@@ -52,7 +52,11 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   List<XFile> _partnerPhotos = [];
   BlindDateAnalysis? _photoAnalysis;
   bool _isAnalyzingPhotos = false;
-  
+
+  // Chat Analysis
+  final _chatContentController = TextEditingController();
+  String? _chatPlatform;
+
   // Tab Controller
   late TabController _tabController;
   int _selectedTabIndex = 0;
@@ -129,8 +133,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   @override
   void initState() {
     super.initState();
-    
-    _tabController = TabController(length: 2, vsync: this);
+
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       setState(() {
         _selectedTabIndex = _tabController.index;
@@ -153,6 +157,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   @override
   void dispose() {
     _nameController.dispose();
+    _chatContentController.dispose();
     _tabController.dispose();
     super.dispose();
   }
@@ -394,18 +399,26 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 icon: Icon(Icons.photo_camera),
                 text: '사진 분석',
               ),
+              Tab(
+                icon: Icon(Icons.chat_bubble),
+                text: '대화 분석',
+              ),
             ],
           ),
         ),
-        
+
         // Tab Views
         if (_selectedTabIndex == 0) ...[
           // Original Form
           buildUserInfoForm(),
           const SizedBox(height: 16),
-        ] else ...[
+        ] else if (_selectedTabIndex == 1) ...[
           // Photo Analysis Section
           _buildPhotoAnalysisSection(),
+          const SizedBox(height: 16),
+        ] else if (_selectedTabIndex == 2) ...[
+          // Chat Analysis Section
+          _buildChatAnalysisSection(),
           const SizedBox(height: 16),
         ],
         // Meeting Details
@@ -1941,6 +1954,144 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// 대화 분석 섹션 빌드
+  Widget _buildChatAnalysisSection() {
+    final theme = Theme.of(context);
+
+    final Map<String, String> chatPlatforms = {
+      'kakao': '카카오톡',
+      'sms': '문자 메시지',
+      'instagram': '인스타그램 DM',
+      'other': '기타',
+    };
+
+    return GlassCard(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.chat_bubble,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '대화 분석',
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '상대방과 나눈 대화 내용을 붙여넣으면 AI가 호감도, 대화 스타일, 개선점을 분석해드립니다.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.7),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Chat Platform Selection
+            Text(
+              '대화 플랫폼',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: chatPlatforms.entries.map((entry) {
+                final isSelected = _chatPlatform == entry.key;
+
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      _chatPlatform = entry.key;
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(20),
+                  child: Chip(
+                    label: Text(entry.value),
+                    backgroundColor: isSelected
+                        ? theme.colorScheme.primary.withOpacity(0.2)
+                        : theme.colorScheme.surface.withOpacity(0.5),
+                    side: BorderSide(
+                      color: isSelected
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurface.withOpacity(0.3),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+
+            // Chat Content Input
+            Text(
+              '대화 내용',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _chatContentController,
+              maxLines: 10,
+              maxLength: 500,
+              decoration: InputDecoration(
+                hintText: '상대방과의 대화 내용을 붙여넣으세요.\n예시:\n나: 안녕하세요! 만나서 반가워요\n상대: 네 저도 반가워요 ㅎㅎ\n나: 오늘 날씨 좋네요',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                counterText: '${_chatContentController.text.length}/500',
+              ),
+              onChanged: (value) {
+                setState(() {}); // Update counter
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Info Box
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: theme.colorScheme.primary.withOpacity(0.3),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 20,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '대화 내용은 AI 분석 후 안전하게 삭제되며, 저장되지 않습니다.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
