@@ -12,6 +12,8 @@ import '../screens/auth/callback_page.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/profile_edit_page.dart';
+import '../screens/profile/saju_detail_page.dart';
+import '../screens/profile/elements_detail_page.dart';
 import '../screens/settings/settings_screen.dart';
 import '../screens/settings/social_accounts_screen.dart';
 import '../screens/settings/phone_management_screen.dart';
@@ -135,6 +137,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   context,
                   state,
                   const ProfileEditPage(),
+                ),
+              ),
+              GoRoute(
+                path: 'saju',
+                name: 'profile-saju',
+                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                  context,
+                  state,
+                  const SajuDetailPage(),
+                ),
+              ),
+              GoRoute(
+                path: 'elements',
+                name: 'profile-elements',
+                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                  context,
+                  state,
+                  const ElementsDetailPage(),
                 ),
               ),
             ],

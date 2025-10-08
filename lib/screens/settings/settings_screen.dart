@@ -102,12 +102,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     icon: Icons.notifications_outlined,
                     title: '알림 설정',
                     subtitle: '푸시, 문자, 운세 알림 관리',
-                    onTap: () => context.push('/settings/notifications')),
-                  _buildSettingItem(
-                    icon: Icons.history_outlined,
-                    title: '운세 기록',
-                    subtitle: '지난 운세 보기',
-                    onTap: () => context.push('/fortune/history'),
+                    onTap: () => context.push('/settings/notifications'),
                     isLast: true)])),
             
             // 앱 설정 섹션

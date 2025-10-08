@@ -374,7 +374,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -410,25 +410,46 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 프로필 요약 (한 줄)
+              const SizedBox(height: TossDesignSystem.spacingM),
+
+              // 프로필 요약 카드
               if (userProfile != null || localProfile != null)
-                _buildListItem(
-                  leading: CircleAvatar(
-                    radius: 24,
-                    backgroundImage: (userProfile ?? localProfile)?['profile_image_url'] != null
-                        ? NetworkImage((userProfile ?? localProfile)!['profile_image_url'])
-                        : null,
-                    child: (userProfile ?? localProfile)?['profile_image_url'] == null
-                        ? const Icon(Icons.person, size: 24)
-                        : null,
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: TossDesignSystem.black.withValues(alpha: 0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  title: (userProfile ?? localProfile)?['name'] ?? '사용자',
-                  subtitle: _formatProfileSubtitle(),
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: _getSecondaryTextColor(context),
+                  child: _buildListItem(
+                    leading: CircleAvatar(
+                      radius: 24,
+                      backgroundImage: (userProfile ?? localProfile)?['profile_image_url'] != null
+                          ? NetworkImage((userProfile ?? localProfile)!['profile_image_url'])
+                          : null,
+                      child: (userProfile ?? localProfile)?['profile_image_url'] == null
+                          ? const Icon(Icons.person, size: 24)
+                          : null,
+                    ),
+                    title: (userProfile ?? localProfile)?['name'] ?? '사용자',
+                    subtitle: _formatProfileSubtitle(),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: _getSecondaryTextColor(context),
+                    ),
+                    onTap: () => context.push('/profile/edit'),
+                    isLast: true,
                   ),
-                  onTap: () => context.push('/profile/edit'),
                 ),
 
               // 테스트 계정 섹션 (간소화)
@@ -441,36 +462,57 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildSectionHeader('테스트 계정'),
-                        _buildListItem(
-                          icon: Icons.bug_report_outlined,
-                          title: '무제한 토큰',
-                          trailing: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(12),
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                          decoration: BoxDecoration(
+                            color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                              width: 1,
                             ),
-                            child: Text(
-                              '활성화',
-                              style: TossDesignSystem.caption.copyWith(
-                                color: TossDesignSystem.successGreen,
-                                fontWeight: FontWeight.w600,
+                            boxShadow: [
+                              BoxShadow(
+                                color: TossDesignSystem.black.withValues(alpha: 0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 2),
                               ),
-                            ),
+                            ],
                           ),
-                        ),
-                        _buildListItem(
-                          icon: Icons.star_outline,
-                          title: '프리미엄 기능',
-                          trailing: Switch(
-                            value: profile.isTestAccount, // isPremium 대신 isTestAccount 사용
-                            onChanged: (value) async {
-                              // 테스트 계정은 항상 프리미엄 기능 활성화
-                              setState(() {});
-                            },
-                            activeColor: TossDesignSystem.tossBlue,
+                          child: Column(
+                            children: [
+                              _buildListItem(
+                                icon: Icons.bug_report_outlined,
+                                title: '무제한 토큰',
+                                trailing: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    '활성화',
+                                    style: TossDesignSystem.caption.copyWith(
+                                      color: TossDesignSystem.successGreen,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              _buildListItem(
+                                icon: Icons.star_outline,
+                                title: '프리미엄 기능',
+                                trailing: Switch(
+                                  value: profile.isTestAccount,
+                                  onChanged: (value) async {
+                                    setState(() {});
+                                  },
+                                  activeColor: TossDesignSystem.tossBlue,
+                                ),
+                                isLast: true,
+                              ),
+                            ],
                           ),
-                          isLast: true,
                         ),
                       ],
                     );
@@ -481,214 +523,287 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
               // 운세 활동 섹션
               _buildSectionHeader('운세 활동'),
-              _buildListItem(
-                icon: Icons.today_outlined,
-                title: '오늘의 운세',
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (userStats?['today_score'] != null) ...[
-                      Text(
-                        '${userStats!['today_score']}',
-                        style: TossDesignSystem.heading4.copyWith(
-                          color: _getTextColor(context),
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Text(
-                        '점',
-                        style: TossDesignSystem.body2.copyWith(
-                          color: _getSecondaryTextColor(context),
-                        ),
-                      ),
-                    ] else
-                      Text(
-                        '미확인',
-                        style: TossDesignSystem.body2.copyWith(
-                          color: _getSecondaryTextColor(context),
-                        ),
-                      ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                decoration: BoxDecoration(
+                  color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: TossDesignSystem.black.withValues(alpha: 0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
                   ],
                 ),
-                onTap: () => context.push('/fortune/today'),
-              ),
-              _buildListItem(
-                icon: Icons.local_fire_department_outlined,
-                title: '연속 접속일',
-                trailing: Text(
-                  '${userStats?['consecutive_days'] ?? 0}일',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: _getSecondaryTextColor(context),
-                  ),
+                child: Column(
+                  children: [
+                    _buildListItem(
+                      icon: Icons.today_outlined,
+                      title: '오늘의 운세',
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (userStats?['today_score'] != null) ...[
+                            Text(
+                              '${userStats!['today_score']}',
+                              style: TossDesignSystem.heading4.copyWith(
+                                color: _getTextColor(context),
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              '점',
+                              style: TossDesignSystem.body2.copyWith(
+                                color: _getSecondaryTextColor(context),
+                              ),
+                            ),
+                          ] else
+                            Text(
+                              '미확인',
+                              style: TossDesignSystem.body2.copyWith(
+                                color: _getSecondaryTextColor(context),
+                              ),
+                            ),
+                        ],
+                      ),
+                      onTap: () => context.push('/fortune/today'),
+                    ),
+                    _buildListItem(
+                      icon: Icons.local_fire_department_outlined,
+                      title: '연속 접속일',
+                      trailing: Text(
+                        '${userStats?['consecutive_days'] ?? 0}일',
+                        style: TossDesignSystem.body2.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
+                      ),
+                    ),
+                    _buildListItem(
+                      icon: Icons.visibility_outlined,
+                      title: '총 조회수',
+                      trailing: Text(
+                        '${userStats?['total_fortunes'] ?? 0}회',
+                        style: TossDesignSystem.body2.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
+                      ),
+                      isLast: true,
+                    ),
+                  ],
                 ),
-              ),
-              _buildListItem(
-                icon: Icons.visibility_outlined,
-                title: '총 조회수',
-                trailing: Text(
-                  '${userStats?['total_fortunes'] ?? 0}회',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: _getSecondaryTextColor(context),
-                  ),
-                ),
-                isLast: true,
               ),
 
               // 정보 섹션
               if (userProfile != null || localProfile != null) ...[
                 _buildSectionHeader('정보'),
-                _buildListItem(
-                  icon: Icons.cake_outlined,
-                  title: '생년월일',
-                  trailing: Text(
-                    _formatBirthDate((userProfile ?? localProfile)?['birth_date']),
-                    style: TossDesignSystem.body2.copyWith(
-                      color: _getSecondaryTextColor(context),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                      width: 1,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: TossDesignSystem.black.withValues(alpha: 0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  onTap: () => context.push('/profile/edit'),
-                ),
-                _buildListItem(
-                  icon: Icons.access_time_outlined,
-                  title: '출생시간',
-                  trailing: Text(
-                    (userProfile ?? localProfile)?['birth_time'] ?? '미입력',
-                    style: TossDesignSystem.body2.copyWith(
-                      color: _getSecondaryTextColor(context),
-                    ),
+                  child: Column(
+                    children: [
+                      _buildListItem(
+                        icon: Icons.cake_outlined,
+                        title: '생년월일',
+                        trailing: Text(
+                          _formatBirthDate((userProfile ?? localProfile)?['birth_date']),
+                          style: TossDesignSystem.body2.copyWith(
+                            color: _getSecondaryTextColor(context),
+                          ),
+                        ),
+                        onTap: () => context.push('/profile/edit'),
+                      ),
+                      _buildListItem(
+                        icon: Icons.access_time_outlined,
+                        title: '출생시간',
+                        trailing: Text(
+                          (userProfile ?? localProfile)?['birth_time'] ?? '미입력',
+                          style: TossDesignSystem.body2.copyWith(
+                            color: _getSecondaryTextColor(context),
+                          ),
+                        ),
+                        onTap: () => context.push('/profile/edit'),
+                      ),
+                      _buildListItem(
+                        icon: Icons.pets_outlined,
+                        title: '띠',
+                        trailing: Text(
+                          (userProfile ?? localProfile)?['chinese_zodiac'] ?? '미입력',
+                          style: TossDesignSystem.body2.copyWith(
+                            color: _getSecondaryTextColor(context),
+                          ),
+                        ),
+                      ),
+                      _buildListItem(
+                        icon: Icons.stars_outlined,
+                        title: '별자리',
+                        trailing: Text(
+                          (userProfile ?? localProfile)?['zodiac_sign'] ?? '미입력',
+                          style: TossDesignSystem.body2.copyWith(
+                            color: _getSecondaryTextColor(context),
+                          ),
+                        ),
+                      ),
+                      _buildListItem(
+                        icon: Icons.water_drop_outlined,
+                        title: '혈액형',
+                        trailing: Text(
+                          (userProfile ?? localProfile)?['blood_type'] != null
+                              ? '${(userProfile ?? localProfile)!['blood_type']}형'
+                              : '미입력',
+                          style: TossDesignSystem.body2.copyWith(
+                            color: _getSecondaryTextColor(context),
+                          ),
+                        ),
+                        onTap: () => context.push('/profile/edit'),
+                      ),
+                      _buildListItem(
+                        icon: Icons.psychology_outlined,
+                        title: 'MBTI',
+                        trailing: Text(
+                          (userProfile ?? localProfile)?['mbti']?.toUpperCase() ?? '미입력',
+                          style: TossDesignSystem.body2.copyWith(
+                            color: _getSecondaryTextColor(context),
+                          ),
+                        ),
+                        onTap: () => context.push('/profile/edit'),
+                        isLast: true,
+                      ),
+                    ],
                   ),
-                  onTap: () => context.push('/profile/edit'),
-                ),
-                _buildListItem(
-                  icon: Icons.pets_outlined,
-                  title: '띠',
-                  trailing: Text(
-                    (userProfile ?? localProfile)?['chinese_zodiac'] ?? '미입력',
-                    style: TossDesignSystem.body2.copyWith(
-                      color: _getSecondaryTextColor(context),
-                    ),
-                  ),
-                ),
-                _buildListItem(
-                  icon: Icons.stars_outlined,
-                  title: '별자리',
-                  trailing: Text(
-                    (userProfile ?? localProfile)?['zodiac_sign'] ?? '미입력',
-                    style: TossDesignSystem.body2.copyWith(
-                      color: _getSecondaryTextColor(context),
-                    ),
-                  ),
-                ),
-                _buildListItem(
-                  icon: Icons.water_drop_outlined,
-                  title: '혈액형',
-                  trailing: Text(
-                    (userProfile ?? localProfile)?['blood_type'] != null
-                        ? '${(userProfile ?? localProfile)!['blood_type']}형'
-                        : '미입력',
-                    style: TossDesignSystem.body2.copyWith(
-                      color: _getSecondaryTextColor(context),
-                    ),
-                  ),
-                  onTap: () => context.push('/profile/edit'),
-                ),
-                _buildListItem(
-                  icon: Icons.psychology_outlined,
-                  title: 'MBTI',
-                  trailing: Text(
-                    (userProfile ?? localProfile)?['mbti']?.toUpperCase() ?? '미입력',
-                    style: TossDesignSystem.body2.copyWith(
-                      color: _getSecondaryTextColor(context),
-                    ),
-                  ),
-                  onTap: () => context.push('/profile/edit'),
-                  isLast: true,
                 ),
               ],
 
               // 사주 & 분석 섹션
               if (userProfile != null || localProfile != null) ...[
                 _buildSectionHeader('사주 & 분석'),
-                _buildListItem(
-                  icon: Icons.auto_stories_outlined,
-                  title: '사주 정보',
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: _getSecondaryTextColor(context),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: TossDesignSystem.black.withValues(alpha: 0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  onTap: () {
-                    // TODO: BottomSheet으로 사주 정보 표시
-                    context.push('/profile/saju');
-                  },
-                ),
-                _buildListItem(
-                  icon: Icons.wb_sunny_outlined,
-                  title: '오행 분석',
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: _getSecondaryTextColor(context),
+                  child: Column(
+                    children: [
+                      _buildListItem(
+                        icon: Icons.auto_stories_outlined,
+                        title: '사주 정보',
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: _getSecondaryTextColor(context),
+                        ),
+                        onTap: () {
+                          context.push('/profile/saju');
+                        },
+                      ),
+                      _buildListItem(
+                        icon: Icons.wb_sunny_outlined,
+                        title: '오행 분석',
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: _getSecondaryTextColor(context),
+                        ),
+                        onTap: () {
+                          context.push('/profile/elements');
+                        },
+                      ),
+                      _buildListItem(
+                        icon: Icons.history,
+                        title: '운세 기록',
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: _getSecondaryTextColor(context),
+                        ),
+                        onTap: () => context.push('/fortune/history'),
+                        isLast: true,
+                      ),
+                    ],
                   ),
-                  onTap: () {
-                    // TODO: BottomSheet으로 오행 분석 표시
-                    context.push('/profile/elements');
-                  },
-                ),
-                _buildListItem(
-                  icon: Icons.history,
-                  title: '운세 기록',
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: _getSecondaryTextColor(context),
-                  ),
-                  onTap: () => context.push('/fortune/history'),
-                  isLast: true,
                 ),
               ],
 
               // 도구 섹션
               _buildSectionHeader('도구'),
-              _buildListItem(
-                icon: Icons.share_outlined,
-                title: '친구와 공유',
-                trailing: Icon(
-                  Icons.chevron_right,
-                  color: _getSecondaryTextColor(context),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                decoration: BoxDecoration(
+                  color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: TossDesignSystem.black.withValues(alpha: 0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                onTap: () async {
-                  await _inviteFriend();
-                },
-              ),
-              _buildListItem(
-                icon: Icons.star_outline,
-                title: '프리미엄 체험',
-                trailing: Icon(
-                  Icons.chevron_right,
-                  color: _getSecondaryTextColor(context),
+                child: Column(
+                  children: [
+                    _buildListItem(
+                      icon: Icons.share_outlined,
+                      title: '친구와 공유',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () async {
+                        await _inviteFriend();
+                      },
+                    ),
+                    _buildListItem(
+                      icon: Icons.star_outline,
+                      title: '프리미엄 체험',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () => context.push('/subscription'),
+                    ),
+                    _buildListItem(
+                      icon: Icons.verified_outlined,
+                      title: '프로필 인증',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () => context.push('/profile/verification'),
+                      isLast: true,
+                    ),
+                  ],
                 ),
-                onTap: () => context.push('/subscription'),
-              ),
-              _buildListItem(
-                icon: Icons.verified_outlined,
-                title: '프로필 인증',
-                trailing: Icon(
-                  Icons.chevron_right,
-                  color: _getSecondaryTextColor(context),
-                ),
-                onTap: () => context.push('/profile/verification'),
-                isLast: true,
-              ),
-
-              // 계정 섹션
-              _buildSectionHeader('계정'),
-              _buildListItem(
-                icon: Icons.logout,
-                title: '로그아웃',
-                trailing: Icon(
-                  Icons.chevron_right,
-                  color: _getSecondaryTextColor(context),
-                ),
-                onTap: () => _handleLogout(),
-                isLast: true,
               ),
 
               const SizedBox(height: TossDesignSystem.spacingXXL),
