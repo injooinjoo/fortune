@@ -79,6 +79,9 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     final displayUserName = widget.userName ?? widget.userProfile?.name ?? '회원';
     final score = widget.fortune?.overallScore ?? 75;
 
+    // 디버그: 이름 확인
+    debugPrint('🔍 [FortuneCompletionPageTinder] userName: ${widget.userName}, profileName: ${widget.userProfile?.name}, displayName: $displayUserName');
+
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF8F9FA),
       extendBodyBehindAppBar: true,
