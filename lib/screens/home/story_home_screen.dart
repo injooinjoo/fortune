@@ -642,6 +642,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
       final fortuneState = ref.read(dailyFortuneProvider);
 
+      debugPrint('🔍 Provider state after load - hasFortune: ${fortuneState.fortune != null}, hasScore: ${fortuneState.fortune?.overallScore != null}, score: ${fortuneState.fortune?.overallScore}');
+
       if (fortuneState.fortune != null && fortuneState.fortune!.overallScore != null) {
         debugPrint('✅ Fortune loaded via Provider - score: ${fortuneState.fortune!.overallScore}');
 
