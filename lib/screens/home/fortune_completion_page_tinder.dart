@@ -151,7 +151,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     ),
                   ),
                   Text(
-                    DateTime.now().toString().split(' ')[0],
+                    '${DateTime.now().year}.${DateTime.now().month.toString().padLeft(2, '0')}.${DateTime.now().day.toString().padLeft(2, '0')}',
                     style: TextStyle(
                       color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
                       fontSize: 14,
@@ -295,16 +295,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 헤더 (작고 명확)
-        Text(
-          '$displayUserName님의',
-          style: TextStyle(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 4),
+        // 헤더 (카드 제목만 표시 - 이름은 상단 헤더에 있음)
         Text(
           '오늘의 총운',
           style: TextStyle(
