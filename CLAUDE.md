@@ -1,5 +1,26 @@
 # Fortune Flutter App - Claude Code 개발 규칙
 
+## 🚫 **FLUTTER 실행 금지 규칙 (CRITICAL)** 🚫
+
+**Claude는 절대로 Flutter를 직접 실행하지 않습니다!**
+
+### ❌ 금지 명령어
+```bash
+flutter run
+flutter run --release
+flutter run -d [device-id]
+```
+
+### ✅ 올바른 워크플로우
+1. **Claude**: 코드 수정 완료 후 "Flutter를 실행해서 테스트해주세요" 요청
+2. **사용자**: 직접 `flutter run --release -d 00008140-00120304260B001C` 실행
+3. **사용자**: 로그를 Claude에게 전달
+4. **Claude**: 로그를 분석하고 문제 해결
+
+**이유**: Claude가 Flutter를 실행하면 로그를 제대로 확인할 수 없어 디버깅이 불가능합니다.
+
+---
+
 ## 🤖 **필수 자동화 워크플로우** - 절대 건너뛰지 말 것! 🤖
 
 ### 🔴 **JIRA 등록 최우선 원칙 (CRITICAL RULE)**
