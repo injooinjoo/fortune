@@ -15,7 +15,7 @@ import '../../../../core/utils/logger.dart';
 import '../../../../widgets/multi_photo_selector.dart';
 import '../../../../services/vision_api_service.dart';
 import '../../../../services/ad_service.dart';
-import '../../../../shared/layouts/fortune_result_skeleton.dart';
+import '../widgets/fortune_loading_skeleton.dart';
 import '../../../../shared/layouts/standard_fortune_app_bar.dart';
 
 class BlindDateFortunePage extends BaseFortunePage {
@@ -186,7 +186,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
         child: Stack(
           children: [
             isLoading
-                ? const FortuneResultSkeleton()
+                ? FortuneResultSkeleton(
+                    isDark: Theme.of(context).brightness == Brightness.dark,
+                  )
                 : error != null
                     ? buildErrorState()
                     : fortune != null
