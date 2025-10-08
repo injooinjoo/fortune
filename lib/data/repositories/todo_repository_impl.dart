@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:fortune/core/error/failures.dart';
+import 'package:fortune/core/errors/failures.dart';
 import 'package:fortune/data/models/todo_model.dart';
 import 'package:fortune/domain/entities/todo.dart';
 import 'package:fortune/domain/repositories/todo_repository.dart';

@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import '../error/failures.dart';
+import '../errors/failures.dart';
 
 /// Base class for all use cases in the application
 ///

@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fortune/core/error/failures.dart';
+import 'package:fortune/core/errors/failures.dart';
 import 'package:fortune/core/usecases/usecase.dart';
 import 'package:fortune/domain/entities/todo.dart';
 import 'package:fortune/domain/repositories/todo_repository.dart';

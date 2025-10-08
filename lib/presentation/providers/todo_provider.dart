@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fortune/core/error/failures.dart';
+import 'package:fortune/core/errors/failures.dart';
 import 'package:fortune/data/datasources/remote/supabase_client.dart';
 import 'package:fortune/data/repositories/todo_repository_impl.dart';
 import 'package:fortune/domain/entities/todo.dart';
