@@ -1241,6 +1241,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
     // 기본 화면: Tinder 완료 페이지
     debugPrint('🎯 Showing default FortuneCompletionPageTinder');
+    debugPrint('🔍 [StoryHomeScreen] userProfile: ${userProfile?.name}, fortune: ${todaysFortune != null}');
 
     // 네비게이션 바 즉시 표시 (build 전에)
     // FortuneStoryViewer가 hide()를 호출했을 수 있으므로 명시적으로 show() 필요
