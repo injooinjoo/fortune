@@ -1,35 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../services/ad_service.dart';
-import '../../domain/models/avoid_person_analysis.dart';
-import '../widgets/standard_fortune_app_bar.dart';
+import 'base_fortune_page.dart';
+import '../../../../domain/entities/fortune.dart';
+import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../data/services/fortune_api_service.dart';
+import '../../../../presentation/providers/providers.dart';
+import '../../../../core/utils/logger.dart';
 
-class AvoidPeopleFortunePage extends ConsumerStatefulWidget {
-  const AvoidPeopleFortunePage({super.key});
+class AvoidPeopleFortunePage extends BaseFortunePage {
+  const AvoidPeopleFortunePage({super.key})
+      : super(
+          title: '피해야 할 사람',
+          description: '오늘 주의해야 할 사람 유형을 분석해드립니다',
+          fortuneType: 'avoid-people',
+          requiresUserInfo: false,
+        );
 
   @override
   ConsumerState<AvoidPeopleFortunePage> createState() => _AvoidPeopleFortunePageState();
 }
 
-class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage> {
+class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortunePage> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
-  
+
   // Step 1: 상황 및 환경
   String _environment = '';
   String _importantSchedule = '';
-  
+
   // Step 2: 감정 상태
   int _moodLevel = 3;
   int _stressLevel = 3;
   int _socialFatigue = 3;
-  
+
   // Step 3: 주의할 상황
   bool _hasImportantDecision = false;
   bool _hasSensitiveConversation = false;
@@ -51,60 +59,85 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
         curve: Curves.easeInOut,
       );
     } else {
-      _analyzeAndShowResult();
+      // 마지막 단계에서 운세 생성
+      _generateFortune();
     }
   }
 
-  void _previousStep() {
-    if (_currentStep > 0) {
-      setState(() {
-        _currentStep--;
-      });
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+  Future<void> _generateFortune() async {
+    final params = {
+      'environment': _environment,
+      'importantSchedule': _importantSchedule,
+      'moodLevel': _moodLevel,
+      'stressLevel': _stressLevel,
+      'socialFatigue': _socialFatigue,
+      'hasImportantDecision': _hasImportantDecision,
+      'hasSensitiveConversation': _hasSensitiveConversation,
+      'hasTeamProject': _hasTeamProject,
+    };
+
+    // BaseFortunePage의 generateFortuneAction 호출
+    await generateFortuneAction(params: params);
+  }
+
+  @override
+  Future<Fortune> generateFortune(Map<String, dynamic> params) async {
+    final user = ref.read(userProvider).value;
+    if (user == null) {
+      throw Exception('로그인이 필요합니다');
+    }
+
+    Logger.info('🔮 [AvoidPeopleFortune] Calling API', {'params': params});
+
+    try {
+      final apiService = ref.read(fortuneApiServiceProvider);
+
+      // API 호출 - FortuneApiService.getFortune 사용
+      final fortune = await apiService.getFortune(
+        userId: user.id,
+        fortuneType: widget.fortuneType,
+        params: params,
       );
+
+      Logger.info('✅ [AvoidPeopleFortune] API fortune loaded successfully');
+      return fortune;
+
+    } catch (e, stackTrace) {
+      Logger.error('❌ [AvoidPeopleFortune] API failed', e, stackTrace);
+      rethrow;
     }
-  }
-
-  void _analyzeAndShowResult() async {
-    final input = AvoidPersonInput(
-      environment: _environment,
-      importantSchedule: _importantSchedule,
-      moodLevel: _moodLevel,
-      stressLevel: _stressLevel,
-      socialFatigue: _socialFatigue,
-      hasImportantDecision: _hasImportantDecision,
-      hasSensitiveConversation: _hasSensitiveConversation,
-      hasTeamProject: _hasTeamProject,
-    );
-
-    // Show ad before showing result
-    await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () async {
-        context.pushNamed(
-          'fortune-avoid-people-result',
-          extra: input,
-        );
-      },
-      onAdFailed: () async {
-        // Navigate even if ad fails
-        context.pushNamed(
-          'fortune-avoid-people-result',
-          extra: input,
-        );
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    // 운세 결과가 있으면 BaseFortunePage가 결과 표시
+    if (fortune != null || isLoading || error != null) {
+      return super.build(context);
+    }
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // Input UI 표시
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
-      appBar: const StandardFortuneAppBar(
-        title: '피해야 할 사람',
+      appBar: AppBar(
+        backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            size: 20,
+          ),
+        ),
+        title: Text(
+          widget.title,
+          style: TossDesignSystem.heading3.copyWith(
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Stack(
         children: [
@@ -130,10 +163,10 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
 
           // Floating 버튼
           FloatingBottomButton(
-            text: _currentStep == 2 ? '분석 결과 보기' : '다음',
+            text: _currentStep == 2 ? '분석 시작' : '다음',
             onPressed: _currentStep == 0
                 ? (_environment.isNotEmpty && _importantSchedule.isNotEmpty ? _nextStep : null)
-                : (_currentStep == 1 ? _nextStep : _analyzeAndShowResult),
+                : _nextStep,
             style: TossButtonStyle.primary,
             size: TossButtonSize.large,
           ),
@@ -206,7 +239,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                 Text(
                   '현재 상황 분석',
                   style: TossDesignSystem.heading3.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -220,18 +253,18 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           Text(
             '오늘의 주요 환경',
             style: TossDesignSystem.body1.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 12),
-          
+
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -244,18 +277,18 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
               isDark,
             )).toList(),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           Text(
             '중요한 일정',
             style: TossDesignSystem.body1.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 12),
-          
+
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -268,11 +301,8 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
               isDark,
             )).toList(),
           ),
-          
-          const SizedBox(height: 40),
 
-          // 하단 버튼 공간 확보
-          const BottomButtonSpacing(),
+          const SizedBox(height: 80), // Floating 버튼 공간
         ],
       ),
     );
@@ -308,7 +338,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                 Text(
                   '감정 상태 체크',
                   style: TossDesignSystem.heading3.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -322,9 +352,9 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           _buildSliderSection(
             '현재 기분',
             _moodLevel,
@@ -332,9 +362,9 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             ['😔', '😐', '😊', '😄', '🤩'],
             isDark,
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           _buildSliderSection(
             '스트레스 레벨',
             _stressLevel,
@@ -342,9 +372,9 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             ['😌', '🙂', '😰', '😣', '🤯'],
             isDark,
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           _buildSliderSection(
             '대인관계 피로도',
             _socialFatigue,
@@ -352,11 +382,8 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             ['💪', '👍', '😑', '😩', '🥱'],
             isDark,
           ),
-          
-          const SizedBox(height: 40),
 
-          // 하단 버튼 공간 확보
-          const BottomButtonSpacing(),
+          const SizedBox(height: 80), // Floating 버튼 공간
         ],
       ),
     );
@@ -392,7 +419,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                 Text(
                   '주의할 상황',
                   style: TossDesignSystem.heading3.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -406,9 +433,9 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           _buildCheckboxItem(
             '중요한 의사결정이 있다',
             _hasImportantDecision,
@@ -416,9 +443,9 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             Icons.gavel_rounded,
             isDark,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           _buildCheckboxItem(
             '민감한 대화가 예정되어 있다',
             _hasSensitiveConversation,
@@ -426,9 +453,9 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             Icons.chat_bubble_rounded,
             isDark,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           _buildCheckboxItem(
             '팀 프로젝트나 협업이 있다',
             _hasTeamProject,
@@ -436,8 +463,8 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             Icons.groups_rounded,
             isDark,
           ),
-          
-          const SizedBox(height: 40),
+
+          const SizedBox(height: 16),
 
           Text(
             '분석 결과는 참고용으로만 활용해주세요',
@@ -447,10 +474,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             textAlign: TextAlign.center,
           ),
 
-          const SizedBox(height: 16),
-
-          // 하단 버튼 공간 확보
-          const BottomButtonSpacing(),
+          const SizedBox(height: 80), // Floating 버튼 공간
         ],
       ),
     );
@@ -479,7 +503,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
           style: TossDesignSystem.body2.copyWith(
             color: isSelected
                 ? TossDesignSystem.errorRed
-                : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
+                : (isDark ? TossDesignSystem.white : TossDesignSystem.gray900),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
           ),
         ),
@@ -506,7 +530,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
               Text(
                 title,
                 style: TossDesignSystem.body1.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -589,7 +613,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             child: Text(
               title,
               style: TossDesignSystem.body2.copyWith(
-                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
               ),
             ),
           ),
