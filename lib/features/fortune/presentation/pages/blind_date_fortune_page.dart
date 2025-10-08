@@ -996,7 +996,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               onPressed: _isAnalyzingPhotos ? null : _analyzePhotos,
               style: TossButtonStyle.primary,
               size: TossButtonSize.large,
-              icon: _isAnalyzingPhotos ? null : Icons.auto_awesome,
+              icon: _isAnalyzingPhotos ? null : const Icon(Icons.auto_awesome),
             ),
           ),
         
