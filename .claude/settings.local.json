@@ -157,7 +157,11 @@
       "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_test_base_v2_fix.txt)",
       "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_final_test.txt)",
       "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_blind_date.txt)",
-      "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_title_fix.txt)"
+      "Bash(do if grep -q \"Xcode build done\" /tmp/flutter_title_fix.txt)",
+      "Bash(if grep -q \"Xcode build done\" /tmp/flutter_health_api_test.txt)",
+      "Bash(if grep -q \"Error:\" /tmp/flutter_health_api_test.txt)",
+      "Bash(psql:*)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "ask": [],

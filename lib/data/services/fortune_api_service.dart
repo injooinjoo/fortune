@@ -893,11 +893,15 @@ class FortuneApiService {
         .eq('id', userId)
         .maybeSingle();
 
-    final shouldCallApi = await _decisionService.shouldCallApi(
-      userId: userId,
-      fortuneType: fortuneType,
-      userProfile: userProfile ?? {},
-    );
+    // 🚫 예외 운세: 항상 API 호출 (소원빌기, 꿈해몽, 관상, 헤어진 애인, 소개팅)
+    const alwaysCallApiTypes = ['wish', 'dream', 'face-reading', 'ex-lover', 'blind-date'];
+    final shouldCallApi = alwaysCallApiTypes.contains(fortuneType)
+        ? true
+        : await _decisionService.shouldCallApi(
+            userId: userId,
+            fortuneType: fortuneType,
+            userProfile: userProfile ?? {},
+          );
 
     // 💰 API 호출하지 않기로 결정 - 유사 운세 재사용
     if (!shouldCallApi) {
