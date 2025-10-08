@@ -644,6 +644,47 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
       debugPrint('🔍 Provider state after load - hasFortune: ${fortuneState.fortune != null}, hasScore: ${fortuneState.fortune?.overallScore != null}, score: ${fortuneState.fortune?.overallScore}');
 
+      // 3. Provider에서 로드했지만 overallScore가 null인 경우 (잘못된 캐시)
+      if (fortuneState.fortune != null && fortuneState.fortune!.overallScore == null) {
+        debugPrint('⚠️ Cached fortune has null overallScore - invalidating cache and reloading');
+
+        // 캐시 무효화
+        await _cacheService.removeCachedFortune('daily', {'userId': userId});
+
+        // Provider 리셋
+        dailyFortuneNotifier.reset();
+
+        // 새로 로드
+        dailyFortuneNotifier.setDate(now);
+        await dailyFortuneNotifier.loadFortune();
+
+        final newFortuneState = ref.read(dailyFortuneProvider);
+
+        if (newFortuneState.fortune != null && newFortuneState.fortune!.overallScore != null) {
+          debugPrint('✅ Fortune reloaded with valid score - score: ${newFortuneState.fortune!.overallScore}');
+
+          setState(() {
+            todaysFortune = newFortuneState.fortune;
+            isLoadingFortune = false;
+          });
+
+          await _saveDailyFortuneToHistory(newFortuneState.fortune!);
+
+          final cachedStorySegments = await _cacheService.getCachedStorySegments('daily', {'userId': userId});
+          if (cachedStorySegments != null && cachedStorySegments.isNotEmpty) {
+            setState(() {
+              storySegments = cachedStorySegments;
+            });
+          } else {
+            await _generateStory(newFortuneState.fortune!);
+          }
+        } else {
+          debugPrint('❌ Still no valid fortune after reload');
+        }
+
+        return;
+      }
+
       if (fortuneState.fortune != null && fortuneState.fortune!.overallScore != null) {
         debugPrint('✅ Fortune loaded via Provider - score: ${fortuneState.fortune!.overallScore}');
 
