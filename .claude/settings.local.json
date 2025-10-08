@@ -161,7 +161,9 @@
       "Bash(if grep -q \"Xcode build done\" /tmp/flutter_health_api_test.txt)",
       "Bash(if grep -q \"Error:\" /tmp/flutter_health_api_test.txt)",
       "Bash(psql:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(adb:*)",
+      "Bash(/Users/jacobmac/Library/Android/sdk/platform-tools/adb devices)"
     ],
     "deny": [],
     "ask": [],
