@@ -38,7 +38,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return BaseFortunePageV2(
-      title: 'AI 관상 분석',
+      title: '관상',
       fortuneType: 'face-reading',
       headerGradient: LinearGradient(
         begin: Alignment.topLeft,

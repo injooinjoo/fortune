@@ -192,7 +192,7 @@ class _BlindDateInstagramPageState extends ConsumerState<BlindDateInstagramPage>
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
       appBar: StandardFortuneAppBar(
-        title: '소개팅 AI 코칭',
+        title: '소개팅 운세',
         onBackPressed: () {
           if (_currentStep > 0) {
             _previousStep();

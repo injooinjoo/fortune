@@ -161,7 +161,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       appBar: const StandardFortuneAppBar(
-        title: '부적 만들기',
+        title: '부적',
       ),
       body: Column(
         children: [

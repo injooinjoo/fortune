@@ -21,7 +21,7 @@ class CelebrityFortunePageV2 extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return BaseFortunePageV2(
-      title: '연예인 운세',
+      title: '유명인 운세',
       fortuneType: 'celebrity-saju',
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,

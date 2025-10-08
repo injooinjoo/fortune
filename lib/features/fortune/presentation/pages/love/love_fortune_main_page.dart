@@ -119,7 +119,7 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
       appBar: StandardFortuneAppBar(
-        title: '연애운세',
+        title: '연애운',
         onBackPressed: _currentStep == 0 ? () => Navigator.pop(context) : _previousStep,
       ),
       body: Column(
