@@ -2905,25 +2905,33 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
 
   /// 띠별 운세 데이터 가져오기 (API 우선, 생년 기반 fallback)
   List<Map<String, dynamic>> _getZodiacFortuneData() {
+    // 사용자 프로필에서 생년월일 가져오기
+    final userBirthDate = widget.userProfile?.birthdate;
+
     final birthYearFortunes = widget.fortune?.birthYearFortunes ?? [];
 
-    // 1. API에서 받은 데이터가 있으면 사용
-    if (birthYearFortunes.isNotEmpty) {
+    // 1. API에서 받은 데이터가 있고, 사용자 생년이 있으면 사용자 띠를 표시
+    if (birthYearFortunes.isNotEmpty && userBirthDate != null) {
+      final userYear = userBirthDate.year;
+      final userZodiac = _getZodiacFromYear(userYear);
+
       return birthYearFortunes.take(3).map((fortune) {
         final zodiacInfo = _getZodiacInfo(fortune.zodiacAnimal);
+        final isUserZodiac = fortune.birthYear == userYear.toString() || fortune.zodiacAnimal == userZodiac;
+
         return {
           'year': fortune.birthYear,
           'name': fortune.zodiacAnimal,
           'emoji': zodiacInfo['emoji'],
           'description': fortune.description,
           'score': 75, // API에 score가 없으면 기본값
-          'isUser': false,
+          'isUser': isUserZodiac,
         };
       }).toList();
     }
 
     // 2. Fallback: 사용자 생년 기반 띠 계산
-    final birthDate = DateTime.tryParse(widget.fortune?.metadata?['birth_date']?.toString() ?? '') ?? DateTime(1990, 1, 1);
+    final birthDate = userBirthDate ?? DateTime(1990, 1, 1);
     final userYear = birthDate.year;
     final userZodiac = _getZodiacFromYear(userYear);
     final zodiacInfo = _getZodiacInfo(userZodiac);
