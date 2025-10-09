@@ -34,7 +34,11 @@
       "Bash(/tmp/update_jira.sh:*)",
       "Bash(while read line)",
       "Bash(do if ! echo \"$line\")",
-      "Bash(then echo \"$line\" fi done)"
+      "Bash(then echo \"$line\" fi done)",
+      "Bash(xargs:*)",
+      "Bash(curl -s -X POST )",
+      "Bash(\"https://beyond-app.atlassian.net/rest/api/3/issue\")",
+      "Read(//Users/jacobmac/Library/**)"
     ],
     "deny": [],
     "ask": [],

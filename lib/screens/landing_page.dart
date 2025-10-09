@@ -585,8 +585,17 @@ class _LandingPageState extends ConsumerState<LandingPage>
     } catch (e) {
       debugPrint('Error saving profile: $e');
       if (mounted) {
+        // Check for duplicate email error
+        String errorMessage = '네이버 로그인 중 문제가 발생했습니다. 다시 시도해주세요.';
+        if (e is AuthException) {
+          errorMessage = e.message;
+        } else if (e.toString().contains('already been registered')) {
+          errorMessage = '이미 다른 소셜 계정(Google, Kakao, Apple)으로 가입된 이메일입니다.\n다른 로그인 방법을 시도해주세요.';
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('네이버 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
+            content: Text(errorMessage),
+            duration: Duration(seconds: 4),
             backgroundColor: Theme.of(context).brightness == Brightness.dark
                 ? TossDesignSystem.errorRedDark
                 : TossDesignSystem.errorRed));

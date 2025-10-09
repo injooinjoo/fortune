@@ -876,6 +876,17 @@ class SocialAuthService {
       if (response.status != 200) {
         Logger.warning('[SocialAuthService] Naver OAuth Edge Function 실패 (선택적 기능, 다른 로그인 방법 사용 권장): ${response.status}');
         Logger.warning('[SocialAuthService] Naver OAuth 응답 데이터 (선택적 기능, 다른 로그인 방법 사용 권장): ${response.data}');
+
+        // Check for duplicate email error
+        final errorData = response.data as Map<String, dynamic>?;
+        final errorMessage = errorData?['error']?.toString() ?? '';
+        if (errorMessage.contains('already been registered')) {
+          throw AuthException(
+            '이미 다른 소셜 계정(Google, Kakao, Apple)으로 가입된 이메일입니다.\n'
+            '다른 로그인 방법을 시도해주세요.'
+          );
+        }
+
         throw Exception('Naver OAuth failed: Status ${response.status}, Data: ${response.data}');
       }
       
@@ -884,6 +895,16 @@ class SocialAuthService {
       if (data['success'] != true) {
         Logger.warning('[SocialAuthService] Naver OAuth 실패 (선택적 기능, 다른 로그인 방법 사용 권장): ${data['error'] ?? 'Unknown error'}');
         Logger.warning('[SocialAuthService] Naver OAuth 전체 응답 데이터 (선택적 기능, 다른 로그인 방법 사용 권장): $data');
+
+        // Check for duplicate email error in data['error']
+        final errorMessage = data['error']?.toString() ?? '';
+        if (errorMessage.contains('already been registered')) {
+          throw AuthException(
+            '이미 다른 소셜 계정(Google, Kakao, Apple)으로 가입된 이메일입니다.\n'
+            '다른 로그인 방법을 시도해주세요.'
+          );
+        }
+
         throw Exception(data['error'] ?? 'Naver OAuth failed');
       }
       

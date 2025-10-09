@@ -141,9 +141,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
         }
       } else if (data.event == AuthChangeEvent.signedOut) {
         debugPrint('🔐 [StoryHomeScreen] User signed out');
-        setState(() {
-          _isReallyLoggedIn = false;
-        });
+        if (mounted) {
+          setState(() {
+            _isReallyLoggedIn = false;
+          });
+        }
       }
     });
   }
