@@ -589,17 +589,6 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       description: '좋아하는 유명인과 나의 오늘 운세',
       category: 'interactive',
       isNew: true),
-    
-    // ==================== Fortune History (프로필로 이동) ====================
-    FortuneCategory(
-      title: '운세 히스토리',
-      route: '/history',
-      type: 'history',
-      icon: Icons.history_rounded,
-      gradientColors: [Color(0xFF795548), Color(0xFF5D4037)],
-      description: '과거 운세 기록 및 통계',
-      category: 'lifestyle',
-      isNew: true),
 
     // ==================== Pet Fortunes (통합) ====================
     FortuneCategory(
