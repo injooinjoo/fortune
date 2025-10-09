@@ -38,7 +38,11 @@
       "Bash(xargs:*)",
       "Bash(curl -s -X POST )",
       "Bash(\"https://beyond-app.atlassian.net/rest/api/3/issue\")",
-      "Read(//Users/jacobmac/Library/**)"
+      "Read(//Users/jacobmac/Library/**)",
+      "Bash(curl -s -X POST -u \"injooinjoo@gmail.com:ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" -H \"Content-Type: application/json\" -d '{\n  \"\"fields\"\": {\n    \"\"project\"\": {\"\"key\"\": \"\"KAN\"\"},\n    \"\"summary\"\": \"\"[에픽] 26개 운세 표준화 - 통일된 프로세스 구축\"\",\n    \"\"description\"\": \"\"# 목표\\n모든 운세를 통일된 표준 프로세스로 전환하여 중복 방지, 조건 반영, 영구 저장을 구현\\n\\n# 범위\\n- 26개 운세 (소원빌기, 꿈해몽 제외)\\n- UnifiedFortuneService 공통 인프라\\n- fortune_history 테이블 확장\\n\\n# 기대 효과\\n✅ 중복 방지: 같은 날 + 같은 조건 = 기존 결과 반환\\n✅ 조건 반영: 사용자 입력이 결과에 영향\\n✅ 영구 저장: 모든 결과 DB 저장\\n✅ 일관된 UX: 동일한 사용자 경험\"\",\n    \"\"issuetype\"\": {\"\"name\"\": \"\"Epic\"\"},\n    \"\"customfield_10011\"\": \"\"[에픽] 26개 운세 표준화\"\"\n  }\n}' \"https://beyond-app.atlassian.net/rest/api/3/issue\")",
+      "Bash(curl:*)",
+      "Bash(chmod:*)",
+      "Bash(/Users/jacobmac/Desktop/Dev/fortune/scripts/create_fortune_standardization_tickets.sh)"
     ],
     "deny": [],
     "ask": [],

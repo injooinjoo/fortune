@@ -567,11 +567,15 @@ class _LandingPageState extends ConsumerState<LandingPage>
 
     try {
       // Naver OAuth 로그인 - SocialAuthService 사용
+      print('🟢 [NAVER] Checking _socialAuthService: $_socialAuthService');
       if (_socialAuthService == null) {
+        print('🟢 [NAVER] ERROR: Social auth service is NULL!');
         throw Exception('Social auth service not available');
       }
 
+      print('🟢 [NAVER] Calling signInWithNaver()...');
       final result = await _socialAuthService!.signInWithNaver();
+      print('🟢 [NAVER] signInWithNaver() returned: $result');
 
       if (result != null) {
         // Naver Sign-In 성공
@@ -590,6 +594,8 @@ class _LandingPageState extends ConsumerState<LandingPage>
         }
       }
     } catch (e) {
+      print('🟢 [NAVER] Exception caught: $e');
+      print('🟢 [NAVER] Exception type: ${e.runtimeType}');
       debugPrint('Error saving profile: $e');
       if (mounted) {
         // Check for duplicate email error
