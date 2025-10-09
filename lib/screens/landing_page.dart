@@ -553,8 +553,15 @@ class _LandingPageState extends ConsumerState<LandingPage>
   }
 
   Future<void> _handleNaverLogin() async {
-    if (_isAuthProcessing) return;
+    print('🟢 [NAVER] _handleNaverLogin() called');
+    print('🟢 [NAVER] _isAuthProcessing at entry: $_isAuthProcessing');
 
+    if (_isAuthProcessing) {
+      print('🟢 [NAVER] Already processing, returning early');
+      return;
+    }
+
+    print('🟢 [NAVER] Setting _isAuthProcessing = true');
     setState(() => _isAuthProcessing = true);
     _startAuthTimeout(); // 타임아웃 시작
 
@@ -697,17 +704,15 @@ class _LandingPageState extends ConsumerState<LandingPage>
         await Future.delayed(Duration(milliseconds: 100));
         _handleSocialLogin('Kakao');
       },
-      onNaverLogin: () async {
+      onNaverLogin: () {
         print('🟢 Naver login button clicked');
-        print('🟢 _isAuthProcessing: $_isAuthProcessing');
+        print('🟢 _isAuthProcessing before pop: $_isAuthProcessing');
 
         // 모달을 먼저 닫기
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
+        Navigator.pop(context);
 
-        // 잠시 기다렸다가 로그인 처리 (UI가 완전히 업데이트되도록)
-        await Future.delayed(Duration(milliseconds: 100));
+        // 즉시 로그인 처리 (100ms 대기 제거)
+        print('🟢 About to call _handleNaverLogin()');
         _handleNaverLogin();
       },
       onInstagramLogin: () {
