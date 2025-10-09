@@ -574,7 +574,12 @@ class _LandingPageState extends ConsumerState<LandingPage>
       }
 
       print('🟢 [NAVER] Calling signInWithNaver()...');
-      final result = await _socialAuthService!.signInWithNaver();
+
+      // Test: call without await first to see if it returns a Future
+      final futureResult = _socialAuthService!.signInWithNaver();
+      print('🟢 [NAVER] Got Future: ${futureResult.runtimeType}');
+
+      final result = await futureResult;
       print('🟢 [NAVER] signInWithNaver() returned: $result');
 
       if (result != null) {
