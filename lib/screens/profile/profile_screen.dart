@@ -447,14 +447,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       Icons.chevron_right,
                       color: _getSecondaryTextColor(context),
                     ),
-                    onTap: () async {
-                      final result = await context.push('/profile/edit');
-                      // 프로필 편집 후 돌아왔을 때 업데이트된 경우 프로필 다시 로드
-                      if (result == true && mounted) {
-                        ref.invalidate(userProfileProvider);
-                        setState(() {});
-                      }
-                    },
+                    onTap: () => context.push('/profile/edit'),
                     isLast: true,
                   ),
                 ),
@@ -636,14 +629,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
-                        onTap: () async {
-                      final result = await context.push('/profile/edit');
-                      // 프로필 편집 후 돌아왔을 때 업데이트된 경우 프로필 다시 로드
-                      if (result == true && mounted) {
-                        ref.invalidate(userProfileProvider);
-                        setState(() {});
-                      }
-                    },
+                        onTap: () => context.push('/profile/edit'),
                       ),
                       _buildListItem(
                         icon: Icons.access_time_outlined,
@@ -654,14 +640,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
-                        onTap: () async {
-                      final result = await context.push('/profile/edit');
-                      // 프로필 편집 후 돌아왔을 때 업데이트된 경우 프로필 다시 로드
-                      if (result == true && mounted) {
-                        ref.invalidate(userProfileProvider);
-                        setState(() {});
-                      }
-                    },
+                        onTap: () => context.push('/profile/edit'),
                       ),
                       _buildListItem(
                         icon: Icons.pets_outlined,
@@ -694,14 +673,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
-                        onTap: () async {
-                      final result = await context.push('/profile/edit');
-                      // 프로필 편집 후 돌아왔을 때 업데이트된 경우 프로필 다시 로드
-                      if (result == true && mounted) {
-                        ref.invalidate(userProfileProvider);
-                        setState(() {});
-                      }
-                    },
+                        onTap: () => context.push('/profile/edit'),
                       ),
                       _buildListItem(
                         icon: Icons.psychology_outlined,
@@ -712,14 +684,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
-                        onTap: () async {
-                      final result = await context.push('/profile/edit');
-                      // 프로필 편집 후 돌아왔을 때 업데이트된 경우 프로필 다시 로드
-                      if (result == true && mounted) {
-                        ref.invalidate(userProfileProvider);
-                        setState(() {});
-                      }
-                    },
+                        onTap: () => context.push('/profile/edit'),
                         isLast: true,
                       ),
                     ],
@@ -770,6 +735,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         onTap: () {
                           context.push('/profile/elements');
                         },
+                      ),
+                      _buildListItem(
+                        icon: Icons.history,
+                        title: '운세 기록',
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: _getSecondaryTextColor(context),
+                        ),
+                        onTap: () => context.push('/fortune/history'),
                         isLast: true,
                       ),
                     ],
@@ -808,6 +782,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       onTap: () async {
                         await _inviteFriend();
                       },
+                    ),
+                    _buildListItem(
+                      icon: Icons.star_outline,
+                      title: '프리미엄 체험',
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () => context.push('/subscription'),
                     ),
                     _buildListItem(
                       icon: Icons.verified_outlined,
