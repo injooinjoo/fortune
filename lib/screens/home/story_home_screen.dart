@@ -108,6 +108,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
     WidgetsBinding.instance.addObserver(this);
     _checkIfAlreadyViewed();
     _checkRealLoginStatus(); // 초기 로그인 상태 확인
+    _loadWeatherInfo(); // 날씨는 항상 로드
     _quickCacheCheck(); // 캐시 빠른 확인으로 로딩 상태 결정
     _initializeDataWithCacheCheck();
 
