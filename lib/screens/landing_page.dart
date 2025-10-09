@@ -927,18 +927,8 @@ class _LandingPageState extends ConsumerState<LandingPage>
     print(
         '🎨 Building LandingPage: _isCheckingAuth=$_isCheckingAuth, _isAuthProcessing=$_isAuthProcessing');
 
-    // Build 시마다 OAuth 상태 체크
-    if (_isAuthProcessing && _isSupabaseAvailable) {
-      final session = Supabase.instance.client.auth.currentSession;
-      if (session == null) {
-        // 세션이 없는데 아직 processing 중이면 즉시 리셋
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          debugPrint(
-              '🔄 Build detected no session while auth processing - resetting');
-          _resetAuthProcessing();
-        });
-      }
-    }
+    // Build 시 OAuth 상태 체크는 제거 (didChangeDependencies와 didChangeAppLifecycleState에서 처리)
+    // build()에서 setState를 트리거하는 로직은 무한 리빌드를 유발할 수 있음
 
     if (_isCheckingAuth) {
       print('🅿️ Showing loading screen because _isCheckingAuth is true');
