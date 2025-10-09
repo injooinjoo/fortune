@@ -420,9 +420,15 @@ class SocialAuthService {
         // Update name if not set or if it's a kakao placeholder
         if (name != null && name.isNotEmpty) {
           final currentName = existingProfile['name'] as String?;
+          Logger.info('🟡 [Profile Update] Current name: $currentName, New name: $name');
           if (currentName == null || currentName == '사용자' || currentName.startsWith('kakao_')) {
+            Logger.info('🟡 [Profile Update] Updating name from "$currentName" to "$name"');
             updates['name'] = name;
+          } else {
+            Logger.info('🟡 [Profile Update] Keeping existing name: $currentName');
           }
+        } else {
+          Logger.warning('🟡 [Profile Update] Name is null or empty, skipping update');
         }
         
         // Handle profile image update
@@ -549,10 +555,14 @@ class SocialAuthService {
                           'kakao_${kakaoUser.id}@kakao.local';
       
       // 카카오 닉네임 가져오기 (없으면 기본값 사용)
-      final String nickname = kakaoUser.kakaoAccount?.profile?.nickname ?? 
+      final String nickname = kakaoUser.kakaoAccount?.profile?.nickname ??
                             (kakaoUser.kakaoAccount?.name ?? '사용자');
-      
-      Logger.info('Processing Kakao login for email: $email, nickname: $nickname');
+
+      Logger.info('🟡 [Kakao] Processing Kakao login:');
+      Logger.info('🟡 [Kakao] - Email: $email');
+      Logger.info('🟡 [Kakao] - Nickname: $nickname');
+      Logger.info('🟡 [Kakao] - Profile nickname: ${kakaoUser.kakaoAccount?.profile?.nickname}');
+      Logger.info('🟡 [Kakao] - Account name: ${kakaoUser.kakaoAccount?.name}');
       
       // Supabase Edge Function을 사용해 OAuth 처리
       try {

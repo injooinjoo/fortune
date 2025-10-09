@@ -10,7 +10,6 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/app_header.dart';
-import '../../../../shared/components/bottom_navigation_bar.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
@@ -310,9 +309,6 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
             style: TextStyle(fontSize: 16 * fontScale),
           ),
         ),
-      ),
-      bottomNavigationBar: const FortuneBottomNavigationBar(
-        currentIndex: 3,
       ),
     );
   }

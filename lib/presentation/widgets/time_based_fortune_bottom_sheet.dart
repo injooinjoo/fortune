@@ -174,19 +174,18 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
     final isSelected = isSameDay(day, _selectedDay);
     final isToday = isSameDay(day, DateTime.now());
     final isPastDate = day.isBefore(DateTime.now().subtract(const Duration(days: 1)));
-    final isFarFuture = day.isAfter(DateTime.now().add(const Duration(days: 30)));
-    
+
     final eventInfo = _events[DateTime(day.year, day.month, day.day)];
     final isHoliday = eventInfo?.isHoliday ?? false;
     final isSpecial = eventInfo?.isSpecial ?? false;
     final isAuspicious = eventInfo?.isAuspicious ?? false;
     final isWeekend = day.weekday == DateTime.saturday || day.weekday == DateTime.sunday;
-    
+
     Color textColor = theme.colorScheme.onSurface;
     Color? backgroundColor;
     Color? borderColor;
-    
-    if (isPastDate || isFarFuture) {
+
+    if (isPastDate) {
       textColor = theme.colorScheme.onSurface.withValues(alpha:0.3);
     } else if (isSelected) {
       backgroundColor = AppTheme.primaryColor;
@@ -264,11 +263,10 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
 
   Widget _buildSelectedDateInfo() {
     if (_selectedDay == null) return const SizedBox.shrink();
-    
+
     final theme = Theme.of(context);
     final eventInfo = _events[DateTime(_selectedDay!.year, _selectedDay!.month, _selectedDay!.day)];
     final isPastDate = _selectedDay!.isBefore(DateTime.now().subtract(const Duration(days: 1)));
-    final isFarFuture = _selectedDay!.isAfter(DateTime.now().add(const Duration(days: 30)));
     
     return AnimatedContainer(
       duration: AppAnimations.durationShort,
@@ -412,25 +410,6 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
               ],
             ),
           ],
-          if (isFarFuture) ...[
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(
-                  Icons.warning_amber_outlined,
-                  color: TossDesignSystem.warningOrange,
-                  size: 16,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '운세는 30일 후까지만 볼 수 있습니다',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: TossDesignSystem.warningOrange,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
     );
@@ -441,8 +420,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
     final theme = Theme.of(context);
     final screenHeight = MediaQuery.of(context).size.height;
     final isPastDate = _selectedDay?.isBefore(DateTime.now().subtract(const Duration(days: 1))) ?? false;
-    final isFarFuture = _selectedDay?.isAfter(DateTime.now().add(const Duration(days: 30))) ?? false;
-    final canGetFortune = _selectedDay != null && !isPastDate && !isFarFuture;
+    final canGetFortune = _selectedDay != null && !isPastDate;
     
     return AnimatedBuilder(
       animation: _animationController,

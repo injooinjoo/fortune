@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import '../services/auth_service.dart';
 import '../services/social_auth_service.dart';
 import '../services/storage_service.dart';
@@ -202,6 +203,60 @@ class _LandingPageState extends ConsumerState<LandingPage>
         _resetAuthProcessing();
       }
     });
+  }
+
+  Future<void> _updateKakaoProfileName() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
+
+      // 사용자 메타데이터에서 카카오 ID 확인
+      final userMetadata = user.userMetadata;
+      final kakaoId = userMetadata?['kakao_id'];
+
+      debugPrint('🟡 [Kakao Profile Update] Current metadata name: ${userMetadata?['name']}');
+      debugPrint('🟡 [Kakao Profile Update] Current metadata nickname: ${userMetadata?['nickname']}');
+      debugPrint('🟡 [Kakao Profile Update] Kakao ID: $kakaoId');
+
+      if (kakaoId == null) {
+        debugPrint('🟡 [Kakao Profile Update] Not a Kakao user, skipping');
+        return;
+      }
+
+      // 카카오 SDK에서 직접 사용자 정보 가져오기
+      try {
+        final kakaoUser = await kakao.UserApi.instance.me();
+        final kakaoNickname = kakaoUser.kakaoAccount?.profile?.nickname ??
+                             (kakaoUser.kakaoAccount?.name ?? '사용자');
+
+        debugPrint('🟡 [Kakao Profile Update] Retrieved nickname from Kakao SDK: $kakaoNickname');
+
+        if (kakaoNickname != '사용자') {
+          // Supabase 프로필 업데이트
+          await Supabase.instance.client
+              .from('user_profiles')
+              .update({'name': kakaoNickname})
+              .eq('id', user.id);
+
+          debugPrint('🟡 [Kakao Profile Update] Updated Supabase profile name to: $kakaoNickname');
+
+          // 로컬 스토리지도 업데이트
+          final localProfile = await _storageService.getUserProfile();
+          if (localProfile != null) {
+            localProfile['name'] = kakaoNickname;
+            await _storageService.saveUserProfile(localProfile);
+            debugPrint('🟡 [Kakao Profile Update] Updated local profile name');
+          }
+        } else {
+          debugPrint('🟡 [Kakao Profile Update] Kakao nickname is still default, not updating');
+        }
+      } catch (kakaoError) {
+        debugPrint('🟡 [Kakao Profile Update] Error fetching from Kakao SDK: $kakaoError');
+        debugPrint('🟡 [Kakao Profile Update] Falling back to metadata');
+      }
+    } catch (e) {
+      debugPrint('🟡 [Kakao Profile Update] Error updating profile: $e');
+    }
   }
 
   Future<void> _syncProfileFromSupabase() async {
@@ -787,6 +842,9 @@ class _LandingPageState extends ConsumerState<LandingPage>
 
             // 명시적으로 프로필 동기화 및 페이지 이동 처리
             await _syncProfileFromSupabase();
+
+            // 카카오 사용자 정보를 다시 가져와서 프로필 업데이트
+            await _updateKakaoProfileName();
 
             // 프로필 상태 확인 후 페이지 이동
             final needsOnboarding = await ProfileValidation.needsOnboarding();

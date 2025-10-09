@@ -232,15 +232,15 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         chineseZodiac: FortuneDateUtils.getChineseZodiac(isoDate),
         onboardingCompleted: true,
         subscriptionStatus: SubscriptionStatus.free,
-        fortuneCount: _originalProfile?['fortune_count'],
-        premiumFortunesCount: _originalProfile?['premium_fortunes_count'],
+        fortuneCount: _originalProfile?['fortune_count'] ?? 0,
+        premiumFortunesCount: _originalProfile?['premium_fortunes_count'] ?? 0,
         profileImageUrl: uploadedImageUrl ?? _profileImageUrl,
-        linkedProviders: _originalProfile?['linked_providers'] != null 
-            ? List<String>.from(_originalProfile!['linked_providers']) 
+        linkedProviders: _originalProfile?['linked_providers'] != null
+            ? List<String>.from(_originalProfile!['linked_providers'])
             : null,
         primaryProvider: _originalProfile?['primary_provider'],
-        createdAt: _originalProfile?['created_at'] != null 
-            ? DateTime.parse(_originalProfile!['created_at']) 
+        createdAt: _originalProfile?['created_at'] != null
+            ? DateTime.parse(_originalProfile!['created_at'])
             : DateTime.now(),
         updatedAt: DateTime.now(),
       );
@@ -265,7 +265,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             'chinese_zodiac': profile.chineseZodiac,
             'updated_at': DateTime.now().toIso8601String(),
           });
-          debugPrint('Profile synced with Supabase');
+          debugPrint('✅ Profile synced with Supabase successfully');
+          debugPrint('✅ Updated profile name: ${_nameController.text}');
         } catch (e) {
           debugPrint('Error loading profile from Supabase: $e');
           // Continue even if Supabase sync fails
@@ -279,7 +280,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             backgroundColor: TossDesignSystem.successGreen,
           ),
         );
-        context.pop();
+
+        // 프로필 업데이트 성공 시 true를 반환하여 이전 화면에 알림
+        context.pop(true);
       }
     } catch (e) {
       debugPrint('Error loading profile: $e');

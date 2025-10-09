@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../services/social_auth_service.dart';
+import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/widgets/social_accounts_section.dart';
 
 class SocialAccountsScreen extends ConsumerStatefulWidget {
@@ -19,6 +20,41 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
   bool isLoading = true;
   Map<String, dynamic>? userProfile;
   List<UserIdentity> userIdentities = [];
+
+  // TOSS Design System Helper Methods (프로필 페이지와 동일)
+  bool _isDarkMode(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark;
+  }
+
+  Color _getTextColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark900
+        : TossDesignSystem.gray900;
+  }
+
+  Color _getSecondaryTextColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark400
+        : TossDesignSystem.gray600;
+  }
+
+  Color _getBackgroundColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark50
+        : TossDesignSystem.gray50;
+  }
+
+  Color _getCardColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark100
+        : TossDesignSystem.white;
+  }
+
+  Color _getDividerColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark200
+        : TossDesignSystem.gray200;
+  }
 
   @override
   void initState() {
@@ -40,15 +76,19 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
 
       userIdentities = user.identities ?? [];
 
-      setState(() {
-        userProfile = profileResponse;
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          userProfile = profileResponse;
+          isLoading = false;
+        });
+      }
     } catch (e) {
       debugPrint('Error loading user data: $e');
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -64,10 +104,6 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
         return 'Naver';
       case 'facebook':
         return 'Facebook';
-      case 'instagram':
-        return 'Instagram';
-      case 'tiktok':
-        return 'TikTok';
       case 'phone':
         return '전화번호';
       default:
@@ -85,124 +121,31 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
         return Icons.facebook;
       case 'phone':
         return Icons.phone;
+      case 'kakao':
+        return Icons.chat_bubble;
+      case 'naver':
+        return Icons.web;
       default:
         return Icons.account_circle;
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
-          onPressed: () => context.pop(),
-        ),
-        title: Text(
-          '소셜 계정 연동',
-          style: theme.textTheme.titleLarge,
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        TossDesignSystem.marginHorizontal,
+        TossDesignSystem.spacingL,
+        TossDesignSystem.marginHorizontal,
+        TossDesignSystem.spacingS,
+      ),
+      child: Text(
+        title,
+        style: TossDesignSystem.caption.copyWith(
+          color: _getSecondaryTextColor(context),
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
         ),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(16),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: TossDesignSystem.tossBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.info_outline,
-                          color: TossDesignSystem.tossBlue,
-                          size: 24.0),
-                        SizedBox(width: 12.0),
-                        Expanded(
-                          child: Text(
-                            '여러 소셜 계정을 연동하면 어떤 방법으로든 로그인할 수 있습니다.',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                              height: 1.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (userIdentities.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                      child: Text(
-                        '연동된 계정',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    ...userIdentities.map(
-                      (identity) => _buildConnectedAccount(
-                        provider: identity.provider ?? '',
-                        email: identity.identityData?['email'] ?? '',
-                        isPrimary: identity.provider == 
-                            userProfile?['primary_provider'],
-                      ),
-                    ).toList(),
-                  ],
-                  if (userProfile?['phone'] != null &&
-                      userProfile!['phone'].toString().isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-                      child: Text(
-                        '전화번호',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    _buildConnectedAccount(
-                      provider: 'phone',
-                      email: userProfile!['phone'],
-                      isPrimary: false,
-                      isPhone: true,
-                    ),
-                  ],
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
-                    child: Text(
-                      '연동 가능한 계정',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: SocialAccountsSection(
-                      linkedProviders:
-                          userIdentities.map((identity) => identity.provider).toList(),
-                      primaryProvider:
-                          userIdentities.isNotEmpty ? userIdentities.first.provider : null,
-                      onProvidersChanged: (providers) {
-                        _loadUserData();
-                      },
-                      socialAuthService: _socialAuthService,
-                    ),
-                  ),
-                  SizedBox(height: 32.0),
-                ],
-              ),
-            ),
     );
   }
 
@@ -211,76 +154,85 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
     required String email,
     required bool isPrimary,
     bool isPhone = false,
+    bool isLast = false,
   }) {
     return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: 16.0,
-        vertical: 4.0),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: TossDesignSystem.marginHorizontal,
+        vertical: TossDesignSystem.spacingM,
+      ),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isPrimary ? TossDesignSystem.tossBlue : Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-          width: isPrimary ? 2 : 1,
+        border: Border(
+          bottom: BorderSide(
+            color: isLast ? Colors.transparent : _getDividerColor(context),
+            width: 0.5,
+          ),
         ),
       ),
       child: Row(
         children: [
-          Container(
-            width: 40.0,
-            height: 40.0,
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
-              borderRadius: BorderRadius.circular(20.0)),
-            child: Icon(
-              _getProviderIcon(provider),
-              color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-              size: 24.0,
-            ),
+          // 아이콘
+          Icon(
+            _getProviderIcon(provider),
+            size: 22,
+            color: _getSecondaryTextColor(context),
           ),
-          SizedBox(width: 12.0),
+          const SizedBox(width: TossDesignSystem.spacingM),
+
+          // 제목 & 설명
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   _getProviderName(provider),
-                  style: Theme.of(context).textTheme.titleMedium),
+                  style: TossDesignSystem.body2.copyWith(
+                    color: _getTextColor(context),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 if (email.isNotEmpty) ...[
-                  SizedBox(height: 4.0),
+                  const SizedBox(height: 2),
                   Text(
                     email,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                    style: TossDesignSystem.caption.copyWith(
+                      color: _getSecondaryTextColor(context),
                     ),
                   ),
                 ],
               ],
             ),
           ),
+
+          // 주 계정 배지 또는 연동 해제 버튼
           if (isPrimary)
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 4.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue,
-                borderRadius: BorderRadius.circular(12)),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Text(
                 '주 계정',
-                style: Theme.of(context).textTheme.labelSmall,
+                style: TossDesignSystem.caption.copyWith(
+                  color: TossDesignSystem.tossBlue,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           if (!isPrimary && userIdentities.length > 1 && !isPhone)
             TextButton(
               onPressed: () => _showUnlinkDialog(provider),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(60, 32),
+              ),
               child: Text(
-                '연동 해제',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(color: TossDesignSystem.errorRed),
+                '해제',
+                style: TossDesignSystem.caption.copyWith(
+                  color: TossDesignSystem.errorRed,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
         ],
@@ -292,21 +244,38 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('계정 연동 해제'),
+        title: Text(
+          '계정 연동 해제',
+          style: TossDesignSystem.heading4.copyWith(
+            color: _getTextColor(context),
+          ),
+        ),
         content: Text(
-          '${_getProviderName(provider)} 계정 연동을 해제하시겠습니까?'),
+          '${_getProviderName(provider)} 계정 연동을 해제하시겠습니까?',
+          style: TossDesignSystem.body2.copyWith(
+            color: _getTextColor(context),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소')),
+            child: Text(
+              '취소',
+              style: TossDesignSystem.button.copyWith(
+                color: _getSecondaryTextColor(context),
+              ),
+            ),
+          ),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
               await _unlinkProvider(provider);
             },
-            child: const Text('연동 해제'),
-            style: TextButton.styleFrom(
-              foregroundColor: TossDesignSystem.errorRed,
+            child: Text(
+              '연동 해제',
+              style: TossDesignSystem.button.copyWith(
+                color: TossDesignSystem.errorRed,
+              ),
             ),
           ),
         ],
@@ -320,9 +289,16 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('계정 연동이 해제되었습니다'),
-            backgroundColor: TossDesignSystem.successGreen));
+          SnackBar(
+            content: Text(
+              '계정 연동이 해제되었습니다',
+              style: TossDesignSystem.body2.copyWith(
+                color: TossDesignSystem.white,
+              ),
+            ),
+            backgroundColor: TossDesignSystem.successGreen,
+          ),
+        );
         _loadUserData();
       }
     } catch (e) {
@@ -330,10 +306,175 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              e.toString().replaceAll('Exception: ', '')
+              e.toString().replaceAll('Exception: ', ''),
+              style: TossDesignSystem.body2.copyWith(
+                color: TossDesignSystem.white,
+              ),
             ),
-            backgroundColor: TossDesignSystem.errorRed));
+            backgroundColor: TossDesignSystem.errorRed,
+          ),
+        );
       }
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeModeProvider);
+    final isDarkMode = themeMode == ThemeMode.dark ||
+        (themeMode == ThemeMode.system &&
+            MediaQuery.of(context).platformBrightness == Brightness.dark);
+
+    if (isLoading) {
+      return Scaffold(
+        backgroundColor: _getBackgroundColor(context),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: _getTextColor(context)),
+            onPressed: () => context.pop(),
+          ),
+          title: Text(
+            '소셜 계정 연동',
+            style: TossDesignSystem.heading4.copyWith(
+              color: _getTextColor(context),
+            ),
+          ),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(
+            color: TossDesignSystem.tossBlue,
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: _getBackgroundColor(context),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: _getTextColor(context)),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          '소셜 계정 연동',
+          style: TossDesignSystem.heading4.copyWith(
+            color: _getTextColor(context),
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: TossDesignSystem.spacingM),
+
+              // 안내 메시지
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: TossDesignSystem.marginHorizontal),
+                child: Container(
+                  padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+                  decoration: BoxDecoration(
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        color: TossDesignSystem.tossBlue,
+                        size: 20,
+                      ),
+                      const SizedBox(width: TossDesignSystem.spacingS),
+                      Expanded(
+                        child: Text(
+                          '여러 소셜 계정을 연동하면 어떤 방법으로든 로그인할 수 있습니다.',
+                          style: TossDesignSystem.caption.copyWith(
+                            color: TossDesignSystem.tossBlue,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // 연동된 계정
+              if (userIdentities.isNotEmpty) ...[
+                _buildSectionHeader('연동된 계정'),
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: TossDesignSystem.marginHorizontal),
+                  decoration: BoxDecoration(
+                    color: _getCardColor(context),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _getDividerColor(context),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: TossDesignSystem.black.withValues(alpha: 0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      for (int i = 0; i < userIdentities.length; i++)
+                        _buildConnectedAccount(
+                          provider: userIdentities[i].provider ?? '',
+                          email: userIdentities[i].identityData?['email'] ?? '',
+                          isPrimary: userIdentities[i].provider ==
+                              userProfile?['primary_provider'],
+                          isLast: i == userIdentities.length - 1 &&
+                              (userProfile?['phone'] == null ||
+                                  userProfile!['phone'].toString().isEmpty),
+                        ),
+                      if (userProfile?['phone'] != null &&
+                          userProfile!['phone'].toString().isNotEmpty)
+                        _buildConnectedAccount(
+                          provider: 'phone',
+                          email: userProfile!['phone'],
+                          isPrimary: false,
+                          isPhone: true,
+                          isLast: true,
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+
+              // 연동 가능한 계정
+              _buildSectionHeader('연동 가능한 계정'),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: TossDesignSystem.marginHorizontal),
+                child: SocialAccountsSection(
+                  linkedProviders: userIdentities
+                      .map((identity) => identity.provider)
+                      .toList(),
+                  primaryProvider: userIdentities.isNotEmpty
+                      ? userIdentities.first.provider
+                      : null,
+                  onProvidersChanged: (providers) {
+                    _loadUserData();
+                  },
+                  socialAuthService: _socialAuthService,
+                ),
+              ),
+
+              const SizedBox(height: TossDesignSystem.spacingXXL),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

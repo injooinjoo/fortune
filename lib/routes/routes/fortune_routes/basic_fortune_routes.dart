@@ -4,7 +4,6 @@ import '../../../features/fortune/presentation/pages/mbti_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/destiny_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/wish_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/network_report_fortune_page.dart';
-import '../../../features/history/presentation/pages/fortune_history_page.dart';
 
 final basicFortuneRoutes = [
   // Saju (Four Pillars)
@@ -46,9 +45,4 @@ final basicFortuneRoutes = [
     path: '/network-report',
     name: 'fortune-network-report',
     builder: (context, state) => const NetworkReportFortunePage()),
-  
-  // History
-  GoRoute(
-    path: '/history',
-    name: 'fortune-history',
-    builder: (context, state) => const FortuneHistoryPage())];
+];

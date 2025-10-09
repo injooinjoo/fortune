@@ -17,7 +17,16 @@
       "Bash(flutter run:*)",
       "Bash(tee:*)",
       "Bash(./scripts/parse_ux_request.sh:*)",
-      "Bash(./scripts/git_jira_commit.sh:*)"
+      "Bash(./scripts/git_jira_commit.sh:*)",
+      "Bash(grep:*)",
+      "Bash(git revert:*)",
+      "Bash(JIRA_EMAIL=\"jacobmac324@gmail.com\" JIRA_API_TOKEN=\"ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" JIRA_URL=\"https://beyond-app.atlassian.net\")",
+      "Bash(curl -s -X GET -u \"$JIRA_EMAIL:$JIRA_API_TOKEN\" -H \"Content-Type: application/json\" \"$JIRA_URL/rest/api/3/search?jql=project=KAN+AND+status!=Done+ORDER+BY+created+DESC&maxResults=50\")",
+      "Bash(curl -s -X GET -u \"jacobmac324@gmail.com:ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" -H \"Content-Type: application/json\" \"https://beyond-app.atlassian.net/rest/api/3/search?jql=project=KAN+AND+status!=Done+ORDER+BY+created+DESC&maxResults=50\")",
+      "Bash(curl -s -X GET -u \"jacobmac324@gmail.com:ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" -H \"Content-Type: application/json\" \"https://beyond-app.atlassian.net/rest/api/3/search?jql=project=KAN+AND+status!=Done+ORDER+BY+created+DESC&maxResults=10\")",
+      "Bash(curl -s -X POST -u \"jacobmac324@gmail.com:ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" -H \"Content-Type: application/json\" -d '{\"\"\"\"jql\"\"\"\":\"\"\"\"project=KAN AND status!=Done ORDER BY created DESC\"\"\"\",\"\"\"\"maxResults\"\"\"\":50}' \"https://beyond-app.atlassian.net/rest/api/3/search/jql\")",
+      "Bash(curl -s -X POST -u \"jacobmac324@gmail.com:ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" -H \"Content-Type: application/json\" -d '{\"\"jql\"\":\"\"project=KAN AND status!=Done ORDER BY created DESC\"\",\"\"maxResults\"\":10}' \"https://beyond-app.atlassian.net/rest/api/3/search/jql\")",
+      "Bash(curl -s -X GET -u \"jacobmac324@gmail.com:ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" -H \"Accept: application/json\" \"https://beyond-app.atlassian.net/rest/api/2/search?jql=project%3DKAN%20AND%20status%21%3DDone%20ORDER%20BY%20created%20DESC&maxResults=50\")"
     ],
     "deny": [],
     "ask": [],

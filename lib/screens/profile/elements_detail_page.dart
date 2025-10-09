@@ -87,6 +87,24 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
         : TossDesignSystem.gray600;
   }
 
+  Color _getBackgroundColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark50
+        : TossDesignSystem.gray50;
+  }
+
+  Color _getCardColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark100
+        : TossDesignSystem.white;
+  }
+
+  Color _getDividerColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark200
+        : TossDesignSystem.gray200;
+  }
+
   Color _getElementColor(String element) {
     switch (element) {
       case '木 (木)':
@@ -137,11 +155,7 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isLast
-                ? Colors.transparent
-                : (_isDarkMode(context)
-                    ? TossDesignSystem.grayDark200
-                    : TossDesignSystem.gray200),
+            color: isLast ? Colors.transparent : _getDividerColor(context),
             width: 0.5,
           ),
         ),
@@ -174,9 +188,7 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
             child: LinearProgressIndicator(
               value: percentage / 100,
               minHeight: 8,
-              backgroundColor: _isDarkMode(context)
-                  ? TossDesignSystem.grayDark200
-                  : TossDesignSystem.gray200,
+              backgroundColor: _getDividerColor(context),
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
@@ -199,11 +211,7 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isLast
-                ? Colors.transparent
-                : (_isDarkMode(context)
-                    ? TossDesignSystem.grayDark200
-                    : TossDesignSystem.gray200),
+            color: isLast ? Colors.transparent : _getDividerColor(context),
             width: 0.5,
           ),
         ),
@@ -264,7 +272,7 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
+        backgroundColor: _getBackgroundColor(context),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -288,7 +296,7 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
     }
 
     return Scaffold(
-      backgroundColor: isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
+      backgroundColor: _getBackgroundColor(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -315,10 +323,10 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                  color: _getCardColor(context),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                    color: _getDividerColor(context),
                     width: 1,
                   ),
                   boxShadow: [
@@ -355,10 +363,10 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                  color: _getCardColor(context),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                    color: _getDividerColor(context),
                     width: 1,
                   ),
                   boxShadow: [

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../services/notification/fcm_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 class NotificationSettingsPage extends ConsumerStatefulWidget {
@@ -16,7 +14,7 @@ class NotificationSettingsPage extends ConsumerStatefulWidget {
 }
 
 class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsPage> {
-  final FCMService _fcmService = FCMService();
+  late final FCMService _fcmService;
   late NotificationSettings _settings;
   bool _isLoading = false;
   TimeOfDay _morningTime = const TimeOfDay(hour: 7, minute: 0);
@@ -32,9 +30,45 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
     'lucky': true,
   };
 
+  // TOSS Design System Helper Methods
+  bool _isDarkMode(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark;
+  }
+
+  Color _getTextColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark900
+        : TossDesignSystem.gray900;
+  }
+
+  Color _getSecondaryTextColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark400
+        : TossDesignSystem.gray600;
+  }
+
+  Color _getBackgroundColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark50
+        : TossDesignSystem.gray50;
+  }
+
+  Color _getCardColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark100
+        : TossDesignSystem.white;
+  }
+
+  Color _getDividerColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark200
+        : TossDesignSystem.gray200;
+  }
+
   @override
   void initState() {
     super.initState();
+    _fcmService = FCMService();
     _settings = _fcmService.settings;
     _initializeSettings();
   }
@@ -51,134 +85,108 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            // Custom header with back button
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () => context.pop(),
-                      style: IconButton.styleFrom(
-                        backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      '알림 설정',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  _buildMasterSwitch(),
-                  const SizedBox(height: 24),
-                  
-                  // Notification Methods Section
-                  _buildSectionTitle('알림 방법'),
-                  const SizedBox(height: 12),
-                  _buildNotificationMethods(),
-                  const SizedBox(height: 24),
-                  
-                  // Notification Categories
-                  _buildSectionTitle('알림 카테고리'),
-                  const SizedBox(height: 12),
-                  _buildNotificationCategories(),
-                  const SizedBox(height: 24),
-                  
-                  // Fortune Type Notifications
-                  _buildSectionTitle('운세별 알림'),
-                  const SizedBox(height: 12),
-                  _buildFortuneTypeNotifications(),
-                  const SizedBox(height: 24),
-                  
-                  // Notification Schedule
-                  _buildSectionTitle('알림 시간'),
-                  const SizedBox(height: 12),
-                  _buildNotificationSchedule(),
-                  const SizedBox(height: 24),
-                  
-                  // Frequency Settings
-                  _buildSectionTitle('알림 빈도'),
-                  const SizedBox(height: 12),
-                  _buildFrequencySettings(),
-                  const SizedBox(height: 32),
-                  
-                  _buildTestNotificationButton(),
-                  const SizedBox(height: 20),
-                ]),
-              ),
-            ),
-          ],
+      backgroundColor: _getBackgroundColor(context),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: _getTextColor(context)),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          '알림 설정',
+          style: TossDesignSystem.heading4.copyWith(
+            color: _getTextColor(context),
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: TossDesignSystem.marginHorizontal),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: TossDesignSystem.spacingM),
+
+              _buildMasterSwitch(),
+              const SizedBox(height: TossDesignSystem.spacingXL),
+
+              // Notification Categories
+              _buildSectionTitle('알림 카테고리'),
+              const SizedBox(height: TossDesignSystem.spacingM),
+              _buildNotificationCategories(),
+              const SizedBox(height: TossDesignSystem.spacingXL),
+
+              // Notification Schedule
+              _buildSectionTitle('알림 시간'),
+              const SizedBox(height: TossDesignSystem.spacingM),
+              _buildNotificationSchedule(),
+              const SizedBox(height: TossDesignSystem.spacingXXL),
+
+              _buildTestNotificationButton(),
+              const SizedBox(height: TossDesignSystem.spacingXL),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildSectionTitle(String title) {
-    final theme = Theme.of(context);
-    
     return Text(
       title,
-      style: theme.textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.bold,
-        color: theme.colorScheme.primary,
+      style: TossDesignSystem.caption.copyWith(
+        color: _getSecondaryTextColor(context),
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.5,
       ),
     );
   }
 
   Widget _buildMasterSwitch() {
-    final theme = Theme.of(context);
-    
-    return GlassContainer(
-      padding: const EdgeInsets.all(20),
+    return Container(
+      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+      decoration: BoxDecoration(
+        color: _getCardColor(context),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _getDividerColor(context),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: TossDesignSystem.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              Icons.notifications,
-              color: TossDesignSystem.tossBlue,
-              size: 28,
-            ),
+          Icon(
+            Icons.notifications_outlined,
+            color: TossDesignSystem.tossBlue,
+            size: 22,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: TossDesignSystem.spacingM),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '알림 허용',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  style: TossDesignSystem.body2.copyWith(
+                    color: _getTextColor(context),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '모든 알림을 켜거나 끕니다',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  style: TossDesignSystem.caption.copyWith(
+                    color: _getSecondaryTextColor(context),
                   ),
                 ),
               ],
@@ -203,367 +211,152 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           ),
         ],
       ),
-    ).animate().fadeIn().scale();
-  }
-
-  Widget _buildNotificationMethods() {
-    final theme = Theme.of(context);
-    
-    return Column(
-      children: [
-        GlassContainer(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Icon(Icons.phone_android, color: theme.colorScheme.primary),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  '푸시 알림',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Switch(
-                value: _settings.enabled,
-                onChanged: _settings.enabled ? (value) {
-                  // Handle push notification toggle
-                } : null,
-                activeColor: TossDesignSystem.tossBlue,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        GlassContainer(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Icon(Icons.sms, color: theme.colorScheme.primary),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '문자 알림',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      '프리미엄 회원 전용',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Switch(
-                value: false,
-                onChanged: null,
-                activeColor: TossDesignSystem.tossBlue,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        GlassContainer(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Icon(Icons.email, color: theme.colorScheme.primary),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  '이메일 알림',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Switch(
-                value: false,
-                onChanged: _settings.enabled ? (value) {
-                  // Handle email notification toggle
-                } : null,
-                activeColor: TossDesignSystem.tossBlue,
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
   Widget _buildNotificationCategories() {
-    return Column(
-      children: [
-        _buildCategoryItem(
-          icon: Icons.sunny,
-          title: '일일 운세',
-          subtitle: '매일 아침 오늘의 운세를 알려드립니다',
-          value: _settings.dailyFortune,
-          onChanged: (value) {
-            setState(() {
-              _settings = NotificationSettings(
-                enabled: _settings.enabled,
-                dailyFortune: value,
-                tokenAlert: _settings.tokenAlert,
-                promotion: _settings.promotion,
-                dailyFortuneTime: _settings.dailyFortuneTime,
-              );
-            });
-            _saveSettings();
-          },
+    return Container(
+      decoration: BoxDecoration(
+        color: _getCardColor(context),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _getDividerColor(context),
+          width: 1,
         ),
-        const SizedBox(height: 8),
-        _buildCategoryItem(
-          icon: Icons.toll,
-          title: '토큰 알림',
-          subtitle: '토큰이 부족할 때 알려드립니다',
-          value: _settings.tokenAlert,
-          onChanged: (value) {
-            setState(() {
-              _settings = NotificationSettings(
-                enabled: _settings.enabled,
-                dailyFortune: _settings.dailyFortune,
-                tokenAlert: value,
-                promotion: _settings.promotion,
-                dailyFortuneTime: _settings.dailyFortuneTime,
-              );
-            });
-            _saveSettings();
-          },
-        ),
-        const SizedBox(height: 8),
-        _buildCategoryItem(
-          icon: Icons.local_offer,
-          title: '이벤트 및 프로모션',
-          subtitle: '특별 이벤트와 할인 소식을 받아보세요',
-          value: _settings.promotion,
-          onChanged: (value) {
-            setState(() {
-              _settings = NotificationSettings(
-                enabled: _settings.enabled,
-                dailyFortune: _settings.dailyFortune,
-                tokenAlert: _settings.tokenAlert,
-                promotion: value,
-                dailyFortuneTime: _settings.dailyFortuneTime,
-              );
-            });
-            _saveSettings();
-          },
-        ),
-        const SizedBox(height: 8),
-        _buildCategoryItem(
-          icon: Icons.cake,
-          title: '생일 운세',
-          subtitle: '생일날 특별한 운세를 받아보세요',
-          value: true,
-          onChanged: (value) {
-            // Handle birthday fortune toggle
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFortuneTypeNotifications() {
-    final theme = Theme.of(context);
-    
-    return GlassContainer(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '관심있는 운세만 알림받기',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _buildFortuneChip('일일 운세', 'daily'),
-              _buildFortuneChip('연애 운세', 'love'),
-              _buildFortuneChip('직업 운세', 'career'),
-              _buildFortuneChip('재물 운세', 'wealth'),
-              _buildFortuneChip('건강 운세', 'health'),
-              _buildFortuneChip('행운 운세', 'lucky'),
-            ],
+        boxShadow: [
+          BoxShadow(
+            color: TossDesignSystem.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildFortuneChip(String label, String key) {
-    final theme = Theme.of(context);
-    final isSelected = _fortuneTypeNotifications[key] ?? false;
-    
-    return FilterChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: _settings.enabled ? (value) {
-        setState(() {
-          _fortuneTypeNotifications[key] = value;
-        });
-      } : null,
-      backgroundColor: theme.colorScheme.surfaceContainerHighest,
-      selectedColor: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
-      checkmarkColor: TossDesignSystem.tossBlue,
+      child: Column(
+        children: [
+          _buildCategoryItem(
+            icon: Icons.sunny,
+            title: '일일 운세',
+            subtitle: '매일 아침 오늘의 운세를 알려드립니다',
+            value: _settings.dailyFortune,
+            onChanged: (value) {
+              setState(() {
+                _settings = NotificationSettings(
+                  enabled: _settings.enabled,
+                  dailyFortune: value,
+                  tokenAlert: _settings.tokenAlert,
+                  promotion: _settings.promotion,
+                  dailyFortuneTime: _settings.dailyFortuneTime,
+                );
+              });
+              _saveSettings();
+            },
+          ),
+          _buildCategoryItem(
+            icon: Icons.toll,
+            title: '토큰 알림',
+            subtitle: '토큰이 부족할 때 알려드립니다',
+            value: _settings.tokenAlert,
+            onChanged: (value) {
+              setState(() {
+                _settings = NotificationSettings(
+                  enabled: _settings.enabled,
+                  dailyFortune: _settings.dailyFortune,
+                  tokenAlert: value,
+                  promotion: _settings.promotion,
+                  dailyFortuneTime: _settings.dailyFortuneTime,
+                );
+              });
+              _saveSettings();
+            },
+          ),
+          _buildCategoryItem(
+            icon: Icons.local_offer,
+            title: '이벤트 및 프로모션',
+            subtitle: '특별 이벤트와 할인 소식을 받아보세요',
+            value: _settings.promotion,
+            onChanged: (value) {
+              setState(() {
+                _settings = NotificationSettings(
+                  enabled: _settings.enabled,
+                  dailyFortune: _settings.dailyFortune,
+                  tokenAlert: _settings.tokenAlert,
+                  promotion: value,
+                  dailyFortuneTime: _settings.dailyFortuneTime,
+                );
+              });
+              _saveSettings();
+            },
+            isLast: true,
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildNotificationSchedule() {
-    final theme = Theme.of(context);
-    
-    return Column(
-      children: [
-        GlassContainer(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: TossDesignSystem.gray600.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.wb_sunny,
-                  color: TossDesignSystem.gray600,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '아침 알림',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '매일 ${_morningTime.format(context)}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              TextButton(
-                onPressed: _settings.enabled && _settings.dailyFortune
-                    ? () => _selectTime(true)
-                    : null,
-                child: const Text('변경'),
-              ),
-            ],
-          ),
+    return Container(
+      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+      decoration: BoxDecoration(
+        color: _getCardColor(context),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _getDividerColor(context),
+          width: 1,
         ),
-        const SizedBox(height: 8),
-        GlassContainer(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: TossDesignSystem.gray600.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.nightlight_round,
-                  color: TossDesignSystem.gray600,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '저녁 알림',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '매일 ${_eveningTime.format(context)}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Row(
-                children: [
-                  Switch(
-                    value: false,
-                    onChanged: _settings.enabled ? (value) {} : null,
-                    activeColor: TossDesignSystem.tossBlue,
-                  ),
-                  TextButton(
-                    onPressed: null,
-                    child: const Text('변경'),
-                  ),
-                ],
-              ),
-            ],
+        boxShadow: [
+          BoxShadow(
+            color: TossDesignSystem.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFrequencySettings() {
-    final theme = Theme.of(context);
-    
-    return GlassContainer(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '알림 빈도 설정',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildFrequencyOption('매일'),
-          _buildFrequencyOption('주 3회 (월/수/금)'),
-          _buildFrequencyOption('주말만'),
-          _buildFrequencyOption('평일만'),
         ],
       ),
-    );
-  }
-
-  Widget _buildFrequencyOption(String label) {
-    final isSelected = false;
-    
-    return RadioListTile<String>(
-      title: Text(label),
-      value: label,
-      groupValue: isSelected ? label : null,
-      onChanged: _settings.enabled ? (value) {} : null,
-      activeColor: TossDesignSystem.tossBlue,
-      contentPadding: EdgeInsets.zero,
+      child: Row(
+        children: [
+          Icon(
+            Icons.wb_sunny,
+            color: TossDesignSystem.tossBlue,
+            size: 22,
+          ),
+          const SizedBox(width: TossDesignSystem.spacingM),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '아침 알림 시간',
+                  style: TossDesignSystem.body2.copyWith(
+                    color: _getTextColor(context),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '매일 ${_morningTime.format(context)}',
+                  style: TossDesignSystem.caption.copyWith(
+                    color: _getSecondaryTextColor(context),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: _settings.enabled && _settings.dailyFortune
+                ? () => _selectTime(true)
+                : null,
+            style: TextButton.styleFrom(
+              foregroundColor: TossDesignSystem.tossBlue,
+            ),
+            child: Text(
+              '변경',
+              style: TossDesignSystem.caption.copyWith(
+                color: _settings.enabled && _settings.dailyFortune
+                    ? TossDesignSystem.tossBlue
+                    : _getSecondaryTextColor(context),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -573,42 +366,44 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
     required String subtitle,
     required bool value,
     required ValueChanged<bool> onChanged,
+    bool isLast = false,
   }) {
-    final theme = Theme.of(context);
-    
-    return GlassContainer(
-      padding: const EdgeInsets.all(16),
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: TossDesignSystem.marginHorizontal,
+        vertical: TossDesignSystem.spacingM,
+      ),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: isLast ? Colors.transparent : _getDividerColor(context),
+            width: 0.5,
+          ),
+        ),
+      ),
       child: Row(
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: TossDesignSystem.gray600.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              icon,
-              color: TossDesignSystem.gray600,
-              size: 20,
-            ),
+          Icon(
+            icon,
+            size: 22,
+            color: _getSecondaryTextColor(context),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: TossDesignSystem.spacingM),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  style: TossDesignSystem.body2.copyWith(
+                    color: _getTextColor(context),
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  style: TossDesignSystem.caption.copyWith(
+                    color: _getSecondaryTextColor(context),
                   ),
                 ),
               ],
@@ -617,20 +412,32 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           Switch(
             value: value && _settings.enabled,
             onChanged: _settings.enabled ? onChanged : null,
-            activeColor: TossDesignSystem.gray600,
+            activeColor: TossDesignSystem.tossBlue,
           ),
         ],
       ),
-    ).animate().fadeIn().slideX();
+    );
   }
 
   Widget _buildTestNotificationButton() {
-    return Center(
-      child: TextButton.icon(
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
         onPressed: _sendTestNotification,
         icon: const Icon(Icons.notifications_active),
-        label: const Text('테스트 알림 보내기'),
-        style: TextButton.styleFrom(
+        label: Text(
+          '테스트 알림 보내기',
+          style: TossDesignSystem.button.copyWith(
+            color: TossDesignSystem.tossBlue,
+          ),
+        ),
+        style: OutlinedButton.styleFrom(
+          padding:
+              const EdgeInsets.symmetric(vertical: TossDesignSystem.spacingM),
+          side: const BorderSide(color: TossDesignSystem.tossBlue),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+          ),
           foregroundColor: TossDesignSystem.tossBlue,
         ),
       ),

@@ -57,24 +57,32 @@ class NotificationSettings {
 }
 
 class FCMService {
-  static final FCMService _instance = FCMService._internal();
-  factory FCMService() => _instance;
+  static FCMService? _instance;
+  factory FCMService() {
+    _instance ??= FCMService._internal();
+    return _instance!;
+  }
   FCMService._internal();
 
-  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  FirebaseMessaging? _fcm;
+  FirebaseMessaging get fcm {
+    _fcm ??= FirebaseMessaging.instance;
+    return _fcm!;
+  }
+
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
   final ApiClient _apiClient = ApiClient();
-  
+
   String? _fcmToken;
   StreamController<RemoteMessage>? _messageStreamController;
   NotificationSettings _settings = NotificationSettings();
-  
+
   // 알림 스트림
   Stream<RemoteMessage> get onMessage => _messageStreamController!.stream;
-  
+
   // FCM 토큰 가져오기
   String? get fcmToken => _fcmToken;
-  
+
   // 알림 설정 가져오기
   NotificationSettings get settings => _settings;
 
@@ -187,7 +195,7 @@ class FCMService {
   
   // 권한 요청
   Future<void> _requestPermission() async {
-    final settings = await _fcm.requestPermission(
+    final settings = await fcm.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -196,9 +204,9 @@ class FCMService {
       provisional: false,
       sound: true
     );
-    
+
     Logger.info('상태: ${settings.authorizationStatus}');
-    
+
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       Logger.info('사용자가 알림을 허용했습니다');
     } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
@@ -207,20 +215,20 @@ class FCMService {
       Logger.info('사용자가 알림을 거부했습니다');
     }
   }
-  
+
   // FCM 토큰 획득
   Future<void> _getToken() async {
     try {
-      _fcmToken = await _fcm.getToken();
+      _fcmToken = await fcm.getToken();
       Logger.info('Supabase initialized successfully');
-      
+
       if (_fcmToken != null) {
         // 서버에 토큰 전송
         await _sendTokenToServer(_fcmToken!);
       }
-      
+
       // 토큰 갱신 리스너
-      _fcm.onTokenRefresh.listen((newToken) async {
+      fcm.onTokenRefresh.listen((newToken) async {
         Logger.info('Supabase initialized successfully');
         _fcmToken = newToken;
         await _sendTokenToServer(newToken);
@@ -268,7 +276,7 @@ class FCMService {
   
   // 초기 메시지 확인
   Future<void> _checkInitialMessage() async {
-    final message = await _fcm.getInitialMessage();
+    final message = await fcm.getInitialMessage();
     if (message != null) {
       Logger.info('실행: ${message.messageId}');
       _handleNotificationTap(message.data);
@@ -361,25 +369,25 @@ class FCMService {
   Future<void> _subscribeToTopics() async {
     try {
       // 전체 사용자 토픽
-      await _fcm.subscribeToTopic('all_users');
-      
+      await fcm.subscribeToTopic('all_users');
+
       // 플랫폼별 토픽
       if (kIsWeb) {
-        await _fcm.subscribeToTopic('web_users');
+        await fcm.subscribeToTopic('web_users');
       } else if (!kIsWeb && Platform.isIOS) {
-        await _fcm.subscribeToTopic('ios_users');
+        await fcm.subscribeToTopic('ios_users');
       } else if (!kIsWeb && Platform.isAndroid) {
-        await _fcm.subscribeToTopic('android_users');
+        await fcm.subscribeToTopic('android_users');
       }
-      
+
       // 설정에 따른 토픽 구독
       if (_settings.dailyFortune) {
-        await _fcm.subscribeToTopic('daily_fortune');
+        await fcm.subscribeToTopic('daily_fortune');
       }
       if (_settings.promotion) {
-        await _fcm.subscribeToTopic('promotions');
+        await fcm.subscribeToTopic('promotions');
       }
-      
+
       Logger.info('FCM 토픽 구독 완료');
     } catch (e) {
       Logger.error('토픽 구독 실패', e);
@@ -426,15 +434,15 @@ class FCMService {
   // 토픽 구독 업데이트
   Future<void> _updateTopicSubscriptions() async {
     if (_settings.dailyFortune) {
-      await _fcm.subscribeToTopic('daily_fortune');
+      await fcm.subscribeToTopic('daily_fortune');
     } else {
-      await _fcm.unsubscribeFromTopic('daily_fortune');
+      await fcm.unsubscribeFromTopic('daily_fortune');
     }
-    
+
     if (_settings.promotion) {
-      await _fcm.subscribeToTopic('promotions');
+      await fcm.subscribeToTopic('promotions');
     } else {
-      await _fcm.unsubscribeFromTopic('promotions');
+      await fcm.unsubscribeFromTopic('promotions');
     }
   }
   

@@ -14,6 +14,8 @@ import '../screens/profile/profile_screen.dart';
 import '../screens/profile/profile_edit_page.dart';
 import '../screens/profile/saju_detail_page.dart';
 import '../screens/profile/elements_detail_page.dart';
+import '../screens/profile/profile_verification_page.dart';
+import '../features/history/presentation/pages/fortune_history_page.dart';
 import '../screens/settings/settings_screen.dart';
 import '../screens/settings/social_accounts_screen.dart';
 import '../screens/settings/phone_management_screen.dart';
@@ -155,6 +157,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   context,
                   state,
                   const ElementsDetailPage(),
+                ),
+              ),
+              GoRoute(
+                path: 'verification',
+                name: 'profile-verification',
+                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                  context,
+                  state,
+                  const ProfileVerificationPage(),
+                ),
+              ),
+              GoRoute(
+                path: 'history',
+                name: 'profile-history',
+                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                  context,
+                  state,
+                  const FortuneHistoryPage(),
                 ),
               ),
             ],

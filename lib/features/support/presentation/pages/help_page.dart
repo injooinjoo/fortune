@@ -3,28 +3,65 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
-class HelpPage extends ConsumerWidget {
+class HelpPage extends ConsumerStatefulWidget {
   const HelpPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    
+  ConsumerState<HelpPage> createState() => _HelpPageState();
+}
+
+class _HelpPageState extends ConsumerState<HelpPage> {
+  // TOSS Design System Helper Methods
+  bool _isDarkMode(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark;
+  }
+
+  Color _getTextColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark900
+        : TossDesignSystem.gray900;
+  }
+
+  Color _getSecondaryTextColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark400
+        : TossDesignSystem.gray600;
+  }
+
+  Color _getBackgroundColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark50
+        : TossDesignSystem.gray50;
+  }
+
+  Color _getCardColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark100
+        : TossDesignSystem.white;
+  }
+
+  Color _getDividerColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark200
+        : TossDesignSystem.gray200;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TossDesignSystem.white,
+      backgroundColor: _getBackgroundColor(context),
       appBar: AppBar(
-        backgroundColor: TossDesignSystem.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
+          icon: Icon(Icons.arrow_back, color: _getTextColor(context)),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
+        title: Text(
           '도움말',
-          style: TextStyle(
-            color: TossDesignSystem.gray900,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+          style: TossDesignSystem.heading4.copyWith(
+            color: _getTextColor(context),
           ),
         ),
       ),
@@ -34,27 +71,29 @@ class HelpPage extends ConsumerWidget {
           children: [
             // Quick Links
             Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.all(TossDesignSystem.marginHorizontal),
+              padding: const EdgeInsets.all(TossDesignSystem.spacingM),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  width: 1,
+                ),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
                     color: TossDesignSystem.tossBlue,
-                    size: 24,
+                    size: 22,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: TossDesignSystem.spacingM),
                   Expanded(
                     child: Text(
                       'Fortune 앱을 더 잘 활용하는 방법을 알아보세요!',
-                      style: TextStyle(
-                        color: TossDesignSystem.gray600,
-                        fontSize: 14,
-                        height: 1.5,
+                      style: TossDesignSystem.body2.copyWith(
+                        color: _getSecondaryTextColor(context),
                       ),
                     ),
                   ),
@@ -151,10 +190,14 @@ class HelpPage extends ConsumerWidget {
             
             // Contact Section
             Container(
-              margin: const EdgeInsets.all(16),
+              margin: const EdgeInsets.all(TossDesignSystem.marginHorizontal),
               decoration: BoxDecoration(
-                color: TossDesignSystem.white,
-                borderRadius: BorderRadius.circular(16),
+                color: _getCardColor(context),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: _getDividerColor(context),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: TossDesignSystem.black.withValues(alpha: 0.04),
@@ -165,70 +208,79 @@ class HelpPage extends ConsumerWidget {
               ),
               child: Column(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: TossDesignSystem.purple.withValues(alpha: 0.1),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(TossDesignSystem.spacingM),
                     child: Row(
                       children: [
+                        Icon(Icons.headset_mic_outlined,
+                            color: TossDesignSystem.tossBlue, size: 22),
+                        const SizedBox(width: TossDesignSystem.spacingM),
                         Text(
                           '추가 도움이 필요하신가요?',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                          style: TossDesignSystem.body1.copyWith(
+                            color: _getTextColor(context),
                           ),
                         ),
                       ],
                     ),
                   ),
+                  Divider(height: 1, color: _getDividerColor(context)),
                   ListTile(
-                    leading: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: TossDesignSystem.tossBlue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.support_agent,
-                        color: TossDesignSystem.tossBlue,
-                        size: 22,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: TossDesignSystem.marginHorizontal,
+                      vertical: TossDesignSystem.spacingS,
+                    ),
+                    leading: Icon(
+                      Icons.support_agent,
+                      color: _getSecondaryTextColor(context),
+                      size: 22,
+                    ),
+                    title: Text(
+                      '고객센터',
+                      style: TossDesignSystem.body2.copyWith(
+                        color: _getTextColor(context),
                       ),
                     ),
-                    title: const Text('고객센터'),
-                    subtitle: const Text('1:1 문의하기'),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: TossDesignSystem.gray600,
+                    subtitle: Text(
+                      '1:1 문의하기',
+                      style: TossDesignSystem.caption.copyWith(
+                        color: _getSecondaryTextColor(context),
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      size: 20,
+                      color: _getSecondaryTextColor(context),
                     ),
                     onTap: () => context.push('/support'),
                   ),
-                  const Divider(height: 1),
+                  Divider(height: 1, color: _getDividerColor(context)),
                   ListTile(
-                    leading: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: TossDesignSystem.tossBlue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.email_outlined,
-                        color: TossDesignSystem.tossBlue,
-                        size: 22,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: TossDesignSystem.marginHorizontal,
+                      vertical: TossDesignSystem.spacingS,
+                    ),
+                    leading: Icon(
+                      Icons.email_outlined,
+                      color: _getSecondaryTextColor(context),
+                      size: 22,
+                    ),
+                    title: Text(
+                      '이메일 문의',
+                      style: TossDesignSystem.body2.copyWith(
+                        color: _getTextColor(context),
                       ),
                     ),
-                    title: const Text('이메일 문의'),
-                    subtitle: const Text('support@fortune-app.com'),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: TossDesignSystem.gray600,
+                    subtitle: Text(
+                      'support@fortune-app.com',
+                      style: TossDesignSystem.caption.copyWith(
+                        color: _getSecondaryTextColor(context),
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      size: 20,
+                      color: _getSecondaryTextColor(context),
                     ),
                     onTap: () {
                       // TODO: Open email client
@@ -250,13 +302,16 @@ class HelpPage extends ConsumerWidget {
     required IconData icon,
     required List<Widget> children,
   }) {
-    final theme = Theme.of(context);
-    
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(
+          horizontal: TossDesignSystem.marginHorizontal, vertical: 8),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
+        color: _getCardColor(context),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _getDividerColor(context),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: TossDesignSystem.black.withValues(alpha: 0.04),
@@ -268,30 +323,24 @@ class HelpPage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withOpacity(0.05),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
+          Padding(
+            padding: const EdgeInsets.all(TossDesignSystem.spacingM),
             child: Row(
               children: [
-                Icon(icon, color: TossDesignSystem.tossBlue, size: 24),
-                const SizedBox(width: 12),
+                Icon(icon, color: TossDesignSystem.tossBlue, size: 22),
+                const SizedBox(width: TossDesignSystem.spacingM),
                 Text(
                   title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  style: TossDesignSystem.body1.copyWith(
+                    color: _getTextColor(context),
                   ),
                 ),
               ],
             ),
           ),
+          Divider(height: 1, color: _getDividerColor(context)),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(TossDesignSystem.spacingM),
             child: Column(children: children),
           ),
         ],
@@ -304,25 +353,23 @@ class HelpPage extends ConsumerWidget {
     required String answer,
   }) {
     return Theme(
-      data: Theme.of(context).copyWith(dividerColor: TossDesignSystem.white.withValues(alpha: 0.0)),
+      data: Theme.of(context).copyWith(
+          dividerColor: Colors.transparent),
       child: ExpansionTile(
         tilePadding: EdgeInsets.zero,
         title: Text(
           question,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
+          style: TossDesignSystem.body2.copyWith(
+            color: _getTextColor(context),
           ),
         ),
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingM),
             child: Text(
               answer,
-              style: TextStyle(
-                color: TossDesignSystem.gray600,
-                fontSize: 14,
-                height: 1.5,
+              style: TossDesignSystem.caption.copyWith(
+                color: _getSecondaryTextColor(context),
               ),
             ),
           ),
@@ -336,26 +383,26 @@ class HelpPage extends ConsumerWidget {
     required List<String> steps,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: TossDesignSystem.spacingS),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
+            style: TossDesignSystem.body2.copyWith(
+              color: _getTextColor(context),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: TossDesignSystem.spacingS),
           ...steps.asMap().entries.map((entry) => Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 4),
+            padding: const EdgeInsets.only(
+                left: TossDesignSystem.spacingM, bottom: 4),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '${entry.key + 1}. ',
-                  style: TextStyle(
+                  style: TossDesignSystem.caption.copyWith(
                     color: TossDesignSystem.tossBlue,
                     fontWeight: FontWeight.w600,
                   ),
@@ -363,9 +410,8 @@ class HelpPage extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     entry.value,
-                    style: TextStyle(
-                      color: TossDesignSystem.gray600,
-                      fontSize: 14,
+                    style: TossDesignSystem.caption.copyWith(
+                      color: _getSecondaryTextColor(context),
                     ),
                   ),
                 ),
@@ -376,32 +422,23 @@ class HelpPage extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildTipItem(BuildContext context, String tip, IconData icon) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: TossDesignSystem.spacingS),
       child: Row(
         children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: TossDesignSystem.gray600.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              icon,
-              color: TossDesignSystem.gray600,
-              size: 18,
-            ),
+          Icon(
+            icon,
+            color: TossDesignSystem.tossBlue,
+            size: 22,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: TossDesignSystem.spacingM),
           Expanded(
             child: Text(
               tip,
-              style: const TextStyle(
-                fontSize: 14,
-                height: 1.4,
+              style: TossDesignSystem.caption.copyWith(
+                color: _getSecondaryTextColor(context),
               ),
             ),
           ),

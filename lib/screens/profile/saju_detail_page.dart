@@ -79,6 +79,18 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
         : TossDesignSystem.gray600;
   }
 
+  Color _getBackgroundColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark50
+        : TossDesignSystem.gray50;
+  }
+
+  Color _getCardColor(BuildContext context) {
+    return _isDarkMode(context)
+        ? TossDesignSystem.grayDark100
+        : TossDesignSystem.white;
+  }
+
   Color _getDividerColor(BuildContext context) {
     return _isDarkMode(context)
         ? TossDesignSystem.grayDark200
@@ -152,7 +164,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
+        backgroundColor: _getBackgroundColor(context),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -178,7 +190,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
     final profile = userProfile ?? localProfile;
 
     return Scaffold(
-      backgroundColor: isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
+      backgroundColor: _getBackgroundColor(context),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -205,10 +217,10 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                  color: _getCardColor(context),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                    color: _getDividerColor(context),
                     width: 1,
                   ),
                   boxShadow: [
@@ -247,10 +259,10 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                  color: _getCardColor(context),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                    color: _getDividerColor(context),
                     width: 1,
                   ),
                   boxShadow: [
@@ -289,10 +301,10 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                  color: _getCardColor(context),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                    color: _getDividerColor(context),
                     width: 1,
                   ),
                   boxShadow: [
