@@ -8,6 +8,8 @@ import '../constants/fortune_button_spacing.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/career_coaching_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_button.dart';
 
 class CareerCoachingInputPage extends ConsumerStatefulWidget {
   const CareerCoachingInputPage({super.key});
@@ -143,71 +145,67 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
     return Scaffold(
       backgroundColor: TossDesignSystem.gray50,
       appBar: const StandardFortuneAppBar(
-        title: '커리어 코칭',
+        title: '직업 운세',
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Progress indicator
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: _currentStep >= 0 
-                        ? TossDesignSystem.tossBlue 
-                        : TossDesignSystem.gray200,
-                      borderRadius: BorderRadius.circular(2),
+          Column(
+            children: [
+              // Progress indicator
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 3,
+                        decoration: BoxDecoration(
+                          color: _currentStep >= 0
+                            ? TossDesignSystem.tossBlue
+                            : TossDesignSystem.gray200,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Container(
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: _currentStep >= 1 
-                        ? TossDesignSystem.tossBlue 
-                        : TossDesignSystem.gray200,
-                      borderRadius: BorderRadius.circular(2),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Container(
+                        height: 3,
+                        decoration: BoxDecoration(
+                          color: _currentStep >= 1
+                            ? TossDesignSystem.tossBlue
+                            : TossDesignSystem.gray200,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ).animate().fadeIn(duration: 300.ms),
-          
-          // Content
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _buildStep1(isDark),
-                _buildStep2(isDark),
-              ],
-            ),
+              ).animate().fadeIn(duration: 300.ms),
+
+              // Content
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _buildStep1(isDark),
+                    _buildStep2(isDark),
+                  ],
+                ),
+              ),
+
+              // Bottom spacing for floating button
+              const BottomButtonSpacing(),
+            ],
           ),
-          
-          // Bottom buttons
-          Container(
-            padding: const EdgeInsets.all(24),
-            child: SafeArea(
-              child: _currentStep == 1
-                  ? FortuneButton.analyze(
-                      onPressed: _nextStep,
-                      text: '분석 시작',
-                    )
-                  : FortuneButtonGroup.navigation(
-                      onPrevious: _currentStep > 0 ? _previousStep : null,
-                      onNext: _nextStep,
-                      showPrevious: _currentStep > 0,
-                      isNextEnabled: true,
-                      position: FortuneButtonPosition.inline,
-                    ),
-            ),
+
+          // Floating bottom button
+          FloatingBottomButton(
+            text: _currentStep == 1 ? '분석 시작' : '다음',
+            onPressed: _nextStep,
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
           ),
         ],
       ),
@@ -264,7 +262,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '맞춤형 커리어 전략을 제공해드려요',
+                        '맞춤형 직업 전략을 제공해드려요',
                         style: TossDesignSystem.caption.copyWith(
                           color: TossDesignSystem.gray600,
                         ),
@@ -412,8 +410,6 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                 .slideY(begin: 0.1),
             ),
           ).toList(),
-          
-          const SizedBox(height: 40),
         ],
       ),
     );
@@ -645,8 +641,6 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
               .fadeIn(duration: 300.ms)
               .slideY(begin: 0.1),
           ).toList(),
-          
-          const SizedBox(height: 40),
         ],
       ),
     );
@@ -685,7 +679,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             const SizedBox(height: 32),
             
             Text(
-              '커리어 전략 분석 중...',
+              '직업 전략 분석 중...',
               style: TossDesignSystem.heading3.copyWith(
                 fontWeight: FontWeight.bold,
               ),

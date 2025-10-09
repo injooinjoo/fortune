@@ -26,7 +26,15 @@
       "Bash(curl -s -X GET -u \"jacobmac324@gmail.com:ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" -H \"Content-Type: application/json\" \"https://beyond-app.atlassian.net/rest/api/3/search?jql=project=KAN+AND+status!=Done+ORDER+BY+created+DESC&maxResults=10\")",
       "Bash(curl -s -X POST -u \"jacobmac324@gmail.com:ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" -H \"Content-Type: application/json\" -d '{\"\"\"\"jql\"\"\"\":\"\"\"\"project=KAN AND status!=Done ORDER BY created DESC\"\"\"\",\"\"\"\"maxResults\"\"\"\":50}' \"https://beyond-app.atlassian.net/rest/api/3/search/jql\")",
       "Bash(curl -s -X POST -u \"jacobmac324@gmail.com:ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" -H \"Content-Type: application/json\" -d '{\"\"jql\"\":\"\"project=KAN AND status!=Done ORDER BY created DESC\"\",\"\"maxResults\"\":10}' \"https://beyond-app.atlassian.net/rest/api/3/search/jql\")",
-      "Bash(curl -s -X GET -u \"jacobmac324@gmail.com:ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" -H \"Accept: application/json\" \"https://beyond-app.atlassian.net/rest/api/2/search?jql=project%3DKAN%20AND%20status%21%3DDone%20ORDER%20BY%20created%20DESC&maxResults=50\")"
+      "Bash(curl -s -X GET -u \"jacobmac324@gmail.com:ATATT3xFfGF0tHBtIBNVMbMfZX-VSaJBk26jZ5oEMIDLO-GcPgLvXgdbQQJsJ1UlPoCBk8WdYWfbhkb0m2QE1-pqOOB4-fKJJHZxHlMHCZ5CbUj1hkPEJL-62P9lscVVD2EpgXTiMXg5SjKN3_Kv9B4yXp_Lh2TdYrj4ZOkRgDJ4BKjcq7EDXP4=2A9A4F94\" -H \"Accept: application/json\" \"https://beyond-app.atlassian.net/rest/api/2/search?jql=project%3DKAN%20AND%20status%21%3DDone%20ORDER%20BY%20created%20DESC&maxResults=50\")",
+      "Bash(for i in {85..96})",
+      "Bash(do)",
+      "Bash(echo:*)",
+      "Bash(done)",
+      "Bash(/tmp/update_jira.sh:*)",
+      "Bash(while read line)",
+      "Bash(do if ! echo \"$line\")",
+      "Bash(then echo \"$line\" fi done)"
     ],
     "deny": [],
     "ask": [],
