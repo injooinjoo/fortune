@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -840,9 +841,17 @@ class SocialAuthService {
   Future<AuthResponse?> signInWithNaver() async {
     try {
       Logger.info('Starting Naver Sign-In process (Native)');
-      
-      // Initialize Naver SDK
-      final initResult = await _naverChannel.invokeMethod('initializeNaver');
+
+      // Initialize Naver SDK with timeout
+      final initResult = await _naverChannel
+          .invokeMethod('initializeNaver')
+          .timeout(
+            Duration(seconds: 10),
+            onTimeout: () {
+              Logger.warning('Naver SDK initialization timed out');
+              throw TimeoutException('Naver SDK initialization timed out');
+            },
+          );
       Logger.info('Naver SDK initialization: $initResult');
       
       // Perform Naver login
