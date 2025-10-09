@@ -11,6 +11,7 @@ import '../../domain/entities/user_profile.dart';
 import '../../presentation/widgets/fortune_infographic_widgets.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../presentation/providers/celebrity_saju_provider.dart';
+import '../../services/weather_service.dart';
 
 /// 틴더 스타일 카드 기반 운세 완료 페이지
 class FortuneCompletionPageTinder extends ConsumerStatefulWidget {
@@ -20,6 +21,7 @@ class FortuneCompletionPageTinder extends ConsumerStatefulWidget {
   final Map<String, dynamic>? overall;
   final Map<String, dynamic>? categories;
   final Map<String, dynamic>? sajuInsight;
+  final WeatherInfo? currentWeather;
 
   const FortuneCompletionPageTinder({
     super.key,
@@ -29,6 +31,7 @@ class FortuneCompletionPageTinder extends ConsumerStatefulWidget {
     this.overall,
     this.categories,
     this.sajuInsight,
+    this.currentWeather,
   });
 
   @override
@@ -103,7 +106,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             child: PageView.builder(
               controller: _pageController,
               scrollDirection: Axis.vertical,
-              itemCount: 18,
+              itemCount: 17,
               itemBuilder: (context, index) {
                 return _buildFullSizeCard(
                   context,
@@ -130,7 +133,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
               ),
               child: FractionallySizedBox(
                 alignment: Alignment.centerLeft,
-                widthFactor: (_currentPage + 1) / 18,
+                widthFactor: (_currentPage + 1) / 17,
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
@@ -146,7 +149,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             ),
           ),
 
-          // 고정 헤더 (이름 · 날짜)
+          // 고정 헤더 (이름 · 날짜 · 날씨)
           Positioned(
             top: MediaQuery.of(context).padding.top + 12,
             left: 0,
@@ -164,13 +167,33 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(
-                    '${DateTime.now().year}.${DateTime.now().month.toString().padLeft(2, '0')}.${DateTime.now().day.toString().padLeft(2, '0')}',
-                    style: TextStyle(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        '${DateTime.now().year}.${DateTime.now().month.toString().padLeft(2, '0')}.${DateTime.now().day.toString().padLeft(2, '0')}',
+                        style: TextStyle(
+                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      if (widget.currentWeather != null) ...[
+                        const SizedBox(width: 12),
+                        Text(
+                          _getWeatherEmoji(widget.currentWeather!.condition),
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${widget.currentWeather!.temperature.round()}°',
+                          style: TextStyle(
+                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ],
               ),
@@ -243,55 +266,52 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
       case 0: // 📊 총운 카드
         return _buildOverallCard(score, isDark, displayUserName);
 
-      case 1: // 🌤️ 오늘의 날씨 연계 운세 (총운 바로 다음으로 이동)
-        return _buildWeatherFortuneCard(isDark);
-
-      case 2: // 📈 5대 영역 레이더
+      case 1: // 📈 5대 영역 레이더
         return _buildRadarCard(score, isDark);
 
-      case 3: // ⏰ 시간대별 조언
+      case 2: // ⏰ 시간대별 조언
         return _buildTimeSlotCard(isDark);
 
-      case 4: // ❤️ 연애운
+      case 3: // ❤️ 연애운
         return _buildCategoryDetailCard('연애운', 'love', score, isDark);
 
-      case 5: // 💰 금전운
+      case 4: // 💰 금전운
         return _buildCategoryDetailCard('금전운', 'money', score, isDark);
 
-      case 6: // 💼 직장운
+      case 5: // 💼 직장운
         return _buildCategoryDetailCard('직장운', 'work', score, isDark);
 
-      case 7: // 📚 학업운
+      case 6: // 📚 학업운
         return _buildCategoryDetailCard('학업운', 'study', score, isDark);
 
-      case 8: // 🏃 건강운
+      case 7: // 🏃 건강운
         return _buildCategoryDetailCard('건강운', 'health', score, isDark);
 
-      case 9: // ✨ 행운 아이템
+      case 8: // ✨ 행운 아이템
         return _buildLuckyItemsCard(isDark);
 
-      case 10: // 🎭 유사 사주 연예인
+      case 9: // 🎭 유사 사주 연예인
         return _buildCelebrityCard(isDark);
 
-      case 11: // 🔮 사주 인사이트
+      case 10: // 🔮 사주 인사이트
         return _buildSajuInsightCard(isDark);
 
-      case 12: // 🎯 오늘의 액션 플랜
+      case 11: // 🎯 오늘의 액션 플랜
         return _buildActionPlanCard(isDark);
 
-      case 13: // 🌊 오행 밸런스
+      case 12: // 🌊 오행 밸런스
         return _buildFiveElementsCard(isDark);
 
-      case 14: // ⏱️ 시간대별 점수 그래프
+      case 13: // ⏱️ 시간대별 점수 그래프
         return _buildHourlyScoreGraphCard(isDark);
 
-      case 15: // 🐉 띠별 운세
+      case 14: // 🐉 띠별 운세
         return _buildZodiacFortuneCard(isDark);
 
-      case 16: // 💫 주간 트렌드
+      case 15: // 💫 주간 트렌드
         return _buildWeeklyTrendCard(isDark);
 
-      case 17: // 🎁 공유 카드
+      case 16: // 🎁 공유 카드
         return _buildShareCard(isDark);
 
       default:
@@ -1219,6 +1239,29 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
   }
 
   // ========== Helper Functions ==========
+
+  /// 날씨 상태에 따른 이모지 반환
+  String _getWeatherEmoji(String condition) {
+    switch (condition.toLowerCase()) {
+      case 'clear':
+        return '☀️';
+      case 'clouds':
+        return '☁️';
+      case 'rain':
+      case 'drizzle':
+        return '🌧️';
+      case 'snow':
+        return '❄️';
+      case 'thunderstorm':
+        return '⛈️';
+      case 'mist':
+      case 'fog':
+      case 'haze':
+        return '🌫️';
+      default:
+        return '🌤️';
+    }
+  }
 
   String _getMainScoreMessage(int score) {
     final idiom = widget.fortune?.metadata?['categories']?['total']?['advice']?['idiom'];

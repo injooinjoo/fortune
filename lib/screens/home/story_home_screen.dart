@@ -30,7 +30,7 @@ class StoryHomeScreen extends ConsumerStatefulWidget {
   ConsumerState<StoryHomeScreen> createState() => _StoryHomeScreenState();
 }
 
-class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
+class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsBindingObserver {
   final supabase = Supabase.instance.client;
   final _cacheService = CacheService();
   
@@ -105,6 +105,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkIfAlreadyViewed();
     _checkRealLoginStatus(); // 초기 로그인 상태 확인
     _quickCacheCheck(); // 캐시 빠른 확인으로 로딩 상태 결정
@@ -144,6 +145,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         });
       }
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      debugPrint('🔄 [StoryHomeScreen] App resumed - reloading profile');
+      // 앱이 다시 포그라운드로 돌아왔을 때 프로필 다시 로드
+      if (_isReallyLoggedIn && mounted) {
+        _loadUserProfile();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -908,30 +926,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       fontSize: TossDesignSystem.heading1.fontSize!,
       fontWeight: FontWeight.w200,
     ));
-    
-    // 2. 날짜와 날씨
-    String weatherText = currentWeather != null 
-        ? currentWeather!.emotionalDescription
-        : '맑은 하늘';
-    segments.add(StorySegment(
-      text: '${now.month}월 ${now.day}일\n${_getWeekdayKorean(now.weekday)}',
-      fontSize: TossDesignSystem.heading2.fontSize!,
-      fontWeight: FontWeight.w300,
-    ));
-    
-    // 3. 오늘의 총평
+
+    // 2. 오늘의 총평 (날씨 페이지 제거)
     segments.add(StorySegment(
       text: _getEnergyDescription(score),
       fontSize: TossDesignSystem.heading3.fontSize!,
       fontWeight: FontWeight.w300,
       emoji: score >= 80 ? '✨' : score >= 60 ? '☁️' : '🌙',
     ));
-    
-    // 4-6. 운세 상세 (3페이지에 걸쳐)
+
+    // 3-5. 운세 상세 (3페이지에 걸쳐)
     if (fortune.content != null && fortune.content!.isNotEmpty) {
       final sentences = _splitIntoSentences(fortune.content!);
       final chunkSize = (sentences.length / 3).ceil();
-      
+
       for (int i = 0; i < 3; i++) {
         final start = i * chunkSize;
         final end = math.min((i + 1) * chunkSize, sentences.length);
@@ -964,8 +972,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         fontWeight: FontWeight.w300,
       ));
     }
-    
-    // 7. 오늘의 주의사항
+
+    // 6. 오늘의 주의사항
     String cautionText = fortune.metadata?['caution'] ?? _getCautionByScore(score);
     segments.add(StorySegment(
       subtitle: '⚠️ 주의',
@@ -973,8 +981,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       fontSize: TossDesignSystem.heading4.fontSize!,
       fontWeight: FontWeight.w300,
     ));
-    
-    // 8. 행운의 요소들
+
+    // 7. 행운의 요소들
     String luckyText = '';
     if (fortune.luckyItems != null) {
       if (fortune.luckyItems!['color'] != null) {
@@ -996,8 +1004,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       fontSize: TossDesignSystem.heading3.fontSize!,
       fontWeight: FontWeight.w300,
     ));
-    
-    // 9. 오늘의 조언
+
+    // 8. 오늘의 조언
     String adviceText = fortune.metadata?['advice'] ?? _getAdviceByScore(score);
     segments.add(StorySegment(
       subtitle: '💡 조언',
@@ -1005,8 +1013,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       fontSize: TossDesignSystem.heading3.fontSize!,
       fontWeight: FontWeight.w300,
     ));
-    
-    // 10. 마무리 메시지
+
+    // 9. 마무리 메시지
     segments.add(StorySegment(
       subtitle: '마무리',
       text: '좋은 하루 되세요',
@@ -1154,6 +1162,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           overall: overallData,
           categories: categoriesData,
           sajuInsight: sajuInsightData,
+          currentWeather: currentWeather,
         ),
       ),
     );
@@ -1264,6 +1273,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       overall: overallData,
       categories: categoriesData,
       sajuInsight: sajuInsightData,
+      currentWeather: currentWeather,
     );
   }
 }
