@@ -743,7 +743,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           Icons.chevron_right,
                           color: _getSecondaryTextColor(context),
                         ),
-                        onTap: () => context.push('/fortune/history'),
+                        onTap: () => context.push('/profile/history'),
                         isLast: true,
                       ),
                     ],

@@ -603,12 +603,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
   
   Future<void> _loadWeatherInfo() async {
     try {
+      debugPrint('🌤️ Loading weather info...');
       final weather = await WeatherService.getCurrentWeather();
       setState(() {
         currentWeather = weather;
       });
+      debugPrint('✅ Weather loaded: ${weather.condition}, ${weather.temperature}°C');
     } catch (e) {
-      debugPrint('Failed to load weather: $e');
+      debugPrint('❌ Failed to load weather: $e');
     }
   }
   
