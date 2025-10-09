@@ -660,8 +660,16 @@ class _LandingPageState extends ConsumerState<LandingPage>
     // 공통 BottomSheet 위젯 사용
     final result = await SocialLoginBottomSheet.show(
       context,
-      onGoogleLogin: () {
-        Navigator.pop(context);
+      onGoogleLogin: () async {
+        print('🔴 Google login button clicked');
+
+        // 모달을 먼저 닫기
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        // 잠시 기다렸다가 로그인 처리
+        await Future.delayed(Duration(milliseconds: 100));
         _handleSocialLogin('Google');
       },
       onAppleLogin: () async {
@@ -677,12 +685,29 @@ class _LandingPageState extends ConsumerState<LandingPage>
         await Future.delayed(Duration(milliseconds: 100));
         _handleAppleLogin();
       },
-      onKakaoLogin: () {
-        Navigator.pop(context);
+      onKakaoLogin: () async {
+        print('🟡 Kakao login button clicked');
+
+        // 모달을 먼저 닫기
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        // 잠시 기다렸다가 로그인 처리
+        await Future.delayed(Duration(milliseconds: 100));
         _handleSocialLogin('Kakao');
       },
-      onNaverLogin: () {
-        Navigator.pop(context);
+      onNaverLogin: () async {
+        print('🟢 Naver login button clicked');
+        print('🟢 _isAuthProcessing: $_isAuthProcessing');
+
+        // 모달을 먼저 닫기
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        // 잠시 기다렸다가 로그인 처리 (UI가 완전히 업데이트되도록)
+        await Future.delayed(Duration(milliseconds: 100));
         _handleNaverLogin();
       },
       onInstagramLogin: () {
@@ -697,12 +722,8 @@ class _LandingPageState extends ConsumerState<LandingPage>
     );
 
     // Modal이 닫힌 후 처리
-    // result가 null이면 사용자가 직접 modal을 닫은 것
-    // _isAuthProcessing이 true이면 OAuth 진행 중이었던 것
-    if (result == null && _isAuthProcessing) {
-      // OAuth 진행 중에 modal이 닫혔다면 상태 초기화
-      _resetAuthProcessing();
-    }
+    // 각 버튼의 콜백이 async로 처리되므로 여기서는 특별한 처리 불필요
+    // _resetAuthProcessing()을 호출하면 버튼 클릭 직후 상태가 초기화되어 로그인이 진행되지 않음
   }
 
   Future<void> _handleSocialLogin(String provider) async {
