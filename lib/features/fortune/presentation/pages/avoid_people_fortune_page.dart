@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
@@ -11,6 +12,8 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
 
 class AvoidPeopleFortunePage extends BaseFortunePage {
   const AvoidPeopleFortunePage({super.key})
@@ -87,17 +90,34 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
       throw Exception('로그인이 필요합니다');
     }
 
-    Logger.info('🔮 [AvoidPeopleFortune] Calling API', {'params': params});
+    Logger.info('🔮 [AvoidPeopleFortune] UnifiedFortuneService 호출', {'params': params});
 
     try {
-      final apiService = ref.read(fortuneApiServiceProvider);
+      // UnifiedFortuneService 사용
+      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
-      // API 호출 - FortuneApiService.getFortune 사용
-      final fortune = await apiService.getFortune(
-        userId: user.id,
-        fortuneType: widget.fortuneType,
-        params: params,
+      // input_conditions 정규화
+      final inputConditions = {
+        'environment': params['environment'],
+        'important_schedule': params['importantSchedule'],
+        'mood_level': params['moodLevel'],
+        'stress_level': params['stressLevel'],
+        'social_fatigue': params['socialFatigue'],
+        'has_important_decision': params['hasImportantDecision'],
+        'has_sensitive_conversation': params['hasSensitiveConversation'],
+        'has_team_project': params['hasTeamProject'],
+      };
+
+      final fortuneResult = await fortuneService.getFortune(
+        fortuneType: 'avoid_people',
+        dataSource: FortuneDataSource.api,
+        inputConditions: inputConditions,
       );
+
+      Logger.info('✅ [AvoidPeopleFortune] UnifiedFortuneService 완료');
+
+      // FortuneResult → Fortune 엔티티 변환
+      final fortune = _convertToFortune(fortuneResult);
 
       Logger.info('✅ [AvoidPeopleFortune] API fortune loaded successfully');
       return fortune;
@@ -627,6 +647,21 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
           ),
         ],
       ),
+    );
+  }
+
+  /// FortuneResult를 Fortune 엔티티로 변환
+  Fortune _convertToFortune(FortuneResult result) {
+    return Fortune(
+      id: result.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      type: result.fortuneType,
+      date: DateTime.now(),
+      content: result.data['content'] as String? ?? result.summary.toString(),
+      overallScore: result.score,
+      createdAt: DateTime.now(),
+      title: result.title,
+      summary: result.summary,
     );
   }
 }
