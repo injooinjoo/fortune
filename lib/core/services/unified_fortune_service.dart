@@ -10,6 +10,7 @@ import 'fortune_generators/avoid_people_generator.dart';
 import 'fortune_generators/ex_lover_generator.dart';
 import 'fortune_generators/blind_date_generator.dart';
 import 'fortune_generators/career_generator.dart';
+import 'fortune_generators/exam_generator.dart';
 
 /// 통합 운세 서비스
 ///
@@ -184,6 +185,11 @@ class UnifiedFortuneService {
         case 'startup_career':
         case 'startup-career':
           return await CareerGenerator.generate(inputConditions, _supabase);
+
+        case 'exam':
+        case 'lucky_exam':
+        case 'lucky-exam':
+          return await ExamGenerator.generate(inputConditions, _supabase);
 
         default:
           // 기본 Edge Function 호출 (레거시)

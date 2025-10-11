@@ -15,6 +15,8 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../data/services/fortune_api_service.dart';
 import 'dart:math' as math;
 import '../../../../services/ad_service.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
 
 class LuckyExamFortunePage extends ConsumerStatefulWidget {
   const LuckyExamFortunePage({super.key});
@@ -68,28 +70,25 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     });
 
     try {
-      // Get current user
-      final user = Supabase.instance.client.auth.currentUser;
-      final userId = user?.id ?? 'anonymous';
-      
-      // Get FortuneApiService
-      final fortuneApiService = ref.read(fortuneApiServiceProvider);
-      
-      // Prepare exam data
-      final examData = {
-        'examType': _examType,
-        'examDate': _examDate,
-        'studyPeriod': _studyPeriod,
+      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+      // UnifiedFortuneService용 input_conditions 구성 (snake_case)
+      final inputConditions = {
+        'exam_type': _examType,
+        'exam_date': _examDate,
+        'study_period': _studyPeriod,
         'confidence': _confidence,
         'difficulty': _difficulty,
       };
-      
-      // Call API
-      final fortune = await fortuneApiService.getLuckyExamFortune(
-        userId: userId,
-        examData: examData,
+
+      final fortuneResult = await fortuneService.getFortune(
+        fortuneType: 'exam',
+        dataSource: FortuneDataSource.api,
+        inputConditions: inputConditions,
       );
-      
+
+      final fortune = _convertToFortune(fortuneResult);
+
       setState(() {
         _fortuneResult = fortune;
         _isLoading = false;
@@ -795,4 +794,23 @@ class CircularScorePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+extension on _LuckyExamFortunePageState {
+  /// FortuneResult를 Fortune 엔티티로 변환
+  Fortune _convertToFortune(FortuneResult fortuneResult) {
+    return Fortune(
+      id: fortuneResult.id ?? '',
+      userId: Supabase.instance.client.auth.currentUser?.id ?? '',
+      fortuneType: 'exam',
+      title: fortuneResult.title,
+      content: fortuneResult.data['content'] as String? ?? '',
+      summary: fortuneResult.summary['message'] as String? ?? '',
+      score: fortuneResult.score,
+      fortuneData: fortuneResult.data,
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
+      lastViewedAt: fortuneResult.lastViewedAt,
+      viewCount: fortuneResult.viewCount ?? 0,
+    );
+  }
 }
