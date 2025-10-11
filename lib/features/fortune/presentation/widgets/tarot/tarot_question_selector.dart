@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../shared/components/toss_button.dart';
+import '../../../../../shared/components/floating_bottom_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 
 class TarotQuestionSelector extends StatefulWidget {
@@ -112,153 +113,154 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
     final hasSelection = widget.selectedQuestion != null ||
                         (widget.customQuestion?.isNotEmpty == true);
     final hasCustomInput = widget.customQuestion?.isNotEmpty == true;
-    
+
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(
         position: _slideAnimation,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              
-              // 제목
-              const Text(
-                '어떤 것이 궁금하신가요?',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF191919),
-                  height: 1.2,
-                ),
+        child: Stack(
+          children: [
+            // 스크롤 가능한 컨텐츠
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 100, // FloatingBottomButton을 위한 공간
               ),
-              
-              const SizedBox(height: 8),
-              
-              // 부제목
-              const Text(
-                '카드가 답해드릴게요',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF8B95A1),
-                ),
-              ),
-              
-              const SizedBox(height: 32),
-              
-              // 템플릿 질문들
-              ...List.generate(_templateQuestions.length, (index) {
-                final question = _templateQuestions[index];
-                final isSelected = widget.selectedQuestion == question['question'];
-                print('🔶 Question "${question['question']}" - isSelected: $isSelected');
-
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: _buildQuestionCard(
-                    question: question['question'] as String,
-                    icon: question['icon'] as IconData,
-                    color: question['color'] as Color,
-                    isSelected: isSelected,
-                    onTap: () {
-                      print('🔵 Question tapped: ${question['question']}');
-                      _focusNode.unfocus();
-                      widget.onQuestionSelected(question['question'] as String);
-                      print('🔵 onQuestionSelected called with: ${question['question']}');
-                      // 템플릿 질문을 선택하면 커스텀 입력 완전히 초기화
-                      _customController.clear();
-                      // widget.onCustomQuestionChanged(''); // 제거 - 이게 _selectedQuestion을 null로 만듦
-                    },
-                  ),
-                );
-              }),
-              
-              const SizedBox(height: 24),
-              
-              // 직접 입력 섹션
-              const Text(
-                '직접 입력하기',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF191919),
-                ),
-              ),
-              
-              const SizedBox(height: 12),
-              
-              // 직접 입력 텍스트 필드
-              Container(
-                decoration: BoxDecoration(
-                  color: hasCustomInput
-                      ? const Color(0xFF3182F6).withValues(alpha: 0.05)
-                      : TossDesignSystem.white,
-                  border: Border.all(
-                    color: hasCustomInput || _focusNode.hasFocus 
-                        ? const Color(0xFF3182F6)
-                        : const Color(0xFFE5E7EB),
-                    width: hasCustomInput || _focusNode.hasFocus ? 2 : 1,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: hasCustomInput
-                      ? [
-                          BoxShadow(
-                            color: const Color(0xFF3182F6).withValues(alpha: 0.1),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: TextField(
-                  controller: _customController,
-                  focusNode: _focusNode,
-                  maxLines: 3,
-                  maxLength: 100,
-                  onChanged: (value) {
-                    widget.onCustomQuestionChanged(value);
-                    // 커스텀 질문을 입력하면 템플릿 선택 해제
-                    if (value.isNotEmpty && widget.selectedQuestion != null) {
-                      widget.onQuestionSelected('');
-                    }
-                  },
-                  decoration: const InputDecoration(
-                    hintText: '궁금한 것을 자유롭게 입력해주세요\n예: 새로운 직장에서 잘 적응할 수 있을까요?',
-                    hintStyle: TextStyle(
-                      color: Color(0xFF9CA3AF),
-                      fontSize: 14,
-                      height: 1.4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 제목
+                  const Text(
+                    '어떤 것이 궁금하신가요?',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF191919),
+                      height: 1.2,
                     ),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                    counterText: '',
                   ),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFF191919),
-                    height: 1.4,
+
+                  const SizedBox(height: 8),
+
+                  // 부제목
+                  const Text(
+                    '카드가 답해드릴게요',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF8B95A1),
+                    ),
                   ),
-                ),
+
+                  const SizedBox(height: 32),
+
+                  // 템플릿 질문들
+                  ...List.generate(_templateQuestions.length, (index) {
+                    final question = _templateQuestions[index];
+                    final isSelected = widget.selectedQuestion == question['question'];
+                    print('🔶 Question "${question['question']}" - isSelected: $isSelected');
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _buildQuestionCard(
+                        question: question['question'] as String,
+                        icon: question['icon'] as IconData,
+                        color: question['color'] as Color,
+                        isSelected: isSelected,
+                        onTap: () {
+                          print('🔵 Question tapped: ${question['question']}');
+                          _focusNode.unfocus();
+                          widget.onQuestionSelected(question['question'] as String);
+                          print('🔵 onQuestionSelected called with: ${question['question']}');
+                          // 템플릿 질문을 선택하면 커스텀 입력 완전히 초기화
+                          _customController.clear();
+                          // widget.onCustomQuestionChanged(''); // 제거 - 이게 _selectedQuestion을 null로 만듦
+                        },
+                      ),
+                    );
+                  }),
+
+                  const SizedBox(height: 24),
+
+                  // 직접 입력 섹션
+                  const Text(
+                    '직접 입력하기',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF191919),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // 직접 입력 텍스트 필드
+                  Container(
+                    decoration: BoxDecoration(
+                      color: hasCustomInput
+                          ? const Color(0xFF3182F6).withValues(alpha: 0.05)
+                          : TossDesignSystem.white,
+                      border: Border.all(
+                        color: hasCustomInput || _focusNode.hasFocus
+                            ? const Color(0xFF3182F6)
+                            : const Color(0xFFE5E7EB),
+                        width: hasCustomInput || _focusNode.hasFocus ? 2 : 1,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: hasCustomInput
+                          ? [
+                              BoxShadow(
+                                color: const Color(0xFF3182F6).withValues(alpha: 0.1),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: TextField(
+                      controller: _customController,
+                      focusNode: _focusNode,
+                      maxLines: 3,
+                      maxLength: 100,
+                      onChanged: (value) {
+                        widget.onCustomQuestionChanged(value);
+                        // 커스텀 질문을 입력하면 템플릿 선택 해제
+                        if (value.isNotEmpty && widget.selectedQuestion != null) {
+                          widget.onQuestionSelected('');
+                        }
+                      },
+                      decoration: const InputDecoration(
+                        hintText: '궁금한 것을 자유롭게 입력해주세요\n예: 새로운 직장에서 잘 적응할 수 있을까요?',
+                        hintStyle: TextStyle(
+                          color: Color(0xFF9CA3AF),
+                          fontSize: 14,
+                          height: 1.4,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.all(16),
+                        counterText: '',
+                      ),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF191919),
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              
-              const SizedBox(height: 40),
-              
-              // 운세 보기 버튼
-              SizedBox(
-                width: double.infinity,
-                child: TossButton(
-                  text: '운세 보기',
-                  onPressed: hasSelection ? widget.onStartReading : null,
-                  style: TossButtonStyle.primary,
-                  size: TossButtonSize.large,
-                ),
-              ),
-              
-              const SizedBox(height: 40),
-            ],
-          ),
+            ),
+
+            // FloatingBottomButton
+            FloatingBottomButton(
+              text: '운세 보기',
+              onPressed: hasSelection ? widget.onStartReading : null,
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+            ),
+          ],
         ),
       ),
     );

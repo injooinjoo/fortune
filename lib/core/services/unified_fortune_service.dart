@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../utils/logger.dart';
 import '../models/fortune_result.dart';
+import 'fortune_generators/tarot_generator.dart';
 
 /// 통합 운세 서비스
 ///
@@ -170,14 +171,23 @@ class UnifiedFortuneService {
     try {
       Logger.info('[UnifiedFortune] 로컬 생성 시작: $fortuneType');
 
-      // 운세 타입별 로컬 생성 로직
-      // TODO: 각 운세별 Generator 클래스로 분리 예정
-      // 예: TarotGenerator, BiorhythmGenerator, MBTIGenerator 등
+      // 운세 타입별 Generator 클래스 호출
+      switch (fortuneType.toLowerCase()) {
+        case 'tarot':
+          return await TarotGenerator.generate(inputConditions);
 
-      throw UnimplementedError(
-        '로컬 생성 로직 미구현: $fortuneType\n'
-        '해당 운세의 Generator 클래스를 구현해야 합니다.'
-      );
+        // TODO: 다른 운세 Generator 추가
+        // case 'mbti':
+        //   return await MBTIGenerator.generate(inputConditions);
+        // case 'biorhythm':
+        //   return await BiorhythmGenerator.generate(inputConditions);
+
+        default:
+          throw UnimplementedError(
+            '로컬 생성 로직 미구현: $fortuneType\n'
+            '해당 운세의 Generator 클래스를 구현해야 합니다.'
+          );
+      }
 
     } catch (error, stackTrace) {
       Logger.error('[UnifiedFortune] 로컬 생성 실패: $fortuneType', error, stackTrace);

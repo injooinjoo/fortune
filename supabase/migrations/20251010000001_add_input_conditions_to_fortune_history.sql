@@ -45,13 +45,13 @@ CREATE OR REPLACE FUNCTION check_duplicate_fortune(
 )
 RETURNS TABLE (
   fortune_id UUID,
-  exists BOOLEAN
+  is_duplicate BOOLEAN
 ) AS $$
 BEGIN
   RETURN QUERY
   SELECT
     id as fortune_id,
-    TRUE as exists
+    TRUE as is_duplicate
   FROM fortune_history
   WHERE user_id = p_user_id
     AND fortune_type = p_fortune_type

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:math' as dart_math;
 import 'dart:math';
 import '../../../../presentation/providers/auth_provider.dart';
@@ -16,6 +17,8 @@ import '../widgets/tarot/tarot_multi_card_result.dart';
 import '../../domain/models/tarot_card_model.dart';
 import '../../services/tarot_service.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/utils/logger.dart';
 
 enum TarotFlowState {
   initial,      // 초기 화면
@@ -417,22 +420,129 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
     });
   }
 
-  void _generateTarotResult() {
+  void _generateTarotResult() async {
     if (!mounted) return;
     if (_selectedSpread == null) return;
 
-    // 새로운 타로 서비스를 사용하여 카드 뽑기
-    final question = _selectedQuestion ?? _customQuestion ?? '일반 운세';
-    final result = TarotService.drawCards(
-      spreadType: _selectedSpread!,
-      question: question,
-      deck: _selectedDeck,
-    );
+    try {
+      // UnifiedFortuneService를 사용하여 표준화된 타로 운세 생성
+      final question = _selectedQuestion ?? _customQuestion ?? '일반 운세';
 
-    setState(() {
-      _tarotResult = result;
-      _currentState = TarotFlowState.result;
-    });
+      // input_conditions 구성
+      final inputConditions = {
+        'spread_type': _selectedSpread!.name,
+        'deck_type': _selectedDeck.name,
+        'question': question,
+      };
+
+      Logger.info('[TarotPage] 타로 운세 생성 시작: $inputConditions');
+
+      // UnifiedFortuneService 호출
+      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+      final fortuneResult = await fortuneService.getFortune(
+        fortuneType: 'tarot',
+        dataSource: FortuneDataSource.local,
+        inputConditions: inputConditions,
+      );
+
+      Logger.info('[TarotPage] 타로 운세 생성 완료: ${fortuneResult.score}점');
+
+      // fortuneResult.data에서 TarotSpreadResult로 변환
+      final tarotData = fortuneResult.data;
+      final cardsData = tarotData['cards'] as List;
+
+      // TarotCard 리스트 재구성
+      final cards = cardsData.map((cardJson) {
+        return TarotCard(
+          deckType: _parseDeckType(cardJson['deck_type'] as String),
+          category: _parseCardCategory(cardJson['category'] as String),
+          number: cardJson['number'] as int,
+          cardName: cardJson['card_name'] as String,
+          cardNameKr: cardJson['card_name_kr'] as String,
+          isReversed: cardJson['is_reversed'] as bool,
+          positionKey: cardJson['position_key'] as String?,
+        );
+      }).toList();
+
+      // TarotSpreadResult 재구성
+      final result = TarotSpreadResult(
+        spreadType: _selectedSpread!,
+        cards: cards,
+        question: question,
+        timestamp: DateTime.parse(tarotData['timestamp'] as String),
+        overallInterpretation: tarotData['overall_interpretation'] as String,
+        positionInterpretations: Map<String, String>.from(
+          tarotData['position_interpretations'] as Map,
+        ),
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        _tarotResult = result;
+        _currentState = TarotFlowState.result;
+      });
+
+    } catch (error, stackTrace) {
+      Logger.error('[TarotPage] 타로 운세 생성 실패', error, stackTrace);
+
+      if (!mounted) return;
+
+      // 에러 발생 시 사용자에게 알림
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('타로 운세를 생성하는 데 실패했습니다. 다시 시도해주세요.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+
+      setState(() {
+        _currentState = TarotFlowState.spreadSelection;
+      });
+    }
+  }
+
+  // Helper methods for parsing
+  TarotDeckType _parseDeckType(String deckTypeStr) {
+    switch (deckTypeStr.toLowerCase()) {
+      case 'riderwaite':
+      case 'rider_waite':
+        return TarotDeckType.riderWaite;
+      case 'marseille':
+      case 'ancient_italian':
+        return TarotDeckType.ancientItalian;
+      case 'thoth':
+        return TarotDeckType.thoth;
+      case 'after_tarot':
+        return TarotDeckType.afterTarot;
+      case 'before_tarot':
+        return TarotDeckType.beforeTarot;
+      case 'golden_dawn_cicero':
+        return TarotDeckType.goldenDawnCicero;
+      case 'golden_dawn_wang':
+        return TarotDeckType.goldenDawnWang;
+      case 'grand_etteilla':
+        return TarotDeckType.grandEtteilla;
+      default:
+        return TarotDeckType.riderWaite;
+    }
+  }
+
+  CardCategory _parseCardCategory(String categoryStr) {
+    switch (categoryStr.toLowerCase()) {
+      case 'major':
+        return CardCategory.major;
+      case 'cups':
+        return CardCategory.cups;
+      case 'wands':
+        return CardCategory.wands;
+      case 'swords':
+        return CardCategory.swords;
+      case 'pentacles':
+        return CardCategory.pentacles;
+      default:
+        return CardCategory.major;
+    }
   }
 }
 

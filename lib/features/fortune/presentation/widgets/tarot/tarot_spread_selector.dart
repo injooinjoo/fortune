@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../shared/components/toss_button.dart';
+import '../../../../../shared/components/floating_bottom_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 
 class TarotSpreadSelector extends StatefulWidget {
@@ -65,93 +66,94 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
       opacity: _fadeAnimation,
       child: SlideTransition(
         position: _slideAnimation,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-
-              // 제목
-              const Text(
-                '스프레드를 선택하세요',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF191919),
-                  height: 1.2,
-                ),
+        child: Stack(
+          children: [
+            // 스크롤 가능한 컨텐츠
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 100, // FloatingBottomButton을 위한 공간
               ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 제목
+                  const Text(
+                    '스프레드를 선택하세요',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF191919),
+                      height: 1.2,
+                    ),
+                  ),
 
-              const SizedBox(height: 8),
+                  const SizedBox(height: 8),
 
-              // 부제목
-              Text(
-                '질문: ${widget.question}',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF8B95A1),
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                  // 부제목
+                  Text(
+                    '질문: ${widget.question}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF8B95A1),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // 스프레드 옵션들
+                  _buildSpreadCard(
+                    spread: TarotSpreadType.single,
+                    icon: Icons.style,
+                    color: const Color(0xFF3B82F6),
+                    recommended: '빠른 답변이 필요할 때',
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  _buildSpreadCard(
+                    spread: TarotSpreadType.threeCard,
+                    icon: Icons.timeline,
+                    color: const Color(0xFF7C3AED),
+                    recommended: '시간의 흐름을 보고 싶을 때',
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  _buildSpreadCard(
+                    spread: TarotSpreadType.relationship,
+                    icon: Icons.favorite,
+                    color: const Color(0xFFEC4899),
+                    recommended: '연애/관계 질문',
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  _buildSpreadCard(
+                    spread: TarotSpreadType.celticCross,
+                    icon: Icons.apps,
+                    color: const Color(0xFF10B981),
+                    recommended: '심층 분석이 필요할 때',
+                  ),
+                ],
               ),
+            ),
 
-              const SizedBox(height: 32),
-
-              // 스프레드 옵션들
-              _buildSpreadCard(
-                spread: TarotSpreadType.single,
-                icon: Icons.style,
-                color: const Color(0xFF3B82F6),
-                recommended: '빠른 답변이 필요할 때',
-              ),
-
-              const SizedBox(height: 16),
-
-              _buildSpreadCard(
-                spread: TarotSpreadType.threeCard,
-                icon: Icons.timeline,
-                color: const Color(0xFF7C3AED),
-                recommended: '시간의 흐름을 보고 싶을 때',
-              ),
-
-              const SizedBox(height: 16),
-
-              _buildSpreadCard(
-                spread: TarotSpreadType.relationship,
-                icon: Icons.favorite,
-                color: const Color(0xFFEC4899),
-                recommended: '연애/관계 질문',
-              ),
-
-              const SizedBox(height: 16),
-
-              _buildSpreadCard(
-                spread: TarotSpreadType.celticCross,
-                icon: Icons.apps,
-                color: const Color(0xFF10B981),
-                recommended: '심층 분석이 필요할 때',
-              ),
-
-              const SizedBox(height: 40),
-
-              // 선택 버튼
-              SizedBox(
-                width: double.infinity,
-                child: TossButton(
-                  text: '카드 뽑기',
-                  onPressed: _selectedSpread != null
-                      ? () => widget.onSpreadSelected(_selectedSpread!)
-                      : null,
-                  style: TossButtonStyle.primary,
-                  size: TossButtonSize.large,
-                ),
-              ),
-
-              const SizedBox(height: 40),
-            ],
-          ),
+            // FloatingBottomButton
+            FloatingBottomButton(
+              text: '카드 뽑기',
+              onPressed: _selectedSpread != null
+                  ? () => widget.onSpreadSelected(_selectedSpread!)
+                  : null,
+              style: TossButtonStyle.primary,
+              size: TossButtonSize.large,
+            ),
+          ],
         ),
       ),
     );

@@ -43,7 +43,14 @@
       "Bash(curl:*)",
       "Bash(chmod:*)",
       "Bash(/Users/jacobmac/Desktop/Dev/fortune/scripts/create_fortune_standardization_tickets.sh)",
-      "Bash(/Users/jacobmac/Desktop/Dev/fortune/scripts/create_remaining_tickets.sh)"
+      "Bash(/Users/jacobmac/Desktop/Dev/fortune/scripts/create_remaining_tickets.sh)",
+      "Bash(supabase status:*)",
+      "Bash(supabase link:*)",
+      "Bash(supabase db:*)",
+      "Bash(psql:*)",
+      "Bash(pkill:*)",
+      "Bash(flutter clean:*)",
+      "Bash(flutter pub:*)"
     ],
     "deny": [],
     "ask": [],
