@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -12,6 +13,8 @@ import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
 import '../../../fortune/presentation/widgets/fortune_button.dart';
 import '../../../fortune/presentation/widgets/standard_fortune_app_bar.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
 
 /// 포춘쿠키 타입
 enum CookieType {
@@ -835,22 +838,20 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
     });
 
     try {
-      final authState = ref.read(authStateProvider);
-      final userId = authState.value?.session?.user.id ?? 'anonymous';
-      
-      final fortune = await ref.read(fortuneServiceProvider).getFortune(
-        fortuneType: 'fortune-cookie',
-        userId: userId,
-        params: {
-          'cookieType': _selectedCookie?.name ?? 'luck',
-        },
+      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+      // UnifiedFortuneService용 input_conditions 구성 (snake_case)
+      final inputConditions = {
+        'cookie_type': _selectedCookie?.name ?? 'luck',
+      };
+
+      final fortuneResult = await fortuneService.getFortune(
+        fortuneType: 'fortune_cookie',
+        dataSource: FortuneDataSource.local,
+        inputConditions: inputConditions,
       );
 
-      if (fortune != null) {
-        _parseFortune(fortune);
-      } else {
-        _generateMockFortune();
-      }
+      _parseFortuneResult(fortuneResult);
     } catch (e) {
       Logger.error('Failed to get fortune', e);
       _generateMockFortune();
@@ -1128,5 +1129,23 @@ class ImprovedCrackPainter extends CustomPainter {
   @override
   bool shouldRepaint(ImprovedCrackPainter oldDelegate) {
     return oldDelegate.progress != progress;
+  }
+}
+
+extension on _FortuneCookiePageState {
+  /// FortuneResult를 UI 상태로 파싱
+  void _parseFortuneResult(FortuneResult fortuneResult) {
+    final data = fortuneResult.data;
+    final summary = fortuneResult.summary;
+
+    setState(() {
+      _mainMessage = summary['message'] as String? ?? data['message'] as String? ?? _generateDefaultMessage();
+      _luckyNumbers = [summary['lucky_number'] as int? ?? _generateLuckyNumbers().first];
+      _luckyColorName = summary['lucky_color'] as String? ?? _getLuckyColorName(_luckyColor);
+      _luckyColor = _generateLuckyColor(); // 색상 매핑 로직 필요시 추가
+      _chineseProverb = _generateDefaultProverb();
+      _chineseProverbMeaning = _generateDefaultProverbMeaning();
+      _advice = _generateAdvice();
+    });
   }
 }

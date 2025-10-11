@@ -12,6 +12,7 @@ import 'fortune_generators/blind_date_generator.dart';
 import 'fortune_generators/career_generator.dart';
 import 'fortune_generators/exam_generator.dart';
 import 'fortune_generators/health_generator.dart';
+import 'fortune_generators/fortune_cookie_generator.dart';
 
 /// 통합 운세 서비스
 ///
@@ -231,7 +232,11 @@ class UnifiedFortuneService {
         case 'tarot':
           return await TarotGenerator.generate(inputConditions);
 
-        // TODO: 다른 운세 Generator 추가
+        case 'fortune_cookie':
+        case 'fortune-cookie':
+          return await FortuneCookieGenerator.generate(inputConditions);
+
+        // TODO: 다른 로컬 운세 Generator 추가
         // case 'mbti':
         //   return await MBTIGenerator.generate(inputConditions);
         // case 'biorhythm':
