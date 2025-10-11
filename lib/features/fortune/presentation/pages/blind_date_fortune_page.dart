@@ -5,6 +5,7 @@ import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
@@ -18,6 +19,9 @@ import '../../../../services/vision_api_service.dart';
 import '../../../../services/ad_service.dart';
 import '../widgets/fortune_loading_skeleton.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
+import 'dart:convert';
 
 class BlindDateFortunePage extends BaseFortunePage {
   const BlindDateFortunePage({Key? key})
@@ -255,13 +259,59 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final fortuneService = ref.read(fortuneServiceProvider);
-    
-    return await fortuneService.getFortune(
-      fortuneType: widget.fortuneType,
-      userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    // Base64 인코딩된 사진 데이터 준비
+    List<String>? myEncodedPhotos;
+    List<String>? partnerEncodedPhotos;
+
+    if (_myPhotos.isNotEmpty) {
+      myEncodedPhotos = [];
+      for (final photo in _myPhotos) {
+        final bytes = await photo.readAsBytes();
+        myEncodedPhotos.add(base64Encode(bytes));
+      }
+    }
+
+    if (_partnerPhotos.isNotEmpty) {
+      partnerEncodedPhotos = [];
+      for (final photo in _partnerPhotos) {
+        final bytes = await photo.readAsBytes();
+        partnerEncodedPhotos.add(base64Encode(bytes));
+      }
+    }
+
+    // UnifiedFortuneService용 input_conditions 구성 (snake_case)
+    final inputConditions = {
+      'name': params['name'],
+      'birth_date': params['birthDate'],
+      'gender': params['gender'],
+      'mbti': params['mbti'],
+      'meeting_date': params['meetingDate'],
+      'meeting_time': params['meetingTime'],
+      'meeting_type': params['meetingType'],
+      'introducer': params['introducer'],
+      'important_qualities': params['importantQualities'],
+      'age_preference': params['agePreference'],
+      'ideal_first_date': params['idealFirstDate'],
+      'confidence': params['confidence'],
+      'concerns': params['concerns'],
+      'past_experience': params['pastExperience'],
+      'is_first_blind_date': params['isFirstBlindDate'],
+      'my_photos': myEncodedPhotos,
+      'partner_photos': partnerEncodedPhotos,
+      'chat_content': _chatContentController.text.isEmpty ? null : _chatContentController.text,
+      'chat_platform': _chatPlatform,
+      if (params['photoAnalysis'] != null) 'photo_analysis': params['photoAnalysis'],
+    };
+
+    final fortuneResult = await fortuneService.getFortune(
+      fortuneType: 'blind_date',
+      dataSource: FortuneDataSource.api,
+      inputConditions: inputConditions,
     );
+
+    return _convertToFortune(fortuneResult);
   }
 
   Future<Map<String, dynamic>?> getUserInfo() async {
@@ -2270,6 +2320,23 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           ),
         );
       }).toList(),
+    );
+  }
+
+  /// FortuneResult를 Fortune 엔티티로 변환
+  Fortune _convertToFortune(FortuneResult fortuneResult) {
+    return Fortune(
+      id: fortuneResult.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      fortuneType: 'blind-date',
+      title: fortuneResult.title,
+      content: fortuneResult.data['content'] as String? ?? '',
+      summary: fortuneResult.summary['message'] as String? ?? '',
+      score: fortuneResult.score,
+      fortuneData: fortuneResult.data,
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
+      lastViewedAt: fortuneResult.lastViewedAt,
+      viewCount: fortuneResult.viewCount ?? 0,
     );
   }
 }

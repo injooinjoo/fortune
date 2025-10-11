@@ -8,6 +8,7 @@ import 'fortune_generators/time_based_generator.dart';
 import 'fortune_generators/compatibility_generator.dart';
 import 'fortune_generators/avoid_people_generator.dart';
 import 'fortune_generators/ex_lover_generator.dart';
+import 'fortune_generators/blind_date_generator.dart';
 
 /// 통합 운세 서비스
 ///
@@ -167,6 +168,10 @@ class UnifiedFortuneService {
         case 'ex_lover':
         case 'ex-lover':
           return await ExLoverGenerator.generate(inputConditions, _supabase);
+
+        case 'blind_date':
+        case 'blind-date':
+          return await BlindDateGenerator.generate(inputConditions, _supabase);
 
         // TODO: 다른 API 운세 Generator 추가
         // case 'career':
