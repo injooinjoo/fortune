@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
@@ -11,6 +12,8 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
 import '../constants/fortune_button_spacing.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/standard_fortune_page_layout.dart';
@@ -148,22 +151,29 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
   Future<void> _performCompatibilityAnalysis() async {
     try {
-      final fortuneService = ref.read(fortuneServiceProvider);
-      final params = {
+      // UnifiedFortuneService 사용
+      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+      // input_conditions 정규화
+      final inputConditions = {
         'person1': {
           'name': _person1NameController.text,
-          'birthDate': _person1BirthDate!.toIso8601String(),
+          'birth_date': _person1BirthDate!.toIso8601String(),
         },
         'person2': {
           'name': _person2NameController.text,
-          'birthDate': _person2BirthDate!.toIso8601String(),
+          'birth_date': _person2BirthDate!.toIso8601String(),
         },
       };
 
-      final fortune = await fortuneService.getCompatibilityFortune(
-        person1: params['person1'] as Map<String, dynamic>,
-        person2: params['person2'] as Map<String, dynamic>,
+      final fortuneResult = await fortuneService.getFortune(
+        fortuneType: 'compatibility',
+        dataSource: FortuneDataSource.api,
+        inputConditions: inputConditions,
       );
+
+      // FortuneResult → Fortune 엔티티 변환
+      final fortune = _convertToFortune(fortuneResult);
 
       // Parse scores from fortune response
       Map<String, double> scores = {};
@@ -881,5 +891,21 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
     if (score >= 0.7) return '보통';
     if (score >= 0.6) return '나쁨';
     return '매우 나쁨';
+  }
+
+  /// FortuneResult를 Fortune 엔티티로 변환
+  Fortune _convertToFortune(FortuneResult result) {
+    return Fortune(
+      id: result.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      type: result.fortuneType,
+      date: DateTime.now(),
+      content: result.data['content'] as String? ?? result.summary.toString(),
+      overallScore: result.score,
+      createdAt: DateTime.now(),
+      title: result.title,
+      summary: result.summary,
+      metadata: result.data,
+    );
   }
 }
