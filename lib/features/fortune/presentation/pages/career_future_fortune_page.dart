@@ -1,13 +1,14 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
 
 class CareerFutureFortunePage extends BaseFortunePage {
   const CareerFutureFortunePage({
@@ -60,13 +61,25 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final fortuneService = ref.read(fortuneServiceProvider);
-    
-    return await fortuneService.getFortune(
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    // UnifiedFortuneService용 input_conditions 구성 (snake_case)
+    final inputConditions = {
+      'career_type': widget.fortuneType,
+      'current_role': params['currentRole'],
+      'goal': params['careerGoal'],
+      'time_horizon': params['timeHorizon'],
+      'career_path': params['careerPath'],
+      'selected_skills': params['skills'],
+    };
+
+    final fortuneResult = await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
-      userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params
+      dataSource: FortuneDataSource.api,
+      inputConditions: inputConditions,
     );
+
+    return _convertToFortune(fortuneResult);
   }
 
   @override
@@ -289,6 +302,23 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
           SizedBox(height: TossDesignSystem.spacingXL),
         ],
       ),
+    );
+  }
+
+  /// FortuneResult를 Fortune 엔티티로 변환
+  Fortune _convertToFortune(FortuneResult fortuneResult) {
+    return Fortune(
+      id: fortuneResult.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      fortuneType: widget.fortuneType,
+      title: fortuneResult.title,
+      content: fortuneResult.data['content'] as String? ?? '',
+      summary: fortuneResult.summary['message'] as String? ?? '',
+      score: fortuneResult.score,
+      fortuneData: fortuneResult.data,
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
+      lastViewedAt: fortuneResult.lastViewedAt,
+      viewCount: fortuneResult.viewCount ?? 0,
     );
   }
 }

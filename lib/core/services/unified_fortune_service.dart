@@ -9,6 +9,7 @@ import 'fortune_generators/compatibility_generator.dart';
 import 'fortune_generators/avoid_people_generator.dart';
 import 'fortune_generators/ex_lover_generator.dart';
 import 'fortune_generators/blind_date_generator.dart';
+import 'fortune_generators/career_generator.dart';
 
 /// 통합 운세 서비스
 ///
@@ -173,9 +174,16 @@ class UnifiedFortuneService {
         case 'blind-date':
           return await BlindDateGenerator.generate(inputConditions, _supabase);
 
-        // TODO: 다른 API 운세 Generator 추가
-        // case 'career':
-        //   return await CareerGenerator.generate(inputConditions, _supabase);
+        case 'career':
+        case 'career_future':
+        case 'career-future':
+        case 'career_seeker':
+        case 'career-seeker':
+        case 'career_change':
+        case 'career-change':
+        case 'startup_career':
+        case 'startup-career':
+          return await CareerGenerator.generate(inputConditions, _supabase);
 
         default:
           // 기본 Edge Function 호출 (레거시)
