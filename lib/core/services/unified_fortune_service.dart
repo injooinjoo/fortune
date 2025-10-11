@@ -4,6 +4,7 @@ import '../utils/logger.dart';
 import '../models/fortune_result.dart';
 import 'fortune_generators/tarot_generator.dart';
 import 'fortune_generators/moving_generator.dart';
+import 'fortune_generators/time_based_generator.dart';
 
 /// 통합 운세 서비스
 ///
@@ -147,6 +148,11 @@ class UnifiedFortuneService {
       switch (fortuneType.toLowerCase()) {
         case 'moving':
           return await MovingGenerator.generate(inputConditions, _supabase);
+
+        case 'time_based':
+        case 'daily':
+        case 'daily_calendar':
+          return await TimeBasedGenerator.generate(inputConditions, _supabase);
 
         // TODO: 다른 API 운세 Generator 추가
         // case 'compatibility':

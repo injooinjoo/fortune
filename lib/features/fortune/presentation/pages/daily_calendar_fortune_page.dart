@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_design_system.dart';
-
-
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/services/personalized_fortune_service.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
 
 class DailyCalendarFortunePage extends BaseFortunePage {
   const DailyCalendarFortunePage({
@@ -38,13 +39,42 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final fortuneService = ref.read(fortuneServiceProvider);
     final userId = ref.read(userProvider).value?.id ?? 'anonymous';
-    
-    // Use getDailyFortune for date-based fortune
-    return await fortuneService.getDailyFortune(
-      userId: userId,
-      date: _selectedDate,
+
+    // UnifiedFortuneService 사용
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    // input_conditions 정규화
+    final inputConditions = {
+      'date': _selectedDate.toIso8601String(),
+      'period': 'daily',
+      'is_holiday': _isHoliday,
+      'holiday_name': _holidayName,
+      'special_name': _specialName,
+    };
+
+    final fortuneResult = await fortuneService.getFortune(
+      fortuneType: 'daily_calendar',
+      dataSource: FortuneDataSource.api,
+      inputConditions: inputConditions,
+    );
+
+    // FortuneResult → Fortune 엔티티 변환
+    return _convertToFortune(fortuneResult);
+  }
+
+  /// FortuneResult를 Fortune 엔티티로 변환
+  Fortune _convertToFortune(FortuneResult result) {
+    return Fortune(
+      id: result.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      type: result.fortuneType,
+      date: DateTime.now(),
+      content: result.data['content'] as String? ?? result.summary.toString(),
+      overallScore: result.score,
+      createdAt: DateTime.now(),
+      title: result.title,
+      summary: result.summary,
     );
   }
 
