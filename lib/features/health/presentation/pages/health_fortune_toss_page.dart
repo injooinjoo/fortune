@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../widgets/body_part_selector.dart';
 import '../widgets/body_part_grid_selector.dart';
 import '../widgets/health_score_card.dart';
@@ -14,6 +15,9 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../presentation/providers/providers.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart' as core_fortune;
+import '../../../../domain/entities/fortune.dart';
 
 class HealthFortuneTossPage extends ConsumerStatefulWidget {
   const HealthFortuneTossPage({super.key});
@@ -991,20 +995,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
     await AdService.instance.showInterstitialAdWithCallback(
       onAdCompleted: () async {
         try {
-          final input = HealthFortuneInput(
-            userId: 'test_user_id', // 실제로는 현재 사용자 ID
-            currentCondition: _currentCondition,
-            concernedBodyParts: _selectedBodyParts.isNotEmpty ? _selectedBodyParts : null,
-          );
-
-          final result = await _healthService.generateHealthFortune(input);
-
-          setState(() {
-            _fortuneResult = result;
-          });
-
-          _goToNextStep();
-
+          await _generateHealthFortuneInternal();
         } catch (e) {
           Toast.error(context, '건강운세 생성 중 오류가 발생했습니다.');
         } finally {
@@ -1014,22 +1005,8 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
         }
       },
       onAdFailed: () async {
-        // Generate health fortune even if ad fails
         try {
-          final input = HealthFortuneInput(
-            userId: 'test_user_id', // 실제로는 현재 사용자 ID
-            currentCondition: _currentCondition,
-            concernedBodyParts: _selectedBodyParts.isNotEmpty ? _selectedBodyParts : null,
-          );
-
-          final result = await _healthService.generateHealthFortune(input);
-
-          setState(() {
-            _fortuneResult = result;
-          });
-
-          _goToNextStep();
-
+          await _generateHealthFortuneInternal();
         } catch (e) {
           Toast.error(context, '건강운세 생성 중 오류가 발생했습니다.');
         } finally {
@@ -1058,6 +1035,55 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
       0, // First page is now condition selection
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
+    );
+  }
+
+  /// UnifiedFortuneService를 사용한 건강 운세 생성
+  Future<void> _generateHealthFortuneInternal() async {
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    // UnifiedFortuneService용 input_conditions 구성 (snake_case)
+    final inputConditions = {
+      'current_condition': _currentCondition?.name ?? 'normal',
+      'concerned_body_parts': _selectedBodyParts.isNotEmpty
+          ? _selectedBodyParts.map((part) => part.name).toList()
+          : null,
+    };
+
+    final fortuneResult = await fortuneService.getFortune(
+      fortuneType: 'health',
+      dataSource: FortuneDataSource.api,
+      inputConditions: inputConditions,
+    );
+
+    // HealthFortuneResult로 변환 (기존 UI 호환)
+    final healthResult = _convertToHealthFortuneResult(fortuneResult);
+
+    setState(() {
+      _fortuneResult = healthResult;
+    });
+
+    _goToNextStep();
+  }
+
+  /// FortuneResult를 HealthFortuneResult로 변환
+  HealthFortuneResult _convertToHealthFortuneResult(core_fortune.FortuneResult fortuneResult) {
+    final fortuneData = fortuneResult.data['fortune_data'] as Map<String, dynamic>? ?? {};
+
+    return HealthFortuneResult(
+      overallScore: fortuneResult.score ?? 70,
+      summary: fortuneResult.summary['message'] as String? ?? '',
+      bodyPartScores: (fortuneData['body_part_scores'] as Map<String, dynamic>?)
+          ?.map((key, value) => MapEntry(key, (value as num).toInt())) ?? {},
+      recommendations: (fortuneData['recommendations'] as List?)
+          ?.map((r) => r.toString()).toList() ?? [],
+      warnings: (fortuneData['warnings'] as List?)
+          ?.map((w) => w.toString()).toList() ?? [],
+      detailedAnalysis: (fortuneData['detailed_analysis'] as Map<String, dynamic>?)
+          ?.map((key, value) => MapEntry(key, value.toString())) ?? {},
+      healthTips: (fortuneData['health_tips'] as List?)
+          ?.map((t) => t.toString()).toList() ?? [],
+      timestamp: fortuneResult.createdAt ?? DateTime.now(),
     );
   }
 }
