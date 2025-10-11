@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../utils/logger.dart';
 import '../models/fortune_result.dart';
 import 'fortune_generators/tarot_generator.dart';
+import 'fortune_generators/moving_generator.dart';
 
 /// 통합 운세 서비스
 ///
@@ -142,21 +143,34 @@ class UnifiedFortuneService {
     try {
       Logger.info('[UnifiedFortune] API 호출 시작: $fortuneType');
 
-      final response = await _supabase.functions.invoke(
-        'generate-fortune',
-        body: {
-          'fortune_type': fortuneType,
-          'input_conditions': inputConditions,
-        },
-      );
+      // 운세 타입별 Generator 클래스 호출
+      switch (fortuneType.toLowerCase()) {
+        case 'moving':
+          return await MovingGenerator.generate(inputConditions, _supabase);
 
-      if (response.data == null) {
-        throw Exception('API 응답 데이터 없음');
+        // TODO: 다른 API 운세 Generator 추가
+        // case 'compatibility':
+        //   return await CompatibilityGenerator.generate(inputConditions, _supabase);
+        // case 'career':
+        //   return await CareerGenerator.generate(inputConditions, _supabase);
+
+        default:
+          // 기본 Edge Function 호출 (레거시)
+          final response = await _supabase.functions.invoke(
+            'generate-fortune',
+            body: {
+              'fortune_type': fortuneType,
+              'input_conditions': inputConditions,
+            },
+          );
+
+          if (response.data == null) {
+            throw Exception('API 응답 데이터 없음');
+          }
+
+          Logger.info('[UnifiedFortune] ✅ API 호출 성공: $fortuneType');
+          return FortuneResult.fromJson(response.data);
       }
-
-      Logger.info('[UnifiedFortune] ✅ API 호출 성공: $fortuneType');
-      return FortuneResult.fromJson(response.data);
-
     } catch (error, stackTrace) {
       Logger.error('[UnifiedFortune] API 호출 실패: $fortuneType', error, stackTrace);
       throw Exception('API 호출 실패: $error');
