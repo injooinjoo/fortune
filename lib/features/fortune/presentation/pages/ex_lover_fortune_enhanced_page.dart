@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import 'dart:convert';
 
@@ -16,6 +17,8 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
 // import 'ex_lover_fortune_result_page.dart'; // Removed - unused
 
 // Step 관리를 위한 StateNotifier
@@ -1834,16 +1837,15 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     );
     
     try {
-      // Fortune API Service Provider 가져오기
-      final fortuneService = ref.read(fortuneServiceProvider);
+      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
       final user = ref.read(userProvider).value;
-      
+
       if (user == null) {
         Navigator.pop(context); // 로딩 닫기
         Toast.error(context, '로그인이 필요합니다');
         return;
       }
-      
+
       // 이미지를 Base64로 인코딩
       List<String>? encodedImages;
       if (data.useImageAnalysis && data.uploadedImages.isNotEmpty) {
@@ -1853,36 +1855,38 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           encodedImages.add(base64Encode(bytes));
         }
       }
-      
-      // API 요청 파라미터 구성
-      final params = {
+
+      // UnifiedFortuneService용 input_conditions 구성
+      final inputConditions = {
         'name': data.name,
-        'birthDate': data.birthDate?.toIso8601String(),
+        'birth_date': data.birthDate?.toIso8601String(),
         'gender': data.gender,
-        'mbtiType': data.mbti,
-        'relationshipDuration': data.relationshipDuration,
-        'breakupReason': data.breakupReason,
-        'timeSinceBreakup': data.timeSinceBreakup,
-        'currentFeeling': data.currentFeeling,
-        'stillInContact': data.stillInContact,
-        'hasUnresolvedFeelings': data.hasUnresolvedFeelings,
-        'lessonsLearned': data.lessonsLearned,
-        'currentStatus': data.currentStatus,
-        'readyForNewRelationship': data.readyForNewRelationship,
-        'useImageAnalysis': data.useImageAnalysis,
-        'uploadedImages': encodedImages,
-        'useInstagramAnalysis': data.useInstagramAnalysis,
-        'instagramLink': data.instagramLink,
-        'useStoryConsultation': data.useStoryConsultation,
-        'detailedStory': data.detailedStory,
+        'mbti_type': data.mbti,
+        'relationship_duration': data.relationshipDuration,
+        'breakup_reason': data.breakupReason,
+        'time_since_breakup': data.timeSinceBreakup,
+        'current_feeling': data.currentFeeling,
+        'still_in_contact': data.stillInContact,
+        'has_unresolved_feelings': data.hasUnresolvedFeelings,
+        'lessons_learned': data.lessonsLearned,
+        'current_status': data.currentStatus,
+        'ready_for_new_relationship': data.readyForNewRelationship,
+        'use_image_analysis': data.useImageAnalysis,
+        'uploaded_images': encodedImages,
+        'use_instagram_analysis': data.useInstagramAnalysis,
+        'instagram_link': data.instagramLink,
+        'use_story_consultation': data.useStoryConsultation,
+        'detailed_story': data.detailedStory,
       };
-      
-      // API 호출
-      final fortune = await fortuneService.getFortune(
-        fortuneType: 'ex-lover-enhanced',
-        userId: user.id,
-        params: params,
+
+      // UnifiedFortuneService로 운세 생성
+      final fortuneResult = await fortuneService.getFortune(
+        fortuneType: 'ex_lover',
+        dataSource: FortuneDataSource.api,
+        inputConditions: inputConditions,
       );
+
+      final fortune = _convertToFortune(fortuneResult);
       
       Navigator.pop(context); // 로딩 닫기
       
@@ -2086,6 +2090,23 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           ],
         );
       },
+    );
+  }
+
+  /// FortuneResult를 Fortune 엔티티로 변환
+  Fortune _convertToFortune(FortuneResult fortuneResult) {
+    return Fortune(
+      id: fortuneResult.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      fortuneType: 'ex-lover',
+      title: fortuneResult.title,
+      content: fortuneResult.data['content'] as String? ?? '',
+      summary: fortuneResult.summary['message'] as String? ?? '',
+      score: fortuneResult.score,
+      fortuneData: fortuneResult.data,
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
+      lastViewedAt: fortuneResult.lastViewedAt,
+      viewCount: fortuneResult.viewCount ?? 0,
     );
   }
 }

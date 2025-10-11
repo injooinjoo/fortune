@@ -7,6 +7,7 @@ import 'fortune_generators/moving_generator.dart';
 import 'fortune_generators/time_based_generator.dart';
 import 'fortune_generators/compatibility_generator.dart';
 import 'fortune_generators/avoid_people_generator.dart';
+import 'fortune_generators/ex_lover_generator.dart';
 
 /// 통합 운세 서비스
 ///
@@ -162,6 +163,10 @@ class UnifiedFortuneService {
         case 'avoid_people':
         case 'avoid-people':
           return await AvoidPeopleGenerator.generate(inputConditions, _supabase);
+
+        case 'ex_lover':
+        case 'ex-lover':
+          return await ExLoverGenerator.generate(inputConditions, _supabase);
 
         // TODO: 다른 API 운세 Generator 추가
         // case 'career':
