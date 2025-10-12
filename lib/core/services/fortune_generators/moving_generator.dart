@@ -47,12 +47,11 @@ class MovingGenerator {
     Map<String, dynamic> inputConditions,
   ) {
     return FortuneResult(
-      fortuneType: 'moving',
+      type: 'moving',
       title: apiData['title'] as String? ?? '이사운',
       summary: apiData['summary'] as Map<String, dynamic>? ?? {},
       data: apiData['data'] as Map<String, dynamic>? ?? apiData,
       score: (apiData['score'] as num?)?.toInt() ?? 50,
-      inputConditions: inputConditions,
     );
   }
 }

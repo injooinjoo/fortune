@@ -48,13 +48,12 @@ class TimeBasedGenerator {
     Map<String, dynamic> inputConditions,
   ) {
     return FortuneResult(
-      fortuneType: 'time_based',
+      type: 'time_based',
       title: apiData['title'] as String? ?? '시간별 운세',
       summary: apiData['summary'] as Map<String, dynamic>? ?? {},
       data: apiData['data'] as Map<String, dynamic>? ?? apiData,
       score: (apiData['score'] as num?)?.toInt() ??
              (apiData['overallScore'] as num?)?.toInt() ?? 50,
-      inputConditions: inputConditions,
     );
   }
 }

@@ -50,12 +50,11 @@ class AvoidPeopleGenerator {
     Map<String, dynamic> inputConditions,
   ) {
     return FortuneResult(
-      fortuneType: 'avoid_people',
+      type: 'avoid_people',
       title: apiData['title'] as String? ?? '피해야 할 사람',
       summary: apiData['summary'] as Map<String, dynamic>? ?? {},
       data: apiData['data'] as Map<String, dynamic>? ?? apiData,
       score: (apiData['score'] as num?)?.toInt() ?? 50,
-      inputConditions: inputConditions,
     );
   }
 }

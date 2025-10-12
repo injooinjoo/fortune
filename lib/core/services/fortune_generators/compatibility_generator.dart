@@ -51,13 +51,12 @@ class CompatibilityGenerator {
     Map<String, dynamic> inputConditions,
   ) {
     return FortuneResult(
-      fortuneType: 'compatibility',
+      type: 'compatibility',
       title: apiData['title'] as String? ?? '궁합',
       summary: apiData['summary'] as Map<String, dynamic>? ?? {},
       data: apiData['data'] as Map<String, dynamic>? ?? apiData,
       score: (apiData['score'] as num?)?.toInt() ??
              (apiData['overallScore'] as num?)?.toInt() ?? 75,
-      inputConditions: inputConditions,
     );
   }
 }

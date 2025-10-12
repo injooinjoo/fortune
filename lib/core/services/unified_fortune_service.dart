@@ -100,10 +100,11 @@ class UnifiedFortuneService {
 
       final today = DateTime.now().toIso8601String().split('T')[0]; // YYYY-MM-DD
 
-      // JSONB 조건을 정규화 (키 정렬)
+      // JSONB 조건을 정규화 (키 정렬) - DB에서는 text로 캐스팅해서 비교
       final normalizedConditions = _normalizeJsonb(inputConditions);
 
       Logger.debug('[UnifiedFortune] 중복 체크 - userId: $userId, type: $fortuneType, date: $today');
+      Logger.debug('[UnifiedFortune] Normalized conditions: ${jsonEncode(normalizedConditions)}');
 
       final response = await _supabase
         .from('fortune_history')
@@ -272,8 +273,10 @@ class UnifiedFortuneService {
       final now = DateTime.now();
       final today = now.toIso8601String().split('T')[0]; // YYYY-MM-DD
 
-      // JSONB 조건을 정규화
+      // JSONB 조건을 정규화 (키 정렬)
       final normalizedConditions = _normalizeJsonb(inputConditions);
+
+      Logger.debug('[UnifiedFortune] Saving conditions: ${jsonEncode(normalizedConditions)}');
 
       final data = {
         'user_id': userId,
