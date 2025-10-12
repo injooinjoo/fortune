@@ -68,13 +68,12 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
     return Fortune(
       id: result.id ?? '',
       userId: ref.read(userProvider).value?.id ?? '',
-      type: result.fortuneType,
-      date: DateTime.now(),
+      type: result.type,
       content: result.data['content'] as String? ?? result.summary.toString(),
-      overallScore: result.score,
       createdAt: DateTime.now(),
-      title: result.title,
-      summary: result.summary,
+      overallScore: result.score,
+      summary: result.summary['message'] as String?,
+      metadata: result.data,
     );
   }
 
