@@ -1070,20 +1070,22 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
   HealthFortuneResult _convertToHealthFortuneResult(core_fortune.FortuneResult fortuneResult) {
     final fortuneData = fortuneResult.data['fortune_data'] as Map<String, dynamic>? ?? {};
 
+    // 간단한 mock 변환 (기존 UI 호환)
     return HealthFortuneResult(
+      id: fortuneResult.id ?? '',
+      userId: Supabase.instance.client.auth.currentUser?.id ?? '',
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
       overallScore: fortuneResult.score ?? 70,
-      summary: fortuneResult.summary['message'] as String? ?? '',
-      bodyPartScores: (fortuneData['body_part_scores'] as Map<String, dynamic>?)
-          ?.map((key, value) => MapEntry(key, (value as num).toInt())) ?? {},
-      recommendations: (fortuneData['recommendations'] as List?)
-          ?.map((r) => r.toString()).toList() ?? [],
-      warnings: (fortuneData['warnings'] as List?)
-          ?.map((w) => w.toString()).toList() ?? [],
-      detailedAnalysis: (fortuneData['detailed_analysis'] as Map<String, dynamic>?)
-          ?.map((key, value) => MapEntry(key, value.toString())) ?? {},
-      healthTips: (fortuneData['health_tips'] as List?)
-          ?.map((t) => t.toString()).toList() ?? [],
-      timestamp: fortuneResult.createdAt ?? DateTime.now(),
+      mainMessage: fortuneResult.summary['message'] as String? ?? '건강 상태가 양호합니다',
+      bodyPartHealthList: [], // Edge Function에서 반환된 데이터로 채워야 함
+      recommendations: [], // Edge Function에서 반환된 데이터로 채워야 함
+      avoidanceList: [],
+      timeline: const HealthTimeline(
+        morning: TimeSlotHealth(score: 70, description: '아침'),
+        afternoon: TimeSlotHealth(score: 75, description: '오후'),
+        evening: TimeSlotHealth(score: 80, description: '저녁'),
+        night: TimeSlotHealth(score: 65, description: '밤'),
+      ),
     );
   }
 }
