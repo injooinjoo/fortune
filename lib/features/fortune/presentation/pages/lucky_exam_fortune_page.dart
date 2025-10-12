@@ -802,15 +802,12 @@ extension on _LuckyExamFortunePageState {
     return Fortune(
       id: fortuneResult.id ?? '',
       userId: Supabase.instance.client.auth.currentUser?.id ?? '',
-      fortuneType: 'exam',
-      title: fortuneResult.title,
+      type: fortuneResult.type,
       content: fortuneResult.data['content'] as String? ?? '',
-      summary: fortuneResult.summary['message'] as String? ?? '',
-      score: fortuneResult.score,
-      fortuneData: fortuneResult.data,
       createdAt: fortuneResult.createdAt ?? DateTime.now(),
-      lastViewedAt: fortuneResult.lastViewedAt,
-      viewCount: fortuneResult.viewCount ?? 0,
+      overallScore: fortuneResult.score,
+      summary: fortuneResult.summary['message'] as String?,
+      metadata: fortuneResult.data,
     );
   }
 }

@@ -2098,15 +2098,12 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     return Fortune(
       id: fortuneResult.id ?? '',
       userId: ref.read(userProvider).value?.id ?? '',
-      fortuneType: 'ex-lover',
-      title: fortuneResult.title,
+      type: fortuneResult.type,
       content: fortuneResult.data['content'] as String? ?? '',
-      summary: fortuneResult.summary['message'] as String? ?? '',
-      score: fortuneResult.score,
-      fortuneData: fortuneResult.data,
       createdAt: fortuneResult.createdAt ?? DateTime.now(),
-      lastViewedAt: fortuneResult.lastViewedAt,
-      viewCount: fortuneResult.viewCount ?? 0,
+      overallScore: fortuneResult.score,
+      summary: fortuneResult.summary['message'] as String?,
+      metadata: fortuneResult.data,
     );
   }
 }
