@@ -805,8 +805,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
   }
 
   String _getCardImagePath() {
-    // Default to rider_waite deck
-    const deckPath = 'decks/rider_waite';
+    // Default to before_tarot deck
+    const deckPath = 'decks/before_tarot';
     
     if (widget.cardIndex < 22) {
       // Major Arcana

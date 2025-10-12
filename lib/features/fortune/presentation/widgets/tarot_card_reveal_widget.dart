@@ -520,8 +520,8 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
   }
 
   String _getCardImagePath(int cardIndex) {
-    // Default to rider_waite deck
-    const deckPath = 'decks/rider_waite';
+    // Default to before_tarot deck
+    const deckPath = 'decks/before_tarot';
     
     if (cardIndex < 22) {
       // Major Arcana

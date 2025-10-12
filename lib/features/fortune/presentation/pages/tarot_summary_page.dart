@@ -1057,8 +1057,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
 }
 
   String _getCardImagePath(int cardIndex) {
-    // Default to rider_waite deck
-    const deckPath = 'decks/rider_waite';
+    // Use before_tarot deck (actual images available)
+    const deckPath = 'decks/before_tarot';
     
     if (cardIndex < 22) {
       // Major Arcana

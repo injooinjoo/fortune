@@ -51,7 +51,8 @@
       "Bash(pkill:*)",
       "Bash(flutter clean:*)",
       "Bash(flutter pub:*)",
-      "Bash(for file in /Users/jacobmac/Desktop/Dev/fortune/lib/core/services/fortune_generators/{moving,time_based,compatibility,avoid_people,ex_lover}_generator.dart)"
+      "Bash(for file in /Users/jacobmac/Desktop/Dev/fortune/lib/core/services/fortune_generators/{moving,time_based,compatibility,avoid_people,ex_lover}_generator.dart)",
+      "Bash(awk:*)"
     ],
     "deny": [],
     "ask": [],

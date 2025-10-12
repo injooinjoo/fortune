@@ -1106,7 +1106,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
             TarotMetadata.majorArcana[0]!
         : TarotMetadata.majorArcana[0]!;
 
-    // Get the appropriate image path - use rider_waite deck
+    // Get the appropriate image path - use before_tarot deck
     String imagePath;
     if (selectedCardIndex != null && selectedCardIndex! < 22) {
       // Major Arcana names
@@ -1124,9 +1124,9 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         'judgement', 'world',
       ];
       imagePath =
-          'assets/images/tarot/decks/rider_waite/major/${selectedCardIndex.toString().padLeft(2, '0')}_${cardNames[selectedCardIndex!]}.jpg';
+          'assets/images/tarot/decks/before_tarot/major/${selectedCardIndex.toString().padLeft(2, '0')}_${cardNames[selectedCardIndex!]}.jpg';
     } else {
-      imagePath = 'assets/images/tarot/decks/rider_waite/major/00_fool.jpg';
+      imagePath = 'assets/images/tarot/decks/before_tarot/major/00_fool.jpg';
     }
 
     // Card design with rounded corners and shadow
@@ -1508,8 +1508,8 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
   }
 
   String _getCardImagePath(int cardIndex) {
-    // Default to rider_waite deck
-    const deckPath = 'assets/images/tarot/decks/rider_waite';
+    // Default to before_tarot deck
+    const deckPath = 'assets/images/tarot/decks/before_tarot';
 
     if (cardIndex < 22) {
       // Major Arcana names

@@ -506,7 +506,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   TarotDeckType _parseDeckType(String deckTypeStr) {
     switch (deckTypeStr.toLowerCase()) {
       case 'riderwaite':
-      case 'rider_waite':
+      case 'before_tarot':
         return TarotDeckType.riderWaite;
       case 'marseille':
       case 'ancient_italian':
