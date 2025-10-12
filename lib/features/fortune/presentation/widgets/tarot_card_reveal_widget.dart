@@ -408,55 +408,19 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
 
     return Stack(
       children: [
-        // Card image with error handling
+        // Card image
         Container(
           decoration: BoxDecoration(
             borderRadius: AppDimensions.borderRadiusMedium,
-            // 임시: 이미지 없이 그라데이션 배경만 사용
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                TossDesignSystem.purple.withValues(alpha: 0.5),
-                TossDesignSystem.bluePrimary.withValues(alpha: 0.5),
-                TossDesignSystem.purple50,
-              ],
-            ),
+            image: DecorationImage(
+              image: AssetImage('assets/images/tarot/$imagePath'),
+              fit: BoxFit.cover),
             boxShadow: [
               BoxShadow(
                 color: TossDesignSystem.black.withValues(alpha: 0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 5)),
             ],
-          ),
-          // 카드 이름 중앙에 크게 표시
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.auto_awesome,
-                  size: 48,
-                  color: TossDesignSystem.white.withValues(alpha: 0.5),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  cardInfo?.name ?? 'Tarot Card',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black54,
-                        blurRadius: 4,
-                      ),
-                    ],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
           ),
         ),
         
