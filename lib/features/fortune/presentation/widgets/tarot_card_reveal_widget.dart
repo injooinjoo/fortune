@@ -405,22 +405,56 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
   Widget _buildFrontSide() {
     final imagePath = _getCardImagePath(widget.cardIndex);
     final cardInfo = TarotMetadata.majorArcana[widget.cardIndex % 22];
-    
+
     return Stack(
       children: [
-        // Card image
+        // Card image with error handling
         Container(
           decoration: BoxDecoration(
             borderRadius: AppDimensions.borderRadiusMedium,
-            image: DecorationImage(
-              image: AssetImage('assets/images/tarot/$imagePath'),
-              fit: BoxFit.cover),
+            // 임시: 이미지 없이 그라데이션 배경만 사용
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                TossDesignSystem.purple.withValues(alpha: 0.3),
+                TossDesignSystem.blueSecondary.withValues(alpha: 0.3),
+                TossDesignSystem.bluePrimary.withValues(alpha: 0.3),
+              ],
+            ),
             boxShadow: [
               BoxShadow(
                 color: TossDesignSystem.black.withValues(alpha: 0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 5)),
             ],
+          ),
+          // 카드 이름 중앙에 크게 표시
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.auto_awesome,
+                  size: 48,
+                  color: TossDesignSystem.white.withValues(alpha: 0.5),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  cardInfo['name_kr'] ?? 'Tarot Card',
+                  style: TossTextStyles.heading2.copyWith(
+                    color: TossDesignSystem.white,
+                    shadows: [
+                      Shadow(
+                        color: TossDesignSystem.black.withValues(alpha: 0.5),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ),
         
