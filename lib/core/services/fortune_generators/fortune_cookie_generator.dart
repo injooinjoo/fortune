@@ -1,5 +1,6 @@
 import 'dart:math';
 import '../../models/fortune_result.dart';
+import '../../utils/logger.dart';
 
 /// 포춘 쿠키 운세 생성기
 ///
@@ -21,10 +22,24 @@ class FortuneCookieGenerator {
   ) async {
     final cookieType = inputConditions['cookie_type'] as String? ?? 'luck';
 
+    // 📤 로컬 생성 시작
+    Logger.info('[FortuneCookieGenerator] 🍪 포춘쿠키 생성 시작');
+    Logger.info('[FortuneCookieGenerator]   🎲 cookie_type: $cookieType');
+
     // 쿠키 타입별 메시지 풀
+    final messages = _getMessagesByType(cookieType);
+    Logger.info('[FortuneCookieGenerator]   📚 메시지 풀 크기: ${messages.length}개');
+
     final message = _generateMessage(cookieType);
     final luckyNumber = _generateLuckyNumber();
     final luckyColor = _generateLuckyColor();
+    final score = _random.nextInt(30) + 70;
+
+    Logger.info('[FortuneCookieGenerator] ✅ 포춘쿠키 생성 완료');
+    Logger.info('[FortuneCookieGenerator]   💬 메시지: $message');
+    Logger.info('[FortuneCookieGenerator]   🎯 행운의 숫자: $luckyNumber');
+    Logger.info('[FortuneCookieGenerator]   🎨 행운의 색상: $luckyColor');
+    Logger.info('[FortuneCookieGenerator]   ⭐ 점수: $score');
 
     return FortuneResult(
       type: 'fortune_cookie',
@@ -42,7 +57,7 @@ class FortuneCookieGenerator {
         'lucky_color': luckyColor,
         'emoji': _getCookieEmoji(cookieType),
       },
-      score: _random.nextInt(30) + 70, // 70-100
+      score: score,
       createdAt: DateTime.now(),
     );
   }

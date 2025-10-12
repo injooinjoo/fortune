@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
+import '../../utils/logger.dart';
 
 /// 소개팅 운세 생성기
 ///
@@ -45,38 +46,69 @@ class BlindDateGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
+    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+
+    // 📤 API 요청 준비
+    Logger.info('[BlindDateGenerator] 📤 API 요청 준비');
+    Logger.info('[BlindDateGenerator]   🌐 Edge Function: fortune-blind-date');
+    Logger.info('[BlindDateGenerator]   👤 user_id: $userId');
+    Logger.info('[BlindDateGenerator]   📅 meeting_date: ${inputConditions['meeting_date']}');
+    Logger.info('[BlindDateGenerator]   ⏰ meeting_time: ${inputConditions['meeting_time']}');
+    Logger.info('[BlindDateGenerator]   📍 meeting_type: ${inputConditions['meeting_type']}');
+    Logger.info('[BlindDateGenerator]   🤝 introducer: ${inputConditions['introducer']}');
+
     try {
+      final requestBody = {
+        'fortune_type': 'blind_date',
+        'meeting_date': inputConditions['meeting_date'],
+        'meeting_time': inputConditions['meeting_time'],
+        'meeting_type': inputConditions['meeting_type'],
+        'introducer': inputConditions['introducer'],
+        'important_qualities': inputConditions['important_qualities'],
+        'age_preference': inputConditions['age_preference'],
+        'ideal_first_date': inputConditions['ideal_first_date'],
+        'confidence': inputConditions['confidence'],
+        'concerns': inputConditions['concerns'],
+        'past_experience': inputConditions['past_experience'],
+        'is_first_blind_date': inputConditions['is_first_blind_date'],
+        'my_photos': inputConditions['my_photos'],
+        'partner_photos': inputConditions['partner_photos'],
+        'chat_content': inputConditions['chat_content'],
+        'chat_platform': inputConditions['chat_platform'],
+      };
+
+      Logger.info('[BlindDateGenerator] 📡 API 호출 중...');
+
       // Edge Function 호출
       final response = await supabase.functions.invoke(
-        'generate-fortune',
-        body: {
-          'fortune_type': 'blind_date',
-          'meeting_date': inputConditions['meeting_date'],
-          'meeting_time': inputConditions['meeting_time'],
-          'meeting_type': inputConditions['meeting_type'],
-          'introducer': inputConditions['introducer'],
-          'important_qualities': inputConditions['important_qualities'],
-          'age_preference': inputConditions['age_preference'],
-          'ideal_first_date': inputConditions['ideal_first_date'],
-          'confidence': inputConditions['confidence'],
-          'concerns': inputConditions['concerns'],
-          'past_experience': inputConditions['past_experience'],
-          'is_first_blind_date': inputConditions['is_first_blind_date'],
-          'my_photos': inputConditions['my_photos'],
-          'partner_photos': inputConditions['partner_photos'],
-          'chat_content': inputConditions['chat_content'],
-          'chat_platform': inputConditions['chat_platform'],
-        },
+        'fortune-blind-date',
+        body: requestBody,
       );
 
+      // 📥 응답 수신
+      Logger.info('[BlindDateGenerator] 📥 API 응답 수신');
+      Logger.info('[BlindDateGenerator]   ✅ Status: ${response.status}');
+
       if (response.status != 200) {
+        Logger.error('[BlindDateGenerator] ❌ API 호출 실패: ${response.data}');
         throw Exception('Failed to generate blind date fortune: ${response.data}');
       }
 
       final data = response.data as Map<String, dynamic>;
-      return _convertToFortuneResult(data, inputConditions);
-    } catch (e) {
-      throw Exception('BlindDateGenerator error: $e');
+      Logger.info('[BlindDateGenerator]   📦 Response data keys: ${data.keys.toList()}');
+
+      // 🔄 파싱
+      Logger.info('[BlindDateGenerator] 🔄 응답 데이터 파싱 중...');
+      final result = _convertToFortuneResult(data, inputConditions);
+
+      Logger.info('[BlindDateGenerator] ✅ 파싱 완료');
+      Logger.info('[BlindDateGenerator]   📝 Title: ${result.title}');
+      Logger.info('[BlindDateGenerator]   ⭐ Score: ${result.score}');
+
+      return result;
+    } catch (e, stackTrace) {
+      Logger.error('[BlindDateGenerator] ❌ 소개팅 운세 생성 실패', e, stackTrace);
+      rethrow;
     }
   }
 

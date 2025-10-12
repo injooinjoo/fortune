@@ -10,34 +10,57 @@ class TimeBasedGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
-    Logger.info('📅 [TimeBasedGenerator] Generating time-based fortune', {
-      'inputConditions': inputConditions,
-    });
+    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+
+    // 📤 API 요청 준비
+    Logger.info('[TimeBasedGenerator] 📤 API 요청 준비');
+    Logger.info('[TimeBasedGenerator]   🌐 Edge Function: fortune-daily');
+    Logger.info('[TimeBasedGenerator]   👤 user_id: $userId');
+    Logger.info('[TimeBasedGenerator]   📅 date: ${inputConditions['date']}');
+    Logger.info('[TimeBasedGenerator]   ⏰ period: ${inputConditions['period'] ?? 'daily'}');
+    Logger.info('[TimeBasedGenerator]   🎉 is_holiday: ${inputConditions['is_holiday'] ?? false}');
+    Logger.info('[TimeBasedGenerator]   🏷️ holiday_name: ${inputConditions['holiday_name']}');
 
     try {
+      final requestBody = {
+        'date': inputConditions['date'],
+        'period': inputConditions['period'] ?? 'daily',
+        'is_holiday': inputConditions['is_holiday'] ?? false,
+        'holiday_name': inputConditions['holiday_name'],
+        'special_name': inputConditions['special_name'],
+      };
+
+      Logger.info('[TimeBasedGenerator] 📡 API 호출 중...');
+
       // Edge Function 호출
       final response = await supabase.functions.invoke(
         'fortune-daily',
-        body: {
-          'date': inputConditions['date'],
-          'period': inputConditions['period'] ?? 'daily',
-          'is_holiday': inputConditions['is_holiday'] ?? false,
-          'holiday_name': inputConditions['holiday_name'],
-          'special_name': inputConditions['special_name'],
-        },
+        body: requestBody,
       );
 
+      // 📥 응답 수신
+      Logger.info('[TimeBasedGenerator] 📥 API 응답 수신');
+      Logger.info('[TimeBasedGenerator]   ✅ Status: ${response.status}');
+
       if (response.status != 200) {
+        Logger.error('[TimeBasedGenerator] ❌ API 호출 실패: status ${response.status}');
         throw Exception('Edge Function 호출 실패: ${response.status}');
       }
 
       final data = response.data as Map<String, dynamic>;
+      Logger.info('[TimeBasedGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
-      Logger.info('✅ [TimeBasedGenerator] Time-based fortune generated successfully');
+      // 🔄 파싱
+      Logger.info('[TimeBasedGenerator] 🔄 응답 데이터 파싱 중...');
+      final result = _convertToFortuneResult(data, inputConditions);
 
-      return _convertToFortuneResult(data, inputConditions);
+      Logger.info('[TimeBasedGenerator] ✅ 파싱 완료');
+      Logger.info('[TimeBasedGenerator]   📝 Title: ${result.title}');
+      Logger.info('[TimeBasedGenerator]   ⭐ Score: ${result.score}');
+
+      return result;
     } catch (e, stackTrace) {
-      Logger.error('❌ [TimeBasedGenerator] Failed to generate time-based fortune', e, stackTrace);
+      Logger.error('[TimeBasedGenerator] ❌ 시간별 운세 생성 실패', e, stackTrace);
       rethrow;
     }
   }

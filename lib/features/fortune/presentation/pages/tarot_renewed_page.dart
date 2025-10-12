@@ -464,6 +464,14 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
         );
       }).toList();
 
+      // 뽑힌 카드 로깅
+      Logger.info('[TarotPage] 🎴 뽑힌 카드 (총 ${cards.length}장):');
+      for (int i = 0; i < cards.length; i++) {
+        final card = cards[i];
+        final direction = card.isReversed ? '역방향' : '정방향';
+        Logger.info('  ${i+1}. ${card.cardNameKr} ($direction)');
+      }
+
       // TarotSpreadResult 재구성
       final result = TarotSpreadResult(
         spreadType: _selectedSpread!,

@@ -9,34 +9,57 @@ class MovingGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
-    Logger.info('🏠 [MovingGenerator] Generating moving fortune', {
-      'inputConditions': inputConditions,
-    });
+    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+
+    // 📤 API 요청 준비
+    Logger.info('[MovingGenerator] 📤 API 요청 준비');
+    Logger.info('[MovingGenerator]   🌐 Edge Function: fortune-moving');
+    Logger.info('[MovingGenerator]   👤 user_id: $userId');
+    Logger.info('[MovingGenerator]   📍 current_area: ${inputConditions['current_area']}');
+    Logger.info('[MovingGenerator]   📍 target_area: ${inputConditions['target_area']}');
+    Logger.info('[MovingGenerator]   📅 moving_period: ${inputConditions['moving_period']}');
+    Logger.info('[MovingGenerator]   🎯 purpose: ${inputConditions['purpose']}');
 
     try {
+      final requestBody = {
+        'fortune_type': 'moving',
+        'current_area': inputConditions['current_area'],
+        'target_area': inputConditions['target_area'],
+        'moving_period': inputConditions['moving_period'],
+        'purpose': inputConditions['purpose'],
+      };
+
+      Logger.info('[MovingGenerator] 📡 API 호출 중...');
+
       // Edge Function 호출
       final response = await supabase.functions.invoke(
-        'generate-fortune',
-        body: {
-          'fortune_type': 'moving',
-          'current_area': inputConditions['current_area'],
-          'target_area': inputConditions['target_area'],
-          'moving_period': inputConditions['moving_period'],
-          'purpose': inputConditions['purpose'],
-        },
+        'fortune-moving',
+        body: requestBody,
       );
 
+      // 📥 응답 수신
+      Logger.info('[MovingGenerator] 📥 API 응답 수신');
+      Logger.info('[MovingGenerator]   ✅ Status: ${response.status}');
+
       if (response.status != 200) {
+        Logger.error('[MovingGenerator] ❌ API 호출 실패: status ${response.status}');
         throw Exception('Edge Function 호출 실패: ${response.status}');
       }
 
       final data = response.data as Map<String, dynamic>;
+      Logger.info('[MovingGenerator]   📦 Response data: $data');
 
-      Logger.info('✅ [MovingGenerator] Moving fortune generated successfully');
+      // 🔄 파싱
+      Logger.info('[MovingGenerator] 🔄 응답 데이터 파싱 중...');
+      final result = _convertToFortuneResult(data, inputConditions);
 
-      return _convertToFortuneResult(data, inputConditions);
+      Logger.info('[MovingGenerator] ✅ 파싱 완료');
+      Logger.info('[MovingGenerator]   📝 Title: ${result.title}');
+      Logger.info('[MovingGenerator]   ⭐ Score: ${result.score}');
+
+      return result;
     } catch (e, stackTrace) {
-      Logger.error('❌ [MovingGenerator] Failed to generate moving fortune', e, stackTrace);
+      Logger.error('[MovingGenerator] ❌ 이사운 생성 실패', e, stackTrace);
       rethrow;
     }
   }

@@ -52,7 +52,10 @@
       "Bash(flutter clean:*)",
       "Bash(flutter pub:*)",
       "Bash(for file in /Users/jacobmac/Desktop/Dev/fortune/lib/core/services/fortune_generators/{moving,time_based,compatibility,avoid_people,ex_lover}_generator.dart)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== $file_generator.dart ===\" head -50 /Users/jacobmac/Desktop/Dev/fortune/lib/core/services/fortune_generators/$file_generator.dart)",
+      "Bash(supabase functions deploy:*)"
     ],
     "deny": [],
     "ask": [],

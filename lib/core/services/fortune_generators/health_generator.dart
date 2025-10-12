@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
+import '../../utils/logger.dart';
 
 /// 건강 운세 생성기
 ///
@@ -22,25 +23,54 @@ class HealthGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
+    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+
+    // 📤 API 요청 준비
+    Logger.info('[HealthGenerator] 📤 API 요청 준비');
+    Logger.info('[HealthGenerator]   🌐 Edge Function: fortune-health');
+    Logger.info('[HealthGenerator]   👤 user_id: $userId');
+    Logger.info('[HealthGenerator]   💊 current_condition: ${inputConditions['current_condition']}');
+    Logger.info('[HealthGenerator]   🩺 concerned_body_parts: ${inputConditions['concerned_body_parts']}');
+
     try {
+      final requestBody = {
+        'fortune_type': 'health',
+        'current_condition': inputConditions['current_condition'],
+        'concerned_body_parts': inputConditions['concerned_body_parts'],
+      };
+
+      Logger.info('[HealthGenerator] 📡 API 호출 중...');
+
       // Edge Function 호출
       final response = await supabase.functions.invoke(
-        'generate-fortune',
-        body: {
-          'fortune_type': 'health',
-          'current_condition': inputConditions['current_condition'],
-          'concerned_body_parts': inputConditions['concerned_body_parts'],
-        },
+        'fortune-health',
+        body: requestBody,
       );
 
+      // 📥 응답 수신
+      Logger.info('[HealthGenerator] 📥 API 응답 수신');
+      Logger.info('[HealthGenerator]   ✅ Status: ${response.status}');
+
       if (response.status != 200) {
+        Logger.error('[HealthGenerator] ❌ API 호출 실패: ${response.data}');
         throw Exception('Failed to generate health fortune: ${response.data}');
       }
 
       final data = response.data as Map<String, dynamic>;
-      return _convertToFortuneResult(data, inputConditions);
-    } catch (e) {
-      throw Exception('HealthGenerator error: $e');
+      Logger.info('[HealthGenerator]   📦 Response data keys: ${data.keys.toList()}');
+
+      // 🔄 파싱
+      Logger.info('[HealthGenerator] 🔄 응답 데이터 파싱 중...');
+      final result = _convertToFortuneResult(data, inputConditions);
+
+      Logger.info('[HealthGenerator] ✅ 파싱 완료');
+      Logger.info('[HealthGenerator]   📝 Title: ${result.title}');
+      Logger.info('[HealthGenerator]   ⭐ Score: ${result.score}');
+
+      return result;
+    } catch (e, stackTrace) {
+      Logger.error('[HealthGenerator] ❌ 건강운 생성 실패', e, stackTrace);
+      rethrow;
     }
   }
 

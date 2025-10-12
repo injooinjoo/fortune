@@ -10,37 +10,57 @@ class CompatibilityGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
-    Logger.info('💑 [CompatibilityGenerator] Generating compatibility fortune', {
-      'inputConditions': inputConditions,
-    });
+    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+    final person1 = inputConditions['person1'] as Map<String, dynamic>;
+    final person2 = inputConditions['person2'] as Map<String, dynamic>;
+
+    // 📤 API 요청 준비
+    Logger.info('[CompatibilityGenerator] 📤 API 요청 준비');
+    Logger.info('[CompatibilityGenerator]   🌐 Edge Function: fortune-compatibility');
+    Logger.info('[CompatibilityGenerator]   👤 user_id: $userId');
+    Logger.info('[CompatibilityGenerator]   👤 person1: ${person1['name']} (${person1['birth_date']})');
+    Logger.info('[CompatibilityGenerator]   👤 person2: ${person2['name']} (${person2['birth_date']})');
 
     try {
-      final person1 = inputConditions['person1'] as Map<String, dynamic>;
-      final person2 = inputConditions['person2'] as Map<String, dynamic>;
+      final requestBody = {
+        'fortune_type': 'compatibility',
+        'person1_name': person1['name'],
+        'person1_birth_date': person1['birth_date'],
+        'person2_name': person2['name'],
+        'person2_birth_date': person2['birth_date'],
+      };
+
+      Logger.info('[CompatibilityGenerator] 📡 API 호출 중...');
 
       // Edge Function 호출
       final response = await supabase.functions.invoke(
-        'generate-fortune',
-        body: {
-          'fortune_type': 'compatibility',
-          'person1_name': person1['name'],
-          'person1_birth_date': person1['birth_date'],
-          'person2_name': person2['name'],
-          'person2_birth_date': person2['birth_date'],
-        },
+        'fortune-compatibility',
+        body: requestBody,
       );
 
+      // 📥 응답 수신
+      Logger.info('[CompatibilityGenerator] 📥 API 응답 수신');
+      Logger.info('[CompatibilityGenerator]   ✅ Status: ${response.status}');
+
       if (response.status != 200) {
+        Logger.error('[CompatibilityGenerator] ❌ API 호출 실패: status ${response.status}');
         throw Exception('Edge Function 호출 실패: ${response.status}');
       }
 
       final data = response.data as Map<String, dynamic>;
+      Logger.info('[CompatibilityGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
-      Logger.info('✅ [CompatibilityGenerator] Compatibility fortune generated successfully');
+      // 🔄 파싱
+      Logger.info('[CompatibilityGenerator] 🔄 응답 데이터 파싱 중...');
+      final result = _convertToFortuneResult(data, inputConditions);
 
-      return _convertToFortuneResult(data, inputConditions);
+      Logger.info('[CompatibilityGenerator] ✅ 파싱 완료');
+      Logger.info('[CompatibilityGenerator]   📝 Title: ${result.title}');
+      Logger.info('[CompatibilityGenerator]   ⭐ Score: ${result.score}');
+
+      return result;
     } catch (e, stackTrace) {
-      Logger.error('❌ [CompatibilityGenerator] Failed to generate compatibility fortune', e, stackTrace);
+      Logger.error('[CompatibilityGenerator] ❌ 궁합 운세 생성 실패', e, stackTrace);
       rethrow;
     }
   }

@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
+import '../../utils/logger.dart';
 
 /// 시험 운세 생성기
 ///
@@ -23,28 +24,59 @@ class ExamGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
+    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+
+    // 📤 API 요청 준비
+    Logger.info('[ExamGenerator] 📤 API 요청 준비');
+    Logger.info('[ExamGenerator]   🌐 Edge Function: generate-fortune');
+    Logger.info('[ExamGenerator]   👤 user_id: $userId');
+    Logger.info('[ExamGenerator]   📝 exam_type: ${inputConditions['exam_type']}');
+    Logger.info('[ExamGenerator]   📅 exam_date: ${inputConditions['exam_date']}');
+    Logger.info('[ExamGenerator]   📚 study_period: ${inputConditions['study_period']}');
+    Logger.info('[ExamGenerator]   💪 confidence: ${inputConditions['confidence']}');
+
     try {
+      final requestBody = {
+        'fortune_type': 'exam',
+        'exam_type': inputConditions['exam_type'],
+        'exam_date': inputConditions['exam_date'],
+        'study_period': inputConditions['study_period'],
+        'confidence': inputConditions['confidence'],
+        'difficulty': inputConditions['difficulty'],
+      };
+
+      Logger.info('[ExamGenerator] 📡 API 호출 중...');
+
       // Edge Function 호출
       final response = await supabase.functions.invoke(
         'generate-fortune',
-        body: {
-          'fortune_type': 'exam',
-          'exam_type': inputConditions['exam_type'],
-          'exam_date': inputConditions['exam_date'],
-          'study_period': inputConditions['study_period'],
-          'confidence': inputConditions['confidence'],
-          'difficulty': inputConditions['difficulty'],
-        },
+        body: requestBody,
       );
 
+      // 📥 응답 수신
+      Logger.info('[ExamGenerator] 📥 API 응답 수신');
+      Logger.info('[ExamGenerator]   ✅ Status: ${response.status}');
+
       if (response.status != 200) {
+        Logger.error('[ExamGenerator] ❌ API 호출 실패: ${response.data}');
         throw Exception('Failed to generate exam fortune: ${response.data}');
       }
 
       final data = response.data as Map<String, dynamic>;
-      return _convertToFortuneResult(data, inputConditions);
-    } catch (e) {
-      throw Exception('ExamGenerator error: $e');
+      Logger.info('[ExamGenerator]   📦 Response data keys: ${data.keys.toList()}');
+
+      // 🔄 파싱
+      Logger.info('[ExamGenerator] 🔄 응답 데이터 파싱 중...');
+      final result = _convertToFortuneResult(data, inputConditions);
+
+      Logger.info('[ExamGenerator] ✅ 파싱 완료');
+      Logger.info('[ExamGenerator]   📝 Title: ${result.title}');
+      Logger.info('[ExamGenerator]   ⭐ Score: ${result.score}');
+
+      return result;
+    } catch (e, stackTrace) {
+      Logger.error('[ExamGenerator] ❌ 시험운 생성 실패', e, stackTrace);
+      rethrow;
     }
   }
 

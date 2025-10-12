@@ -10,38 +10,60 @@ class ExLoverGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
-    Logger.info('💔 [ExLoverGenerator] Generating ex-lover fortune', {
-      'inputConditions': inputConditions,
-    });
+    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+
+    // 📤 API 요청 준비
+    Logger.info('[ExLoverGenerator] 📤 API 요청 준비');
+    Logger.info('[ExLoverGenerator]   🌐 Edge Function: fortune-ex-lover');
+    Logger.info('[ExLoverGenerator]   👤 user_id: $userId');
+    Logger.info('[ExLoverGenerator]   💔 name: ${inputConditions['name']}');
+    Logger.info('[ExLoverGenerator]   📅 relationship_duration: ${inputConditions['relationship_duration']}');
+    Logger.info('[ExLoverGenerator]   💭 breakup_reason: ${inputConditions['breakup_reason']}');
 
     try {
+      final requestBody = {
+        'fortune_type': 'ex_lover',
+        'name': inputConditions['name'],
+        'birth_date': inputConditions['birth_date'],
+        'gender': inputConditions['gender'],
+        'mbti': inputConditions['mbti'],
+        'relationship_duration': inputConditions['relationship_duration'],
+        'breakup_reason': inputConditions['breakup_reason'],
+        'time_since_breakup': inputConditions['time_since_breakup'],
+        'current_feeling': inputConditions['current_feeling'],
+        'still_in_contact': inputConditions['still_in_contact'],
+        'has_unresolved_feelings': inputConditions['has_unresolved_feelings'],
+      };
+
+      Logger.info('[ExLoverGenerator] 📡 API 호출 중...');
+
       // Edge Function 호출
       final response = await supabase.functions.invoke(
-        'generate-fortune',
-        body: {
-          'fortune_type': 'ex_lover',
-          'name': inputConditions['name'],
-          'birth_date': inputConditions['birth_date'],
-          'gender': inputConditions['gender'],
-          'mbti': inputConditions['mbti'],
-          'relationship_duration': inputConditions['relationship_duration'],
-          'breakup_reason': inputConditions['breakup_reason'],
-          'time_since_breakup': inputConditions['time_since_breakup'],
-          'current_feeling': inputConditions['current_feeling'],
-          'still_in_contact': inputConditions['still_in_contact'],
-          'has_unresolved_feelings': inputConditions['has_unresolved_feelings'],
-        },
+        'fortune-ex-lover',
+        body: requestBody,
       );
 
+      // 📥 응답 수신
+      Logger.info('[ExLoverGenerator] 📥 API 응답 수신');
+      Logger.info('[ExLoverGenerator]   ✅ Status: ${response.status}');
+
       if (response.status != 200) {
+        Logger.error('[ExLoverGenerator] ❌ API 호출 실패: status ${response.status}');
         throw Exception('Edge Function 호출 실패: ${response.status}');
       }
 
       final data = response.data as Map<String, dynamic>;
+      Logger.info('[ExLoverGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
-      Logger.info('✅ [ExLoverGenerator] Ex-lover fortune generated successfully');
+      // 🔄 파싱
+      Logger.info('[ExLoverGenerator] 🔄 응답 데이터 파싱 중...');
+      final result = _convertToFortuneResult(data, inputConditions);
 
-      return _convertToFortuneResult(data, inputConditions);
+      Logger.info('[ExLoverGenerator] ✅ 파싱 완료');
+      Logger.info('[ExLoverGenerator]   📝 Title: ${result.title}');
+      Logger.info('[ExLoverGenerator]   ⭐ Score: ${result.score}');
+
+      return result;
     } catch (e, stackTrace) {
       Logger.error('❌ [ExLoverGenerator] Failed to generate ex-lover fortune', e, stackTrace);
       rethrow;

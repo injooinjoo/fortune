@@ -41,39 +41,59 @@ class UnifiedFortuneService {
     required Map<String, dynamic> inputConditions,
   }) async {
     try {
+      final userId = _supabase.auth.currentUser?.id ?? 'unknown';
+      final today = DateTime.now().toIso8601String().split('T')[0];
+
+      // 🎯 운세 요청 시작
+      Logger.info('[$fortuneType] 🎯 운세 요청 시작');
+      Logger.info('[$fortuneType] 📅 날짜: $today');
+      Logger.info('[$fortuneType] 👤 사용자: $userId');
+      Logger.info('[$fortuneType] 📋 입력 조건: ${jsonEncode(inputConditions)}');
+      Logger.info('[$fortuneType] 📡 데이터 소스: $dataSource');
+
       // Step 1: 기존 결과 확인 (중복 방지)
-      Logger.info('[UnifiedFortune] 기존 결과 확인: $fortuneType');
+      Logger.info('[$fortuneType] 🔍 DB 기존 결과 확인 중...');
       final existing = await checkExistingFortune(
         fortuneType: fortuneType,
         inputConditions: inputConditions,
       );
 
       if (existing != null) {
-        Logger.info('[UnifiedFortune] ✅ 기존 결과 반환: $fortuneType (ID: ${existing.id})');
+        Logger.info('[$fortuneType] ✅ 기존 결과 발견 → 재사용');
+        Logger.info('[$fortuneType] 🆔 ID: ${existing.id}');
+        Logger.info('[$fortuneType] 📝 제목: ${existing.title}');
+        Logger.info('[$fortuneType] ⭐ 점수: ${existing.score}');
         return existing;
       }
 
       // Step 2: 새로 생성
-      Logger.info('[UnifiedFortune] 새 운세 생성 시작: $fortuneType (Source: $dataSource)');
+      Logger.info('[$fortuneType] ❌ DB에 없음 → 새로 생성');
+      Logger.info('[$fortuneType] 📡 Generator 호출 시작');
       final result = await generateFortune(
         fortuneType: fortuneType,
         dataSource: dataSource,
         inputConditions: inputConditions,
       );
 
+      Logger.info('[$fortuneType] ✅ 운세 생성 완료');
+      Logger.info('[$fortuneType] 🆔 ID: ${result.id}');
+      Logger.info('[$fortuneType] 📝 제목: ${result.title}');
+      Logger.info('[$fortuneType] 📊 데이터 크기: ${result.data.toString().length}자');
+      Logger.info('[$fortuneType] ⭐ 점수: ${result.score}');
+
       // Step 3: DB 저장
-      Logger.info('[UnifiedFortune] DB 저장 시작: $fortuneType');
+      Logger.info('[$fortuneType] 💾 DB 저장 시작');
       await saveFortune(
         result: result,
         fortuneType: fortuneType,
         inputConditions: inputConditions,
       );
+      Logger.info('[$fortuneType] ✅ DB 저장 완료');
 
-      Logger.info('[UnifiedFortune] ✅ 새 결과 생성 및 저장 완료: $fortuneType (Score: ${result.score})');
       return result;
 
     } catch (error, stackTrace) {
-      Logger.error('[UnifiedFortune] 운세 조회 실패: $fortuneType', error, stackTrace);
+      Logger.error('[$fortuneType] ❌ 운세 조회 실패', error, stackTrace);
       rethrow;
     }
   }

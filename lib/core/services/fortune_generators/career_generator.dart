@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
+import '../../utils/logger.dart';
 
 /// 커리어 운세 생성기
 ///
@@ -39,51 +40,80 @@ class CareerGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
+    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+    final careerType = inputConditions['career_type'] as String? ?? 'career-future';
+
+    // 📤 API 요청 준비
+    Logger.info('[CareerGenerator] 📤 API 요청 준비');
+    Logger.info('[CareerGenerator]   🌐 Edge Function: fortune-career');
+    Logger.info('[CareerGenerator]   👤 user_id: $userId');
+    Logger.info('[CareerGenerator]   💼 career_type: $careerType');
+    Logger.info('[CareerGenerator]   🎯 goal: ${inputConditions['goal']}');
+    Logger.info('[CareerGenerator]   📅 time_horizon: ${inputConditions['time_horizon']}');
+
     try {
-      final careerType = inputConditions['career_type'] as String? ?? 'career-future';
+      final requestBody = {
+        'fortune_type': careerType.replaceAll('-', '_'),
+        'current_role': inputConditions['current_role'],
+        'goal': inputConditions['goal'],
+        'time_horizon': inputConditions['time_horizon'],
+        'career_path': inputConditions['career_path'],
+        'selected_skills': inputConditions['selected_skills'],
+        // career-seeker 관련
+        if (inputConditions['desired_industry'] != null)
+          'desired_industry': inputConditions['desired_industry'],
+        if (inputConditions['experience_level'] != null)
+          'experience_level': inputConditions['experience_level'],
+        if (inputConditions['education'] != null)
+          'education': inputConditions['education'],
+        // career-change 관련
+        if (inputConditions['current_industry'] != null)
+          'current_industry': inputConditions['current_industry'],
+        if (inputConditions['target_industry'] != null)
+          'target_industry': inputConditions['target_industry'],
+        if (inputConditions['change_reason'] != null)
+          'change_reason': inputConditions['change_reason'],
+        // startup-career 관련
+        if (inputConditions['startup_stage'] != null)
+          'startup_stage': inputConditions['startup_stage'],
+        if (inputConditions['team_size'] != null)
+          'team_size': inputConditions['team_size'],
+        if (inputConditions['funding_status'] != null)
+          'funding_status': inputConditions['funding_status'],
+      };
+
+      Logger.info('[CareerGenerator] 📡 API 호출 중...');
 
       // Edge Function 호출
       final response = await supabase.functions.invoke(
-        'generate-fortune',
-        body: {
-          'fortune_type': careerType.replaceAll('-', '_'),
-          'current_role': inputConditions['current_role'],
-          'goal': inputConditions['goal'],
-          'time_horizon': inputConditions['time_horizon'],
-          'career_path': inputConditions['career_path'],
-          'selected_skills': inputConditions['selected_skills'],
-          // career-seeker 관련
-          if (inputConditions['desired_industry'] != null)
-            'desired_industry': inputConditions['desired_industry'],
-          if (inputConditions['experience_level'] != null)
-            'experience_level': inputConditions['experience_level'],
-          if (inputConditions['education'] != null)
-            'education': inputConditions['education'],
-          // career-change 관련
-          if (inputConditions['current_industry'] != null)
-            'current_industry': inputConditions['current_industry'],
-          if (inputConditions['target_industry'] != null)
-            'target_industry': inputConditions['target_industry'],
-          if (inputConditions['change_reason'] != null)
-            'change_reason': inputConditions['change_reason'],
-          // startup-career 관련
-          if (inputConditions['startup_stage'] != null)
-            'startup_stage': inputConditions['startup_stage'],
-          if (inputConditions['team_size'] != null)
-            'team_size': inputConditions['team_size'],
-          if (inputConditions['funding_status'] != null)
-            'funding_status': inputConditions['funding_status'],
-        },
+        'fortune-career',
+        body: requestBody,
       );
 
+      // 📥 응답 수신
+      Logger.info('[CareerGenerator] 📥 API 응답 수신');
+      Logger.info('[CareerGenerator]   ✅ Status: ${response.status}');
+
       if (response.status != 200) {
+        Logger.error('[CareerGenerator] ❌ API 호출 실패: ${response.data}');
         throw Exception('Failed to generate career fortune: ${response.data}');
       }
 
       final data = response.data as Map<String, dynamic>;
-      return _convertToFortuneResult(data, inputConditions, careerType);
-    } catch (e) {
-      throw Exception('CareerGenerator error: $e');
+      Logger.info('[CareerGenerator]   📦 Response data keys: ${data.keys.toList()}');
+
+      // 🔄 파싱
+      Logger.info('[CareerGenerator] 🔄 응답 데이터 파싱 중...');
+      final result = _convertToFortuneResult(data, inputConditions, careerType);
+
+      Logger.info('[CareerGenerator] ✅ 파싱 완료');
+      Logger.info('[CareerGenerator]   📝 Title: ${result.title}');
+      Logger.info('[CareerGenerator]   ⭐ Score: ${result.score}');
+
+      return result;
+    } catch (e, stackTrace) {
+      Logger.error('[CareerGenerator] ❌ 직업운 생성 실패', e, stackTrace);
+      rethrow;
     }
   }
 

@@ -9,37 +9,60 @@ class AvoidPeopleGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
-    Logger.info('⚠️ [AvoidPeopleGenerator] Generating avoid people fortune', {
-      'inputConditions': inputConditions,
-    });
+    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+
+    // 📤 API 요청 준비
+    Logger.info('[AvoidPeopleGenerator] 📤 API 요청 준비');
+    Logger.info('[AvoidPeopleGenerator]   🌐 Edge Function: fortune-avoid-people');
+    Logger.info('[AvoidPeopleGenerator]   👤 user_id: $userId');
+    Logger.info('[AvoidPeopleGenerator]   🏢 environment: ${inputConditions['environment']}');
+    Logger.info('[AvoidPeopleGenerator]   📅 important_schedule: ${inputConditions['important_schedule']}');
+    Logger.info('[AvoidPeopleGenerator]   😊 mood_level: ${inputConditions['mood_level']}');
+    Logger.info('[AvoidPeopleGenerator]   😰 stress_level: ${inputConditions['stress_level']}');
 
     try {
+      final requestBody = {
+        'environment': inputConditions['environment'],
+        'important_schedule': inputConditions['important_schedule'],
+        'mood_level': inputConditions['mood_level'],
+        'stress_level': inputConditions['stress_level'],
+        'social_fatigue': inputConditions['social_fatigue'],
+        'has_important_decision': inputConditions['has_important_decision'],
+        'has_sensitive_conversation': inputConditions['has_sensitive_conversation'],
+        'has_team_project': inputConditions['has_team_project'],
+      };
+
+      Logger.info('[AvoidPeopleGenerator] 📡 API 호출 중...');
+
       // Edge Function 호출
       final response = await supabase.functions.invoke(
         'fortune-avoid-people',
-        body: {
-          'environment': inputConditions['environment'],
-          'important_schedule': inputConditions['important_schedule'],
-          'mood_level': inputConditions['mood_level'],
-          'stress_level': inputConditions['stress_level'],
-          'social_fatigue': inputConditions['social_fatigue'],
-          'has_important_decision': inputConditions['has_important_decision'],
-          'has_sensitive_conversation': inputConditions['has_sensitive_conversation'],
-          'has_team_project': inputConditions['has_team_project'],
-        },
+        body: requestBody,
       );
 
+      // 📥 응답 수신
+      Logger.info('[AvoidPeopleGenerator] 📥 API 응답 수신');
+      Logger.info('[AvoidPeopleGenerator]   ✅ Status: ${response.status}');
+
       if (response.status != 200) {
+        Logger.error('[AvoidPeopleGenerator] ❌ API 호출 실패: status ${response.status}');
         throw Exception('Edge Function 호출 실패: ${response.status}');
       }
 
       final data = response.data as Map<String, dynamic>;
+      Logger.info('[AvoidPeopleGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
-      Logger.info('✅ [AvoidPeopleGenerator] Avoid people fortune generated successfully');
+      // 🔄 파싱
+      Logger.info('[AvoidPeopleGenerator] 🔄 응답 데이터 파싱 중...');
+      final result = _convertToFortuneResult(data, inputConditions);
 
-      return _convertToFortuneResult(data, inputConditions);
+      Logger.info('[AvoidPeopleGenerator] ✅ 파싱 완료');
+      Logger.info('[AvoidPeopleGenerator]   📝 Title: ${result.title}');
+      Logger.info('[AvoidPeopleGenerator]   ⭐ Score: ${result.score}');
+
+      return result;
     } catch (e, stackTrace) {
-      Logger.error('❌ [AvoidPeopleGenerator] Failed to generate avoid people fortune', e, stackTrace);
+      Logger.error('[AvoidPeopleGenerator] ❌ 피해야할사람 운세 생성 실패', e, stackTrace);
       rethrow;
     }
   }

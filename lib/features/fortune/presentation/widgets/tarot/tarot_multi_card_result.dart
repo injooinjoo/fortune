@@ -4,6 +4,7 @@ import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../services/ad_service.dart';
+import 'tarot_card_detail_modal.dart';
 
 class TarotMultiCardResult extends ConsumerStatefulWidget {
   final TarotSpreadResult result;
@@ -305,25 +306,35 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
     double width = large ? 180 : (small ? 80 : 100);
     double height = large ? 260 : (small ? 120 : 145);
 
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Stack(
-          children: [
-            // 카드 이미지 (역방향일 경우 180도 회전)
-            Container(
+    return GestureDetector(
+      onTap: () {
+        // 카드 상세 모달 열기
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => TarotCardDetailModal(card: card),
+        );
+      },
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: TossDesignSystem.black.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            children: [
+              // 카드 이미지 (역방향일 경우 180도 회전)
+              Container(
               color: TossDesignSystem.white,
               child: Center(
                 child: AspectRatio(
@@ -404,7 +415,8 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                   ),
                 ),
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );
