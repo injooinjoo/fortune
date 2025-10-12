@@ -322,27 +322,30 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
         borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
-            // 카드 이미지 (BoxFit.contain으로 변경하여 짤림 방지)
+            // 카드 이미지 (역방향일 경우 180도 회전)
             Container(
               color: TossDesignSystem.white,
               child: Center(
                 child: AspectRatio(
                   aspectRatio: 0.65, // 타로 카드 비율
-                  child: Image.asset(
-                    card.imagePath,
-                    fit: BoxFit.contain, // cover → contain으로 변경
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: const Color(0xFFF5F5F5),
-                        child: const Center(
-                          child: Icon(
-                            Icons.image_not_supported,
-                            color: Color(0xFF8B95A1),
-                            size: 30,
+                  child: Transform.rotate(
+                    angle: card.isReversed ? 3.14159 : 0, // 180도 회전 (π 라디안)
+                    child: Image.asset(
+                      card.imagePath,
+                      fit: BoxFit.contain, // cover → contain으로 변경
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: const Color(0xFFF5F5F5),
+                          child: const Center(
+                            child: Icon(
+                              Icons.image_not_supported,
+                              color: Color(0xFF8B95A1),
+                              size: 30,
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
