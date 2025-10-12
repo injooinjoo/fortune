@@ -106,22 +106,55 @@ class UnifiedFortuneService {
       Logger.debug('[UnifiedFortune] 중복 체크 - userId: $userId, type: $fortuneType, date: $today');
       Logger.debug('[UnifiedFortune] Normalized conditions: ${jsonEncode(normalizedConditions)}');
 
-      final response = await _supabase
+      // 잠깐! input_conditions 비교를 빼고 일단 모든 레코드를 가져온 후 메모리에서 비교
+      // 이유: DB에 잘못된 JSONB 데이터가 있으면 쿼리 자체가 실패함
+      final results = await _supabase
         .from('fortune_history')
         .select('*, id')
         .eq('user_id', userId)
         .eq('fortune_type', fortuneType)
-        .eq('fortune_date', today)
-        .eq('input_conditions', normalizedConditions)
-        .maybeSingle();
+        .eq('fortune_date', today);
 
-      if (response == null) {
+      if (results == null || (results is List && results.isEmpty)) {
         Logger.debug('[UnifiedFortune] 기존 결과 없음');
         return null;
       }
 
-      Logger.debug('[UnifiedFortune] 기존 결과 발견: ${response['id']}');
-      return FortuneResult.fromJson(response);
+      // 결과가 여러 개일 수 있으므로 input_conditions를 메모리에서 비교
+      final targetJson = jsonEncode(normalizedConditions);
+
+      if (results is List) {
+        for (final record in results) {
+          try {
+            final recordConditions = record['input_conditions'];
+            final recordJson = jsonEncode(_normalizeJsonb(recordConditions));
+
+            if (recordJson == targetJson) {
+              Logger.debug('[UnifiedFortune] 기존 결과 발견: ${record['id']}');
+              return FortuneResult.fromJson(record);
+            }
+          } catch (e) {
+            Logger.debug('[UnifiedFortune] 레코드 비교 실패 (건너뜀): $e');
+            continue;
+          }
+        }
+      } else {
+        // 단일 결과
+        try {
+          final recordConditions = results['input_conditions'];
+          final recordJson = jsonEncode(_normalizeJsonb(recordConditions));
+
+          if (recordJson == targetJson) {
+            Logger.debug('[UnifiedFortune] 기존 결과 발견: ${results['id']}');
+            return FortuneResult.fromJson(results);
+          }
+        } catch (e) {
+          Logger.debug('[UnifiedFortune] 레코드 비교 실패: $e');
+        }
+      }
+
+      Logger.debug('[UnifiedFortune] 조건 일치하는 기존 결과 없음');
+      return null;
 
     } catch (error, stackTrace) {
       Logger.warning('[UnifiedFortune] 기존 결과 확인 실패 (무시하고 계속): $error', error);
