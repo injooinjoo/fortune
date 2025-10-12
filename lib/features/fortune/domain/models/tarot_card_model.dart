@@ -114,18 +114,14 @@ class TarotCard {
   });
 
   /// 카드 이미지 경로 생성
+  /// 기존 flat 구조 사용: assets/images/tarot/major_00.jpg, cups_01.jpg 등
   String get imagePath {
-    final basePath = 'assets/images/tarot/decks/${deckType.path}/${category.path}/';
-
     if (category == CardCategory.major) {
-      // 메이저 아르카나: 00_fool.jpg, 01_magician.jpg 등
-      final fileName = '${number.toString().padLeft(2, '0')}_${_getCardFileName()}.jpg';
-      return basePath + fileName;
+      // 메이저 아르카나: major_00.jpg, major_01.jpg 등
+      return 'assets/images/tarot/major_${number.toString().padLeft(2, '0')}.jpg';
     } else {
-      // 마이너 아르카나: 01_of_cups.jpg, 02_of_cups.jpg, ... 14_of_pentacles.jpg
-      final suitName = category.path; // cups, wands, swords, pentacles
-      final fileName = '${number.toString().padLeft(2, '0')}_of_$suitName.jpg';
-      return basePath + fileName;
+      // 마이너 아르카나: cups_01.jpg, wands_02.jpg, swords_03.jpg, pentacles_04.jpg 등
+      return 'assets/images/tarot/${category.path}_${number.toString().padLeft(2, '0')}.jpg';
     }
   }
 
