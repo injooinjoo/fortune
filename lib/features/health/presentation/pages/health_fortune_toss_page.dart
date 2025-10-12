@@ -1081,10 +1081,21 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
       recommendations: [], // Edge Function에서 반환된 데이터로 채워야 함
       avoidanceList: [],
       timeline: const HealthTimeline(
-        morning: TimeSlotHealth(score: 70, description: '아침'),
-        afternoon: TimeSlotHealth(score: 75, description: '오후'),
-        evening: TimeSlotHealth(score: 80, description: '저녁'),
-        night: TimeSlotHealth(score: 65, description: '밤'),
+        morning: HealthTimeSlot(
+          timeLabel: '오전',
+          conditionScore: 70,
+          description: '오전 컨디션 양호',
+        ),
+        afternoon: HealthTimeSlot(
+          timeLabel: '오후',
+          conditionScore: 75,
+          description: '오후 컨디션 좋음',
+        ),
+        evening: HealthTimeSlot(
+          timeLabel: '저녁',
+          conditionScore: 80,
+          description: '저녁 컨디션 최고',
+        ),
       ),
     );
   }
