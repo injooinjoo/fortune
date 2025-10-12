@@ -417,9 +417,9 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                TossDesignSystem.purple.withValues(alpha: 0.3),
-                TossDesignSystem.blueSecondary.withValues(alpha: 0.3),
-                TossDesignSystem.bluePrimary.withValues(alpha: 0.3),
+                TossDesignSystem.purple.withValues(alpha: 0.5),
+                TossDesignSystem.bluePrimary.withValues(alpha: 0.5),
+                TossDesignSystem.purple50,
               ],
             ),
             boxShadow: [
