@@ -442,11 +442,13 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 const SizedBox(height: 16),
                 Text(
                   cardInfo?.name ?? 'Tarot Card',
-                  style: TossTextStyles.heading2.copyWith(
-                    color: TossDesignSystem.white,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                     shadows: [
                       Shadow(
-                        color: TossDesignSystem.black.withValues(alpha: 0.5),
+                        color: Colors.black54,
                         blurRadius: 4,
                       ),
                     ],
