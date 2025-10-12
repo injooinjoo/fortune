@@ -141,12 +141,13 @@ class UnifiedFortuneService {
       } else {
         // 단일 결과
         try {
-          final recordConditions = results['input_conditions'];
+          final record = results as Map<String, dynamic>;
+          final recordConditions = record['input_conditions'];
           final recordJson = jsonEncode(_normalizeJsonb(recordConditions));
 
           if (recordJson == targetJson) {
-            Logger.debug('[UnifiedFortune] 기존 결과 발견: ${results['id']}');
-            return FortuneResult.fromJson(results);
+            Logger.debug('[UnifiedFortune] 기존 결과 발견: ${record['id']}');
+            return FortuneResult.fromJson(record);
           }
         } catch (e) {
           Logger.debug('[UnifiedFortune] 레코드 비교 실패: $e');
