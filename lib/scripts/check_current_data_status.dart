@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// celebrity_master_list와 celebrities 테이블의 현재 상태를 확인합니다
 class DataStatusChecker {
   static Future<void> main() async {
-    print('📊 데이터베이스 현재 상태 체크를 시작합니다...\n');
+    debugPrint('📊 데이터베이스 현재 상태 체크를 시작합니다...\n');
 
     try {
       // Supabase 초기화
@@ -13,8 +13,8 @@ class DataStatusChecker {
       const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
       
       if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
-        print('❌ SUPABASE_URL과 SUPABASE_ANON_KEY 환경변수를 설정해주세요.');
-        print('사용법: flutter run lib/scripts/check_current_data_status.dart --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...');
+        debugPrint('❌ SUPABASE_URL과 SUPABASE_ANON_KEY 환경변수를 설정해주세요.');
+        debugPrint('사용법: flutter run lib/scripts/check_current_data_status.dart --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...');
         return;
       }
 
@@ -24,7 +24,7 @@ class DataStatusChecker {
       );
 
       final supabase = Supabase.instance.client;
-      print('✅ Supabase 연결 완료\n');
+      debugPrint('✅ Supabase 연결 완료\n');
 
       // 1. celebrity_master_list 테이블 상태 확인
       await _checkMasterListStatus(supabase);
@@ -36,14 +36,14 @@ class DataStatusChecker {
       await _checkSampleData(supabase);
 
     } catch (e, stackTrace) {
-      print('❌ 오류 발생: $e');
-      print('Stack trace: $stackTrace');
+      debugPrint('❌ 오류 발생: $e');
+      debugPrint('Stack trace: $stackTrace');
     }
   }
 
   /// celebrity_master_list 테이블 상태 확인
   static Future<void> _checkMasterListStatus(SupabaseClient supabase) async {
-    print('📋 celebrity_master_list 테이블 상태 확인...');
+    debugPrint('📋 celebrity_master_list 테이블 상태 확인...');
 
     try {
       // 전체 개수
@@ -79,33 +79,33 @@ class DataStatusChecker {
         }
       }
 
-      print('  전체 연예인: $totalCount명');
-      print('  크롤링 완료: $crawledCount명');
-      print('  크롤링 진행률: ${totalCount > 0 ? (crawledCount / totalCount * 100).toStringAsFixed(1) : 0}%\n');
+      debugPrint('  전체 연예인: $totalCount명');
+      debugPrint('  크롤링 완료: $crawledCount명');
+      debugPrint('  크롤링 진행률: ${totalCount > 0 ? (crawledCount / totalCount * 100).toStringAsFixed(1) : 0}%\n');
       
-      print('  📊 카테고리별 현황:');
+      debugPrint('  📊 카테고리별 현황:');
       categoryStats.forEach((category, stats) {
         final total = stats['total']!;
         final crawled = stats['crawled']!;
         final percentage = total > 0 ? (crawled / total * 100).toStringAsFixed(1) : '0';
-        print('    $category: $crawled/$total명 ($percentage%)');
+        debugPrint('    $category: $crawled/$total명 ($percentage%)');
       });
 
       if (totalCount == 0) {
-        print('\n⚠️  celebrity_master_list에 데이터가 없습니다!');
-        print('    먼저 연예인 목록을 업로드해야 합니다:');
-        print('    flutter run lib/scripts/upload_celebrity_lists.dart');
+        debugPrint('\n⚠️  celebrity_master_list에 데이터가 없습니다!');
+        debugPrint('    먼저 연예인 목록을 업로드해야 합니다:');
+        debugPrint('    flutter run lib/scripts/upload_celebrity_lists.dart');
       }
 
     } catch (e) {
-      print('  ❌ celebrity_master_list 테이블 조회 실패: $e');
+      debugPrint('  ❌ celebrity_master_list 테이블 조회 실패: $e');
     }
-    print('');
+    debugPrint('');
   }
 
   /// celebrities 테이블 상태 확인
   static Future<void> _checkCelebritiesStatus(SupabaseClient supabase) async {
-    print('🎭 celebrities 테이블 상태 확인...');
+    debugPrint('🎭 celebrities 테이블 상태 확인...');
 
     try {
       // 전체 개수
@@ -132,30 +132,30 @@ class DataStatusChecker {
         categoryStats[category] = (categoryStats[category] ?? 0) + 1;
       }
 
-      print('  전체 연예인: $totalCount명');
-      print('  덤프에서 처리된 연예인: $dumpProcessedCount명\n');
+      debugPrint('  전체 연예인: $totalCount명');
+      debugPrint('  덤프에서 처리된 연예인: $dumpProcessedCount명\n');
       
       if (categoryStats.isNotEmpty) {
-        print('  📊 카테고리별 현황:');
+        debugPrint('  📊 카테고리별 현황:');
         categoryStats.forEach((category, count) {
-          print('    $category: $count명');
+          debugPrint('    $category: $count명');
         });
       }
 
       if (totalCount == 0) {
-        print('\n⚠️  celebrities 테이블에 데이터가 없습니다!');
-        print('    덤프 처리를 통해 연예인 정보를 추가해야 합니다.');
+        debugPrint('\n⚠️  celebrities 테이블에 데이터가 없습니다!');
+        debugPrint('    덤프 처리를 통해 연예인 정보를 추가해야 합니다.');
       }
 
     } catch (e) {
-      print('  ❌ celebrities 테이블 조회 실패: $e');
+      debugPrint('  ❌ celebrities 테이블 조회 실패: $e');
     }
-    print('');
+    debugPrint('');
   }
 
   /// 샘플 데이터 확인
   static Future<void> _checkSampleData(SupabaseClient supabase) async {
-    print('🔍 샘플 데이터 확인...');
+    debugPrint('🔍 샘플 데이터 확인...');
 
     try {
       // celebrity_master_list에서 상위 5명
@@ -165,13 +165,13 @@ class DataStatusChecker {
           .order('popularity_rank')
           .limit(5);
 
-      print('  📋 celebrity_master_list 상위 5명:');
+      debugPrint('  📋 celebrity_master_list 상위 5명:');
       for (final item in masterListSample) {
         final name = item['name'];
         final category = item['category'];
         final rank = item['popularity_rank'];
         final isCrawled = item['is_crawled'] ? '✅' : '❌';
-        print('    $rank위. $name ($category) $isCrawled');
+        debugPrint('    $rank위. $name ($category) $isCrawled');
       }
 
       // celebrities에서 샘플
@@ -181,19 +181,19 @@ class DataStatusChecker {
           .limit(5);
 
       if (celebritiesSample.isNotEmpty) {
-        print('\n  🎭 celebrities 테이블 샘플:');
+        debugPrint('\n  🎭 celebrities 테이블 샘플:');
         for (final item in celebritiesSample) {
           final name = item['name'];
           final category = item['category'];
           final birthDate = item['birth_date'] ?? '정보없음';
-          print('    $name ($category) - 생년월일: $birthDate');
+          debugPrint('    $name ($category) - 생년월일: $birthDate');
         }
       }
 
     } catch (e) {
-      print('  ❌ 샘플 데이터 조회 실패: $e');
+      debugPrint('  ❌ 샘플 데이터 조회 실패: $e');
     }
-    print('');
+    debugPrint('');
   }
 }
 

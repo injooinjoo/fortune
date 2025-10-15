@@ -141,8 +141,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   void initState() {
     super.initState();
 
-    print('🎯 [BlindDateFortunePage] initState() called - Page is ACTIVE');
-    print('🎯 [BlindDateFortunePage] Manual tab system initialized with 3 tabs: 기본 정보, 사진 분석, 대화 분석');
+    debugPrint('🎯 [BlindDateFortunePage] initState() called - Page is ACTIVE');
+    debugPrint('🎯 [BlindDateFortunePage] Manual tab system initialized with 3 tabs: 기본 정보, 사진 분석, 대화 분석');
 
     // Pre-fill user data with profile if available
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -2261,7 +2261,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             onTap: () {
               setState(() => _selectedTabIndex = index);
               HapticFeedback.lightImpact();
-              print('🎯 [BlindDateFortunePage] Tab changed to index: $index ($label)');
+              debugPrint('🎯 [BlindDateFortunePage] Tab changed to index: $index ($label)');
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),

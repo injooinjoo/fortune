@@ -70,7 +70,7 @@ class TalismanShareService {
       
       return byteData!.buffer.asUint8List();
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
       return imageData; // Return original if watermarking fails
     }
   }
@@ -109,7 +109,7 @@ class TalismanShareService {
           break;
       }
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
       rethrow;
     }
   }
@@ -140,7 +140,7 @@ class TalismanShareService {
       final imageFile = File(imagePath);
       await imageFile.writeAsBytes(imageData);
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
       rethrow;
     }
   }

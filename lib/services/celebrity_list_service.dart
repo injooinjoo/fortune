@@ -77,14 +77,14 @@ class CelebrityListService {
         totalUploaded += result.successCount;
         totalErrors += result.errorCount;
         
-        print('✅ Uploaded $categoryCode: ${result.successCount} success, ${result.errorCount} errors');
+        debugPrint('✅ Uploaded $categoryCode: ${result.successCount} success, ${result.errorCount} errors');
       } catch (e) {
-        print('❌ Failed to upload $categoryCode: $e');
+        debugPrint('❌ Failed to upload $categoryCode: $e');
         totalErrors++;
       }
     }
 
-    print('📊 Total uploaded: $totalUploaded, Total errors: $totalErrors');
+    debugPrint('📊 Total uploaded: $totalUploaded, Total errors: $totalErrors');
   }
 
   /// 특정 카테고리를 Supabase에 업로드합니다
@@ -121,7 +121,7 @@ class CelebrityListService {
       } catch (e) {
         errorCount++;
         errors.add('${celebrity.name}: $e');
-        print('❌ Error uploading ${celebrity.name}: $e');
+        debugPrint('❌ Error uploading ${celebrity.name}: $e');
       }
     }
 

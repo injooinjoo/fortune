@@ -229,5 +229,5 @@ class VisitInfo {
 /// 3. 방문 통계 조회:
 /// ```dart
 /// final mostVisited = RouteObserverLogger().getMostVisitedScreens();
-/// print('Most visited: ${mostVisited.first.screenName}');
+/// debugPrint('Most visited: ${mostVisited.first.screenName}');
 /// ```

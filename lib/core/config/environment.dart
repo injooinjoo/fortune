@@ -185,13 +185,13 @@ class Environment {
   // 디버그 정보 출력 (개발 환경에서만)
   static void printDebugInfo() {
     if (kDebugMode) {
-      print('=== Environment Configuration ===');
-      print('Environment: Production');
-      print('API URL: ${apiBaseUrl.substring(0, 20)}...');
-      print('Supabase URL: ${supabaseUrl.substring(0, 20)}...');
-      print('Analytics enabled: $enableAnalytics');
-      print('Ads enabled: $enableAds');
-      print('================================');
+      debugPrint('=== Environment Configuration ===');
+      debugPrint('Environment: Production');
+      debugPrint('API URL: ${apiBaseUrl.substring(0, 20)}...');
+      debugPrint('Supabase URL: ${supabaseUrl.substring(0, 20)}...');
+      debugPrint('Analytics enabled: $enableAnalytics');
+      debugPrint('Ads enabled: $enableAds');
+      debugPrint('================================');
     }
   }
 }

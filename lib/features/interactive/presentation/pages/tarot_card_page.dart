@@ -121,10 +121,10 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
   @override
   void initState() {
     super.initState();
-    print('[TarotCardPage] === initState ===');
-    print('[TarotCardPage] widget.extra: ${widget.extra}');
-    print('[TarotCardPage] widget.spreadType: ${widget.spreadType}');
-    print('[TarotCardPage] widget.initialQuestion: ${widget.initialQuestion}');
+    debugPrint('[TarotCardPage] === initState ===');
+    debugPrint('[TarotCardPage] widget.extra: ${widget.extra}');
+    debugPrint('[TarotCardPage] widget.spreadType: ${widget.spreadType}');
+    debugPrint('[TarotCardPage] widget.initialQuestion: ${widget.initialQuestion}');
     
     // Initialize from parameters
     if (widget.extra != null) {
@@ -153,15 +153,15 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('[TarotCardPage] === didChangeDependencies ===');
-    print('Fortune cached');
-    print('Fortune cached');
+    debugPrint('[TarotCardPage] === didChangeDependencies ===');
+    debugPrint('Fortune cached');
+    debugPrint('Fortune cached');
     
     // Check for deck selection
     if (!_hasCheckedDeck) {
       _hasCheckedDeck = true;
       selectedDeck ??= ref.watch(currentTarotDeckProvider);
-      print('Fortune cached');
+      debugPrint('Fortune cached');
       
       if (selectedDeck == null) {
         // Navigate to deck selection
@@ -337,15 +337,15 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('[TarotCardPage] === Build ===');
+    debugPrint('[TarotCardPage] === Build ===');
     final theme = Theme.of(context);
     final state = ref.watch(tarotReadingStateProvider);
-    print('step: ${state.currentStep}');
-    print('Fortune cached');
+    debugPrint('step: ${state.currentStep}');
+    debugPrint('Fortune cached');
     
     // Show loading if no deck selected
     if (selectedDeck == null) {
-      print('[TarotCardPage] No deck selected, showing loading');
+      debugPrint('[TarotCardPage] No deck selected, showing loading');
       return Scaffold(
         backgroundColor: theme.colorScheme.surface,
         body: const Center(
@@ -377,7 +377,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
   }
 
   Widget _buildCurrentStep(TarotReadingState state) {
-    print('[TarotCardPage] _buildCurrentStep - step: ${state.currentStep}');
+    debugPrint('[TarotCardPage] _buildCurrentStep - step: ${state.currentStep}');
     switch (state.currentStep) {
       case TarotReadingStep.input:
         return Padding(

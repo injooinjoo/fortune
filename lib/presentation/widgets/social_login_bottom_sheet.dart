@@ -21,11 +21,11 @@ class SocialLoginBottomSheet {
       isScrollControlled: true,
       backgroundColor: Colors.black.withValues(alpha: 0.5),
       builder: (bottomSheetContext) {
-        print(
+        debugPrint(
             '🌐 [BOTTOMSHEET] Theme brightness: ${Theme.of(bottomSheetContext).brightness}');
-        print(
+        debugPrint(
             '🌐 [BOTTOMSHEET] colorScheme.onSurface: ${Theme.of(bottomSheetContext).colorScheme.onSurface}');
-        print(
+        debugPrint(
             '🌐 [BOTTOMSHEET] textTheme.bodyLarge.color: ${Theme.of(bottomSheetContext).textTheme.bodyLarge?.color}');
 
         return StatefulBuilder(

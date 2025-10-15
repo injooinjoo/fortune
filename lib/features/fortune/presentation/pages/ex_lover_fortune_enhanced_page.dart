@@ -211,7 +211,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         }
       }
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
   }
   
@@ -244,7 +244,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
       
       await prefs.setString('ex_lover_fortune_progress', jsonEncode(saveData));
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
   }
   
@@ -253,7 +253,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('ex_lover_fortune_progress');
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
   }
 

@@ -71,7 +71,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
         }
       }
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     } finally {
       setState(() => _isCapturing = false);
     }
@@ -288,7 +288,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                 }
               }
             } catch (e) {
-              print('Fortune cached');
+              debugPrint('Fortune cached');
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

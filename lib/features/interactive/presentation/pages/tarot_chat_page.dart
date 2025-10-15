@@ -452,7 +452,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {
-            print('[TarotChat] Example question tapped: $question');
+            debugPrint('[TarotChat] Example question tapped: $question');
             HapticFeedback.lightImpact();
             _sendMessage(question);
           },

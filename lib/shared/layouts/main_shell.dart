@@ -88,7 +88,7 @@ class _MainShellState extends ConsumerState<MainShell>
     // Only update if visibility actually changed
     if (shouldShow != currentVisibility) {
       if (kDebugMode) {
-        print('route: ${widget.state.uri.path}');
+        debugPrint('route: ${widget.state.uri.path}');
       }
       // Update the navigation visibility state
       WidgetsBinding.instance.addPostFrameCallback((_) {

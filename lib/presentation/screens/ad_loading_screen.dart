@@ -163,8 +163,8 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
     // If fortune route is provided, navigate to it
     if (widget.fortuneRoute != null && mounted) {
       try {
-        print('Navigating to: ${widget.fortuneRoute}');
-        print('params: ${widget.fortuneParams}');
+        debugPrint('Navigating to: ${widget.fortuneRoute}');
+        debugPrint('params: ${widget.fortuneParams}');
         
         // Use pushReplacement to replace the current AdLoadingScreen with the fortune page
         // This ensures the AdLoadingScreen is removed from the navigation stack
@@ -176,9 +176,9 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
             'autoGenerate': true, // Flag to auto-generate fortune
           },
         );
-        print('[AdLoadingScreen] Navigation successful');
+        debugPrint('[AdLoadingScreen] Navigation successful');
       } catch (e) {
-        print('Fortune cached');
+        debugPrint('Fortune cached');
         if (mounted) {
           // Show error message
           ScaffoldMessenger.of(context).showSnackBar(

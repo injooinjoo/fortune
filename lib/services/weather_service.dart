@@ -41,12 +41,12 @@ class WeatherService {
         // 4. 캐시 확인
         final cachedWeather = await _getCachedWeather(cityName);
         if (cachedWeather != null && _isCacheValid(cachedWeather['timestamp'])) {
-          print('📋 캐시된 날씨 사용: $cityName');
+          debugPrint('📋 캐시된 날씨 사용: $cityName');
           return WeatherInfo.fromJson(cachedWeather['data']);
         }
         
         // 5. 캐시가 없거나 만료된 경우 새로 저장
-        print('🌤️ API에서 날씨 가져오기: $cityName');
+        debugPrint('🌤️ API에서 날씨 가져오기: $cityName');
         await _cacheWeather(cityName, data);
         return WeatherInfo.fromJson(data);
       } else {
@@ -54,7 +54,7 @@ class WeatherService {
         return WeatherInfo.defaultWeather();
       }
     } catch (e) {
-      print('날씨 정보 가져오기 실패: $e');
+      debugPrint('날씨 정보 가져오기 실패: $e');
       return WeatherInfo.defaultWeather();
     }
   }
@@ -65,12 +65,12 @@ class WeatherService {
       // 1. 캐시 확인
       final cachedWeather = await _getCachedWeather(city);
       if (cachedWeather != null && _isCacheValid(cachedWeather['timestamp'])) {
-        print('📋 캐시된 날씨 사용: $city');
+        debugPrint('📋 캐시된 날씨 사용: $city');
         return WeatherInfo.fromJson(cachedWeather['data']);
       }
 
       // 2. 캐시가 없으면 API 호출
-      print('🌤️ API에서 날씨 가져오기: $city');
+      debugPrint('🌤️ API에서 날씨 가져오기: $city');
       final response = await http.get(
         Uri.parse(
           '$_baseUrl/weather?q=$city&appid=$_apiKey&units=metric&lang=kr',
@@ -84,7 +84,7 @@ class WeatherService {
         return WeatherInfo.fromJson(data);
       }
     } catch (e) {
-      print('도시 날씨 정보 가져오기 실패: $e');
+      debugPrint('도시 날씨 정보 가져오기 실패: $e');
     }
     return WeatherInfo.defaultWeather();
   }
@@ -100,7 +100,7 @@ class WeatherService {
         return json.decode(cachedString);
       }
     } catch (e) {
-      print('캐시 읽기 오류: $e');
+      debugPrint('캐시 읽기 오류: $e');
     }
     return null;
   }
@@ -116,9 +116,9 @@ class WeatherService {
       };
       
       await prefs.setString(cacheKey, json.encode(cacheData));
-      print('✅ 날씨 정보 캐싱 완료: $cityName');
+      debugPrint('✅ 날씨 정보 캐싱 완료: $cityName');
     } catch (e) {
-      print('캐시 저장 오류: $e');
+      debugPrint('캐시 저장 오류: $e');
     }
   }
   

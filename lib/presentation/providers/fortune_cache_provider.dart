@@ -14,7 +14,7 @@ final fortuneCacheScoresProvider = FutureProvider.family<List<int>, int?>((ref, 
   final today = DateTime.now();
   
   try {
-    print('📊 fortuneCacheScoresProvider: Fetching scores for last 7 days for user: $userId');
+    debugPrint('📊 fortuneCacheScoresProvider: Fetching scores for last 7 days for user: $userId');
     // Get scores for last 7 days
     for (int i = 6; i >= 0; i--) {
       final targetDate = today.subtract(Duration(days: i));
@@ -28,7 +28,7 @@ final fortuneCacheScoresProvider = FutureProvider.family<List<int>, int?>((ref, 
       } else {
         // Try to get from fortune_cache
         try {
-          print('🔍 Querying fortune_cache for date: $dateKey');
+          debugPrint('🔍 Querying fortune_cache for date: $dateKey');
           final response = await supabase
               .from('fortune_cache')
               .select('fortune_data')
@@ -48,7 +48,7 @@ final fortuneCacheScoresProvider = FutureProvider.family<List<int>, int?>((ref, 
                 final total = categories['total'] as Map<String, dynamic>;
                 if (total['score'] != null) {
                   dayScore = total['score'] as int;
-                  print('✅ Found score for $dateKey in fortune_cache: $dayScore');
+                  debugPrint('✅ Found score for $dateKey in fortune_cache: $dayScore');
                 }
               }
             }
@@ -56,23 +56,23 @@ final fortuneCacheScoresProvider = FutureProvider.family<List<int>, int?>((ref, 
             // Fallback to overallScore
             if (dayScore == 0 && fortuneData['overallScore'] != null) {
               dayScore = fortuneData['overallScore'] as int;
-              print('✅ Found score from overallScore for $dateKey: $dayScore');
+              debugPrint('✅ Found score from overallScore for $dateKey: $dayScore');
             }
           } else {
-            print('❌ No data found in fortune_cache for date: $dateKey');
+            debugPrint('❌ No data found in fortune_cache for date: $dateKey');
           }
         } catch (e) {
-          print('Error fetching score for $dateKey: $e');
+          debugPrint('Error fetching score for $dateKey: $e');
         }
       }
       
       scores.add(dayScore);
     }
     
-    print('📊 Final scores from fortune_cache: $scores');
+    debugPrint('📊 Final scores from fortune_cache: $scores');
     return scores;
   } catch (e) {
-    print('Error in fortuneCacheScoresProvider: $e');
+    debugPrint('Error in fortuneCacheScoresProvider: $e');
     return List.generate(7, (_) => 0);
   }
 });

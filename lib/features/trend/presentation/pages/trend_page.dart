@@ -89,7 +89,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     if (currentScrollPosition <= 10.0) {
       if (_isScrollingDown) {
         _isScrollingDown = false;
-        print('🔼 Showing nav bar - at top');
+        debugPrint('🔼 Showing nav bar - at top');
         ref.read(navigationVisibilityProvider.notifier).show();
       }
       _lastScrollOffset = currentScrollPosition;
@@ -102,13 +102,13 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     if (scrollDelta > scrollDownThreshold && !_isScrollingDown) {
       // Scrolling down - hide navigation
       _isScrollingDown = true;
-      print('🔽 Hiding nav bar - scrolling down');
+      debugPrint('🔽 Hiding nav bar - scrolling down');
       ref.read(navigationVisibilityProvider.notifier).hide();
     } else if (scrollDelta < -scrollUpThreshold) {
       // Scrolling up - immediately show navigation (any upward movement)
       if (_isScrollingDown) {
         _isScrollingDown = false;
-        print('🔼 Showing nav bar - scrolling up');
+        debugPrint('🔼 Showing nav bar - scrolling up');
         ref.read(navigationVisibilityProvider.notifier).show();
       }
     }
@@ -120,7 +120,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
   Widget build(BuildContext context) {
     // Watch the navigation visibility state for debugging
     final navState = ref.watch(navigationVisibilityProvider);
-    print('🎯 Navigation state - isVisible: ${navState.isVisible}, isAnimating: ${navState.isAnimating}');
+    debugPrint('🎯 Navigation state - isVisible: ${navState.isVisible}, isAnimating: ${navState.isAnimating}');
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 

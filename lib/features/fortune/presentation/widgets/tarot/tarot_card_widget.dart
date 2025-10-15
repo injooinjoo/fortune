@@ -93,10 +93,10 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
 
   @override
   Widget build(BuildContext context) {
-    print('[TarotCard] === Card Widget Build ===');
-    print('[TarotCard] cardIndex: ${widget.cardIndex}');
-    print('[TarotCard] isHovered: ${widget.isHovered}, isSelected: ${widget.isSelected}');
-    print('[TarotCard] showFront: ${widget.showFront}');
+    debugPrint('[TarotCard] === Card Widget Build ===');
+    debugPrint('[TarotCard] cardIndex: ${widget.cardIndex}');
+    debugPrint('[TarotCard] isHovered: ${widget.isHovered}, isSelected: ${widget.isSelected}');
+    debugPrint('[TarotCard] showFront: ${widget.showFront}');
     
     return GestureDetector(
       onTap: widget.onTap,
@@ -137,9 +137,9 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
   }
 
   List<BoxShadow> _buildBoxShadow() {
-    print('[TarotCard] Building box shadow - isSelected: ${widget.isSelected}, isHovered: ${widget.isHovered}');
+    debugPrint('[TarotCard] Building box shadow - isSelected: ${widget.isSelected}, isHovered: ${widget.isHovered}');
     if (widget.isSelected) {
-      print('alpha: 0.6');
+      debugPrint('alpha: 0.6');
       return [
         BoxShadow(
           color: widget.deck.primaryColor.withValues(alpha: 0.6),
@@ -148,7 +148,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         ),
       ];
     } else if (widget.isHovered) {
-      print('alpha: 0.4');
+      debugPrint('alpha: 0.4');
       return [
         BoxShadow(
           color: widget.deck.primaryColor.withValues(alpha: 0.4),
@@ -157,7 +157,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         ),
       ];
     } else {
-      print('alpha: 0.3');
+      debugPrint('alpha: 0.3');
       return [
         BoxShadow(
           color: TossDesignSystem.black.withValues(alpha: 0.3),

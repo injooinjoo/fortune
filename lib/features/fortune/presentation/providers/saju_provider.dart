@@ -94,10 +94,10 @@ class SajuNotifier extends StateNotifier<SajuState> {
       }
 
       // Call Edge Function to calculate and save Saju
-      print('with:');
-      print('birthDate: ${birthDate.toIso8601String().split('T')[0]}');
-      print('Fortune cached');
-      print('Fortune cached');
+      debugPrint('with:');
+      debugPrint('birthDate: ${birthDate.toIso8601String().split('T')[0]}');
+      debugPrint('Fortune cached');
+      debugPrint('Fortune cached');
       
       final response = await _supabase.functions.invoke(
         'calculate-saju',
@@ -109,32 +109,32 @@ class SajuNotifier extends StateNotifier<SajuState> {
         }).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
-          print('Edge Function timeout after 30 seconds');
+          debugPrint('Edge Function timeout after 30 seconds');
           throw Exception('사주 계산 시간 초과 (30초)');
         });
       
-      print('=== SAJU API RESPONSE ===');
-      print('type: ${response.runtimeType}');
-      print('status: ${response.status}');
-      print('type: ${response.data.runtimeType}');
-      print('data: ${response.data}');
+      debugPrint('=== SAJU API RESPONSE ===');
+      debugPrint('type: ${response.runtimeType}');
+      debugPrint('status: ${response.status}');
+      debugPrint('type: ${response.data.runtimeType}');
+      debugPrint('data: ${response.data}');
       
       // Log all available properties
       if (response.data is Map) {
-        print('keys: ${(response.data as Map).keys.toList()}');
+        debugPrint('keys: ${(response.data as Map).keys.toList()}');
 }
 
       if (response.status != 200) {
-        print('=== EDGE FUNCTION ERROR RESPONSE ===');
-        print('code: ${response.status}');
+        debugPrint('=== EDGE FUNCTION ERROR RESPONSE ===');
+        debugPrint('code: ${response.status}');
         
         final errorData = response.data;
         String errorMessage = '사주 계산에 실패했습니다.';
         String errorDetails = '';
         
         if (errorData is Map) {
-          print('Error data is Map, keys: ${errorData.keys.toList()}');
-          print('data: ${errorData}');
+          debugPrint('Error data is Map, keys: ${errorData.keys.toList()}');
+          debugPrint('data: ${errorData}');
           
           errorMessage = errorData['error'] ?? errorMessage;
           if (errorData['details'] != null) {
@@ -144,17 +144,17 @@ class SajuNotifier extends StateNotifier<SajuState> {
           
           // Log additional error info if available
           if (errorData['timestamp'] != null) {
-            print('timestamp: ${errorData[')timestamp']}');
+            debugPrint('timestamp: ${errorData[')timestamp']}');
 }
           if (errorData['reasonPhrase'] != null) {
-            print('phrase: ${errorData[')reasonPhrase']}');
+            debugPrint('phrase: ${errorData[')reasonPhrase']}');
 }
         } else {
-          print('type: ${errorData.runtimeType}');
-          print('Fortune cached');
+          debugPrint('type: ${errorData.runtimeType}');
+          debugPrint('Fortune cached');
 }
         
-        print('Fortune cached');
+        debugPrint('Fortune cached');
         throw Exception(errorMessage);
 }
 
@@ -172,11 +172,11 @@ class SajuNotifier extends StateNotifier<SajuState> {
         throw Exception('사주 계산에 실패했습니다. 응답 형식이 올바르지 않습니다.');
       }
     } catch (e, stackTrace) {
-      print('=== SAJU CALCULATION EXCEPTION ===');
-      print('type: ${e.runtimeType}');
-      print('Fortune cached');
-      print('trace:');
-      print(stackTrace);
+      debugPrint('=== SAJU CALCULATION EXCEPTION ===');
+      debugPrint('type: ${e.runtimeType}');
+      debugPrint('Fortune cached');
+      debugPrint('trace:');
+      debugPrint(stackTrace);
       
       // Extract cleaner error message
       String errorMessage = '사주 계산 중 오류가 발생했습니다';

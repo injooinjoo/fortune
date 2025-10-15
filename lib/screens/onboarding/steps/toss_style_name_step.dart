@@ -329,7 +329,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
       child: InkWell(
         onTap: () {
           // Debug: Immediate feedback
-          print('Button tapped: $label');
+          debugPrint('Button tapped: $label');
           onTap();
         },
         borderRadius: BorderRadius.circular(12),
@@ -420,7 +420,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                           showCursor: true,
                           enableInteractiveSelection: true,
                           onTap: () {
-                            print('TextField 탭됨!');
+                            debugPrint('TextField 탭됨!');
                             _focusNode.requestFocus();
                             SystemChannels.textInput.invokeMethod('TextInput.show');
                           },

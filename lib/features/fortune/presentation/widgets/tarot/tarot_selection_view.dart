@@ -35,26 +35,26 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
   bool _isShuffling = false;
 
   void _handleCardSelection(int index) {
-    print('[TarotSelection] Card selected: $index');
-    print('[TarotSelection] Current selection: $_selectedCards');
-    print('[TarotSelection] Required cards: ${widget.requiredCards}');
+    debugPrint('[TarotSelection] Card selected: $index');
+    debugPrint('[TarotSelection] Current selection: $_selectedCards');
+    debugPrint('[TarotSelection] Required cards: ${widget.requiredCards}');
     
     if (_selectedCards.contains(index)) {
       // 카드 선택 해제
       setState(() {
         _selectedCards.remove(index);
       });
-      print('[TarotSelection] Card $index deselected');
+      debugPrint('[TarotSelection] Card $index deselected');
     } else if (_selectedCards.length < widget.requiredCards) {
       // 새 카드 선택
       setState(() {
         _selectedCards.add(index);
       });
-      print('[TarotSelection] Card $index selected (${_selectedCards.length}/${widget.requiredCards})');
+      debugPrint('[TarotSelection] Card $index selected (${_selectedCards.length}/${widget.requiredCards})');
       
       // Check if selection is complete
       if (_selectedCards.length == widget.requiredCards) {
-        print('[TarotSelection] Selection complete! Proceeding...');
+        debugPrint('[TarotSelection] Selection complete! Proceeding...');
         Future.delayed(const Duration(milliseconds: 800), () {
           if (mounted) {
             widget.onSelectionComplete(_selectedCards);
@@ -63,12 +63,12 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
       }
     } else {
       // 이미 필요한 수만큼 선택됨
-      print('[TarotSelection] Maximum cards already selected');
+      debugPrint('[TarotSelection] Maximum cards already selected');
     }
   }
 
   void _shuffleCards() {
-    print('[TarotSelection] Starting shuffle animation');
+    debugPrint('[TarotSelection] Starting shuffle animation');
     setState(() {
       _isShuffling = true;
     });
@@ -84,10 +84,10 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
 
   @override
   Widget build(BuildContext context) {
-    print('[TarotSelection] === Build Start ===');
-    print('Fortune cached');
-    print('Fortune cached');
-    print('[TarotSelection] requiredCards: ${widget.requiredCards}');
+    debugPrint('[TarotSelection] === Build Start ===');
+    debugPrint('Fortune cached');
+    debugPrint('Fortune cached');
+    debugPrint('[TarotSelection] requiredCards: ${widget.requiredCards}');
     
     final theme = Theme.of(context);
     final fontSize = ref.watch(fontSizeProvider);
@@ -198,7 +198,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
   }
 
   Widget _buildShufflingAnimation() {
-    print('[TarotSelection] Building shuffle animation widget');
+    debugPrint('[TarotSelection] Building shuffle animation widget');
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -207,7 +207,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
             duration: const Duration(seconds: 2),
             tween: Tween(begin: 0, end: 4 * math.pi),
             builder: (context, value, child) {
-              print('Fortune cached');
+              debugPrint('Fortune cached');
               return Transform.rotate(
                 angle: value,
                 child: Icon(

@@ -109,7 +109,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
 
   @override
   Widget build(BuildContext context) {
-    print('🟠 TarotQuestionSelector build - selectedQuestion: ${widget.selectedQuestion}');
+    debugPrint('🟠 TarotQuestionSelector build - selectedQuestion: ${widget.selectedQuestion}');
     final hasSelection = widget.selectedQuestion != null ||
                         (widget.customQuestion?.isNotEmpty == true);
     final hasCustomInput = widget.customQuestion?.isNotEmpty == true;
@@ -160,7 +160,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                   ...List.generate(_templateQuestions.length, (index) {
                     final question = _templateQuestions[index];
                     final isSelected = widget.selectedQuestion == question['question'];
-                    print('🔶 Question "${question['question']}" - isSelected: $isSelected');
+                    debugPrint('🔶 Question "${question['question']}" - isSelected: $isSelected');
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
@@ -170,10 +170,10 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                         color: question['color'] as Color,
                         isSelected: isSelected,
                         onTap: () {
-                          print('🔵 Question tapped: ${question['question']}');
+                          debugPrint('🔵 Question tapped: ${question['question']}');
                           _focusNode.unfocus();
                           widget.onQuestionSelected(question['question'] as String);
-                          print('🔵 onQuestionSelected called with: ${question['question']}');
+                          debugPrint('🔵 onQuestionSelected called with: ${question['question']}');
                           // 템플릿 질문을 선택하면 커스텀 입력 완전히 초기화
                           _customController.clear();
                           // widget.onCustomQuestionChanged(''); // 제거 - 이게 _selectedQuestion을 null로 만듦

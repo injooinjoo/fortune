@@ -30,16 +30,16 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
   
   // Google Sign In
   Future<void> signInWithGoogle() async {
-    print('🟢 [SocialAuthProvider] signInWithGoogle() called');
+    debugPrint('🟢 [SocialAuthProvider] signInWithGoogle() called');
     state = const AsyncValue.loading();
     
     try {
-      print('🟢 [SocialAuthProvider] Calling _socialAuthService.signInWithGoogle()...');
+      debugPrint('🟢 [SocialAuthProvider] Calling _socialAuthService.signInWithGoogle()...');
       final response = await _socialAuthService.signInWithGoogle();
-      print('received: ${response != null ? "not null" : "null"}');
+      debugPrint('received: ${response != null ? "not null" : "null"}');
       
       if (response != null && response.user != null) {
-        print('authenticated: ${response.user!.id}');
+        debugPrint('authenticated: ${response.user!.id}');
         state = AsyncValue.data(response);
         
         // 인증 상태 새로고침
@@ -47,7 +47,7 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         _ref.invalidate(userProfileProvider);
         
         // 프로필 자동 생성 확인
-        print('🟢 [SocialAuthProvider] Ensuring user profile...');
+        debugPrint('🟢 [SocialAuthProvider] Ensuring user profile...');
         final authService = _ref.read(authServiceProvider);
         await authService.ensureUserProfile();
         
@@ -61,13 +61,13 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         }
         
         Logger.info('Google Sign-In successful');
-        print('🟢 [SocialAuthProvider] Google Sign-In successful');
+        debugPrint('🟢 [SocialAuthProvider] Google Sign-In successful');
       } else {
-        print('🟢 [SocialAuthProvider] No response or user from Google Sign-In');
+        debugPrint('🟢 [SocialAuthProvider] No response or user from Google Sign-In');
         state = const AsyncValue.data(null);
       }
     } catch (error, stackTrace) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
       state = AsyncValue.error(error, stackTrace);
       Logger.error('Google Sign-In error', error, stackTrace);
     }

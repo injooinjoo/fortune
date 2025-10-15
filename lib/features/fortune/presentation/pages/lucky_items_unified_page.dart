@@ -130,7 +130,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
       }
     } catch (e) {
       // 에러 시 기본값 사용
-      print('Error getting daily fortune score: $e');
+      debugPrint('Error getting daily fortune score: $e');
     }
     
     // 로또 번호 생성

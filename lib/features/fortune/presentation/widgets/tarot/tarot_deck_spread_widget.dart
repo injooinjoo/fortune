@@ -77,11 +77,11 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
   }
 
   void _handleCardTap(int index) {
-    print('[TarotDeckSpread] Card tapped: $index, enableSelection: ${widget.enableSelection}');
+    debugPrint('[TarotDeckSpread] Card tapped: $index, enableSelection: ${widget.enableSelection}');
     if (widget.enableSelection) {
       HapticUtils.lightImpact();
       widget.onCardSelected(index);
-      print('[TarotDeckSpread] Card selected event fired for index: $index');
+      debugPrint('[TarotDeckSpread] Card selected event fired for index: $index');
     }
   }
 

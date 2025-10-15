@@ -37,53 +37,53 @@ import 'core/services/supabase_connection_service.dart';
 import 'core/utils/route_observer_logger.dart';
 
 void main() async {
-  print('🚀 [STARTUP] App main() started');
+  debugPrint('🚀 [STARTUP] App main() started');
   WidgetsFlutterBinding.ensureInitialized();
-  print('🚀 [STARTUP] Flutter binding initialized');
+  debugPrint('🚀 [STARTUP] Flutter binding initialized');
 
   try {
     // Load environment variables - check for test environment first
-    print('🚀 [STARTUP] Loading environment variables...');
+    debugPrint('🚀 [STARTUP] Loading environment variables...');
     if (TestAuthService.isTestMode()) {
-      print('🔧 [TEST] Running in test mode, loading test environment...');
+      debugPrint('🔧 [TEST] Running in test mode, loading test environment...');
       try {
         await dotenv.dotenv.load(fileName: ".env.test");
-        print('🔧 [TEST] Test environment variables loaded');
+        debugPrint('🔧 [TEST] Test environment variables loaded');
       } catch (e) {
-        print('🔧 [TEST] Test env not found, falling back to .env: $e');
+        debugPrint('🔧 [TEST] Test env not found, falling back to .env: $e');
         await dotenv.dotenv.load(fileName: ".env");
       }
       TestAuthService.enableTestLogging();
     } else {
       await dotenv.dotenv.load(fileName: ".env");
     }
-    print('🚀 [STARTUP] Environment variables loaded');
+    debugPrint('🚀 [STARTUP] Environment variables loaded');
   } catch (e) {
-    print('Warning: Could not load .env file: $e');
+    debugPrint('Warning: Could not load .env file: $e');
   }
 
-  print('🚀 [STARTUP] Initializing date formatting...');
+  debugPrint('🚀 [STARTUP] Initializing date formatting...');
   await initializeDateFormatting('ko_KR', null);
-  print('🚀 [STARTUP] Date formatting initialized');
+  debugPrint('🚀 [STARTUP] Date formatting initialized');
 
   // Initialize Hive
   try {
-    print('🚀 [STARTUP] Initializing Hive...');
+    debugPrint('🚀 [STARTUP] Initializing Hive...');
     await Hive.initFlutter();
-    print('🚀 [STARTUP] Hive initialized successfully');
+    debugPrint('🚀 [STARTUP] Hive initialized successfully');
     Logger.info('Hive initialized successfully');
   } catch (e) {
-    print('❌ [STARTUP] Hive initialization failed: $e');
+    debugPrint('❌ [STARTUP] Hive initialization failed: $e');
     Logger.error('Hive initialization failed', e);
   }
 
   // Firebase is initialized automatically by the firebase_core plugin
   // No manual initialization needed here
-  print('🚀 [STARTUP] Using Firebase (auto-initialized by plugin)');
+  debugPrint('🚀 [STARTUP] Using Firebase (auto-initialized by plugin)');
 
   // Initialize Supabase with enhanced connection management
   try {
-    print('🚀 [STARTUP] Initializing Supabase...');
+    debugPrint('🚀 [STARTUP] Initializing Supabase...');
     final success = await SupabaseConnectionService.initialize(
       maxRetries: 3,
       timeout: Duration(seconds: 10),
@@ -91,26 +91,26 @@ void main() async {
     );
 
     if (success) {
-      print('🚀 [STARTUP] Supabase initialized successfully');
+      debugPrint('🚀 [STARTUP] Supabase initialized successfully');
       Logger.info('Supabase initialized successfully');
     } else {
-      print('⚠️ [STARTUP] Supabase connection failed, offline mode enabled');
+      debugPrint('⚠️ [STARTUP] Supabase connection failed, offline mode enabled');
       Logger.warning('Supabase connection failed (optional feature, using offline mode)');
     }
   } catch (e) {
-    print('❌ [STARTUP] Supabase initialization error: $e');
+    debugPrint('❌ [STARTUP] Supabase initialization error: $e');
     Logger.warning('Supabase initialization failed (optional feature, using offline mode): $e');
   }
 
   // Initialize Firebase Remote Config (after Firebase initialization)
   Future(() async {
     try {
-      print('🚀 [STARTUP] Initializing Firebase Remote Config...');
+      debugPrint('🚀 [STARTUP] Initializing Firebase Remote Config...');
       await RemoteConfigService().initialize();
-      print('🚀 [STARTUP] Remote Config initialized successfully');
+      debugPrint('🚀 [STARTUP] Remote Config initialized successfully');
       Logger.info('Remote Config initialized successfully');
     } catch (e) {
-      print('⚠️ [STARTUP] Remote Config initialization failed: $e');
+      debugPrint('⚠️ [STARTUP] Remote Config initialization failed: $e');
       Logger.warning('Remote Config initialization failed (using default values): $e');
     }
   });
@@ -136,26 +136,26 @@ void main() async {
   // DISABLE ADS FOR TESTING ON REAL DEVICES
   const bool DISABLE_ADS_FOR_TESTING = false; // Enable ads for release build
 
-  print('🎯 [ADMOB] kIsWeb: $kIsWeb, DISABLE_ADS_FOR_TESTING: $DISABLE_ADS_FOR_TESTING');
-  print('🎯 [ADMOB] Environment.enableAds: ${Environment.enableAds}');
-  print('🎯 [ADMOB] Environment.admobAppId: ${Environment.admobAppId}');
+  debugPrint('🎯 [ADMOB] kIsWeb: $kIsWeb, DISABLE_ADS_FOR_TESTING: $DISABLE_ADS_FOR_TESTING');
+  debugPrint('🎯 [ADMOB] Environment.enableAds: ${Environment.enableAds}');
+  debugPrint('🎯 [ADMOB] Environment.admobAppId: ${Environment.admobAppId}');
 
   if (!kIsWeb && !DISABLE_ADS_FOR_TESTING) {
     // Don't await - let it run in the background
     Future(() async {
       try {
-        print('🎯 [ADMOB] Starting Ad Service initialization in background...');
+        debugPrint('🎯 [ADMOB] Starting Ad Service initialization in background...');
         Logger.info('Initializing Ad Service in background...');
         await AdService.instance.initialize();
-        print('✅ [ADMOB] Ad Service initialized successfully in background');
+        debugPrint('✅ [ADMOB] Ad Service initialized successfully in background');
         Logger.info('Ad Service initialized successfully in background');
       } catch (e) {
-        print('❌ [ADMOB] Ad Service initialization failed in background: $e');
+        debugPrint('❌ [ADMOB] Ad Service initialization failed in background: $e');
         Logger.error('Ad Service initialization failed in background: $e');
       }
     });
   } else {
-    print('⚠️ [ADMOB] Ad Service disabled for testing');
+    debugPrint('⚠️ [ADMOB] Ad Service disabled for testing');
     Logger.info('Ad Service disabled for testing');
   }
   
@@ -170,27 +170,27 @@ void main() async {
   // Initialize test authentication if in test mode
   if (TestAuthService.isTestMode()) {
     try {
-      print('🔧 [TEST] Initializing test authentication...');
+      debugPrint('🔧 [TEST] Initializing test authentication...');
       final testAuthService = TestAuthService();
       await testAuthService.autoLoginTestAccount();
-      print('🔧 [TEST] Test authentication initialized');
+      debugPrint('🔧 [TEST] Test authentication initialized');
     } catch (e) {
-      print('🔧 [TEST] Test authentication failed: $e');
+      debugPrint('🔧 [TEST] Test authentication failed: $e');
     }
   }
 
   // Initialize RouteObserver Logger (debug mode only)
   if (kDebugMode) {
     try {
-      print('🔍 [STARTUP] Initializing RouteObserver Logger...');
+      debugPrint('🔍 [STARTUP] Initializing RouteObserver Logger...');
       await RouteObserverLogger().loadFromFile();
-      print('🔍 [STARTUP] RouteObserver Logger initialized');
+      debugPrint('🔍 [STARTUP] RouteObserver Logger initialized');
     } catch (e) {
-      print('⚠️ [STARTUP] RouteObserver Logger initialization failed: $e');
+      debugPrint('⚠️ [STARTUP] RouteObserver Logger initialization failed: $e');
     }
   }
 
-  print('🚀 [STARTUP] All initializations complete, starting app...');
+  debugPrint('🚀 [STARTUP] All initializations complete, starting app...');
   if (sharedPreferences != null) {
     runApp(
       ProviderScope(
@@ -204,7 +204,7 @@ void main() async {
       const ProviderScope(
         child: MyApp()));
   }
-  print('🚀 [STARTUP] App started successfully');
+  debugPrint('🚀 [STARTUP] App started successfully');
 }
 
 class MyApp extends ConsumerWidget {

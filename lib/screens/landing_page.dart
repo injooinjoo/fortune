@@ -44,17 +44,17 @@ class _LandingPageState extends ConsumerState<LandingPage>
     // 상태 초기화 명확히 하기
     _isAuthProcessing = false;
     _isCheckingAuth = false; // Initialize as false instead of true
-    print('🔵 initState: _isAuthProcessing initialized to false');
-    print('🔵 initState: _isCheckingAuth initialized to false');
+    debugPrint('🔵 initState: _isAuthProcessing initialized to false');
+    debugPrint('🔵 initState: _isCheckingAuth initialized to false');
 
     // Supabase 안전하게 초기화
     try {
       final client = Supabase.instance.client;
       _socialAuthService = SocialAuthService(client);
       _isSupabaseAvailable = true;
-      print('✅ [LandingPage] Supabase client initialized successfully');
+      debugPrint('✅ [LandingPage] Supabase client initialized successfully');
     } catch (e) {
-      print('⚠️ [LandingPage] Supabase client not available, using offline mode: $e');
+      debugPrint('⚠️ [LandingPage] Supabase client not available, using offline mode: $e');
       _isSupabaseAvailable = false;
       _socialAuthService = null;
     }
@@ -62,7 +62,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
     // Check auth in background without blocking UI
     Future.microtask(() async {
       if (!_isSupabaseAvailable) {
-        print('⚠️ [LandingPage] Skipping auth check - Supabase not available');
+        debugPrint('⚠️ [LandingPage] Skipping auth check - Supabase not available');
         return;
       }
 
@@ -82,7 +82,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
     // Add timeout fallback to prevent infinite loading
     Timer(const Duration(seconds: 5), () {
       if (_isCheckingAuth && mounted) {
-        print('⚠️ Auth check timeout - forcing _isCheckingAuth to false');
+        debugPrint('⚠️ Auth check timeout - forcing _isCheckingAuth to false');
         setState(() => _isCheckingAuth = false);
       }
     });
@@ -261,7 +261,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
 
   Future<void> _syncProfileFromSupabase() async {
     if (!_isSupabaseAvailable) {
-      print('⚠️ [LandingPage] Skipping profile sync - Supabase not available');
+      debugPrint('⚠️ [LandingPage] Skipping profile sync - Supabase not available');
       return;
     }
 
@@ -375,11 +375,11 @@ class _LandingPageState extends ConsumerState<LandingPage>
 
   Future<void> _checkAuthState() async {
     if (!_isSupabaseAvailable) {
-      print('⚠️ [LandingPage] Skipping auth state check - Supabase not available');
+      debugPrint('⚠️ [LandingPage] Skipping auth state check - Supabase not available');
       return;
     }
 
-    print(
+    debugPrint(
         '🔍 _checkAuthState: Starting auth check, _isCheckingAuth is $_isCheckingAuth');
     try {
       final session = Supabase.instance.client.auth.currentSession;
@@ -387,15 +387,15 @@ class _LandingPageState extends ConsumerState<LandingPage>
       // If no session, stay on landing page
       if (session == null) {
         debugPrint('No session found, staying on landing page');
-        print('🔍 _checkAuthState: Setting _isCheckingAuth to false');
+        debugPrint('🔍 _checkAuthState: Setting _isCheckingAuth to false');
         if (mounted) {
           setState(() {
             _isCheckingAuth = false;
-            print('✅ _checkAuthState: _isCheckingAuth set to false');
+            debugPrint('✅ _checkAuthState: _isCheckingAuth set to false');
           });
           // Force visual update in release mode
           WidgetsBinding.instance.ensureVisualUpdate();
-          print('🔍 _checkAuthState: ensureVisualUpdate() called');
+          debugPrint('🔍 _checkAuthState: ensureVisualUpdate() called');
         }
         return;
       }
@@ -476,31 +476,31 @@ class _LandingPageState extends ConsumerState<LandingPage>
   }
 
   Future<void> _handleAppleLogin() async {
-    print('🍎 _handleAppleLogin() called');
-    print('🍎 _isAuthProcessing at start: $_isAuthProcessing');
+    debugPrint('🍎 _handleAppleLogin() called');
+    debugPrint('🍎 _isAuthProcessing at start: $_isAuthProcessing');
 
     if (_isAuthProcessing) {
-      print('🍎 Already processing, returning early');
+      debugPrint('🍎 Already processing, returning early');
       return;
     }
 
-    print('🍎 Setting _isAuthProcessing to true');
+    debugPrint('🍎 Setting _isAuthProcessing to true');
     setState(() => _isAuthProcessing = true);
     _startAuthTimeout(); // 타임아웃 시작
 
     try {
-      print('🍎 Calling _socialAuthService.signInWithApple()');
+      debugPrint('🍎 Calling _socialAuthService.signInWithApple()');
       // Apple OAuth 로그인 - SocialAuthService 사용
       if (_socialAuthService == null) {
         throw Exception('Social auth service not available');
       }
       final result = await _socialAuthService!.signInWithApple();
 
-      print('🍎 signInWithApple() result: $result');
+      debugPrint('🍎 signInWithApple() result: $result');
 
       if (result != null) {
         // Native Apple Sign-In 성공
-        print('🍎 Native Apple Sign-In successful');
+        debugPrint('🍎 Native Apple Sign-In successful');
 
         // 프로필은 social_auth_service에서 이미 저장됨
 
@@ -524,7 +524,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
         }
       } else {
         // OAuth flow - 브라우저로 리다이렉트됨
-        print('🍎 OAuth flow initiated');
+        debugPrint('🍎 OAuth flow initiated');
         // _startAuthTimeout(); // 이미 시작됨
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -535,7 +535,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
         }
       }
     } catch (e) {
-      print('🍎 Apple login error: $e');
+      debugPrint('🍎 Apple login error: $e');
       debugPrint('Error saving profile: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -545,7 +545,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
                 : TossDesignSystem.errorRed));
       }
     } finally {
-      print('🍎 Setting _isAuthProcessing to false');
+      debugPrint('🍎 Setting _isAuthProcessing to false');
       if (mounted) {
         setState(() => _isAuthProcessing = false);
       }
@@ -553,34 +553,34 @@ class _LandingPageState extends ConsumerState<LandingPage>
   }
 
   Future<void> _handleNaverLogin() async {
-    print('🟢 [NAVER] _handleNaverLogin() called');
-    print('🟢 [NAVER] _isAuthProcessing at entry: $_isAuthProcessing');
+    debugPrint('🟢 [NAVER] _handleNaverLogin() called');
+    debugPrint('🟢 [NAVER] _isAuthProcessing at entry: $_isAuthProcessing');
 
     if (_isAuthProcessing) {
-      print('🟢 [NAVER] Already processing, returning early');
+      debugPrint('🟢 [NAVER] Already processing, returning early');
       return;
     }
 
-    print('🟢 [NAVER] Setting _isAuthProcessing = true');
+    debugPrint('🟢 [NAVER] Setting _isAuthProcessing = true');
     setState(() => _isAuthProcessing = true);
     _startAuthTimeout(); // 타임아웃 시작
 
     try {
       // Naver OAuth 로그인 - SocialAuthService 사용
-      print('🟢 [NAVER] Checking _socialAuthService: $_socialAuthService');
+      debugPrint('🟢 [NAVER] Checking _socialAuthService: $_socialAuthService');
       if (_socialAuthService == null) {
-        print('🟢 [NAVER] ERROR: Social auth service is NULL!');
+        debugPrint('🟢 [NAVER] ERROR: Social auth service is NULL!');
         throw Exception('Social auth service not available');
       }
 
-      print('🟢 [NAVER] Calling signInWithNaver()...');
+      debugPrint('🟢 [NAVER] Calling signInWithNaver()...');
 
       // Test: call without await first to see if it returns a Future
       final futureResult = _socialAuthService!.signInWithNaver();
-      print('🟢 [NAVER] Got Future: ${futureResult.runtimeType}');
+      debugPrint('🟢 [NAVER] Got Future: ${futureResult.runtimeType}');
 
       final result = await futureResult;
-      print('🟢 [NAVER] signInWithNaver() returned: $result');
+      debugPrint('🟢 [NAVER] signInWithNaver() returned: $result');
 
       if (result != null) {
         // Naver Sign-In 성공
@@ -599,8 +599,8 @@ class _LandingPageState extends ConsumerState<LandingPage>
         }
       }
     } catch (e) {
-      print('🟢 [NAVER] Exception caught: $e');
-      print('🟢 [NAVER] Exception type: ${e.runtimeType}');
+      debugPrint('🟢 [NAVER] Exception caught: $e');
+      debugPrint('🟢 [NAVER] Exception type: ${e.runtimeType}');
       debugPrint('Error saving profile: $e');
       if (mounted) {
         // Check for duplicate email error
@@ -679,7 +679,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
     final result = await SocialLoginBottomSheet.show(
       context,
       onGoogleLogin: () async {
-        print('🔴 Google login button clicked');
+        debugPrint('🔴 Google login button clicked');
 
         // 모달을 먼저 닫기
         if (Navigator.canPop(context)) {
@@ -691,8 +691,8 @@ class _LandingPageState extends ConsumerState<LandingPage>
         _handleSocialLogin('Google');
       },
       onAppleLogin: () async {
-        print('🍎 Apple login button clicked');
-        print('🍎 _isAuthProcessing: $_isAuthProcessing');
+        debugPrint('🍎 Apple login button clicked');
+        debugPrint('🍎 _isAuthProcessing: $_isAuthProcessing');
 
         // 모달을 먼저 닫기
         if (Navigator.canPop(context)) {
@@ -704,7 +704,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
         _handleAppleLogin();
       },
       onKakaoLogin: () async {
-        print('🟡 Kakao login button clicked');
+        debugPrint('🟡 Kakao login button clicked');
 
         // 모달을 먼저 닫기
         if (Navigator.canPop(context)) {
@@ -716,14 +716,14 @@ class _LandingPageState extends ConsumerState<LandingPage>
         _handleSocialLogin('Kakao');
       },
       onNaverLogin: () {
-        print('🟢 Naver login button clicked');
-        print('🟢 _isAuthProcessing before pop: $_isAuthProcessing');
+        debugPrint('🟢 Naver login button clicked');
+        debugPrint('🟢 _isAuthProcessing before pop: $_isAuthProcessing');
 
         // 모달을 먼저 닫기
         Navigator.pop(context);
 
         // 즉시 로그인 처리 (100ms 대기 제거)
-        print('🟢 About to call _handleNaverLogin()');
+        debugPrint('🟢 About to call _handleNaverLogin()');
         _handleNaverLogin();
       },
       onInstagramLogin: () {
@@ -961,14 +961,14 @@ class _LandingPageState extends ConsumerState<LandingPage>
 
   @override
   Widget build(BuildContext context) {
-    print(
+    debugPrint(
         '🎨 Building LandingPage: _isCheckingAuth=$_isCheckingAuth, _isAuthProcessing=$_isAuthProcessing');
 
     // Build 시 OAuth 상태 체크는 제거 (didChangeDependencies와 didChangeAppLifecycleState에서 처리)
     // build()에서 setState를 트리거하는 로직은 무한 리빌드를 유발할 수 있음
 
     if (_isCheckingAuth) {
-      print('🅿️ Showing loading screen because _isCheckingAuth is true');
+      debugPrint('🅿️ Showing loading screen because _isCheckingAuth is true');
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Center(

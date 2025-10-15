@@ -3,7 +3,7 @@ import 'dart:io';
 import 'accurate_celebrity_data_processor.dart';
 
 void main() async {
-  print('🚀 정확한 유명인 데이터를 JSON으로 변환 중...');
+  debugPrint('🚀 정확한 유명인 데이터를 JSON으로 변환 중...');
   
   final celebrities = <Map<String, dynamic>>[];
   
@@ -38,7 +38,7 @@ void main() async {
     });
   });
   
-  print('📊 총 ${celebrities.length}명의 유명인 데이터 변환 완료');
+  debugPrint('📊 총 ${celebrities.length}명의 유명인 데이터 변환 완료');
   
   // JSON 파일로 저장
   final jsonFile = File('accurate_celebrities.json');
@@ -46,8 +46,8 @@ void main() async {
     const JsonEncoder.withIndent('  ').convert(celebrities),
   );
   
-  print('✅ JSON 파일 저장 완료: accurate_celebrities.json');
-  print('📁 파일 크기: ${await jsonFile.length()} bytes');
+  debugPrint('✅ JSON 파일 저장 완료: accurate_celebrities.json');
+  debugPrint('📁 파일 크기: ${await jsonFile.length()} bytes');
 }
 
 String _generateId(String category, String name) {

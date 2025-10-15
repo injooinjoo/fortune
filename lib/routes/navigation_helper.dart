@@ -18,7 +18,7 @@ class NavigationHelper {
     // Check if current location is exactly a main route
     if (mainRoutes.contains(location)) {
       if (kDebugMode) {
-        print('Fortune cached');
+        debugPrint('Fortune cached');
       }
       return true;
     }
@@ -26,7 +26,7 @@ class NavigationHelper {
     // Settings and other nested routes should hide navigation
     if (location.startsWith('/settings')) {
       if (kDebugMode) {
-        print('Fortune cached');
+        debugPrint('Fortune cached');
       }
       return false;
     }
@@ -41,14 +41,14 @@ class NavigationHelper {
       
       if (hideNavigationRoutes.contains(location)) {
         if (kDebugMode) {
-          print('Fortune cached');
+          debugPrint('Fortune cached');
         }
         return false;
       }
       
       // Default: show navigation for fortune sub-routes
       if (kDebugMode) {
-        print('Fortune cached');
+        debugPrint('Fortune cached');
       }
       return true;
     }
@@ -74,7 +74,7 @@ class NavigationHelper {
 
     // All other routes hide navigation bar
     if (kDebugMode) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
     return false;
   }

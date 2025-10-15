@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Failsafe: If still on splash after 3 seconds, force navigation
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        print('⏰ SplashScreen: Failsafe triggered, forcing navigation to landing');
+        debugPrint('⏰ SplashScreen: Failsafe triggered, forcing navigation to landing');
         context.go('/');
       }
     });
@@ -29,24 +29,24 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _performAuthCheck() async {
-    print('🚀 SplashScreen: Starting auth check');
+    debugPrint('🚀 SplashScreen: Starting auth check');
     await Future.delayed(const Duration(seconds: 1));
 
     if (!mounted) {
-      print('⚠️ SplashScreen: Widget not mounted, returning');
+      debugPrint('⚠️ SplashScreen: Widget not mounted, returning');
       return;
     }
 
     try {
-      print('🔍 SplashScreen: Getting Supabase client');
+      debugPrint('🔍 SplashScreen: Getting Supabase client');
       final supabase = Supabase.instance.client;
-      print('🔐 SplashScreen: Checking current session');
+      debugPrint('🔐 SplashScreen: Checking current session');
       final session = supabase.auth.currentSession;
-      print('🔐 SplashScreen: Session status - ${session != null ? 'Authenticated' : 'Not authenticated'}');
+      debugPrint('🔐 SplashScreen: Session status - ${session != null ? 'Authenticated' : 'Not authenticated'}');
 
       if (session != null) {
         try {
-          print('👤 SplashScreen: Checking user profile for user ${session.user.id}');
+          debugPrint('👤 SplashScreen: Checking user profile for user ${session.user.id}');
 
           // Add timeout to prevent hanging
           final profileResponse = await supabase
@@ -57,42 +57,42 @@ class _SplashScreenState extends State<SplashScreen> {
               .timeout(
                 const Duration(seconds: 2),
                 onTimeout: () {
-                  print('⏱️ SplashScreen: Profile fetch timeout');
+                  debugPrint('⏱️ SplashScreen: Profile fetch timeout');
                   return null;
                 },
               );
 
-          print('📋 SplashScreen: Profile response - $profileResponse');
+          debugPrint('📋 SplashScreen: Profile response - $profileResponse');
 
           if (!mounted) return;
 
           if (profileResponse == null ||
               profileResponse['onboarding_completed'] != true) {
             // No profile or onboarding not completed - go to full onboarding
-            print('➡️ SplashScreen: Redirecting to onboarding');
+            debugPrint('➡️ SplashScreen: Redirecting to onboarding');
             context.go('/onboarding/toss-style');
           } else if (profileResponse['name'] == null ||
                      profileResponse['birth_date'] == null) {
             // Has profile but missing essential fields - go to partial onboarding
-            print('➡️ SplashScreen: Missing essential fields, redirecting to partial onboarding');
+            debugPrint('➡️ SplashScreen: Missing essential fields, redirecting to partial onboarding');
             context.go('/onboarding/toss-style?partial=true');
           } else {
             // Profile complete - go to home
-            print('➡️ SplashScreen: Redirecting to home');
+            debugPrint('➡️ SplashScreen: Redirecting to home');
             context.go('/home');
           }
         } catch (e) {
-          print('❌ SplashScreen: Error checking profile: $e');
+          debugPrint('❌ SplashScreen: Error checking profile: $e');
           // If error while logged in, still go to landing for clean start
           if (mounted) context.go('/');
         }
       } else {
         // Always redirect non-logged-in users to landing page
-        print('➡️ SplashScreen: No session, redirecting to landing page');
+        debugPrint('➡️ SplashScreen: No session, redirecting to landing page');
         if (mounted) context.go('/');
       }
     } catch (e) {
-      print('❌ SplashScreen: Critical error in auth check: $e');
+      debugPrint('❌ SplashScreen: Critical error in auth check: $e');
       // On any critical error, go to landing page
       if (mounted) context.go('/');
     }

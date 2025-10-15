@@ -25,7 +25,7 @@ class SocialAuthService {
   // Google Sign In - Supabase 표준 OAuth 사용
   Future<AuthResponse?> signInWithGoogle({BuildContext? context}) async {
     try {
-      print('🟡 [SocialAuthService] signInWithGoogle() started with Supabase OAuth');
+      debugPrint('🟡 [SocialAuthService] signInWithGoogle() started with Supabase OAuth');
       Logger.info('=== GOOGLE OAUTH SUPABASE PROCESS STARTED ===');
       
       // Debug: Log the Supabase URL being used
@@ -38,7 +38,7 @@ class SocialAuthService {
         throw Exception('Supabase URL is not properly configured');
       }
       
-      print('🟡 [SocialAuthService] Starting Supabase OAuth for Google...');
+      debugPrint('🟡 [SocialAuthService] Starting Supabase OAuth for Google...');
       Logger.info('Starting Supabase OAuth for Google');
       
       // Use Supabase standard OAuth
@@ -56,7 +56,7 @@ class SocialAuthService {
       }
       
       Logger.info('Google OAuth initiated successfully - redirecting to browser');
-      print('🟡 [SocialAuthService] OAuth redirect initiated');
+      debugPrint('🟡 [SocialAuthService] OAuth redirect initiated');
       
       Logger.securityCheckpoint('Google OAuth flow initiated');
       

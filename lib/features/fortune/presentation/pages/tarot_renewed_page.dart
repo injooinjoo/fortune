@@ -305,16 +305,16 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   }
 
   Widget _buildQuestioningScreen() {
-    print('🟡 Building questioning screen - selectedQuestion: $_selectedQuestion');
+    debugPrint('🟡 Building questioning screen - selectedQuestion: $_selectedQuestion');
     return TarotQuestionSelector(
       key: const ValueKey('tarot-question-selector'), // key 추가로 위젯 재사용
       onQuestionSelected: (question) {
-        print('🟢 Parent received question: $question');
+        debugPrint('🟢 Parent received question: $question');
         if (mounted) {
           setState(() {
             _selectedQuestion = question;  // 빈 문자열 체크 제거
             _customQuestion = null;
-            print('🟢 State updated - selectedQuestion: $_selectedQuestion');
+            debugPrint('🟢 State updated - selectedQuestion: $_selectedQuestion');
           });
         }
       },

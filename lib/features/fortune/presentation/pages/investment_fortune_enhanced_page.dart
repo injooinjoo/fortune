@@ -523,7 +523,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           padding: const EdgeInsets.only(bottom: 12),
           child: GestureDetector(
             onTap: () {
-              print('🎯 위험 감수도 선택: ${option['value']}');
+              debugPrint('🎯 위험 감수도 선택: ${option['value']}');
               ref.read(investmentDataProvider.notifier).update((state) {
                 final newData = InvestmentFortuneData()
                   ..userId = state.userId
@@ -542,7 +542,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   ..wantLuckyNumbers = state.wantLuckyNumbers
                   ..wantRiskAnalysis = state.wantRiskAnalysis
                   ..specificQuestion = state.specificQuestion;
-                print('🔄 상태 업데이트 완료: riskTolerance = ${newData.riskTolerance}');
+                debugPrint('🔄 상태 업데이트 완료: riskTolerance = ${newData.riskTolerance}');
                 return newData;
               });
             },

@@ -311,7 +311,7 @@ class TalentCardGenerator {
       
       return byteData?.buffer.asUint8List();
     } catch (e) {
-      print('Error generating talent card: $e');
+      debugPrint('Error generating talent card: $e');
       return null;
     }
   }

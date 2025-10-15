@@ -61,7 +61,7 @@ class AuthService {
       
       return response['onboarding_completed'] == true;
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
       return false;
     }
   }

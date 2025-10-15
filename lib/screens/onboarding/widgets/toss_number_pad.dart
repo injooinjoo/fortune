@@ -69,10 +69,10 @@ class TossNumberPad extends StatelessWidget {
         color: TossDesignSystem.white,
         child: InkWell(
           onTap: () {
-            print('[TossNumberPad] Button $number pressed at ${DateTime.now()}');
+            debugPrint('[TossNumberPad] Button $number pressed at ${DateTime.now()}');
             HapticFeedback.lightImpact();
             onPressed();
-            print('[TossNumberPad] onPressed callback executed for $number');
+            debugPrint('[TossNumberPad] onPressed callback executed for $number');
           },
           child: Container(
             decoration: BoxDecoration(
@@ -102,10 +102,10 @@ class TossNumberPad extends StatelessWidget {
         color: TossDesignSystem.white,
         child: InkWell(
           onTap: onBackspacePressed != null ? () {
-            print('[TossNumberPad] Backspace pressed at ${DateTime.now()}');
+            debugPrint('[TossNumberPad] Backspace pressed at ${DateTime.now()}');
             HapticFeedback.lightImpact();
             onBackspacePressed!();
-            print('[TossNumberPad] onBackspacePressed callback executed');
+            debugPrint('[TossNumberPad] onBackspacePressed callback executed');
           } : null,
           child: Container(
             decoration: BoxDecoration(

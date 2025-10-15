@@ -34,9 +34,9 @@ class TarotAnimations {
     required AnimationController controller,
     required int cardCount,
     double delayFactor = 0.5}) {
-    print('Fortune cached 3');
-    print('Fortune cached');
-    print('[TarotAnim] controller.value: ${controller.value}');
+    debugPrint('Fortune cached 3');
+    debugPrint('Fortune cached');
+    debugPrint('[TarotAnim] controller.value: ${controller.value}');
     return List.generate(cardCount, (index) {
       final delay = index / cardCount;
       return Tween<double>(
@@ -58,14 +58,14 @@ class TarotAnimations {
     required double fanAngle,
     required double radius,
     double baseRotation = 0}) {
-    print('Fortune cached');
+    debugPrint('Fortune cached');
     final normalizedIndex = (index - totalCards / 2) / (totalCards / 2);
-    print('Fortune cached');
+    debugPrint('Fortune cached');
     final angle = normalizedIndex * fanAngle * math.pi / 180 + baseRotation;
-    print('[TarotAnim] angle: $angle (fanAngle: $fanAngle, baseRotation: $baseRotation)');
+    debugPrint('[TarotAnim] angle: $angle (fanAngle: $fanAngle, baseRotation: $baseRotation)');
     
     final scale = 1.0 - (angle.abs() * 0.2).clamp(0.0, 0.4);
-    print('Fortune cached');
+    debugPrint('Fortune cached');
     return FanSpreadPosition(
       x: radius * math.sin(angle),
       y: -radius * math.cos(angle) + radius * 0.8,
@@ -214,9 +214,9 @@ class TarotCardEntrance extends StatelessWidget {
       animation: animation,
       builder: (context, child) {
         final progress = animation.value;
-        print('Fortune cached');
-        print('Y: ${50 * (1 - progress)}');
-        print('Fortune cached');
+        debugPrint('Fortune cached');
+        debugPrint('Y: ${50 * (1 - progress)}');
+        debugPrint('Fortune cached');
         return Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()
@@ -224,9 +224,9 @@ class TarotCardEntrance extends StatelessWidget {
             ..scale(progress, progress),
           child: Opacity(
             opacity: (() {
-              print('Fortune cached');
+              debugPrint('Fortune cached');
               if (progress < 0.0 || progress > 1.0) {
-                print('Fortune cached');
+                debugPrint('Fortune cached');
 }
               return progress.clamp(0.0, 1.0);
 })(),

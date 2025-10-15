@@ -36,7 +36,7 @@ class TestAuthService {
       // Check if test session already exists
       final existingSession = prefs.getString(_testSessionKey);
       if (existingSession != null) {
-        print('🔧 Test: Using existing test session');
+        debugPrint('🔧 Test: Using existing test session');
         return true;
       }
 
@@ -46,7 +46,7 @@ class TestAuthService {
       final testPassword = const String.fromEnvironment('TEST_ACCOUNT_PASSWORD',
                                                         defaultValue: 'Test123!@#');
 
-      print('🔧 Test: Attempting auto-login with $testEmail');
+      debugPrint('🔧 Test: Attempting auto-login with $testEmail');
 
       // Try to sign in first
       AuthResponse? response;
@@ -56,7 +56,7 @@ class TestAuthService {
           password: testPassword,
         );
       } catch (e) {
-        print('🔧 Test: Sign in failed, trying to create account: $e');
+        debugPrint('🔧 Test: Sign in failed, trying to create account: $e');
         // If sign in fails, try to create the account
         response = await _supabase.auth.signUp(
           email: testEmail,
@@ -73,13 +73,13 @@ class TestAuthService {
         await prefs.setString(_testUserIdKey, response.user!.id);
         await prefs.setString(_testSessionKey, response.session?.accessToken ?? '');
 
-        print('🔧 Test: Auto-login successful for user ${response.user!.id}');
+        debugPrint('🔧 Test: Auto-login successful for user ${response.user!.id}');
         return true;
       }
 
       return false;
     } catch (e) {
-      print('🔧 Test: Auto-login failed: $e');
+      debugPrint('🔧 Test: Auto-login failed: $e');
       return false;
     }
   }
@@ -107,7 +107,7 @@ class TestAuthService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_testUserIdKey);
     await prefs.remove(_testSessionKey);
-    print('🔧 Test: Test session cleared');
+    debugPrint('🔧 Test: Test session cleared');
   }
 
   /// Inject test session into app
@@ -125,13 +125,13 @@ class TestAuthService {
       // The session should already be set by autoLoginTestAccount
       final currentUser = _supabase.auth.currentUser;
       if (currentUser?.id == testSession['user_id']) {
-        print('🔧 Test: Test session successfully injected');
+        debugPrint('🔧 Test: Test session successfully injected');
         return true;
       }
 
       return false;
     } catch (e) {
-      print('🔧 Test: Failed to inject test session: $e');
+      debugPrint('🔧 Test: Failed to inject test session: $e');
       return false;
     }
   }
@@ -164,9 +164,9 @@ class TestAuthService {
   /// Enable debug logging for tests
   static void enableTestLogging() {
     if (isTestMode()) {
-      print('🔧 Test: Test mode enabled');
-      print('🔧 Test: Bypass auth: ${_shouldBypassAuth()}');
-      print('🔧 Test: Test account: ${const String.fromEnvironment('TEST_ACCOUNT_EMAIL')}');
+      debugPrint('🔧 Test: Test mode enabled');
+      debugPrint('🔧 Test: Bypass auth: ${_shouldBypassAuth()}');
+      debugPrint('🔧 Test: Test account: ${const String.fromEnvironment('TEST_ACCOUNT_EMAIL')}');
     }
   }
 }

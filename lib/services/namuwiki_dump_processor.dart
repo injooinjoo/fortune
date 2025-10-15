@@ -20,7 +20,7 @@ class NamuWikiDumpProcessor {
   /// 덤프 파일에서 특정 연예인의 정보를 추출합니다
   Future<CelebrityInfo?> extractCelebrityInfo(String celebrityName) async {
     try {
-      print('🔍 덤프에서 검색 중: $celebrityName');
+      debugPrint('🔍 덤프에서 검색 중: $celebrityName');
 
       // XML 덤프 파일 읽기 (스트림 방식으로 메모리 효율적으로)
       final file = File(dumpFilePath);
@@ -43,18 +43,18 @@ class NamuWikiDumpProcessor {
       }
 
       if (!foundPage || pageContent == null) {
-        print('❌ 덤프에서 찾을 수 없음: $celebrityName');
+        debugPrint('❌ 덤프에서 찾을 수 없음: $celebrityName');
         return null;
       }
 
       // 위키텍스트에서 정보 추출
       final info = _parseWikiText(celebrityName, pageContent);
-      print('✅ 덤프에서 추출 완료: $celebrityName');
+      debugPrint('✅ 덤프에서 추출 완료: $celebrityName');
       
       return info;
 
     } catch (e) {
-      print('❌ 덤프 처리 오류 ($celebrityName): $e');
+      debugPrint('❌ 덤프 처리 오류 ($celebrityName): $e');
       return null;
     }
   }
@@ -63,7 +63,7 @@ class NamuWikiDumpProcessor {
   Future<Map<String, CelebrityInfo>> extractMultipleCelebrities(
     List<String> celebrityNames,
   ) async {
-    print('📋 배치 추출 시작: ${celebrityNames.length}명');
+    debugPrint('📋 배치 추출 시작: ${celebrityNames.length}명');
 
     final results = <String, CelebrityInfo>{};
     
@@ -81,10 +81,10 @@ class NamuWikiDumpProcessor {
         }
       }
 
-      print('📊 배치 추출 완료: ${results.length}/${celebrityNames.length}명 성공');
+      debugPrint('📊 배치 추출 완료: ${results.length}/${celebrityNames.length}명 성공');
       
     } catch (e) {
-      print('❌ 배치 추출 오류: $e');
+      debugPrint('❌ 배치 추출 오류: $e');
     }
 
     return results;
@@ -175,7 +175,7 @@ class NamuWikiDumpProcessor {
         aliases: _extractAliases(wikiText, name),
       );
     } catch (e) {
-      print('위키텍스트 파싱 오류 ($name): $e');
+      debugPrint('위키텍스트 파싱 오류 ($name): $e');
       return null;
     }
   }

@@ -60,8 +60,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
   }
 
   void _flipCard(int index) {
-    print('Fortune cached');
-    print('state: ${_flippedCards[index] ?? false}');
+    debugPrint('Fortune cached');
+    debugPrint('state: ${_flippedCards[index] ?? false}');
     setState(() {
       _flippedCards[index] = !(_flippedCards[index] ?? false);
     });
@@ -81,11 +81,11 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
     return AnimatedBuilder(
       animation: _entranceAnimation,
       builder: (context, child) {
-        print('value: ${_entranceAnimation.value}');
+        debugPrint('value: ${_entranceAnimation.value}');
         final opacityValue = _entranceAnimation.value;
-        print('Fortune cached');
+        debugPrint('Fortune cached');
         if (opacityValue < 0.0 || opacityValue > 1.0) {
-          print('Fortune cached');
+          debugPrint('Fortune cached');
         }
         return Opacity(
           opacity: opacityValue.clamp(0.0, 1.0),

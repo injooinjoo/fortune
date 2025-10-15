@@ -220,7 +220,7 @@ class CacheInterceptor extends Interceptor {
       await _cacheBox.put(key, entry.toJson());
     } catch (e) {
       // Ignore cache save errors
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
   }
 

@@ -2,20 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 
 void main() async {
-  print('🚀 JSON 데이터를 배치 SQL 파일로 분할 중...');
+  debugPrint('🚀 JSON 데이터를 배치 SQL 파일로 분할 중...');
   
   // JSON 파일 읽기
   final jsonFile = File('accurate_celebrities.json');
   final jsonContent = await jsonFile.readAsString();
   final List<dynamic> celebrities = jsonDecode(jsonContent);
   
-  print('📊 총 ${celebrities.length}명의 유명인 데이터 로드됨');
+  debugPrint('📊 총 ${celebrities.length}명의 유명인 데이터 로드됨');
   
   // 배치 크기 설정 (50명씩)
   const batchSize = 50;
   final totalBatches = (celebrities.length / batchSize).ceil();
   
-  print('🔄 $totalBatches개의 배치 파일로 분할 예정...');
+  debugPrint('🔄 $totalBatches개의 배치 파일로 분할 예정...');
   
   for (int i = 0; i < totalBatches; i++) {
     final startIndex = i * batchSize;
@@ -25,15 +25,15 @@ void main() async {
     final fileName = 'celebrities_batch_${i + 1}_of_$totalBatches.sql';
     await createBatchSQLFile(fileName, batch, i == 0);
     
-    print('✅ 배치 ${i + 1}/$totalBatches 생성: $fileName (${batch.length}명)');
+    debugPrint('✅ 배치 ${i + 1}/$totalBatches 생성: $fileName (${batch.length}명)');
   }
   
-  print('🎉 모든 배치 파일 생성 완료!');
-  print('');
-  print('📋 업로드 순서:');
-  print('1. 먼저 celebrities_batch_1_of_$totalBatches.sql 실행 (테이블 생성 포함)');
+  debugPrint('🎉 모든 배치 파일 생성 완료!');
+  debugPrint('');
+  debugPrint('📋 업로드 순서:');
+  debugPrint('1. 먼저 celebrities_batch_1_of_$totalBatches.sql 실행 (테이블 생성 포함)');
   for (int i = 1; i < totalBatches; i++) {
-    print('${i + 1}. celebrities_batch_${i + 1}_of_$totalBatches.sql 실행');
+    debugPrint('${i + 1}. celebrities_batch_${i + 1}_of_$totalBatches.sql 실행');
   }
 }
 

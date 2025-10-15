@@ -11,7 +11,7 @@ class VibrationService {
     try {
       HapticFeedback.lightImpact();
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
   }
   
@@ -20,7 +20,7 @@ class VibrationService {
     try {
       HapticFeedback.lightImpact();
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
   }
   
@@ -29,7 +29,7 @@ class VibrationService {
     try {
       HapticFeedback.mediumImpact();
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
   }
   
@@ -38,7 +38,7 @@ class VibrationService {
     try {
       HapticFeedback.heavyImpact();
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
   }
   
@@ -47,7 +47,7 @@ class VibrationService {
     try {
       HapticFeedback.selectionClick();
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
   }
   
@@ -58,7 +58,7 @@ class VibrationService {
       // In a real app, this would use platform-specific code
       HapticFeedback.mediumImpact();
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
   }
   
@@ -69,7 +69,7 @@ class VibrationService {
       // In a real app, this would check device capabilities
       return true;
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
       return false;
     }
   }
@@ -79,7 +79,7 @@ class VibrationService {
     try {
       // Platform-specific implementation would go here
     } catch (e) {
-      print('Fortune cached');
+      debugPrint('Fortune cached');
     }
   }
 }

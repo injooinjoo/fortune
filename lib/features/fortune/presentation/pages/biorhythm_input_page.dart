@@ -111,7 +111,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
       }
     } catch (e) {
       // 에러가 발생해도 앱이 계속 작동하도록 함
-      print('생년월일 로드 실패: $e');
+      debugPrint('생년월일 로드 실패: $e');
     }
   }
 

@@ -120,16 +120,16 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Future<void> _handleGenerateFortune() async {
-    print('🔵 [MBTI-TRACE-1] _handleGenerateFortune() started');
+    debugPrint('🔵 [MBTI-TRACE-1] _handleGenerateFortune() started');
 
     // Just call generateFortuneAction() directly - it handles ads and loading internally
     try {
-      print('🔵 [MBTI-TRACE-2] Calling generateFortuneAction()');
+      debugPrint('🔵 [MBTI-TRACE-2] Calling generateFortuneAction()');
       await generateFortuneAction();
-      print('🔵 [MBTI-TRACE-3] generateFortuneAction() returned');
+      debugPrint('🔵 [MBTI-TRACE-3] generateFortuneAction() returned');
     } catch (e, stackTrace) {
-      print('❌ [MbtiFortunePage] Error in _handleGenerateFortune: $e');
-      print('📚 [MbtiFortunePage] Stack trace: $stackTrace');
+      debugPrint('❌ [MbtiFortunePage] Error in _handleGenerateFortune: $e');
+      debugPrint('📚 [MbtiFortunePage] Stack trace: $stackTrace');
     }
   }
 
@@ -137,7 +137,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
     final user = ref.read(userProvider).value;
     if (user == null) {
-      print('⚠️ [MbtiFortunePage] User not logged in, using fallback fortune');
+      debugPrint('⚠️ [MbtiFortunePage] User not logged in, using fallback fortune');
       return _createFallbackFortune('temp_user_id');
     }
 
@@ -150,7 +150,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       DateTime.now(),
     );
 
-    print('🔮 [MbtiFortunePage] Generating fortune for MBTI: $_selectedMbti');
+    debugPrint('🔮 [MbtiFortunePage] Generating fortune for MBTI: $_selectedMbti');
 
     // Fetch user profile for name and birthDate
     String userName = 'Unknown';
@@ -161,12 +161,12 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       if (userProfile != null) {
         userName = userProfile.name ?? 'Unknown';
         userBirthDate = userProfile.birthDate?.toIso8601String().split('T')[0] ?? userBirthDate;
-        print('📋 [MbtiFortunePage] User profile loaded: $userName, $userBirthDate');
+        debugPrint('📋 [MbtiFortunePage] User profile loaded: $userName, $userBirthDate');
       } else {
-        print('⚠️ [MbtiFortunePage] User profile is null, using defaults');
+        debugPrint('⚠️ [MbtiFortunePage] User profile is null, using defaults');
       }
     } catch (e) {
-      print('⚠️ [MbtiFortunePage] Failed to load user profile: $e, using defaults');
+      debugPrint('⚠️ [MbtiFortunePage] Failed to load user profile: $e, using defaults');
     }
 
     // Try API call directly (without Notifier to avoid state conflicts)
@@ -174,7 +174,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       final apiService = ref.read(fortuneApiServiceProvider);
       final categories = _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'];
 
-      print('📡 [MbtiFortunePage] Calling API - type: $_selectedMbti, categories: $categories, name: $userName, birthDate: $userBirthDate');
+      debugPrint('📡 [MbtiFortunePage] Calling API - type: $_selectedMbti, categories: $categories, name: $userName, birthDate: $userBirthDate');
 
       final apiStartTime = DateTime.now();
       final fortune = await apiService.getMbtiFortune(
@@ -186,27 +186,27 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       );
       final apiDuration = DateTime.now().difference(apiStartTime).inMilliseconds;
 
-      print('✅ [MbtiFortunePage] API fortune loaded successfully in ${apiDuration}ms');
-      print('📊 [MbtiFortunePage] Fortune details: id=${fortune.id}, type=${fortune.type}, score=${fortune.overallScore}');
-      print('📝 [MbtiFortunePage] Fortune description length: ${fortune.description?.length ?? 0} chars');
-      print('📝 [MbtiFortunePage] Fortune content: ${fortune.description?.substring(0, fortune.description!.length > 200 ? 200 : fortune.description!.length)}...');
-      print('📊 [MbtiFortunePage] Fortune metadata keys: ${fortune.metadata?.keys.toList()}');
-      print('🔄 [MbtiFortunePage] Returning fortune to BaseFortunePage...');
+      debugPrint('✅ [MbtiFortunePage] API fortune loaded successfully in ${apiDuration}ms');
+      debugPrint('📊 [MbtiFortunePage] Fortune details: id=${fortune.id}, type=${fortune.type}, score=${fortune.overallScore}');
+      debugPrint('📝 [MbtiFortunePage] Fortune description length: ${fortune.description?.length ?? 0} chars');
+      debugPrint('📝 [MbtiFortunePage] Fortune content: ${fortune.description?.substring(0, fortune.description!.length > 200 ? 200 : fortune.description!.length)}...');
+      debugPrint('📊 [MbtiFortunePage] Fortune metadata keys: ${fortune.metadata?.keys.toList()}');
+      debugPrint('🔄 [MbtiFortunePage] Returning fortune to BaseFortunePage...');
       return fortune;
 
     } catch (e, stackTrace) {
       // Log error and return fallback - NEVER throw
-      print('❌ [MbtiFortunePage] API failed with error: $e');
-      print('📚 [MbtiFortunePage] Stack trace: $stackTrace');
-      print('🔄 [MbtiFortunePage] Creating fallback fortune...');
+      debugPrint('❌ [MbtiFortunePage] API failed with error: $e');
+      debugPrint('📚 [MbtiFortunePage] Stack trace: $stackTrace');
+      debugPrint('🔄 [MbtiFortunePage] Creating fallback fortune...');
       final fallback = _createFallbackFortune(user.id);
-      print('✅ [MbtiFortunePage] Fallback fortune created: ${fallback.id}');
+      debugPrint('✅ [MbtiFortunePage] Fallback fortune created: ${fallback.id}');
       return fallback;
     }
   }
 
   Fortune _createFallbackFortune(String userId) {
-    print('🔄 [MbtiFortunePage] Creating fallback fortune for MBTI: $_selectedMbti');
+    debugPrint('🔄 [MbtiFortunePage] Creating fallback fortune for MBTI: $_selectedMbti');
 
     return Fortune(
       id: 'mbti_fallback_${DateTime.now().millisecondsSinceEpoch}',

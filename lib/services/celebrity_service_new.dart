@@ -20,7 +20,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting all celebrities: $e');
+      debugPrint('Error getting all celebrities: $e');
       return [];
     }
   }
@@ -36,7 +36,7 @@ class CelebrityService {
 
       return Celebrity.fromJson(response);
     } catch (e) {
-      print('Error getting celebrity by ID: $e');
+      debugPrint('Error getting celebrity by ID: $e');
       return null;
     }
   }
@@ -56,7 +56,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting celebrities by type: $e');
+      debugPrint('Error getting celebrities by type: $e');
       return [];
     }
   }
@@ -93,7 +93,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error searching celebrities: $e');
+      debugPrint('Error searching celebrities: $e');
       return [];
     }
   }
@@ -114,7 +114,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting random celebrities: $e');
+      debugPrint('Error getting random celebrities: $e');
       return [];
     }
   }
@@ -143,7 +143,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting celebrities by birth year range: $e');
+      debugPrint('Error getting celebrities by birth year range: $e');
       return [];
     }
   }
@@ -160,7 +160,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting celebrities with same birthday: $e');
+      debugPrint('Error getting celebrities with same birthday: $e');
       return [];
     }
   }
@@ -176,7 +176,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting celebrities with external links: $e');
+      debugPrint('Error getting celebrities with external links: $e');
       return [];
     }
   }
@@ -193,7 +193,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting pro gamers by game: $e');
+      debugPrint('Error getting pro gamers by game: $e');
       return [];
     }
   }
@@ -208,7 +208,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting streamers by platform: $e');
+      debugPrint('Error getting streamers by platform: $e');
       return [];
     }
   }
@@ -223,7 +223,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting politicians by party: $e');
+      debugPrint('Error getting politicians by party: $e');
       return [];
     }
   }
@@ -238,7 +238,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting business leaders by industry: $e');
+      debugPrint('Error getting business leaders by industry: $e');
       return [];
     }
   }
@@ -253,7 +253,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting idol members by group: $e');
+      debugPrint('Error getting idol members by group: $e');
       return [];
     }
   }
@@ -268,7 +268,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting solo singers by genre: $e');
+      debugPrint('Error getting solo singers by genre: $e');
       return [];
     }
   }
@@ -283,7 +283,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting actors by specialty: $e');
+      debugPrint('Error getting actors by specialty: $e');
       return [];
     }
   }
@@ -299,7 +299,7 @@ class CelebrityService {
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
-      print('Error getting athletes by sport: $e');
+      debugPrint('Error getting athletes by sport: $e');
       return [];
     }
   }
@@ -317,7 +317,7 @@ class CelebrityService {
 
       return Celebrity.fromJson(response);
     } catch (e) {
-      print('Error adding celebrity: $e');
+      debugPrint('Error adding celebrity: $e');
       return null;
     }
   }
@@ -334,7 +334,7 @@ class CelebrityService {
 
       return Celebrity.fromJson(response);
     } catch (e) {
-      print('Error updating celebrity: $e');
+      debugPrint('Error updating celebrity: $e');
       return null;
     }
   }
@@ -354,7 +354,7 @@ class CelebrityService {
 
       return true;
     } catch (e) {
-      print('Error updating celebrity external ID: $e');
+      debugPrint('Error updating celebrity external ID: $e');
       return false;
     }
   }
@@ -374,7 +374,7 @@ class CelebrityService {
 
       return true;
     } catch (e) {
-      print('Error updating celebrity profession data: $e');
+      debugPrint('Error updating celebrity profession data: $e');
       return false;
     }
   }
@@ -385,7 +385,7 @@ class CelebrityService {
       final response = await _supabase.rpc('get_celebrity_statistics');
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      print('Error getting celebrity statistics: $e');
+      debugPrint('Error getting celebrity statistics: $e');
       return [];
     }
   }
@@ -399,7 +399,7 @@ class CelebrityService {
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      print('Error getting celebrity analytics: $e');
+      debugPrint('Error getting celebrity analytics: $e');
       return [];
     }
   }

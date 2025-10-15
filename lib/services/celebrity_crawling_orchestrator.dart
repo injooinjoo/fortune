@@ -33,7 +33,7 @@ class CelebrityCrawlingOrchestrator {
     CelebrityMasterListItem masterItem,
   ) async {
     try {
-      print('🔄 크롤링 시작: ${masterItem.name} (${masterItem.category.displayName})');
+      debugPrint('🔄 크롤링 시작: ${masterItem.name} (${masterItem.category.displayName})');
 
       // 1. 나무위키에서 정보 크롤링 (masterItemId 포함)
       final crawlingResult = await _crawlingService.crawlCelebrityInfo(
@@ -54,7 +54,7 @@ class CelebrityCrawlingOrchestrator {
       // 2. 크롤링 성공 시 마스터 리스트 상태 업데이트
       await _listService.markCelebrityAsCrawled(masterItem.id);
 
-      print('✅ 크롤링 완료: ${masterItem.name}');
+      debugPrint('✅ 크롤링 완료: ${masterItem.name}');
 
       return CrawlingOperationResult(
         masterItem: masterItem,
@@ -64,7 +64,7 @@ class CelebrityCrawlingOrchestrator {
       );
 
     } catch (e) {
-      print('❌ 크롤링 오류: ${masterItem.name} - $e');
+      debugPrint('❌ 크롤링 오류: ${masterItem.name} - $e');
       
       return CrawlingOperationResult(
         masterItem: masterItem,
@@ -100,7 +100,7 @@ class CelebrityCrawlingOrchestrator {
         );
       }
 
-      print('📋 배치 크롤링 시작: ${targetItems.length}명');
+      debugPrint('📋 배치 크롤링 시작: ${targetItems.length}명');
 
       final results = <CrawlingOperationResult>[];
       int successCount = 0;
@@ -132,7 +132,7 @@ class CelebrityCrawlingOrchestrator {
         }
       }
 
-      print('📊 배치 크롤링 완료 - 성공: $successCount, 실패: $failureCount');
+      debugPrint('📊 배치 크롤링 완료 - 성공: $successCount, 실패: $failureCount');
 
       return BatchCrawlingOperationResult(
         results: results,
@@ -211,16 +211,16 @@ class CelebrityCrawlingOrchestrator {
         );
       }
 
-      print('🔄 실패한 크롤링 재시도: ${failedItems.length}명');
+      debugPrint('🔄 실패한 크롤링 재시도: ${failedItems.length}명');
 
       return await crawlBatch(
         batchSize: batchSize,
         delayBetweenCrawls: delayBetweenCrawls,
         onItemComplete: (result) {
           if (result.success) {
-            print('✅ 재시도 성공: ${result.masterItem.name}');
+            debugPrint('✅ 재시도 성공: ${result.masterItem.name}');
           } else {
-            print('❌ 재시도 실패: ${result.masterItem.name} - ${result.error}');
+            debugPrint('❌ 재시도 실패: ${result.masterItem.name} - ${result.error}');
           }
         },
       );

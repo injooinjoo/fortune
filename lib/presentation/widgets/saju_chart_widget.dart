@@ -32,40 +32,40 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
   }
 
   Future<void> _initializeSaju() async {
-    print('=== SAJU INITIALIZATION START ===');
-    print('Timestamp: ${DateTime.now().toIso8601String()}');
-    print('data: ${widget.userProfile}');
+    debugPrint('=== SAJU INITIALIZATION START ===');
+    debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
+    debugPrint('data: ${widget.userProfile}');
     
     try {
       final sajuNotifier = ref.read(sajuProvider.notifier);
       
-      print('1: Fetching user Saju from database...');
+      debugPrint('1: Fetching user Saju from database...');
       await sajuNotifier.fetchUserSaju();
-      print('Step 1 completed');
+      debugPrint('Step 1 completed');
       
       // If no Saju data exists and we have birth info, calculate it
       final sajuState = ref.read(sajuProvider);
-      print('state:');
-      print('- isLoading: ${sajuState.isLoading}');
-      print('exists: ${sajuState.sajuData != null}');
-      print('- error: ${sajuState.error}');
-      print('- isCached: ${sajuState.isCached}');
+      debugPrint('state:');
+      debugPrint('- isLoading: ${sajuState.isLoading}');
+      debugPrint('exists: ${sajuState.sajuData != null}');
+      debugPrint('- error: ${sajuState.error}');
+      debugPrint('- isCached: ${sajuState.isCached}');
       
       if (sajuState.sajuData == null && !sajuState.isLoading && widget.userProfile != null) {
-        print('No Saju data found, checking birth info...');
+        debugPrint('No Saju data found, checking birth info...');
         final birthDate = widget.userProfile!['birth_date'];
         final birthTime = widget.userProfile!['birth_time'];
         
-        print('Fortune cached');
-        print('Fortune cached');
+        debugPrint('Fortune cached');
+        debugPrint('Fortune cached');
         
         if (birthDate != null) {
-          print('2: Calculating Saju with birth info...');
-          print('with:');
-          print('birthDate: $birthDate');
-          print('birthTime: $birthTime');
-          print('Fortune cached');
-          print('- isLunar: false');
+          debugPrint('2: Calculating Saju with birth info...');
+          debugPrint('with:');
+          debugPrint('birthDate: $birthDate');
+          debugPrint('birthTime: $birthTime');
+          debugPrint('Fortune cached');
+          debugPrint('- isLunar: false');
           
           await sajuNotifier.calculateAndSaveSaju(
             birthDate: DateTime.parse(birthDate),
@@ -73,33 +73,33 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
             isLunar: false
           );
           
-          print('Step 2 completed');
+          debugPrint('Step 2 completed');
           
           // Check final state
           final finalState = ref.read(sajuProvider);
-          print('state:');
-          print('- isLoading: ${finalState.isLoading}');
-          print('exists: ${finalState.sajuData != null}');
-          print('- error: ${finalState.error}');
-          print('- isCached: ${finalState.isCached}');
+          debugPrint('state:');
+          debugPrint('- isLoading: ${finalState.isLoading}');
+          debugPrint('exists: ${finalState.sajuData != null}');
+          debugPrint('- error: ${finalState.error}');
+          debugPrint('- isCached: ${finalState.isCached}');
         } else {
-          print('No birth date available, skipping Saju calculation');
+          debugPrint('No birth date available, skipping Saju calculation');
         }
       } else {
-        print('met:');
-        print('exists: ${sajuState.sajuData != null}');
-        print('- isLoading: ${sajuState.isLoading}');
-        print('exists: ${widget.userProfile != null}');
+        debugPrint('met:');
+        debugPrint('exists: ${sajuState.sajuData != null}');
+        debugPrint('- isLoading: ${sajuState.isLoading}');
+        debugPrint('exists: ${widget.userProfile != null}');
       }
     } catch (e, stackTrace) {
-      print('=== SAJU INITIALIZATION ERROR ===');
-      print('type: ${e.runtimeType}');
-      print('Fortune cached');
-      print('trace:');
-      print(stackTrace);
+      debugPrint('=== SAJU INITIALIZATION ERROR ===');
+      debugPrint('type: ${e.runtimeType}');
+      debugPrint('Fortune cached');
+      debugPrint('trace:');
+      debugPrint(stackTrace);
     }
     
-    print('=== SAJU INITIALIZATION END ===');
+    debugPrint('=== SAJU INITIALIZATION END ===');
   }
 
   @override
