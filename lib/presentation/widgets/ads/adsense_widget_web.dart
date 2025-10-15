@@ -2,7 +2,6 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'dart:html' as html;
 import 'dart:ui_web' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import '../../../core/config/environment.dart';
 import '../../../core/utils/logger.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';

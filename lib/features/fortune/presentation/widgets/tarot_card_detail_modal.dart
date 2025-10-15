@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
-import 'dart:ui';
 import 'dart:math';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../core/constants/tarot_minor_arcana.dart';

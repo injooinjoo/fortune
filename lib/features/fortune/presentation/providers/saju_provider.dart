@@ -177,7 +177,7 @@ class SajuNotifier extends StateNotifier<SajuState> {
       debugPrint('type: ${e.runtimeType}');
       debugPrint('Fortune cached');
       debugPrint('trace:');
-      debugPrint(stackTrace);
+      debugPrint(stackTrace.toString());
       
       // Extract cleaner error message
       String errorMessage = '사주 계산 중 오류가 발생했습니다';

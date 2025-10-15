@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
-import 'dart:ui';
 
 /// Typography system mapped to TossDesignSystem for consistency
 class AppTypography {

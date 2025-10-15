@@ -6,7 +6,6 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 class RouteObserverLogger extends RouteObserver<PageRoute<dynamic>> {
   static final RouteObserverLogger _instance = RouteObserverLogger._internal();

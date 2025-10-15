@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import '../core/theme/toss_design_system.dart';
 import '../core/theme/app_theme.dart';
 

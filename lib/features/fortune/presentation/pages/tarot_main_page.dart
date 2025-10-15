@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
-import 'dart:ui';
 // import '../../../../routes/app_router.dart';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../presentation/providers/auth_provider.dart';

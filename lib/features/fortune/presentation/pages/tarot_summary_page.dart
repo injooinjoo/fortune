@@ -3,7 +3,6 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:ui';
 import '../../../../core/theme/toss_design_system.dart';
 import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
