@@ -36,7 +36,7 @@ class TokenBalanceWidget extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(TossDesignSystem.spacingXXS),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.2),
+                color: theme.colorScheme.primary.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -99,11 +99,11 @@ class FullTokenBalanceWidget extends ConsumerWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              theme.colorScheme.onSurfaceVariant.withOpacity(0.1),
-              theme.colorScheme.onSurfaceVariant.withOpacity(0.1)]),
+              theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
+              theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.1)]),
           borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
           border: Border.all(
-            color: theme.colorScheme.primary.withOpacity(0.2),
+            color: theme.colorScheme.primary.withValues(alpha: 0.2),
             width: 1)),
         child: Column(
           children: [
@@ -141,7 +141,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                   Container(
                     padding: EdgeInsets.all(TossDesignSystem.spacingS),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle),
                     child: Icon(
                       Icons.auto_awesome,
@@ -161,7 +161,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                       Text(
                         '영혼',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7)))])]),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))])]),
             
             SizedBox(height: TossDesignSystem.spacingM),
             
@@ -269,7 +269,7 @@ class TokenBalanceStats extends ConsumerWidget {
             Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7)))]),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]),
         Text(
           value,
           style: theme.textTheme.bodyMedium?.copyWith(

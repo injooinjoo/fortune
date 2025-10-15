@@ -136,8 +136,8 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         padding: const EdgeInsets.all(20),
                         gradient: LinearGradient(
                           colors: [
-                            theme.colorScheme.primary.withOpacity(0.1),
-                            theme.colorScheme.secondary.withOpacity(0.1),
+                            theme.colorScheme.primary.withValues(alpha: 0.1),
+                            theme.colorScheme.secondary.withValues(alpha: 0.1),
                           ],
                         ),
                         child: Row(
@@ -164,7 +164,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     '더 나은 서비스를 만들어가겠습니다',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
-                                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                     ),
                                   ),
                                 ],
@@ -198,8 +198,8 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                             gradient: isSelected
                                 ? LinearGradient(
                                     colors: [
-                                      theme.colorScheme.primary.withOpacity(0.3),
-                                      theme.colorScheme.secondary.withOpacity(0.3)])
+                                      theme.colorScheme.primary.withValues(alpha: 0.3),
+                                      theme.colorScheme.secondary.withValues(alpha: 0.3)])
                                 : null,
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -295,7 +295,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                               borderSide: BorderSide.none,
                             ),
                             filled: true,
-                            fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                            fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
@@ -323,7 +323,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         '답변이 필요한 경우 이메일을 남겨주세요',
                         style: TextStyle(
                           fontSize: 12 * fontScale,
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -341,7 +341,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                               borderSide: BorderSide.none,
                             ),
                             filled: true,
-                            fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                            fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                           ),
                           validator: (value) {
                             if (value != null && value.isNotEmpty) {

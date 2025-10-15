@@ -46,7 +46,7 @@ class _DestinyInputForm extends StatelessWidget {
             Text(
               '당신의 운명을 확인해보세요!\n인생의 전환점과 중요한 시기를 알려드립니다.',
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                 height: 1.5,
               ),
             ),
@@ -56,7 +56,7 @@ class _DestinyInputForm extends StatelessWidget {
               child: Icon(
                 Icons.explore,
                 size: 120,
-                color: theme.colorScheme.primary.withOpacity(0.3),
+                color: theme.colorScheme.primary.withValues(alpha: 0.3),
               ),
             ),
             
@@ -167,7 +167,7 @@ class _DestinyFortuneResult extends StatelessWidget {
                           width: 60,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
-                            color: _getScoreColor(entry.value).withOpacity(0.2),
+                            color: _getScoreColor(entry.value).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(

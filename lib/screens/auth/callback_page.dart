@@ -346,7 +346,7 @@ class _CallbackPageState extends State<CallbackPage> {
             children: [
               FortuneCompassIcon(
                 size: 64,
-                color: (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withOpacity(0.87)),
+                color: (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withValues(alpha: 0.87)),
               SizedBox(height: AppSpacing.spacing6),
               const CircularProgressIndicator(),
               SizedBox(height: AppSpacing.spacing4),

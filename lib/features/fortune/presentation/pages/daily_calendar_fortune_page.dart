@@ -153,10 +153,10 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: TossDesignSystem.tossBlue.withOpacity(0.3),
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -195,7 +195,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
-              color: _getScoreColor(overallScore).withOpacity(0.1),
+              color: _getScoreColor(overallScore).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -318,7 +318,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             width: 80,
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: _getScoreColor(score).withOpacity(0.1),
+              color: _getScoreColor(score).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -434,10 +434,10 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: TossDesignSystem.tossBlue.withOpacity(0.1),
+          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: TossDesignSystem.tossBlue.withOpacity(0.3),
+            color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -535,7 +535,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Center(

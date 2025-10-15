@@ -37,7 +37,7 @@ class DailyFortuneCard extends StatelessWidget {
           border: Border.all(color: context.fortuneTheme.dividerColor),
     boxShadow: [
             BoxShadow(
-              color: Theme.of(context).shadowColor.withOpacity(0.05),
+              color: Theme.of(context).shadowColor.withValues(alpha: 0.05),
               blurRadius: 12,
               offset: const Offset(0, 2)
             )
@@ -212,7 +212,7 @@ class DailyFortuneCard extends StatelessWidget {
           width: double.infinity, // 전체 너비 사용
           padding: AppSpacing.paddingAll12,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
             borderRadius: AppDimensions.borderRadiusSmall
           ),
           child: Column(
@@ -345,7 +345,7 @@ class DailyFortuneCard extends StatelessWidget {
                   child: Container(
                     padding: AppSpacing.paddingAll12,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
                       borderRadius: AppDimensions.borderRadiusSmall
                     ),
                     child: Row(
@@ -395,7 +395,7 @@ class DailyFortuneCard extends StatelessWidget {
                   child: Container(
                     padding: AppSpacing.paddingAll12,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
                       borderRadius: AppDimensions.borderRadiusSmall
                     ),
                     child: Row(
@@ -469,7 +469,7 @@ class DailyFortuneCard extends StatelessWidget {
       child: Container(
         padding: AppSpacing.paddingAll8,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
           borderRadius: AppDimensions.borderRadiusSmall
         ),
         child: Column(

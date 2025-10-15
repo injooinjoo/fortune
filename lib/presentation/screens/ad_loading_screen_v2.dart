@@ -283,8 +283,8 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? TossDesignSystem.black.withOpacity(0.87)
-          : TossDesignSystem.gray900.withOpacity(0.9),
+          ? TossDesignSystem.black.withValues(alpha: 0.87)
+          : TossDesignSystem.gray900.withValues(alpha: 0.9),
       body: SafeArea(
         child: Stack(
           children: [
@@ -299,8 +299,8 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          TossDesignSystem.purple.withOpacity(0.92).withOpacity(0.3),
-                          TossDesignSystem.purple.withOpacity(0.92).withOpacity(0.3)],
+                          TossDesignSystem.purple.withValues(alpha: 0.92).withValues(alpha: 0.3),
+                          TossDesignSystem.purple.withValues(alpha: 0.92).withValues(alpha: 0.3)],
                         transform: GradientRotation(
                           _animationController.value * 2 * 3.14159)),
                     );
@@ -321,8 +321,8 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
-                            Theme.of(context).colorScheme.onSurface.withOpacity(0.05)])),
+                            Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                            Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)])),
                       child: Icon(
                         Icons.auto_awesome,
                         size: 50,
@@ -333,7 +333,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                       end: const Offset(1.05, 1.05),
                       curve: Curves.easeInOut).shimmer(
                       duration: 2.seconds,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
                     
                     const SizedBox(height: AppSpacing.spacing12),
                     
@@ -355,7 +355,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                         _currentMessage,
                         key: ValueKey(_currentMessage),
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
                         textAlign: TextAlign.center)),
                     
                     const SizedBox(height: AppSpacing.spacing12),
@@ -365,7 +365,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                       height: AppSpacing.spacing2,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                         borderRadius: AppDimensions.borderRadiusSmall),
                       child: AnimatedBuilder(
                         animation: _progressAnimation,
@@ -382,7 +382,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                                 borderRadius: AppDimensions.borderRadiusSmall)).animate(
                               onPlay: (controller) => controller.repeat()).shimmer(
                               duration: 1.5.seconds,
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                             );
                         })]),
             
@@ -393,7 +393,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
               child: IconButton(
                 icon: const Icon(
                   Icons.close,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                   size: 28),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -410,7 +410,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                     Text(
                       '광고 없이 바로 운세를 확인하고 싶으신가요?',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
                       textAlign: TextAlign.center),
                     const SizedBox(height: AppSpacing.spacing4),
                     ElevatedButton(

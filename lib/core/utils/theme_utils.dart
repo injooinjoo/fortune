@@ -83,7 +83,7 @@ class ThemeUtils {
   /// Convert hardcoded colors to theme-aware colors
   static Color getThemedPurple(BuildContext context, {double opacity = 1.0}) {
     final baseColor = TossDesignSystem.purple;
-    return opacity < 1.0 ? baseColor.withOpacity(opacity) : baseColor;
+    return opacity < 1.0 ? baseColor.withValues(alpha: opacity) : baseColor;
   }
 
   /// Get status color based on theme

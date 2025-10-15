@@ -171,8 +171,8 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          widget.color.withOpacity(0.1),
-                          widget.color.withOpacity(0.05),
+                          widget.color.withValues(alpha: 0.1),
+                          widget.color.withValues(alpha: 0.05),
                         ],
                       )
                     : null,
@@ -189,7 +189,7 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
                 boxShadow: widget.value
                     ? [
                         BoxShadow(
-                          color: widget.color.withOpacity(0.2),
+                          color: widget.color.withValues(alpha: 0.2),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -204,8 +204,8 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
                     height: 48,
                     decoration: BoxDecoration(
                       color: widget.value
-                          ? widget.color.withOpacity(0.2)
-                          : widget.color.withOpacity(0.1),
+                          ? widget.color.withValues(alpha: 0.2)
+                          : widget.color.withValues(alpha: 0.1),
                       borderRadius: AppDimensions.borderRadiusMedium,
                     ),
                     child: Icon(

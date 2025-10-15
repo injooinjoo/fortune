@@ -251,8 +251,8 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        TossDesignSystem.purple.withOpacity(0.8),
-                        const Color(0xFFEC4899).withOpacity(0.8),
+                        TossDesignSystem.purple.withValues(alpha: 0.8),
+                        const Color(0xFFEC4899).withValues(alpha: 0.8),
                       ],
                     ),
                     shape: BoxShape.circle,
@@ -367,8 +367,8 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        TossDesignSystem.tossBlue.withOpacity(0.8),
-                        TossDesignSystem.purple.withOpacity(0.8),
+                        TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+                        TossDesignSystem.purple.withValues(alpha: 0.8),
                       ],
                     ),
                     shape: BoxShape.circle,
@@ -554,7 +554,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? TossDesignSystem.purple.withOpacity(0.1)
+              ? TossDesignSystem.purple.withValues(alpha: 0.1)
               : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
@@ -681,7 +681,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
               width: 2,
             ),
             color: isSelected
-                ? TossDesignSystem.purple.withOpacity(0.05)
+                ? TossDesignSystem.purple.withValues(alpha: 0.05)
                 : null,
           ),
           child: Row(
@@ -691,7 +691,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
                 height: 48,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.purple.withOpacity(0.1)
+                      ? TossDesignSystem.purple.withValues(alpha: 0.1)
                       : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -758,7 +758,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? TossDesignSystem.purple.withOpacity(0.1)
+              ? TossDesignSystem.purple.withValues(alpha: 0.1)
               : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(

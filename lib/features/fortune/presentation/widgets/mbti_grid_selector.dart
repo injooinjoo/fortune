@@ -260,7 +260,7 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                 boxShadow: widget.isSelected
                     ? [
                         BoxShadow(
-                          color: widget.colors[0].withOpacity(0.4),
+                          color: widget.colors[0].withValues(alpha: 0.4),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),

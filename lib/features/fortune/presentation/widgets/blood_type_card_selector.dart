@@ -150,7 +150,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                         end: Alignment.bottomRight,
                         colors: [
                           color,
-                          color.withOpacity(0.8)])
+                          color.withValues(alpha: 0.8)])
                     : null,
                 color: !widget.isSelected
                     ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -195,7 +195,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                           decoration: BoxDecoration(
                             color: widget.isSelected
                                 ? TossDesignSystem.white.withValues(alpha: 0.2)
-                                : color.withOpacity(0.1),
+                                : color.withValues(alpha: 0.1),
                             shape: BoxShape.circle),
                           child: Icon(
                             icon,

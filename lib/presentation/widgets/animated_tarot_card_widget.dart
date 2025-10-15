@@ -84,7 +84,7 @@ class _AnimatedTarotCardWidgetState extends State<AnimatedTarotCardWidget>
             sparkles: _sparkles,
             sparkleProgress: _sparkleAnimation.value,
             floatOffset: _floatAnimation.value,
-            symbolColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+            symbolColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
             sparkleColor: Theme.of(context).colorScheme.onSurface,
           ),
         );
@@ -187,7 +187,7 @@ class _TarotCardPainter extends CustomPainter {
       final opacity = math.sin(progress * math.pi).abs() * 0.8; // Use abs() to ensure positive value
       
       if (opacity > 0) {
-        sparklePaint.color = sparkleColor.withOpacity(opacity);
+        sparklePaint.color = sparkleColor.withValues(alpha: opacity);
         
         final x = size.width * sparkle.x;
         final y = size.height * sparkle.y + floatOffset * 0.5;

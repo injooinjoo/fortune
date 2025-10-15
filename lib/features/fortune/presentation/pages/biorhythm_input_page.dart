@@ -300,7 +300,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: TossTheme.primaryBlue.withOpacity(0.3),
+                                        color: TossTheme.primaryBlue.withValues(alpha: 0.3),
                                         blurRadius: 20,
                                         offset: const Offset(0, 8),
                                       ),

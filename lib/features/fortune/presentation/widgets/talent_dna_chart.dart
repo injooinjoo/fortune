@@ -60,7 +60,7 @@ class _TalentDnaPainter extends CustomPainter {
 
   void _drawHexagonBackground(Canvas canvas, Offset center, double radius) {
     final paint = Paint()
-      ..color = primaryColor.withOpacity(0.1)
+      ..color = primaryColor.withValues(alpha: 0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
@@ -78,7 +78,7 @@ class _TalentDnaPainter extends CustomPainter {
     
     final path = Path();
     final paint = Paint()
-      ..color = primaryColor.withOpacity(0.3)
+      ..color = primaryColor.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
 
     for (int i = 0; i < talentList.length; i++) {
@@ -224,7 +224,7 @@ class TalentProgressBar extends StatelessWidget {
           height: 8,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
-            color: progressColor.withOpacity(0.2),
+            color: progressColor.withValues(alpha: 0.2),
           ),
           child: FractionallySizedBox(
             alignment: Alignment.centerLeft,
@@ -274,7 +274,7 @@ class TalentTypeCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.2),
+                    color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -298,7 +298,7 @@ class TalentTypeCard extends StatelessWidget {
                       Text(
                         description,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -313,9 +313,9 @@ class TalentTypeCard extends StatelessWidget {
               children: traits.map((trait) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: color.withOpacity(0.3)),
+                  border: Border.all(color: color.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   trait,

@@ -417,7 +417,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
           Container(
             padding: const EdgeInsets.all(TossTheme.spacingL),
             decoration: BoxDecoration(
-              color: TossTheme.primaryBlue.withOpacity(0.1),
+              color: TossTheme.primaryBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(TossTheme.radiusM),
             ),
             child: Column(

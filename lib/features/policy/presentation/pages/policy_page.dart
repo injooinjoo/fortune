@@ -66,8 +66,8 @@ class PolicyPage extends ConsumerWidget {
       child: GlassContainer(
         gradient: LinearGradient(
           colors: [
-            color.withOpacity(0.3),
-            color.withOpacity(0.1)],
+            color.withValues(alpha: 0.3),
+            color.withValues(alpha: 0.1)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
         borderRadius: BorderRadius.circular(20),
@@ -77,7 +77,7 @@ class PolicyPage extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -102,7 +102,7 @@ class PolicyPage extends ConsumerWidget {
                     subtitle,
                     style: TextStyle(
                       fontSize: 14,
-                      color: TossDesignSystem.white.withOpacity(0.8),
+                      color: TossDesignSystem.white.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -110,7 +110,7 @@ class PolicyPage extends ConsumerWidget {
             ),
             Icon(
               Icons.arrow_forward_ios_rounded,
-              color: TossDesignSystem.white.withOpacity(0.5),
+              color: TossDesignSystem.white.withValues(alpha: 0.5),
               size: 20,
             ),
           ],
@@ -123,22 +123,22 @@ class PolicyPage extends ConsumerWidget {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.white.withOpacity(0.1),
-          TossDesignSystem.white.withOpacity(0.05)]),
+          TossDesignSystem.white.withValues(alpha: 0.1),
+          TossDesignSystem.white.withValues(alpha: 0.05)]),
       borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: TossDesignSystem.white.withOpacity(0.6),
+            color: TossDesignSystem.white.withValues(alpha: 0.6),
             size: 32),
           const SizedBox(height: 12),
           Text(
             'Fortune은 이용자의 개인정보를 소중히 여기며,\n'
             '관련 법령에 따라 안전하게 관리하고 있습니다.',
             style: TextStyle(
-              color: TossDesignSystem.white.withOpacity(0.8),
+              color: TossDesignSystem.white.withValues(alpha: 0.8),
               fontSize: 14,
               height: 1.5),
             textAlign: TextAlign.center),
@@ -146,7 +146,7 @@ class PolicyPage extends ConsumerWidget {
           Text(
             '문의사항이 있으시면 고객지원 페이지를 이용해주세요.',
             style: TextStyle(
-              color: TossDesignSystem.white.withOpacity(0.6),
+              color: TossDesignSystem.white.withValues(alpha: 0.6),
               fontSize: 12),
             textAlign: TextAlign.center,
           ),

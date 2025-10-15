@@ -128,7 +128,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
               height: 3,
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(2),
               ),
               child: FractionallySizedBox(
@@ -172,7 +172,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                       Text(
                         '${DateTime.now().year}.${DateTime.now().month.toString().padLeft(2, '0')}.${DateTime.now().day.toString().padLeft(2, '0')}',
                         style: TextStyle(
-                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -187,7 +187,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         Text(
                           '${widget.currentWeather!.temperature.round()}°',
                           style: TextStyle(
-                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
@@ -223,7 +223,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.08),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
             blurRadius: 32,
             offset: const Offset(0, 12),
             spreadRadius: 0,
@@ -350,7 +350,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -378,7 +378,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
               Text(
                 'POINTS',
                 style: TextStyle(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.35),
+                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.35),
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 2,
@@ -395,7 +395,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   Container(
                     height: 3,
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(1.5),
                     ),
                   ),
@@ -430,10 +430,10 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: scoreColor.withOpacity(0.04),
+            color: scoreColor.withValues(alpha: 0.04),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: scoreColor.withOpacity(0.1),
+              color: scoreColor.withValues(alpha: 0.1),
               width: 1,
             ),
           ),
@@ -454,7 +454,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 Text(
                   subtitle,
                   style: TextStyle(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
                     height: 1.5,
@@ -477,7 +477,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -486,7 +486,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           child: Text(
             fullDescription,
             style: TextStyle(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.8),
+              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
               fontSize: 15,
               fontWeight: FontWeight.w400,
               height: 1.6,
@@ -525,7 +525,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         Text(
           '오늘의 각 분야별 운세를 한눈에',
           style: TextStyle(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -541,7 +541,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -591,7 +591,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                             Container(
                               height: 6,
                               decoration: BoxDecoration(
-                                color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+                                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
                                 borderRadius: BorderRadius.circular(3),
                               ),
                             ),
@@ -675,7 +675,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         Text(
           '오늘 하루를 시간대별로 준비하세요',
           style: TextStyle(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -737,11 +737,11 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: isActive
-            ? Border.all(color: accentColor.withOpacity(0.3), width: 1.5)
-            : Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08), width: 1),
+            ? Border.all(color: accentColor.withValues(alpha: 0.3), width: 1.5)
+            : Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -755,19 +755,19 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: isActive
-                  ? accentColor.withOpacity(0.1)
-                  : (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+                  ? accentColor.withValues(alpha: 0.1)
+                  : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: isActive
-                    ? accentColor.withOpacity(0.2)
-                    : (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                    ? accentColor.withValues(alpha: 0.2)
+                    : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
                 width: 1,
               ),
             ),
             child: Icon(
               icon,
-              color: isActive ? accentColor : (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+              color: isActive ? accentColor : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
               size: 20,
             ),
           ),
@@ -791,10 +791,10 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: accentColor.withOpacity(0.1),
+                          color: accentColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
-                            color: accentColor.withOpacity(0.2),
+                            color: accentColor.withValues(alpha: 0.2),
                             width: 1,
                           ),
                         ),
@@ -814,7 +814,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 Text(
                   advice,
                   style: TextStyle(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
                     fontSize: 14,
                     height: 1.5,
                   ),
@@ -870,7 +870,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -895,7 +895,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   Text(
                     '점',
                     style: TextStyle(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4),
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                     ),
@@ -911,7 +911,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   Container(
                     height: 6,
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -935,7 +935,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
               Text(
                 advice,
                 style: TextStyle(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
                   fontSize: 15,
                   height: 1.6,
                 ),
@@ -970,7 +970,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         Text(
           '오늘 행운을 불러올 아이템들',
           style: TextStyle(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -997,12 +997,12 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.3 : 0.04),
+                        color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
                         blurRadius: 15,
                         offset: const Offset(0, 3),
                       ),
@@ -1014,7 +1014,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                       Text(
                         entry.key,
                         style: TextStyle(
-                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -1062,7 +1062,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         Text(
           '유명인과의 사주 궁합',
           style: TextStyle(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -1115,7 +1115,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -1128,10 +1128,10 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: scoreColor.withOpacity(0.1),
+              color: scoreColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
               border: Border.all(
-                color: scoreColor.withOpacity(0.2),
+                color: scoreColor.withValues(alpha: 0.2),
                 width: 2,
               ),
             ),
@@ -1166,10 +1166,10 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: scoreColor.withOpacity(0.1),
+                        color: scoreColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: scoreColor.withOpacity(0.2),
+                          color: scoreColor.withValues(alpha: 0.2),
                           width: 1,
                         ),
                       ),
@@ -1188,7 +1188,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 Text(
                   description,
                   style: TextStyle(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
                     fontSize: 14,
                     height: 1.4,
                   ),
@@ -1644,7 +1644,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -1719,7 +1719,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -1746,7 +1746,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         Text(
           label,
           style: TextStyle(
-            color: color.withOpacity(0.8),
+            color: color.withValues(alpha: 0.8),
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
@@ -1755,7 +1755,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -2304,10 +2304,10 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2D2D2D).withOpacity(0.5) : const Color(0xFFF8F9FA),
+        color: isDark ? const Color(0xFF2D2D2D).withValues(alpha: 0.5) : const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: getPriorityColor().withOpacity(0.3),
+          color: getPriorityColor().withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -2392,7 +2392,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
               width: 1,
             ),
           ),
@@ -2413,7 +2413,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   Text(
                     '(만세력 기준)',
                     style: TextStyle(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
                       fontSize: 13,
                     ),
                   ),
@@ -2439,10 +2439,10 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: (isDark ? const Color(0xFF3B82F6) : const Color(0xFF3B82F6)).withOpacity(0.1),
+            color: (isDark ? const Color(0xFF3B82F6) : const Color(0xFF3B82F6)).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: const Color(0xFF3B82F6).withOpacity(0.3),
+              color: const Color(0xFF3B82F6).withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -2509,7 +2509,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: getElementColor(entry.key).withOpacity(0.15),
+                            color: getElementColor(entry.key).withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -2537,7 +2537,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 Container(
                   height: 10,
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: FractionallySizedBox(
@@ -2548,7 +2548,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         gradient: LinearGradient(
                           colors: [
                             getElementColor(entry.key),
-                            getElementColor(entry.key).withOpacity(0.7),
+                            getElementColor(entry.key).withValues(alpha: 0.7),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(5),
@@ -2570,14 +2570,14 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
               width: 1,
             ),
           ),
           child: Text(
             explanation,
             style: TextStyle(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.8),
+              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
               fontSize: 14,
               height: 1.7,
               letterSpacing: -0.2,
@@ -2595,7 +2595,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         Text(
           label,
           style: TextStyle(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
             fontSize: 12,
           ),
         ),
@@ -2603,10 +2603,10 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
               width: 1,
             ),
           ),
@@ -2661,7 +2661,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           height: 64,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2D2D2D).withOpacity(0.5) : const Color(0xFFF8F9FA),
+            color: isDark ? const Color(0xFF2D2D2D).withValues(alpha: 0.5) : const Color(0xFFF8F9FA),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -2698,7 +2698,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
               Container(
                 width: 1,
                 height: 40,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
               ),
               Row(
                 children: [
@@ -2738,7 +2738,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           height: 200,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2D2D2D).withOpacity(0.5) : const Color(0xFFF8F9FA),
+            color: isDark ? const Color(0xFF2D2D2D).withValues(alpha: 0.5) : const Color(0xFFF8F9FA),
             borderRadius: BorderRadius.circular(16),
           ),
           child: LineChart(
@@ -2749,7 +2749,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 horizontalInterval: 25,
                 getDrawingHorizontalLine: (value) {
                   return FlLine(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
                     strokeWidth: 1,
                   );
                 },
@@ -2808,8 +2808,8 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF3B82F6).withOpacity(0.3),
-                        const Color(0xFF8B5CF6).withOpacity(0.1),
+                        const Color(0xFF3B82F6).withValues(alpha: 0.3),
+                        const Color(0xFF8B5CF6).withValues(alpha: 0.1),
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -2856,11 +2856,11 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2D2D2D).withOpacity(0.5) : const Color(0xFFF8F9FA),
+              color: isDark ? const Color(0xFF2D2D2D).withValues(alpha: 0.5) : const Color(0xFFF8F9FA),
               borderRadius: BorderRadius.circular(16),
               border: fortune['isUser'] == true
                   ? Border.all(
-                      color: const Color(0xFF3B82F6).withOpacity(0.5),
+                      color: const Color(0xFF3B82F6).withValues(alpha: 0.5),
                       width: 2,
                     )
                   : null,
@@ -2894,7 +2894,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF3B82F6).withOpacity(0.15),
+                                    color: const Color(0xFF3B82F6).withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
@@ -2922,7 +2922,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: _getZodiacScoreColor(fortune['score'] as int).withOpacity(0.15),
+                        color: _getZodiacScoreColor(fortune['score'] as int).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -2940,7 +2940,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 Text(
                   fortune['description'] as String,
                   style: TextStyle(
-                    color: isDark ? Colors.white.withOpacity(0.87) : Colors.black.withOpacity(0.87),
+                    color: isDark ? Colors.white.withValues(alpha: 0.87) : Colors.black.withValues(alpha: 0.87),
                     fontSize: 15,
                     height: 1.6,
                   ),
@@ -3325,7 +3325,7 @@ ${cardInfo['message']}
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Text(
@@ -3358,7 +3358,7 @@ ${cardInfo['message']}
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 color: score >= 80
-                    ? const Color(0xFF10B981).withOpacity(0.2)
+                    ? const Color(0xFF10B981).withValues(alpha: 0.2)
                     : (isDark ? Colors.white10 : Colors.black12),
                 borderRadius: BorderRadius.circular(8),
                 border: score >= 80
@@ -3429,7 +3429,7 @@ ${cardInfo['message']}
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  currentCardInfo['color'].withOpacity(0.8),
+                  currentCardInfo['color'].withValues(alpha: 0.8),
                   currentCardInfo['color'],
                 ],
                 begin: Alignment.topLeft,
@@ -3478,7 +3478,7 @@ ${cardInfo['message']}
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(

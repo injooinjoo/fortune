@@ -78,10 +78,10 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: TossTheme.primaryBlue.withOpacity(0.1),
+            color: TossTheme.primaryBlue.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: TossTheme.primaryBlue.withOpacity(0.2),
+              color: TossTheme.primaryBlue.withValues(alpha: 0.2),
             ),
           ),
           child: Row(

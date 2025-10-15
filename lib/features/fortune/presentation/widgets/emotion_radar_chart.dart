@@ -45,7 +45,7 @@ class _RadarChartPainter extends CustomPainter {
 
     // Draw background circles
     final bgPaint = Paint()
-      ..color = backgroundColor.withOpacity(0.3)
+      ..color = backgroundColor.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
      
    
@@ -89,7 +89,7 @@ class _RadarChartPainter extends CustomPainter {
 
     // Draw data polygon
     final dataPaint = Paint()
-      ..color = primaryColor.withOpacity(0.3)
+      ..color = primaryColor.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
 
     final dataStrokePaint = Paint()

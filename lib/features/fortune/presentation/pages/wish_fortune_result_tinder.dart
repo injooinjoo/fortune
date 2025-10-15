@@ -92,7 +92,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
               height: 3,
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(2),
               ),
               child: FractionallySizedBox(
@@ -120,7 +120,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -150,7 +150,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
                     decoration: BoxDecoration(
                       color: isActive
                           ? TossDesignSystem.tossBlue
-                          : (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+                          : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   );
@@ -175,7 +175,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.08),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
             blurRadius: 32,
             offset: const Offset(0, 12),
             spreadRadius: 0,
@@ -349,7 +349,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
             margin: const EdgeInsets.only(bottom: 20),
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withOpacity(0.08),
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -453,7 +453,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
           end: Alignment.bottomRight,
           colors: [
             TossDesignSystem.tossBlue,
-            TossDesignSystem.tossBlue.withOpacity(0.7),
+            TossDesignSystem.tossBlue.withValues(alpha: 0.7),
           ],
         ),
         borderRadius: BorderRadius.circular(28),

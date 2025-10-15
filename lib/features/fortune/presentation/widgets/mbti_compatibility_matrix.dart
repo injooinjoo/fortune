@@ -250,7 +250,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                                 margin: const EdgeInsets.all(1),
                                 decoration: BoxDecoration(
                                   color: _getCompatibilityColor(score)
-                                      .withOpacity(_fadeAnimation.value * 0.8),
+                                      .withValues(alpha: _fadeAnimation.value * 0.8),
                                   borderRadius: AppDimensions.borderRadiusSmall,
                                   border: Border.all(
                                     color: isSelected
@@ -260,7 +260,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                                   boxShadow: (isSelected || isHovered) ? [
                                     BoxShadow(
                                       color: _getCompatibilityColor(score)
-                                          .withOpacity(0.5),
+                                          .withValues(alpha: 0.5),
                                       blurRadius: 8,
                                       spreadRadius: 2)] : []),
                                 child: Center(
@@ -298,7 +298,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
         child: Text(
           '매트릭스에서 두 MBTI 유형을 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
-            color: TossDesignSystem.white.withOpacity(0.6),
+            color: TossDesignSystem.white.withValues(alpha: 0.6),
             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
           textAlign: TextAlign.center),
       );
@@ -332,10 +332,10 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           Container(
             padding: AppSpacing.paddingAll16,
             decoration: BoxDecoration(
-              color: _getCompatibilityColor(score).withOpacity(0.1),
+              color: _getCompatibilityColor(score).withValues(alpha: 0.1),
               borderRadius: AppDimensions.borderRadiusMedium,
               border: Border.all(
-                color: _getCompatibilityColor(score).withOpacity(0.3),
+                color: _getCompatibilityColor(score).withValues(alpha: 0.3),
                 width: 1)),
             child: Column(
               children: [
@@ -364,11 +364,11 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
             shape: BoxShape.circle,
             gradient: LinearGradient(
               colors: [
-                color.withOpacity(0.8),
-                color.withOpacity(0.4)]),
+                color.withValues(alpha: 0.8),
+                color.withValues(alpha: 0.4)]),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.4),
+                color: color.withValues(alpha: 0.4),
                 blurRadius: 10,
                 spreadRadius: 2)]),
           child: Center(
@@ -425,7 +425,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: commonFunctions.contains(func)
                             ? TossDesignSystem.successGreen
-                            : TossDesignSystem.white.withOpacity(0.8),
+                            : TossDesignSystem.white.withValues(alpha: 0.8),
                       ),
                     ),
                   )).toList(),
@@ -435,7 +435,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
             Container(
               width: 1,
               height: AppSpacing.spacing20,
-              color: TossDesignSystem.white.withOpacity(0.2),
+              color: TossDesignSystem.white.withValues(alpha: 0.2),
               margin: AppSpacing.paddingHorizontal16),
             Expanded(
               child: Column(
@@ -453,7 +453,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: commonFunctions.contains(func)
                             ? TossDesignSystem.successGreen
-                            : TossDesignSystem.white.withOpacity(0.8),
+                            : TossDesignSystem.white.withValues(alpha: 0.8),
                       ),
                     ),
                   )).toList(),
@@ -467,10 +467,10 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           Container(
             padding: AppSpacing.paddingAll12,
             decoration: BoxDecoration(
-              color: TossDesignSystem.successGreen.withOpacity(0.1),
+              color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
               borderRadius: AppDimensions.borderRadiusSmall,
               border: Border.all(
-                color: TossDesignSystem.successGreen.withOpacity(0.3),
+                color: TossDesignSystem.successGreen.withValues(alpha: 0.3),
                 width: 1)),
             child: Row(
               children: [
@@ -498,10 +498,10 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white.withOpacity(0.05),
+        color: TossDesignSystem.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: TossDesignSystem.white.withOpacity(0.1),
+          color: TossDesignSystem.white.withValues(alpha: 0.1),
           width: 1)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -535,7 +535,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
             Text(
               range,
               style: TextStyle(
-                color: TossDesignSystem.white.withOpacity(0.6),
+                color: TossDesignSystem.white.withValues(alpha: 0.6),
                 fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])]);
   }
 

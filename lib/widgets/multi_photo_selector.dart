@@ -330,7 +330,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: TossDesignSystem.tossBlue.withOpacity(0.3),
+                                color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
                                 width: 2,
                               ),
                             ),
@@ -374,7 +374,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                               child: Container(
                                 padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(
-                                  color: TossDesignSystem.black.withOpacity(0.6),
+                                  color: TossDesignSystem.black.withValues(alpha: 0.6),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -395,7 +395,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: TossDesignSystem.tossBlue.withOpacity(0.9),
+                                color: TossDesignSystem.tossBlue.withValues(alpha: 0.9),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(

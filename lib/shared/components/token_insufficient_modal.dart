@@ -107,7 +107,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                   height: 80,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: theme.colorScheme.error.withOpacity(0.2),
+                    color: theme.colorScheme.error.withValues(alpha: 0.2),
                   ),
                   child: Icon(
                     Icons.auto_awesome_outlined,
@@ -138,7 +138,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                 Container(
                   padding: AppSpacing.paddingAll16,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surface.withOpacity(0.5),
+                    color: theme.colorScheme.surface.withValues(alpha: 0.5),
                     borderRadius: AppDimensions.borderRadiusMedium,
                   ),
                   child: Row(
@@ -152,7 +152,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                       Container(
                         width: 1,
                         height: AppDimensions.buttonHeightSmall,
-                        color: theme.colorScheme.onSurface.withOpacity(0.2)),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
                       _buildTokenInfo(
                         label: '필요 영혼',
                         value: '${widget.requiredTokens}개',
@@ -161,7 +161,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                       Container(
                         width: 1,
                         height: AppDimensions.buttonHeightSmall,
-                        color: theme.colorScheme.onSurface.withOpacity(0.2)),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
                       _buildTokenInfo(
                         label: '부족',
                         value: '${widget.requiredTokens - remainingTokens}개',
@@ -218,13 +218,13 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        theme.colorScheme.secondary.withOpacity(0.2),
-                        theme.colorScheme.primary.withOpacity(0.2),
+                        theme.colorScheme.secondary.withValues(alpha: 0.2),
+                        theme.colorScheme.primary.withValues(alpha: 0.2),
                       ],
                     ),
                     borderRadius: AppDimensions.borderRadiusMedium,
                     border: Border.all(
-                      color: theme.colorScheme.primary.withOpacity(0.5),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.5),
                     ),
                   ),
                   child: Material(
@@ -257,7 +257,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                 Text(
                                     '월 ₩30,000으로 모든 프리미엄 운세 무제한',
                           style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       )),
                                 ],
                               ),
@@ -302,7 +302,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                         Text(
                           label,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
         SizedBox(height: AppSpacing.spacing1),
@@ -327,10 +327,10 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
     
     return Container(
       decoration: BoxDecoration(
-      color: color.withOpacity(0.2),
+      color: color.withValues(alpha: 0.2),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-                      color: color.withOpacity(0.5),
+                      color: color.withValues(alpha: 0.5),
         ),
       ),
       child: Material(

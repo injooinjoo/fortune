@@ -301,8 +301,8 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
         border: Border.all(
           color: isSet
               ? (Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.tossBlue.withOpacity(0.3)
-                  : TossDesignSystem.tossBlue.withOpacity(0.2))
+                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.3)
+                  : TossDesignSystem.tossBlue.withValues(alpha: 0.2))
               : (Theme.of(context).brightness == Brightness.dark
                   ? TossDesignSystem.grayDark300
                   : TossDesignSystem.gray200),
@@ -315,7 +315,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
             height: 48,
             decoration: BoxDecoration(
               color: isSet
-                  ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                   : (Theme.of(context).brightness == Brightness.dark
                       ? TossDesignSystem.grayDark200
                       : TossDesignSystem.gray100),

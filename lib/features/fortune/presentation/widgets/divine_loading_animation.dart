@@ -124,7 +124,7 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: TossDesignSystem.tossBlue.withOpacity(0.3),
+                            color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
                             width: 2,
                           ),
                         ),
@@ -150,7 +150,7 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
                         height: 140,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: TossDesignSystem.tossBlue.withOpacity(0.1 + (_pulseController.value * 0.1)),
+                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1 + (_pulseController.value * 0.1)),
                         ),
                       ),
                     );
@@ -168,12 +168,12 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
                       end: Alignment.bottomRight,
                       colors: [
                         TossDesignSystem.tossBlue,
-                        TossDesignSystem.tossBlue.withOpacity(0.7),
+                        TossDesignSystem.tossBlue.withValues(alpha: 0.7),
                       ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.tossBlue.withOpacity(0.4),
+                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.4),
                         blurRadius: 30,
                         spreadRadius: 5,
                       ),
@@ -187,7 +187,7 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
                 ).animate(onPlay: (controller) => controller.repeat())
                   .shimmer(
                     duration: 2000.ms,
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                   ),
               ],
             ),
@@ -218,7 +218,7 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
               width: 200,
               height: 4,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(2),
               ),
               child: FractionallySizedBox(
@@ -229,7 +229,7 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
                     gradient: LinearGradient(
                       colors: [
                         TossDesignSystem.tossBlue,
-                        TossDesignSystem.tossBlue.withOpacity(0.6),
+                        TossDesignSystem.tossBlue.withValues(alpha: 0.6),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(2),
@@ -250,7 +250,7 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
             Text(
               '${_currentStep + 1} / ${_loadingSteps.length}',
               style: TextStyle(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),

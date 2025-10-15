@@ -146,7 +146,7 @@ class _SajuTossPageState extends ConsumerState<SajuTossPage> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: TossTheme.primaryBlue.withOpacity(0.1),
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(TossTheme.radiusM),
                 ),
                 child: Icon(
@@ -213,10 +213,10 @@ class _SajuTossPageState extends ConsumerState<SajuTossPage> {
     return Container(
       padding: const EdgeInsets.all(TossTheme.spacingM),
       decoration: BoxDecoration(
-        color: elementColor.withOpacity(0.1),
+        color: elementColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
         border: Border.all(
-          color: elementColor.withOpacity(0.3),
+          color: elementColor.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -330,10 +330,10 @@ class _SajuTossPageState extends ConsumerState<SajuTossPage> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: _getTenGodColor(god).withOpacity(0.1),
+                        color: _getTenGodColor(god).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(TossTheme.radiusS),
                         border: Border.all(
-                          color: _getTenGodColor(god).withOpacity(0.3),
+                          color: _getTenGodColor(god).withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -439,10 +439,10 @@ class _SajuTossPageState extends ConsumerState<SajuTossPage> {
             vertical: TossTheme.spacingS,
           ),
           decoration: BoxDecoration(
-            color: TossTheme.primaryBlue.withOpacity(0.1),
+            color: TossTheme.primaryBlue.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(TossTheme.radiusM),
             border: Border.all(
-              color: TossTheme.primaryBlue.withOpacity(0.3),
+              color: TossTheme.primaryBlue.withValues(alpha: 0.3),
               width: 1,
             ),
           ),

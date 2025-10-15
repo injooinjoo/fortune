@@ -138,13 +138,13 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
             border: Border.all(
               color: isSelected 
                   ? TossTheme.primaryBlue 
-                  : TossTheme.borderGray200.withOpacity(0.5),
+                  : TossTheme.borderGray200.withValues(alpha: 0.5),
               width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: TossTheme.primaryBlue.withOpacity(0.3),
+                      color: TossTheme.primaryBlue.withValues(alpha: 0.3),
                       blurRadius: 8,
                       spreadRadius: 1,
                     ),
@@ -211,22 +211,22 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
       // 건강 상태가 있는 경우 (결과 화면에서)
       switch (healthLevel) {
         case HealthLevel.excellent:
-          return Color(0xFF4CAF50).withOpacity(isSelected ? 0.8 : 0.3);
+          return Color(0xFF4CAF50).withValues(alpha: isSelected ? 0.8 : 0.3);
         case HealthLevel.good:
-          return Color(0xFF2196F3).withOpacity(isSelected ? 0.8 : 0.3);
+          return Color(0xFF2196F3).withValues(alpha: isSelected ? 0.8 : 0.3);
         case HealthLevel.caution:
-          return Color(0xFFFF9800).withOpacity(isSelected ? 0.8 : 0.3);
+          return Color(0xFFFF9800).withValues(alpha: isSelected ? 0.8 : 0.3);
         case HealthLevel.warning:
-          return Color(0xFFFF5722).withOpacity(isSelected ? 0.8 : 0.3);
+          return Color(0xFFFF5722).withValues(alpha: isSelected ? 0.8 : 0.3);
       }
     }
     
     // 일반 선택 상태
     if (isSelected) {
-      return TossTheme.primaryBlue.withOpacity(0.7);
+      return TossTheme.primaryBlue.withValues(alpha: 0.7);
     } else {
       // 선택되지 않은 영역도 약간 보이도록 설정
-      return TossTheme.borderGray200.withOpacity(0.15);
+      return TossTheme.borderGray200.withValues(alpha: 0.15);
     }
   }
 
@@ -269,10 +269,10 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: TossTheme.primaryBlue.withOpacity(0.1),
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: TossTheme.primaryBlue.withOpacity(0.3),
+                    color: TossTheme.primaryBlue.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(

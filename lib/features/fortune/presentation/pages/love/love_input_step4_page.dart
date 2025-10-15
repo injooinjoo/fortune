@@ -189,7 +189,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
                     activeTrackColor: _getConfidenceColor(_appearanceConfidence),
                     inactiveTrackColor: TossTheme.borderGray200,
                     thumbColor: _getConfidenceColor(_appearanceConfidence),
-                    overlayColor: _getConfidenceColor(_appearanceConfidence).withOpacity(0.2),
+                    overlayColor: _getConfidenceColor(_appearanceConfidence).withValues(alpha: 0.2),
                     thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
                     trackHeight: 6,
                   ),
@@ -346,7 +346,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
               ? TossTheme.primaryBlue 
               : canSelect 
                   ? TossTheme.backgroundSecondary 
-                  : TossTheme.disabledGray.withOpacity(0.3),
+                  : TossTheme.disabledGray.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected 

@@ -124,7 +124,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           Text(
             widget.question!,
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 16 * fontScale,
               fontStyle: FontStyle.italic),
             textAlign: TextAlign.center)]]);
@@ -182,8 +182,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
             padding: const EdgeInsets.all(20),
             gradient: LinearGradient(
               colors: [
-                theme.colorScheme.primary.withOpacity(0.1),
-                theme.colorScheme.secondary.withOpacity(0.1),
+                theme.colorScheme.primary.withValues(alpha: 0.1),
+                theme.colorScheme.secondary.withValues(alpha: 0.1),
               ],
             ),
             child: Column(
@@ -248,7 +248,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                             width: 32,
                             height: 32,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.2),
+                              color: theme.colorScheme.primary.withValues(alpha: 0.2),
                               shape: BoxShape.circle),
                             child: Center(
                               child: Text(
@@ -293,8 +293,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               padding: const EdgeInsets.all(20),
               gradient: LinearGradient(
                 colors: [
-                  theme.colorScheme.secondary.withOpacity(0.1),
-                  theme.colorScheme.primary.withOpacity(0.1),
+                  theme.colorScheme.secondary.withValues(alpha: 0.1),
+                  theme.colorScheme.primary.withValues(alpha: 0.1),
                 ],
               ),
               child: Column(

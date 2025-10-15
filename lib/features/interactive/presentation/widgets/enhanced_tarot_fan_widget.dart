@@ -159,7 +159,7 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                 Text(
                   'Choose your card',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: TossDesignSystem.white.withOpacity(0.7),
+                    color: TossDesignSystem.white.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -262,13 +262,13 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
         borderRadius: BorderRadius.circular(16),
         boxShadow: isCenter ? [
           BoxShadow(
-            color: widget.primaryColor.withOpacity(0.6),
+            color: widget.primaryColor.withValues(alpha: 0.6),
             blurRadius: 30,
             spreadRadius: 10,
           ),
         ] : [
           BoxShadow(
-            color: TossDesignSystem.black.withOpacity(0.3),
+            color: TossDesignSystem.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -285,7 +285,7 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                   end: Alignment.bottomRight,
                   colors: isCenter ? [
                     widget.primaryColor,
-                    widget.primaryColor.withOpacity(0.7)
+                    widget.primaryColor.withValues(alpha: 0.7)
                   ] : [
                     const Color(0xFF2C1810),
                     const Color(0xFF1A0F08)
@@ -302,8 +302,8 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
               child: CustomPaint(
                 painter: CardPatternPainter(
                   color: isCenter
-                      ? TossDesignSystem.white.withOpacity(0.3)
-                      : TossDesignSystem.white.withOpacity(0.1),
+                      ? TossDesignSystem.white.withValues(alpha: 0.3)
+                      : TossDesignSystem.white.withValues(alpha: 0.1),
                   isAnimated: isCenter),
               ),
             ),
@@ -314,8 +314,8 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: isCenter
-                      ? TossDesignSystem.white.withOpacity(0.5)
-                      : TossDesignSystem.white.withOpacity(0.2),
+                      ? TossDesignSystem.white.withValues(alpha: 0.5)
+                      : TossDesignSystem.white.withValues(alpha: 0.2),
                   width: isCenter ? 3 : 1),
               ),
             ),

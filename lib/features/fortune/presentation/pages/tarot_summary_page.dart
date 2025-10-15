@@ -245,10 +245,10 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                         shape: BoxShape.circle,
                         gradient: SweepGradient(
                           colors: [
-                            TossDesignSystem.purple.withOpacity(0),
-                            const Color(0xFF9333EA).withOpacity(0.3),
-                            TossDesignSystem.tossBlue.withOpacity(0.3),
-                            TossDesignSystem.purple.withOpacity(0)
+                            TossDesignSystem.purple.withValues(alpha: 0),
+                            const Color(0xFF9333EA).withValues(alpha: 0.3),
+                            TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                            TossDesignSystem.purple.withValues(alpha: 0)
                           ]
                         )
                       )
@@ -284,7 +284,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               widget.question!,
               style: TextStyle(
                 fontSize: 16 * fontScale,
-                color: TossDesignSystem.white.withOpacity(0.7),
+                color: TossDesignSystem.white.withValues(alpha: 0.7),
                 fontStyle: FontStyle.italic),
               textAlign: TextAlign.center,
             ),
@@ -299,8 +299,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.purple.withOpacity(0.2),
-          TossDesignSystem.bluePrimary.withOpacity(0.2),
+          TossDesignSystem.purple.withValues(alpha: 0.2),
+          TossDesignSystem.bluePrimary.withValues(alpha: 0.2),
         ],
       ),
       child: Column(
@@ -446,13 +446,13 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF9333EA).withOpacity(0.4),
+                        color: const Color(0xFF9333EA).withValues(alpha: 0.4),
                         blurRadius: 12,
                         spreadRadius: 2,
                       ),
                     ],
                     border: Border.all(
-                      color: TossDesignSystem.white.withOpacity(0.2),
+                      color: TossDesignSystem.white.withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -462,7 +462,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.black.withOpacity(0.5),
+                  color: TossDesignSystem.black.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -526,15 +526,15 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       padding: const EdgeInsets.all(24),
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.warningYellow.withOpacity(0.2),
-          TossDesignSystem.warningOrange.withOpacity(0.2),
+          TossDesignSystem.warningYellow.withValues(alpha: 0.2),
+          TossDesignSystem.warningOrange.withValues(alpha: 0.2),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
       borderRadius: BorderRadius.circular(20),
       border: Border.all(
-        color: TossDesignSystem.warningYellow.withOpacity(0.3),
+        color: TossDesignSystem.warningYellow.withValues(alpha: 0.3),
         width: 1,
       ),
       blur: 15,
@@ -547,7 +547,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  TossDesignSystem.warningYellow.withOpacity(0.3),
+                  TossDesignSystem.warningYellow.withValues(alpha: 0.3),
                   TossDesignSystem.transparent,
                 ],
               ),
@@ -631,7 +631,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                     child: Container(
                       height: 20,
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.white.withOpacity(0.1),
+                        color: TossDesignSystem.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: FractionallySizedBox(
@@ -651,7 +651,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                     '$percentage%',
                     style: TextStyle(
                       fontSize: 14 * fontScale,
-                      color: TossDesignSystem.white.withOpacity(0.7),
+                      color: TossDesignSystem.white.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -681,8 +681,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.successGreen.withOpacity(0.2),
-          TossDesignSystem.successGreen.withOpacity(0.2),
+          TossDesignSystem.successGreen.withValues(alpha: 0.2),
+          TossDesignSystem.successGreen.withValues(alpha: 0.2),
         ],
       ),
       child: Column(
@@ -737,8 +737,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.tossBlue.withOpacity(0.2),
-          TossDesignSystem.tossBlue.withOpacity(0.2),
+          TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+          TossDesignSystem.tossBlue.withValues(alpha: 0.2),
         ],
       ),
       child: Row(
@@ -766,7 +766,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   _summaryData!['timeline'],
                   style: TextStyle(
                     fontSize: 14 * fontScale,
-                    color: TossDesignSystem.white.withOpacity(0.7),
+                    color: TossDesignSystem.white.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -827,7 +827,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
           '소울: $tokenCount',
           style: TextStyle(
             fontSize: 12 * fontScale,
-            color: TossDesignSystem.white.withOpacity(0.54),
+            color: TossDesignSystem.white.withValues(alpha: 0.54),
           ),
         ),
       ],
@@ -848,7 +848,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
         maxChildSize: 0.95,
         builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
-            color: TossDesignSystem.black.withOpacity(0.9),
+            color: TossDesignSystem.black.withValues(alpha: 0.9),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: ListView(
@@ -860,7 +860,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.white.withOpacity(0.3),
+                    color: TossDesignSystem.white.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2)
                   )
                 )
@@ -898,7 +898,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 widget.interpretations[index],
                 style: TextStyle(
                   fontSize: 14,
-                  color: TossDesignSystem.white.withOpacity(0.7),
+                  color: TossDesignSystem.white.withValues(alpha: 0.7),
                   height: 1.5,
                 ),
               ),
@@ -914,13 +914,13 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          const Color(0xFF9333EA).withOpacity(0.1),
-          const Color(0xFF7C3AED).withOpacity(0.1),
+          const Color(0xFF9333EA).withValues(alpha: 0.1),
+          const Color(0xFF7C3AED).withValues(alpha: 0.1),
         ],
       ),
       borderRadius: BorderRadius.circular(16),
       border: Border.all(
-        color: TossDesignSystem.white.withOpacity(0.1),
+        color: TossDesignSystem.white.withValues(alpha: 0.1),
         width: 1,
       ),
       child: Column(
@@ -930,7 +930,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             children: [
               Icon(
                 Icons.share,
-                color: TossDesignSystem.white.withOpacity(0.9),
+                color: TossDesignSystem.white.withValues(alpha: 0.9),
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -1026,10 +1026,10 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             width: 1,
           ),
         ),

@@ -252,7 +252,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
           borderRadius: BorderRadius.circular(TossTheme.radiusL),
           boxShadow: [
             BoxShadow(
-              color: TossDesignSystem.black.withOpacity(0.08),
+              color: TossDesignSystem.black.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -366,10 +366,10 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                 vertical: TossTheme.spacingS,
               ),
               decoration: BoxDecoration(
-                color: TossTheme.primaryBlue.withOpacity(0.1),
+                color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(TossTheme.radiusL),
                 border: Border.all(
-                  color: TossTheme.primaryBlue.withOpacity(0.3),
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),

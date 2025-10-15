@@ -404,7 +404,7 @@ class _SajuInputFormState extends State<SajuInputForm>
             Container(
               padding: const EdgeInsets.all(TossTheme.spacingS),
               decoration: BoxDecoration(
-                color: TossTheme.warning.withOpacity(0.1),
+                color: TossTheme.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(TossTheme.radiusS),
               ),
               child: Row(
@@ -470,7 +470,7 @@ class _SajuInputFormState extends State<SajuInputForm>
                     padding: const EdgeInsets.all(TossTheme.spacingM),
                     decoration: BoxDecoration(
                       color: _selectedGender == '남'
-                          ? TossTheme.brandBlue.withOpacity(0.1)
+                          ? TossTheme.brandBlue.withValues(alpha: 0.1)
                           : TossTheme.backgroundSecondary,
                       border: Border.all(
                         color: _selectedGender == '남'
@@ -513,7 +513,7 @@ class _SajuInputFormState extends State<SajuInputForm>
                     padding: const EdgeInsets.all(TossTheme.spacingM),
                     decoration: BoxDecoration(
                       color: _selectedGender == '여'
-                          ? TossTheme.brandBlue.withOpacity(0.1)
+                          ? TossTheme.brandBlue.withValues(alpha: 0.1)
                           : TossTheme.backgroundSecondary,
                       border: Border.all(
                         color: _selectedGender == '여'
@@ -559,10 +559,10 @@ class _SajuInputFormState extends State<SajuInputForm>
     return Container(
       padding: const EdgeInsets.all(TossTheme.spacingM),
       decoration: BoxDecoration(
-        color: TossTheme.brandBlue.withOpacity(0.05),
+        color: TossTheme.brandBlue.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
         border: Border.all(
-          color: TossTheme.brandBlue.withOpacity(0.2),
+          color: TossTheme.brandBlue.withValues(alpha: 0.2),
         ),
       ),
       child: Row(

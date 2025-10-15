@@ -209,13 +209,13 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                       margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? theme.colorScheme.primary.withOpacity(0.1)
-                            : theme.colorScheme.surface.withOpacity(0.3),
+                            ? theme.colorScheme.primary.withValues(alpha: 0.1)
+                            : theme.colorScheme.surface.withValues(alpha: 0.3),
                         borderRadius: AppDimensions.borderRadiusMedium,
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.2),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
@@ -226,7 +226,7 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                                 : Icons.radio_button_unchecked,
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.5),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                           SizedBox(width: AppSpacing.spacing3),
                           Text(

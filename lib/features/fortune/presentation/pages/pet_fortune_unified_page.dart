@@ -128,13 +128,13 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFFE11D48).withOpacity(0.1),
-            Color(0xFF9333EA).withOpacity(0.05),
+            Color(0xFFE11D48).withValues(alpha: 0.1),
+            Color(0xFF9333EA).withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Color(0xFFE11D48).withOpacity(0.3),
+          color: Color(0xFFE11D48).withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -210,7 +210,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: type.gradientColors[0].withOpacity(0.4),
+                    color: type.gradientColors[0].withValues(alpha: 0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -244,7 +244,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                     child: Text(
                       type.description,
                       style: TextStyle(
-                        color: isSelected ? TossDesignSystem.white.withOpacity(0.8) : TossDesignSystem.gray500,
+                        color: isSelected ? TossDesignSystem.white.withValues(alpha: 0.8) : TossDesignSystem.gray500,
                         fontSize: 11,
                       ),
                       textAlign: TextAlign.center,
@@ -270,7 +270,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: TossDesignSystem.black.withOpacity(0.87),
+                      color: TossDesignSystem.black.withValues(alpha: 0.87),
                     ),
                   ),
                 ),
@@ -382,13 +382,13 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _selectedType.gradientColors[0].withOpacity(0.1),
-            _selectedType.gradientColors[1].withOpacity(0.05),
+            _selectedType.gradientColors[0].withValues(alpha: 0.1),
+            _selectedType.gradientColors[1].withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _selectedType.gradientColors[0].withOpacity(0.3),
+          color: _selectedType.gradientColors[0].withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -509,7 +509,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: _selectedType.gradientColors[0].withOpacity(0.05),
+              color: _selectedType.gradientColors[0].withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(

@@ -84,7 +84,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                   child: Icon(
                     Icons.style_rounded,
                     size: 60,
-                    color: TossDesignSystem.white.withOpacity(0.5)),
+                    color: TossDesignSystem.white.withValues(alpha: 0.5)),
                 ),
               );
             },
@@ -99,7 +99,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                 borderRadius: AppDimensions.borderRadiusLarge,
                 boxShadow: [
                   BoxShadow(
-                    color: TossDesignSystem.purple.withOpacity(0.3 * _glowAnimation.value),
+                    color: TossDesignSystem.purple.withValues(alpha: 0.3 * _glowAnimation.value),
                     blurRadius: 20,
                     spreadRadius: 5),
                 ],
@@ -114,11 +114,11 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: TossDesignSystem.warningYellow.withOpacity(0.9),
+                color: TossDesignSystem.warningYellow.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: TossDesignSystem.warningYellow.withOpacity(0.5),
+                    color: TossDesignSystem.warningYellow.withValues(alpha: 0.5),
                     blurRadius: 8,
                     spreadRadius: 1),
                 ],
@@ -145,8 +145,8 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                 end: Alignment.bottomCenter,
                 colors: [
                   TossDesignSystem.transparent,
-                  TossDesignSystem.black.withOpacity(0.7),
-                  TossDesignSystem.black.withOpacity(0.9)],
+                  TossDesignSystem.black.withValues(alpha: 0.7),
+                  TossDesignSystem.black.withValues(alpha: 0.9)],
               ),
             ),
             child: Column(
@@ -162,7 +162,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                 Text(
                   widget.description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: TossDesignSystem.white.withOpacity(0.8)),
+                    color: TossDesignSystem.white.withValues(alpha: 0.8)),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -226,7 +226,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
             boxShadow: [
               BoxShadow(
                 color: (widget.soulCost == 0 ? TossDesignSystem.successGreen : FortuneColors.spiritualPrimary)
-                    .withOpacity(0.3),
+                    .withValues(alpha: 0.3),
                 blurRadius: 8,
                 spreadRadius: 1),
             ],

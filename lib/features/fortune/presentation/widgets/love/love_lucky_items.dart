@@ -101,7 +101,7 @@ class LoveLuckyItems extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: TossTheme.warning.withOpacity(0.1),
+                  color: TossTheme.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -152,15 +152,15 @@ class LoveLuckyItems extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossTheme.primaryBlue.withOpacity(0.05),
-                  TossTheme.primaryBlue.withOpacity(0.1),
+                  TossTheme.primaryBlue.withValues(alpha: 0.05),
+                  TossTheme.primaryBlue.withValues(alpha: 0.1),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossTheme.primaryBlue.withOpacity(0.2),
+                color: TossTheme.primaryBlue.withValues(alpha: 0.2),
               ),
             ),
             child: Row(
@@ -198,11 +198,11 @@ class LoveLuckyItems extends StatelessWidget {
         color: TossTheme.backgroundPrimary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
         ),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -248,7 +248,7 @@ class LoveLuckyItems extends StatelessWidget {
      .then()
      .shimmer(
        duration: 2000.ms,
-       color: color.withOpacity(0.3),
+       color: color.withValues(alpha: 0.3),
      );
   }
 }

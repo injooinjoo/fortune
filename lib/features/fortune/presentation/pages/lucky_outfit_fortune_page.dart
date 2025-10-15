@@ -530,7 +530,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.pinkPrimary.withOpacity(0.1),
+                          color: TossDesignSystem.pinkPrimary.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -578,8 +578,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.purple.withOpacity(0.1),
-                  TossDesignSystem.pinkPrimary.withOpacity(0.1),
+                  TossDesignSystem.purple.withValues(alpha: 0.1),
+                  TossDesignSystem.pinkPrimary.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
@@ -619,7 +619,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.warningYellow.withOpacity(0.05),
+              color: TossDesignSystem.warningYellow.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -670,7 +670,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.errorRed.withOpacity(0.05),
+              color: TossDesignSystem.errorRed.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(

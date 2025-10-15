@@ -205,7 +205,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: _getElementColor(element).withOpacity(0.3),
+            color: _getElementColor(element).withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -350,7 +350,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(

@@ -126,7 +126,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.1),
+              color: AppTheme.primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -172,7 +172,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
             maxLength: 200,
             decoration: InputDecoration(
               hintText: '마음속 걱정을 적어주세요...',
-              hintStyle: TextStyle(color: AppTheme.textSecondaryColor.withOpacity(0.5)),
+              hintStyle: TextStyle(color: AppTheme.textSecondaryColor.withValues(alpha: 0.5)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: AppTheme.borderColor)),
@@ -215,8 +215,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      AppTheme.primaryColor.withOpacity(0.3),
-                      AppTheme.primaryColor.withOpacity(0.1),
+                      AppTheme.primaryColor.withValues(alpha: 0.3),
+                      AppTheme.primaryColor.withValues(alpha: 0.1),
                     ],
                   ),
                 ),
@@ -238,7 +238,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                             color: AppTheme.primaryColor,
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.primaryColor.withOpacity(0.5),
+                                color: AppTheme.primaryColor.withValues(alpha: 0.5),
                                 blurRadius: 4,
                               ),
                             ],
@@ -257,12 +257,12 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                           end: Alignment.bottomRight,
                           colors: [
                             AppTheme.primaryColor,
-                            AppTheme.primaryColor.withOpacity(0.7),
+                            AppTheme.primaryColor.withValues(alpha: 0.7),
                           ],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.primaryColor.withOpacity(0.5),
+                            color: AppTheme.primaryColor.withValues(alpha: 0.5),
                             blurRadius: 20,
                             spreadRadius: 5,
                           ),

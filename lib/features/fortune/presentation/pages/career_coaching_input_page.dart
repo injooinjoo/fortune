@@ -226,8 +226,8 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.tossBlue.withOpacity(0.1),
-                  TossDesignSystem.tossBlue.withOpacity(0.05),
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -362,7 +362,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                         height: 48,
                         decoration: BoxDecoration(
                           color: _primaryConcern == concern.id
-                            ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                            ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                             : TossDesignSystem.gray100,
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -429,8 +429,8 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.successGreen.withOpacity(0.1),
-                  TossDesignSystem.successGreen.withOpacity(0.05),
+                  TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                  TossDesignSystem.successGreen.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -613,7 +613,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: _skillsToImprove.contains(skill)
-                              ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                              ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                               : TossDesignSystem.gray100,
                             borderRadius: BorderRadius.circular(16),
                             border: _skillsToImprove.contains(skill)
@@ -673,7 +673,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                 size: 48,
               ),
             ).animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withOpacity(0.3))
+              .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withValues(alpha: 0.3))
               .rotate(duration: 3000.ms),
             
             const SizedBox(height: 32),
@@ -707,7 +707,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                 valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.tossBlue),
               ),
             ).animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 1500.ms, color: TossDesignSystem.tossBlue.withOpacity(0.3)),
+              .shimmer(duration: 1500.ms, color: TossDesignSystem.tossBlue.withValues(alpha: 0.3)),
           ],
         ),
       ),

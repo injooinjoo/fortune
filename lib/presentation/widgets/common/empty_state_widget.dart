@@ -32,12 +32,12 @@ class EmptyStateWidget extends StatelessWidget {
             Container(
               padding: AppSpacing.paddingAll24,
               decoration: BoxDecoration(
-                color: colorScheme.surfaceVariant.withOpacity(0.3),
+                color: colorScheme.surfaceVariant.withValues(alpha: 0.3),
                 shape: BoxShape.circle),
               child: Icon(
                 icon,
                 size: iconSize,
-                color: colorScheme.onSurfaceVariant.withOpacity(0.6)),
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
             SizedBox(height: AppSpacing.spacing6),
             Text(
               title,

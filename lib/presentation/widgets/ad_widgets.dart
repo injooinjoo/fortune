@@ -44,7 +44,7 @@ class AdDialog extends ConsumerWidget {
             Text(
               '짧은 광고를 시청하고 운세를 확인하세요',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -128,7 +128,7 @@ class NativeAdWidget extends StatelessWidget {
         borderRadius: AppDimensions.borderRadiusMedium,
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withOpacity(0.05),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))
         ]),

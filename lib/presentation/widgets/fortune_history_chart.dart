@@ -24,14 +24,14 @@ class FortuneHistoryChart extends StatelessWidget {
     return Card(
       elevation: 4,
       margin: EdgeInsets.zero,
-      shadowColor: theme.colorScheme.shadow.withOpacity(0.1),
+      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.1),
       child: Container(
         padding: AppSpacing.paddingAll20,
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: AppDimensions.borderRadiusMedium,
           border: Border.all(
-            color: theme.colorScheme.outline.withOpacity(0.1),
+            color: theme.colorScheme.outline.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -55,14 +55,14 @@ class FortuneHistoryChart extends StatelessWidget {
                       Text(
                         '최근 7일',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                       if (fortuneScores.isEmpty)
                         Text(
                           '예상 운세',
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.primary.withOpacity(0.7),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.7),
                           ),
                         ),
                     ],
@@ -152,7 +152,7 @@ class FortuneHistoryChart extends StatelessWidget {
           horizontalInterval: 20,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: theme.colorScheme.outline.withOpacity(0.1),
+              color: theme.colorScheme.outline.withValues(alpha: 0.1),
               strokeWidth: 1,
             );
           },
@@ -167,7 +167,7 @@ class FortuneHistoryChart extends StatelessWidget {
                 return Text(
                   value.toInt().toString(),
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 );
               },
@@ -189,7 +189,7 @@ class FortuneHistoryChart extends StatelessWidget {
                   return Text(
                     days[value.toInt() % 7],
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   );
                 }
@@ -225,7 +225,7 @@ class FortuneHistoryChart extends StatelessWidget {
             ),
             belowBarData: BarAreaData(
               show: true,
-              color: theme.colorScheme.primary.withOpacity(0.1),
+              color: theme.colorScheme.primary.withValues(alpha: 0.1),
             ),
           ),
         ],
@@ -279,7 +279,7 @@ class FortuneHistoryChart extends StatelessWidget {
         Text(
           label,
           style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         Text(

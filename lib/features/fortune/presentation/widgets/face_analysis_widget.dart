@@ -149,13 +149,13 @@ class FaceAnalysisResultWidget extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            faceTypeInfo.primaryColor.withOpacity(0.1),
-            faceTypeInfo.secondaryColor.withOpacity(0.05),
+            faceTypeInfo.primaryColor.withValues(alpha: 0.1),
+            faceTypeInfo.secondaryColor.withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: faceTypeInfo.primaryColor.withOpacity(0.2),
+          color: faceTypeInfo.primaryColor.withValues(alpha: 0.2),
           width: 1.5,
         ),
       ),
@@ -197,10 +197,10 @@ class FaceAnalysisResultWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: _getScoreColor(overallScore).withOpacity(0.1),
+        color: _getScoreColor(overallScore).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: _getScoreColor(overallScore).withOpacity(0.3),
+          color: _getScoreColor(overallScore).withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -302,10 +302,10 @@ class FaceStrengthsWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.05),
+        color: primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: primaryColor.withOpacity(0.1),
+          color: primaryColor.withValues(alpha: 0.1),
         ),
       ),
       child: Row(
@@ -392,10 +392,10 @@ class RecommendedCareersWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.1),
+        color: primaryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: primaryColor.withOpacity(0.2),
+          color: primaryColor.withValues(alpha: 0.2),
         ),
       ),
       child: Text(

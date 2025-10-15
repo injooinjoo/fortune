@@ -85,7 +85,7 @@ class FortuneResultDisplay extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: _getScoreGradientColors(fortune.overallScore!).first.withOpacity(0.5),
+                      color: _getScoreGradientColors(fortune.overallScore!).first.withValues(alpha: 0.5),
                       blurRadius: 20,
                       spreadRadius: 5,
                     ),
@@ -110,10 +110,10 @@ class FortuneResultDisplay extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
                 border: Border.all(
-                  color: theme.colorScheme.primary.withOpacity(0.3),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
                 ),
               ),
               child: Text(
@@ -148,7 +148,7 @@ class FortuneResultDisplay extends StatelessWidget {
                 child: Text(
                   fortune.description!,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     height: 1.5,
                   ),
                 ),
@@ -161,7 +161,7 @@ class FortuneResultDisplay extends StatelessWidget {
             Text(
               '생성일: ${_formatDate(fortune.createdAt)}',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -188,7 +188,7 @@ class FortuneResultDisplay extends StatelessWidget {
                   padding: AppSpacing.paddingAll8,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)],
+                      colors: [TossDesignSystem.gray600.withValues(alpha: 0.6), TossDesignSystem.gray600.withValues(alpha: 0.8)],
                     ),
                     borderRadius: AppDimensions.borderRadiusMedium,
                   ),
@@ -229,7 +229,7 @@ class FortuneResultDisplay extends StatelessWidget {
                                 Container(
                                   height: AppSpacing.spacing5,
                                   decoration: BoxDecoration(
-                                    color: TossDesignSystem.gray400.withOpacity(0.3),
+                                    color: TossDesignSystem.gray400.withValues(alpha: 0.3),
                                     borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
                                   ),
                                 ),
@@ -289,7 +289,7 @@ class FortuneResultDisplay extends StatelessWidget {
                     padding: AppSpacing.paddingAll8,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [TossDesignSystem.warningYellow.withOpacity(0.6), TossDesignSystem.warningYellow.withOpacity(0.8)],
+                        colors: [TossDesignSystem.warningYellow.withValues(alpha: 0.6), TossDesignSystem.warningYellow.withValues(alpha: 0.8)],
                       ),
                       borderRadius: AppDimensions.borderRadiusMedium,
                     ),
@@ -329,13 +329,13 @@ class FortuneResultDisplay extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          theme.colorScheme.primary.withOpacity(0.1),
-                          theme.colorScheme.primary.withOpacity(0.05),
+                          theme.colorScheme.primary.withValues(alpha: 0.1),
+                          theme.colorScheme.primary.withValues(alpha: 0.05),
                         ],
                       ),
                       borderRadius: AppDimensions.borderRadiusMedium,
                       border: Border.all(
-                        color: theme.colorScheme.primary.withOpacity(0.3),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Row(
@@ -400,7 +400,7 @@ class FortuneResultDisplay extends StatelessWidget {
                   padding: AppSpacing.paddingAll8,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)],
+                      colors: [TossDesignSystem.gray600.withValues(alpha: 0.6), TossDesignSystem.gray600.withValues(alpha: 0.8)],
                     ),
                     borderRadius: AppDimensions.borderRadiusMedium,
                   ),
@@ -431,7 +431,7 @@ class FortuneResultDisplay extends StatelessWidget {
                       width: 24,
                       height: AppSpacing.spacing6,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -496,21 +496,21 @@ class FortuneResultDisplay extends StatelessWidget {
 
   List<Color> _getScoreGradientColors(int score) {
     if (score >= 80) {
-      return [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)];
+      return [TossDesignSystem.gray600.withValues(alpha: 0.6), TossDesignSystem.gray600.withValues(alpha: 0.8)];
     } else if (score >= 60) {
-      return [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)];
+      return [TossDesignSystem.gray600.withValues(alpha: 0.6), TossDesignSystem.gray600.withValues(alpha: 0.8)];
     } else if (score >= 40) {
-      return [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)];
+      return [TossDesignSystem.gray600.withValues(alpha: 0.6), TossDesignSystem.gray600.withValues(alpha: 0.8)];
     } else {
-      return [TossDesignSystem.gray600.withOpacity(0.6), TossDesignSystem.gray600.withOpacity(0.8)];
+      return [TossDesignSystem.gray600.withValues(alpha: 0.6), TossDesignSystem.gray600.withValues(alpha: 0.8)];
     }
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.gray600.withOpacity(0.8);
-    if (score >= 60) return TossDesignSystem.gray600.withOpacity(0.8);
-    if (score >= 40) return TossDesignSystem.gray600.withOpacity(0.8);
-    return TossDesignSystem.gray600.withOpacity(0.8);
+    if (score >= 80) return TossDesignSystem.gray600.withValues(alpha: 0.8);
+    if (score >= 60) return TossDesignSystem.gray600.withValues(alpha: 0.8);
+    if (score >= 40) return TossDesignSystem.gray600.withValues(alpha: 0.8);
+    return TossDesignSystem.gray600.withValues(alpha: 0.8);
   }
 
   IconData _getLuckyItemIcon(String type) {

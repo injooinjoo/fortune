@@ -196,7 +196,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                               : BorderSide.none,
                           ),
                           color: isDay 
-                            ? TossTheme.brandBlue.withOpacity(0.08)
+                            ? TossTheme.brandBlue.withValues(alpha: 0.08)
                             : null,
                         ),
                         child: _buildStemCell(pillarData?['cheongan'], isDay),
@@ -233,7 +233,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                             : BorderSide.none,
                         ),
                         color: isDay 
-                          ? TossTheme.brandBlue.withOpacity(0.08)
+                          ? TossTheme.brandBlue.withValues(alpha: 0.08)
                           : null,
                         borderRadius: index == pillars.length - 1 
                           ? const BorderRadius.only(
@@ -300,7 +300,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
@@ -360,7 +360,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
         Text(
           animal,
           style: TossTheme.caption.copyWith(
-            color: isDay ? TossTheme.brandBlue.withOpacity(0.8) : TossTheme.textGray600,
+            color: isDay ? TossTheme.brandBlue.withValues(alpha: 0.8) : TossTheme.textGray600,
             fontSize: isDay ? 12 : 11,
             fontWeight: FontWeight.w600,
           ),
@@ -371,7 +371,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
@@ -402,9 +402,9 @@ class _SajuTableTossState extends State<SajuTableToss> {
     return Container(
       padding: const EdgeInsets.all(TossTheme.spacingM),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [

@@ -232,7 +232,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue.withOpacity(0.05),
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -315,7 +315,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: _getInsightColor(insight.category).withOpacity(0.1),
+                            color: _getInsightColor(insight.category).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Center(
@@ -341,7 +341,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: _getImpactColor(insight.impact).withOpacity(0.1),
+                                      color: _getImpactColor(insight.impact).withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -423,7 +423,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.successGreen.withOpacity(0.1),
+                    color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -633,8 +633,8 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  TossDesignSystem.tossBlue.withOpacity(0.1),
-                                  TossDesignSystem.successGreen.withOpacity(0.1),
+                                  TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                                  TossDesignSystem.successGreen.withValues(alpha: 0.1),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(12),
@@ -752,10 +752,10 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: _getPriorityColor(skill.priority).withOpacity(0.05),
+                      color: _getPriorityColor(skill.priority).withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: _getPriorityColor(skill.priority).withOpacity(0.3),
+                        color: _getPriorityColor(skill.priority).withValues(alpha: 0.3),
                       ),
                     ),
                     child: Column(
@@ -833,7 +833,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: score.$3.withOpacity(0.1),
+                color: score.$3.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
@@ -869,7 +869,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(

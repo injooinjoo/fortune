@@ -130,7 +130,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
               ),
               belowBarData: BarAreaData(
                 show: true,
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               ),
             ),
           ],
@@ -150,7 +150,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
         color: fortuneTheme.cardSurface,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: fortuneTheme.dividerColor.withOpacity(0.1),
+          color: fortuneTheme.dividerColor.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -233,7 +233,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                 child: Text(
                   '아직 확인한 운세가 없습니다',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ),
@@ -254,7 +254,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
         color: fortuneTheme.cardBackground,
         borderRadius: AppDimensions.borderRadiusSmall,
         border: Border.all(
-          color: fortuneTheme.dividerColor.withOpacity(0.1),
+          color: fortuneTheme.dividerColor.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -264,7 +264,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
+              color: theme.colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: AppDimensions.borderRadiusSmall,
             ),
             child: Center(
@@ -290,7 +290,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                 Text(
                   fortune['title'] ?? '',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

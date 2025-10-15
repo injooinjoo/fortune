@@ -81,8 +81,8 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
                 child: CustomPaint(
                   size: Size(widget.size, widget.size),
                   painter: _CompassBackgroundPainter(
-                    primaryColor: theme.colorScheme.primary.withOpacity(0.1),
-                    secondaryColor: theme.colorScheme.secondary.withOpacity(0.05)),
+                    primaryColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+                    secondaryColor: theme.colorScheme.secondary.withValues(alpha: 0.05)),
                 ),
               );
             },
@@ -113,7 +113,7 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary.withOpacity(0.3),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
                   blurRadius: 20,
                   spreadRadius: 5),
               ],
@@ -166,7 +166,7 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
               width: 40,
               height: TossDesignSystem.spacingXS,
               decoration: BoxDecoration(
-                color: theme.colorScheme.onSurface.withOpacity(0.2),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4 * 0.5),
               ),
             ),
@@ -183,12 +183,12 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
             Text(
               '${data.direction} 방향',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
             ),
             const SizedBox(height: TossDesignSystem.spacingL),
             LinearProgressIndicator(
               value: data.value / 100,
-              backgroundColor: data.color.withOpacity(0.2),
+              backgroundColor: data.color.withValues(alpha: 0.2),
               valueColor: AlwaysStoppedAnimation<Color>(data.color),
               minHeight: 8),
             const SizedBox(height: TossDesignSystem.spacingS),
@@ -249,7 +249,7 @@ class _DataPoint extends StatelessWidget {
             width: 3),
           boxShadow: [
             BoxShadow(
-              color: data.color.withOpacity(0.3),
+              color: data.color.withValues(alpha: 0.3),
               blurRadius: 10,
               spreadRadius: 2),
           ],
@@ -371,7 +371,7 @@ class _CompassPainter extends CustomPainter {
     // Draw data connections
     final dataPath = Path();
     final dataPaint = Paint()
-      ..color = textColor.withOpacity(0.2)
+      ..color = textColor.withValues(alpha: 0.2)
       ..style = PaintingStyle.fill;
     
     for (int i = 0; i < data.length; i++) {
@@ -395,7 +395,7 @@ class _CompassPainter extends CustomPainter {
     canvas.drawPath(
       dataPath,
       Paint()
-        ..color = textColor.withOpacity(0.5)
+        ..color = textColor.withValues(alpha: 0.5)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2
     );

@@ -163,7 +163,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isSelected ? TossDesignSystem.tossBlue.withOpacity(0.05) : TossDesignSystem.backgroundPrimary,
+              color: isSelected ? TossDesignSystem.tossBlue.withValues(alpha: 0.05) : TossDesignSystem.backgroundPrimary,
               border: Border.all(
                 color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
                 width: isSelected ? 2 : 1,
@@ -176,7 +176,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: isSelected ? TossTheme.primaryBlue : type.gradientColors[0].withOpacity(0.1),
+                    color: isSelected ? TossTheme.primaryBlue : type.gradientColors[0].withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -360,7 +360,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                           child: Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: _childGender == 'boy' ? TossTheme.primaryBlue.withOpacity(0.1) : null,
+                              color: _childGender == 'boy' ? TossTheme.primaryBlue.withValues(alpha: 0.1) : null,
                               border: Border.all(
                                 color: _childGender == 'boy' ? TossTheme.primaryBlue : TossTheme.borderGray200,
                                 width: _childGender == 'boy' ? 2 : 1,
@@ -394,7 +394,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                           child: Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: _childGender == 'girl' ? TossTheme.primaryBlue.withOpacity(0.1) : null,
+                              color: _childGender == 'girl' ? TossTheme.primaryBlue.withValues(alpha: 0.1) : null,
                               border: Border.all(
                                 color: _childGender == 'girl' ? TossTheme.primaryBlue : TossTheme.borderGray200,
                                 width: _childGender == 'girl' ? 2 : 1,
@@ -457,7 +457,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: isSelected ? TossTheme.primaryBlue.withOpacity(0.1) : null,
+                            color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.1) : null,
                             border: Border.all(
                               color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
                               width: isSelected ? 2 : 1,

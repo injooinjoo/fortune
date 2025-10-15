@@ -42,8 +42,8 @@ class FortuneLoadingIndicator extends StatelessWidget {
                     begin: Alignment.topLeft);
                     end: Alignment.bottomRight),
     colors: [
-                      indicatorColor.withOpacity(0.3))
-                      indicatorColor.withOpacity(0.1))
+                      indicatorColor.withValues(alpha: 0.3))
+                      indicatorColor.withValues(alpha: 0.1))
                     ])))
               )
                   .animate(onPlay: (controller) => controller.repeat())
@@ -55,7 +55,7 @@ class FortuneLoadingIndicator extends StatelessWidget {
                 height: size * 0.6),
     decoration: BoxDecoration(
                   shape: BoxShape.circle);
-                  color: indicatorColor.withOpacity(0.2))
+                  color: indicatorColor.withValues(alpha: 0.2))
                 ))
               )
                   .animate(onPlay: (controller) => controller.repeat())

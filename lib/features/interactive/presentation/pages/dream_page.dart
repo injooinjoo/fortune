@@ -230,7 +230,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
         Container(
           margin: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withOpacity(0.5),
+            color: theme.colorScheme.surface.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(16),
           ),
           child: TabBar(
@@ -284,7 +284,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
               '오늘 밤 꾼 꿈을 기록해보세요',
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontSize: fontSize,
-                color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
           ],
         ),
@@ -332,7 +332,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getLuckColor(entry.luckScore).withOpacity(0.2),
+                        color: _getLuckColor(entry.luckScore).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -351,7 +351,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                 entry.content,
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontSize: fontSize,
-                  color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -361,28 +361,28 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                   Icon(
                     Icons.calendar_today_rounded,
                     size: 16,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '${entry.date.year}년 ${entry.date.month}월 ${entry.date.day}일',
                     style: theme.textTheme.bodySmall?.copyWith(
                       fontSize: fontSize - 2,
-                      color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                   ),
                   const SizedBox(width: 16),
                   if (entry.tags.isNotEmpty) ...[
                     Icon(
                       Icons.label_rounded,
                       size: 16,
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       entry.tags.take(3).join(', '),
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: fontSize - 2,
-                        color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                     ),
                   ],
                 ],
@@ -404,7 +404,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
             Icon(
               Icons.auto_fix_high_rounded,
               size: 80,
-              color: theme.colorScheme.primary.withOpacity(0.5),
+              color: theme.colorScheme.primary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 24),
             Text(
@@ -419,7 +419,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
               '기록한 꿈을 선택하면\nAI가 상세하게 해석해드립니다',
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontSize: fontSize,
-                color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -478,7 +478,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: theme.colorScheme.outline.withOpacity(0.3)),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -526,13 +526,13 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.3),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.3),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.3),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.3),
                       ),
                     ),
                   ),
@@ -563,12 +563,12 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.3)),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.3)),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                     ),
                   ),
                 ),
@@ -606,7 +606,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                           }
                         });
                       },
-                      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                      selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                       checkmarkColor: theme.colorScheme.primary);
                   }).toList()),
                 ],
@@ -683,7 +683,7 @@ class DreamDetailSheet extends ConsumerWidget {
             height: 4,
             margin: const EdgeInsets.symmetric(vertical: 12),
             decoration: BoxDecoration(
-              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.3),
+              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -705,7 +705,7 @@ class DreamDetailSheet extends ConsumerWidget {
                     '${entry.date.year}년 ${entry.date.month}월 ${entry.date.day}일',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontSize: fontSize.value - 2,
-                      color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                   ),
                   const SizedBox(height: 20),
                   // Content
@@ -769,8 +769,8 @@ class DreamDetailSheet extends ConsumerWidget {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            theme.colorScheme.primary.withOpacity(0.1),
-                            theme.colorScheme.secondary.withOpacity(0.1)]),
+                            theme.colorScheme.primary.withValues(alpha: 0.1),
+                            theme.colorScheme.secondary.withValues(alpha: 0.1)]),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -792,7 +792,7 @@ class DreamDetailSheet extends ConsumerWidget {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.primary.withOpacity(0.2),
+                                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -806,7 +806,7 @@ class DreamDetailSheet extends ConsumerWidget {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: _getLuckColor(analysis.overallLuck).withOpacity(0.2),
+                                    color: _getLuckColor(analysis.overallLuck).withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
@@ -846,10 +846,10 @@ class DreamDetailSheet extends ConsumerWidget {
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.tertiaryContainer.withOpacity(0.3),
+                                color: theme.colorScheme.tertiaryContainer.withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: theme.colorScheme.tertiary.withOpacity(0.3)),
+                                  color: theme.colorScheme.tertiary.withValues(alpha: 0.3)),
                               ),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,

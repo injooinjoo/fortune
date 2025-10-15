@@ -119,7 +119,7 @@ class _LoveTrendChartState extends State<LoveTrendChart>
                   gradient: LinearGradient(
                     colors: [
                       TossTheme.primaryBlue,
-                      TossTheme.primaryBlue.withOpacity(0.7),
+                      TossTheme.primaryBlue.withValues(alpha: 0.7),
                     ],
                   ),
                   barWidth: 4,
@@ -139,8 +139,8 @@ class _LoveTrendChartState extends State<LoveTrendChart>
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        TossTheme.primaryBlue.withOpacity(0.3),
-                        TossTheme.primaryBlue.withOpacity(0.05),
+                        TossTheme.primaryBlue.withValues(alpha: 0.3),
+                        TossTheme.primaryBlue.withValues(alpha: 0.05),
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -151,7 +151,7 @@ class _LoveTrendChartState extends State<LoveTrendChart>
               lineTouchData: LineTouchData(
                 enabled: true,
                 touchTooltipData: LineTouchTooltipData(
-                  // backgroundColor: TossTheme.textBlack.withOpacity(0.8),
+                  // backgroundColor: TossTheme.textBlack.withValues(alpha: 0.8),
                   tooltipRoundedRadius: 8,
                   tooltipPadding: const EdgeInsets.all(8),
                   getTooltipItems: (touchedSpots) {

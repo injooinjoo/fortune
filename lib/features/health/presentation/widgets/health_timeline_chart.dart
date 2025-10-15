@@ -205,7 +205,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
             end: Alignment.bottomCenter,
             colors: [
               TossTheme.primaryBlue,
-              TossTheme.primaryBlue.withOpacity(0.7),
+              TossTheme.primaryBlue.withValues(alpha: 0.7),
             ],
           ),
           barWidth: 3,
@@ -227,8 +227,8 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                TossTheme.primaryBlue.withOpacity(0.3),
-                TossTheme.primaryBlue.withOpacity(0.05),
+                TossTheme.primaryBlue.withValues(alpha: 0.3),
+                TossTheme.primaryBlue.withValues(alpha: 0.05),
               ],
             ),
           ),
@@ -310,11 +310,11 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: isHighlighted 
-                ? TossTheme.primaryBlue.withOpacity(0.1)
+                ? TossTheme.primaryBlue.withValues(alpha: 0.1)
                 : TossTheme.backgroundSecondary,
             borderRadius: BorderRadius.circular(12),
             border: isHighlighted
-                ? Border.all(color: TossTheme.primaryBlue.withOpacity(0.3))
+                ? Border.all(color: TossTheme.primaryBlue.withValues(alpha: 0.3))
                 : null,
           ),
           child: Row(
@@ -389,13 +389,13 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            TossTheme.success.withOpacity(0.1),
-            TossTheme.primaryBlue.withOpacity(0.1),
+            TossTheme.success.withValues(alpha: 0.1),
+            TossTheme.primaryBlue.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: TossTheme.primaryBlue.withOpacity(0.2),
+          color: TossTheme.primaryBlue.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -404,7 +404,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: TossTheme.primaryBlue.withOpacity(0.2),
+              color: TossTheme.primaryBlue.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(

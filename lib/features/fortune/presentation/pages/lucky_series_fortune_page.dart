@@ -99,7 +99,7 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
         Text(
           '오늘 당신에게 행운을 가져다줄\n시리즈를 찾아보세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -119,11 +119,11 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
             ),
           ),
         ),
@@ -141,12 +141,12 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
+                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
                 const SizedBox(width: 12),
                 Text(
                   _birthDate != null
@@ -155,7 +155,7 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: _birthDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withOpacity(0.5),
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ],
@@ -184,7 +184,7 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
                   _selectedGenre = selected ? genre : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
               ),
@@ -213,7 +213,7 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
                   _selectedPlatform = selected ? platform : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
               ),
@@ -302,7 +302,7 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -341,7 +341,7 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.secondary.withOpacity(0.1),
+                      color: theme.colorScheme.secondary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -398,7 +398,7 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                     Text(
                       subSeries['platform'],
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -498,7 +498,7 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                     Text(
                       avoidSeries['reason'],
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         fontSize: 12 + fontSize,
                       ),
                     ),

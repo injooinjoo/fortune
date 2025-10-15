@@ -27,11 +27,11 @@ class CognitiveFunctionWeather extends StatelessWidget {
           colors: isDark
               ? [
                   TossDesignSystem.grayDark100,
-                  TossDesignSystem.grayDark200.withOpacity(0.5),
+                  TossDesignSystem.grayDark200.withValues(alpha: 0.5),
                 ]
               : [
                   TossDesignSystem.white,
-                  TossDesignSystem.gray50.withOpacity(0.5),
+                  TossDesignSystem.gray50.withValues(alpha: 0.5),
                 ],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -53,7 +53,7 @@ class CognitiveFunctionWeather extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.purple.withOpacity(0.1),
+                  color: TossDesignSystem.purple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -127,11 +127,11 @@ class CognitiveFunctionWeather extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: isDark 
-          ? TossDesignSystem.grayDark50.withOpacity(0.5)
-          : TossDesignSystem.white.withOpacity(0.8),
+          ? TossDesignSystem.grayDark50.withValues(alpha: 0.5)
+          : TossDesignSystem.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: _getFunctionColor(name).withOpacity(0.3),
+          color: _getFunctionColor(name).withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -172,7 +172,7 @@ class CognitiveFunctionWeather extends StatelessWidget {
             height: 28,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: _getFunctionColor(name).withOpacity(0.1),
+              color: _getFunctionColor(name).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -197,10 +197,10 @@ class CognitiveFunctionWeather extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
           width: 1,
         ),
       ),

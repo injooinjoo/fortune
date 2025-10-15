@@ -339,7 +339,7 @@ class TossBadge extends StatelessWidget {
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: backgroundColor ?? TossDesignSystem.tossBlue.withOpacity(0.1),
+        color: backgroundColor ?? TossDesignSystem.tossBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(TossDesignSystem.radiusXS),
       ),
       child: Text(

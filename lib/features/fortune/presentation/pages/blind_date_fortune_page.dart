@@ -390,7 +390,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withOpacity(0.6)
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6)
                 )
               )
             )
@@ -598,7 +598,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                     suffixIcon: const Icon(Icons.calendar_today),
                   ),
                   child: Text(
@@ -633,12 +633,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -661,7 +661,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withOpacity(0.5)),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
                 items: _meetingTypes.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
@@ -697,12 +697,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -769,12 +769,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     child: Chip(
                       label: Text(quality),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                       deleteIcon: isSelected
                           ? const Icon(Icons.check_circle, size: 18)
@@ -812,7 +812,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.5)
+                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
                           : TossDesignSystem.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Row(
@@ -853,7 +853,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withOpacity(0.5)),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
                 items: _idealDates.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
@@ -917,7 +917,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.5)
+                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
                           : TossDesignSystem.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Row(
@@ -927,7 +927,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                             height: 40,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: _getConfidenceColor(index).withOpacity(0.2),
+                              color: _getConfidenceColor(index).withValues(alpha: 0.2),
                               border: Border.all(
                                 color: _getConfidenceColor(index),
                                 width: 2,
@@ -983,12 +983,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     child: Chip(
                       label: Text(concern),
                       backgroundColor: isSelected
-                          ? TossDesignSystem.warningOrange.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? TossDesignSystem.warningOrange.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? TossDesignSystem.warningOrange
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -1016,7 +1016,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
       TossDesignSystem.errorRed,
       TossDesignSystem.warningOrange,
       TossDesignSystem.warningYellow,
-      TossDesignSystem.successGreen.withOpacity(0.7),
+      TossDesignSystem.successGreen.withValues(alpha: 0.7),
       TossDesignSystem.successGreen];
     return colors[index];
   }
@@ -1122,7 +1122,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 Text(
                   '상대방 사진이 있으면 매칭 확률을 더 정확하게 분석할 수 있습니다',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -1199,8 +1199,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        theme.colorScheme.primary.withOpacity(0.1),
-                        theme.colorScheme.secondary.withOpacity(0.1),
+                        theme.colorScheme.primary.withValues(alpha: 0.1),
+                        theme.colorScheme.secondary.withValues(alpha: 0.1),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -1250,10 +1250,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: TossDesignSystem.tossBlue.withOpacity(0.3),
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -1314,7 +1314,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withOpacity(0.5),
+        color: theme.colorScheme.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -1342,7 +1342,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     Text(
                       '스타일',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                     Text(
@@ -1359,7 +1359,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     Text(
                       '성격',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                     Text(
@@ -1411,7 +1411,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   child: CircularProgressIndicator(
                     value: successRate / 100,
                     strokeWidth: 20,
-                    backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+                    backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getSuccessColor(successRate)
                     ),
@@ -1440,8 +1440,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    theme.colorScheme.primary.withOpacity(0.1),
-                    theme.colorScheme.secondary.withOpacity(0.1),
+                    theme.colorScheme.primary.withValues(alpha: 0.1),
+                    theme.colorScheme.secondary.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -1560,7 +1560,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -1584,7 +1584,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         Text(
                           tip['detail'] as String,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.7)
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7)
                           ),
                         ),
                       ],
@@ -1639,7 +1639,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
@@ -1659,9 +1659,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         item as String,
                         style: theme.textTheme.bodySmall
                       ),
-                      backgroundColor: theme.colorScheme.surface.withOpacity(0.8),
+                      backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.8),
                       side: BorderSide(
-                        color: theme.colorScheme.onSurface.withOpacity(0.2)
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.2)
                       )
                     )).toList()
                   ),
@@ -1672,10 +1672,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: TossDesignSystem.errorRed.withOpacity(0.1),
+                color: TossDesignSystem.errorRed.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: TossDesignSystem.errorRed.withOpacity(0.3)
+                  color: TossDesignSystem.errorRed.withValues(alpha: 0.3)
                 )
               ),
               child: Column(
@@ -1743,8 +1743,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    theme.colorScheme.primary.withOpacity(0.05),
-                    theme.colorScheme.secondary.withOpacity(0.05)]),
+                    theme.colorScheme.primary.withValues(alpha: 0.05),
+                    theme.colorScheme.secondary.withValues(alpha: 0.05)]),
                 borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -1790,7 +1790,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     color: color['color'],
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withOpacity(0.2),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Center(
@@ -1886,7 +1886,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -1981,10 +1981,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.successGreen.withOpacity(0.05),
+                color: TossDesignSystem.successGreen.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: TossDesignSystem.successGreen.withOpacity(0.3)),
+                  color: TossDesignSystem.successGreen.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2026,10 +2026,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.errorRed.withOpacity(0.05),
+                color: TossDesignSystem.errorRed.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: TossDesignSystem.errorRed.withOpacity(0.3)),
+                  color: TossDesignSystem.errorRed.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2074,8 +2074,8 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    TossDesignSystem.warningYellow.withOpacity(0.1),
-                    TossDesignSystem.warningOrange.withOpacity(0.1)]),
+                    TossDesignSystem.warningYellow.withValues(alpha: 0.1),
+                    TossDesignSystem.warningOrange.withValues(alpha: 0.1)]),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -2135,7 +2135,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             Text(
               '상대방과 나눈 대화 내용을 붙여넣으면 AI가 호감도, 대화 스타일, 개선점을 분석해드립니다.',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 16),
@@ -2164,12 +2164,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   child: Chip(
                     label: Text(entry.value),
                     backgroundColor: isSelected
-                        ? theme.colorScheme.primary.withOpacity(0.2)
-                        : theme.colorScheme.surface.withOpacity(0.5),
+                        ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                        : theme.colorScheme.surface.withValues(alpha: 0.5),
                     side: BorderSide(
                       color: isSelected
                           ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurface.withOpacity(0.3),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     ),
                   ),
                 );
@@ -2195,7 +2195,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   borderRadius: BorderRadius.circular(12),
                 ),
                 filled: true,
-                fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                 counterText: '${_chatContentController.text.length}/500',
               ),
               onChanged: (value) {
@@ -2208,10 +2208,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: theme.colorScheme.primary.withOpacity(0.3),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -2226,7 +2226,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     child: Text(
                       '대화 내용은 AI 분석 후 안전하게 삭제되며, 저장되지 않습니다.',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
                     ),
                   ),

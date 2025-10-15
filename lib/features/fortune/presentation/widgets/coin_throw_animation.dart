@@ -226,7 +226,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.black.withOpacity(0.3),
+                      color: TossDesignSystem.black.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(2, 2),
                     ),
@@ -291,11 +291,11 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.white.withOpacity(0.9),
+                color: TossDesignSystem.white.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(25),
                 boxShadow: [
                   BoxShadow(
-                    color: TossDesignSystem.black.withOpacity(0.1),
+                    color: TossDesignSystem.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -319,7 +319,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                       : '간절한 마음을 담아 동전이 날아가고 있어요.',
                     style: TextStyle(
                       fontSize: 14,
-                      color: const Color(0xFF1E3A8A).withOpacity(0.8),
+                      color: const Color(0xFF1E3A8A).withValues(alpha: 0.8),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -340,7 +340,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: TossDesignSystem.white.withOpacity(0.9),
+          color: TossDesignSystem.white.withValues(alpha: 0.9),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(25),
             topRight: Radius.circular(25),
@@ -354,7 +354,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E3A8A).withOpacity(0.1),
+                    color: const Color(0xFF1E3A8A).withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -377,7 +377,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _getCategoryColor().withOpacity(0.2),
+                    color: _getCategoryColor().withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -453,11 +453,11 @@ class StaticFountainPainter extends CustomPainter {
     canvas.drawCircle(center, 30, paint);
     
     // 물 표면
-    paint.color = const Color(0xFF87CEEB).withOpacity(0.8);
+    paint.color = const Color(0xFF87CEEB).withValues(alpha: 0.8);
     canvas.drawCircle(center, 115, paint);
     
     // 물 하이라이트
-    paint.color = TossDesignSystem.white.withOpacity(0.4);
+    paint.color = TossDesignSystem.white.withValues(alpha: 0.4);
     canvas.drawCircle(center + const Offset(-20, -20), 100, paint);
   }
 
@@ -482,7 +482,7 @@ class SplashEffectPainter extends CustomPainter {
 
     // 물 튀는 효과
     if (splashProgress > 0) {
-      paint.color = TossDesignSystem.white.withOpacity(0.8 * (1 - splashProgress));
+      paint.color = TossDesignSystem.white.withValues(alpha: 0.8 * (1 - splashProgress));
       
       final splashCount = 12;
       for (int i = 0; i < splashCount; i++) {
@@ -509,7 +509,7 @@ class SplashEffectPainter extends CustomPainter {
       for (int i = 0; i < 4; i++) {
         final opacity = (1 - rippleProgress) * (1 - i * 0.2);
         if (opacity > 0) {
-          paint.color = TossDesignSystem.white.withOpacity(opacity);
+          paint.color = TossDesignSystem.white.withValues(alpha: opacity);
           final radius = rippleProgress * 150 + (i * 20);
           canvas.drawCircle(center, radius, paint);
         }

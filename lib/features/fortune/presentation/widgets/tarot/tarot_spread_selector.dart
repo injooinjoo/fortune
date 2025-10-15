@@ -441,7 +441,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
       width: 24,
       height: 32,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(2),
         border: Border.all(
           color: color.withValues(alpha: 0.3),

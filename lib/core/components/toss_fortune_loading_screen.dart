@@ -204,7 +204,7 @@ class _TossFortuneLoadingScreenState extends State<TossFortuneLoadingScreen>
                         color: backgroundColor,
                         boxShadow: [
                           BoxShadow(
-                            color: logoColor.withOpacity(0.2),
+                            color: logoColor.withValues(alpha: 0.2),
                             blurRadius: 20,
                             spreadRadius: 5,
                           ),
@@ -243,7 +243,7 @@ class _TossFortuneLoadingScreenState extends State<TossFortuneLoadingScreen>
                         child: Text(
                           _messages[_currentMessageIndex],
                           style: TossDesignSystem.body2.copyWith(
-                            color: textColor.withOpacity(0.7),
+                            color: textColor.withValues(alpha: 0.7),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -260,7 +260,7 @@ class _TossFortuneLoadingScreenState extends State<TossFortuneLoadingScreen>
               Text(
                 'Fortune',
                 style: TossDesignSystem.small.copyWith(
-                  color: textColor.withOpacity(0.3),
+                  color: textColor.withValues(alpha: 0.3),
                   letterSpacing: 1.5,
                 ),
               ).animate()
@@ -335,7 +335,7 @@ class _TossFortuneLoadingWidgetState extends State<TossFortuneLoadingWidget>
           Text(
             widget.message!,
             style: TossDesignSystem.caption.copyWith(
-              color: textColor.withOpacity(0.6),
+              color: textColor.withValues(alpha: 0.6),
             ),
           ),
         ],

@@ -141,7 +141,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
         Text(
           '${widget.requiredCards}장의 카드를 선택해주세요',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             fontSize: 16 * fontScale,
           ),
         ),
@@ -189,7 +189,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
           decoration: BoxDecoration(
             color: isSelected
                 ? theme.colorScheme.primary
-                : theme.colorScheme.onSurface.withOpacity(0.2),
+                : theme.colorScheme.onSurface.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(2),
           ),
         );

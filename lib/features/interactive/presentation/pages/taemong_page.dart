@@ -104,7 +104,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withOpacity(0.1),
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -149,7 +149,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
             maxLength: 500,
             decoration: InputDecoration(
               hintText: '꿈에서 본 내용을 자세히 적어주세요...',
-              hintStyle: TextStyle(color: TossDesignSystem.gray600.withOpacity(0.5)),
+              hintStyle: TextStyle(color: TossDesignSystem.gray600.withValues(alpha: 0.5)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: TossDesignSystem.gray200)),

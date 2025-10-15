@@ -38,7 +38,7 @@ class MbtiEnergyGauge extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(

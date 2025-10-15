@@ -212,13 +212,13 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                       margin: const EdgeInsets.only(bottom: 8),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? theme.colorScheme.primary.withOpacity(0.1)
-                            : theme.colorScheme.surface.withOpacity(0.3),
+                            ? theme.colorScheme.primary.withValues(alpha: 0.1)
+                            : theme.colorScheme.surface.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.2),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
@@ -229,7 +229,7 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                                 : Icons.radio_button_unchecked,
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.5),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                           const SizedBox(width: 12),
                           Text(
@@ -266,7 +266,7 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                 Text(
                   '최대 4개까지 선택 가능',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 const SizedBox(height: 12),

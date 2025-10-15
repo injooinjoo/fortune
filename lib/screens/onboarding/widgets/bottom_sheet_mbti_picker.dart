@@ -132,7 +132,7 @@ class BottomSheetMbtiPicker extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal * 1.25),
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : context.fortuneTheme.cardBackground,
+          color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.1) : context.fortuneTheme.cardBackground,
           borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4),
           border: Border.all(
             color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.dividerColor,

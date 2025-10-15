@@ -192,11 +192,11 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                     width: particle.size,
                     height: particle.size,
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.gray600.withOpacity(0.8),
+                      color: TossDesignSystem.gray600.withValues(alpha: 0.8),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: TossDesignSystem.gray600.withOpacity(0.4),
+                          color: TossDesignSystem.gray600.withValues(alpha: 0.4),
                           blurRadius: 3,
                           spreadRadius: 1),
                       ],

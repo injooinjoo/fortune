@@ -113,7 +113,7 @@ class AdminGuard extends ConsumerWidget {
                 Text(
                   '이 페이지에 접근하려면 관리자 권한이 필요합니다.\n관리자에게 문의해주세요.',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                   textAlign: TextAlign.center),
                 const SizedBox(height: 32),
                 ElevatedButton(
@@ -154,7 +154,7 @@ class AdminGuard extends ConsumerWidget {
                 Text(
                   error.toString(),
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                   textAlign: TextAlign.center),
                 const SizedBox(height: 32),
                 ElevatedButton(

@@ -104,7 +104,7 @@ class PremiumCard extends StatelessWidget {
           fortuneTheme.fortuneGradientStart,
           fortuneTheme.fortuneGradientEnd]),
       border: Border.all(
-        color: fortuneTheme.fortuneGradientStart.withOpacity(0.3),
+        color: fortuneTheme.fortuneGradientStart.withValues(alpha: 0.3),
         width: 1));
   }
 }

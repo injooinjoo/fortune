@@ -166,13 +166,13 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        TossDesignSystem.tossBlue.withOpacity(0.1),
-                        TossDesignSystem.tossBlue.withOpacity(0.05)],
+                        TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                        TossDesignSystem.tossBlue.withValues(alpha: 0.05)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: TossDesignSystem.tossBlue.withOpacity(0.2)),
+                      color: TossDesignSystem.tossBlue.withValues(alpha: 0.2)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +182,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: TossDesignSystem.tossBlue.withOpacity(0.2),
+                              color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Icon(
@@ -271,7 +271,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.black.withOpacity(0.05),
+            color: TossDesignSystem.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: Theme(
@@ -286,7 +286,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
           leading: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: category.color.withOpacity(0.1),
+              color: category.color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -365,7 +365,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.black.withOpacity(0.05),
+            color: TossDesignSystem.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -379,7 +379,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(

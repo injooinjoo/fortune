@@ -410,7 +410,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
               boxShadow: [
                 if (isSelected)
                   BoxShadow(
-                    color: TossDesignSystem.tossBlue.withOpacity(0.3),
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2))]),
             child: Text(

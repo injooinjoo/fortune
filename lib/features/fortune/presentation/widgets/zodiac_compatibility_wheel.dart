@@ -150,7 +150,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
           height: isSelected ? 70 : 60,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _getCompatibilityColor(compatibility).withOpacity(0.2),
+            color: _getCompatibilityColor(compatibility).withValues(alpha: 0.2),
             border: Border.all(
               color: isSelected 
                   ? TossDesignSystem.warningYellow 
@@ -158,7 +158,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
               width: isSelected ? 3 : 2),
             boxShadow: (isSelected || isHovered) ? [
               BoxShadow(
-                color: _getCompatibilityColor(compatibility).withOpacity(0.5),
+                color: _getCompatibilityColor(compatibility).withValues(alpha: 0.5),
                 blurRadius: 20,
                 spreadRadius: 5)] : []),
           child: Column(
@@ -191,10 +191,10 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            TossDesignSystem.warningYellow.withOpacity(0.3),
-            TossDesignSystem.warningYellow.withOpacity(0.1)]),
+            TossDesignSystem.warningYellow.withValues(alpha: 0.3),
+            TossDesignSystem.warningYellow.withValues(alpha: 0.1)]),
         border: Border.all(
-          color: TossDesignSystem.warningYellow.withOpacity(0.5),
+          color: TossDesignSystem.warningYellow.withValues(alpha: 0.5),
           width: 2)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -212,7 +212,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
             info['hanja'],
             style: TextStyle(
               fontSize: 14,
-              color: TossDesignSystem.white.withOpacity(0.8)),
+              color: TossDesignSystem.white.withValues(alpha: 0.8)),
           ),
           Text(
             info['element'],
@@ -228,10 +228,10 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white.withOpacity(0.05),
+        color: TossDesignSystem.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: TossDesignSystem.white.withOpacity(0.1),
+          color: TossDesignSystem.white.withValues(alpha: 0.1),
           width: 1)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -271,7 +271,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
             Text(
               description,
               style: TextStyle(
-                color: TossDesignSystem.white.withOpacity(0.6),
+                color: TossDesignSystem.white.withValues(alpha: 0.6),
                 fontSize: 10)),
           ],
         ),
@@ -337,7 +337,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final bestMatchIndex = ZodiacCompatibilityService.zodiacAnimals.indexOf(bestMatch);
     
     final paint = Paint()
-      ..color = TossDesignSystem.successGreen.withOpacity(0.6 * animationValue)
+      ..color = TossDesignSystem.successGreen.withValues(alpha: 0.6 * animationValue)
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
     
@@ -360,7 +360,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     for (final group in ZodiacCompatibilityService.harmonyGroups) {
       if (group.contains(selectedZodiac)) {
         final paint = Paint()
-          ..color = TossDesignSystem.tossBlue.withOpacity(0.4 * animationValue)
+          ..color = TossDesignSystem.tossBlue.withValues(alpha: 0.4 * animationValue)
           ..strokeWidth = 2
           ..style = PaintingStyle.stroke;
         
@@ -397,7 +397,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final conflictIndex = ZodiacCompatibilityService.zodiacAnimals.indexOf(conflict);
     
     final paint = Paint()
-      ..color = TossDesignSystem.errorRed.withOpacity(0.5 * animationValue)
+      ..color = TossDesignSystem.errorRed.withValues(alpha: 0.5 * animationValue)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;

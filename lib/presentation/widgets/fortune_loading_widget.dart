@@ -96,7 +96,7 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
             Container(
               height: AppSpacing.spacing24 * 2.08,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(_animation.value),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: _animation.value),
                 borderRadius: AppDimensions.borderRadiusMedium,
               ),
             ),
@@ -105,7 +105,7 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
               height: AppSpacing.spacing5,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(_animation.value),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: _animation.value),
                 borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
               ),
             ),
@@ -114,7 +114,7 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
               height: 20,
               width: AppSpacing.spacing24 * 2.08,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(_animation.value),
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: _animation.value),
                 borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
               ),
             ),

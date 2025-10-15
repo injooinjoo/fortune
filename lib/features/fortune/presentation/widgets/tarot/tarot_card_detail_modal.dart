@@ -200,8 +200,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                TossDesignSystem.purple.withOpacity(0.8),
-                TossDesignSystem.bluePrimary.withOpacity(0.8),
+                TossDesignSystem.purple.withValues(alpha: 0.8),
+                TossDesignSystem.bluePrimary.withValues(alpha: 0.8),
               ],
             ),
           ),
@@ -212,7 +212,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
                 Icon(
                   Icons.auto_awesome,
                   size: 80,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -220,7 +220,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     letterSpacing: 4,
                   ),
                 ),

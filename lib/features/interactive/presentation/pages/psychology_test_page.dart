@@ -334,8 +334,8 @@ class _TestInputView extends StatelessWidget {
             borderRadius: BorderRadius.circular(50),
             gradient: LinearGradient(
               colors: [
-                theme.colorScheme.primary.withOpacity(0.2),
-                theme.colorScheme.secondary.withOpacity(0.2),
+                theme.colorScheme.primary.withValues(alpha: 0.2),
+                theme.colorScheme.secondary.withValues(alpha: 0.2),
               ],
             ),
             child: Center(
@@ -379,7 +379,7 @@ class _TestInputView extends StatelessWidget {
                       labelText: '이름',
                       hintText: '이름을 입력하세요',
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                      fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -441,7 +441,7 @@ class _TestInputView extends StatelessWidget {
             Text(
               '${currentQuestionIndex + 1} / ${psychologyQuestions.length}',
               style: TextStyle(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 fontSize: 14 * fontScale,
               ),
             ),
@@ -475,8 +475,8 @@ class _TestInputView extends StatelessWidget {
                             gradient: isSelected
                                 ? LinearGradient(
                                     colors: [
-                                      theme.colorScheme.primary.withOpacity(0.2),
-                                      theme.colorScheme.secondary.withOpacity(0.2),
+                                      theme.colorScheme.primary.withValues(alpha: 0.2),
+                                      theme.colorScheme.secondary.withValues(alpha: 0.2),
                                     ],
                                   )
                                 : null,
@@ -498,7 +498,7 @@ class _TestInputView extends StatelessWidget {
                                   border: Border.all(
                                     color: isSelected
                                         ? theme.colorScheme.primary
-                                        : theme.colorScheme.onSurface.withOpacity(0.3),
+                                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                                     width: 2,
                                   ),
                                 ),
@@ -672,8 +672,8 @@ class _TestResultView extends ConsumerWidget {
                     padding: const EdgeInsets.all(24),
                     gradient: LinearGradient(
                       colors: [
-                        _getLuckColor(result.overallLuck).withOpacity(0.1),
-                        _getLuckColor(result.overallLuck).withOpacity(0.05),
+                        _getLuckColor(result.overallLuck).withValues(alpha: 0.1),
+                        _getLuckColor(result.overallLuck).withValues(alpha: 0.05),
                       ],
                     ),
                     child: Column(
@@ -697,7 +697,7 @@ class _TestResultView extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: _getLuckColor(result.overallLuck).withOpacity(0.2),
+                            color: _getLuckColor(result.overallLuck).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -739,8 +739,8 @@ class _TestResultView extends ConsumerWidget {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                theme.colorScheme.primary.withOpacity(0.1),
-                                theme.colorScheme.secondary.withOpacity(0.1),
+                                theme.colorScheme.primary.withValues(alpha: 0.1),
+                                theme.colorScheme.secondary.withValues(alpha: 0.1),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(12),
@@ -844,11 +844,11 @@ class _TestResultView extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      theme.colorScheme.primary.withOpacity(0.2),
-                                      theme.colorScheme.secondary.withOpacity(0.2)]),
+                                      theme.colorScheme.primary.withValues(alpha: 0.2),
+                                      theme.colorScheme.secondary.withValues(alpha: 0.2)]),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: theme.colorScheme.primary.withOpacity(0.3)),
+                                    color: theme.colorScheme.primary.withValues(alpha: 0.3)),
                                 ),
                                 child: Text(
                                   element,

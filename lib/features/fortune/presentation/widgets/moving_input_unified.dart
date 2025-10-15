@@ -224,7 +224,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: TossTheme.primaryBlue.withOpacity(0.1),
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -355,7 +355,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                   child: Container(
                     decoration: isSelected 
                         ? BoxDecoration(
-                            color: TossTheme.primaryBlue.withOpacity(0.1),
+                            color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(TossTheme.radiusS),
                           )
                         : null,
@@ -428,7 +428,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
               child: Container(
                 decoration: isSelected 
                     ? BoxDecoration(
-                        color: TossTheme.primaryBlue.withOpacity(0.1),
+                        color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(TossTheme.radiusS),
                         border: Border.all(
                           color: TossTheme.primaryBlue,
@@ -657,7 +657,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: TossTheme.primaryBlue.withOpacity(0.1),
+                color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(

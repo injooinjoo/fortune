@@ -113,7 +113,7 @@ class _LoadingElevatedButtonState extends State<LoadingElevatedButton>
       height: 8,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: theme.colorScheme.onPrimary.withOpacity(opacity),
+        color: theme.colorScheme.onPrimary.withValues(alpha: opacity),
       ),
     );
   }

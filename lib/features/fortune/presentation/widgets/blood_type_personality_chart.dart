@@ -108,13 +108,13 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      TossDesignSystem.errorRed.withOpacity(0.6),
-                      TossDesignSystem.errorRed.withOpacity(0.8),
+                      TossDesignSystem.errorRed.withValues(alpha: 0.6),
+                      TossDesignSystem.errorRed.withValues(alpha: 0.8),
                     ],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.errorRed.withOpacity(0.4),
+                      color: TossDesignSystem.errorRed.withValues(alpha: 0.4),
                       blurRadius: 15,
                       spreadRadius: 3,
                     ),
@@ -174,14 +174,14 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                       ? LinearGradient(
                           colors: [
                             Theme.of(context).colorScheme.primary,
-                            Theme.of(context).colorScheme.primary.withOpacity(0.8)])
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8)])
                       : null,
                   borderRadius: AppDimensions.borderRadiusSmall),
                 child: Center(
                   child: Text(
                     title,
                     style: TextStyle(
-                      color: isSelected ? TossDesignSystem.white : TossDesignSystem.white.withOpacity(0.7),
+                      color: isSelected ? TossDesignSystem.white : TossDesignSystem.white.withValues(alpha: 0.7),
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
@@ -266,7 +266,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   borderRadius: AppDimensions.borderRadiusSmall),
                 child: Icon(icon, color: color, size: 20)),
               const SizedBox(width: AppSpacing.spacing2),
@@ -334,7 +334,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: AppDimensions.borderRadiusSmall),
           child: Icon(icon, color: color, size: 20)),
         const SizedBox(width: AppSpacing.spacing3),
@@ -363,8 +363,8 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.purple.withOpacity(0.1),
-          TossDesignSystem.purple.withOpacity(0.05)]),
+          TossDesignSystem.purple.withValues(alpha: 0.1),
+          TossDesignSystem.purple.withValues(alpha: 0.05)]),
       padding: AppSpacing.paddingAll16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -395,10 +395,10 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.purple.withOpacity(0.2),
+                  color: TossDesignSystem.purple.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: TossDesignSystem.purple.withOpacity(0.4),
+                    color: TossDesignSystem.purple.withValues(alpha: 0.4),
                     width: 1)),
                 child: Text(
                   trait,
@@ -412,10 +412,10 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
             Container(
               padding: AppSpacing.paddingAll12,
               decoration: BoxDecoration(
-                color: TossDesignSystem.warningYellow.withOpacity(0.1),
+                color: TossDesignSystem.warningYellow.withValues(alpha: 0.1),
                 borderRadius: AppDimensions.borderRadiusSmall,
                 border: Border.all(
-                  color: TossDesignSystem.warningYellow.withOpacity(0.3),
+                  color: TossDesignSystem.warningYellow.withValues(alpha: 0.3),
                   width: 1)),
               child: Row(
                 children: [
@@ -471,10 +471,10 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                       width: 1)),
                   child: Row(
                     children: [
@@ -550,7 +550,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                             borderRadius: AppDimensions.borderRadiusSmall,
                             child: LinearProgressIndicator(
                               value: entry.value,
-                              backgroundColor: color.withOpacity(0.2),
+                              backgroundColor: color.withValues(alpha: 0.2),
                               valueColor: AlwaysStoppedAnimation<Color>(color),
                               minHeight: 8,
                             ),
@@ -595,19 +595,19 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                     RadarChartData(
                       radarShape: RadarShape.polygon,
                       radarBorderData: BorderSide(
-                        color: TossDesignSystem.white.withOpacity(0.3),
+                        color: TossDesignSystem.white.withValues(alpha: 0.3),
                         width: 2),
                       gridBorderData: BorderSide(
-                        color: TossDesignSystem.white.withOpacity(0.2),
+                        color: TossDesignSystem.white.withValues(alpha: 0.2),
                         width: 1),
                       tickBorderData: BorderSide(
-                        color: TossDesignSystem.white.withOpacity(0.2),
+                        color: TossDesignSystem.white.withValues(alpha: 0.2),
                         width: 1),
                       titlePositionPercentageOffset: 0.2,
                       radarBackgroundColor: TossDesignSystem.transparent,
                       dataSets: [
                         RadarDataSet(
-                          fillColor: TossDesignSystem.errorRed.withOpacity(0.3),
+                          fillColor: TossDesignSystem.errorRed.withValues(alpha: 0.3),
                           borderColor: TossDesignSystem.errorRed,
                           borderWidth: 2,
                           dataEntries: strengths.entries
@@ -621,7 +621,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                       },
                       tickCount: 5,
                       ticksTextStyle: TextStyle(
-                        color: TossDesignSystem.white.withOpacity(0.5),
+                        color: TossDesignSystem.white.withValues(alpha: 0.5),
                         fontSize: Theme.of(context).textTheme.bodySmall?.fontSize),
                       titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 14),
                     ),

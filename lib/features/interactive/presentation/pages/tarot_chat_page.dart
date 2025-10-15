@@ -390,7 +390,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: TossDesignSystem.black.withOpacity(0.05),
+                  color: TossDesignSystem.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2))]),
             child: const Icon(
@@ -466,7 +466,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                 width: 1),
               boxShadow: [
                 BoxShadow(
-                  color: TossDesignSystem.black.withOpacity(0.04),
+                  color: TossDesignSystem.black.withValues(alpha: 0.04),
                   blurRadius: 8,
                   offset: const Offset(0, 2))]),
             child: Text(
@@ -529,7 +529,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                   width: 1) : null,
                 boxShadow: [
                   BoxShadow(
-                    color: TossDesignSystem.black.withOpacity(0.02),
+                    color: TossDesignSystem.black.withValues(alpha: 0.02),
                     blurRadius: 4,
                     offset: const Offset(0, 2))]),
               child: Column(
@@ -602,7 +602,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
           width: 1),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.black.withOpacity(0.1),
+            color: TossDesignSystem.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

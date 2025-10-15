@@ -139,7 +139,7 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0),
               decoration: BoxDecoration(
-                color: theme.colorScheme.onPrimary.withOpacity(0.2),
+                color: theme.colorScheme.onPrimary.withValues(alpha: 0.2),
                 borderRadius: AppDimensions.borderRadiusMedium,
               ),
               child: Text(

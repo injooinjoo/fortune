@@ -220,12 +220,12 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
         borderRadius: BorderRadius.circular(8),
         boxShadow: isCenter ? [
           BoxShadow(
-            color: TossDesignSystem.tossBlue.withOpacity(0.6),
+            color: TossDesignSystem.tossBlue.withValues(alpha: 0.6),
             blurRadius: 20,
             spreadRadius: 5),
         ] : [
           BoxShadow(
-            color: TossDesignSystem.black.withOpacity(0.3),
+            color: TossDesignSystem.black.withValues(alpha: 0.3),
             blurRadius: 5,
             offset: const Offset(0, 3)),
         ],
@@ -263,8 +263,8 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: isCenter
-                      ? TossDesignSystem.white.withOpacity(0.5)
-                      : TossDesignSystem.white.withOpacity(0.2),
+                      ? TossDesignSystem.white.withValues(alpha: 0.5)
+                      : TossDesignSystem.white.withValues(alpha: 0.2),
                   width: isCenter ? 2 : 1),
               ),
             ),
@@ -290,7 +290,7 @@ class TarotCardBackPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     
     // Draw stars pattern
-    paint.color = TossDesignSystem.white.withOpacity(isHighlighted ? 0.4 : 0.2);
+    paint.color = TossDesignSystem.white.withValues(alpha: isHighlighted ? 0.4 : 0.2);
     
     // Center star
     _drawStar(canvas, center, size.width * 0.15, paint);

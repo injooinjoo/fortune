@@ -132,9 +132,9 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                         height: 2,
                         child: LinearProgressIndicator(
                           value: _progressAnimation.value,
-                          backgroundColor: TossDesignSystem.gray400.withOpacity(0.2),
+                          backgroundColor: TossDesignSystem.gray400.withValues(alpha: 0.2),
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            TossDesignSystem.gray600.withOpacity(0.5),
+                            TossDesignSystem.gray600.withValues(alpha: 0.5),
                           ),
                         ),
                       );
@@ -145,7 +145,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                     _countdown > 0 ? '$_countdown초' : '',
                     style: TextStyle(
                       fontSize: 11,
-                      color: (isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withOpacity(0.4),
+                      color: (isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withValues(alpha: 0.4),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -181,7 +181,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                   '건너뛰기',
                   style: TextStyle(
                     fontSize: 13,
-                    color: (isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withOpacity(0.6),
+                    color: (isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withValues(alpha: 0.6),
                   ),
                 ),
               ).animate().fadeIn(duration: 300.ms),

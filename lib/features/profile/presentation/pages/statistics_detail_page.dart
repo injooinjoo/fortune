@@ -477,7 +477,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                                     gradient: LinearGradient(
                                       colors: [
                                         TossDesignSystem.tossBlue,
-                                        TossDesignSystem.tossBlue.withOpacity(0.7)],
+                                        TossDesignSystem.tossBlue.withValues(alpha: 0.7)],
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter),
                                     width: 24,
@@ -632,7 +632,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       child: Text(
                         '평균 ${stats.averageFortuneScore.toStringAsFixed(1)}점',
@@ -703,15 +703,15 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                           gradient: LinearGradient(
                             colors: [
                               TossDesignSystem.tossBlue,
-                              TossDesignSystem.tossBlue.withOpacity(0.7)]),
+                              TossDesignSystem.tossBlue.withValues(alpha: 0.7)]),
                           barWidth: 3,
                           dotData: FlDotData(show: false),
                           belowBarData: BarAreaData(
                             show: true,
                             gradient: LinearGradient(
                               colors: [
-                                TossDesignSystem.tossBlue.withOpacity(0.3),
-                                TossDesignSystem.tossBlue.withOpacity(0.1)],
+                                TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                                TossDesignSystem.tossBlue.withValues(alpha: 0.1)],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter))]))])),
           
@@ -764,11 +764,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.tossBlue.withOpacity(0.1),
-                  TossDesignSystem.tossBlue.withOpacity(0.05)]),
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  TossDesignSystem.tossBlue.withValues(alpha: 0.05)]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: TossDesignSystem.tossBlue.withOpacity(0.2)),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.2)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -807,7 +807,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.black.withOpacity(0.05),
+            color: TossDesignSystem.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: Column(
@@ -818,7 +818,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 child: Icon(icon, color: color, size: 20)),
               const SizedBox(width: 8),
@@ -899,7 +899,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.black.withOpacity(0.05),
+            color: TossDesignSystem.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2))]),
       child: Column(

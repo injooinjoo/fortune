@@ -65,7 +65,7 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossTheme.success.withOpacity(0.1),
+                  color: TossTheme.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -152,10 +152,10 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
               padding: const EdgeInsets.all(16),
               margin: const EdgeInsets.only(top: 12),
               decoration: BoxDecoration(
-                color: TossTheme.success.withOpacity(0.1),
+                color: TossTheme.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: TossTheme.success.withOpacity(0.3),
+                  color: TossTheme.success.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -190,12 +190,12 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isCompleted 
-              ? TossTheme.success.withOpacity(0.1)
+              ? TossTheme.success.withValues(alpha: 0.1)
               : TossTheme.backgroundPrimary,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isCompleted 
-                ? TossTheme.success.withOpacity(0.3)
+                ? TossTheme.success.withValues(alpha: 0.3)
                 : TossTheme.borderGray200,
           ),
         ),

@@ -776,16 +776,16 @@ class FortuneInfographicWidgets {
           colors: isDarkMode
             ? [
                 TossDesignSystem.grayDark200,
-                TossDesignSystem.grayDark300.withOpacity(0.5),
+                TossDesignSystem.grayDark300.withValues(alpha: 0.5),
               ]
             : [
                 TossDesignSystem.white,
-                scoreColor.withOpacity(0.05),
+                scoreColor.withValues(alpha: 0.05),
               ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: scoreColor.withOpacity(0.3),
+          color: scoreColor.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -807,7 +807,7 @@ class FortuneInfographicWidgets {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: scoreColor.withOpacity(0.15),
+                  color: scoreColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -829,10 +829,10 @@ class FortuneInfographicWidgets {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
-                color: scoreColor.withOpacity(0.1),
+                color: scoreColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: scoreColor.withOpacity(0.2),
+                  color: scoreColor.withValues(alpha: 0.2),
                 ),
               ),
               child: Text(
@@ -901,7 +901,7 @@ class FortuneInfographicWidgets {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: scoreColor.withOpacity(0.1),
+                  color: scoreColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -1001,8 +1001,8 @@ class FortuneInfographicWidgets {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: isDark
-          ? TossDesignSystem.primaryBlue.withOpacity(0.2)
-          : TossDesignSystem.tossBlue.withOpacity(0.1),
+          ? TossDesignSystem.primaryBlue.withValues(alpha: 0.2)
+          : TossDesignSystem.tossBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -1068,7 +1068,7 @@ class FortuneInfographicWidgets {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: _getCategoryScoreColor(score, isDark).withOpacity(0.1),
+                      color: _getCategoryScoreColor(score, isDark).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -1229,13 +1229,13 @@ class FortuneInfographicWidgets {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: isDark
-          ? TossDesignSystem.primaryYellow.withOpacity(0.2)
-          : TossDesignSystem.warningOrange.withOpacity(0.1),
+          ? TossDesignSystem.primaryYellow.withValues(alpha: 0.2)
+          : TossDesignSystem.warningOrange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isDark
-            ? TossDesignSystem.primaryYellow.withOpacity(0.3)
-            : TossDesignSystem.warningOrange.withOpacity(0.2),
+            ? TossDesignSystem.primaryYellow.withValues(alpha: 0.3)
+            : TossDesignSystem.warningOrange.withValues(alpha: 0.2),
         ),
       ),
       child: Row(

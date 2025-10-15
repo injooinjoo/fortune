@@ -103,10 +103,10 @@ class MbtiSynergyCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withOpacity(0.05),
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.tossBlue.withOpacity(0.2),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -161,8 +161,8 @@ class MbtiSynergyCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            TossDesignSystem.purple.withOpacity(0.8),
-            TossDesignSystem.tossBlue.withOpacity(0.8),
+            TossDesignSystem.purple.withValues(alpha: 0.8),
+            TossDesignSystem.tossBlue.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -196,7 +196,7 @@ class MbtiSynergyCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white.withOpacity(0.2),
+                  color: TossDesignSystem.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -211,7 +211,7 @@ class MbtiSynergyCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white.withOpacity(0.3),
+                  color: TossDesignSystem.white.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -228,7 +228,7 @@ class MbtiSynergyCard extends StatelessWidget {
           Text(
             message,
             style: TossDesignSystem.body3.copyWith(
-              color: TossDesignSystem.white.withOpacity(0.95),
+              color: TossDesignSystem.white.withValues(alpha: 0.95),
               height: 1.4,
             ),
             textAlign: TextAlign.center,
@@ -256,7 +256,7 @@ class MbtiSynergyCard extends StatelessWidget {
           : TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -283,7 +283,7 @@ class MbtiSynergyCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -322,7 +322,7 @@ class MbtiSynergyCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(

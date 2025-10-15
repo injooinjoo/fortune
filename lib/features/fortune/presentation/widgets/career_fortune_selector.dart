@@ -119,7 +119,7 @@ class CareerFortuneSelector extends StatelessWidget {
                     Text(
                       '현재 상황에 맞는 운세를 선택해주세요',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                     ),
                   ],
                 ),
@@ -173,7 +173,7 @@ class _CareerTypeCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: careerType.gradientColors.map((color) => 
-            color.withOpacity(0.1)).toList(),
+            color.withValues(alpha: 0.1)).toList(),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,7 +220,7 @@ class _CareerTypeCard extends StatelessWidget {
             Text(
               careerType.description,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
               maxLines: 2,
               overflow: TextOverflow.ellipsis),
             const SizedBox(height: AppSpacing.spacing2),
@@ -233,7 +233,7 @@ class _CareerTypeCard extends StatelessWidget {
                     horizontal: AppSpacing.spacing2,
                     vertical: 4 * 0.5),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.onSurface.withOpacity(0.1),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     borderRadius: AppDimensions.borderRadiusSmall),
                   child: Text(
                     audience,

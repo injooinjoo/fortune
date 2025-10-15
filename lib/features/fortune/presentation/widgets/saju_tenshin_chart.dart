@@ -215,7 +215,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
+                  color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(TossTheme.radiusS),
                 ),
                 child: Icon(
@@ -293,7 +293,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                             gradient: LinearGradient(
                               colors: [
                                 color,
-                                color.withOpacity(0.7),
+                                color.withValues(alpha: 0.7),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(4),
@@ -323,10 +323,10 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
       child: Container(
         padding: const EdgeInsets.all(TossTheme.spacingM),
         decoration: BoxDecoration(
-          color: (dominantInfo['color'] as Color).withOpacity(0.08),
+          color: (dominantInfo['color'] as Color).withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(TossTheme.radiusM),
           border: Border.all(
-            color: (dominantInfo['color'] as Color).withOpacity(0.3),
+            color: (dominantInfo['color'] as Color).withValues(alpha: 0.3),
           ),
         ),
         child: Column(

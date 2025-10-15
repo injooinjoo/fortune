@@ -316,9 +316,9 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
       margin: const EdgeInsets.only(bottom: TossTheme.spacingM),
       padding: const EdgeInsets.all(TossTheme.spacingM),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -556,9 +556,9 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
             width: double.infinity,
             padding: const EdgeInsets.all(TossTheme.spacingM),
             decoration: BoxDecoration(
-              color: TossTheme.brandBlue.withOpacity(0.1),
+              color: TossTheme.brandBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(TossTheme.radiusM),
-              border: Border.all(color: TossTheme.brandBlue.withOpacity(0.3)),
+              border: Border.all(color: TossTheme.brandBlue.withValues(alpha: 0.3)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

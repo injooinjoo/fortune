@@ -145,7 +145,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
           animation: _fadeAnimation,
           builder: (context, child) {
             return Container(
-              color: TossDesignSystem.black.withOpacity(_fadeAnimation.value * 0.7),
+              color: TossDesignSystem.black.withValues(alpha: _fadeAnimation.value * 0.7),
             );
           },
         ),
@@ -183,7 +183,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Theme.of(context).primaryColor.withOpacity(_glowAnimation.value),
+                            color: Theme.of(context).primaryColor.withValues(alpha: _glowAnimation.value),
                             blurRadius: 40,
                             spreadRadius: 20)])),
                   
@@ -216,10 +216,10 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Theme.of(context).primaryColor.withOpacity(0.6),
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.6)]),
+                      Theme.of(context).primaryColor.withValues(alpha: 0.6),
+                      Theme.of(context).colorScheme.secondary.withValues(alpha: 0.6)]),
                   border: Border.all(
-                    color: TossDesignSystem.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withValues(alpha: 0.2),
                     width: 2))));
         });
     });
@@ -235,7 +235,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.black.withOpacity(0.3),
+            color: TossDesignSystem.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 5))]),
       child: ClipRRect(
@@ -257,9 +257,9 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        TossDesignSystem.white.withOpacity(0),
-                        TossDesignSystem.white.withOpacity(0.3),
-                        TossDesignSystem.white.withOpacity(0)],
+                        TossDesignSystem.white.withValues(alpha: 0),
+                        TossDesignSystem.white.withValues(alpha: 0.3),
+                        TossDesignSystem.white.withValues(alpha: 0)],
                       transform: GradientRotation(_flipAnimation.value * math.pi)))]));
   }
 
@@ -278,7 +278,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
           Positioned.fill(
             child: CustomPaint(
               painter: AnimatedMandalaPainter(
-                color: TossDesignSystem.white.withOpacity(0.2),
+                color: TossDesignSystem.white.withValues(alpha: 0.2),
                 progress: _pickAnimation.value)),
           
           // Center icon
@@ -286,7 +286,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
             child: Icon(
               Icons.auto_awesome,
               size: 60,
-              color: TossDesignSystem.white.withOpacity(0.8))]);
+              color: TossDesignSystem.white.withValues(alpha: 0.8))]);
   }
 
   Widget _buildCardFront() {
@@ -343,7 +343,7 @@ class AnimatedMandalaPainter extends CustomPainter {
     // Center star
     if (progress > 0.5) {
       final starPaint = Paint()
-        ..color = color.withOpacity((progress - 0.5) * 2)
+        ..color = color.withValues(alpha: (progress - 0.5) * 2)
         ..style = PaintingStyle.fill;
       
       final path = Path();

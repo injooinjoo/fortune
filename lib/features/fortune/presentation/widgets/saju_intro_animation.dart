@@ -262,7 +262,7 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: TossTheme.brandBlue.withOpacity(0.3),
+                          color: TossTheme.brandBlue.withValues(alpha: 0.3),
                           width: 2,
                         ),
                       ),
@@ -304,7 +304,7 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                       color: TossTheme.backgroundPrimary,
                       boxShadow: [
                         BoxShadow(
-                          color: TossTheme.brandBlue.withOpacity(0.2),
+                          color: TossTheme.brandBlue.withValues(alpha: 0.2),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -348,7 +348,7 @@ class TaeguekPainter extends CustomPainter {
     final radius = size.width / 2 - 10;
     
     final yinPaint = Paint()
-      ..color = TossTheme.textBlack.withOpacity(0.8)
+      ..color = TossTheme.textBlack.withValues(alpha: 0.8)
       ..style = PaintingStyle.fill;
     
     final yangPaint = Paint()
@@ -407,7 +407,7 @@ class TraditionalPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = TossTheme.textGray600.withOpacity(0.1)
+      ..color = TossTheme.textGray600.withValues(alpha: 0.1)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
     

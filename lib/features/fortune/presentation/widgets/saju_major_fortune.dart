@@ -153,7 +153,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                       ),
                       boxShadow: isCurrent ? [
                         BoxShadow(
-                          color: TossTheme.brandBlue.withOpacity(0.3),
+                          color: TossTheme.brandBlue.withValues(alpha: 0.3),
                           blurRadius: 8,
                           spreadRadius: 2,
                         ),
@@ -180,11 +180,11 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                   padding: const EdgeInsets.all(TossTheme.spacingM),
                   decoration: BoxDecoration(
                     color: isCurrent 
-                        ? TossTheme.brandBlue.withOpacity(0.08)
+                        ? TossTheme.brandBlue.withValues(alpha: 0.08)
                         : TossTheme.backgroundSecondary,
                     borderRadius: BorderRadius.circular(TossTheme.radiusM),
                     border: isCurrent 
-                        ? Border.all(color: TossTheme.brandBlue.withOpacity(0.3))
+                        ? Border.all(color: TossTheme.brandBlue.withValues(alpha: 0.3))
                         : null,
                   ),
                   child: Column(
@@ -234,10 +234,10 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: _getFortuneColor(name, index).withOpacity(0.2),
+                              color: _getFortuneColor(name, index).withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: _getFortuneColor(name, index).withOpacity(0.5),
+                                color: _getFortuneColor(name, index).withValues(alpha: 0.5),
                               ),
                             ),
                             child: Text(

@@ -47,7 +47,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: widget.result.design.primaryColor.withOpacity(0.3),
+            color: widget.result.design.primaryColor.withValues(alpha: 0.3),
             blurRadius: 30,
             offset: const Offset(0, 10)]),
       child: ClipRRect(
@@ -61,13 +61,13 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    widget.result.design.primaryColor.withOpacity(0.8),
-                    widget.result.design.secondaryColor.withOpacity(0.6)])),
+                    widget.result.design.primaryColor.withValues(alpha: 0.8),
+                    widget.result.design.secondaryColor.withValues(alpha: 0.6)])),
             
             // Traditional paper texture overlay
             Container(
               decoration: BoxDecoration(
-                color: TossDesignSystem.white.withOpacity(0.4)),
+                color: TossDesignSystem.white.withValues(alpha: 0.4)),
               child: CustomPaint(
                 painter: _TalismanPaperTexturePainter(),
                 size: Size(widget.size, widget.size * 1.2)),
@@ -121,7 +121,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
         Container(
           width: widget.size * 0.5,
           height: 4 * 0.5,
-          color: TossDesignSystem.white.withOpacity(0.6))]);
+          color: TossDesignSystem.white.withValues(alpha: 0.6))]);
   }
   
   Widget _buildCentralSymbol() {
@@ -130,10 +130,10 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
       height: widget.size * 0.5,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: TossDesignSystem.white.withOpacity(0.9),
+        color: TossDesignSystem.white.withValues(alpha: 0.9),
         boxShadow: [
           BoxShadow(
-            color: widget.result.design.primaryColor.withOpacity(0.5),
+            color: widget.result.design.primaryColor.withValues(alpha: 0.5),
             blurRadius: 20,
             spreadRadius: 5)]),
       child: Stack(
@@ -170,7 +170,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
             decoration: BoxDecoration(
-              color: TossDesignSystem.white.withOpacity(0.8),
+              color: TossDesignSystem.white.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(20)),
             child: Text(
               widget.result.design.personalText!,
@@ -186,10 +186,10 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25),
           decoration: BoxDecoration(
-            color: TossDesignSystem.white.withOpacity(0.9),
+            color: TossDesignSystem.white.withValues(alpha: 0.9),
             borderRadius: BorderRadius.circular(AppSpacing.spacing6 * 1.04)),
             border: Border.all(
-              color: widget.result.design.primaryColor.withOpacity(0.5),
+              color: widget.result.design.primaryColor.withValues(alpha: 0.5),
               width: 2)),
           child: Text(
             widget.result.design.userName ?? '소유자',
@@ -212,7 +212,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
           dateText,
           style: TextStyle(
             fontSize: widget.size * 0.04,
-            color: TossDesignSystem.white.withOpacity(0.8),
+            color: TossDesignSystem.white.withValues(alpha: 0.8),
             letterSpacing: 1)),
         const SizedBox(width: AppSpacing.spacing4),
         // Seal
@@ -236,7 +236,7 @@ class _TalismanPaperTexturePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = TossDesignSystem.gray400.withOpacity(0.05)
+      ..color = TossDesignSystem.gray400.withValues(alpha: 0.05)
       ..strokeWidth = 0.5
      
    
@@ -274,7 +274,7 @@ class _TalismanSymbolPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = primaryColor.withOpacity(0.3)
+      ..color = primaryColor.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
      
    
@@ -323,7 +323,7 @@ class _MysticalEffectsPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(0.1 * (1 - progress),
+      ..color = color.withValues(alpha: 0.1 * (1 - progress),
       ..style = PaintingStyle.fill;
 
     // Draw expanding circles for mystical effect

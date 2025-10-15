@@ -136,7 +136,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            TossDesignSystem.purple.withOpacity(0.8),
+            TossDesignSystem.purple.withValues(alpha: 0.8),
             TossDesignSystem.black,
           ],
         ),
@@ -153,7 +153,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 fontWeight: FontWeight.bold,
                 shadows: [
                   Shadow(
-                    color: TossDesignSystem.purple.withOpacity(0.5),
+                    color: TossDesignSystem.purple.withValues(alpha: 0.5),
                     blurRadius: 20,
                   ),
                 ],
@@ -169,7 +169,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
               'Discover your destiny through\nthe ancient wisdom of tarot',
               textAlign: TextAlign.center,
               style: TossDesignSystem.body1?.copyWith(
-                color: TossDesignSystem.white.withOpacity(0.8),
+                color: TossDesignSystem.white.withValues(alpha: 0.8),
                 height: 1.6,
               ),
             ).animate(delay: 500.ms)
@@ -187,14 +187,14 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: TossDesignSystem.purple.withOpacity(0.8),
+                backgroundColor: TossDesignSystem.purple.withValues(alpha: 0.8),
                 foregroundColor: TossDesignSystem.white,
                 padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
                 elevation: 10,
-                shadowColor: TossDesignSystem.purple.withOpacity(0.5),
+                shadowColor: TossDesignSystem.purple.withValues(alpha: 0.5),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -242,7 +242,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                     'Trust your intuition and select the card that calls to you',
                     textAlign: TextAlign.center,
                     style: TossDesignSystem.body2?.copyWith(
-                      color: TossDesignSystem.white.withOpacity(0.7),
+                      color: TossDesignSystem.white.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -266,15 +266,15 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                       onTap: () => _selectCard(index),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.purple.withOpacity(0.2),
+                          color: TossDesignSystem.purple.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: TossDesignSystem.purple.withOpacity(0.5),
+                            color: TossDesignSystem.purple.withValues(alpha: 0.5),
                             width: 2,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: TossDesignSystem.purple.withOpacity(0.3),
+                              color: TossDesignSystem.purple.withValues(alpha: 0.3),
                               blurRadius: 10,
                               offset: const Offset(0, 5),
                             ),
@@ -329,7 +329,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).primaryColor.withOpacity(0.5),
+                    color: Theme.of(context).primaryColor.withValues(alpha: 0.5),
                     blurRadius: 30,
                     spreadRadius: 10,
                   ),
@@ -389,7 +389,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
               '"Go forward and do whatever\nyour heart tells you"',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: TossDesignSystem.white.withOpacity(0.8),
+                color: TossDesignSystem.white.withValues(alpha: 0.8),
                 fontSize: 16,
                 fontStyle: FontStyle.italic,
               ),
@@ -439,12 +439,12 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
   Widget _buildMetadata(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, color: TossDesignSystem.white.withOpacity(0.6), size: 20),
+        Icon(icon, color: TossDesignSystem.white.withValues(alpha: 0.6), size: 20),
         const SizedBox(width: 8),
         Text(
           text,
           style: TextStyle(
-            color: TossDesignSystem.white.withOpacity(0.6),
+            color: TossDesignSystem.white.withValues(alpha: 0.6),
             fontSize: 14,
           ),
         ),

@@ -147,10 +147,10 @@ class _TarotResultCardState extends State<TarotResultCard>
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF7C3AED).withOpacity(0.1),
+              color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: const Color(0xFF7C3AED).withOpacity(0.2),
+                color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
               ),
             ),
             child: Column(
@@ -244,10 +244,10 @@ class _TarotResultCardState extends State<TarotResultCard>
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF7C3AED).withOpacity(0.1),
+                        color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: const Color(0xFF7C3AED).withOpacity(0.2),
+                          color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
                         ),
                       ),
                       child: Text(
@@ -357,7 +357,7 @@ class _TarotResultCardState extends State<TarotResultCard>
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF7C3AED).withOpacity(0.3),
+            color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
             blurRadius: 30,
             spreadRadius: 5,
             offset: const Offset(0, 10),
@@ -381,7 +381,7 @@ class _TarotResultCardState extends State<TarotResultCard>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF7C3AED).withOpacity(0.3),
+            color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
             blurRadius: 30,
             spreadRadius: 5,
             offset: const Offset(0, 10),
@@ -475,10 +475,10 @@ class _TarotResultCardState extends State<TarotResultCard>
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
         ),
       ),
       child: Column(

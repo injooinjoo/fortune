@@ -46,7 +46,7 @@ class _LuckyStockInputForm extends StatelessWidget {
         Text(
           '오늘의 주식 투자 운세를 확인해보세요!\n매수/매도 타이밍과 유망 섹터를 알려드립니다.',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -56,7 +56,7 @@ class _LuckyStockInputForm extends StatelessWidget {
           child: Icon(
             Icons.trending_up,
             size: 120,
-            color: theme.colorScheme.primary.withOpacity(0.3),
+            color: theme.colorScheme.primary.withValues(alpha: 0.3),
           ),
         ),
         
@@ -171,7 +171,7 @@ class _LuckyStockFortuneResult extends StatelessWidget {
                           width: 60,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
-                            color: _getScoreColor(entry.value).withOpacity(0.2),
+                            color: _getScoreColor(entry.value).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(

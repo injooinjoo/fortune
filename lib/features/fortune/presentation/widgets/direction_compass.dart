@@ -75,9 +75,9 @@ class _DirectionCompassState extends State<DirectionCompass>
       return TossDesignSystem.successGreen;
     } else if (widget.avoidDirections.contains(direction) ||
         widget.avoidDirections.contains('$direction쪽')) {
-      return TossDesignSystem.errorRed.withOpacity(0.7);
+      return TossDesignSystem.errorRed.withValues(alpha: 0.7);
     } else {
-      return TossDesignSystem.gray400.withOpacity(0.5);
+      return TossDesignSystem.gray400.withValues(alpha: 0.5);
     }
   }
 
@@ -90,10 +90,10 @@ class _DirectionCompassState extends State<DirectionCompass>
           height: AppSpacing.spacing24 * 3.125,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: TossDesignSystem.gray400.withOpacity(0.9),
+            color: TossDesignSystem.gray400.withValues(alpha: 0.9),
             boxShadow: [
               BoxShadow(
-                color: TossDesignSystem.black.withOpacity(0.1),
+                color: TossDesignSystem.black.withValues(alpha: 0.1),
                 blurRadius: 10,
                 spreadRadius: 2,
               ),
@@ -109,7 +109,7 @@ class _DirectionCompassState extends State<DirectionCompass>
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: TossDesignSystem.gray400.withOpacity(0.5),
+                    color: TossDesignSystem.gray400.withValues(alpha: 0.5),
                     width: 2,
                   ),
                 ),
@@ -142,12 +142,12 @@ class _DirectionCompassState extends State<DirectionCompass>
                   gradient: RadialGradient(
                     colors: [
                       Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withOpacity(0.6),
+                      Theme.of(context).primaryColor.withValues(alpha: 0.6),
                     ],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.black.withOpacity(0.3),
+                      color: TossDesignSystem.black.withValues(alpha: 0.3),
                       blurRadius: 5,
                     ),
                   ],
@@ -168,9 +168,9 @@ class _DirectionCompassState extends State<DirectionCompass>
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
-            color: TossDesignSystem.gray400.withOpacity(0.08),
+            color: TossDesignSystem.gray400.withValues(alpha: 0.08),
             borderRadius: AppDimensions.borderRadiusMedium,
-            border: Border.all(color: TossDesignSystem.gray400.withOpacity(0.3)),
+            border: Border.all(color: TossDesignSystem.gray400.withValues(alpha: 0.3)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,8 +190,8 @@ class _DirectionCompassState extends State<DirectionCompass>
                   if (widget.primaryDirection != null)
                     _buildLegendItem(TossDesignSystem.warningYellow, '최고의 방향'),
                   _buildLegendItem(TossDesignSystem.successGreen, '길한 방향'),
-                  _buildLegendItem(TossDesignSystem.errorRed.withOpacity(0.7), '피해야 할 방향'),
-                  _buildLegendItem(TossDesignSystem.gray400.withOpacity(0.5), '보통'),
+                  _buildLegendItem(TossDesignSystem.errorRed.withValues(alpha: 0.7), '피해야 할 방향'),
+                  _buildLegendItem(TossDesignSystem.gray400.withValues(alpha: 0.5), '보통'),
                 ],
               ),
               if (widget.auspiciousDirections.isNotEmpty) ...[
@@ -199,7 +199,7 @@ class _DirectionCompassState extends State<DirectionCompass>
                 Text(
                   '방향: ${widget.auspiciousDirections.join(', ')}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: TossDesignSystem.successGreen.withOpacity(0.9),
+                        color: TossDesignSystem.successGreen.withValues(alpha: 0.9),
                         fontWeight: FontWeight.w500,
                       ),
                 ),
@@ -209,7 +209,7 @@ class _DirectionCompassState extends State<DirectionCompass>
                 Text(
                   '방향: ${widget.avoidDirections.join(', ')}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: TossDesignSystem.errorRed.withOpacity(0.9),
+                        color: TossDesignSystem.errorRed.withValues(alpha: 0.9),
                         fontWeight: FontWeight.w500,
                       ),
                 ),
@@ -231,7 +231,7 @@ class _DirectionCompassState extends State<DirectionCompass>
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
-            border: Border.all(color: TossDesignSystem.gray400.withOpacity(0.6), width: 0.5),
+            border: Border.all(color: TossDesignSystem.gray400.withValues(alpha: 0.6), width: 0.5),
           ),
         ),
         const SizedBox(width: AppSpacing.spacing1 * 1.5),
@@ -284,7 +284,7 @@ class CompassPainter extends CustomPainter {
       // 메인 방위만 그리기 (동서남북)
       if (direction.guardian.isNotEmpty) {
         final paint = Paint()
-          ..color = color.withOpacity(0.3)
+          ..color = color.withValues(alpha: 0.3)
           ..style = PaintingStyle.fill;
         
         final sweepAngle = 90 * (math.pi / 180);
@@ -327,7 +327,7 @@ class CompassPainter extends CustomPainter {
             text: TextSpan(
               text: direction.guardian,
               style: TextStyle(
-                color: color.withOpacity(0.7),
+                color: color.withValues(alpha: 0.7),
                 fontSize: textStyle?.fontSize ?? 14,
               ),
             ),

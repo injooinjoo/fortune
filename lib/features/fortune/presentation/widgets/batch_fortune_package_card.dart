@@ -90,7 +90,7 @@ class BatchFortunePackageCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing2),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.1),
+        color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
         borderRadius: AppDimensions.borderRadiusSmall),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -303,7 +303,7 @@ class BatchFortuneResultsList extends ConsumerWidget {
                       Container(
                         padding: AppSpacing.paddingAll12,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor.withOpacity(0.1),
+                          color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                           borderRadius: AppDimensions.borderRadiusSmall),
                         child: Text(
                           result.fortune.summary!,

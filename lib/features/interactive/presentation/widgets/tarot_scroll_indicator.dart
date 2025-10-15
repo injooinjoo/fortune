@@ -77,10 +77,10 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.black.withOpacity(0.6),
+                    color: TossDesignSystem.black.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: TossDesignSystem.white.withOpacity(0.3),
+                      color: TossDesignSystem.white.withValues(alpha: 0.3),
                       width: 1)),
                   child: Text(
                     widget.text,
@@ -116,7 +116,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).primaryColor.withOpacity(0.5),
+                    color: Theme.of(context).primaryColor.withValues(alpha: 0.5),
                     blurRadius: 15,
                     spreadRadius: 2,
                   ),
@@ -228,11 +228,11 @@ class _TarotScrollHintState extends State<TarotScrollHint>
                 width: 60,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white.withOpacity(0.5),
+                  color: TossDesignSystem.white.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(2),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).primaryColor.withOpacity(0.3),
+                      color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                       blurRadius: 8,
                       spreadRadius: 2,
                     ),

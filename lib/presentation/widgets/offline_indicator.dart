@@ -23,10 +23,10 @@ class OfflineIndicator extends ConsumerWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.error.withOpacity(0.2),
+        color: Theme.of(context).colorScheme.error.withValues(alpha: 0.2),
         border: Border(
           bottom: BorderSide(
-            color: Theme.of(context).colorScheme.error.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.error.withValues(alpha: 0.5),
             width: 1
           )
         )
@@ -36,7 +36,7 @@ class OfflineIndicator extends ConsumerWidget {
           Icon(
             Icons.cloud_off,
             size: AppDimensions.iconSizeXSmall,
-            color: Theme.of(context).colorScheme.error.withOpacity(0.9)
+            color: Theme.of(context).colorScheme.error.withValues(alpha: 0.9)
           ),
           SizedBox(width: AppSpacing.spacing2),
           Expanded(
@@ -52,7 +52,7 @@ class OfflineIndicator extends ConsumerWidget {
                   SizedBox(height: AppSpacing.spacing1),
                   Text(
                     '동기화: ${_formatLastSync(lastSyncTime!)}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error.withOpacity(0.8))
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.8))
                   )
                 ]
               ]
@@ -74,7 +74,7 @@ class OfflineIndicator extends ConsumerWidget {
             ),
             child: Text(
               '재시도',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.error.withOpacity(0.9))
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.9))
             )
           )
         ]
@@ -126,7 +126,7 @@ class CachedFortuneCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: AppDimensions.borderRadiusMedium,
-            color: isExpired ? Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.1) : null
+            color: isExpired ? Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.1) : null
           ),
           child: Padding(
             padding: AppSpacing.paddingAll16,
@@ -148,19 +148,19 @@ class CachedFortuneCard extends StatelessWidget {
                           vertical: AppSpacing.spacing1
                         ),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.error.withOpacity(0.2),
+                          color: Theme.of(context).colorScheme.error.withValues(alpha: 0.2),
                           borderRadius: AppDimensions.borderRadiusMedium
                         ),
                         child: Text(
                           '만료됨',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error.withOpacity(0.9))
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.9))
                         )
                       ),
                     SizedBox(width: AppSpacing.spacing2),
                     Icon(
                       Icons.offline_bolt,
                       size: AppDimensions.iconSizeXSmall,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.6)
+                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6)
                     )
                   ]
                 ),
@@ -168,7 +168,7 @@ class CachedFortuneCard extends StatelessWidget {
                 Text(
                   content,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: isExpired ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.onSurface.withOpacity(0.87)
+                    color: isExpired ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.87)
                   ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis

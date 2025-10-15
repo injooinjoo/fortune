@@ -238,7 +238,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
     final color = isCompleted 
         ? TossDesignSystem.tossBlue 
         : isActive 
-            ? TossDesignSystem.tossBlue.withOpacity(0.6)
+            ? TossDesignSystem.tossBlue.withValues(alpha: 0.6)
             : TossDesignSystem.gray400;
 
     return Expanded(

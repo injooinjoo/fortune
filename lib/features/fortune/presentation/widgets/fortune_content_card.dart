@@ -162,7 +162,7 @@ class FortuneContentCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: category.$4.withOpacity(0.1),
+                color: category.$4.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
               ),
               child: Icon(category.$3, size: 20, color: category.$4),
@@ -193,7 +193,7 @@ class FortuneContentCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
                     child: LinearProgressIndicator(
                       value: score.toDouble() / 100,
-                      backgroundColor: category.$4.withOpacity(0.2),
+                      backgroundColor: category.$4.withValues(alpha: 0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(category.$4),
                       minHeight: 8,
                     ),
@@ -247,9 +247,9 @@ class FortuneContentCard extends StatelessWidget {
         vertical: TossDesignSystem.spacingS,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -262,7 +262,7 @@ class FortuneContentCard extends StatelessWidget {
               Text(
                 label,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
               ),
               Text(

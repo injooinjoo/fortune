@@ -54,7 +54,7 @@ class StatisticsDashboard extends StatelessWidget {
                 DateFormat('yyyy년 MM월').format(DateTime.now()),
                 style: TextStyle(
                   fontSize: 14 * fontScale,
-                  color: theme.colorScheme.onSurface.withOpacity(0.6)))]),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]),
           const SizedBox(height: 20),
           
           // Quick Stats Grid
@@ -101,8 +101,8 @@ class StatisticsDashboard extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             gradient: LinearGradient(
               colors: [
-                theme.colorScheme.primary.withOpacity(0.1),
-                theme.colorScheme.secondary.withOpacity(0.1)]),
+                theme.colorScheme.primary.withValues(alpha: 0.1),
+                theme.colorScheme.secondary.withValues(alpha: 0.1)]),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -125,7 +125,7 @@ class StatisticsDashboard extends StatelessWidget {
                   _getPersonalizedInsight(statistics),
                   style: TextStyle(
                     fontSize: 14 * fontScale,
-                    color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
                 ),
               ],
             ),
@@ -152,7 +152,7 @@ class StatisticsDashboard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle),
             child: Icon(
               icon,
@@ -163,7 +163,7 @@ class StatisticsDashboard extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 12 * fontScale,
-              color: theme.colorScheme.onSurface.withOpacity(0.6)),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             textAlign: TextAlign.center),
           const SizedBox(height: 4),
           Text(

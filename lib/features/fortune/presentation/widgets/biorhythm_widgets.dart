@@ -35,12 +35,12 @@ class TodayOverallStatusCard extends StatelessWidget {
               gradient: RadialGradient(
                 colors: [
                   biorhythmData.statusColor,
-                  biorhythmData.statusColor.withOpacity(0.7),
+                  biorhythmData.statusColor.withValues(alpha: 0.7),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: biorhythmData.statusColor.withOpacity(0.3),
+                  color: biorhythmData.statusColor.withValues(alpha: 0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -60,7 +60,7 @@ class TodayOverallStatusCard extends StatelessWidget {
                 Text(
                   '점',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: TossDesignSystem.white.withOpacity(0.9),
+                    color: TossDesignSystem.white.withValues(alpha: 0.9),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -150,7 +150,7 @@ class RhythmDetailCards extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -458,7 +458,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                 ),
                 belowBarData: BarAreaData(
                   show: true,
-                  color: const Color(0xFFFF5A5F).withOpacity(0.1),
+                  color: const Color(0xFFFF5A5F).withValues(alpha: 0.1),
                 ),
               ),
               // 감정 리듬
@@ -583,7 +583,7 @@ class ImportantDatesCard extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
@@ -716,7 +716,7 @@ class WeeklyActivityGuide extends StatelessWidget {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: (activity['color'] as Color).withOpacity(0.1),
+                      color: (activity['color'] as Color).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -901,7 +901,7 @@ class LifestyleAdviceCard extends StatelessWidget {
                     height: 24,
                     margin: const EdgeInsets.only(top: 2),
                     decoration: BoxDecoration(
-                      color: TossTheme.primaryBlue.withOpacity(0.1),
+                      color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Icon(
@@ -1092,7 +1092,7 @@ class HealthTipsCard extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(

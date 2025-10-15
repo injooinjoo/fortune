@@ -198,8 +198,8 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              state.selectedType!.gradientColors[0].withOpacity(0.3),
-                              state.selectedType!.gradientColors[1].withOpacity(0.1),
+                              state.selectedType!.gradientColors[0].withValues(alpha: 0.3),
+                              state.selectedType!.gradientColors[1].withValues(alpha: 0.1),
                               TossDesignSystem.white.withValues(alpha: 0.0)],
                             stops: const [0.3, 0.7, 1.0]),
                         child: Stack(
@@ -218,7 +218,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: state.selectedType!.gradientColors[0]
-                                            .withOpacity(0.5),
+                                            .withValues(alpha: 0.5),
                                         width: 2),
                                     child: CustomPaint(
                                       painter: _MagicCirclePainter(
@@ -239,7 +239,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                                 boxShadow: [
                                   BoxShadow(
                                     color: state.selectedType!.gradientColors[0]
-                                        .withOpacity(0.5),
+                                        .withValues(alpha: 0.5),
                                     blurRadius: 20,
                                     spreadRadius: 5)]),
                               child: Icon(
@@ -311,7 +311,7 @@ class _MagicCirclePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(0.5)
+      ..color = color.withValues(alpha: 0.5)
       ..style = PaintingStyle.stroke
      
    

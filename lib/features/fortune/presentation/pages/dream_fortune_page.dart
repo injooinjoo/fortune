@@ -153,7 +153,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
           Text(
             '꿈의 세부 내용을 자세히 입력할수록 정확한 해몽이 가능합니다',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6)
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)
             )
           )
         ]
@@ -215,7 +215,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
               size: 18,
               color: isSelected
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurface.withOpacity(0.6)
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.6)
             ),
             const SizedBox(width: 4),
             Text(
@@ -223,7 +223,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
               style: theme.textTheme.bodySmall?.copyWith(
                 color: isSelected
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withOpacity(0.6),
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal
               )
             )
@@ -245,7 +245,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
         decoration: InputDecoration(
           hintText: '어젯밤 꿈의 내용을 자세히 적어주세요...',
           hintStyle: TextStyle(
-            color: theme.colorScheme.onSurface.withOpacity(0.5)
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5)
           ),
           border: InputBorder.none,
           filled: false
@@ -276,7 +276,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
                           ? '듣고 있습니다... 꿈 내용을 말씀해주세요'
                           : '마이크 버튼을 눌러 녹음을 시작하세요',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                       textAlign: TextAlign.center,
                     )
@@ -300,7 +300,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
             return Text(
               status,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6)
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)
               )
             );
           }

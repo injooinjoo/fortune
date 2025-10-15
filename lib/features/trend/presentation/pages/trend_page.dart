@@ -213,7 +213,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
             boxShadow: [
               BoxShadow(
                 color: (isTrend ? Color(0xFFF58529) : Color(0xFF8134AF))
-                    .withOpacity(0.3),
+                    .withValues(alpha: 0.3),
                 blurRadius: 12,
                 offset: Offset(0, 6))]),
           child: Stack(

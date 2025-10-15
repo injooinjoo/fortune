@@ -100,13 +100,13 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                   tickCount: 5,
                   ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   tickBorderData: BorderSide(
-                    color: TossDesignSystem.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withValues(alpha: 0.2),
                     width: 1),
                   gridBorderData: BorderSide(
-                    color: TossDesignSystem.white.withOpacity(0.2),
+                    color: TossDesignSystem.white.withValues(alpha: 0.2),
                     width: 1),
                   radarBorderData: BorderSide(
-                    color: TossDesignSystem.purple.withOpacity(0.5),
+                    color: TossDesignSystem.purple.withValues(alpha: 0.5),
                     width: 2),
                   titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
                   titlePositionPercentageOffset: 0.15,
@@ -118,7 +118,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                   },
                   dataSets: [
                     RadarDataSet(
-                      fillColor: TossDesignSystem.purple.withOpacity(0.3),
+                      fillColor: TossDesignSystem.purple.withValues(alpha: 0.3),
                       borderColor: TossDesignSystem.purple,
                       borderWidth: 2,
                       entryRadius: 4,
@@ -180,10 +180,10 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
           decoration: BoxDecoration(
-            color: stateColor.withOpacity(0.2),
+            color: stateColor.withValues(alpha: 0.2),
             borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: stateColor.withOpacity(0.5),
+              color: stateColor.withValues(alpha: 0.5),
               width: 1),
           ),
           child: Text(
@@ -218,10 +218,10 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
     return Container(
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
-        color: TossDesignSystem.white.withOpacity(0.05),
+        color: TossDesignSystem.white.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: TossDesignSystem.white.withOpacity(0.1),
+          color: TossDesignSystem.white.withValues(alpha: 0.1),
           width: 1),
       ),
       child: Column(
@@ -242,7 +242,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
             borderRadius: AppDimensions.borderRadiusSmall,
             child: LinearProgressIndicator(
               value: leftValue / total,
-              backgroundColor: rightColor.withOpacity(0.3),
+              backgroundColor: rightColor.withValues(alpha: 0.3),
               valueColor: AlwaysStoppedAnimation<Color>(leftColor),
               minHeight: 8),
           ),
@@ -379,7 +379,7 @@ class _RadarBackgroundPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = TossDesignSystem.white.withOpacity(0.1);
+      ..color = TossDesignSystem.white.withValues(alpha: 0.1);
     
     // 동심원
     for (int i = 1; i <= 5; i++) {

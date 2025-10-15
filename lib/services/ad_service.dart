@@ -389,15 +389,15 @@ class AdService {
               style: NativeTemplateFontStyle.bold,
               size: 16.0),
             primaryTextStyle: NativeTemplateTextStyle(
-              textColor: TossDesignSystem.gray900.withOpacity(0.87),
+              textColor: TossDesignSystem.gray900.withValues(alpha: 0.87),
               style: NativeTemplateFontStyle.normal,
               size: 16.0),
             secondaryTextStyle: NativeTemplateTextStyle(
-              textColor: TossDesignSystem.gray900.withOpacity(0.54),
+              textColor: TossDesignSystem.gray900.withValues(alpha: 0.54),
               style: NativeTemplateFontStyle.normal,
               size: 14.0),
             tertiaryTextStyle: NativeTemplateTextStyle(
-              textColor: TossDesignSystem.gray900.withOpacity(0.54),
+              textColor: TossDesignSystem.gray900.withValues(alpha: 0.54),
               style: NativeTemplateFontStyle.normal,
               size: 12.0)));
   }

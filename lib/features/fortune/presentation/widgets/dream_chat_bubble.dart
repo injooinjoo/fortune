@@ -79,7 +79,7 @@ class _FortuneTellerBubble extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.black.withOpacity(0.08),
+                        color: TossDesignSystem.black.withValues(alpha: 0.08),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -112,7 +112,7 @@ class _FortuneTellerBubble extends StatelessWidget {
         color: TossTheme.primaryBlue,
         boxShadow: [
           BoxShadow(
-            color: TossTheme.primaryBlue.withOpacity(0.2),
+            color: TossTheme.primaryBlue.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -161,7 +161,7 @@ class _UserBubble extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: TossTheme.primaryBlue.withOpacity(0.2),
+                        color: TossTheme.primaryBlue.withValues(alpha: 0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -210,7 +210,7 @@ class _LoadingBubble extends StatelessWidget {
               color: TossTheme.primaryBlue,
               boxShadow: [
                 BoxShadow(
-                  color: TossTheme.primaryBlue.withOpacity(0.2),
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -249,7 +249,7 @@ class _LoadingBubble extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.black.withOpacity(0.08),
+                        color: TossDesignSystem.black.withValues(alpha: 0.08),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -316,7 +316,7 @@ class _ResultBubble extends StatelessWidget {
               color: TossTheme.primaryBlue,
               boxShadow: [
                 BoxShadow(
-                  color: TossTheme.primaryBlue.withOpacity(0.2),
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -355,7 +355,7 @@ class _ResultBubble extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.black.withOpacity(0.1),
+                        color: TossDesignSystem.black.withValues(alpha: 0.1),
                         blurRadius: 12,
                         offset: const Offset(0, 3),
                       ),
@@ -430,7 +430,7 @@ class TypingIndicator extends StatelessWidget {
               color: TossTheme.primaryBlue,
               boxShadow: [
                 BoxShadow(
-                  color: TossTheme.primaryBlue.withOpacity(0.2),
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -453,7 +453,7 @@ class TypingIndicator extends StatelessWidget {
               borderRadius: BorderRadius.circular(TossTheme.radiusL),
               boxShadow: [
                 BoxShadow(
-                  color: TossDesignSystem.black.withOpacity(0.08),
+                  color: TossDesignSystem.black.withValues(alpha: 0.08),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),

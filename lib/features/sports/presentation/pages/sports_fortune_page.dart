@@ -54,8 +54,8 @@ class ExerciseFortunePage extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      TossTheme.primaryBlue.withOpacity(0.1),
-                      TossTheme.success.withOpacity(0.1),
+                      TossTheme.primaryBlue.withValues(alpha: 0.1),
+                      TossTheme.success.withValues(alpha: 0.1),
                     ],
                   ),
                   shape: BoxShape.circle,

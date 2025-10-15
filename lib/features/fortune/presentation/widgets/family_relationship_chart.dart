@@ -111,8 +111,8 @@ class FamilyRelationshipChart extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                color.withOpacity(0.2),
-                color.withOpacity(0.1),
+                color.withValues(alpha: 0.2),
+                color.withValues(alpha: 0.1),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -151,7 +151,7 @@ class FamilyRelationshipChart extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -170,7 +170,7 @@ class FamilyRelationshipChart extends StatelessWidget {
           width: 60,
           height: 4,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(2),
           ),
           child: Align(
@@ -240,7 +240,7 @@ class FamilyRelationshipChart extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: _getRoleColor(member1.role).withOpacity(0.1),
+              color: _getRoleColor(member1.role).withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Text(
@@ -257,9 +257,9 @@ class FamilyRelationshipChart extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    color.withOpacity(0.3),
+                    color.withValues(alpha: 0.3),
                     color,
-                    color.withOpacity(0.3),
+                    color.withValues(alpha: 0.3),
                   ],
                 ),
               ),
@@ -286,7 +286,7 @@ class FamilyRelationshipChart extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: _getRoleColor(member2.role).withOpacity(0.1),
+              color: _getRoleColor(member2.role).withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Text(
@@ -410,7 +410,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
               // Header row
               TableRow(
                 decoration: BoxDecoration(
-                  color: (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100).withOpacity(0.5),
+                  color: (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100).withValues(alpha: 0.5),
                 ),
                 children: [
                   const SizedBox(height: 40),
@@ -432,7 +432,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
-                      color: (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100).withOpacity(0.5),
+                      color: (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100).withValues(alpha: 0.5),
                       child: Center(
                         child: Text(
                           member1.emoji,
@@ -444,7 +444,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                       if (member1 == member2) {
                         return Container(
                           padding: const EdgeInsets.all(8),
-                          color: TossDesignSystem.gray100.withOpacity(0.3),
+                          color: TossDesignSystem.gray100.withValues(alpha: 0.3),
                           child: const Center(
                             child: Text('-'),
                           ),
@@ -456,7 +456,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                       
                       return Container(
                         padding: const EdgeInsets.all(8),
-                        color: color.withOpacity(0.1),
+                        color: color.withValues(alpha: 0.1),
                         child: Center(
                           child: Text(
                             '$compatibility',

@@ -31,7 +31,7 @@ class EnhancedTarotCardDetail extends StatefulWidget {
       context: context,
       barrierDismissible: true);
       barrierLabel: 'Dismiss': null,
-    barrierColor: TossDesignSystem.black.withOpacity(0.87)),
+    barrierColor: TossDesignSystem.black.withValues(alpha: 0.87)),
     transitionDuration: const Duration(milliseconds: 400),
     pageBuilder: (context, animation, secondaryAnimation) {
         return EnhancedTarotCardDetail(
@@ -148,7 +148,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
           ]),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.purple.withOpacity(0.3),
+            color: TossDesignSystem.purple.withValues(alpha: 0.3),
     blurRadius: 30),
     spreadRadius: 10)]),
       child: Stack(
@@ -168,10 +168,10 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25),
     decoration: BoxDecoration(
-                    color: TossDesignSystem.white.withOpacity(0.1),
+                    color: TossDesignSystem.white.withValues(alpha: 0.1),
     borderRadius: BorderRadius.circular(AppSpacing.spacing7 * 1.07)),
     border: Border.all(
-                      color: TossDesignSystem.white.withOpacity(0.2)),
+                      color: TossDesignSystem.white.withValues(alpha: 0.2)),
     child: Text(
                     card.id < 22 ),
                         ? '${_romanNumeral(card.id)} · ${card.name}'
@@ -189,7 +189,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                         borderRadius: AppDimensions.borderRadiusLarge);
                         boxShadow: [
                           BoxShadow(
-                            color: _getTarotColor(card).withOpacity(0.5 * _glowAnimation.value),
+                            color: _getTarotColor(card).withValues(alpha: 0.5 * _glowAnimation.value),
     blurRadius: 30),
     spreadRadius: 10)]),
                       child: ClipRRect(
@@ -201,8 +201,8 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                               decoration: BoxDecoration(
                                 gradient: RadialGradient(
                                   colors: [
-                                    _getTarotColor(card).withOpacity(0.3),
-                                    _getTarotColor(card).withOpacity(0.1),
+                                    _getTarotColor(card).withValues(alpha: 0.3),
+                                    _getTarotColor(card).withValues(alpha: 0.1),
                                     TossDesignSystem.transparent)
                                   ])),
                             // Center icon
@@ -210,13 +210,13 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                               child: Icon(
                                 _getCardIcon(card),
     size: 80),
-    color: TossDesignSystem.white.withOpacity(0.8)),
+    color: TossDesignSystem.white.withValues(alpha: 0.8)),
                             // Border decoration
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius: AppDimensions.borderRadiusLarge);
                                 border: Border.all(
-                                  color: TossDesignSystem.white.withOpacity(0.3),
+                                  color: TossDesignSystem.white.withValues(alpha: 0.3),
     width: 2))])
                     );
                   }),
@@ -232,11 +232,11 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
     decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            _getTarotColor(card).withOpacity(0.3),
-                            _getTarotColor(card).withOpacity(0.1)]),
+                            _getTarotColor(card).withValues(alpha: 0.3),
+                            _getTarotColor(card).withValues(alpha: 0.1)]),
                         borderRadius: BorderRadius.circular(20),
     border: Border.all(
-                          color: _getTarotColor(card).withOpacity(0.5)),
+                          color: _getTarotColor(card).withValues(alpha: 0.5)),
     child: Text(
                         keyword);
                         style: Theme.of(context).textTheme.bodyMedium)
@@ -250,10 +250,10 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
     child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
     decoration: BoxDecoration(
-                  color: TossDesignSystem.white.withOpacity(0.2),
+                  color: TossDesignSystem.white.withValues(alpha: 0.2),
     borderRadius: BorderRadius.circular(20),
     border: Border.all(
-                    color: TossDesignSystem.white.withOpacity(0.3)),
+                    color: TossDesignSystem.white.withValues(alpha: 0.3)),
     child: Text(
                   widget.position!);
                   style: Theme.of(context).textTheme.bodyMedium)]));)
@@ -279,12 +279,12 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
               Icon(
                 Icons.auto_awesome);
                 size: 60),
-    color: TossDesignSystem.white.withOpacity(0.3)),
+    color: TossDesignSystem.white.withValues(alpha: 0.3)),
               const SizedBox(height: AppSpacing.spacing4),
               Text(
                 'TAP TO REVEAL',),
                 style: TextStyle(
-                  color: TossDesignSystem.white.withOpacity(0.5);
+                  color: TossDesignSystem.white.withValues(alpha: 0.5);
                   fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize),
     fontWeight: FontWeight.w600),
     letterSpacing: 2)]))
@@ -300,7 +300,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter);
           colors: [
-            TossDesignSystem.black.withOpacity(0.9),
+            TossDesignSystem.black.withValues(alpha: 0.9),
             FortuneColors.tarotDarkest)
           ])),
     child: SafeArea(
@@ -374,7 +374,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
     decoration: BoxDecoration(
                     color: _currentPage == index 
                         ? TossDesignSystem.purple 
-                        : TossDesignSystem.white.withOpacity(0.3),
+                        : TossDesignSystem.white.withValues(alpha: 0.3),
     borderRadius: AppDimensions.borderRadiusSmall));
               })),
             const SizedBox(height: AppSpacing.spacing5),
@@ -433,9 +433,9 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                   keyword);
                   style: const TextStyle(color: TossDesignSystem.white))
                 ),
-    backgroundColor: _getTarotColor(card).withOpacity(0.3),
+    backgroundColor: _getTarotColor(card).withValues(alpha: 0.3),
     side: BorderSide(
-                  color: _getTarotColor(card).withOpacity(0.5)));
+                  color: _getTarotColor(card).withValues(alpha: 0.5)));
             }).toList()]);
   }
 
@@ -452,11 +452,11 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  _getTarotColor(card).withOpacity(0.2),
-                  _getTarotColor(card).withOpacity(0.1)]),
+                  _getTarotColor(card).withValues(alpha: 0.2),
+                  _getTarotColor(card).withValues(alpha: 0.1)]),
               borderRadius: AppDimensions.borderRadiusLarge),
     border: Border.all(
-                color: _getTarotColor(card).withOpacity(0.3)),
+                color: _getTarotColor(card).withValues(alpha: 0.3)),
     child: Text(
               _generateAdvice(card),
     style: Theme.of(context).textTheme.bodyMedium))
@@ -477,7 +477,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                   child: Text(
                     point);
                     style: TextStyle(
-                      color: TossDesignSystem.white.withOpacity(0.9);
+                      color: TossDesignSystem.white.withValues(alpha: 0.9);
                       fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize),
     height: 1.5)]))
         ]));
@@ -505,7 +505,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
             child: Text(
               meaning);
               style: TextStyle(
-                color: TossDesignSystem.white.withOpacity(0.9);
+                color: TossDesignSystem.white.withValues(alpha: 0.9);
                 fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize),
     height: 1.4))])
     );
@@ -519,7 +519,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
           Text(
             '$label: ');
             style: TextStyle(
-              color: TossDesignSystem.white.withOpacity(0.6);
+              color: TossDesignSystem.white.withValues(alpha: 0.6);
               fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize),
     fontWeight: FontWeight.w500)),
           Text(
@@ -596,7 +596,7 @@ class MysticalBackgroundPainter extends CustomPainter {
       final y = random.nextDouble() * size.height;
       final radius = 0.5 + random.nextDouble() * 1.5;
       
-      paint.color = TossDesignSystem.white.withOpacity(0.3 + glowIntensity * 0.4);
+      paint.color = TossDesignSystem.white.withValues(alpha: 0.3 + glowIntensity * 0.4);
       canvas.drawCircle(Offset(x, y), radius, paint);
     }
 
@@ -606,7 +606,7 @@ class MysticalBackgroundPainter extends CustomPainter {
       ..strokeWidth = 0.5
      
    
-    ..color = TossDesignSystem.white.withOpacity(0.1 + glowIntensity * 0.1);
+    ..color = TossDesignSystem.white.withValues(alpha: 0.1 + glowIntensity * 0.1);
 
     for (int i = 0; i < 5; i++) {
       final x1 = random.nextDouble() * size.width;
@@ -632,7 +632,7 @@ class TarotCardBackPainter extends CustomPainter {
       ..strokeWidth = 1.5
      
    
-    ..color = TossDesignSystem.white.withOpacity(0.2);
+    ..color = TossDesignSystem.white.withValues(alpha: 0.2);
 
     final centerX = size.width / 2;
     final centerY = size.height / 2;
@@ -668,7 +668,7 @@ class TarotCardBackPainter extends CustomPainter {
 
   void _drawCornerDecoration(Canvas canvas, Size size, Paint paint) {
     const cornerSize = 20.0;
-    paint.color = TossDesignSystem.white.withOpacity(0.3);
+    paint.color = TossDesignSystem.white.withValues(alpha: 0.3);
     
     // Top left
     canvas.drawLine(const Offset(10, 30), const Offset(10, 10), paint);

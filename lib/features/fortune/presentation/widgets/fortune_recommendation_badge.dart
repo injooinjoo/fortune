@@ -36,7 +36,7 @@ class FortuneRecommendationBadge extends StatelessWidget {
         borderRadius: AppDimensions.borderRadiusMedium,
         boxShadow: [
           BoxShadow(
-            color: badgeData.gradientColors.first.withOpacity(0.3),
+            color: badgeData.gradientColors.first.withValues(alpha: 0.3),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -63,7 +63,7 @@ class FortuneRecommendationBadge extends StatelessWidget {
             Text(
               '${(score! * 100).toInt()}%',
               style: theme.textTheme.labelSmall?.copyWith(
-                color: TossDesignSystem.white.withOpacity(0.9),
+                color: TossDesignSystem.white.withValues(alpha: 0.9),
               ),
             ),
         ],
@@ -166,10 +166,10 @@ class FortuneRecommendationChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1 * 1.5, vertical: 4 * 0.5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: AppDimensions.borderRadiusSmall,
         border: Border.all(
-          color: color.withOpacity(0.5),
+          color: color.withValues(alpha: 0.5),
           width: 0.5,
         ),
       ),

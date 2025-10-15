@@ -81,7 +81,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
       child: Container(
         padding: AppSpacing.paddingAll20,
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withOpacity(0.8),
+          color: theme.colorScheme.surface.withValues(alpha: 0.8),
           borderRadius: AppDimensions.borderRadiusLarge,
           boxShadow: [
             BoxShadow(
@@ -126,7 +126,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                 Container(
                   height: AppSpacing.spacing2,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.onSurface.withOpacity(0.1),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     borderRadius: AppDimensions.borderRadiusSmall,
                   ),
                 ),
@@ -175,13 +175,13 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                         border: Border.all(
                           color: isCompleted || isCurrent
                               ? (stage['color'] as Color)
-                              : theme.colorScheme.onSurface.withOpacity(0.3),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                           width: 3,
                         ),
                         boxShadow: isCurrent
                             ? [
                                 BoxShadow(
-                                  color: (stage['color'] as Color).withOpacity(0.5),
+                                  color: (stage['color'] as Color).withValues(alpha: 0.5),
                                   blurRadius: 8,
                                   spreadRadius: 2,
                                 ),
@@ -194,7 +194,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                           size: 20,
                           color: isCompleted || isCurrent
                               ? TossDesignSystem.white
-                              : theme.colorScheme.onSurface.withOpacity(0.5),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -221,7 +221,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: isCompleted || isCurrent
                           ? (stage['color'] as Color)
-                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                       fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal),
                   ),
                 );
@@ -237,7 +237,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                 key: ValueKey(widget.currentStage),
                 padding: AppSpacing.paddingAll12,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: AppDimensions.borderRadiusSmall),
                 child: Row(
                   children: [

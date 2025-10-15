@@ -546,7 +546,7 @@ ${_formatMajorFortunes(majorFortunes)}
       borderRadius: BorderRadius.circular(12),
       blur: 10,
       borderColor: isDay
-          ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
+          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)
           : TossDesignSystem.transparent,
       borderWidth: isDay ? 2 : 0,
       child: Column(
@@ -565,7 +565,7 @@ ${_formatMajorFortunes(majorFortunes)}
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (stem['color'] as Color).withOpacity(0.2),
+              color: (stem['color'] as Color).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -580,7 +580,7 @@ ${_formatMajorFortunes(majorFortunes)}
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+              color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -724,7 +724,7 @@ ${_formatMajorFortunes(majorFortunes)}
                             width: 60,
                             padding: const EdgeInsets.symmetric(vertical: 4),
                             decoration: BoxDecoration(
-                              color: (info['color'] as Color).withOpacity(0.2),
+                              color: (info['color'] as Color).withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Center(
@@ -752,7 +752,7 @@ ${_formatMajorFortunes(majorFortunes)}
                                   value:
                                       count / 3 * _tenGodsController.value,
                                   backgroundColor: (info['color'] as Color)
-                                      .withOpacity(0.2),
+                                      .withValues(alpha: 0.2),
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     info['color'] as Color,
                                   ),
@@ -822,7 +822,7 @@ ${_formatMajorFortunes(majorFortunes)}
                       ? Theme.of(context)
                           .colorScheme
                           .primary
-                          .withOpacity(0.1)
+                          .withValues(alpha: 0.1)
                       : TossDesignSystem.transparent,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
@@ -830,11 +830,11 @@ ${_formatMajorFortunes(majorFortunes)}
                         ? Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.5)
+                            .withValues(alpha: 0.5)
                         : Theme.of(context)
                             .colorScheme
                             .outline
-                            .withOpacity(0.3),
+                            .withValues(alpha: 0.3),
                     width: isCurrent ? 2 : 1,
                   ),
                 ),
@@ -893,7 +893,7 @@ ${_formatMajorFortunes(majorFortunes)}
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.7),
+                                  .withValues(alpha: 0.7),
                           ),
                     ),
                   ],

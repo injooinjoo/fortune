@@ -81,8 +81,8 @@ class EnhancedMovingResult extends StatelessWidget {
           borderRadius: AppDimensions.borderRadiusLarge,
           gradient: LinearGradient(
             colors: [
-              scoreColor.withOpacity(0.1),
-              scoreColor.withOpacity(0.05),
+              scoreColor.withValues(alpha: 0.1),
+              scoreColor.withValues(alpha: 0.05),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -106,7 +106,7 @@ class EnhancedMovingResult extends StatelessWidget {
                   CircularProgressIndicator(
                     value: overallScore / 100,
                     strokeWidth: 15,
-                    backgroundColor: TossDesignSystem.gray300.withOpacity(0.3),
+                    backgroundColor: TossDesignSystem.gray300.withValues(alpha: 0.3),
                     valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
                   ),
                   Column(
@@ -349,7 +349,7 @@ class EnhancedMovingResult extends StatelessWidget {
           dataSets: [
             RadarDataSet(
               dataEntries: radarData,
-              fillColor: Theme.of(context).primaryColor.withOpacity(0.3),
+              fillColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
               borderColor: Theme.of(context).primaryColor,
               borderWidth: 2,
               entryRadius: 4,
@@ -384,7 +384,7 @@ class EnhancedMovingResult extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: AppDimensions.borderRadiusSmall,
             ),
             child: Icon(icon, color: color, size: 24),
@@ -442,7 +442,7 @@ class EnhancedMovingResult extends StatelessWidget {
               Container(
                 padding: AppSpacing.paddingAll12,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.warning.withOpacity(0.1),
+                  color: TossDesignSystem.warning.withValues(alpha: 0.1),
                   borderRadius: AppDimensions.borderRadiusSmall,
                   border: Border.all(color: TossDesignSystem.warning)),
                 child: Row(
@@ -581,7 +581,7 @@ class EnhancedMovingResult extends StatelessWidget {
             child: LinearProgressIndicator(
               value: score / 100,
               minHeight: 8,
-              backgroundColor: TossDesignSystem.gray300.withOpacity(0.3),
+              backgroundColor: TossDesignSystem.gray300.withValues(alpha: 0.3),
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
@@ -648,7 +648,7 @@ class EnhancedMovingResult extends StatelessWidget {
     if (cautions.isEmpty) return const SizedBox.shrink();
     
     return Card(
-      color: TossDesignSystem.error.withOpacity(0.08),
+      color: TossDesignSystem.error.withValues(alpha: 0.08),
       child: Padding(
         padding: AppSpacing.paddingAll16,
         child: Column(
@@ -662,7 +662,7 @@ class EnhancedMovingResult extends StatelessWidget {
                   '주의사항',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: TossDesignSystem.error.withOpacity(0.9),
+                    color: TossDesignSystem.error.withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -674,14 +674,14 @@ class EnhancedMovingResult extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(Icons.error_outline,
-                    color: TossDesignSystem.error.withOpacity(0.9),
+                    color: TossDesignSystem.error.withValues(alpha: 0.9),
                     size: 20),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       caution,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: TossDesignSystem.error.withOpacity(0.9),
+                        color: TossDesignSystem.error.withValues(alpha: 0.9),
                       ),
                     ),
                   ),

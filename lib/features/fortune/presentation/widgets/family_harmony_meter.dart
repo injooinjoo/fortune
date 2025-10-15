@@ -29,15 +29,15 @@ class FamilyHarmonyMeter extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            scoreColor.withOpacity(0.05),
-            scoreColor.withOpacity(0.02),
+            scoreColor.withValues(alpha: 0.05),
+            scoreColor.withValues(alpha: 0.02),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: scoreColor.withOpacity(0.2),
+          color: scoreColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -83,7 +83,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
             ),
             circularStrokeCap: CircularStrokeCap.round,
             progressColor: scoreColor,
-            backgroundColor: scoreColor.withOpacity(0.1),
+            backgroundColor: scoreColor.withValues(alpha: 0.1),
           ),
           
           const SizedBox(height: 20),
@@ -92,7 +92,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: scoreColor.withOpacity(0.1),
+              color: scoreColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -230,7 +230,7 @@ class FamilyCategoryChart extends StatelessWidget {
                   LinearPercentIndicator(
                     lineHeight: 8.0,
                     percent: score / 100,
-                    backgroundColor: color.withOpacity(0.1),
+                    backgroundColor: color.withValues(alpha: 0.1),
                     progressColor: color,
                     barRadius: const Radius.circular(4),
                     padding: EdgeInsets.zero,
@@ -339,7 +339,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: isToday ? color.withOpacity(0.1) : null,
+                        color: isToday ? color.withValues(alpha: 0.1) : null,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -359,7 +359,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                       width: 30,
                       height: 80,
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.1),
+                        color: color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Align(
@@ -369,7 +369,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                           width: 30,
                           height: (score / 100) * 80,
                           decoration: BoxDecoration(
-                            color: isToday ? color : color.withOpacity(0.6),
+                            color: isToday ? color : color.withValues(alpha: 0.6),
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),

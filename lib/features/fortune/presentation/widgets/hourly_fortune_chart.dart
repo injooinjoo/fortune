@@ -126,8 +126,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
         getDrawingHorizontalLine: (value) {
           return FlLine(
             color: isDark
-              ? TossDesignSystem.grayDark300.withOpacity(0.3)
-              : TossDesignSystem.gray300.withOpacity(0.5),
+              ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
+              : TossDesignSystem.gray300.withValues(alpha: 0.5),
             strokeWidth: 1
           );
 },
@@ -135,14 +135,14 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           // 현재 시간 강조
           if (value.toInt() == widget.currentTime.hour) {
             return FlLine(
-              color: TossDesignSystem.purple.withOpacity(0.5),
+              color: TossDesignSystem.purple.withValues(alpha: 0.5),
               strokeWidth: 2,
               dashArray: [5, 5]);
 }
           return FlLine(
             color: isDark
-              ? TossDesignSystem.grayDark300.withOpacity(0.3)
-              : TossDesignSystem.gray300.withOpacity(0.5),
+              ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
+              : TossDesignSystem.gray300.withValues(alpha: 0.5),
             strokeWidth: 1
           );
 }),
@@ -187,8 +187,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
         show: true,
         border: Border.all(
           color: isDark
-            ? TossDesignSystem.grayDark300.withOpacity(0.4)
-            : TossDesignSystem.gray300.withOpacity(0.6),
+            ? TossDesignSystem.grayDark300.withValues(alpha: 0.4)
+            : TossDesignSystem.gray300.withValues(alpha: 0.6),
           width: 1)),
       minX: 0,
       maxX: 23,
@@ -204,8 +204,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           isCurved: true,
           gradient: LinearGradient(
             colors: [
-              TossDesignSystem.purple.withOpacity(0.8),
-              TossDesignSystem.tossBlue.withOpacity(0.8)]),
+              TossDesignSystem.purple.withValues(alpha: 0.8),
+              TossDesignSystem.tossBlue.withValues(alpha: 0.8)]),
           barWidth: 3,
           isStrokeCapRound: true,
           dotData: FlDotData(
@@ -223,8 +223,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
             show: true,
             gradient: LinearGradient(
               colors: [
-                TossDesignSystem.purple.withOpacity(0.2),
-                TossDesignSystem.tossBlue.withOpacity(0.1)],
+                TossDesignSystem.purple.withValues(alpha: 0.2),
+                TossDesignSystem.tossBlue.withValues(alpha: 0.1)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter)))],
       lineTouchData: LineTouchData(
@@ -300,8 +300,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       padding: AppSpacing.paddingAll16,
       gradient: LinearGradient(
         colors: [
-          elementColors[currentElement]!.withOpacity(0.2),
-          elementColors[currentElement]!.withOpacity(0.1)]),
+          elementColors[currentElement]!.withValues(alpha: 0.2),
+          elementColors[currentElement]!.withValues(alpha: 0.1)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

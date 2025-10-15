@@ -82,7 +82,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
             '정면 사진을 업로드하면 AI가 관상을 분석해드립니다.\n'
             '개인정보는 안전하게 보호되며 분석 후 즉시 삭제됩니다.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),
@@ -90,7 +90,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -145,7 +145,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                       icon: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.black.withOpacity(0.54),
+                          color: TossDesignSystem.black.withValues(alpha: 0.54),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Icon(
@@ -164,13 +164,13 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                 Icon(
                   Icons.add_photo_alternate,
                   size: 64,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   '탭하여 사진 선택',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -335,7 +335,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                   _pickImage(ImageSource.gallery);
                 }),
               ListTile(
-                leading: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                leading: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                 title: const Text('취소'),
                 onTap: () => Navigator.pop(context),
               ),

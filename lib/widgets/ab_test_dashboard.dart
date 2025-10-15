@@ -228,7 +228,7 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: backgroundColor.withOpacity(0.2),
+        color: backgroundColor.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: backgroundColor),
       ),
@@ -294,7 +294,7 @@ class _StatisticsRow extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: AppTheme.textSecondary.withOpacity(0.2),
+                      color: AppTheme.textSecondary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Text(
@@ -370,8 +370,8 @@ class _ConfidenceIndicator extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isSignificant 
-            ? AppTheme.success.withOpacity(0.1)
-            : AppTheme.warning.withOpacity(0.1),
+            ? AppTheme.success.withValues(alpha: 0.1)
+            : AppTheme.warning.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isSignificant ? AppTheme.success : AppTheme.warning,
@@ -424,7 +424,7 @@ class _ConfidenceIndicator extends StatelessWidget {
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: confidenceLevel,
-            backgroundColor: AppTheme.textPrimary.withOpacity(0.1),
+            backgroundColor: AppTheme.textPrimary.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(
               isSignificant ? AppTheme.success : AppTheme.warning,
             ),

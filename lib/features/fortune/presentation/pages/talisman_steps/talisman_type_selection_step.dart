@@ -98,8 +98,8 @@ class _TalismanTypeSelectionStepState extends State<TalismanTypeSelectionStep> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              type.gradientColors[0].withOpacity(0.1),
-              type.gradientColors[1].withOpacity(0.05)]),
+              type.gradientColors[0].withValues(alpha: 0.1),
+              type.gradientColors[1].withValues(alpha: 0.05)]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

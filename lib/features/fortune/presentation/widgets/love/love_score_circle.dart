@@ -154,14 +154,14 @@ class _LoveScoreCircleState extends State<LoveScoreCircle>
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: color.withOpacity(0.3),
+                    color: color.withValues(alpha: 0.3),
                     blurRadius: 20,
                     spreadRadius: 5,
                   ),
                 ],
               ),
             ).animate(delay: 800.ms).then()
-             .shimmer(duration: 2000.ms, color: color.withOpacity(0.5))
+             .shimmer(duration: 2000.ms, color: color.withValues(alpha: 0.5))
              .animate(onPlay: (controller) => controller.repeat()),
         ],
       ),

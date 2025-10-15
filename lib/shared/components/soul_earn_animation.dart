@@ -209,7 +209,7 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                 ),
               ),
             ).animate(onPlay: (controller) => controller.repeat())
-                  .shimmer(duration: 1000.ms, color: TossDesignSystem.grayDark900.withOpacity(0.3))
+                  .shimmer(duration: 1000.ms, color: TossDesignSystem.grayDark900.withValues(alpha: 0.3))
                   .fadeOut(delay: particle.delay, duration: 400.ms)),
             
             // Main soul animation

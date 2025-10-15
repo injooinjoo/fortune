@@ -75,7 +75,7 @@ class _CognitiveQuestCardState extends State<CognitiveQuestCard>
                 borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
                 border: Border.all(
                   color: _isCompleted 
-                      ? TossDesignSystem.successGreen.withOpacity(0.3)
+                      ? TossDesignSystem.successGreen.withValues(alpha: 0.3)
                       : TossDesignSystem.transparent,
                   width: 2,
                 ),
@@ -91,7 +91,7 @@ class _CognitiveQuestCardState extends State<CognitiveQuestCard>
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: color.withOpacity(0.1),
+                          color: color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
                         ),
                         child: Center(
@@ -115,7 +115,7 @@ class _CognitiveQuestCardState extends State<CognitiveQuestCard>
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: color.withOpacity(0.1),
+                                    color: color.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(TossDesignSystem.radiusXS),
                                   child: Text(
                                     function,
@@ -187,7 +187,7 @@ class _CognitiveQuestCardState extends State<CognitiveQuestCard>
                         horizontal: TossDesignSystem.spacingM,
                         vertical: TossDesignSystem.spacingS,
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.successGreen.withOpacity(0.1),
+                        color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -286,7 +286,7 @@ class CognitiveQuestList extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(TossDesignSystem.spacingM),
       decoration: BoxDecoration(
-        color: TossDesignSystem.tossBlue.withOpacity(0.05),
+        color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -304,6 +304,6 @@ class CognitiveQuestList extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: TossDesignSystem.tossBlue.withOpacity(0.1),
+              backgroundColor: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
               valueColor: AlwaysStoppedAnimation(TossDesignSystem.tossBlue),
               minHeight: 8,

@@ -75,7 +75,7 @@ class TimelineView extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -91,7 +91,7 @@ class TimelineView extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: _getScoreColor(avgScore).withOpacity(0.2),
+                                color: _getScoreColor(avgScore).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(8)),
                               child: Text(
                                 '평균 ${avgScore}점',
@@ -107,7 +107,7 @@ class TimelineView extends StatelessWidget {
                               '${monthData.length}회',
                               style: TextStyle(
                                 fontSize: 12 * fontScale,
-                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
                             ),
                           ],
@@ -127,13 +127,13 @@ class TimelineView extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: theme.colorScheme.surface,
                           border: Border.all(
-                            color: theme.colorScheme.outline.withOpacity(0.2)),
+                            color: theme.colorScheme.outline.withValues(alpha: 0.2)),
                           borderRadius: BorderRadius.circular(20)),
                         child: Text(
                           '${entry.key} ${entry.value}회',
                           style: TextStyle(
                             fontSize: 12 * fontScale,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7))));
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7))));
                     }).toList()),
                   const SizedBox(height: 16),
                   
@@ -166,14 +166,14 @@ class TimelineView extends StatelessWidget {
                                         DateFormat('E', 'ko').format(item.createdAt),
                                         style: TextStyle(
                                           fontSize: 12 * fontScale,
-                                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                         ),
                                       ),
                                       const SizedBox(height: 4),
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                         decoration: BoxDecoration(
-                                          color: _getScoreColor(score).withOpacity(0.2),
+                                          color: _getScoreColor(score).withValues(alpha: 0.2),
                                           borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Text(
@@ -215,7 +215,7 @@ class TimelineView extends StatelessWidget {
                                         content,
                                         style: TextStyle(
                                           fontSize: 14 * fontScale,
-                                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                         ),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
@@ -225,7 +225,7 @@ class TimelineView extends StatelessWidget {
                                 ),
                                 Icon(
                                   Icons.chevron_right,
-                                  color: theme.colorScheme.onSurface.withOpacity(0.3),
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                                 ),
                               ],
                             ),

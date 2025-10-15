@@ -95,7 +95,7 @@ class _CelebritySajuInputFormState extends ConsumerState<_CelebritySajuInputForm
         Text(
           '좋아하는 연예인의 사주를 통해\n오늘 하루의 행운을 받아보세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
             fontSize: fontSize.value,
           ),
@@ -119,13 +119,13 @@ class _CelebritySajuInputFormState extends ConsumerState<_CelebritySajuInputForm
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: theme.colorScheme.outline.withOpacity(0.3),
+                color: theme.colorScheme.outline.withValues(alpha: 0.3),
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: theme.colorScheme.outline.withOpacity(0.3),
+                color: theme.colorScheme.outline.withValues(alpha: 0.3),
               ),
             ),
           ),

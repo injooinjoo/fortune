@@ -71,7 +71,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                     '패키지로 구매하면 최대 50% 토큰 절약',
                     style: TextStyle(
                       fontSize: 16,
-                      color: TossDesignSystem.white.withOpacity(0.7),
+                      color: TossDesignSystem.white.withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -96,7 +96,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                             Text(
                               '보유 토큰',
                               style: TextStyle(
-                                color: TossDesignSystem.white.withOpacity(0.7),
+                                color: TossDesignSystem.white.withValues(alpha: 0.7),
                                 fontSize: 14,
                               ),
                             ),

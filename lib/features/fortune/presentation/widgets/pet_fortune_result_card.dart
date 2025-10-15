@@ -132,7 +132,7 @@ class PetFortuneResultCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withOpacity(0.1),
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -183,7 +183,7 @@ class PetFortuneResultCard extends StatelessWidget {
             ),
             circularStrokeCap: CircularStrokeCap.round,
             progressColor: scoreColor,
-            backgroundColor: scoreColor.withOpacity(0.1),
+            backgroundColor: scoreColor.withValues(alpha: 0.1),
           ),
           const SizedBox(height: 20),
           Text(
@@ -207,7 +207,7 @@ class PetFortuneResultCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withOpacity(0.05),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -257,7 +257,7 @@ class PetFortuneResultCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.successGreen.withOpacity(0.05),
+              color: TossDesignSystem.successGreen.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -333,7 +333,7 @@ class PetFortuneResultCard extends StatelessWidget {
             child: LinearPercentIndicator(
               lineHeight: 8.0,
               percent: score / 100,
-              backgroundColor: color.withOpacity(0.1),
+              backgroundColor: color.withValues(alpha: 0.1),
               progressColor: color,
               barRadius: const Radius.circular(4),
               padding: EdgeInsets.zero,
@@ -362,7 +362,7 @@ class PetFortuneResultCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.purple.withOpacity(0.05),
+              color: TossDesignSystem.purple.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -405,8 +405,8 @@ class PetFortuneResultCard extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    TossDesignSystem.tossBlue.withOpacity(0.05),
-                    TossDesignSystem.purple.withOpacity(0.05),
+                    TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+                    TossDesignSystem.purple.withValues(alpha: 0.05),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -452,7 +452,7 @@ class PetFortuneResultCard extends StatelessWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: moodColor.withOpacity(0.1),
+                  color: moodColor.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -526,7 +526,7 @@ class PetFortuneResultCard extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -553,7 +553,7 @@ class PetFortuneResultCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.1),
+                        color: color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -585,7 +585,7 @@ class PetFortuneResultCard extends StatelessWidget {
     return FortuneCard(
       title: '💡 오늘의 케어 포인트',
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      backgroundColor: TossDesignSystem.warningOrange.withOpacity(0.03),
+      backgroundColor: TossDesignSystem.warningOrange.withValues(alpha: 0.03),
       child: Column(
         children: carePoints.map((point) => Padding(
           padding: const EdgeInsets.symmetric(vertical: 6),
@@ -646,7 +646,7 @@ class PetFortuneResultCard extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(

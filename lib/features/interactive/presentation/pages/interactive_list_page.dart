@@ -140,7 +140,7 @@ class _InteractiveFeatureCard extends StatelessWidget {
               size: 36,
               color: feature.isAvailable
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurface.withOpacity(0.3),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 8),
             Text(
@@ -149,7 +149,7 @@ class _InteractiveFeatureCard extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: feature.isAvailable
                     ? theme.colorScheme.onSurface
-                    : theme.colorScheme.onSurface.withOpacity(0.5),
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               textAlign: TextAlign.center,
             ),
@@ -158,8 +158,8 @@ class _InteractiveFeatureCard extends StatelessWidget {
               feature.subtitle,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: feature.isAvailable
-                    ? theme.colorScheme.onSurface.withOpacity(0.7)
-                    : theme.colorScheme.onSurface.withOpacity(0.3),
+                    ? theme.colorScheme.onSurface.withValues(alpha: 0.7)
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -170,13 +170,13 @@ class _InteractiveFeatureCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surface.withOpacity(0.5),
+                  color: theme.colorScheme.surface.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '준비중',
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ),

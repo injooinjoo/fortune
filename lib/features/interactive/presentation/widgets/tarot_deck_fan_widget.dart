@@ -139,7 +139,7 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
                                 borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Theme.of(context).primaryColor.withOpacity(0.4),
+                                    color: Theme.of(context).primaryColor.withValues(alpha: 0.4),
                                     blurRadius: 20,
                                     spreadRadius: 5,
                                   ),
@@ -172,13 +172,13 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Theme.of(context).primaryColor.withOpacity(0.8),
-            Theme.of(context).primaryColor.withOpacity(0.6),
-            Theme.of(context).colorScheme.secondary.withOpacity(0.8)]),
+            Theme.of(context).primaryColor.withValues(alpha: 0.8),
+            Theme.of(context).primaryColor.withValues(alpha: 0.6),
+            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8)]),
         border: Border.all(
           color: isHovered
               ? Theme.of(context).colorScheme.secondary
-              : TossDesignSystem.white.withOpacity(0.3),
+              : TossDesignSystem.white.withValues(alpha: 0.3),
           width: isHovered ? 3 : 2)),
       child: Stack(
         children: [
@@ -186,7 +186,7 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
           Positioned.fill(
             child: CustomPaint(
               painter: MandalaPainter(
-                color: TossDesignSystem.white.withOpacity(0.1),
+                color: TossDesignSystem.white.withValues(alpha: 0.1),
                 isAnimated: isHovered)),
           ),
           
@@ -195,7 +195,7 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
             child: Icon(
               Icons.auto_awesome,
               size: 40,
-              color: TossDesignSystem.white.withOpacity(isHovered ? 0.9 : 0.7)),
+              color: TossDesignSystem.white.withValues(alpha: isHovered ? 0.9 : 0.7)),
           ),
         ],
       ),

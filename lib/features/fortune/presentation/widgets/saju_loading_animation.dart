@@ -251,11 +251,11 @@ class _SajuLoadingAnimationState extends State<SajuLoadingAnimation>
                 width: 30,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: _getStemColor(index).withOpacity(0.8),
+                  color: _getStemColor(index).withValues(alpha: 0.8),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: _getStemColor(index).withOpacity(0.3),
+                      color: _getStemColor(index).withValues(alpha: 0.3),
                       blurRadius: 8,
                       spreadRadius: 2,
                     ),
@@ -298,7 +298,7 @@ class _SajuLoadingAnimationState extends State<SajuLoadingAnimation>
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: _getBranchColor(index).withOpacity(0.7),
+                  color: _getBranchColor(index).withValues(alpha: 0.7),
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: TossDesignSystem.white.withValues(alpha: 0.5),
@@ -332,12 +332,12 @@ class _SajuLoadingAnimationState extends State<SajuLoadingAnimation>
         gradient: RadialGradient(
           colors: [
             TossTheme.brandBlue,
-            TossTheme.brandBlue.withOpacity(0.8),
+            TossTheme.brandBlue.withValues(alpha: 0.8),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: TossTheme.brandBlue.withOpacity(0.4),
+            color: TossTheme.brandBlue.withValues(alpha: 0.4),
             blurRadius: 15,
             spreadRadius: 3,
           ),
@@ -379,7 +379,7 @@ class _SajuLoadingAnimationState extends State<SajuLoadingAnimation>
                   gradient: LinearGradient(
                     colors: [
                       TossTheme.brandBlue,
-                      TossTheme.brandBlue.withOpacity(0.7),
+                      TossTheme.brandBlue.withValues(alpha: 0.7),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(3),

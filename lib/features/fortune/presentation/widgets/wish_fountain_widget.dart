@@ -343,7 +343,7 @@ class FountainPainter extends CustomPainter {
 
   void _drawWater(Canvas canvas, Offset center, Paint paint) {
     // 물 표면
-    paint.color = const Color(0xFF87CEEB).withOpacity(0.8);
+    paint.color = const Color(0xFF87CEEB).withValues(alpha: 0.8);
     canvas.drawCircle(center, 115, paint);
     
     // 물 하이라이트

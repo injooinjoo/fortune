@@ -308,7 +308,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: cookie.color.withOpacity(0.1),
+                  color: cookie.color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
@@ -386,7 +386,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                           borderRadius: BorderRadius.circular(100),
                           boxShadow: [
                             BoxShadow(
-                              color: _selectedCookie!.color.withOpacity(0.3),
+                              color: _selectedCookie!.color.withValues(alpha: 0.3),
                               blurRadius: 40,
                               spreadRadius: 20,
                             ),
@@ -420,7 +420,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                                   borderRadius: BorderRadius.circular(80),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFFF9F40).withOpacity(0.4),
+                                      color: const Color(0xFFFF9F40).withValues(alpha: 0.4),
                                       blurRadius: 30,
                                       offset: const Offset(0, 10),
                                     ),
@@ -435,7 +435,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                                   borderRadius: BorderRadius.circular(80),
                                   gradient: LinearGradient(
                                     colors: [
-                                      TossDesignSystem.white.withOpacity(0.2),
+                                      TossDesignSystem.white.withValues(alpha: 0.2),
                                       TossDesignSystem.transparent,
                                     ],
                                     begin: Alignment.topLeft,
@@ -467,7 +467,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                                   fontSize: 60,
                                   shadows: [
                                     Shadow(
-                                      color: TossDesignSystem.black.withOpacity(0.2),
+                                      color: TossDesignSystem.black.withValues(alpha: 0.2),
                                       blurRadius: 10,
                                       offset: const Offset(0, 4),
                                     ),
@@ -515,7 +515,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: _selectedCookie!.color.withOpacity(0.1),
+            color: _selectedCookie!.color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -654,7 +654,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
@@ -1075,7 +1075,7 @@ class ImprovedCrackPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = TossDesignSystem.black.withOpacity(0.3 * progress)
+      ..color = TossDesignSystem.black.withValues(alpha: 0.3 * progress)
       ..strokeWidth = 2.5
       ..style = PaintingStyle.stroke
       ..isAntiAlias = true // 안티앨리어싱 적용

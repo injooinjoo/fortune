@@ -286,11 +286,11 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
             margin: const EdgeInsets.only(bottom: AppSpacing.spacing2),
             padding: AppSpacing.paddingAll12,
             decoration: BoxDecoration(
-              color: (info['color'] as Color).withOpacity(0.1),
+              color: (info['color'] as Color).withValues(alpha: 0.1),
               borderRadius: AppDimensions.borderRadiusMedium,
               border: Border.all(
                 color: isStrongest
-                    ? (info['color'] as Color).withOpacity(0.3)
+                    ? (info['color'] as Color).withValues(alpha: 0.3)
                     : TossDesignSystem.transparent,
                 width: 2,
               ),
@@ -301,7 +301,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   width: 40,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: (info['color'] as Color).withOpacity(0.2),
+                    color: (info['color'] as Color).withValues(alpha: 0.2),
                     borderRadius: AppDimensions.borderRadiusSmall,
                   ),
                   child: Icon(
@@ -430,10 +430,10 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
     return Container(
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: AppDimensions.borderRadiusSmall,
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),

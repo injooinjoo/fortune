@@ -351,7 +351,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                             color: TossDesignSystem.black.withValues(alpha: 0.6),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: FortuneColors.spiritualPrimary.withOpacity(0.3),
+                              color: FortuneColors.spiritualPrimary.withValues(alpha: 0.3),
                               width: 1)),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -387,7 +387,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                         end: Alignment.bottomRight,
                         colors: [
                           TossDesignSystem.white.withValues(alpha: 0.3),
-                          FortuneColors.spiritualPrimary.withOpacity(0.2),
+                          FortuneColors.spiritualPrimary.withValues(alpha: 0.2),
                           TossDesignSystem.white.withValues(alpha: 0.3),
                         ],
                       ),
@@ -800,8 +800,8 @@ class _AuraPainter extends CustomPainter {
       final paint = Paint()
         ..shader = RadialGradient(
           colors: [
-            color.withOpacity(opacity),
-            color.withOpacity(opacity * 0.5),
+            color.withValues(alpha: opacity),
+            color.withValues(alpha: opacity * 0.5),
             TossDesignSystem.transparent],
           stops: const [0.0, 0.6, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius))
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, 20 + i * 10.0);
@@ -835,7 +835,7 @@ class _ParticlePainter extends CustomPainter {
       final position = particle.position + particle.velocity * progress;
       
       final paint = Paint()
-        ..color = particle.color.withOpacity(opacity * 0.8)
+        ..color = particle.color.withValues(alpha: opacity * 0.8)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
       
       canvas.drawCircle(center + position, particle.size, paint);

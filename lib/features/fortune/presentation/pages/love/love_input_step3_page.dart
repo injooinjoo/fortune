@@ -302,7 +302,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
               ? TossTheme.primaryBlue 
               : canSelect 
                   ? TossTheme.backgroundSecondary 
-                  : TossTheme.disabledGray.withOpacity(0.3),
+                  : TossTheme.disabledGray.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected 
@@ -388,7 +388,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withOpacity(0.1) : TossTheme.backgroundSecondary,
+          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.1) : TossTheme.backgroundSecondary,
           border: Border.all(
             color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
             width: isSelected ? 2 : 1,

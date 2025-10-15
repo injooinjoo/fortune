@@ -45,13 +45,13 @@ class TalentTypeResultWidget extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            TossTheme.primaryBlue.withOpacity(0.1),
-            TossTheme.primaryBlue.withOpacity(0.05),
+            TossTheme.primaryBlue.withValues(alpha: 0.1),
+            TossTheme.primaryBlue.withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(TossTheme.radiusL),
         border: Border.all(
-          color: TossTheme.primaryBlue.withOpacity(0.2),
+          color: TossTheme.primaryBlue.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -95,10 +95,10 @@ class TalentTypeResultWidget extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: _getScoreColor(overallScore).withOpacity(0.1),
+            color: _getScoreColor(overallScore).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: _getScoreColor(overallScore).withOpacity(0.3),
+              color: _getScoreColor(overallScore).withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -129,7 +129,7 @@ class TalentTypeResultWidget extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossTheme.borderGray200.withOpacity(0.3),
+        color: TossTheme.borderGray200.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
       ),
       child: Text(
@@ -206,10 +206,10 @@ class TalentStrengthCards extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colors[rank - 1].withOpacity(0.1),
+        color: colors[rank - 1].withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
         border: Border.all(
-          color: colors[rank - 1].withOpacity(0.3),
+          color: colors[rank - 1].withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -294,10 +294,10 @@ class RecommendedCareersWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: TossTheme.primaryBlue.withOpacity(0.1),
+        color: TossTheme.primaryBlue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: TossTheme.primaryBlue.withOpacity(0.2),
+          color: TossTheme.primaryBlue.withValues(alpha: 0.2),
         ),
       ),
       child: Text(
@@ -360,7 +360,7 @@ class ActionPlanWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TossTheme.borderGray200.withOpacity(0.5),
+        color: TossTheme.borderGray200.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
       ),
       child: Row(

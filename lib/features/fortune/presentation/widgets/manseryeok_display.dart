@@ -107,7 +107,7 @@ class ManseryeokDisplay extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: TossTheme.borderPrimary.withOpacity(0.5),
+                  color: TossTheme.borderPrimary.withValues(alpha: 0.5),
                   width: 1,
                 ),
               ),
@@ -224,7 +224,7 @@ class ManseryeokDisplay extends StatelessWidget {
             style: TossTheme.caption.copyWith(
               fontSize: isDay ? 12 : 11,
               color: isDay 
-                ? TossTheme.brandBlue.withOpacity(0.8)
+                ? TossTheme.brandBlue.withValues(alpha: 0.8)
                 : TossTheme.textGray600,
               fontWeight: isDay ? FontWeight.w600 : FontWeight.normal,
             ),
@@ -235,10 +235,10 @@ class ManseryeokDisplay extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: _getElementColor(element).withOpacity(0.15),
+                color: _getElementColor(element).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: _getElementColor(element).withOpacity(0.3),
+                  color: _getElementColor(element).withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -261,7 +261,7 @@ class ManseryeokDisplay extends StatelessWidget {
     return Container(
       width: 1,
       height: 60,
-      color: TossTheme.borderPrimary.withOpacity(0.3),
+      color: TossTheme.borderPrimary.withValues(alpha: 0.3),
     );
   }
 

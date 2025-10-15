@@ -187,7 +187,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white.withOpacity(0.2),
+                  color: TossDesignSystem.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
@@ -214,7 +214,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             '나와 반려동물의 특별한 궁합을\n확인해보세요',
             style: TextStyle(
               fontSize: 16,
-              color: TossDesignSystem.white.withOpacity(0.9),
+              color: TossDesignSystem.white.withValues(alpha: 0.9),
               height: 1.4,
             ),
           ),
@@ -248,7 +248,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: TossDesignSystem.black.withOpacity(0.06),
+                color: TossDesignSystem.black.withValues(alpha: 0.06),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
@@ -325,7 +325,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: TossDesignSystem.black.withOpacity(0.06),
+              color: TossDesignSystem.black.withValues(alpha: 0.06),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -559,7 +559,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: isSelected 
-                ? TossTheme.primaryBlue.withOpacity(0.1)
+                ? TossTheme.primaryBlue.withValues(alpha: 0.1)
                 : TossDesignSystem.gray50,
               border: Border.all(
                 color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
@@ -708,7 +708,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossTheme.primaryBlue.withOpacity(0.1),
+                  TossTheme.primaryBlue.withValues(alpha: 0.1),
                   TossDesignSystem.white,
                 ],
                 begin: Alignment.topCenter,
@@ -716,7 +716,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: TossTheme.primaryBlue.withOpacity(0.2),
+                color: TossTheme.primaryBlue.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -773,7 +773,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: TossDesignSystem.black.withOpacity(0.06),
+                  color: TossDesignSystem.black.withValues(alpha: 0.06),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 ),

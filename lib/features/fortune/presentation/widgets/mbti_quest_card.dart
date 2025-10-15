@@ -55,7 +55,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.orange.withOpacity(0.1),
+                  color: TossDesignSystem.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -94,10 +94,10 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withOpacity(0.05),
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -126,7 +126,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progress,
-                    backgroundColor: TossDesignSystem.tossBlue.withOpacity(0.1),
+                    backgroundColor: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation(TossDesignSystem.tossBlue),
                     minHeight: 8,
                   ),
@@ -173,15 +173,15 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isCompleted 
-            ? TossDesignSystem.successGreen.withOpacity(0.05)
+            ? TossDesignSystem.successGreen.withValues(alpha: 0.05)
             : (widget.isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isCompleted 
-              ? TossDesignSystem.successGreen.withOpacity(0.3)
+              ? TossDesignSystem.successGreen.withValues(alpha: 0.3)
               : (widget.isDark 
-                ? TossDesignSystem.grayDark200.withOpacity(0.5)
-                : TossDesignSystem.gray200.withOpacity(0.5)),
+                ? TossDesignSystem.grayDark200.withValues(alpha: 0.5)
+                : TossDesignSystem.gray200.withValues(alpha: 0.5)),
             width: 1,
           ),
         ),
@@ -191,7 +191,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: _getDifficultyColor(difficulty).withOpacity(0.1),
+                color: _getDifficultyColor(difficulty).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Center(
@@ -243,7 +243,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getDifficultyColor(difficulty).withOpacity(0.1),
+                  color: _getDifficultyColor(difficulty).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -291,7 +291,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(

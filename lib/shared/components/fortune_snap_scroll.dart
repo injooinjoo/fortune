@@ -312,8 +312,8 @@ class FortuneSnapCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       TossDesignSystem.transparent,
-                      TossDesignSystem.gray900.withOpacity(0.3),
-                      TossDesignSystem.gray900.withOpacity(0.7),
+                      TossDesignSystem.gray900.withValues(alpha: 0.3),
+                      TossDesignSystem.gray900.withValues(alpha: 0.7),
                     ],
                     stops: const [0.5, 0.8, 1.0],
                   ),
@@ -331,16 +331,16 @@ class FortuneSnapCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         shadows: [
                           Shadow(
-                            color: TossDesignSystem.gray900.withOpacity(0.8),
+                            color: TossDesignSystem.gray900.withValues(alpha: 0.8),
                             blurRadius: 8)])),
                     SizedBox(height: AppSpacing.spacing2),
                     Text(
                       description,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: TossDesignSystem.grayDark900.withOpacity(0.9),
+                        color: TossDesignSystem.grayDark900.withValues(alpha: 0.9),
                         shadows: [
                           Shadow(
-                            color: TossDesignSystem.gray900.withOpacity(0.8),
+                            color: TossDesignSystem.gray900.withValues(alpha: 0.8),
                             blurRadius: 6,
                           ),
                         ],

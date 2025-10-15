@@ -88,10 +88,10 @@ class CustomerSupportPage extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             width: 1)),
         child: Row(
           children: [
@@ -238,8 +238,8 @@ class CustomerSupportPage extends ConsumerWidget {
       child: GlassContainer(
         gradient: LinearGradient(
           colors: [
-            color.withOpacity(0.2),
-            color.withOpacity(0.1)],
+            color.withValues(alpha: 0.2),
+            color.withValues(alpha: 0.1)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
         borderRadius: BorderRadius.circular(16),

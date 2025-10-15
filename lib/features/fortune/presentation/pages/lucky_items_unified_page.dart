@@ -335,7 +335,7 @@ ${topRecommendations.join('\n')}
               margin: const EdgeInsets.symmetric(horizontal: 4),
               decoration: BoxDecoration(
                 color: isSelected 
-                    ? category['color'].withOpacity(0.2) 
+                    ? category['color'].withValues(alpha: 0.2) 
                     : TossDesignSystem.gray100,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
@@ -394,10 +394,10 @@ ${topRecommendations.join('\n')}
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: selectedCategory['color'].withOpacity(0.1),
+            color: selectedCategory['color'].withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: selectedCategory['color'].withOpacity(0.3),
+              color: selectedCategory['color'].withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -457,7 +457,7 @@ ${topRecommendations.join('\n')}
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1F4EF5).withOpacity(0.3),
+            color: const Color(0xFF1F4EF5).withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -484,7 +484,7 @@ ${topRecommendations.join('\n')}
             '로또부터 투자까지, 실용적인 행운 정보를 얻어보세요',
             style: TextStyle(
               fontSize: 14,
-              color: TossDesignSystem.gray100.withOpacity(0.7),
+              color: TossDesignSystem.gray100.withValues(alpha: 0.7),
               height: 1.4,
             ),
             textAlign: TextAlign.center,
@@ -496,7 +496,7 @@ ${topRecommendations.join('\n')}
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: TossDesignSystem.gray100.withOpacity(0.1),
+                color: TossDesignSystem.gray100.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
@@ -602,7 +602,7 @@ ${topRecommendations.join('\n')}
                 border: Border.all(color: TossDesignSystem.gray100, width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: displayColor.withOpacity(0.4),
+                    color: displayColor.withValues(alpha: 0.4),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -653,7 +653,7 @@ ${topRecommendations.join('\n')}
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: gradientColors[0].withOpacity(0.3),
+            color: gradientColors[0].withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -665,14 +665,14 @@ ${topRecommendations.join('\n')}
           Icon(
             icon,
             size: 32,
-            color: TossDesignSystem.gray100.withOpacity(0.9),
+            color: TossDesignSystem.gray100.withValues(alpha: 0.9),
           ),
           const SizedBox(height: 8),
           Text(
             title,
             style: TextStyle(
               fontSize: 12,
-              color: TossDesignSystem.gray100.withOpacity(0.8),
+              color: TossDesignSystem.gray100.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: 8),
@@ -729,7 +729,7 @@ ${topRecommendations.join('\n')}
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Color(0xFF7C3AED).withOpacity(0.05),
+                color: Color(0xFF7C3AED).withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

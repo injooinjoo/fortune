@@ -125,12 +125,12 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                     child: Chip(
                       label: Text(level),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -166,7 +166,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withOpacity(0.5)),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
                 items: _fields.map((field) {
                   return DropdownMenuItem(
                     value: field,
@@ -220,7 +220,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                     width: 80,
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.2),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -273,13 +273,13 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? theme.colorScheme.primary.withOpacity(0.1)
-                            : theme.colorScheme.surface.withOpacity(0.3),
+                            ? theme.colorScheme.primary.withValues(alpha: 0.1)
+                            : theme.colorScheme.surface.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.2),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
@@ -290,7 +290,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                                 : Icons.radio_button_unchecked,
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.5)),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -346,12 +346,12 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                     child: Chip(
                       label: Text(skill),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.secondary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.secondary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.secondary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -420,7 +420,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
             Text(
               '현재 시장 수요가 매우 높은 시기입니다. 적극적인 지원을 추천드립니다!',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
               textAlign: TextAlign.center,
             ),
           ],
@@ -493,7 +493,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                         Container(
                           width: 2,
                           height: 60,
-                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          color: theme.colorScheme.primary.withValues(alpha: 0.3),
                         ),
                     ],
                   ),
@@ -573,7 +573,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                             horizontal: 12,
                             vertical: 4),
                           decoration: BoxDecoration(
-                            color: industry.color.withOpacity(0.2),
+                            color: industry.color.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -589,7 +589,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                     const SizedBox(height: 8),
                     LinearProgressIndicator(
                       value: industry.compatibility / 100,
-                      backgroundColor: industry.color.withOpacity(0.2),
+                      backgroundColor: industry.color.withValues(alpha: 0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(industry.color),
                       minHeight: 8,
                     ),
@@ -639,13 +639,13 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: isTop
-                        ? theme.colorScheme.primary.withOpacity(0.1)
-                        : theme.colorScheme.surface.withOpacity(0.5),
+                        ? theme.colorScheme.primary.withValues(alpha: 0.1)
+                        : theme.colorScheme.surface.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isTop
                           ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurface.withOpacity(0.2),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Row(
@@ -656,7 +656,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                         decoration: BoxDecoration(
                           color: isTop
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.3),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -752,7 +752,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surface.withOpacity(0.3),
+                    color: theme.colorScheme.surface.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -760,7 +760,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: urgencyColor.withOpacity(0.2),
+                          color: urgencyColor.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -782,7 +782,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                             Text(
                               action.description,
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -856,7 +856,7 @@ class _RadarChartPainter extends CustomPainter {
 
     // Draw grid
     final gridPaint = Paint()
-      ..color = backgroundColor.withOpacity(0.3)
+      ..color = backgroundColor.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
@@ -909,7 +909,7 @@ class _RadarChartPainter extends CustomPainter {
 
     // Draw data
     final dataPaint = Paint()
-      ..color = primaryColor.withOpacity(0.3)
+      ..color = primaryColor.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
 
     final dataPath = Path();

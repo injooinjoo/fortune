@@ -110,7 +110,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: TossTheme.primaryBlue.withOpacity(0.1),
+              color: TossTheme.primaryBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(

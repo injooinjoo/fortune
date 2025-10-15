@@ -226,7 +226,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                         color: theme.colorScheme.surfaceContainerHighest,
                         borderRadius: AppDimensions.borderRadiusMedium,
                         border: Border.all(
-                          color: theme.colorScheme.onSurface.withOpacity(0.3),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),

@@ -75,7 +75,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               top: Radius.circular(20)),
             boxShadow: [
               BoxShadow(
-                color: TossDesignSystem.gray900.withOpacity(0.1),
+                color: TossDesignSystem.gray900.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, -5))]),
           child: Transform.translate(
@@ -204,7 +204,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               label: '카카오톡',
               icon: Icons.chat_bubble,
               color: const Color(0xFFFEE500),
-              iconColor: TossDesignSystem.gray900.withOpacity(0.87)),
+              iconColor: TossDesignSystem.gray900.withValues(alpha: 0.87)),
             _buildShareButton(
               platform: SharePlatform.instagram,
               label: '인스타그램',
@@ -257,7 +257,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
           borderRadius: AppDimensions.borderRadiusMedium,
           boxShadow: [
             BoxShadow(
-              color: (color ?? TossDesignSystem.gray600).withOpacity(0.3),
+              color: (color ?? TossDesignSystem.gray600).withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 2))]),
         child: Column(
@@ -311,7 +311,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
     required String label,
     required Color color}) {
     return Material(
-      color: color.withOpacity(0.1),
+      color: color.withValues(alpha: 0.1),
       borderRadius: AppDimensions.borderRadiusMedium,
       child: InkWell(
         onTap: onTap,
