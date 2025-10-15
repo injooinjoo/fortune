@@ -31,7 +31,8 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
   @override
   Widget build(BuildContext context) {
     final fortune = widget.fortuneData['fortune'] ?? widget.fortuneData;
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -40,7 +41,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
             end: Alignment.bottomCenter,
             colors: [
               Color(0xFFEF4444).withOpacity(0.1),
-              TossDesignSystem.white])),
+              isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white])),
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -176,6 +177,8 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
 }
 
   Widget _buildGreetingCard(String greeting) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return BaseCard(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -192,7 +195,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 16,
                 height: 1.6,
-                color: TossDesignSystem.gray900,
+                color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
               ),
               textAlign: TextAlign.center,
             ),

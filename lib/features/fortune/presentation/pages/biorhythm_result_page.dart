@@ -68,16 +68,17 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
       appBar: AppBar(
         backgroundColor: TossDesignSystem.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: TossTheme.textBlack,
+            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
             size: 20,
           ),
           onPressed: () => Navigator.of(context).pop(),
@@ -86,7 +87,7 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
           '바이오리듬 분석 결과',
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: TossTheme.textBlack,
+            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
           ),
         ),
         centerTitle: true,
@@ -94,7 +95,7 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
           IconButton(
             icon: Icon(
               Icons.share_rounded,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
               size: 22,
             ),
             onPressed: () {
@@ -130,6 +131,8 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
   }
 
   Widget _buildPageIndicator() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
@@ -141,9 +144,9 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
             width: _currentPage == index ? 24 : 8,
             height: 8,
             decoration: BoxDecoration(
-              color: _currentPage == index 
-                  ? TossTheme.primaryBlue 
-                  : TossTheme.borderGray300,
+              color: _currentPage == index
+                  ? TossTheme.primaryBlue
+                  : (isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300),
               borderRadius: BorderRadius.circular(4),
             ),
           );
