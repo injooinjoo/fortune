@@ -607,60 +607,62 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       ),
                       const SizedBox(height: TossDesignSystem.spacingM),
                       Row(
-                        children: Gender.values.map((gender) {
-                          final isSelected = _gender == gender;
-                          
-                          return Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                right: gender != Gender.values.last ? 8 : 0,
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() => _gender = gender);
-                                },
-                                borderRadius: BorderRadius.circular(8),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: TossDesignSystem.spacingM),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? TossDesignSystem.tossBlue
-                                        : _getCardColor(),
-                                    border: Border.all(
+                        children: [
+                          ...Gender.values.map((gender) {
+                            final isSelected = _gender == gender;
+
+                            return Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  right: gender != Gender.values.last ? 8 : 0,
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() => _gender = gender);
+                                  },
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: TossDesignSystem.spacingM),
+                                    decoration: BoxDecoration(
                                       color: isSelected
                                           ? TossDesignSystem.tossBlue
-                                          : TossDesignSystem.gray300,
-                                    ),
-                                    borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        gender.icon,
-                                        size: 32,
+                                          : _getCardColor(),
+                                      border: Border.all(
                                         color: isSelected
-                                            ? TossDesignSystem.white
-                                            : _getTextColor(),
+                                            ? TossDesignSystem.tossBlue
+                                            : TossDesignSystem.gray300,
                                       ),
-                                      const SizedBox(height: TossDesignSystem.spacingS),
-                                      Text(
-                                        gender.label,
-                                        style: TossDesignSystem.body2.copyWith(
+                                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Icon(
+                                          gender.icon,
+                                          size: 32,
                                           color: isSelected
                                               ? TossDesignSystem.white
                                               : _getTextColor(),
-                                          fontWeight: isSelected
-                                              ? FontWeight.bold
-                                              : FontWeight.normal,
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(height: TossDesignSystem.spacingS),
+                                        Text(
+                                          gender.label,
+                                          style: TossDesignSystem.body2.copyWith(
+                                            color: isSelected
+                                                ? TossDesignSystem.white
+                                                : _getTextColor(),
+                                            fontWeight: isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        }).toList(),
+                            );
+                          }),
+                        ],
                       ),
                       const SizedBox(height: 32),
 
