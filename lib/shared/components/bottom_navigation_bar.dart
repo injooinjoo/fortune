@@ -136,7 +136,9 @@ class _NavItemWidget extends StatelessWidget {
                 ? (Theme.of(context).brightness == Brightness.dark
                     ? TossDesignSystem.white
                     : TossTheme.textBlack)
-                : TossTheme.textGray600),
+                : (Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.grayDark400
+                    : TossTheme.textGray600)),
             const SizedBox(height: 2),
             Text(
               item.label,
@@ -147,7 +149,9 @@ class _NavItemWidget extends StatelessWidget {
                   ? (Theme.of(context).brightness == Brightness.dark
                       ? TossDesignSystem.white
                       : TossTheme.textBlack)
-                  : TossTheme.textGray600,
+                  : (Theme.of(context).brightness == Brightness.dark
+                      ? TossDesignSystem.grayDark400
+                      : TossTheme.textGray600),
                 letterSpacing: -0.2,
               ),
             ),

@@ -1263,13 +1263,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
     debugPrint('🎯 Showing default FortuneCompletionPageTinder');
     debugPrint('🔍 [StoryHomeScreen] userProfile: ${userProfile?.name}, fortune: ${todaysFortune != null}');
 
-    // 네비게이션 바 즉시 표시 (build 전에)
+    // 네비게이션 바 즉시 표시 (build 후에)
     // FortuneStoryViewer가 hide()를 호출했을 수 있으므로 명시적으로 show() 필요
-    final navNotifier = ref.read(navigationVisibilityProvider.notifier);
-    if (!ref.read(navigationVisibilityProvider).isVisible) {
-      debugPrint('⚠️ Navigation bar was hidden, showing it now');
-      navNotifier.show();
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final navNotifier = ref.read(navigationVisibilityProvider.notifier);
+      if (!ref.read(navigationVisibilityProvider).isVisible) {
+        debugPrint('⚠️ Navigation bar was hidden, showing it now');
+        navNotifier.show();
+      }
+    });
 
     return FortuneCompletionPageTinder(
       fortune: todaysFortune,
