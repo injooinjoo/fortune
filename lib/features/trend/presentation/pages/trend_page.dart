@@ -128,6 +128,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
       backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
       body: SafeArea(
         child: RefreshIndicator(
+          color: isDark ? TossDesignSystem.white : TossDesignSystem.tossBlue,
+          backgroundColor: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.white,
           onRefresh: () async {
             await Future.delayed(Duration(seconds: 1));
           },
@@ -154,7 +156,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
-                              color: TossDesignSystem.white),
+                              color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
                           ),
                         ),
                       ),

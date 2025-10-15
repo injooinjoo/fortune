@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/toss_design_system.dart';
 import '../../shared/components/app_header.dart';
 import '../../shared/glassmorphism/glass_container.dart';
 
@@ -8,7 +9,8 @@ class PremiumScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       body: CustomScrollView(
@@ -16,7 +18,7 @@ class PremiumScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: AppHeader(
               title: '프리미엄 사주',
-              backgroundColor: theme.colorScheme.surface,
+              backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
             ),
           ),
           SliverPadding(
@@ -82,7 +84,11 @@ class PremiumScreen extends StatelessWidget {
                           ),
                           child: const Text(
                             '프리미엄 시작하기',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: TossDesignSystem.white,
+                            ),
                           ),
                         ),
                       ),
