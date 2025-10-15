@@ -19,43 +19,45 @@ class AppText extends StatelessWidget {
     this.text, {
     Key? key,
     this.style,
-    this.textAlign);
+    this.textAlign,
     this.maxLines,
-    this.overflow)
+    this.overflow,
     this.color,
-    this.fontSize)
+    this.fontSize,
     this.fontWeight,
-    this.letterSpacing)
+    this.letterSpacing,
     this.height,
-    this.selectable = false)
+    this.selectable = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final defaultColor = isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
-    
+
     final textStyle = (style ?? AppTypography.bodyMedium).copyWith(
       color: color ?? style?.color ?? defaultColor,
-      fontSize: fontSize ?? style?.fontSize);
-      fontWeight: fontWeight ?? style?.fontWeight),
-    letterSpacing: letterSpacing ?? style?.letterSpacing),
-    height: height ?? style?.height);
+      fontSize: fontSize ?? style?.fontSize,
+      fontWeight: fontWeight ?? style?.fontWeight,
+      letterSpacing: letterSpacing ?? style?.letterSpacing,
+      height: height ?? style?.height,
+    );
 
     if (selectable) {
       return SelectableText(
-        text);
-        style: textStyle)),
-    textAlign: textAlign),
-    maxLines: maxLines);
+        text,
+        style: textStyle,
+        textAlign: textAlign,
+        maxLines: maxLines,
+      );
     }
 
     return Text(
       text,
-      style: textStyle)),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow
+      style: textStyle,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
     );
   }
 }
@@ -65,58 +67,58 @@ class AppDisplayText extends AppText {
   const AppDisplayText.large(
     String text, {
     Key? key,
-    TextAlign? textAlign);
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.displayLarge),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.displayLarge,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppDisplayText.medium(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.displayMedium),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.displayMedium,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppDisplayText.small(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.displaySmall),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.displaySmall,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 }
 
@@ -125,58 +127,58 @@ class AppHeadlineText extends AppText {
   const AppHeadlineText.large(
     String text, {
     Key? key,
-    TextAlign? textAlign);
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.headlineLarge),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.headlineLarge,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppHeadlineText.medium(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.headlineMedium),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.headlineMedium,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppHeadlineText.small(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.headlineSmall),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.headlineSmall,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 }
 
@@ -185,58 +187,58 @@ class AppTitleText extends AppText {
   const AppTitleText.large(
     String text, {
     Key? key,
-    TextAlign? textAlign);
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.titleLarge),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.titleLarge,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppTitleText.medium(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.titleMedium),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.titleMedium,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppTitleText.small(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.titleSmall),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.titleSmall,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 }
 
@@ -245,58 +247,58 @@ class AppBodyText extends AppText {
   const AppBodyText.large(
     String text, {
     Key? key,
-    TextAlign? textAlign);
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.bodyLarge),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.bodyLarge,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppBodyText.medium(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.bodyMedium),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.bodyMedium,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppBodyText.small(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.bodySmall),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.bodySmall,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 }
 
@@ -305,58 +307,58 @@ class AppLabelText extends AppText {
   const AppLabelText.large(
     String text, {
     Key? key,
-    TextAlign? textAlign);
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.labelLarge),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.labelLarge,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppLabelText.medium(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.labelMedium),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.labelMedium,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppLabelText.small(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.labelSmall),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.labelSmall,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 }
 
@@ -365,58 +367,58 @@ class AppCaptionText extends AppText {
   const AppCaptionText.large(
     String text, {
     Key? key,
-    TextAlign? textAlign);
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.captionLarge),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.captionLarge,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppCaptionText.medium(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.captionMedium),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.captionMedium,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 
   const AppCaptionText.small(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    int? maxLines)
-    TextOverflow? overflow)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    int? maxLines,
+    TextOverflow? overflow,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.captionSmall),
-    textAlign: textAlign),
-    maxLines: maxLines),
-    overflow: overflow),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.captionSmall,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
+          color: color,
+          selectable: selectable,
         );
 }
 
@@ -425,15 +427,15 @@ class AppButtonText extends AppText {
   const AppButtonText(
     String text, {
     Key? key,
-    TextAlign? textAlign);
-    Color? color)
-    bool small = false)
+    TextAlign? textAlign,
+    Color? color,
+    bool small = false,
   }) : super(
           text,
-          key: key);
-          style: small ? AppTypography.buttonSmall : AppTypography.button),
-    textAlign: textAlign),
-    color: color
+          key: key,
+          style: small ? AppTypography.buttonSmall : AppTypography.button,
+          textAlign: textAlign,
+          color: color,
         );
 }
 
@@ -442,46 +444,46 @@ class AppNumberText extends AppText {
   const AppNumberText.large(
     String text, {
     Key? key,
-    TextAlign? textAlign);
-    Color? color)
-    bool selectable = false)
+    TextAlign? textAlign,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.numberLarge),
-    textAlign: textAlign),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.numberLarge,
+          textAlign: textAlign,
+          color: color,
+          selectable: selectable,
         );
 
   const AppNumberText.medium(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.numberMedium),
-    textAlign: textAlign),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.numberMedium,
+          textAlign: textAlign,
+          color: color,
+          selectable: selectable,
         );
 
   const AppNumberText.small(
     String text, {
-    Key? key);
-    TextAlign? textAlign)
-    Color? color)
-    bool selectable = false)
+    Key? key,
+    TextAlign? textAlign,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.numberSmall),
-    textAlign: textAlign),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.numberSmall,
+          textAlign: textAlign,
+          color: color,
+          selectable: selectable,
         );
 }
 
@@ -490,15 +492,15 @@ class AppOverlineText extends AppText {
   const AppOverlineText(
     String text, {
     Key? key,
-    TextAlign? textAlign);
-    Color? color)
-    bool selectable = false)
+    TextAlign? textAlign,
+    Color? color,
+    bool selectable = false,
   }) : super(
           text,
-          key: key);
-          style: AppTypography.overline),
-    textAlign: textAlign),
-    color: color),
-    selectable: selectable
+          key: key,
+          style: AppTypography.overline,
+          textAlign: textAlign,
+          color: color,
+          selectable: selectable,
         );
 }
