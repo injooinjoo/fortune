@@ -118,13 +118,16 @@ class _MainShellState extends ConsumerState<MainShell>
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     // Control animation based on visibility state with proper timing
-    if (navigationState.isVisible && _animationController.value > 0) {
-      // Navigation should be visible - slide up animation
-      _animationController.reverse();
-    } else if (!navigationState.isVisible && _animationController.value < 1) {
-      // Navigation should be hidden - slide down animation
-      _animationController.forward();
-    }
+    // Ensure animation state matches visibility state
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (navigationState.isVisible && _animationController.value != 0) {
+        // Navigation should be visible - slide up animation (reverse to 0)
+        _animationController.reverse();
+      } else if (!navigationState.isVisible && _animationController.value != 1) {
+        // Navigation should be hidden - slide down animation (forward to 1)
+        _animationController.forward();
+      }
+    });
 
     return Scaffold(
       backgroundColor: TossDesignSystem.transparent,

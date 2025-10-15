@@ -24,10 +24,8 @@ class NavigationVisibilityNotifier extends StateNotifier<NavigationVisibilitySta
 
   void show() {
     // Always update to visible state, even if already visible
-    // This ensures navigation bar shows when needed
-    if (!state.isVisible) {
-      state = state.copyWith(isVisible: true, isAnimating: false);
-    }
+    // This ensures navigation bar shows when needed (especially after theme changes)
+    state = state.copyWith(isVisible: true, isAnimating: false);
   }
 
   void hide() {
