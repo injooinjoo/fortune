@@ -19,7 +19,8 @@ class TodayOverallStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isDark = theme.brightness == Brightness.dark;
+
     return TossCard(
       style: TossCardStyle.elevated,
       padding: const EdgeInsets.all(24),
@@ -67,20 +68,20 @@ class TodayOverallStatusCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          
+
           Text(
             biorhythmData.statusMessage,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 8),
-          
+
           Text(
             '오늘 ${DateTime.now().month}월 ${DateTime.now().day}일 컨디션',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
             ),
           ),
         ],
@@ -130,77 +131,83 @@ class RhythmDetailCards extends StatelessWidget {
   }
 
   Widget _buildRhythmCard(
-    String title, 
-    int score, 
-    String status, 
-    IconData icon, 
+    String title,
+    int score,
+    String status,
+    IconData icon,
     Color color,
   ) {
-    return TossCard(
-      style: TossCardStyle.outlined,
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: TossTheme.textBlack,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  status,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: TossTheme.textGray600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          
-          Column(
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return TossCard(
+          style: TossCardStyle.outlined,
+          padding: const EdgeInsets.all(20),
+          child: Row(
             children: [
-              Text(
-                '$score',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  icon,
                   color: color,
+                  size: 24,
                 ),
               ),
-              Text(
-                '점',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: TossTheme.textGray600,
+              const SizedBox(width: 16),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      status,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                      ),
+                    ),
+                  ],
                 ),
+              ),
+
+              Column(
+                children: [
+                  Text(
+                    '$score',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: color,
+                    ),
+                  ),
+                  Text(
+                    '점',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      }
     );
   }
 }
@@ -217,10 +224,11 @@ class TodayRecommendationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isDark = theme.brightness == Brightness.dark;
+
     // 점수에 따른 추천 활동
     List<String> recommendations = _getRecommendations();
-    
+
     return TossCard(
       style: TossCardStyle.filled,
       padding: const EdgeInsets.all(20),
@@ -239,17 +247,17 @@ class TodayRecommendationCard extends StatelessWidget {
                 '오늘의 추천',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: TossTheme.textBlack,
+                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          
+
           ...recommendations.asMap().entries.map((entry) {
             final index = entry.key;
             final recommendation = entry.value;
-            
+
             return Padding(
               padding: EdgeInsets.only(bottom: index < recommendations.length - 1 ? 8 : 0),
               child: Row(
@@ -268,7 +276,7 @@ class TodayRecommendationCard extends StatelessWidget {
                     child: Text(
                       recommendation,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: TossTheme.textGray600,
+                        color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                         height: 1.5,
                       ),
                     ),
@@ -328,7 +336,8 @@ class WeeklyForecastHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isDark = theme.brightness == Brightness.dark;
+
     return TossCard(
       style: TossCardStyle.elevated,
       padding: const EdgeInsets.all(20),
@@ -338,14 +347,14 @@ class WeeklyForecastHeader extends StatelessWidget {
             '이번 주 바이오리듬 전망',
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             '${DateTime.now().month}월 ${DateTime.now().day}일 ~ ${DateTime.now().add(const Duration(days: 6)).month}월 ${DateTime.now().add(const Duration(days: 6)).day}일',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
             ),
           ),
         ],
@@ -365,6 +374,8 @@ class WeeklyRhythmChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TossCard(
       style: TossCardStyle.outlined,
       padding: const EdgeInsets.all(20),
@@ -378,7 +389,7 @@ class WeeklyRhythmChart extends StatelessWidget {
               horizontalInterval: 50,
               getDrawingHorizontalLine: (value) {
                 return FlLine(
-                  color: TossTheme.borderGray300,
+                  color: isDark ? TossDesignSystem.grayDark500 : TossTheme.borderGray300,
                   strokeWidth: 1,
                 );
               },
@@ -394,7 +405,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                     return Text(
                       '${value.toInt()}',
                       style: TextStyle(
-                        color: TossTheme.textGray600,
+                        color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                         fontSize: 12,
                       ),
                     );
@@ -410,7 +421,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                       return Text(
                         days[value.toInt()],
                         style: TextStyle(
-                          color: TossTheme.textGray600,
+                          color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                           fontSize: 11,
                         ),
                       );
@@ -510,11 +521,12 @@ class ImportantDatesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isDark = theme.brightness == Brightness.dark;
+
     // 최고/최저 날짜 찾기
     final bestDay = _findBestDay();
     final worstDay = _findWorstDay();
-    
+
     return TossCard(
       style: TossCardStyle.filled,
       padding: const EdgeInsets.all(20),
@@ -525,13 +537,14 @@ class ImportantDatesCard extends StatelessWidget {
             '이번 주 주요 날짜',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // 최고의 날
           _buildDateItem(
+            context,
             '최고의 날',
             bestDay['date'] as String,
             bestDay['description'] as String,
@@ -539,9 +552,10 @@ class ImportantDatesCard extends StatelessWidget {
             const Color(0xFF00C851),
           ),
           const SizedBox(height: 12),
-          
+
           // 주의가 필요한 날
           _buildDateItem(
+            context,
             '주의가 필요한 날',
             worstDay['date'] as String,
             worstDay['description'] as String,
@@ -554,12 +568,15 @@ class ImportantDatesCard extends StatelessWidget {
   }
 
   Widget _buildDateItem(
+    BuildContext context,
     String title,
     String date,
     String description,
     IconData icon,
     Color color,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       children: [
         Container(
@@ -576,7 +593,7 @@ class ImportantDatesCard extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        
+
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -586,7 +603,7 @@ class ImportantDatesCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: TossTheme.textBlack,
+                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                 ),
               ),
               const SizedBox(height: 2),
@@ -594,7 +611,7 @@ class ImportantDatesCard extends StatelessWidget {
                 description,
                 style: TextStyle(
                   fontSize: 13,
-                  color: TossTheme.textGray600,
+                  color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                 ),
               ),
             ],
@@ -669,9 +686,10 @@ class WeeklyActivityGuide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isDark = theme.brightness == Brightness.dark;
+
     final activities = _getWeeklyActivities();
-    
+
     return TossCard(
       style: TossCardStyle.outlined,
       padding: const EdgeInsets.all(20),
@@ -682,14 +700,14 @@ class WeeklyActivityGuide extends StatelessWidget {
             '이번 주 활동 가이드',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 16),
-          
+
           ...activities.asMap().entries.map((entry) {
             final activity = entry.value;
-            
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
@@ -708,7 +726,7 @@ class WeeklyActivityGuide extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -718,14 +736,14 @@ class WeeklyActivityGuide extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: TossTheme.textBlack,
+                            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                           ),
                         ),
                         Text(
                           activity['description'] as String,
                           style: TextStyle(
                             fontSize: 13,
-                            color: TossTheme.textGray600,
+                            color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                           ),
                         ),
                       ],
@@ -776,8 +794,9 @@ class PersonalAnalysisCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final age = DateTime.now().difference(biorhythmData.birthDate).inDays ~/ 365;
-    
+
     return TossCard(
       style: TossCardStyle.elevated,
       padding: const EdgeInsets.all(24),
@@ -788,24 +807,24 @@ class PersonalAnalysisCard extends StatelessWidget {
             '당신의 바이오리듬 특성',
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 16),
-          
+
           Text(
             '${age}세의 당신은 지금까지 ${biorhythmData.totalDays}일을 살아오셨네요.',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
               height: 1.6,
             ),
           ),
           const SizedBox(height: 12),
-          
+
           Text(
             _getPersonalAnalysis(),
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
               height: 1.6,
             ),
           ),
@@ -851,8 +870,9 @@ class LifestyleAdviceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final advices = _getLifestyleAdvices();
-    
+
     return TossCard(
       style: TossCardStyle.filled,
       padding: const EdgeInsets.all(20),
@@ -863,14 +883,14 @@ class LifestyleAdviceCard extends StatelessWidget {
             '맞춤형 라이프 스타일 조언',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 16),
-          
+
           ...advices.asMap().entries.map((entry) {
             final advice = entry.value;
-            
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
@@ -891,7 +911,7 @@ class LifestyleAdviceCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -901,7 +921,7 @@ class LifestyleAdviceCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: TossTheme.textBlack,
+                            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -909,7 +929,7 @@ class LifestyleAdviceCard extends StatelessWidget {
                           advice['description'] as String,
                           style: TextStyle(
                             fontSize: 14,
-                            color: TossTheme.textGray600,
+                            color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                             height: 1.4,
                           ),
                         ),
@@ -1005,7 +1025,8 @@ class HealthTipsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isDark = theme.brightness == Brightness.dark;
+
     return TossCard(
       style: TossCardStyle.outlined,
       padding: const EdgeInsets.all(20),
@@ -1024,30 +1045,33 @@ class HealthTipsCard extends StatelessWidget {
                 '건강 관리 팁',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: TossTheme.textBlack,
+                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          
+
           _buildHealthTip(
+            context,
             '수면',
             _getSleepTip(),
             Icons.bedtime_rounded,
             const Color(0xFF6B73FF),
           ),
           const SizedBox(height: 12),
-          
+
           _buildHealthTip(
+            context,
             '영양',
             _getNutritionTip(),
             Icons.restaurant_rounded,
             const Color(0xFF00C896),
           ),
           const SizedBox(height: 12),
-          
+
           _buildHealthTip(
+            context,
             '운동',
             _getExerciseTip(),
             Icons.fitness_center_rounded,
@@ -1058,7 +1082,9 @@ class HealthTipsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildHealthTip(String title, String tip, IconData icon, Color color) {
+  Widget _buildHealthTip(BuildContext context, String title, String tip, IconData icon, Color color) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1076,7 +1102,7 @@ class HealthTipsCard extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        
+
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1086,7 +1112,7 @@ class HealthTipsCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: TossTheme.textBlack,
+                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                 ),
               ),
               const SizedBox(height: 2),
@@ -1094,7 +1120,7 @@ class HealthTipsCard extends StatelessWidget {
                 tip,
                 style: TextStyle(
                   fontSize: 13,
-                  color: TossTheme.textGray600,
+                  color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                   height: 1.4,
                 ),
               ),
@@ -1140,7 +1166,8 @@ class NextAnalysisCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isDark = theme.brightness == Brightness.dark;
+
     return TossCard(
       style: TossCardStyle.filled,
       padding: const EdgeInsets.all(20),
@@ -1165,7 +1192,7 @@ class NextAnalysisCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 16),
-          
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1174,23 +1201,23 @@ class NextAnalysisCard extends StatelessWidget {
                   '1주일 후 다시 확인해보세요',
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: TossTheme.textBlack,
+                    color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '바이오리듬은 매일 변화해요',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: TossTheme.textGray600,
+                    color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                   ),
                 ),
               ],
             ),
           ),
-          
+
           Icon(
             Icons.arrow_forward_ios_rounded,
-            color: TossTheme.textGray600,
+            color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
             size: 16,
           ),
         ],
