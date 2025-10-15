@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/theme/app_typography.dart';
 
 /// Base text widget with Toss Product Sans typography
 class AppText extends StatelessWidget {
@@ -17,7 +18,7 @@ class AppText extends StatelessWidget {
 
   const AppText(
     this.text, {
-    Key? key,
+    super.key,
     this.style,
     this.textAlign,
     this.maxLines,
@@ -28,7 +29,7 @@ class AppText extends StatelessWidget {
     this.letterSpacing,
     this.height,
     this.selectable = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,7 @@ class AppText extends StatelessWidget {
 class AppDisplayText extends AppText {
   const AppDisplayText.large(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -74,7 +75,6 @@ class AppDisplayText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.displayLarge,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -85,7 +85,7 @@ class AppDisplayText extends AppText {
 
   const AppDisplayText.medium(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -93,7 +93,6 @@ class AppDisplayText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.displayMedium,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -104,7 +103,7 @@ class AppDisplayText extends AppText {
 
   const AppDisplayText.small(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -112,7 +111,6 @@ class AppDisplayText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.displaySmall,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -126,7 +124,7 @@ class AppDisplayText extends AppText {
 class AppHeadlineText extends AppText {
   const AppHeadlineText.large(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -134,7 +132,6 @@ class AppHeadlineText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.headlineLarge,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -145,7 +142,7 @@ class AppHeadlineText extends AppText {
 
   const AppHeadlineText.medium(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -153,7 +150,6 @@ class AppHeadlineText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.headlineMedium,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -164,7 +160,7 @@ class AppHeadlineText extends AppText {
 
   const AppHeadlineText.small(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -172,7 +168,6 @@ class AppHeadlineText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.headlineSmall,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -186,7 +181,7 @@ class AppHeadlineText extends AppText {
 class AppTitleText extends AppText {
   const AppTitleText.large(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -194,7 +189,6 @@ class AppTitleText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.titleLarge,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -205,7 +199,7 @@ class AppTitleText extends AppText {
 
   const AppTitleText.medium(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -213,7 +207,6 @@ class AppTitleText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.titleMedium,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -224,7 +217,7 @@ class AppTitleText extends AppText {
 
   const AppTitleText.small(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -232,7 +225,6 @@ class AppTitleText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.titleSmall,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -246,7 +238,7 @@ class AppTitleText extends AppText {
 class AppBodyText extends AppText {
   const AppBodyText.large(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -254,7 +246,6 @@ class AppBodyText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.bodyLarge,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -265,7 +256,7 @@ class AppBodyText extends AppText {
 
   const AppBodyText.medium(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -273,7 +264,6 @@ class AppBodyText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.bodyMedium,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -284,7 +274,7 @@ class AppBodyText extends AppText {
 
   const AppBodyText.small(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -292,7 +282,6 @@ class AppBodyText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.bodySmall,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -306,7 +295,7 @@ class AppBodyText extends AppText {
 class AppLabelText extends AppText {
   const AppLabelText.large(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -314,7 +303,6 @@ class AppLabelText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.labelLarge,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -325,7 +313,7 @@ class AppLabelText extends AppText {
 
   const AppLabelText.medium(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -333,7 +321,6 @@ class AppLabelText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.labelMedium,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -344,7 +331,7 @@ class AppLabelText extends AppText {
 
   const AppLabelText.small(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -352,7 +339,6 @@ class AppLabelText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.labelSmall,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -366,7 +352,7 @@ class AppLabelText extends AppText {
 class AppCaptionText extends AppText {
   const AppCaptionText.large(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -374,7 +360,6 @@ class AppCaptionText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.captionLarge,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -385,7 +370,7 @@ class AppCaptionText extends AppText {
 
   const AppCaptionText.medium(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -393,7 +378,6 @@ class AppCaptionText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.captionMedium,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -404,7 +388,7 @@ class AppCaptionText extends AppText {
 
   const AppCaptionText.small(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     int? maxLines,
     TextOverflow? overflow,
@@ -412,7 +396,6 @@ class AppCaptionText extends AppText {
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.captionSmall,
           textAlign: textAlign,
           maxLines: maxLines,
@@ -426,13 +409,12 @@ class AppCaptionText extends AppText {
 class AppButtonText extends AppText {
   const AppButtonText(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     Color? color,
     bool small = false,
   }) : super(
           text,
-          key: key,
           style: small ? AppTypography.buttonSmall : AppTypography.button,
           textAlign: textAlign,
           color: color,
@@ -443,13 +425,12 @@ class AppButtonText extends AppText {
 class AppNumberText extends AppText {
   const AppNumberText.large(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     Color? color,
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.numberLarge,
           textAlign: textAlign,
           color: color,
@@ -458,13 +439,12 @@ class AppNumberText extends AppText {
 
   const AppNumberText.medium(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     Color? color,
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.numberMedium,
           textAlign: textAlign,
           color: color,
@@ -473,13 +453,12 @@ class AppNumberText extends AppText {
 
   const AppNumberText.small(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     Color? color,
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.numberSmall,
           textAlign: textAlign,
           color: color,
@@ -491,13 +470,12 @@ class AppNumberText extends AppText {
 class AppOverlineText extends AppText {
   const AppOverlineText(
     String text, {
-    Key? key,
+    super.key,
     TextAlign? textAlign,
     Color? color,
     bool selectable = false,
   }) : super(
           text,
-          key: key,
           style: AppTypography.overline,
           textAlign: textAlign,
           color: color,
