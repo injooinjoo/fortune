@@ -280,6 +280,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
 
   /// 소원 입력 화면
   Widget _buildInputView() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: TossDesignSystem.backgroundPrimary,
       appBar: StandardFortuneAppBar(
@@ -289,7 +290,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
         },
         actions: [
           IconButton(
-            icon: Icon(Icons.help_outline, color: TossDesignSystem.gray600),
+            icon: Icon(Icons.help_outline, color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight),
             onPressed: () => _showHelpDialog(),
           ),
         ],
@@ -371,58 +372,65 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   Widget _buildCategorySelection() {
     return TossCard(
       style: TossCardStyle.outlined,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '어떤 소원인가요?',
-            style: TossTheme.heading5,
-          ),
-          const SizedBox(height: TossTheme.spacingM),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: WishCategory.values.map((category) {
-              final isSelected = _selectedCategory == category;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedCategory = category;
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.backgroundSecondary,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray200,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        category.emoji,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        category.name,
-                        style: TextStyle(
+      child: Builder(
+        builder: (context) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '어떤 소원인가요?',
+                style: TossTheme.heading5,
+              ),
+              const SizedBox(height: TossTheme.spacingM),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: WishCategory.values.map((category) {
+                  final isSelected = _selectedCategory == category;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedCategory = category;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.backgroundSecondary,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
                           color: isSelected
-                              ? TossDesignSystem.white
-                              : TossDesignSystem.gray600,
-                          fontWeight: FontWeight.w500,
+                              ? TossDesignSystem.tossBlue
+                              : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            category.emoji,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            category.name,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? TossDesignSystem.white
+                                  : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -431,42 +439,47 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   Widget _buildWishInput() {
     return TossCard(
       style: TossCardStyle.outlined,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '소원을 자세히 적어주세요',
-            style: TossTheme.heading5,
-          ),
-          const SizedBox(height: TossTheme.spacingM),
-          TextField(
-            controller: _wishController,
-            maxLines: 4,
-            onChanged: (value) => setState(() {}),
-            decoration: InputDecoration(
-              hintText: '마음을 담아 소원을 적어보세요...',
-              hintStyle: TextStyle(
-                color: TossDesignSystem.gray400,
+      child: Builder(
+        builder: (context) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '소원을 자세히 적어주세요',
+                style: TossTheme.heading5,
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(TossTheme.radiusS),
-                borderSide: BorderSide(color: TossDesignSystem.gray200),
+              const SizedBox(height: TossTheme.spacingM),
+              TextField(
+                controller: _wishController,
+                maxLines: 4,
+                onChanged: (value) => setState(() {}),
+                decoration: InputDecoration(
+                  hintText: '마음을 담아 소원을 적어보세요...',
+                  hintStyle: TextStyle(
+                    color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(TossTheme.radiusS),
+                    borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(TossTheme.radiusS),
+                    borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(TossTheme.radiusS),
+                    borderSide: BorderSide(color: TossDesignSystem.tossBlue),
+                  ),
+                  filled: true,
+                  fillColor: TossDesignSystem.backgroundSecondary,
+                  contentPadding: const EdgeInsets.all(16),
+                ),
+                style: TossTheme.body3,
               ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(TossTheme.radiusS),
-                borderSide: BorderSide(color: TossDesignSystem.gray200),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(TossTheme.radiusS),
-                borderSide: BorderSide(color: TossDesignSystem.tossBlue),
-              ),
-              filled: true,
-              fillColor: TossDesignSystem.backgroundSecondary,
-              contentPadding: const EdgeInsets.all(16),
-            ),
-            style: TossTheme.body3,
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
