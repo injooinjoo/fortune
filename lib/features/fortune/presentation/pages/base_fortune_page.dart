@@ -943,8 +943,9 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: widget.backgroundColor ?? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.white),
+      backgroundColor: widget.backgroundColor ?? (isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight),
       appBar: StandardFortuneAppBar(
         title: widget.title,
         onBackPressed: _fortune != null
