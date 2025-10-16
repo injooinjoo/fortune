@@ -92,12 +92,13 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     final screenHeight = MediaQuery.of(context).size.height;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 100),
       height: screenHeight * 0.85 - (bottomInset > 0 ? 0 : 0),
-      decoration: const BoxDecoration(
-        color: Color(0xFFF7F8FA),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.backgroundDark : const Color(0xFFF7F8FA),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         children: [
