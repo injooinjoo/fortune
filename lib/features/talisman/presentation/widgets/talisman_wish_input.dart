@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 
 class TalismanWishInput extends StatefulWidget {
@@ -70,6 +71,8 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -108,7 +111,9 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
         // Input Title
         Text(
           '구체적으로 어떤 소원인가요?',
-          style: TossTheme.heading3,
+          style: TossTheme.heading3.copyWith(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
         ).animate(delay: 100.ms)
           .fadeIn(duration: 400.ms),
         
@@ -117,7 +122,7 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
         Text(
           '구체적이고 명확할수록 더욱 효과적인 부적을 만들어드려요',
           style: TossTheme.subtitle2.copyWith(
-            color: TossTheme.textGray600,
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
           ),
         ).animate(delay: 150.ms)
           .fadeIn(duration: 400.ms),
@@ -151,13 +156,13 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
             Icon(
               Icons.lightbulb_outline,
               size: 16,
-              color: TossTheme.textGray500,
+              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
             ),
             const SizedBox(width: 4),
             Text(
               '최소 5자 이상 입력해주세요',
               style: TossTheme.caption.copyWith(
-                color: TossTheme.textGray500,
+                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
               ),
             ),
           ],
