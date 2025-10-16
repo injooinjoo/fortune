@@ -62,6 +62,8 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(
@@ -80,12 +82,12 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 제목
-                  const Text(
+                  Text(
                     '스프레드를 선택하세요',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF191919),
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       height: 1.2,
                     ),
                   ),
@@ -95,10 +97,10 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                   // 부제목
                   Text(
                     '질문: ${widget.question}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xFF8B95A1),
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -112,6 +114,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                     icon: Icons.style,
                     color: const Color(0xFF3B82F6),
                     recommended: '빠른 답변이 필요할 때',
+                    isDark: isDark,
                   ),
 
                   const SizedBox(height: 16),
@@ -121,6 +124,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                     icon: Icons.timeline,
                     color: const Color(0xFF7C3AED),
                     recommended: '시간의 흐름을 보고 싶을 때',
+                    isDark: isDark,
                   ),
 
                   const SizedBox(height: 16),
@@ -130,6 +134,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                     icon: Icons.favorite,
                     color: const Color(0xFFEC4899),
                     recommended: '연애/관계 질문',
+                    isDark: isDark,
                   ),
 
                   const SizedBox(height: 16),
@@ -139,6 +144,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                     icon: Icons.apps,
                     color: const Color(0xFF10B981),
                     recommended: '심층 분석이 필요할 때',
+                    isDark: isDark,
                   ),
                 ],
               ),
@@ -164,6 +170,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
     required IconData icon,
     required Color color,
     required String recommended,
+    required bool isDark,
   }) {
     final isSelected = _selectedSpread == spread;
 
@@ -172,9 +179,13 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
       borderRadius: BorderRadius.circular(16),
       child: Ink(
         decoration: BoxDecoration(
-          color: isSelected ? color.withValues(alpha: 0.1) : TossDesignSystem.white,
+          color: isSelected
+              ? color.withValues(alpha: 0.1)
+              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight),
           border: Border.all(
-            color: isSelected ? color : const Color(0xFFE5E7EB),
+            color: isSelected
+                ? color
+                : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(16),
@@ -235,7 +246,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                                   fontWeight: FontWeight.w600,
                                   color: isSelected
                                       ? color
-                                      : const Color(0xFF191919),
+                                      : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -262,10 +273,10 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                           const SizedBox(height: 4),
                           Text(
                             spread.description,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              color: Color(0xFF6B7280),
+                              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                             ),
                           ),
                         ],
@@ -291,7 +302,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF3F4F6),
+                    color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -305,10 +316,10 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                       const SizedBox(width: 6),
                       Text(
                         recommended,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF6B7280),
+                          color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                         ),
                       ),
                     ],
@@ -318,7 +329,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                 // 스프레드 미리보기
                 if (spread != TarotSpreadType.single) ...[
                   const SizedBox(height: 16),
-                  _buildSpreadPreview(spread, color),
+                  _buildSpreadPreview(spread, color, isDark),
                 ],
               ],
             ),
@@ -328,7 +339,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
     );
   }
 
-  Widget _buildSpreadPreview(TarotSpreadType spread, Color color) {
+  Widget _buildSpreadPreview(TarotSpreadType spread, Color color, bool isDark) {
     Widget preview;
 
     switch (spread) {
@@ -365,9 +376,9 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                   const SizedBox(height: 4),
                   Text(
                     labels[index],
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10,
-                      color: Color(0xFF9CA3AF),
+                      color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
                     ),
                   ),
                 ],
@@ -416,13 +427,13 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
         break;
 
       case TarotSpreadType.celticCross:
-        preview = const Center(
+        preview = Center(
           child: Text(
             '켈틱 크로스 - 10장의 카드로\n가장 상세한 분석을 제공합니다',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 12,
-              color: Color(0xFF9CA3AF),
+              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
               height: 1.4,
             ),
           ),
