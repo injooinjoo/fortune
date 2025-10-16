@@ -38,7 +38,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: TossDesignSystem.gray50,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.gray50,
       appBar: const StandardFortuneAppBar(
         title: '시험 운세',
       ),
@@ -206,16 +206,18 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                 
                 Text(
                   '시험 운세',
-                  style: TossDesignSystem.heading2,
+                  style: TossDesignSystem.heading2.copyWith(
+                    color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                  ),
                   textAlign: TextAlign.center,
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 Text(
                   '시험 정보를 입력하고\n맞춤형 합격 운세를 확인하세요!',
                   style: TossDesignSystem.body2.copyWith(
-                    color: TossDesignSystem.gray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -231,6 +233,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             '시험 정보를 입력해주세요',
             style: TossDesignSystem.body1.copyWith(
               fontWeight: FontWeight.bold,
+              color: isDark ? TossDesignSystem.textPrimaryDark : null,
             ),
           ),
           
@@ -245,7 +248,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                 Text(
                   '시험 종류',
                   style: TossDesignSystem.caption.copyWith(
-                    color: TossDesignSystem.gray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -273,7 +276,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                 Text(
                   '시험 예정일',
                   style: TossDesignSystem.caption.copyWith(
-                    color: TossDesignSystem.gray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -305,6 +308,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             '준비 상황',
             style: TossDesignSystem.body1.copyWith(
               fontWeight: FontWeight.bold,
+              color: isDark ? TossDesignSystem.textPrimaryDark : null,
             ),
           ),
           const SizedBox(height: 16),
@@ -318,7 +322,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                 Text(
                   '공부 기간',
                   style: TossDesignSystem.caption.copyWith(
-                    color: TossDesignSystem.gray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -331,19 +335,19 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: _studyPeriod == period 
+                          color: _studyPeriod == period
                               ? TossDesignSystem.tossBlue
-                              : TossDesignSystem.gray100,
+                              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           period,
                           style: TossDesignSystem.caption.copyWith(
-                            color: _studyPeriod == period 
-                                ? TossDesignSystem.white 
-                                : TossDesignSystem.gray700,
-                            fontWeight: _studyPeriod == period 
-                                ? FontWeight.bold 
+                            color: _studyPeriod == period
+                                ? TossDesignSystem.white
+                                : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700),
+                            fontWeight: _studyPeriod == period
+                                ? FontWeight.bold
                                 : FontWeight.normal,
                           ),
                         ),
@@ -358,7 +362,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                 Text(
                   '자신감',
                   style: TossDesignSystem.caption.copyWith(
-                    color: TossDesignSystem.gray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -371,19 +375,19 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
-                          color: _confidence == level 
+                          color: _confidence == level
                               ? TossDesignSystem.successGreen
-                              : TossDesignSystem.gray100,
+                              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           level,
                           style: TossDesignSystem.caption.copyWith(
-                            color: _confidence == level 
-                                ? TossDesignSystem.white 
-                                : TossDesignSystem.gray700,
-                            fontWeight: _confidence == level 
-                                ? FontWeight.bold 
+                            color: _confidence == level
+                                ? TossDesignSystem.white
+                                : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700),
+                            fontWeight: _confidence == level
+                                ? FontWeight.bold
                                 : FontWeight.normal,
                           ),
                         ),
@@ -398,7 +402,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                 Text(
                   '예상 난이도',
                   style: TossDesignSystem.caption.copyWith(
-                    color: TossDesignSystem.gray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -411,19 +415,19 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
-                          color: _difficulty == level 
+                          color: _difficulty == level
                               ? TossDesignSystem.warningOrange
-                              : TossDesignSystem.gray100,
+                              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           level,
                           style: TossDesignSystem.caption.copyWith(
-                            color: _difficulty == level 
-                                ? TossDesignSystem.white 
-                                : TossDesignSystem.gray700,
-                            fontWeight: _difficulty == level 
-                                ? FontWeight.bold 
+                            color: _difficulty == level
+                                ? TossDesignSystem.white
+                                : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700),
+                            fontWeight: _difficulty == level
+                                ? FontWeight.bold
                                 : FontWeight.normal,
                           ),
                         ),
@@ -484,7 +488,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                           Text(
                             '합격 가능성',
                             style: TossDesignSystem.caption.copyWith(
-                              color: TossDesignSystem.gray600,
+                              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
                             ),
                           ),
                         ],
@@ -499,6 +503,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                   _examType,
                   style: TossDesignSystem.heading3.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : null,
                   ),
                 ),
                 
@@ -540,6 +545,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                         '세부 분석',
                         style: TossDesignSystem.body1.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : null,
                         ),
                       ),
                     ],
