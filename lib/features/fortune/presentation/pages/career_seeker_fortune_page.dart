@@ -85,6 +85,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
   @override
   Widget buildInputForm() {
     final theme = Theme.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       children: [
@@ -102,7 +103,9 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   const SizedBox(width: 8),
                   Text(
                     '학력 사항',
-                    style: theme.textTheme.headlineSmall,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                    ),
                   ),
                 ],
               ),
@@ -152,7 +155,10 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   const SizedBox(width: 8),
                   Text(
                     '희망 분야',
-                    style: theme.textTheme.headlineSmall),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -193,7 +199,10 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   const SizedBox(width: 8),
                   Text(
                     '구직 기간',
-                    style: theme.textTheme.headlineSmall),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -250,7 +259,10 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   const SizedBox(width: 8),
                   Text(
                     '가장 큰 고민',
-                    style: theme.textTheme.headlineSmall),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -320,7 +332,10 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   const SizedBox(width: 8),
                   Text(
                     '강점 스킬 (복수 선택)',
-                    style: theme.textTheme.headlineSmall),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -376,7 +391,8 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
 
   Widget _buildJobOpportunityRadar() {
     final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: GlassCard(
@@ -392,7 +408,10 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                 const SizedBox(width: 8),
                 Text(
                   '취업 기회 레이더',
-                  style: theme.textTheme.headlineSmall),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 24),
@@ -429,7 +448,8 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
 
   Widget _buildApplicationTimeline() {
     final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final timelineEvents = [
       TimelineEvent('1-2주', '서류 준비 & 지원', true),
       TimelineEvent('3-4주', '서류 합격 예상', false),
@@ -451,7 +471,10 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                 const SizedBox(width: 8),
                 Text(
                   '예상 취업 타임라인',
-                  style: theme.textTheme.headlineSmall),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 24),
@@ -529,7 +552,8 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
 
   Widget _buildIndustryCompatibility() {
     final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final industries = [
       IndustryMatch('IT/테크', 0.95, TossDesignSystem.tossBlue),
       IndustryMatch('금융', 0.85, TossDesignSystem.successGreen),
@@ -552,7 +576,12 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                 const SizedBox(width: 8),
                 Text(
                   '산업별 적합도',
-                  style: theme.textTheme.headlineSmall)]),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 24),
             ...industries.map((industry) {
               return Padding(
@@ -603,7 +632,8 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
 
   Widget _buildLuckyCompanies() {
     final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final companies = [
       '대기업 IT 계열사', '성장 중인 스타트업',
       '외국계 기업', '공공기관',
@@ -625,7 +655,12 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                 const SizedBox(width: 8),
                 Text(
                   '행운의 기업 유형',
-                  style: theme.textTheme.headlineSmall)]),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             ...companies.map((company) {
               final index = companies.indexOf(company);
@@ -698,7 +733,8 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
 
   Widget _buildActionPlan() {
     final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final actions = [
       ActionItem(
         icon: Icons.description_rounded,
@@ -736,7 +772,12 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                 const SizedBox(width: 8),
                 Text(
                   '이번 주 행운의 액션',
-                  style: theme.textTheme.headlineSmall)]),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             ...actions.map((action) {
               final urgencyColor = action.urgency == 'high'
@@ -889,7 +930,7 @@ class _RadarChartPainter extends CustomPainter {
         text: TextSpan(
           text: data[i].label,
           style: TextStyle(
-            color: backgroundColor,
+            color: primaryColor,
             fontSize: 12)),
         textDirection: TextDirection.ltr);
       
