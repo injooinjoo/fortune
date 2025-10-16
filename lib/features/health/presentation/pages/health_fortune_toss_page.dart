@@ -106,7 +106,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  _buildConditionSelectionPage(), // 0: 컨디션 선택 (Start here)
+                  _buildConditionSelectionPage(isDark), // 0: 컨디션 선택 (Start here)
                   _buildBodyPartSelectionPage(), // 1: 신체 부위 선택
                   _buildResultPage(), // 2: 결과 페이지
                 ],
@@ -293,38 +293,38 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
     );
   }
 
-  Widget _buildConditionSelectionPage() {
+  Widget _buildConditionSelectionPage(bool isDark) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
-          
+
           // 제목
           Text(
             '오늘 몸 상태는\n어떠신가요?',
             style: TossTheme.heading2.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               height: 1.3,
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Text(
             '현재 컨디션을 선택해주세요',
             style: TossTheme.subtitle1.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // 컨디션 선택 옵션들
           ...ConditionState.values.map((condition) {
             final index = ConditionState.values.indexOf(condition);
-            return _buildConditionOption(condition, index);
+            return _buildConditionOption(condition, index, isDark);
           }),
           
           const SizedBox(height: 32),
@@ -345,9 +345,9 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
     );
   }
 
-  Widget _buildConditionOption(ConditionState condition, int index) {
+  Widget _buildConditionOption(ConditionState condition, int index, bool isDark) {
     final isSelected = _currentCondition == condition;
-    
+
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -360,10 +360,12 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : TossDesignSystem.white,
+          color: isSelected
+              ? TossTheme.primaryBlue.withValues(alpha: 0.05)
+              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+            color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -374,7 +376,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
               height: 24,
               decoration: BoxDecoration(
                 color: isSelected ? TossTheme.primaryBlue : TossDesignSystem.white.withValues(alpha: 0.0),
-                border: isSelected ? null : Border.all(color: TossTheme.borderGray300, width: 2),
+                border: isSelected ? null : Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray300, width: 2),
                 shape: BoxShape.circle,
               ),
               child: isSelected
@@ -390,14 +392,14 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                     condition.displayName,
                     style: TossTheme.body1.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isSelected ? TossTheme.primaryBlue : TossTheme.textBlack,
+                      color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     _getConditionDescription(condition),
                     style: TossTheme.body3.copyWith(
-                      color: TossTheme.textGray600,
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     ),
                   ),
                 ],
