@@ -140,14 +140,16 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: TossDesignSystem.white,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
       appBar: StandardFortuneAppBar(
         title: '포춘 쿠키',
         actions: _showPaper
             ? [
                 IconButton(
-                  icon: Icon(Icons.refresh, color: TossDesignSystem.gray900),
+                  icon: Icon(Icons.refresh, color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900),
                   onPressed: _resetCookie,
                 ),
                 const SizedBox(width: 16),
@@ -198,17 +200,22 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             bottom: 100,
             left: 20,
             right: 20,
-            child: Center(
-              child: Text(
-                '탭하여 쿠키 깨뜨리기',
-                style: TossDesignSystem.body2.copyWith(
-                  color: TossDesignSystem.gray500,
-                ),
-              ).animate(
-                onPlay: (controller) => controller.repeat(),
-              ).fadeIn(duration: 1.seconds)
-                .then(delay: 1.seconds)
-                .fadeOut(duration: 1.seconds),
+            child: Builder(
+              builder: (context) {
+                final isDark = Theme.of(context).brightness == Brightness.dark;
+                return Center(
+                  child: Text(
+                    '탭하여 쿠키 깨뜨리기',
+                    style: TossDesignSystem.body2.copyWith(
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray500,
+                    ),
+                  ).animate(
+                    onPlay: (controller) => controller.repeat(),
+                  ).fadeIn(duration: 1.seconds)
+                    .then(delay: 1.seconds)
+                    .fadeOut(duration: 1.seconds),
+                );
+              }
             ),
           ),
         ],
@@ -217,12 +224,14 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   }
 
   Widget _buildHeader() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
         Text(
           '포춘 쿠키를 선택하세요',
           style: TossDesignSystem.heading2.copyWith(
-            color: TossDesignSystem.gray900,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
           ),
         ).animate()
           .fadeIn(duration: 500.ms)
@@ -231,7 +240,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         Text(
           '오늘의 운세가 담긴 쿠키를 골라보세요',
           style: TossDesignSystem.body2.copyWith(
-            color: TossDesignSystem.gray600,
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
             height: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -243,14 +252,16 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   }
 
   Widget _buildCookieHeader() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
         Text(
-          _isCracking 
+          _isCracking
             ? '쿠키가 열리고 있어요!'
             : '쿠키를 탭해서 깨뜨리세요',
           style: TossDesignSystem.heading3.copyWith(
-            color: TossDesignSystem.gray900,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
           ),
           textAlign: TextAlign.center,
         ).animate()
@@ -260,7 +271,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         Text(
           '특별한 메시지가 당신을 기다리고 있어요',
           style: TossDesignSystem.body2.copyWith(
-            color: TossDesignSystem.gray600,
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
           ),
           textAlign: TextAlign.center,
         ).animate()
@@ -286,8 +297,9 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   }
 
   Widget _buildCookieTypeCard(CookieType cookie) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = _selectedCookie == cookie;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -325,14 +337,14 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                       '${cookie.title} 포춘쿠키',
                       style: TossDesignSystem.body1.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.gray900,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       cookie.description,
                       style: TossDesignSystem.body2.copyWith(
-                        color: TossDesignSystem.gray600,
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
                         height: 1.4,
                       ),
                     ),
@@ -444,7 +456,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                               // Crack effect
                               if (_isCracking)
                                 Opacity(
-                                  opacity: _crackAnimation.value,
+                                  opacity: _crackAnimation.value.clamp(0.0, 1.0),
                                   child: Container(
                                     width: 220,
                                     height: 160,
@@ -508,6 +520,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   }
 
   Widget _buildResultHeader() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
         Container(
@@ -528,7 +542,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         Text(
           '오늘의 운세 메시지',
           style: TossDesignSystem.heading2.copyWith(
-            color: TossDesignSystem.gray900,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
           ),
         ),
       ],
@@ -538,6 +552,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   }
 
   Widget _buildFortuneCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return AnimatedBuilder(
       animation: _paperAnimation,
       builder: (context, child) {
@@ -599,15 +615,15 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Chinese proverb
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.gray50,
+                    color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -616,7 +632,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                         _chineseProverb,
                         style: TossDesignSystem.body1.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: TossDesignSystem.gray900,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
                           letterSpacing: 2,
                         ),
                       ),
@@ -624,7 +640,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                       Text(
                         _chineseProverbMeaning,
                         style: TossDesignSystem.body2.copyWith(
-                          color: TossDesignSystem.gray600,
+                          color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
                           height: 1.5,
                         ),
                         textAlign: TextAlign.center,
@@ -632,16 +648,16 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Advice
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: TossDesignSystem.gray200,
+                      color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
                       width: 1,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -670,14 +686,14 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                               '오늘의 조언',
                               style: TossDesignSystem.caption.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: TossDesignSystem.gray700,
+                                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               _advice,
                               style: TossDesignSystem.body2.copyWith(
-                                color: TossDesignSystem.gray700,
+                                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700,
                                 height: 1.4,
                               ),
                             ),
@@ -722,6 +738,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   }
 
   Widget _buildLuckyCard(String title, String value, IconData icon, Color color) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TossCard(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -735,7 +753,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
           Text(
             title,
             style: TossDesignSystem.caption.copyWith(
-              color: TossDesignSystem.gray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
             ),
           ),
           const SizedBox(height: 4),
@@ -774,13 +792,15 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   }
 
   Widget _buildSectionTitle(String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       children: [
         Text(
           title,
           style: TossDesignSystem.body1.copyWith(
             fontWeight: FontWeight.w600,
-            color: TossDesignSystem.gray700,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700,
           ),
         ),
       ],
