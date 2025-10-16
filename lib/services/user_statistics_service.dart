@@ -165,7 +165,7 @@ class UserStatisticsService {
 
       Logger.info('✅ [UserStatisticsService] Initial statistics created successfully');
       return initialStats;
-    } catch (e, stackTrace) {
+    } catch (e) {
       Logger.warning('[UserStatisticsService] 초기 통계 생성 실패 (테이블 없음, 폴백 모드): $e');
       return initialStats;
     }
@@ -219,7 +219,7 @@ class UserStatisticsService {
         'newTotal': stats.totalFortunes + 1,
         'fortuneType': fortuneType
       });
-    } catch (e, stackTrace) {
+    } catch (e) {
       Logger.warning('[UserStatisticsService] 운세 횟수 증가 실패 (테이블 없음, 무시): $e');
     }
   }
@@ -284,7 +284,7 @@ class UserStatisticsService {
         'updated_at': DateTime.now().toIso8601String()}).eq('user_id', userId);
 
       // TODO: Implement achievements when user_achievements table is created
-    } catch (e, stackTrace) {
+    } catch (e) {
       Logger.warning('[UserStatisticsService] 토큰 사용량 업데이트 실패 (테이블 없음, 무시): $e');
     }
   }

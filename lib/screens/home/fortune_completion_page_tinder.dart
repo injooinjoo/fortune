@@ -635,7 +635,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     ],
                   ),
                 );
-              }).toList(),
+              }),
             ],
           ),
         ).animate()
@@ -1723,7 +1723,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  sajuData?['insight']?.toString() ??
+                  sajuData['insight']?.toString() ??
                   '당신의 사주는 균형잡힌 에너지를 가지고 있습니다. 오늘은 본래의 성향을 잘 활용하면 좋은 결과를 얻을 수 있습니다.',
                   style: const TextStyle(
                     color: Colors.white,
@@ -2267,11 +2267,11 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     } else {
       // 현재 시간 조언
       if (score >= 75) {
-        return '${timeOfDay} 운세가 양호합니다. 계획한 일들을 진행하기 좋은 시간이니 적극적으로 행동하세요.';
+        return '$timeOfDay 운세가 양호합니다. 계획한 일들을 진행하기 좋은 시간이니 적극적으로 행동하세요.';
       } else if (score >= 50) {
-        return '${timeOfDay} 무난한 운세입니다. 큰 문제는 없으나 중요한 결정은 신중하게 하는 것이 좋습니다.';
+        return '$timeOfDay 무난한 운세입니다. 큰 문제는 없으나 중요한 결정은 신중하게 하는 것이 좋습니다.';
       } else {
-        return '${timeOfDay} 다소 주의가 필요한 시간입니다. 여유를 가지고 천천히 진행하며 실수를 줄이도록 노력하세요.';
+        return '$timeOfDay 다소 주의가 필요한 시간입니다. 여유를 가지고 천천히 진행하며 실수를 줄이도록 노력하세요.';
       }
     }
   }
@@ -2559,7 +2559,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
               ],
             ),
           );
-        }).toList(),
+        }),
 
         const SizedBox(height: 20),
 
@@ -2684,7 +2684,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         ),
                       ),
                       Text(
-                        '${bestHour}시',
+                        '$bestHour시',
                         style: TextStyle(
                           color: isDark ? Colors.white : Colors.black87,
                           fontSize: 16,
@@ -2717,7 +2717,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         ),
                       ),
                       Text(
-                        '${worstHour}시',
+                        '$worstHour시',
                         style: TextStyle(
                           color: isDark ? Colors.white : Colors.black87,
                           fontSize: 16,
@@ -2948,7 +2948,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
               ],
             ),
           ),
-        )).toList(),
+        )),
       ],
     );
   }
@@ -3160,7 +3160,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     final shareText = '''
 ${cardInfo['title']}
 
-$userName의 운세 (${date})
+$userName의 운세 ($date)
 ${cardInfo['score'] != null ? '점수: ${cardInfo['score']}점\n' : ''}
 ${cardInfo['message']}
 

@@ -20,7 +20,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
   String? _name;
   DateTime? _birthdate;
   String? _currentStatus;
-  List<String> _interests = [];
+  final List<String> _interests = [];
   
   final List<Map<String, dynamic>> interestOptions = [
     {'id': 'tech', 'label': '기술/IT', 'icon': Icons.computer},
@@ -503,7 +503,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       ),
                     ],
                   ),
-                )).toList(),
+                )),
               ],
             ),
           ),
@@ -649,7 +649,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       ),
                     ],
                   ),
-                )).toList(),
+                )),
               ],
             ),
           ),

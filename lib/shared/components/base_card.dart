@@ -1,7 +1,6 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme_extensions.dart';
-import '../../core/utils/theme_utils.dart';
 
 /// Base card widget that enforces consistent design guidelines
 /// Light mode: Background #f6f6f6, Card #ffffff
@@ -91,7 +90,6 @@ class PremiumCard extends StatelessWidget {
     final fortuneTheme = context.fortuneTheme;
     
     return BaseCard(
-      child: child,
       padding: padding,
       margin: margin,
       width: width,
@@ -105,7 +103,8 @@ class PremiumCard extends StatelessWidget {
           fortuneTheme.fortuneGradientEnd]),
       border: Border.all(
         color: fortuneTheme.fortuneGradientStart.withValues(alpha: 0.3),
-        width: 1));
+        width: 1),
+      child: child);
   }
 }
 

@@ -233,7 +233,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                 ),
               ),
             ),
-          )).toList(),
+          )),
           
           // Selected blessing description
           if (_selectedGoal != null) ...[
@@ -616,7 +616,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                       ),
                     ],
                   ),
-                )).toList(),
+                )),
               ],
             ),
           ),

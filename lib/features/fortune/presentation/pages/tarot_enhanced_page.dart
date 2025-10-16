@@ -4,17 +4,11 @@ import 'dart:math' as math;
 import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 // Adjusted const usage for gradient button
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../shared/components/app_header.dart'; // For FontSize enum
-import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../core/constants/api_endpoints.dart';
-import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
-import '../../../../presentation/providers/token_provider.dart';
-import '../../../interactive/presentation/pages/tarot_card_page.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 enum TarotSpreadType {
@@ -472,7 +466,7 @@ class _SpreadSelectionView extends StatelessWidget {
               onTap: () => onSpreadSelected(spread),
               fontScale: fontScale,
             ),
-          )).toList(),
+          )),
         ],
       ),
     );
@@ -688,7 +682,7 @@ class _SpreadOptionCard extends StatelessWidget {
         child: Row(
           children: [
             // Spread preview
-            Container(
+            SizedBox(
               width: 100,
               height: 100,
               child: _buildSpreadPreview()),

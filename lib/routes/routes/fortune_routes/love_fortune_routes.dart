@@ -1,4 +1,3 @@
-import 'package:go_router/go_router.dart';
 // import '../../../features/fortune/presentation/pages/love_fortune_page.dart'; // Removed - unused
 
 final loveFortuneRoutes = [

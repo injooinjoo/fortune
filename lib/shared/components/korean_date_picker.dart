@@ -1,6 +1,5 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -17,8 +16,8 @@ class KoreanDatePicker extends StatefulWidget {
   final DateTime? minDate;
   final DateTime? maxDate;
 
-  KoreanDatePicker({
-    Key? key,
+  const KoreanDatePicker({
+    super.key,
     this.initialDate,
     this.selectedDate,
     this.onDateSelected,
@@ -28,8 +27,7 @@ class KoreanDatePicker extends StatefulWidget {
     this.minDate,
     this.maxDate}) : assert(
           onDateSelected != null || onDateChanged != null,
-          'Either onDateSelected or onDateChanged must be provided'),
-        super(key: key);
+          'Either onDateSelected or onDateChanged must be provided');
 
   @override
   State<KoreanDatePicker> createState() => _KoreanDatePickerState();
@@ -311,9 +309,9 @@ class BirthDatePreview extends StatelessWidget {
   final VoidCallback? onTap;
 
   const BirthDatePreview({
-    Key? key,
+    super.key,
     required this.birthDate,
-    this.onTap}) : super(key: key);
+    this.onTap});
 
   int _calculateAge() {
     final now = DateTime.now();

@@ -11,15 +11,13 @@ import '../../../../core/models/fortune_result.dart';
 
 class CareerFutureFortunePage extends BaseFortunePage {
   const CareerFutureFortunePage({
-    Key? key,
-    Map<String, dynamic>? initialParams,
+    super.key,
+    super.initialParams,
   }) : super(
-          key: key,
           title: '커리어 운세',
           description: '당신의 커리어 미래를 함께 그려봅시다',
           fortuneType: 'career-future',
           requiresUserInfo: false,
-          initialParams: initialParams,
         );
 
   @override

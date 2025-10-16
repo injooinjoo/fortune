@@ -1,14 +1,10 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:io';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
-import 'package:flutter/material.dart' show VoidCallback;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../core/config/environment.dart';
 import '../core/utils/logger.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 
 /// Service for managing Google AdMob ads
 class AdService {

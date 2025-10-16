@@ -23,11 +23,11 @@ class TarotSummaryPage extends ConsumerStatefulWidget {
   final String? question;
 
   const TarotSummaryPage({
-    Key? key,
+    super.key,
     required this.cards,
     required this.interpretations,
     required this.spreadType,
-    this.question}) : super(key: key);
+    this.question});
 
   static Future<void> show({
     required BuildContext context,
@@ -656,7 +656,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 ],
               ),
             );
-          }).toList(),
+          }),
           if (_summaryData!['dominantElement'] != null) ...[
             const SizedBox(height: 12),
             Text(
@@ -725,7 +725,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 ),
               ],
             ),
-          )).toList(),
+          )),
         ],
       ),
     );

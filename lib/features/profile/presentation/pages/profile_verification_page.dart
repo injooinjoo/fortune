@@ -5,7 +5,6 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import '../../../../services/auth_service.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../shared/components/app_header.dart' show FontSize;
 

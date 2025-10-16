@@ -15,7 +15,7 @@ class TalentDnaChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    return Container(
+    return SizedBox(
       width: size,
       height: size,
       child: CustomPaint(

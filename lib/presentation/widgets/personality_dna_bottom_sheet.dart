@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../shared/components/loading_elevated_button.dart';
 import '../../shared/components/toss_button.dart';
-import '../../shared/components/floating_bottom_button.dart';
 import '../../services/ad_service.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../core/services/personality_dna_service.dart';
 import '../../core/models/personality_dna_model.dart';
 import '../../presentation/providers/auth_provider.dart';
-import 'package:go_router/go_router.dart';
 
 /// 성격 DNA 입력을 위한 BottomSheet
 class PersonalityDNABottomSheet extends ConsumerStatefulWidget {
@@ -235,7 +232,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
           // 정보 카드들
           _buildSummaryCard('MBTI', _selectedMbti ?? '미설정', '🧠'),
           const SizedBox(height: 12),
-          _buildSummaryCard('혈액형', _selectedBloodType != null ? '${_selectedBloodType}형' : '미설정', '🩸'),
+          _buildSummaryCard('혈액형', _selectedBloodType != null ? '$_selectedBloodType형' : '미설정', '🩸'),
           const SizedBox(height: 12),
           _buildSummaryCard('별자리', _selectedZodiac ?? '미설정', '⭐'),
           const SizedBox(height: 12),
@@ -544,7 +541,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                       ),
                       child: Center(
                         child: Text(
-                          '${bloodType}형',
+                          '$bloodType형',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

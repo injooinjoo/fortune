@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:math' as math;
 
 import '../core/theme/toss_design_system.dart';
 import '../presentation/providers/navigation_visibility_provider.dart';

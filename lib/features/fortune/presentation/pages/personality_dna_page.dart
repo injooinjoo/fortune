@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/models/personality_dna_model.dart';
 import '../../../../presentation/widgets/personality_dna_bottom_sheet.dart';
-import '../../../../shared/components/loading_states.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 /// 성격 DNA 결과 페이지 (토스 디자인 시스템 적용)

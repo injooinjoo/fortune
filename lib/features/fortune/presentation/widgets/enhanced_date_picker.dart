@@ -13,13 +13,13 @@ class EnhancedDatePicker extends StatefulWidget {
   final Map<DateTime, String>? holidayMap;
   
   const EnhancedDatePicker({
-    Key? key,
+    super.key,
     required this.initialDate,
     required this.onDateSelected,
     this.luckyScores,
     this.auspiciousDays,
     this.holidayMap,
-  }) : super(key: key);
+  });
 
   @override
   State<EnhancedDatePicker> createState() => _EnhancedDatePickerState();

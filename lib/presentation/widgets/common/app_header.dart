@@ -6,10 +6,10 @@ class AppHeader extends StatelessWidget {
   final bool showBackButton;
 
   const AppHeader({
-    Key? key,
+    super.key,
     this.title,
     this.actions,
-    this.showBackButton = true}) : super(key: key);
+    this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {

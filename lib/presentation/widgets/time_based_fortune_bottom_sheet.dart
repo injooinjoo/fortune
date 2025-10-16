@@ -3,14 +3,12 @@ import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import '../providers/providers.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/haptic_utils.dart';
-import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../core/services/holiday_service.dart';
 import '../../core/models/holiday_models.dart';
@@ -273,7 +271,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withValues(alpha:0.5),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha:0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: theme.colorScheme.outline.withValues(alpha:0.3),

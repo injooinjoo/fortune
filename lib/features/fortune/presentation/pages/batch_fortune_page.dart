@@ -102,7 +102,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                         ),
                         Text(
                           isAuthenticated 
-                              ? '${tokenBalance}개'
+                              ? '$tokenBalance개'
                               : '로그인 필요',
                           style: const TextStyle(
                             color: TossDesignSystem.white,
@@ -140,7 +140,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                         onTap: () => _onPackageSelected(packageType),
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
@@ -306,7 +306,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                   Text(_getFortuneTypeName(type)),
                 ],
               ),
-            )).toList(),
+            )),
           ],
         ),
         actions: [

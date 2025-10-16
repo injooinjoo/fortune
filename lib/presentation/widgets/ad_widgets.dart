@@ -2,20 +2,16 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../core/theme/app_theme.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import '../../../../core/theme/toss_design_system.dart';
 
 class AdDialog extends ConsumerWidget {
   final VoidCallback onComplete;
   final String? adType;
 
   const AdDialog({
-    Key? key,
+    super.key,
     required this.onComplete,
     this.adType,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -83,10 +79,10 @@ class AdBanner extends StatelessWidget {
   final double? width;
 
   const AdBanner({
-    Key? key,
+    super.key,
     this.height = 60,
     this.width,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +90,7 @@ class AdBanner extends StatelessWidget {
       height: height,
       width: width ?? double.infinity,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: AppDimensions.borderRadiusSmall,
         border: Border.all(
           color: Theme.of(context).colorScheme.outline,
@@ -116,8 +112,8 @@ class NativeAdWidget extends StatelessWidget {
   final String? adId;
 
   const NativeAdWidget({
-    Key? key,
-    this.adId}) : super(key: key);
+    super.key,
+    this.adId});
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
 
 /// 운세 카드 컴포넌트 - 토스 디자인 시스템 적용
 class FortuneCard extends StatelessWidget {

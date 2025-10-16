@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
-import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';

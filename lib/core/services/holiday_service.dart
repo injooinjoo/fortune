@@ -42,29 +42,27 @@ class HolidayService {
             .lte('date', endOfMonth.toIso8601String().split('T')[0]);
         
         // 공휴일/기념일 처리
-        if (holidaysResponse != null) {
-          for (final holiday in holidaysResponse) {
-            final date = DateTime.parse(holiday['date']);
-            final normalizedDate = DateTime(date.year, date.month, date.day);
-            
-            final existingEvent = events[normalizedDate];
-            final isHoliday = holiday['type'] == 'holiday';
-            final isSpecial = holiday['type'] == 'special' || holiday['type'] == 'memorial';
-            
-            events[normalizedDate] = CalendarEventInfo(
-              date: normalizedDate,
-              holidayName: isHoliday ? holiday['name'] : existingEvent?.holidayName,
-              specialName: isSpecial ? holiday['name'] : existingEvent?.specialName,
-              auspiciousName: existingEvent?.auspiciousName,
-              isHoliday: isHoliday || (existingEvent?.isHoliday ?? false),
-              isSpecial: isSpecial || (existingEvent?.isSpecial ?? false),
-              isAuspicious: existingEvent?.isAuspicious ?? false,
-              auspiciousScore: existingEvent?.auspiciousScore,
-              description: holiday['description'] ?? existingEvent?.description,
-            );
-          }
+        for (final holiday in holidaysResponse) {
+          final date = DateTime.parse(holiday['date']);
+          final normalizedDate = DateTime(date.year, date.month, date.day);
+          
+          final existingEvent = events[normalizedDate];
+          final isHoliday = holiday['type'] == 'holiday';
+          final isSpecial = holiday['type'] == 'special' || holiday['type'] == 'memorial';
+          
+          events[normalizedDate] = CalendarEventInfo(
+            date: normalizedDate,
+            holidayName: isHoliday ? holiday['name'] : existingEvent?.holidayName,
+            specialName: isSpecial ? holiday['name'] : existingEvent?.specialName,
+            auspiciousName: existingEvent?.auspiciousName,
+            isHoliday: isHoliday || (existingEvent?.isHoliday ?? false),
+            isSpecial: isSpecial || (existingEvent?.isSpecial ?? false),
+            isAuspicious: existingEvent?.isAuspicious ?? false,
+            auspiciousScore: existingEvent?.auspiciousScore,
+            description: holiday['description'] ?? existingEvent?.description,
+          );
         }
-        
+              
         // Edge Function으로 손없는날 계산
         try {
           final auspiciousDays = await _calculateAuspiciousDaysFromEdgeFunction(month.year, month.month);
@@ -134,7 +132,6 @@ class HolidayService {
   /// Edge Function 실패시 사용할 fallback 손없는날 데이터
   void _addFallbackAuspiciousDays(Map<DateTime, CalendarEventInfo> events, DateTime month) {
     // 최소한의 손없는날 데이터 (음력 9,0일 근사치)
-    final startOfMonth = DateTime(month.year, month.month, 1);
     final endOfMonth = DateTime(month.year, month.month + 1, 0);
     
     for (int day = 1; day <= endOfMonth.day; day++) {

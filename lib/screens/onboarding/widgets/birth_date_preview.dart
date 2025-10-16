@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../utils/date_utils.dart';
-import '../../../core/theme/toss_design_system.dart';
 
 class BirthDatePreview extends StatelessWidget {
   final String birthYear;

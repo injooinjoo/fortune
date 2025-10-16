@@ -1,11 +1,6 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
-import '../../../../core/theme/toss_design_system.dart';
-import '../../core/theme/app_theme.dart';
-import '../../core/theme/app_theme_extensions.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../core/components/toss_fortune_loading_screen.dart';
 
@@ -14,10 +9,10 @@ class FortuneLoadingWidget extends StatelessWidget {
   final String fortuneType;
   
   const FortuneLoadingWidget({
-    Key? key,
+    super.key,
     this.message,
     this.fortuneType = 'default',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +28,10 @@ class SimpleLoadingIndicator extends StatelessWidget {
   final Color? color;
   
   const SimpleLoadingIndicator({
-    Key? key,
+    super.key,
     this.size = 24,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +48,7 @@ class SimpleLoadingIndicator extends StatelessWidget {
 }
 
 class FortuneSkeletonLoader extends StatefulWidget {
-  const FortuneSkeletonLoader({Key? key}) : super(key: key);
+  const FortuneSkeletonLoader({super.key});
 
   @override
   State<FortuneSkeletonLoader> createState() => _FortuneSkeletonLoaderState();

@@ -1,16 +1,7 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/theme/app_theme_extensions.dart';
-import '../../core/constants/fortune_type_names.dart';
-import '../../data/fortune_explanations.dart';
 import '../../presentation/providers/auth_provider.dart';
-import '../../presentation/providers/token_provider.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../services/ad_service.dart';
 import '../../core/utils/logger.dart';

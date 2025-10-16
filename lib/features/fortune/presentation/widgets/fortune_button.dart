@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../core/theme/toss_design_system.dart';
 import '../constants/fortune_button_spacing.dart';
 
 /// 운세 페이지 전용 버튼 컴포넌트

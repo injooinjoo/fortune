@@ -12,9 +12,9 @@ class DreamInputWidget extends ConsumerStatefulWidget {
   final VoidCallback? onSendPressed;
   
   const DreamInputWidget({
-    Key? key,
+    super.key,
     this.enabled = true,
-    this.onSendPressed}) : super(key: key);
+    this.onSendPressed});
 
   @override
   ConsumerState<DreamInputWidget> createState() => _DreamInputWidgetState();

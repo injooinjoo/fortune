@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +9,9 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 // import 'package:flutter_naver_login/flutter_naver_login.dart'; // Replaced with native implementation
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../core/utils/logger.dart';
 import '../core/config/environment.dart';
 import '../core/cache/profile_cache.dart';
-import '../core/utils/performance_monitor.dart';
 
 class SocialAuthService {
   final SupabaseClient _supabase;
@@ -67,7 +64,7 @@ class SocialAuthService {
       Logger.info('=== GOOGLE OAUTH SUPABASE INITIATED ===');
       return null;
       
-    } catch (error, stackTrace) {
+    } catch (error) {
       Logger.warning('[SocialAuthService] Google OAuth 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       Logger.warning('[SocialAuthService] Google OAuth 에러 타입 (선택적 기능, 다른 로그인 방법 사용 권장): ${error.runtimeType}');
       rethrow;
@@ -109,18 +106,14 @@ class SocialAuthService {
             // Use the direct session setting approach that works with Supabase
             try {
               // Create session URL format that Supabase expects
-              final sessionUrl = Uri.parse('$redirectUrl#access_token=$accessToken' + 
-                (refreshToken != null ? '&refresh_token=$refreshToken' : '') +
-                '&token_type=bearer&type=recovery');
+              final sessionUrl = Uri.parse('$redirectUrl#access_token=$accessToken${refreshToken != null ? '&refresh_token=$refreshToken' : ''}&token_type=bearer&type=recovery');
               
               Logger.info('Attempting getSessionFromUrl with formatted URL');
               final sessionResponse = await _supabase.auth.getSessionFromUrl(sessionUrl);
               
-              if (sessionResponse.session != null) {
-                Logger.info('✅ Session created successfully via getSessionFromUrl');
-                return AuthResponse(session: sessionResponse.session, user: sessionResponse.session?.user);
-              }
-            } catch (sessionUrlError) {
+              Logger.info('✅ Session created successfully via getSessionFromUrl');
+              return AuthResponse(session: sessionResponse.session, user: sessionResponse.session.user);
+                        } catch (sessionUrlError) {
               Logger.warning('getSessionFromUrl failed: $sessionUrlError');
             }
             
@@ -147,7 +140,7 @@ class SocialAuthService {
         if (code != null) {
           Logger.info('Found authorization code, processing with getSessionFromUrl');
           final sessionResponse = await _supabase.auth.getSessionFromUrl(uri);
-          return AuthResponse(session: sessionResponse.session, user: sessionResponse.session?.user);
+          return AuthResponse(session: sessionResponse.session, user: sessionResponse.session.user);
         }
       }
       
@@ -157,7 +150,7 @@ class SocialAuthService {
         final callbackUrl = '$redirectUrl?code=$authData';
         final uri = Uri.parse(callbackUrl);
         final sessionResponse = await _supabase.auth.getSessionFromUrl(uri);
-        return AuthResponse(session: sessionResponse.session, user: sessionResponse.session?.user);
+        return AuthResponse(session: sessionResponse.session, user: sessionResponse.session.user);
       }
       
       Logger.warning('No valid auth data format found');
@@ -268,14 +261,14 @@ class SocialAuthService {
         Logger.warning('[SocialAuthService] Apple 로그인 전체 오류 세부사항 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.toString()}');
         
         // Check for specific error code 1000
-        if (e.message?.contains('1000') ?? false || e.toString().contains('1000')) {
+        if (e.message.contains('1000') ?? false || e.toString().contains('1000')) {
           Logger.warning('[SocialAuthService] Apple 로그인 오류 1000 발생 (선택적 기능, 설정 확인 필요): 설정 문제 감지됨');
           Logger.warning('[SocialAuthService] Apple 로그인 설정 문제 (선택적 기능, 앱 ID 설정 확인 필요): 앱 ID 구성이 올바르지 않을 가능성');
           throw Exception('Apple ID 설정을 확인해주세요');
         }
         
         // Provide more specific error message if possible
-        if (e.message != null && e.message!.isNotEmpty) {
+        if (e.message.isNotEmpty) {
           throw Exception('Apple 로그인 오류: ${e.message}');
         }
         throw Exception('알 수 없는 오류가 발생했습니다. (${e.code})');
@@ -410,7 +403,7 @@ class SocialAuthService {
               // Don't throw - allow login to continue
             }
           } else {
-            throw insertError;
+            rethrow;
           }
         }
       } else {
@@ -630,7 +623,7 @@ class SocialAuthService {
           throw Exception('No session returned from Kakao OAuth');
         }
         
-        Logger.securityCheckpoint('Kakao OAuth: ${currentSession?.user?.id}');
+        Logger.securityCheckpoint('Kakao OAuth: ${currentSession.user.id}');
         
         // Return the auth response
         return AuthResponse(
@@ -761,7 +754,7 @@ class SocialAuthService {
     // Extract Kakao ID - use provided kakaoId first, then try metadata
     final effectiveKakaoId = kakaoId ?? 
                             user.userMetadata?['kakao_id'] ?? 
-                            user.appMetadata?['provider_id'] ??
+                            user.appMetadata['provider_id'] ??
                             user.id; // Fallback to user ID
     
     try {
@@ -929,7 +922,7 @@ class SocialAuthService {
             final authResponse = await _supabase.auth.setSession(refreshToken);
 
             if (authResponse.session != null) {
-              Logger.securityCheckpoint('Naver: ${authResponse.session?.user?.id}');
+              Logger.securityCheckpoint('Naver: ${authResponse.session?.user.id}');
               return authResponse;
             }
           }
@@ -972,17 +965,12 @@ class SocialAuthService {
       final uri = Uri.parse(sessionUrl);
       final sessionResponse = await _supabase.auth.getSessionFromUrl(uri);
       
-      if (sessionResponse.session == null) {
-        Logger.warning('[SocialAuthService] 토큰으로 세션 설정 실패 (선택적 기능, 재시도 권장): 토큰으로 세션 설정 실패');
-        throw Exception('Failed to create session from Naver OAuth tokens');
-      }
-      
-      Logger.securityCheckpoint('Naver: ${sessionResponse.session?.user?.id}');
+      Logger.securityCheckpoint('Naver: ${sessionResponse.session.user.id}');
       
       // Return the auth response
       return AuthResponse(
         session: sessionResponse.session,
-        user: sessionResponse.session?.user
+        user: sessionResponse.session.user
       );
       
     } catch (error) {

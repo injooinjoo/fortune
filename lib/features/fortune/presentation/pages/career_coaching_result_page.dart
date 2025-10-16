@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/career_coaching_model.dart';
 import '../../../../services/career_coaching_service.dart';
@@ -521,7 +520,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                           ],
                         ),
                       ),
-                    ).toList(),
+                    ),
                     
                     const SizedBox(height: 12),
                     
@@ -620,7 +619,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                         ],
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: 40,
                       child: Icon(Icons.arrow_forward, 
                         color: TossDesignSystem.tossBlue),
@@ -720,7 +719,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                       ],
                     ),
                   ),
-                ).toList(),
+                ),
               ],
             ),
           ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1),
@@ -798,7 +797,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                       ],
                     ),
                   ),
-                ).toList(),
+                ),
               ],
             ),
           ).animate(delay: 100.ms).fadeIn(duration: 500.ms).slideY(begin: 0.1),

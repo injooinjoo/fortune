@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:provider/provider.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
-import '../../../../presentation/providers/auth_provider.dart';
-import '../widgets/fortune_content_card.dart';
-import 'base_fortune_page.dart';
 
 class PoliticianFortunePage extends StatefulWidget {
   const PoliticianFortunePage({super.key});

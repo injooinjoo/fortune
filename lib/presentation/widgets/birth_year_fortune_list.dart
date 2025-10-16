@@ -2,7 +2,6 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/fortune.dart';
-import '../../core/theme/app_theme.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
 
 class BirthYearFortuneList extends StatelessWidget {
@@ -11,11 +10,11 @@ class BirthYearFortuneList extends StatelessWidget {
   final String? currentUserZodiac;
 
   const BirthYearFortuneList({
-    Key? key,
+    super.key,
     required this.fortunes,
     this.title,
     this.currentUserZodiac,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +35,7 @@ class BirthYearFortuneList extends StatelessWidget {
             ),
           ),
         ],
-        Container(
+        SizedBox(
           height: AppSpacing.spacing24 * 1.25,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -62,10 +61,10 @@ class BirthYearFortuneCard extends StatelessWidget {
   final bool isHighlighted;
 
   const BirthYearFortuneCard({
-    Key? key,
+    super.key,
     required this.fortune,
     this.isHighlighted = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -211,9 +210,9 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
   final BirthYearFortune fortune;
 
   const BirthYearFortuneDetailCard({
-    Key? key,
+    super.key,
     required this.fortune,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

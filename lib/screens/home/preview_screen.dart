@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:go_router/go_router.dart';
 import '../../core/theme/toss_theme.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../services/social_auth_service.dart';
@@ -24,7 +22,7 @@ class PreviewScreen extends StatefulWidget {
 
 class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateMixin {
   late final SocialAuthService _socialAuthService;
-  bool _isLoading = false;
+  final bool _isLoading = false;
   bool _bottomSheetLoading = false;
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -326,7 +324,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                       const SizedBox(height: 48),
                       
                       // Preview button
-                      Container(
+                      SizedBox(
                         width: double.infinity,
                         height: 58,
                         child: ElevatedButton(

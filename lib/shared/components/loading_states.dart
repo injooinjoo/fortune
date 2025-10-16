@@ -8,10 +8,10 @@ class LoadingIndicator extends StatelessWidget {
   final double strokeWidth;
 
   const LoadingIndicator({
-    Key? key,
+    super.key,
     this.size = 40,
     this.color,
-    this.strokeWidth = 3}) : super(key: key);
+    this.strokeWidth = 3});
 
   @override
   Widget build(BuildContext context) {
@@ -68,11 +68,11 @@ class TossLoadingOverlay extends StatelessWidget {
   final String? message;
 
   const TossLoadingOverlay({
-    Key? key,
+    super.key,
     required this.isLoading,
     required this.child,
     this.message,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -128,12 +128,12 @@ class SkeletonLoader extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
 
   const SkeletonLoader({
-    Key? key,
+    super.key,
     this.width,
     this.height,
     this.borderRadius,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -164,10 +164,10 @@ class CardSkeleton extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
 
   const CardSkeleton({
-    Key? key,
+    super.key,
     this.height,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +206,7 @@ class CardSkeleton extends StatelessWidget {
 }
 
 class FortuneResultSkeleton extends StatelessWidget {
-  const FortuneResultSkeleton({Key? key}) : super(key: key);
+  const FortuneResultSkeleton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -343,11 +343,11 @@ class ListItemSkeleton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
 
   const ListItemSkeleton({
-    Key? key,
+    super.key,
     this.itemCount = 5,
     this.itemHeight = 80,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -404,12 +404,12 @@ class GridSkeleton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
 
   const GridSkeleton({
-    Key? key,
+    super.key,
     this.itemCount = 6,
     this.crossAxisCount = 2,
     this.childAspectRatio = 1,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

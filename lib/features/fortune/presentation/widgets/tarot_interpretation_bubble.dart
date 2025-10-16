@@ -12,11 +12,11 @@ class TarotInterpretationBubble extends StatefulWidget {
   final VoidCallback? onTap;
 
   const TarotInterpretationBubble({
-    Key? key,
+    super.key,
     required this.interpretation,
     required this.isCurrentCard,
     required this.fontScale,
-    this.onTap}) : super(key: key);
+    this.onTap});
 
   @override
   State<TarotInterpretationBubble> createState() => _TarotInterpretationBubbleState();
@@ -199,7 +199,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                             padding: EdgeInsets.only(
                               bottom: index < lines.length - 1 ? 12 : 0),
                             child: _buildInterpretationLine(line));
-                        }).toList(),
+                        }),
                       ],
                       
                       // Show more/less button

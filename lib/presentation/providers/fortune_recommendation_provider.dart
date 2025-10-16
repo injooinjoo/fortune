@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import '../../data/models/fortune_card_score.dart';
-import '../../data/models/user_profile.dart';
 import '../../core/constants/edge_functions_endpoints.dart';
-import '../../core/config/environment.dart';
 import '../../core/utils/logger.dart';
-import '../../services/storage_service.dart';
 import '../../services/analytics_service.dart';
 import 'user_profile_notifier.dart' as profile_notifier;
 import '../../features/fortune/presentation/pages/fortune_list_page.dart';
@@ -109,7 +106,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
         throw Exception('Failed to fetch recommendations: ${response.statusCode}');
       }
       */
-    } catch (error, stackTrace) {
+    } catch (error) {
       // This catch block should not be reached since API is disabled above
       // But keeping it for future API implementation
       Logger.warning('Fortune recommendations API disabled - using empty fallback');

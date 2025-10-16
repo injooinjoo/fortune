@@ -104,7 +104,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                 final index = entry.key;
                 final fortune = entry.value;
                 return _buildFortuneItem(fortune, index);
-              }).toList(),
+              }),
               
               const SizedBox(height: TossTheme.spacingM),
               
@@ -195,7 +195,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${startAge}세 - ${endAge}세',
+                            '$startAge세 - $endAge세',
                             style: TossTheme.body2.copyWith(
                               fontWeight: FontWeight.bold,
                               color: isCurrent ? TossTheme.brandBlue : TossTheme.textBlack,

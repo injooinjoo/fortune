@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,8 +8,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../presentation/widgets/social_share_bottom_sheet.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
 
 class TalismanShareService {

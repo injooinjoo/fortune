@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 // import 'package:fortune/core/utils/formatters.dart';
 import 'package:intl/intl.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../domain/models/fortune_history.dart';
 
 class UserStatistics {
   final int totalCount;
@@ -28,9 +26,9 @@ class StatisticsDashboard extends StatelessWidget {
   final double fontScale;
 
   const StatisticsDashboard({
-    Key? key,
+    super.key,
     required this.statistics,
-    required this.fontScale}) : super(key: key);
+    required this.fontScale});
 
   @override
   Widget build(BuildContext context) {

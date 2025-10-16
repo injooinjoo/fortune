@@ -1,16 +1,13 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../glassmorphism/glass_container.dart';
 // import 'daily_token_claim_widget.dart'; // defined in same file
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 
 class DailyTokenBanner extends ConsumerWidget {
-  const DailyTokenBanner({Key? key}) : super(key: key);
+  const DailyTokenBanner({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -122,7 +119,7 @@ class DailyTokenBanner extends ConsumerWidget {
 }
 
 class DailyTokenClaimWidget extends ConsumerStatefulWidget {
-  const DailyTokenClaimWidget({Key? key}) : super(key: key);
+  const DailyTokenClaimWidget({super.key});
   
   @override
   ConsumerState<DailyTokenClaimWidget> createState() => _DailyTokenClaimWidgetState();

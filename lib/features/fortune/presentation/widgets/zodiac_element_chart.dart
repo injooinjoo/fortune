@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/zodiac_compatibility_service.dart';
@@ -10,10 +9,10 @@ class ZodiacElementChart extends StatefulWidget {
   final bool showAnimation;
 
   const ZodiacElementChart({
-    Key? key,
+    super.key,
     required this.selectedZodiac,
     this.showAnimation = true,
-  }) : super(key: key);
+  });
 
   @override
   State<ZodiacElementChart> createState() => _ZodiacElementChartState();
@@ -443,7 +442,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                       ),
                     ),
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),

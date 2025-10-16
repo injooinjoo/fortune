@@ -3,7 +3,6 @@ import '../core/constants/ab_test_events.dart';
 import '../core/utils/logger.dart';
 import 'analytics_service.dart';
 import 'ab_test_manager.dart';
-import 'remote_config_service.dart';
 
 /// 통합 Analytics 트래커
 /// Google Analytics와 A/B Test를 통합하여 사용자 동선을 완벽하게 추적

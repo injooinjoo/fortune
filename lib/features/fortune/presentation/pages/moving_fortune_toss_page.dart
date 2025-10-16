@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/providers.dart';
-import '../../../../data/services/fortune_api_service.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';

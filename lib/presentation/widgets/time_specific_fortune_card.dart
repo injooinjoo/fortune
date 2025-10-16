@@ -196,7 +196,7 @@ class _TimeSpecificFortuneListState extends State<TimeSpecificFortuneList> {
               });
             },
           );
-        }).toList(),
+        }),
       ],
     );
   }

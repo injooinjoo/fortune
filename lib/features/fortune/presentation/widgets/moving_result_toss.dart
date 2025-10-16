@@ -386,7 +386,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

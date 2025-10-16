@@ -3,7 +3,6 @@ import '../../features/interactive/presentation/pages/interactive_list_page.dart
 import '../../features/interactive/presentation/pages/fortune_cookie_page.dart';
 import '../../features/interactive/presentation/pages/dream_interpretation_page.dart';
 import '../../features/interactive/presentation/pages/psychology_test_page.dart';
-import '../../features/interactive/presentation/pages/tarot_card_page.dart';
 import '../../features/interactive/presentation/pages/tarot_chat_page.dart';
 import '../../features/interactive/presentation/pages/tarot_animated_flow_page.dart';
 import '../../features/fortune/presentation/pages/tarot_storytelling_page.dart';

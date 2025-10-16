@@ -10,13 +10,13 @@ class GlassCard extends StatelessWidget {
   final Gradient? gradient; // Deprecated, kept for compatibility
 
   const GlassCard({
-    Key? key,
+    super.key,
     required this.child,
     this.padding,
     this.width,
     this.height,
     this.gradient, // Deprecated, ignored in Toss design
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +48,13 @@ class GlassButton extends StatelessWidget {
   final double? height;
 
   const GlassButton({
-    Key? key,
+    super.key,
     required this.child,
     this.onPressed,
     this.padding,
     this.width,
     this.height,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +98,7 @@ class GlassContainer extends StatelessWidget {
   final double? height;
 
   const GlassContainer({
-    Key? key,
+    super.key,
     required this.child,
     this.padding,
     this.borderRadius,
@@ -109,7 +109,7 @@ class GlassContainer extends StatelessWidget {
     this.gradient, // Deprecated, ignored in Toss design
     this.width,
     this.height,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

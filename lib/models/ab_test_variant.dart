@@ -51,11 +51,10 @@ class ABTestVariant extends Equatable {
 /// Control Group (대조군) 변형
 class ControlVariant extends ABTestVariant {
   const ControlVariant({
-    required Map<String, dynamic> parameters,
+    required super.parameters,
   }) : super(
           id: 'control',
           name: 'Control Group',
-          parameters: parameters,
           weight: 1.0,
         );
 }

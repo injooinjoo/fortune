@@ -1,8 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../core/constants/tarot_minor_arcana.dart';
-import '../../../../core/constants/edge_functions_endpoints.dart';
-import '../../../../data/services/fortune_api_service_edge_functions.dart';
 import '../../../../presentation/providers/providers.dart';
 
 class TarotInterpretationRequest {

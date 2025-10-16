@@ -13,11 +13,11 @@ class MbtiCompatibilityMatrix extends StatefulWidget {
   final bool showAnimation;
 
   const MbtiCompatibilityMatrix({
-    Key? key,
+    super.key,
     this.selectedType1,
     this.selectedType2,
     required this.onPairSelected,
-    this.showAnimation = true}) : super(key: key);
+    this.showAnimation = true});
 
   @override
   State<MbtiCompatibilityMatrix> createState() => _MbtiCompatibilityMatrixState();
@@ -211,7 +211,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                             ),
                           ),
                         );
-                      }).toList()]),
+                      })]),
                   const SizedBox(height: AppSpacing.spacing2 * 1.25),
                   // 매트릭스 본체
                   ..._mbtiTypes.map((type1) {
@@ -278,10 +278,10 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                               ),
                             ),
                           );
-                        }).toList(),
+                        }),
                       ],
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
@@ -428,7 +428,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                             : TossDesignSystem.white.withValues(alpha: 0.8),
                       ),
                     ),
-                  )).toList(),
+                  )),
                 ],
               ),
             ),
@@ -456,7 +456,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                             : TossDesignSystem.white.withValues(alpha: 0.8),
                       ),
                     ),
-                  )).toList(),
+                  )),
                 ],
               ),
             ),

@@ -12,11 +12,11 @@ class DreamTimelineWidget extends StatefulWidget {
   final bool showAnimation;
 
   const DreamTimelineWidget({
-    Key? key,
+    super.key,
     required this.emotionalFlow,
     required this.scenes,
     this.showAnimation = true,
-  }) : super(key: key);
+  });
 
   @override
   State<DreamTimelineWidget> createState() => _DreamTimelineWidgetState();
@@ -373,7 +373,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
               ),
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

@@ -219,7 +219,7 @@ class FamilyRelationshipChart extends StatelessWidget {
             );
           }
           return const SizedBox.shrink();
-        }).toList(),
+        }),
       ],
     );
   }

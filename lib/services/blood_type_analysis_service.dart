@@ -104,8 +104,8 @@ class BloodTypeAnalysisService {
   
   // 혈액형 조합별 특별한 시너지
   static Map<String, dynamic> getSpecialSynergy(String type1, String rh1, String type2, String rh2) {
-    final key = '${type1}${rh1}-${type2}${rh2}';
-    final reverseKey = '${type2}${rh2}-${type1}${rh1}';
+    final key = '$type1$rh1-$type2$rh2';
+    final reverseKey = '$type2$rh2-$type1$rh1';
     
     final synergies = {
       'A+-A+': {

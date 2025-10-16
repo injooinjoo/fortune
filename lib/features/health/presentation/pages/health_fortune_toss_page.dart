@@ -17,7 +17,6 @@ import '../../../../services/ad_service.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart' as core_fortune;
-import '../../../../domain/entities/fortune.dart';
 
 class HealthFortuneTossPage extends ConsumerStatefulWidget {
   const HealthFortuneTossPage({super.key});
@@ -324,7 +323,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
           ...ConditionState.values.map((condition) {
             final index = ConditionState.values.indexOf(condition);
             return _buildConditionOption(condition, index);
-          }).toList(),
+          }),
           
           const SizedBox(height: 32),
           
@@ -766,7 +765,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -838,7 +837,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

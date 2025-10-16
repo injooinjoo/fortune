@@ -21,7 +21,7 @@ class TarotResultView extends ConsumerStatefulWidget {
   final VoidCallback? onShare;
 
   const TarotResultView({
-    Key? key,
+    super.key,
     required this.selectedCards,
     required this.selectedDeck,
     this.question,
@@ -29,7 +29,7 @@ class TarotResultView extends ConsumerStatefulWidget {
     this.readingResult,
     this.isLoading = false,
     this.onNewReading,
-    this.onShare}) : super(key: key);
+    this.onShare});
 
   @override
   ConsumerState<TarotResultView> createState() => _TarotResultViewState();
@@ -131,7 +131,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
   }
 
   Widget _buildCardsDisplay(ThemeData theme, double fontScale) {
-    return Container(
+    return SizedBox(
       height: 200,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,

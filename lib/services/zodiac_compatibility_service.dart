@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 
 class ZodiacCompatibilityService {
   // 12지신 (십이지,

@@ -11,13 +11,13 @@ class TarotDeckFanWidget extends StatefulWidget {
   final int? selectedIndex;
 
   const TarotDeckFanWidget({
-    Key? key,
+    super.key,
     this.cardCount = 22, // Major Arcana
     this.cardWidth = 120,
     this.cardHeight = 200,
     required this.onCardTap,
     this.scrollController,
-    this.selectedIndex}) : super(key: key);
+    this.selectedIndex});
 
   @override
   State<TarotDeckFanWidget> createState() => _TarotDeckFanWidgetState();

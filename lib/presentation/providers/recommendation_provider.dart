@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/user_profile.dart';
-import '../../services/storage_service.dart';
 import 'providers.dart';
 
 // 추천 운세 모델

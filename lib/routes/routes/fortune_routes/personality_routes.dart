@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import '../../../features/fortune/presentation/pages/celebrity_fortune_enhanced_page.dart';
 import '../../../features/fortune/presentation/pages/celebrity_fortune_page_v2.dart';
 import '../../../features/fortune/presentation/pages/same_birthday_celebrity_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/personality_dna_page.dart';

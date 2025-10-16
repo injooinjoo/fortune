@@ -426,7 +426,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
         ...options.map((option) => Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: _buildUploadOptionButton(option, isDark),
-        )).toList(),
+        )),
       ],
     );
   }

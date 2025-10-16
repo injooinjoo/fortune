@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'five_elements_explanation_bottom_sheet.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
 
 class FiveElementsWidget extends ConsumerWidget {
@@ -230,7 +229,7 @@ class FiveElementsWidget extends ConsumerWidget {
                       SizedBox(width: AppSpacing.spacing5),
                     ],
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),

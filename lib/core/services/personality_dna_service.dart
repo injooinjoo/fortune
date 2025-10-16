@@ -98,13 +98,13 @@ class PersonalityDNAService {
       gradientColors: List<Color>.from(dnaInfo['colors']),
       scores: Map<String, int>.from(dnaInfo['scores']),
       todaysFortune: dnaInfo['todaysFortune'],
-      todayHighlight: '오늘은 ${mbti}의 특별한 매력이 빛나는 날입니다!',
+      todayHighlight: '오늘은 $mbti의 특별한 매력이 빛나는 날입니다!',
       loveStyle: loveStyle,
       workStyle: workStyle,
       dailyMatching: dailyMatching,
       compatibility: compatibility,
       celebrity: celebrity,
-      funnyFact: '${mbti}는 전체 인구의 ${_getMBTIPopulation(mbti)}%를 차지합니다!',
+      funnyFact: '$mbti는 전체 인구의 ${_getMBTIPopulation(mbti)}%를 차지합니다!',
       popularityRank: _getMBTIPopularityRank(mbti),
     );
   }
@@ -214,7 +214,7 @@ class PersonalityDNAService {
     };
     
     // 운세 메시지 생성
-    final todaysFortune = '${animalInfo['name']}의 기운과 ${mbti}의 특성이 조화롭게 어우러져 ${bloodInfo['personality']} 하루를 만들어갈 것입니다.';
+    final todaysFortune = '${animalInfo['name']}의 기운과 $mbti의 특성이 조화롭게 어우러져 ${bloodInfo['personality']} 하루를 만들어갈 것입니다.';
     
     return {
       'title': title,
@@ -620,9 +620,9 @@ class PersonalityDNAService {
     };
     
     return dailyMatchings[mbti] ?? DailyMatching(
-      cafeMenu: '${mbti}가 좋아할만한 특별한 메뉴',
-      netflixGenre: '${mbti} 취향저격 장르',
-      weekendActivity: '${mbti}만의 완벽한 주말',
+      cafeMenu: '$mbti가 좋아할만한 특별한 메뉴',
+      netflixGenre: '$mbti 취향저격 장르',
+      weekendActivity: '$mbti만의 완벽한 주말',
     );
   }
   

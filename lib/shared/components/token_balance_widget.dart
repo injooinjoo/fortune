@@ -7,7 +7,7 @@ import '../../presentation/providers/token_provider.dart';
 import '../../presentation/providers/soul_animation_provider.dart';
 
 class TokenBalanceWidget extends ConsumerWidget {
-  const TokenBalanceWidget({Key? key}) : super(key: key);
+  const TokenBalanceWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -81,7 +81,7 @@ class TokenBalanceWidget extends ConsumerWidget {
 }
 
 class FullTokenBalanceWidget extends ConsumerWidget {
-  const FullTokenBalanceWidget({Key? key}) : super(key: key);
+  const FullTokenBalanceWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -192,7 +192,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
 
 // Token balance stats widget
 class TokenBalanceStats extends ConsumerWidget {
-  const TokenBalanceStats({Key? key}) : super(key: key);
+  const TokenBalanceStats({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

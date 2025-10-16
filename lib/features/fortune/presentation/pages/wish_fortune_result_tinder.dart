@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:math' as math;
 
 import '../../domain/models/wish_fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -388,7 +387,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
               ],
             ),
           ).animate().fadeIn(delay: (300 + index * 100).ms).slideX(begin: 0.3, end: 0);
-        }).toList(),
+        }),
 
         const SizedBox(height: 40),
       ],

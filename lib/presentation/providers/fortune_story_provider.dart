@@ -6,7 +6,6 @@ import '../../screens/home/fortune_story_viewer.dart';
 import '../../domain/entities/fortune.dart' as fortune_entity;
 import '../../domain/entities/user_profile.dart';
 import '../../core/utils/logger.dart';
-import 'auth_provider.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -147,7 +146,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
       );
 
       Logger.info('✅ Fortune story generated successfully');
-      Logger.info('📦 Final segments count: ${segments?.length}');
+      Logger.info('📦 Final segments count: ${segments.length}');
     } catch (e) {
       Logger.error('❌ Error generating fortune story: $e');
       
@@ -439,7 +438,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
 
     // 1. 인사
     segments.add(StorySegment(
-      text: userName.isNotEmpty ? userName + '님' : '오늘의 주인공',
+      text: userName.isNotEmpty ? '$userName님' : '오늘의 주인공',
       fontSize: 36,
       fontWeight: FontWeight.w200,
     ));
@@ -464,8 +463,8 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     List<String> fortuneTexts = [];
     
     // 1. content를 3개로 분할
-    if (fortune.content != null && fortune.content!.isNotEmpty) {
-      final sentences = fortune.content!.split('. ');
+    if (fortune.content.isNotEmpty) {
+      final sentences = fortune.content.split('. ');
       final chunkSize = (sentences.length / 3).ceil();
       
       for (int i = 0; i < 3; i++) {
@@ -612,7 +611,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
 
     // 1. 인사
     segments.add(StorySegment(
-      text: userName.isNotEmpty ? userName + '님' : '오늘의 주인공',
+      text: userName.isNotEmpty ? '$userName님' : '오늘의 주인공',
       fontSize: 36,
       fontWeight: FontWeight.w200,
     ));
@@ -641,8 +640,8 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     List<String> fortuneTexts = [];
     
     // 1. 메인 운세 내용 활용
-    if (fortune.content != null && fortune.content!.isNotEmpty) {
-      final sentences = fortune.content!.split('. ');
+    if (fortune.content.isNotEmpty) {
+      final sentences = fortune.content.split('. ');
       // 문장들을 3개 그룹으로 나누어 각각 다른 페이지에 표시
       final chunkSize = (sentences.length / 3).ceil();
       
@@ -703,7 +702,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
       final indexSeed = dateSeed + fortuneTexts.length;
       final randomIndex = (indexSeed % 1000) / 1000.0;
       
-      if (fortuneTexts.length == 0) {
+      if (fortuneTexts.isEmpty) {
         final options = score >= 80 ? [
           '오늘 당신에게는\n새로운 기회가\n찾아올 것입니다.\n\n용기를 내어\n도전해보세요.',
           '밝은 에너지가\n넘치는 하루입니다.\n\n당신의 열정이\n주변을 밝게 할 거예요.',
@@ -947,16 +946,16 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
       } else {
         // 실제 운세 데이터로 추가 페이지 생성
         String additionalText;
-        if (fortune.content != null && fortune.content!.isNotEmpty) {
+        if (fortune.content.isNotEmpty) {
           // content에서 추가 문장 사용
-          final sentences = fortune.content!.split('.');
+          final sentences = fortune.content.split('.');
           final randomIndex = (segments.length - 3) % sentences.length;
-          additionalText = sentences[randomIndex].trim() + '.';
+          additionalText = '${sentences[randomIndex].trim()}.';
         } else if (fortune.description != null && fortune.description!.isNotEmpty) {
           // description에서 추가 문장 사용
           final sentences = fortune.description!.split('.');
           final randomIndex = (segments.length - 3) % sentences.length;
-          additionalText = sentences[randomIndex].trim() + '.';
+          additionalText = '${sentences[randomIndex].trim()}.';
         } else {
           additionalText = '긍정적인 마음으로\n하루를 시작하세요';
         }

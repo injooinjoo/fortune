@@ -39,7 +39,7 @@ abstract class BaseFortunePage extends ConsumerStatefulWidget {
   final Color? backgroundColor;
 
   const BaseFortunePage({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     required this.fortuneType,
@@ -47,7 +47,7 @@ abstract class BaseFortunePage extends ConsumerStatefulWidget {
     this.showShareButton = true,
     this.showFontSizeSelector = false,
     this.initialParams,
-    this.backgroundColor}) : super(key: key);
+    this.backgroundColor});
 }
 
 abstract class BaseFortunePageState<T extends BaseFortunePage>
@@ -196,8 +196,9 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       // 태그 생성
       final tags = <String>[fortuneTypeName, '${now.year}년${now.month}월'];
       final score = fortune.overallScore ?? 75;
-      if (score >= 90) tags.add('최고운');
-      else if (score >= 80) tags.add('대길');
+      if (score >= 90) {
+        tags.add('최고운');
+      } else if (score >= 80) tags.add('대길');
       else if (score >= 70) tags.add('길');
       else if (score >= 60) tags.add('보통');
       else tags.add('주의');
@@ -724,7 +725,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -860,7 +861,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

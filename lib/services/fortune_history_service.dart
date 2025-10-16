@@ -64,7 +64,7 @@ class FortuneHistoryService {
       Logger.info('[FortuneHistoryService] Fortune saved to history: $fortuneType ($fortuneId)');
       return fortuneId;
 
-    } catch (error, stackTrace) {
+    } catch (error) {
       Logger.warning('[FortuneHistoryService] 운세 히스토리 저장 실패 (테이블 없음, 폴백 모드): $error');
       return null;
     }
@@ -128,8 +128,9 @@ class FortuneHistoryService {
     // 점수 기반 태그
     final score = summary['score'] as int?;
     if (score != null) {
-      if (score >= 90) tags.add('최고운');
-      else if (score >= 80) tags.add('대길');
+      if (score >= 90) {
+        tags.add('최고운');
+      } else if (score >= 80) tags.add('대길');
       else if (score >= 70) tags.add('길');
       else if (score >= 60) tags.add('보통');
       else if (score >= 40) tags.add('소흉');
@@ -298,7 +299,7 @@ class FortuneHistoryService {
       Logger.info('[FortuneHistoryService] Daily fortune saved: $title ($historyId)');
       return historyId;
 
-    } catch (error, stackTrace) {
+    } catch (error) {
       Logger.warning('[FortuneHistoryService] 일일 운세 저장 실패 (테이블 없음, 폴백 모드): $error');
       return null;
     }
@@ -369,7 +370,7 @@ class FortuneHistoryService {
       Logger.info('[FortuneHistoryService] Retrieved 7 days scores from history DB: $scores');
       return scores;
 
-    } catch (error, stackTrace) {
+    } catch (error) {
       Logger.warning('[FortuneHistoryService] 7일 점수 조회 실패 (RPC 함수 없음, 폴백 데이터 사용): $error');
       _cachedDailyScores = List.filled(7, 0);
       _lastCacheTime = now;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import 'package:fl_chart/fl_chart.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/zodiac_compatibility_service.dart';
 
@@ -11,12 +10,12 @@ class ZodiacCompatibilityMatrix extends StatefulWidget {
   final bool showAnimation;
 
   const ZodiacCompatibilityMatrix({
-    Key? key,
+    super.key,
     this.selectedZodiac1,
     this.selectedZodiac2,
     required this.onPairSelected,
     this.showAnimation = true,
-  }) : super(key: key);
+  });
 
   @override
   State<ZodiacCompatibilityMatrix> createState() => _ZodiacCompatibilityMatrixState();

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../data/models/pet_profile.dart';
 import '../../../../providers/pet_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
@@ -39,7 +37,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   late Animation<double> _scaleAnimation;
   
   bool _isInitialized = false;
-  bool _showAddPetForm = false;
+  final bool _showAddPetForm = false;
   Fortune? _fortune;
   
   // Pet registration form controllers

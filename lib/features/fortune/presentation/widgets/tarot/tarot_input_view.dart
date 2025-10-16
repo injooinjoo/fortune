@@ -13,11 +13,11 @@ class TarotInputView extends ConsumerStatefulWidget {
   final String? initialQuestion;
 
   const TarotInputView({
-    Key? key,
+    super.key,
     required this.onProceed,
     required this.onQuestionChanged,
     this.initialQuestion,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<TarotInputView> createState() => _TarotInputViewState();

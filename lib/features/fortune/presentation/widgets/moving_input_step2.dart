@@ -224,7 +224,7 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
                         ],
                       ),
                     ),
-                  )).toList(),
+                  )),
                 ],
               ),
             ),

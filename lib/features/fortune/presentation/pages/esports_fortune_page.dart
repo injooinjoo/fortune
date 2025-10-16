@@ -25,9 +25,8 @@ class EsportsFortunePage extends BaseFortunePage {
   final GameType initialGame;
   
   const EsportsFortunePage({
-    Key? key,
+    super.key,
     this.initialGame = GameType.lol}) : super(
-          key: key,
           title: 'e스포츠 운세',
           description: '오늘의 게임 운세를 확인하고 승리를 향해 나아가세요!',
           fortuneType: 'lucky-esports',
@@ -169,7 +168,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
   }
 
   Widget _buildGameSelector() {
-    return Container(
+    return SizedBox(
       height: 100,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -335,7 +334,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
   }
 
   Widget _buildScoreGauge(int score) {
-    return Container(
+    return SizedBox(
       width: 80,
       height: 80,
       child: Stack(
@@ -547,7 +546,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             const SizedBox(height: 16),
             ..._lckSchedule!.take(3).map((match) => 
               _buildMatchItem(match)
-            ).toList()
+            )
           ])
       )
     );
@@ -627,7 +626,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
               ],
             ),
             const SizedBox(height: 16),
-            ..._gameTips.map((tip) => _buildTipItem(tip)).toList(),
+            ..._gameTips.map((tip) => _buildTipItem(tip)),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),

@@ -18,8 +18,8 @@ class LoveInputStep3Page extends StatefulWidget {
 
 class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
   RangeValues _preferredAgeRange = const RangeValues(20, 30);
-  Set<String> _preferredPersonality = {};
-  Set<MeetingPlace> _preferredMeetingPlaces = {};
+  final Set<String> _preferredPersonality = {};
+  final Set<MeetingPlace> _preferredMeetingPlaces = {};
   RelationshipGoal? _relationshipGoal;
 
   final List<String> _personalityTraits = [

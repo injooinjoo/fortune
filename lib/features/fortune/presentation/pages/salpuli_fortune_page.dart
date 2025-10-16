@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:math' as math;
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
@@ -10,10 +9,9 @@ import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 class SalpuliFortunePage extends BaseFortunePage {
-  const SalpuliFortunePage({Key? key})
+  const SalpuliFortunePage({super.key})
       : super(
-          key: key,
-    title: '살풀이 운세',
+          title: '살풀이 운세',
           description: '액운을 막고 행운을 부르는 전통 운세',
           fortuneType: 'salpuli',
           requiresUserInfo: true
@@ -26,7 +24,7 @@ class SalpuliFortunePage extends BaseFortunePage {
 class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> {
   String? _recentBadLuck;
   String? _worryType;
-  List<String> _selectedSymptoms = [];
+  final List<String> _selectedSymptoms = [];
   String? _birthTime;
   bool _hasAncestralRites = false;
   bool _hasMovedRecently = false;
@@ -734,7 +732,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                   )
                 )
               );
-            }).toList()
+            })
           ]
         )
       )
@@ -864,7 +862,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                   ]
                 )
               )
-            )).toList()
+            ))
           ]
         )
       )
@@ -1093,7 +1091,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                   ]
                 )
               )
-            )).toList()
+            ))
           ]
         )
       )

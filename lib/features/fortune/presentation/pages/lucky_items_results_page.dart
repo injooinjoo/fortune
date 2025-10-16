@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../services/weather_service.dart';
 import 'dart:math';
 
 class LuckyItemsResultsPage extends ConsumerStatefulWidget {

@@ -181,7 +181,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                 final count = tenshinEntry.value as int;
                 
                 return _buildTenshinBar(tenshin, count, index);
-              }).toList(),
+              }),
               
               const SizedBox(height: TossTheme.spacingL),
               
@@ -356,7 +356,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: '$dominantTenshin',
+                    text: dominantTenshin,
                     style: TossTheme.body2.copyWith(
                       fontWeight: FontWeight.bold,
                       color: dominantInfo['color'] as Color,

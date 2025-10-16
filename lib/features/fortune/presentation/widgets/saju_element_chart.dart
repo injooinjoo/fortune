@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'dart:math' as math;
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/components/toss_card.dart';
 
@@ -126,7 +125,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
     final totalCount = widget.elementBalance.values.fold<int>(0, (sum, count) => sum + (count as int));
     
     if (totalCount == 0) {
-      return Container(
+      return SizedBox(
         height: 150,
         child: Center(
           child: Text(
@@ -139,7 +138,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
       );
     }
 
-    return Container(
+    return SizedBox(
       height: 150,
       child: PieChart(
         PieChartData(

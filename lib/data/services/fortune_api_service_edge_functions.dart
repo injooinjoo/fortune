@@ -255,7 +255,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       
       return fortune;
       
-    } catch (e, stackTrace) {
+    } catch (e) {
       // Debug info
       // Debug info
       
@@ -688,21 +688,19 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       final endpoint = EdgeFunctionsEndpoints.getEndpointForType(fortuneType);
       debugPrint('📍 [FortuneApiServiceWithEdgeFunctions] Endpoint for $fortuneType: $endpoint');
 
-      if (endpoint != null) {
-        debugPrint('🚀 [FortuneApiServiceWithEdgeFunctions] Using Edge Function: $endpoint');
-        try {
-          return await _getFortuneFromEdgeFunction(
-            endpoint: endpoint,
-            userId: userId,
-            fortuneType: fortuneType,
-            data: params);
-        } catch (e) {
-          debugPrint('❌ [FortuneApiServiceWithEdgeFunctions] Edge Function failed: $e');
-          debugPrint('🔄 [FortuneApiServiceWithEdgeFunctions] Falling back to traditional API');
-          return super.getFortune(userId: userId, fortuneType: fortuneType, params: params);
-        }
+      debugPrint('🚀 [FortuneApiServiceWithEdgeFunctions] Using Edge Function: $endpoint');
+      try {
+        return await _getFortuneFromEdgeFunction(
+          endpoint: endpoint,
+          userId: userId,
+          fortuneType: fortuneType,
+          data: params);
+      } catch (e) {
+        debugPrint('❌ [FortuneApiServiceWithEdgeFunctions] Edge Function failed: $e');
+        debugPrint('🔄 [FortuneApiServiceWithEdgeFunctions] Falling back to traditional API');
+        return super.getFortune(userId: userId, fortuneType: fortuneType, params: params);
       }
-    }
+        }
 
     debugPrint('📡 [FortuneApiServiceWithEdgeFunctions] Using traditional API');
     return super.getFortune(userId: userId, fortuneType: fortuneType, params: params);

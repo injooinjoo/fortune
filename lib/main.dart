@@ -1,35 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options_secure.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/config/environment.dart';
-import 'core/config/feature_flags.dart';
 import 'core/utils/logger.dart';
-import 'core/utils/secure_storage.dart';
 import 'routes/route_config.dart';
 import 'core/theme/toss_design_system.dart';
-import 'services/cache_service.dart';
 // // import 'presentation/providers/app_providers.dart'; // Has syntax errors
 import 'presentation/providers/theme_provider.dart';
-import 'core/utils/url_cleaner_stub.dart';
 //     if (dart.library.html) 'core/utils/url_cleaner_web.dart';
-import 'services/native_features_initializer.dart';
-import 'services/token_monitor_service.dart';
-import 'services/screenshot_detection_service.dart';
 import 'services/ad_service.dart';
-import 'services/analytics_service.dart';
 import 'services/remote_config_service.dart';
 import 'presentation/providers/font_size_provider.dart';
 import 'core/services/test_auth_service.dart';
@@ -134,13 +120,13 @@ void main() async {
   
   // Initialize Ad Service in background - don't block app startup
   // DISABLE ADS FOR TESTING ON REAL DEVICES
-  const bool DISABLE_ADS_FOR_TESTING = false; // Enable ads for release build
+  const bool disableAdsForTesting = false; // Enable ads for release build
 
-  debugPrint('🎯 [ADMOB] kIsWeb: $kIsWeb, DISABLE_ADS_FOR_TESTING: $DISABLE_ADS_FOR_TESTING');
+  debugPrint('🎯 [ADMOB] kIsWeb: $kIsWeb, DISABLE_ADS_FOR_TESTING: $disableAdsForTesting');
   debugPrint('🎯 [ADMOB] Environment.enableAds: ${Environment.enableAds}');
   debugPrint('🎯 [ADMOB] Environment.admobAppId: ${Environment.admobAppId}');
 
-  if (!kIsWeb && !DISABLE_ADS_FOR_TESTING) {
+  if (!kIsWeb && !disableAdsForTesting) {
     // Don't await - let it run in the background
     Future(() async {
       try {

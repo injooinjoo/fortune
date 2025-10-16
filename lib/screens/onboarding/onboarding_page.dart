@@ -66,9 +66,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       }
       
       // Fall back to local storage if no database profile
-      if (existingProfile == null) {
-        existingProfile = await _storageService.getUserProfile();
-      }
+      existingProfile ??= await _storageService.getUserProfile();
       
       if (existingProfile != null) {
         setState(() {

@@ -213,7 +213,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                 const SizedBox(height: 24),
                 
                 // 카테고리별 가이드
-                ..._categories.map((category) => _buildCategorySection(category, fontScale)).toList(),
+                ..._categories.map((category) => _buildCategorySection(category, fontScale)),
               ],
             ),
           ),

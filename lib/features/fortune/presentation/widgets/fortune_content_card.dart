@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../core/theme/toss_design_system.dart';
 
 class FortuneContentCard extends StatelessWidget {
   final Fortune fortune;

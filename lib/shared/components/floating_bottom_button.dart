@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'toss_button.dart';
-import '../../core/theme/toss_design_system.dart';
 
 /// 화면 하단에 floating되는 버튼 위젯
 class FloatingBottomButton extends StatelessWidget {

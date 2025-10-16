@@ -7,7 +7,6 @@ import '../../../features/fortune/presentation/pages/lucky_items_unified_page.da
 import '../../../features/fortune/presentation/pages/lucky_outfit_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_series_fortune_page.dart';
 // import '../../../features/fortune/presentation/pages/birthstone_fortune_page.dart'; // Removed - unused
-import '../../../features/fortune/presentation/pages/talisman_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/five_blessings_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_items_results_page.dart';
 

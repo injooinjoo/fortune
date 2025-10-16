@@ -8,9 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../glassmorphism/glass_container.dart';
 import '../../presentation/providers/token_provider.dart';
-import '../../domain/entities/token.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 
 class TokenInsufficientModal extends ConsumerStatefulWidget {
@@ -18,10 +16,10 @@ class TokenInsufficientModal extends ConsumerStatefulWidget {
   final String fortuneType;
 
   const TokenInsufficientModal({
-    Key? key,
+    super.key,
     required this.requiredTokens,
     required this.fortuneType,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<TokenInsufficientModal> createState() => _TokenInsufficientModalState();

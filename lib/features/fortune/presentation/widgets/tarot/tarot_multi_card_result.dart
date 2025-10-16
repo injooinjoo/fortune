@@ -553,7 +553,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

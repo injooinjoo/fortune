@@ -66,7 +66,7 @@ class RemoteConfigService {
       });
       
       _isInitialized = true;
-    } catch (e, stackTrace) {
+    } catch (e) {
       Logger.warning('[RemoteConfigService] Remote Config 초기화 실패 (기본값 사용): $e');
       _isInitialized = false;
       // 초기화 실패시 기본값으로 동작할 수 있도록 설정

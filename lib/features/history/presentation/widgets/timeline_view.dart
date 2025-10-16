@@ -11,10 +11,10 @@ class TimelineView extends StatelessWidget {
   final Function(FortuneHistory) onItemTap;
 
   const TimelineView({
-    Key? key,
+    super.key,
     required this.history,
     required this.fontScale,
-    required this.onItemTap}) : super(key: key);
+    required this.onItemTap});
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +94,7 @@ class TimelineView extends StatelessWidget {
                                 color: _getScoreColor(avgScore).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(8)),
                               child: Text(
-                                '평균 ${avgScore}점',
+                                '평균 $avgScore점',
                                 style: TextStyle(
                                   fontSize: 12 * fontScale,
                                   fontWeight: FontWeight.bold,
@@ -153,7 +153,7 @@ class TimelineView extends StatelessWidget {
                             child: Row(
                               children: [
                                 // Date & Score
-                                Container(
+                                SizedBox(
                                   width: 60,
                                   child: Column(
                                     children: [

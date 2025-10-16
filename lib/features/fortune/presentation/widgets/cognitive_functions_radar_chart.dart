@@ -6,7 +6,6 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/mbti_cognitive_functions_service.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 
 class CognitiveFunctionsRadarChart extends StatefulWidget {
   final String mbtiType;
@@ -14,11 +13,11 @@ class CognitiveFunctionsRadarChart extends StatefulWidget {
   final bool showAnimation;
 
   const CognitiveFunctionsRadarChart({
-    Key? key,
+    super.key,
     required this.mbtiType,
     required this.functionLevels,
     this.showAnimation = true,
-  }) : super(key: key);
+  });
 
   @override
   State<CognitiveFunctionsRadarChart> createState() => _CognitiveFunctionsRadarChartState();
@@ -629,7 +628,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               ),
             ],
           ),
-        )).toList(),
+        )),
       ],
     );
   }

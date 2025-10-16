@@ -8,9 +8,8 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 
 class TraditionalSajuFortunePage extends BaseFortunePage {
-  const TraditionalSajuFortunePage({Key? key})
+  const TraditionalSajuFortunePage({super.key})
       : super(
-          key: key,
           title: '전통 사주',
           description: '천간지지로 보는 운명과 대운',
           fortuneType: 'traditional-saju',
@@ -899,7 +898,7 @@ ${_formatMajorFortunes(majorFortunes)}
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -953,7 +952,7 @@ ${_formatMajorFortunes(majorFortunes)}
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

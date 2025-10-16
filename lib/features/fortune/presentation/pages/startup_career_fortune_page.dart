@@ -10,15 +10,13 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 
 class StartupCareerFortunePage extends BaseFortunePage {
   const StartupCareerFortunePage({
-    Key? key,
-    Map<String, dynamic>? initialParams,
+    super.key,
+    super.initialParams,
   }) : super(
-          key: key,
           title: '스타트업 전직 운세',
           description: '대기업에서 스타트업으로의 이직 가능성을 진단합니다',
           fortuneType: 'startup-career',
           requiresUserInfo: false,
-          initialParams: initialParams,
         );
 
   @override

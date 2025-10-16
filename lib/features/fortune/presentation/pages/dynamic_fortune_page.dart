@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 
 import '../../../../core/constants/fortune_metadata.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../presentation/widgets/fortune_card.dart';
-import '../../../../presentation/widgets/fortune_explanation_bottom_sheet.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../widgets/fortune_content_card.dart';
 

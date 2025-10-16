@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 
 class PersonalityTraitsChips extends StatelessWidget {
   final List<String> selectedTraits;
@@ -9,11 +7,11 @@ class PersonalityTraitsChips extends StatelessWidget {
   final int maxSelection;
 
   const PersonalityTraitsChips({
-    Key? key,
+    super.key,
     required this.selectedTraits,
     required this.onTraitsChanged,
     this.maxSelection = 5,
-  }) : super(key: key);
+  });
 
   static const List<String> _availableTraits = [
     '외향적인', '내향적인', '감정적인', '논리적인', '창의적인', '현실적인',
@@ -30,7 +28,7 @@ class PersonalityTraitsChips extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '나를 잘 나타내는 성격 특성을 선택하세요 (최대 ${maxSelection}개)',
+          '나를 잘 나타내는 성격 특성을 선택하세요 (최대 $maxSelection개)',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -95,7 +93,7 @@ class PersonalityTraitsChips extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '최대 ${maxSelection}개까지 선택할 수 있습니다',
+                  '최대 $maxSelection개까지 선택할 수 있습니다',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.primary,
                   ),
@@ -115,12 +113,12 @@ class PersonalityTraitChip extends StatelessWidget {
   final bool enabled;
 
   const PersonalityTraitChip({
-    Key? key,
+    super.key,
     required this.trait,
     required this.isSelected,
     required this.onTap,
     this.enabled = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

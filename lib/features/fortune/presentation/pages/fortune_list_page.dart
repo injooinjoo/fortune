@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../shared/components/app_header.dart';
-import '../widgets/fortune_list_card.dart';
-import '../widgets/fortune_list_tile.dart';
 // import '../../../../presentation/widgets/simple_fortune_info_sheet.dart'; // File doesn't exist
 import '../../../../presentation/providers/providers.dart';
-import '../widgets/tarot_fortune_list_card.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';
-import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/widgets/time_based_fortune_bottom_sheet.dart';
 import '../../../../presentation/widgets/personality_dna_bottom_sheet.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/fortune_recommendation_provider.dart';
-import '../../../../presentation/providers/navigation_visibility_provider.dart';
-import '../../../../data/models/fortune_card_score.dart';
 import '../widgets/lucky_items_bottom_sheet.dart';
 import '../widgets/talent_fortune_bottom_sheet.dart';
 

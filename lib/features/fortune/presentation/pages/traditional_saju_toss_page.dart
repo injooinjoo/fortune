@@ -4,14 +4,10 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../providers/saju_provider.dart';
-import '../widgets/saju_table_toss.dart';
 import '../widgets/saju_element_chart.dart';
 import '../widgets/manseryeok_display.dart';
 import '../widgets/standard_fortune_app_bar.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../services/ad_service.dart';
 
 /// 토스 스타일 전통 사주팔자 페이지
@@ -249,7 +245,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
+          SizedBox(
             width: 60,
             child: Text(
               title,
@@ -641,8 +637,8 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     return '''당신의 사주를 기반으로 해석해드립니다.
 
 주요 포인트:
-• 현재 ${dominantElement} 기운이 강하여 의욕적이고 추진력이 있습니다
-• ${lackingElement} 기운이 부족하여 이 부분을 보완하면 더욱 좋을 것
+• 현재 $dominantElement 기운이 강하여 의욕적이고 추진력이 있습니다
+• $lackingElement 기운이 부족하여 이 부분을 보완하면 더욱 좋을 것
 • 현재 대운에서는 신중하게 접근하는 것이 중요
 
 전반적으로 긍정적인 변화가 예상되며, 인내심을 가지고 추진하시기 바랍니다.''';
@@ -652,7 +648,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
   // 질문별 답변 생성 메서드들
   String _getFinancialAnswer(Map<String, dynamic> sajuData) {
     final dominantElement = sajuData['dominantElement'] ?? '목';
-    return '''재물운은 ${dominantElement} 기운의 영향으로 점진적으로 상승할 것으로 보입니다.
+    return '''재물운은 $dominantElement 기운의 영향으로 점진적으로 상승할 것으로 보입니다.
 
 특히 현재 대운에서는:
 • 정재보다 편재의 기운이 강하여 사업이나 투자를 통한 수익이 유리
@@ -689,7 +685,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     return '''건강 관리에 있어 주의사항:
 
 주의할 부분:
-• ${lackingElement} 기운 부족으로 인한 관련 장기 약화 가능성
+• $lackingElement 기운 부족으로 인한 관련 장기 약화 가능성
 • 스트레스로 인한 소화기계 문제 주의
 • 과로를 피하고 충분한 휴식 필요
 
@@ -708,9 +704,9 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     return '''방향과 관련된 조언:
 
 유리한 방향:
-• 주거지: ${luckyDirection} 방향이 가장 유리
-• 직장: ${luckyDirection} 방향에 있는 회사나 사업장
-• 여행: ${luckyDirection} 방향으로의 여행이 운기 상승에 도움
+• 주거지: $luckyDirection 방향이 가장 유리
+• 직장: $luckyDirection 방향에 있는 회사나 사업장
+• 여행: $luckyDirection 방향으로의 여행이 운기 상승에 도움
 
 이사나 이직을 고려한다면 현재 대운이 끝나는 시점인 내년 하반기가 적절한 타이밍입니다. 급하게 결정하기보다는 충분히 준비한 후 움직이는 것을 권합니다.''';
   }

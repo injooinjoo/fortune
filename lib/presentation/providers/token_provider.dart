@@ -4,10 +4,7 @@ import '../../data/models/user_profile.dart';
 import '../../data/services/token_api_service.dart';
 import '../../core/errors/exceptions.dart';
 import '../../core/constants/soul_rates.dart';
-import '../../core/services/test_account_service.dart';
-import 'auth_provider.dart';
 import 'providers.dart';
-import 'soul_animation_provider.dart';
 
 // Token State
 // TODO: Phase 2 - Rename to SoulState and update all references

@@ -4,9 +4,7 @@ import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../data/five_elements_explanations.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 import 'package:fortune/core/theme/app_animations.dart';
-import 'package:fortune/core/theme/fortune_colors.dart';
 
 class FiveElementsExplanationBottomSheet extends StatefulWidget {
   final String element;
@@ -657,7 +655,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

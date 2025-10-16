@@ -39,7 +39,7 @@ abstract class BaseFortuneNotifier extends StateNotifier<FortuneState> {
   BaseFortuneNotifier(this._apiService, this.ref) : super(const FortuneState());
 
   Future<void> loadFortune() async {
-    final stopwatch = Logger.startTimer('Fortune Loading - ${runtimeType}');
+    final stopwatch = Logger.startTimer('Fortune Loading - $runtimeType');
     Logger.info('🔍 [BaseFortuneNotifier] loadFortune: Starting to load fortune', {
       'notifierType': runtimeType.toString(),
       'timestamp': null});
@@ -76,9 +76,9 @@ abstract class BaseFortuneNotifier extends StateNotifier<FortuneState> {
         'notifierType': runtimeType.toString(),
         'timestamp': null});
       
-      final fortuneStopwatch = Logger.startTimer('Generate Fortune - ${runtimeType}');
+      final fortuneStopwatch = Logger.startTimer('Generate Fortune - $runtimeType');
       final fortune = await generateFortune(user.id);
-      Logger.endTimer('Generate Fortune - ${runtimeType}', fortuneStopwatch);
+      Logger.endTimer('Generate Fortune - $runtimeType', fortuneStopwatch);
       
       Logger.info('🔍 [BaseFortuneNotifier] Fortune generated successfully', {
         'fortuneId': fortune.id,
@@ -93,12 +93,12 @@ abstract class BaseFortuneNotifier extends StateNotifier<FortuneState> {
       state = state.copyWith(
         isLoading: false,
         fortune: fortune);
-      Logger.endTimer('Fortune Loading - ${runtimeType}', stopwatch);
+      Logger.endTimer('Fortune Loading - $runtimeType', stopwatch);
       Logger.debug('🔍 [BaseFortuneNotifier] State updated with fortune', {
         'totalLoadTime': '${stopwatch.elapsedMilliseconds}ms',
         'fortuneId': null});
     } catch (e, stackTrace) {
-      Logger.endTimer('Fortune Loading - ${runtimeType}', stopwatch);
+      Logger.endTimer('Fortune Loading - $runtimeType', stopwatch);
       Logger.error('❌ [BaseFortuneNotifier] Error in loadFortune', {
         'error': e.toString(),
         'errorType': e.runtimeType.toString(),
@@ -748,7 +748,7 @@ final fortuneGenerationProvider = FutureProvider.family<Fortune, FortuneGenerati
       'generationTime': '${stopwatch.elapsedMilliseconds}ms'});
     
     return fortune;
-  } catch (e, stackTrace) {
+  } catch (e) {
     Logger.endTimer('Fortune Generation Provider', stopwatch);
     Logger.error('❌ [FortuneGenerationProvider] Generation failed', {
       'error': e.toString(),

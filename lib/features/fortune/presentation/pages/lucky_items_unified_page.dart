@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -13,8 +12,7 @@ import 'dart:math';
 
 class LuckyItemsUnifiedPage extends BaseFortunePage {
   const LuckyItemsUnifiedPage({
-    Key? key}) : super(
-          key: key,
+    super.key}) : super(
           title: '오늘의 행운 가이드',
           description: '로또부터 라이프스타일까지, 실용적인 행운 정보를 확인하세요',
           fortuneType: 'lucky_guide',
@@ -1179,7 +1177,7 @@ ${topRecommendations.join('\n')}
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

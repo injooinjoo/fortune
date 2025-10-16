@@ -830,7 +830,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final currentUser = supabase.auth.currentUser;
     final appStoreUrl = 'https://apps.apple.com/app/fortune';
     final playStoreUrl = 'https://play.google.com/store/apps/details?id=com.beyond.fortune';
-    final inviteCode = currentUser?.id?.substring(0, 8) ?? 'FORTUNE2024';
+    final inviteCode = currentUser?.id.substring(0, 8) ?? 'FORTUNE2024';
 
     final shareText = '''🔮 Fortune - 오늘의 운세 앱 초대
 

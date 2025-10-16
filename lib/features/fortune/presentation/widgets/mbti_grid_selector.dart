@@ -7,10 +7,10 @@ class MbtiGridSelector extends StatelessWidget {
   final ValueChanged<String> onTypeSelected;
   
   const MbtiGridSelector({
-    Key? key,
+    super.key,
     required this.selectedType,
     required this.onTypeSelected,
-  }) : super(key: key);
+  });
   
   // MBTI 타입을 그룹별로 분류
   static const Map<String, List<String>> mbtiGroups = {
@@ -172,13 +172,12 @@ class _MbtiTypeCard extends StatefulWidget {
   final VoidCallback onTap;
   
   const _MbtiTypeCard({
-    Key? key,
     required this.type,
     required this.isSelected,
     required this.colors,
     required this.icon,
     required this.onTap,
-  }) : super(key: key);
+  });
   
   @override
   State<_MbtiTypeCard> createState() => _MbtiTypeCardState();

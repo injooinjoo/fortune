@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/app_theme.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 
 class FortuneDisplay extends StatelessWidget {
   final String title;
@@ -15,14 +13,14 @@ class FortuneDisplay extends StatelessWidget {
   final String? warningMessage;
 
   const FortuneDisplay({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     required this.overallScore,
     this.luckyItems,
     this.advice,
     this.detailedFortune,
-    this.warningMessage}) : super(key: key);
+    this.warningMessage});
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +125,7 @@ class FortuneDisplay extends StatelessWidget {
           Wrap(
             spacing: 12,
             runSpacing: 12,
-            children: this.luckyItems!.entries.map((entry) {
+            children: luckyItems!.entries.map((entry) {
               return _buildLuckyItemChip(
                 entry.key,
                 entry.value.toString(),
@@ -188,7 +186,7 @@ class FortuneDisplay extends StatelessWidget {
 
   Widget _buildDetailedFortune(BuildContext context) {
     return Column(
-      children: this.detailedFortune!.entries.map((entry) {
+      children: detailedFortune!.entries.map((entry) {
         return Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.spacing3),
           child: GlassContainer(
@@ -235,7 +233,7 @@ class FortuneDisplay extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium)]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
-            this.advice!,
+            advice!,
             style: Theme.of(context).textTheme.bodyMedium)]));
   }
 
@@ -261,7 +259,7 @@ class FortuneDisplay extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium)]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
-            this.warningMessage!,
+            warningMessage!,
             style: Theme.of(context).textTheme.bodyMedium)]));
   }
 

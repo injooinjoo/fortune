@@ -215,6 +215,6 @@ final dailyTalismanLimitProvider = FutureProvider.family<bool, String>(
     }).toList();
 
     // 무료 사용자는 하루 1개, 프리미엄 사용자는 무제한
-    return todayTalismans.length >= 1; // TODO: 프리미엄 상태 확인 로직 추가
+    return todayTalismans.isNotEmpty; // TODO: 프리미엄 상태 확인 로직 추가
   },
 );

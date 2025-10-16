@@ -16,10 +16,10 @@ class TarotDeckSelectionPage extends ConsumerStatefulWidget {
   final String? initialQuestion;
 
   const TarotDeckSelectionPage({
-    Key? key,
+    super.key,
     this.spreadType,
     this.initialQuestion,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<TarotDeckSelectionPage> createState() => _TarotDeckSelectionPageState();

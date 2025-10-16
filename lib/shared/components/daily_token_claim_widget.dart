@@ -1,6 +1,5 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import '../glassmorphism/glass_container.dart';
@@ -8,7 +7,6 @@ import '../../presentation/providers/token_provider.dart';
 import '../../core/utils/haptic_utils.dart';
 import '../../core/utils/secure_storage.dart';
 import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';

@@ -1,12 +1,10 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/blood_type_analysis_service.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 
 class BloodTypePersonalityChart extends StatefulWidget {
   final String bloodType;
@@ -14,11 +12,11 @@ class BloodTypePersonalityChart extends StatefulWidget {
   final bool showAnimation;
 
   const BloodTypePersonalityChart({
-    Key? key,
+    super.key,
     required this.bloodType,
     required this.rhType,
     this.showAnimation = true,
-  }) : super(key: key);
+  });
 
   @override
   State<BloodTypePersonalityChart> createState() => _BloodTypePersonalityChartState();
@@ -287,7 +285,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   trait,
-                  style: Theme.of(context).textTheme.bodyMedium)]))).toList()]));
+                  style: Theme.of(context).textTheme.bodyMedium)])))]));
   }
 
   Widget _buildLifeStyleCard(Map<String, dynamic> characteristics) {
@@ -558,7 +556,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             );
@@ -670,7 +668,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

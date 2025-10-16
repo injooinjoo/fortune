@@ -10,9 +10,9 @@ class LuckyItemDetailCard extends StatefulWidget {
   final List<DetailedLuckyItem> detailedItems;
 
   const LuckyItemDetailCard({
-    Key? key,
+    super.key,
     required this.mainLuckyItem,
-    required this.detailedItems}) : super(key: key);
+    required this.detailedItems});
 
   @override
   State<LuckyItemDetailCard> createState() => _LuckyItemDetailCardState();
@@ -127,7 +127,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
   Widget _buildCategoryTabs(
     BuildContext context,
     Map<String, LuckyItemCategory> categories) {
-    return Container(
+    return SizedBox(
       height: AppDimensions.buttonHeightSmall,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,

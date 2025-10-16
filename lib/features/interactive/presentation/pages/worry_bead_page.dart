@@ -291,7 +291,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
       children: [
         if (_isSpinning)
           Text(
-            '염주를 ${_spinCount}번 돌렸습니다...',
+            '염주를 $_spinCount번 돌렸습니다...',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: AppTheme.primaryColor,
             ),

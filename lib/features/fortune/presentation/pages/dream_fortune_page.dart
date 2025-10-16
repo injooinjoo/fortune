@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../widgets/dream_elements_chart.dart';
@@ -15,13 +14,11 @@ import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../services/speech_recognition_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import '../../../../shared/glassmorphism/glass_effects.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 class DreamFortunePage extends BaseFortunePage {
-  const DreamFortunePage({Key? key})
+  const DreamFortunePage({super.key})
       : super(
-          key: key,
           title: '꿈 해몽',
           description: '어젯밤 꿈은 어떤 의미일까요? AI가 해석해드립니다',
           fortuneType: 'dream',
@@ -637,7 +634,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
                   ]
                 )
               );
-            }).toList()
+            })
           ]
         ]
       )

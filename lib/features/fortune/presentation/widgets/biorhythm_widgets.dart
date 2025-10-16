@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../pages/biorhythm_result_page.dart';
@@ -284,7 +282,7 @@ class TodayRecommendationCard extends StatelessWidget {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -752,7 +750,7 @@ class WeeklyActivityGuide extends StatelessWidget {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -813,7 +811,7 @@ class PersonalAnalysisCard extends StatelessWidget {
           const SizedBox(height: 16),
 
           Text(
-            '${age}세의 당신은 지금까지 ${biorhythmData.totalDays}일을 살아오셨네요.',
+            '$age세의 당신은 지금까지 ${biorhythmData.totalDays}일을 살아오셨네요.',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
               height: 1.6,
@@ -939,7 +937,7 @@ class LifestyleAdviceCard extends StatelessWidget {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

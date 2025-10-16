@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 
 class DreamElementsAnalysisService {
   // 꿈 요소 카테고리
@@ -367,7 +366,7 @@ class DreamElementsAnalysisService {
         if (data != null) {
           // 긍정적 의미가 강한 상징
           if (symbol == '태양' || symbol == '새' || symbol == '물') {
-            luckyElements.add('${symbol} - ${data['positive']}');
+            luckyElements.add('$symbol - ${data['positive']}');
           }
         }
       }

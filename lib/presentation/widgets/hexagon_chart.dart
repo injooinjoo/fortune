@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/toss_design_system.dart';
 
 class HexagonChart extends StatelessWidget {
   final Map<String, int> scores;

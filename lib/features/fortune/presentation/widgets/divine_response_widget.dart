@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'dart:math' as math;
-import '../../../../core/components/toss_card.dart';
-import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 /// 신의 응답을 표시하는 영적이고 신비로운 위젯

@@ -223,8 +223,9 @@ class HealthFortuneService {
     };
 
     String category;
-    if (score >= 90) category = 'excellent';
-    else if (score >= 70) category = 'good';
+    if (score >= 90) {
+      category = 'excellent';
+    } else if (score >= 70) category = 'good';
     else if (score >= 50) category = 'caution';
     else category = 'warning';
 

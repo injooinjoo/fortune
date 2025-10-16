@@ -8,14 +8,12 @@ import 'dart:io';
 import 'dart:convert';
 
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
@@ -79,7 +77,7 @@ final exLoverDataProvider = StateProvider<ExLoverFortuneData>((ref) {
 class ExLoverFortuneEnhancedPage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? extras;
   
-  const ExLoverFortuneEnhancedPage({Key? key, this.extras}) : super(key: key);
+  const ExLoverFortuneEnhancedPage({super.key, this.extras});
 
   @override
   ConsumerState<ExLoverFortuneEnhancedPage> createState() => _ExLoverFortuneEnhancedPageState();
@@ -574,7 +572,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       'ISTP', 'ISFP', 'ESTP', 'ESFP'].map((mbti) => DropdownMenuItem(
                       value: mbti,
                       child: Text(mbti),
-                    )).toList(),
+                    )),
                   ],
                   onChanged: (value) {
                     ref.read(exLoverDataProvider.notifier).update((state) {

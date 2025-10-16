@@ -1,13 +1,7 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../core/utils/haptic_utils.dart';
-import '../glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 
 /// A specialized snap scroll view for fortune cards with image headers
@@ -26,7 +20,7 @@ class FortuneSnapScrollView extends StatefulWidget {
   final double fadeEndOffset;
 
   const FortuneSnapScrollView({
-    Key? key,
+    super.key,
     required this.cards,
     this.imageHeight = 300,
     this.snapDuration = const Duration(milliseconds: 350),
@@ -36,7 +30,7 @@ class FortuneSnapScrollView extends StatefulWidget {
     this.backgroundColor,
     this.enableFadeEffect = true,
     this.fadeStartOffset = 0.3,
-    this.fadeEndOffset = 0.7}) : super(key: key);
+    this.fadeEndOffset = 0.7});
 
   @override
   State<FortuneSnapScrollView> createState() => _FortuneSnapScrollViewState();
@@ -273,14 +267,14 @@ class FortuneSnapCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const FortuneSnapCard({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.title,
     required this.description,
     required this.content,
     this.imageHeight = 300,
     this.contentPadding = 20,
-    this.onTap}) : super(key: key);
+    this.onTap});
 
   double get totalHeight => imageHeight + 150 + contentPadding * 2; // Approximate height
 
@@ -370,10 +364,10 @@ class FortunePageSnapView extends StatefulWidget {
   final bool enableHapticFeedback;
 
   const FortunePageSnapView({
-    Key? key,
+    super.key,
     required this.pages,
     this.onPageChanged,
-    this.enableHapticFeedback = true}) : super(key: key);
+    this.enableHapticFeedback = true});
 
   @override
   State<FortunePageSnapView> createState() => _FortunePageSnapViewState();

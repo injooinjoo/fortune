@@ -5,7 +5,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
 import '../../../../services/ad_service.dart';
@@ -318,7 +317,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
           ),
           const SizedBox(height: 16),
           
-          ...emotionCards.map((card) => _buildEmotionCard(card, isDark)).toList(),
+          ...emotionCards.map((card) => _buildEmotionCard(card, isDark)),
           
           const SizedBox(height: 32),
           
@@ -332,7 +331,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
           ),
           const SizedBox(height: 16),
           
-          ...curiosityCards.map((card) => _buildCuriosityCard(card, isDark)).toList(),
+          ...curiosityCards.map((card) => _buildCuriosityCard(card, isDark)),
           
           const SizedBox(height: 40),
           

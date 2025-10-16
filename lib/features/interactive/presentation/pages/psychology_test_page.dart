@@ -418,7 +418,7 @@ class _TestInputView extends StatelessWidget {
             Container(
               height: 8,
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant,
+                color: theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: FractionallySizedBox(
@@ -530,7 +530,7 @@ class _TestInputView extends StatelessWidget {
                         ),
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),

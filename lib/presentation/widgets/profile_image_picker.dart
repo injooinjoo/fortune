@@ -5,8 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../services/supabase_storage_service.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 
 class ProfileImagePicker extends StatefulWidget {
   final String? currentImageUrl;

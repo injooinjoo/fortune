@@ -10,11 +10,11 @@ class ZodiacCompatibilityWheel extends StatefulWidget {
   final bool showAnimation;
 
   const ZodiacCompatibilityWheel({
-    Key? key,
+    super.key,
     required this.selectedZodiac,
     required this.onZodiacSelected,
     this.showAnimation = true,
-  }) : super(key: key);
+  });
 
   @override
   State<ZodiacCompatibilityWheel> createState() => _ZodiacCompatibilityWheelState();

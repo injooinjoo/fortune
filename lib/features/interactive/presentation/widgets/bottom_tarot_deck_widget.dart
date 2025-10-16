@@ -8,9 +8,9 @@ class BottomTarotDeckWidget extends StatefulWidget {
   final Function(int) onCardSelected;
   
   const BottomTarotDeckWidget({
-    Key? key,
+    super.key,
     required this.onCardSelected,
-  }) : super(key: key);
+  });
 
   @override
   State<BottomTarotDeckWidget> createState() => _BottomTarotDeckWidgetState();
@@ -113,7 +113,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
               final velocity = details.velocity.pixelsPerSecond.dx;
               _animateToNearestCard(velocity);
             },
-            child: Container(
+            child: SizedBox(
               height: cardHeight * 2.5,
               child: Stack(
                 alignment: Alignment.bottomCenter,

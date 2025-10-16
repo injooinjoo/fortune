@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 class DreamProgressIndicator extends StatefulWidget {
@@ -13,13 +11,13 @@ class DreamProgressIndicator extends StatefulWidget {
   final VoidCallback? onPrevious;
 
   const DreamProgressIndicator({
-    Key? key,
+    super.key,
     required this.currentStep,
     required this.totalSteps,
     required this.stepTitles,
     this.onNext,
     this.onPrevious,
-  }) : super(key: key);
+  });
 
   @override
   State<DreamProgressIndicator> createState() => _DreamProgressIndicatorState();
@@ -155,11 +153,11 @@ class AnimatedProgressBar extends StatefulWidget {
   final Duration duration;
 
   const AnimatedProgressBar({
-    Key? key,
+    super.key,
     required this.progress,
     required this.color,
     this.duration = const Duration(milliseconds: 500),
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedProgressBar> createState() => _AnimatedProgressBarState();

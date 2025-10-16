@@ -1,8 +1,6 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/dream_elements_analysis_service.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
@@ -15,11 +13,11 @@ class DreamElementsChart extends StatefulWidget {
   final bool showAnimation;
 
   const DreamElementsChart({
-    Key? key,
+    super.key,
     required this.elementWeights,
     required this.elements,
     this.showAnimation = true,
-  }) : super(key: key);
+  });
 
   @override
   State<DreamElementsChart> createState() => _DreamElementsChartState();
@@ -256,7 +254,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         const SizedBox(height: AppSpacing.spacing3),
         ...widget.elements.entries.where((e) => e.value.isNotEmpty).map((entry) {
           return _buildCategorySection(entry.key, entry.value);
-        }).toList(),
+        }),
       ],
     );
   }

@@ -135,7 +135,7 @@ class UnifiedFortuneService {
         .eq('fortune_type', fortuneType)
         .eq('fortune_date', today);
 
-      if (results == null || (results is List && results.isEmpty)) {
+      if ((results.isEmpty)) {
         Logger.debug('[UnifiedFortune] 기존 결과 없음');
         return null;
       }
@@ -143,25 +143,8 @@ class UnifiedFortuneService {
       // 결과가 여러 개일 수 있으므로 input_conditions를 메모리에서 비교
       final targetJson = jsonEncode(normalizedConditions);
 
-      if (results is List) {
-        for (final record in results) {
-          try {
-            final recordConditions = record['input_conditions'];
-            final recordJson = jsonEncode(_normalizeJsonb(recordConditions));
-
-            if (recordJson == targetJson) {
-              Logger.debug('[UnifiedFortune] 기존 결과 발견: ${record['id']}');
-              return FortuneResult.fromJson(record);
-            }
-          } catch (e) {
-            Logger.debug('[UnifiedFortune] 레코드 비교 실패 (건너뜀): $e');
-            continue;
-          }
-        }
-      } else {
-        // 단일 결과
+      for (final record in results) {
         try {
-          final record = results as Map<String, dynamic>;
           final recordConditions = record['input_conditions'];
           final recordJson = jsonEncode(_normalizeJsonb(recordConditions));
 
@@ -170,14 +153,15 @@ class UnifiedFortuneService {
             return FortuneResult.fromJson(record);
           }
         } catch (e) {
-          Logger.debug('[UnifiedFortune] 레코드 비교 실패: $e');
+          Logger.debug('[UnifiedFortune] 레코드 비교 실패 (건너뜀): $e');
+          continue;
         }
       }
-
+    
       Logger.debug('[UnifiedFortune] 조건 일치하는 기존 결과 없음');
       return null;
 
-    } catch (error, stackTrace) {
+    } catch (error) {
       Logger.warning('[UnifiedFortune] 기존 결과 확인 실패 (무시하고 계속): $error', error);
       return null; // 실패 시 null 반환하여 새로 생성하도록
     }

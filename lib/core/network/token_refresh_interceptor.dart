@@ -133,7 +133,7 @@ class TokenRefreshInterceptor extends Interceptor {
       }
     } catch (e) {
       debugPrint('Token refresh failed: $e');
-      throw e;
+      rethrow;
     }
   }
 

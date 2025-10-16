@@ -167,7 +167,7 @@ class CelebritySaju {
     
     final startAge = daeun['startAge']?.toString() ?? '';
     final endAge = daeun['endAge']?.toString() ?? '';
-    return '$startAge-${endAge}세';
+    return '$startAge-$endAge세';
   }
 
   @override

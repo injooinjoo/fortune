@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/constants/fortune_type_names.dart';
-import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/fortune_history_provider.dart';
-import '../../../../presentation/widgets/fortune_explanation_bottom_sheet.dart';
 import '../../domain/models/fortune_history.dart';
 import '../widgets/statistics_dashboard.dart';
 import '../widgets/fortune_charts.dart';
@@ -22,7 +16,7 @@ import '../widgets/timeline_view.dart';
 import '../widgets/fortune_calendar_view.dart';
 
 class FortuneHistoryPage extends ConsumerStatefulWidget {
-  const FortuneHistoryPage({Key? key}) : super(key: key);
+  const FortuneHistoryPage({super.key});
 
   @override
   ConsumerState<FortuneHistoryPage> createState() => _FortuneHistoryPageState();
@@ -31,7 +25,7 @@ class FortuneHistoryPage extends ConsumerStatefulWidget {
 class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> 
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  String _selectedFilter = 'all';
+  final String _selectedFilter = 'all';
   DateTimeRange? _selectedDateRange;
 
   @override
@@ -237,7 +231,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                             child: Column(
                               children: [
                                 Text(
-                                  '${statistics.averageScore.toStringAsFixed(1)}',
+                                  statistics.averageScore.toStringAsFixed(1),
                                   style: TossTheme.heading1.copyWith(
                                     color: TossTheme.primaryBlue,
                                     fontWeight: FontWeight.w700,

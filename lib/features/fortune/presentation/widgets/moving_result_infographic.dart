@@ -659,7 +659,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                 .fadeIn(delay: Duration(milliseconds: 200 + index * 100))
                 .slideX(begin: 0.1, end: 0),
             );
-          }).toList(),
+          }),
           
           const SizedBox(height: 32),
         ],
@@ -840,7 +840,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                 ),
               ),
             );
-          }).toList(),
+          }),
           
           const SizedBox(height: 32),
         ],
@@ -968,7 +968,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
             ).animate()
               .fadeIn(delay: Duration(milliseconds: 100 + index * 50))
               .slideX(begin: 0.05, end: 0);
-          }).toList(),
+          }),
           
           const SizedBox(height: 32),
         ],
@@ -1100,7 +1100,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                 ),
               ),
             );
-          }).toList(),
+          }),
           
           const SizedBox(height: 20),
           

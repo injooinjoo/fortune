@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../constants/fortune_button_spacing.dart';
 
 /// 표준 운세 페이지 레이아웃
 ///

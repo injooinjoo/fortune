@@ -11,9 +11,9 @@ class CategoryPieChart extends StatelessWidget {
   final double fontScale;
 
   const CategoryPieChart({
-    Key? key,
+    super.key,
     required this.history,
-    required this.fontScale}) : super(key: key);
+    required this.fontScale});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class CategoryPieChart extends StatelessWidget {
       TossDesignSystem.warningOrange,
       TossDesignSystem.errorRed];
     
-    return Container(
+    return SizedBox(
       height: 300,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,9 +131,9 @@ class MonthlyTrendChart extends StatelessWidget {
   final double fontScale;
 
   const MonthlyTrendChart({
-    Key? key,
+    super.key,
     required this.history,
-    required this.fontScale}) : super(key: key);
+    required this.fontScale});
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +148,7 @@ class MonthlyTrendChart extends StatelessWidget {
     
     final maxValue = values.reduce((a, b) => a > b ? a : b);
     
-    return Container(
+    return SizedBox(
       height: 300,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,10 +282,10 @@ class FortuneCharts extends StatelessWidget {
   final double fontScale;
 
   const FortuneCharts({
-    Key? key,
+    super.key,
     required this.filteredHistory,
     required this.fontScale,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

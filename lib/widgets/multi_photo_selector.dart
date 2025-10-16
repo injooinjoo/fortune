@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../core/theme/toss_design_system.dart';
-import '../core/theme/app_theme.dart';
 
 /// 여러 장의 사진을 선택할 수 있는 위젯
 class MultiPhotoSelector extends StatefulWidget {
@@ -15,13 +14,13 @@ class MultiPhotoSelector extends StatefulWidget {
   final bool isRequired;
 
   const MultiPhotoSelector({
-    Key? key,
+    super.key,
     this.maxPhotos = 9,
     required this.title,
     required this.onPhotosSelected,
     this.initialPhotos,
     this.isRequired = false,
-  }) : super(key: key);
+  });
 
   @override
   State<MultiPhotoSelector> createState() => _MultiPhotoSelectorState();
@@ -264,7 +263,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
         const SizedBox(height: 12),
         
         // Photo Grid
-        Container(
+        SizedBox(
           height: 120,
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())

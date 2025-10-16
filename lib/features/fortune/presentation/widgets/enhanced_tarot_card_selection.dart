@@ -16,12 +16,12 @@ class EnhancedTarotCardSelection extends StatefulWidget {
   final VoidCallback onCancel;
 
   const EnhancedTarotCardSelection({
-    Key? key,
+    super.key,
     required this.layout,
     required this.requiredCards,
     required this.onCardsSelected,
     required this.onCancel,
-  }) : super(key: key);
+  });
 
   @override
   State<EnhancedTarotCardSelection> createState() => _EnhancedTarotCardSelectionState();
@@ -137,7 +137,7 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
     return AnimatedBuilder(
       animation: _spreadAnimation,
       builder: (context, child) {
-        return Container(
+        return SizedBox(
           height: AppSpacing.spacing1 * 100.0,
           child: LayoutBuilder(
             builder: (context, constraints) {

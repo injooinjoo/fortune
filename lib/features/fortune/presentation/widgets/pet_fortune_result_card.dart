@@ -136,7 +136,7 @@ class PetFortuneResultCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              '$petSpecies • ${petAge}살',
+              '$petSpecies • $petAge살',
               style: TossDesignSystem.body3.copyWith(
                 color: TossDesignSystem.tossBlue,
                 fontWeight: FontWeight.w600,

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/glassmorphism/glass_effects.dart';
 import '../../../../core/constants/fortune_card_images.dart';
-import '../../../../core/constants/soul_rates.dart';
 import '../pages/fortune_list_page.dart';
 
 

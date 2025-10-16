@@ -384,9 +384,9 @@ class MbtiCognitiveFunctionsService {
     final strongDesc = functionDescriptions[strongestFunction]!;
     final weakDesc = functionDescriptions[weakestFunction]!;
     
-    return '${typeDesc['title']}인 당신은 오늘 ${strongDesc['name']}(${strongestFunction})이 '
+    return '${typeDesc['title']}인 당신은 오늘 ${strongDesc['name']}($strongestFunction)이 '
         '특히 활성화되어 ${strongDesc['strengths'][0]}에 탁월한 능력을 발휘할 것입니다. '
-        '반면 ${weakDesc['name']}(${weakestFunction})이 약해져 ${weakDesc['weaknesses'][0]}에 '
+        '반면 ${weakDesc['name']}($weakestFunction)이 약해져 ${weakDesc['weaknesses'][0]}에 '
         '주의가 필요합니다.';
   }
 

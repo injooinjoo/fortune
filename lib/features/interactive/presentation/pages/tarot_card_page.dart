@@ -251,8 +251,9 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
 
       // 태그 생성
       final tags = <String>['타로', '${now.year}년${now.month}월'];
-      if (spreadType == 'three') tags.add('쓰리카드');
-      else if (spreadType == 'celtic') tags.add('켈틱크로스');
+      if (spreadType == 'three') {
+        tags.add('쓰리카드');
+      } else if (spreadType == 'celtic') tags.add('켈틱크로스');
       else if (spreadType == 'relationship') tags.add('연애운');
 
       // FortuneHistoryService에 저장

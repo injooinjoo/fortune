@@ -12,13 +12,13 @@ class ABTestWidget extends ConsumerStatefulWidget {
   final VoidCallback? onVariantAssigned;
 
   const ABTestWidget({
-    Key? key,
+    super.key,
     required this.experimentId,
     required this.builder,
     this.loadingWidget,
     this.errorWidget,
     this.onVariantAssigned,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<ABTestWidget> createState() => _ABTestWidgetState();
@@ -92,12 +92,12 @@ class ABTestConditionalWidget extends ConsumerWidget {
   final Widget? fallback;
 
   const ABTestConditionalWidget({
-    Key? key,
+    super.key,
     required this.experimentId,
     required this.targetVariantId,
     required this.child,
     this.fallback,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -121,12 +121,12 @@ class ABTestSwitchWidget extends ConsumerWidget {
   final Widget? loadingWidget;
 
   const ABTestSwitchWidget({
-    Key? key,
+    super.key,
     required this.experimentId,
     required this.variants,
     this.defaultWidget,
     this.loadingWidget,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -154,12 +154,12 @@ class ABTestParameterWidget<T> extends ConsumerWidget {
   final T? defaultValue;
 
   const ABTestParameterWidget({
-    Key? key,
+    super.key,
     required this.experimentId,
     required this.parameterKey,
     required this.builder,
     this.defaultValue,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -184,12 +184,12 @@ class ABTestConversionTracker extends ConsumerWidget {
   final Map<String, dynamic>? additionalData;
 
   const ABTestConversionTracker({
-    Key? key,
+    super.key,
     required this.experimentId,
     required this.conversionType,
     required this.child,
     this.additionalData,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

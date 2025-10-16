@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:convert';
-import 'dart:typed_data';
 import '../../core/config/environment.dart';
 import '../../widgets/icons/fortune_compass_icon.dart';
 import '../../services/storage_service.dart';
@@ -259,23 +258,21 @@ class _CallbackPageState extends State<CallbackPage> {
       
       // Check current session before listening
       final initialSession = Supabase.instance.client.auth.currentSession;
-      debugPrint('session: ${initialSession?.user?.id}');
+      debugPrint('session: ${initialSession?.user.id}');
       
       // Try to recover session from URL
       debugPrint('Attempting to recover session from URL...');
       try {
         final response = await Supabase.instance.client.auth.getSessionFromUrl(uri);
-        debugPrint('response: ${response.session?.user?.id}');
+        debugPrint('response: ${response.session.user.id}');
         
-        if (response.session != null) {
-          debugPrint('Session recovered successfully!');
-          if (mounted) {
-            // Check if user has completed onboarding
-            await _checkAndNavigate(response.session!.user);
-            return;
-          }
+        debugPrint('Session recovered successfully!');
+        if (mounted) {
+          // Check if user has completed onboarding
+          await _checkAndNavigate(response.session.user);
+          return;
         }
-      } catch (authError) {
+            } catch (authError) {
         debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
         if (authError.toString().contains('Invalid API key')) {
           if (mounted) {
@@ -293,7 +290,7 @@ class _CallbackPageState extends State<CallbackPage> {
       bool sessionFound = false;
       final authSub = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
         debugPrint('Auth state changed: ${data.event}');
-        debugPrint('user: ${data.session?.user?.id}');
+        debugPrint('user: ${data.session?.user.id}');
         
         if (data.session != null && !sessionFound) {
           sessionFound = true;
@@ -310,7 +307,7 @@ class _CallbackPageState extends State<CallbackPage> {
       
       // Final check
       final finalSession = Supabase.instance.client.auth.currentSession;
-      debugPrint('check: ${finalSession?.user?.id}');
+      debugPrint('check: ${finalSession?.user.id}');
       
       if (finalSession == null && !sessionFound) {
         debugPrint('No session found after all attempts');
@@ -322,7 +319,7 @@ class _CallbackPageState extends State<CallbackPage> {
       // Clean up
       authSub.cancel();
       debugPrint('=== END AUTH CALLBACK ===');
-    } catch (e, stack) {
+    } catch (e) {
       debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
       debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
       if (mounted) {

@@ -6,20 +6,16 @@ import '../../../features/fortune/presentation/pages/career_seeker_fortune_page.
 // import '../../../features/fortune/presentation/pages/startup_fortune_page.dart'; // Removed - unused
 import '../../../features/fortune/presentation/pages/employment_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/talent_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/investment_fortune_enhanced_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_investment_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_stock_fortune_page.dart';
 // import '../../../features/fortune/presentation/pages/lucky_crypto_fortune_page.dart'; // Removed - unused
 // import '../../../features/fortune/presentation/pages/lucky_lottery_fortune_page.dart'; // Removed - unused
 // import '../../../features/fortune/presentation/pages/lucky_realestate_fortune_page.dart'; // Removed - unused
-import '../../../features/fortune/presentation/pages/lucky_exam_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/career_change_fortune_page.dart';
 // import '../../../features/fortune/presentation/pages/career_crisis_fortune_page.dart'; // Removed - unused
 import '../../../features/fortune/presentation/pages/career_future_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/freelance_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/startup_career_fortune_page.dart';
-import '../../../features/fortune/presentation/widgets/career_fortune_selector.dart';
-import '../../../domain/entities/fortune.dart';
 
 final careerFortuneRoutes = [
   // Career Seeker

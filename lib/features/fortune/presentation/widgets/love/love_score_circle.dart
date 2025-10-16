@@ -89,7 +89,7 @@ class _LoveScoreCircleState extends State<LoveScoreCircle>
     final color = _getScoreColor(currentScore);
     final emoji = _getScoreEmoji(currentScore);
     
-    return Container(
+    return SizedBox(
       width: 200,
       height: 200,
       child: Stack(

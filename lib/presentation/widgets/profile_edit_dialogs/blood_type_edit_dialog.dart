@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/toss_design_system.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_dimensions.dart';
-import '../../../core/theme/app_typography.dart';
 import 'profile_field_edit_dialog.dart';
 
 class BloodTypeEditDialog extends StatefulWidget {
@@ -88,7 +87,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
               }
 
               final bloodType = bloodTypes[index];
-              return _buildBloodTypeOption(bloodType, '${bloodType}형');
+              return _buildBloodTypeOption(bloodType, '$bloodType형');
             },
           ),
         ],

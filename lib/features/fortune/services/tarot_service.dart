@@ -1,6 +1,5 @@
 import 'dart:math';
 import '../domain/models/tarot_card_model.dart';
-import '../../../core/constants/tarot_metadata.dart';
 
 class TarotService {
   static final Random _random = Random();

@@ -96,7 +96,7 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
                 ),
               ),
               // 진행률 표시
-              Container(
+              SizedBox(
                 width: 50,
                 height: 50,
                 child: Stack(
@@ -143,7 +143,7 @@ class _LoveMissionCardState extends State<LoveMissionCard> {
                 isCompleted,
               ),
             );
-          }).toList(),
+          }),
           
           // 완료 메시지
           if (_completionPercentage == 1.0)

@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
-import '../../core/theme/app_typography.dart';
 import '../../core/theme/app_animations.dart';
 import '../../core/utils/profile_validation.dart';
 import '../../services/storage_service.dart';

@@ -25,11 +25,11 @@ class CareerCompassWidget extends StatefulWidget {
   final double size;
 
   const CareerCompassWidget({
-    Key? key,
+    super.key,
     required this.data,
     this.centerText = '커리어',
     this.size = 300,
-  }) : super(key: key);
+  });
 
   @override
   State<CareerCompassWidget> createState() => _CareerCompassWidgetState();
@@ -66,7 +66,7 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    return Container(
+    return SizedBox(
       width: widget.size,
       height: widget.size,
       child: Stack(
@@ -141,7 +141,7 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
                 data: item,
                 onTap: () => _showDataDetail(context, item)),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -228,9 +228,8 @@ class _DataPoint extends StatelessWidget {
   final VoidCallback onTap;
 
   const _DataPoint({
-    Key? key,
     required this.data,
-    required this.onTap}) : super(key: key);
+    required this.onTap});
 
   @override
   Widget build(BuildContext context) {

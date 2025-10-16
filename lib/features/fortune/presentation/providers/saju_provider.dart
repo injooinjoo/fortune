@@ -135,7 +135,7 @@ class SajuNotifier extends StateNotifier<SajuState> {
         
         if (errorData is Map) {
           debugPrint('Error data is Map, keys: ${errorData.keys.toList()}');
-          debugPrint('data: ${errorData}');
+          debugPrint('data: $errorData');
           
           errorMessage = errorData['error'] ?? errorMessage;
           if (errorData['details'] != null) {

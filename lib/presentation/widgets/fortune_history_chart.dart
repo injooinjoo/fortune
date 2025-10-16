@@ -2,8 +2,6 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 
 class FortuneHistoryChart extends StatelessWidget {
   final List<int> fortuneScores;

@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 class DreamPsychologyChart extends StatefulWidget {
@@ -12,10 +11,10 @@ class DreamPsychologyChart extends StatefulWidget {
   final bool showAnimation;
 
   const DreamPsychologyChart({
-    Key? key,
+    super.key,
     required this.psychologicalState,
     this.showAnimation = true,
-  }) : super(key: key);
+  });
 
   @override
   State<DreamPsychologyChart> createState() => _DreamPsychologyChartState();
@@ -335,7 +334,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
               ),
             ],
           ),
-        )).toList(),
+        )),
       ],
     );
   }

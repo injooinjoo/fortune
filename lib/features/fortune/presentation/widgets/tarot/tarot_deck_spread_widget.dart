@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../../core/utils/haptic_utils.dart';
@@ -20,7 +19,7 @@ class TarotDeckSpreadWidget extends StatefulWidget {
   final SpreadType spreadType;
 
   const TarotDeckSpreadWidget({
-    Key? key,
+    super.key,
     required this.cardCount,
     required this.selectedDeck,
     required this.onCardSelected,
@@ -30,7 +29,7 @@ class TarotDeckSpreadWidget extends StatefulWidget {
     this.fanAngle = 90,
     this.enableHover = true,
     this.enableSelection = true,
-    this.spreadType = SpreadType.fan}) : super(key: key);
+    this.spreadType = SpreadType.fan});
 
   @override
   State<TarotDeckSpreadWidget> createState() => _TarotDeckSpreadWidgetState();
@@ -261,7 +260,7 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
   }
 
   Widget _buildStackSpread() {
-    return Container(
+    return SizedBox(
       height: widget.cardHeight * 1.2,
       child: Stack(
         alignment: Alignment.center,

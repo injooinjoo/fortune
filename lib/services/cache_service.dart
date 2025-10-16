@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/fortune_model.dart';
-import '../models/cache_entry.dart';
 import '../screens/home/fortune_story_viewer.dart';
 
 class CacheService {
@@ -390,31 +389,27 @@ class CacheService {
       int expiredCount = 0;
       
       // Fortune cache 통계
-      if (fortuneCacheResponse != null && fortuneCacheResponse is List) {
-        for (final entry in fortuneCacheResponse) {
-          totalEntries++;
-          final expiresAt = DateTime.parse(entry['expires_at']);
-          if (now.isAfter(expiresAt)) {
-            expiredCount++;
-          } else {
-            validCount++;
-          }
+      for (final entry in fortuneCacheResponse) {
+        totalEntries++;
+        final expiresAt = DateTime.parse(entry['expires_at']);
+        if (now.isAfter(expiresAt)) {
+          expiredCount++;
+        } else {
+          validCount++;
         }
       }
-      
+          
       // Story cache 통계
-      if (storyCacheResponse != null && storyCacheResponse is List) {
-        for (final entry in storyCacheResponse) {
-          totalEntries++;
-          final expiresAt = DateTime.parse(entry['expires_at']);
-          if (now.isAfter(expiresAt)) {
-            expiredCount++;
-          } else {
-            validCount++;
-          }
+      for (final entry in storyCacheResponse) {
+        totalEntries++;
+        final expiresAt = DateTime.parse(entry['expires_at']);
+        if (now.isAfter(expiresAt)) {
+          expiredCount++;
+        } else {
+          validCount++;
         }
       }
-      
+          
       return {
         'total': totalEntries,
         'valid': validCount,
@@ -441,8 +436,6 @@ class CacheService {
           .eq('fortune_type', fortuneType)
           .gte('expires_at', now.toIso8601String())
           .order('created_at', ascending: false);
-      
-      if (response == null || response is! List) return [];
 
       final fortunes = <FortuneModel>[];
       for (final entry in response) {
@@ -483,8 +476,6 @@ class CacheService {
       }
       
       final response = await query.order('created_at', ascending: false);
-      
-      if (response == null || response is! List) return [];
       
       final fortunes = <FortuneModel>[];
       for (final entry in response) {

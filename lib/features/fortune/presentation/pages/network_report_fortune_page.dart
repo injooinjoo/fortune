@@ -211,7 +211,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
             ),
           ),
           const SizedBox(height: 12),
-          Container(
+          SizedBox(
             height: 120,
             child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
@@ -700,7 +700,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                         ),
                       ],
                     ),
-                  )).toList(),
+                  )),
                 ],
               ),
             ),

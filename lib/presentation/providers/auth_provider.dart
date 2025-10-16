@@ -86,7 +86,7 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
     
     Logger.info('❌ [userProfileProvider] Profile data is null');
     return null;
-  } catch (e, stackTrace) {
+  } catch (e) {
     Logger.warning('[userProfileProvider] 사용자 프로필 조회/생성 실패 (선택적 기능, 기본 프로필 사용): $e');
     return null;
   }

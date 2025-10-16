@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
 
@@ -13,10 +12,10 @@ class FiveElementsBalanceChart extends StatefulWidget {
   final bool showAnimation;
 
   const FiveElementsBalanceChart({
-    Key? key,
+    super.key,
     required this.elementBalance,
     this.showAnimation = true,
-  }) : super(key: key);
+  });
 
   @override
   State<FiveElementsBalanceChart> createState() => _FiveElementsBalanceChartState();
@@ -361,7 +360,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   ),
                 ),
                 // 개수 표시
-                Container(
+                SizedBox(
                   width: AppSpacing.spacing12 * 1.04,
                   child: Column(
                     children: [

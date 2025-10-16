@@ -29,7 +29,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
   // Step 2: 목표와 가치
   String? _shortTermGoal;
   String? _coreValue;
-  List<String> _skillsToImprove = [];
+  final List<String> _skillsToImprove = [];
   
   bool _isAnalyzing = false;
 
@@ -407,7 +407,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                 .fadeIn(duration: 300.ms)
                 .slideY(begin: 0.1),
             ),
-          ).toList(),
+          ),
         ],
       ),
     );
@@ -638,7 +638,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             ).animate(delay: Duration(milliseconds: 100 * skillCategories.keys.toList().indexOf(category.key)))
               .fadeIn(duration: 300.ms)
               .slideY(begin: 0.1),
-          ).toList(),
+          ),
         ],
       ),
     );

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_dimensions.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/theme/app_typography.dart';
 import '../../core/theme/app_theme_extensions.dart';
 import '../../core/utils/logger.dart';
 
@@ -225,7 +223,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
                 children: [
                   ...(recentFortunes!['data'] as List).map((fortune) {
                     return _buildFortuneItem(context, fortune);
-                  }).toList(),
+                  }),
                 ],
               )
             else

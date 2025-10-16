@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../shared/components/toss_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import 'dart:math' as dart_math;
 
@@ -371,7 +370,7 @@ class _MysticalTarotLoadingButtonState extends State<MysticalTarotLoadingButton>
         // 회전하는 신비로운 심볼
         Transform.rotate(
           angle: _particleController.value * 2.0 * 3.14159,
-          child: Container(
+          child: SizedBox(
             width: 20,
             height: 20,
             child: CustomPaint(

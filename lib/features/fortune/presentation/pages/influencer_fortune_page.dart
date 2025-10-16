@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
-import '../../domain/models/fortune_result.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 class InfluencerFortunePage extends ConsumerWidget {
@@ -304,7 +301,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
       
       final result = {'message': 'Test fortune result'};
 
-      if (result != null && mounted) {
+      if (mounted) {
         _showFortuneResult(context, result);
       }
     } catch (e) {
@@ -441,7 +438,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                 ),
               ],
             ),
-          )).toList(),
+          )),
         ],
       ),
     );

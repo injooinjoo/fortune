@@ -18,13 +18,13 @@ class TarotSelectionView extends ConsumerStatefulWidget {
   final String spreadType;
 
   const TarotSelectionView({
-    Key? key,
+    super.key,
     required this.requiredCards,
     required this.selectedDeck,
     required this.onSelectionComplete,
     this.question,
     this.spreadType = 'single',
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<TarotSelectionView> createState() => _TarotSelectionViewState();

@@ -305,7 +305,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                   ],
                 ),
               );
-            }).toList(),
+            }),
             const SizedBox(height: 32),
           ],
           

@@ -5,8 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../components/bottom_navigation_bar.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../routes/navigation_helper.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import '../../core/theme/toss_design_system.dart';
 
 /// Main shell widget that provides persistent navigation
@@ -16,9 +14,9 @@ class MainShell extends ConsumerStatefulWidget {
   final GoRouterState state;
 
   const MainShell({
-    Key? key,
+    super.key,
     required this.child,
-    required this.state}) : super(key: key);
+    required this.state});
 
   @override
   ConsumerState<MainShell> createState() => _MainShellState();

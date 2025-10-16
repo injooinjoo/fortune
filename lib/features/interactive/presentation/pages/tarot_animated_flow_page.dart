@@ -1,11 +1,7 @@
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/theme/app_typography.dart';
 
 class TarotAnimatedFlowPage extends StatefulWidget {
   const TarotAnimatedFlowPage({
@@ -148,7 +144,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
             // Hero text
             Text(
               'Mystical Tarot',
-              style: TossDesignSystem.heading1?.copyWith(
+              style: TossDesignSystem.heading1.copyWith(
                 color: TossDesignSystem.white,
                 fontWeight: FontWeight.bold,
                 shadows: [
@@ -168,7 +164,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
             Text(
               'Discover your destiny through\nthe ancient wisdom of tarot',
               textAlign: TextAlign.center,
-              style: TossDesignSystem.body1?.copyWith(
+              style: TossDesignSystem.body1.copyWith(
                 color: TossDesignSystem.white.withValues(alpha: 0.8),
                 height: 1.6,
               ),
@@ -203,7 +199,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                   const SizedBox(width: 12),
                   Text(
                     'Begin Your Journey',
-                    style: TossDesignSystem.button?.copyWith(
+                    style: TossDesignSystem.button.copyWith(
                       color: TossDesignSystem.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -232,7 +228,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 children: [
                   Text(
                     'Choose Your Card',
-                    style: TossDesignSystem.heading1?.copyWith(
+                    style: TossDesignSystem.heading1.copyWith(
                       color: TossDesignSystem.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -241,7 +237,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                   Text(
                     'Trust your intuition and select the card that calls to you',
                     textAlign: TextAlign.center,
-                    style: TossDesignSystem.body2?.copyWith(
+                    style: TossDesignSystem.body2.copyWith(
                       color: TossDesignSystem.white.withValues(alpha: 0.7),
                     ),
                   ),
@@ -291,7 +287,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                             const SizedBox(height: 16),
                             Text(
                               'Card ${index + 1}',
-                              style: TossDesignSystem.heading3?.copyWith(
+                              style: TossDesignSystem.heading3.copyWith(
                                 color: TossDesignSystem.white,
                                 fontWeight: FontWeight.bold,
                               ),

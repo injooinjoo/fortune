@@ -204,7 +204,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               const SizedBox(height: 16),
             ],
           ),
-        ).toList(),
+        ),
       ],
     ),
   ).animate()

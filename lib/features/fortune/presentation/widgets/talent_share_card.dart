@@ -183,7 +183,7 @@ class TalentShareCard extends StatelessWidget {
                   ),
                 ],
               ),
-            )).toList(),
+            )),
             
             const SizedBox(height: 20),
             

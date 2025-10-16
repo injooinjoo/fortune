@@ -2,20 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'dart:math' as math;
 
-import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
-import '../widgets/fortune_button.dart';
-import '../constants/fortune_button_spacing.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
 
@@ -94,7 +88,7 @@ final investmentDataProvider = StateProvider<InvestmentFortuneData>((ref) {
 });
 
 class InvestmentFortuneEnhancedPage extends ConsumerStatefulWidget {
-  const InvestmentFortuneEnhancedPage({Key? key}) : super(key: key);
+  const InvestmentFortuneEnhancedPage({super.key});
 
   @override
   ConsumerState<InvestmentFortuneEnhancedPage> createState() => _InvestmentFortuneEnhancedPageState();
@@ -592,7 +586,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            option['label'] as String? ?? '',
+                            option['label'] ?? '',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -603,7 +597,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            option['description'] as String? ?? '',
+                            option['description'] ?? '',
                             style: TextStyle(
                               fontSize: 14,
                               color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
@@ -683,7 +677,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  option['label'] as String? ?? '',
+                  option['label'] ?? '',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -694,7 +688,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  option['description'] as String? ?? '',
+                  option['description'] ?? '',
                   style: TextStyle(
                     fontSize: 12,
                     color: isSelected
@@ -992,7 +986,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   ...data.selectedSectors.map((sectorName) {
                     final sector = InvestmentSector.values.firstWhere((s) => s.name == sectorName);
                     return _buildPrioritySlider(sector, data);
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
@@ -1743,7 +1737,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               final sector = InvestmentSector.values.firstWhere((s) => s.name == sectorName);
               final priority = data.sectorPriorities[sectorName] ?? 50.0;
               return '${sector.label} (${priority.round()}%)';
-            }).toList(),
+            }),
           ]),
 
           const SizedBox(height: 16),
@@ -1860,7 +1854,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                     ),
                   ],
                 ),
-              )).toList(),
+              )),
         ],
       ),
     );

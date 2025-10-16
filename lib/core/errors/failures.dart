@@ -12,60 +12,50 @@ abstract class Failure extends Equatable {
 
 // General failures
 class ServerFailure extends Failure {
-  const ServerFailure(String message, {String? code})
-      : super(message, code: code);
+  const ServerFailure(super.message, {super.code});
 }
 
 class CacheFailure extends Failure {
-  const CacheFailure(String message, {String? code})
-      : super(message, code: code);
+  const CacheFailure(super.message, {super.code});
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure(String message, {String? code})
-      : super(message, code: code);
+  const NetworkFailure(super.message, {super.code});
 }
 
 // Authentication failures
 class AuthenticationFailure extends Failure {
-  const AuthenticationFailure(String message, {String? code})
-      : super(message, code: code);
+  const AuthenticationFailure(super.message, {super.code});
 }
 
 class UnauthorizedFailure extends Failure {
-  const UnauthorizedFailure(String message, {String? code})
-      : super(message, code: code);
+  const UnauthorizedFailure(super.message, {super.code});
 }
 
 // Validation failures
 class ValidationFailure extends Failure {
-  const ValidationFailure(String message, {String? code})
-      : super(message, code: code);
+  const ValidationFailure(super.message, {super.code});
 }
 
 // Resource failures
 class NotFoundFailure extends Failure {
-  const NotFoundFailure(String message, {String? code})
-      : super(message, code: code);
+  const NotFoundFailure(super.message, {super.code});
 }
 
 class ConflictFailure extends Failure {
-  const ConflictFailure(String message, {String? code})
-      : super(message, code: code);
+  const ConflictFailure(super.message, {super.code});
 }
 
 // Permission failures
 class PermissionFailure extends Failure {
-  const PermissionFailure(String message, {String? code})
-      : super(message, code: code);
+  const PermissionFailure(super.message, {super.code});
 }
 
 // Rate limiting failures
 class RateLimitFailure extends Failure {
   final DateTime? retryAfter;
 
-  const RateLimitFailure(String message, {String? code, this.retryAfter})
-      : super(message, code: code);
+  const RateLimitFailure(super.message, {super.code, this.retryAfter});
 
   @override
   List<Object?> get props => [message, code, retryAfter];
@@ -73,18 +63,15 @@ class RateLimitFailure extends Failure {
 
 // Storage failures
 class StorageFailure extends Failure {
-  const StorageFailure(String message, {String? code})
-      : super(message, code: code);
+  const StorageFailure(super.message, {super.code});
 }
 
 // Payment failures
 class PaymentFailure extends Failure {
-  const PaymentFailure(String message, {String? code})
-      : super(message, code: code);
+  const PaymentFailure(super.message, {super.code});
 }
 
 // General unexpected failure
 class UnexpectedFailure extends Failure {
-  const UnexpectedFailure(String message, {String? code})
-      : super(message, code: code);
+  const UnexpectedFailure(super.message, {super.code});
 }

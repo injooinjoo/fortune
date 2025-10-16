@@ -11,22 +11,21 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../widgets/standard_fortune_app_bar.dart';
-import '../widgets/standard_fortune_page_layout.dart';
 
 enum FamilyType {
-  children('자녀 운세', 'children', '우리 아이의 운세와 성장', Icons.child_care_rounded, [Color(0xFFFBBF24), Color(0xFFF59E0B)]),
-  parenting('육아 운세', 'parenting', '오늘의 육아 조언', Icons.family_restroom_rounded, [Color(0xFF10B981), Color(0xFF059669)]),
-  pregnancy('태교 운세', 'pregnancy', '예비 엄마를 위한 태교 가이드', Icons.pregnant_woman_rounded, [Color(0xFFEC4899), Color(0xFFDB2777)]),
-  harmony('가족 화합', 'family-harmony', '가족 간의 조화와 행복', Icons.home_rounded, [Color(0xFF6366F1), Color(0xFF4F46E5)]);
-  
+  children('자녀 운세', 'children', '우리 아이의 운세와 성장', Icons.child_care_rounded, [Color(0xFFFBBF24), Color(0xFFF59E0B)], false),
+  parenting('육아 운세', 'parenting', '오늘의 육아 조언', Icons.family_restroom_rounded, [Color(0xFF10B981), Color(0xFF059669)], false),
+  pregnancy('태교 운세', 'pregnancy', '예비 엄마를 위한 태교 가이드', Icons.pregnant_woman_rounded, [Color(0xFFEC4899), Color(0xFFDB2777)], false),
+  harmony('가족 화합', 'family-harmony', '가족 간의 조화와 행복', Icons.home_rounded, [Color(0xFF6366F1), Color(0xFF4F46E5)], false);
+
   final String label;
   final String value;
   final String description;
   final IconData icon;
   final List<Color> gradientColors;
   final bool isPremium;
-  
-  const FamilyType(this.label, this.value, this.description, this.icon, this.gradientColors, [this.isPremium = false]);
+
+  const FamilyType(this.label, this.value, this.description, this.icon, this.gradientColors, this.isPremium);
 }
 
 class FamilyFortuneUnifiedPage extends ConsumerStatefulWidget {
@@ -74,11 +73,11 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
             Expanded(
               child: PageView(
                 physics: const NeverScrollableScrollPhysics(),
+                controller: PageController(initialPage: _currentStep),
                 children: [
                   _buildStep1FamilyType(),
                   _buildStep2FamilyInfo(),
                 ],
-                controller: PageController(initialPage: _currentStep),
               ),
             ),
 
@@ -485,7 +484,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                         ),
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),

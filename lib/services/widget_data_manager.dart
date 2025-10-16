@@ -1,9 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/data/models/fortune_response_model.dart';
-import 'package:fortune/domain/entities/fortune.dart';
-import 'package:fortune/services/live_activity_service.dart';
 import 'package:fortune/services/widget_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -536,12 +536,10 @@ class TossDesignSystem {
         primary: tossBlue,
         secondary: tossBlue,
         surface: surfacePrimary,
-        background: backgroundPrimary,
         error: errorRed,
         onPrimary: white,
         onSecondary: white,
         onSurface: gray900,
-        onBackground: gray900,
         onError: white,
       ),
       
@@ -670,12 +668,10 @@ class TossDesignSystem {
         primary: tossBlueDark,
         secondary: tossBlueDark,
         surface: grayDark100,
-        background: grayDark50,
         error: errorRedDark,
         onPrimary: white,
         onSecondary: white,
         onSurface: grayDark900,
-        onBackground: grayDark900,
         onError: white,
         outline: grayDark400,  // 개선된 테두리 색상
         shadow: grayDark300,   // 그림자 색상

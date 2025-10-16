@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -26,9 +25,8 @@ enum PetType {
 
 class PetFortuneUnifiedPage extends BaseFortunePage {
   const PetFortuneUnifiedPage({
-    Key? key,
+    super.key,
   }) : super(
-        key: key,
         title: '반려동물 운세',
         description: '반려동물과의 교감, 건강, 궁합을 확인하세요',
         fortuneType: 'pet',
@@ -413,21 +411,20 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
                   ),
                 ),
               ),
-              if (fortune.score != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _getScoreColor(fortune.score!),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '${fortune.score}점',
-                    style: const TextStyle(
-                      color: TossDesignSystem.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: _getScoreColor(fortune.score),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${fortune.score}점',
+                  style: const TextStyle(
+                    color: TossDesignSystem.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+              ),
             ],
           ),
           
@@ -530,7 +527,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

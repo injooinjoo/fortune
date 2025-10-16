@@ -172,7 +172,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                 _getCategoryIcon(category),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     ).animate().fadeIn(duration: 500.ms).slideX(begin: 0.1);
@@ -469,16 +469,16 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                                   color: TossTheme.textGray500,
                                 ),
                               ),
-                              if (celebrity.age != null) ...[
-                                const SizedBox(height: 2),
-                                Text(
-                                  '${celebrity.age}세',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: TossTheme.textGray400,
-                                  ),
+                              ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                '${celebrity.age}세',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: TossTheme.textGray400,
                                 ),
-                              ],
+                              ),
+                            ],
                             ],
                           ),
                         ),
@@ -991,7 +991,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                         ),
                       ],
                     ),
-                  )).toList(),
+                  )),
                 ],
               ),
             ),

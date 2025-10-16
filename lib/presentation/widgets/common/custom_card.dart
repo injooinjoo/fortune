@@ -12,7 +12,7 @@ class CustomCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const CustomCard({
-    Key? key,
+    super.key,
     required this.child,
     this.padding,
     this.margin,
@@ -20,7 +20,7 @@ class CustomCard extends StatelessWidget {
     this.elevation,
     this.borderRadius,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

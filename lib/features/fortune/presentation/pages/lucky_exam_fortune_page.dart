@@ -2,17 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
-import '../widgets/fortune_button.dart';
-import '../constants/fortune_button_spacing.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/standard_fortune_page_layout.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../data/services/fortune_api_service.dart';
 import 'dart:math' as math;
 import '../../../../services/ad_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -145,11 +139,11 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
 
   String _generateMockContent(int score) {
     if (score >= 85) {
-      return '${_examType} 시험에서 좋은 결과가 예상됩니다! 지금까지의 노력이 빛을 발할 때입니다. 자신감을 가지고 차분하게 준비하세요. 시험 당일 컨디션 관리가 중요합니다.';
+      return '$_examType 시험에서 좋은 결과가 예상됩니다! 지금까지의 노력이 빛을 발할 때입니다. 자신감을 가지고 차분하게 준비하세요. 시험 당일 컨디션 관리가 중요합니다.';
     } else if (score >= 70) {
-      return '${_examType} 시험 준비가 순조롭게 진행되고 있습니다. 남은 기간 동안 약점 보완에 집중하면 좋은 결과를 얻을 수 있을 것입니다. 긍정적인 마음가짐을 유지하세요.';
+      return '$_examType 시험 준비가 순조롭게 진행되고 있습니다. 남은 기간 동안 약점 보완에 집중하면 좋은 결과를 얻을 수 있을 것입니다. 긍정적인 마음가짐을 유지하세요.';
     } else {
-      return '${_examType} 시험을 위해 조금 더 집중이 필요한 시기입니다. 기본기를 다시 한번 점검하고, 실전 연습을 늘려보세요. 포기하지 않는다면 충분히 좋은 결과를 얻을 수 있습니다.';
+      return '$_examType 시험을 위해 조금 더 집중이 필요한 시기입니다. 기본기를 다시 한번 점검하고, 실전 연습을 늘려보세요. 포기하지 않는다면 충분히 좋은 결과를 얻을 수 있습니다.';
     }
   }
 
@@ -587,7 +581,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                         ],
                       ),
                     ),
-                  ).toList(),
+                  ),
                 ],
               ),
             ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
@@ -643,7 +637,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                         ],
                       ),
                     ),
-                  ).toList(),
+                  ),
                 ],
               ),
             ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),

@@ -23,9 +23,8 @@ import '../../../../core/models/fortune_result.dart';
 import 'dart:convert';
 
 class BlindDateFortunePage extends BaseFortunePage {
-  const BlindDateFortunePage({Key? key})
+  const BlindDateFortunePage({super.key})
       : super(
-          key: key,
           title: '소개팅 운세',
           description: '성공적인 만남을 위한 운세',
           fortuneType: 'blind-date',
@@ -44,13 +43,13 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   String? _introducer;
   
   // Preferences
-  List<String> _importantQualities = [];
+  final List<String> _importantQualities = [];
   String? _agePreference;
   String? _idealFirstDate;
   
   // Self Assessment
   String? _confidence;
-  List<String> _concerns = [];
+  final List<String> _concerns = [];
   String? _pastExperience;
   bool _isFirstBlindDate = false;
   
@@ -834,7 +833,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     ),
                   ),
                 );
-              }).toList(),
+              }),
               const SizedBox(height: 16),
               // Ideal First Date
               Text(
@@ -952,7 +951,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     ),
                   ),
                 );
-              }).toList(),
+              }),
               const SizedBox(height: 16),
               // Concerns
               Text(
@@ -1290,7 +1289,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                           ),
                         ],
                       ),
-                    )).toList(),
+                    )),
                   ],
                 ),
               ),
@@ -1591,7 +1590,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   ),
                 ],
               ),
-            )).toList(),
+            )),
           ],
           ),
         ),
@@ -1666,7 +1665,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   ),
                 ],
               ),
-            )).toList(),
+            )),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(12),
@@ -1880,7 +1879,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   ),
                 ],
               ),
-            )).toList(),
+            )),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -2017,7 +2016,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         ),
                       ],
                     ),
-                  )).toList(),
+                  )),
                 ],
               ),
             ),
@@ -2063,7 +2062,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         ),
                       ],
                     ),
-                  )).toList(),
+                  )),
                 ],
               ),
             ),

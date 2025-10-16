@@ -4,9 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/cache_service.dart';
 import '../../data/services/fortune_api_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import '../../../../core/theme/toss_design_system.dart';
 
 class CacheSettingsWidget extends ConsumerStatefulWidget {
   const CacheSettingsWidget({super.key});

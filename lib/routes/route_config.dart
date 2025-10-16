@@ -3,12 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../screens/splash_screen.dart';
-import '../screens/landing_page.dart';
-import '../screens/auth/signup_screen.dart';
-import '../screens/auth/callback_page.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/profile_edit_page.dart';
@@ -30,7 +25,6 @@ import '../features/notification/presentation/pages/notification_settings_page.d
 import '../features/support/presentation/pages/help_page.dart';
 import '../features/policy/presentation/pages/privacy_policy_page.dart';
 import '../features/policy/presentation/pages/terms_of_service_page.dart';
-import '../features/history/presentation/pages/fortune_history_page.dart';
 import '../features/payment/presentation/pages/token_purchase_page_v2.dart';
 
 // Import pages that need to hide navigation bar
@@ -74,9 +68,7 @@ import 'routes/auth_routes.dart';
 import 'routes/fortune_routes.dart';
 import 'routes/interactive_routes.dart';
 
-import '../core/utils/profile_validation.dart';
 import '../core/utils/page_transitions.dart';
-import '../services/storage_service.dart';
 import '../core/utils/route_observer_logger.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
@@ -107,8 +99,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Shell route that provides persistent navigation
       ShellRoute(
         builder: (context, state, child) => MainShell(
-          child: child,
           state: state,
+          child: child,
         ),
         routes: [
           // Home route

@@ -3,16 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:in_app_purchase_android/billing_client_wrappers.dart';
-import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 import '../core/constants/in_app_products.dart';
-import '../core/network/api_client.dart';
 import '../core/constants/edge_functions_endpoints.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../presentation/providers/user_provider.dart';
 
 class InAppPurchaseService {
   static final InAppPurchaseService _instance = InAppPurchaseService._internal();
@@ -87,12 +83,10 @@ class InAppPurchaseService {
   Future<bool> purchaseProduct(String productId) async {
     if (!_isAvailable || _purchasePending) return false;
     
-    final ProductDetails? productDetails = _products.firstWhere(
+    final ProductDetails productDetails = _products.firstWhere(
       (product) => product.id == productId,
       orElse: () => throw Exception('Product not found: $productId'),
     );
-    
-    if (productDetails == null) return false;
     
     final PurchaseParam purchaseParam = PurchaseParam(
       productDetails: productDetails);

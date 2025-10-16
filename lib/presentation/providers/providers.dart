@@ -7,7 +7,6 @@ import '../../data/datasources/token_remote_data_source.dart';
 import '../../data/services/fortune_api_service_edge_functions.dart';
 import '../../domain/entities/fortune.dart';
 import '../../domain/entities/token.dart';
-import '../../domain/entities/user_profile.dart';
 import '../../services/user_statistics_service.dart';
 import '../../services/storage_service.dart';
 

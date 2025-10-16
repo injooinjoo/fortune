@@ -258,7 +258,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                           color: theme.colorScheme.surfaceContainerHighest,
                           borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxLarge)),
                         child: Text(
-                          '광고가 ${_remainingSeconds}초 후에 닫힙니다',
+                          '광고가 $_remainingSeconds초 후에 닫힙니다',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),

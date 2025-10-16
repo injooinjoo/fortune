@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../../talisman/domain/models/talisman_wish.dart';
 import '../../../talisman/presentation/widgets/talisman_wish_selector.dart';
 import '../../../talisman/presentation/widgets/talisman_wish_input.dart';
@@ -10,8 +8,6 @@ import '../../../talisman/presentation/widgets/talisman_generation_animation.dar
 import '../../../talisman/presentation/widgets/talisman_result_card.dart';
 import '../../../talisman/presentation/providers/talisman_provider.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../talisman/presentation/widgets/talisman_premium_bottom_sheet.dart';
 import '../../../../services/in_app_purchase_service.dart';

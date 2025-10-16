@@ -5,7 +5,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../services/mbti_cognitive_functions_service.dart';
-import '../../../../services/ad_service.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_card.dart';
@@ -17,15 +16,13 @@ import 'dart:math' as math;
 
 class MbtiFortunePage extends BaseFortunePage {
   const MbtiFortunePage({
-    Key? key,
-    Map<String, dynamic>? initialParams,
+    super.key,
+    super.initialParams,
   }) : super(
-          key: key,
           title: 'MBTI 운세',
           description: '나의 성격 유형으로 보는 오늘의 운세',
           fortuneType: 'mbti',
           requiresUserInfo: false,
-          initialParams: initialParams,
         );
 
   @override
@@ -107,11 +104,6 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     {'label': '학업운', 'icon': Icons.school, 'color': Color(0xFF06B6D4)},
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    // No need to hide navigation bar - Scaffold structure handles this automatically
-  }
 
   @override
   void dispose() {
@@ -983,7 +975,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       '대인관계': '주변 사람들과의 관계가 원만해집니다. 새로운 인연도 기대해보세요.',
       '학업운': '집중력이 높아지는 날입니다. 어려운 문제도 해결할 수 있을 것입니다.',
     };
-    return fortunes[category] ?? '오늘은 ${category}이 좋은 날입니다.';
+    return fortunes[category] ?? '오늘은 $category이 좋은 날입니다.';
   }
 
   List<String> _getCompatibleTypes(String mbti) {

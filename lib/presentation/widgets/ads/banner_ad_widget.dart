@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../providers/ad_provider.dart';
-import '../../../services/ad_service.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/config/environment.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 
 /// Widget to display banner ads
 class BannerAdWidget extends ConsumerStatefulWidget {

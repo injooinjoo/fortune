@@ -1,10 +1,6 @@
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:lottie/lottie.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../presentation/widgets/common/custom_button.dart';
 import '../../../../core/utils/haptic_utils.dart';
 

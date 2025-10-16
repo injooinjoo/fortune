@@ -1,6 +1,4 @@
 import 'dart:math' as math;
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'mbti_cognitive_functions_service.dart';
 import '../core/utils/logger.dart';
@@ -213,8 +211,9 @@ class MbtiFortuneEnhancedService {
     
     // 요일별 스트레스 (월요일 높음, 주말 낮음)
     final weekday = date.weekday;
-    if (weekday == 1) risk += 15; // 월요일
-    else if (weekday >= 6) risk -= 10; // 주말
+    if (weekday == 1) {
+      risk += 15; // 월요일
+    } else if (weekday >= 6) risk -= 10; // 주말
     
     // 랜덤 변동
     risk += random.nextDouble() * 20 - 10;

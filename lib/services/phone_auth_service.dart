@@ -99,7 +99,7 @@ class PhoneAuthService {
       debugPrint('Profile phone updated successfully');
     } catch (e) {
       debugPrint('Error updating profile phone: $e');
-      throw e;
+      rethrow;
     }
   }
   

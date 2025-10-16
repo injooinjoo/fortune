@@ -10,14 +10,12 @@ import 'dart:math' as math;
 
 class CareerSeekerFortunePage extends BaseFortunePage {
   const CareerSeekerFortunePage({
-    Key? key,
-    Map<String, dynamic>? initialParams}) : super(
-          key: key,
+    super.key,
+    super.initialParams}) : super(
           title: '취업운',
           description: '새로운 직장을 찾고 있는 분들을 위한 맞춤 운세',
           fortuneType: 'career_seeker',
-          requiresUserInfo: false,
-          initialParams: initialParams
+          requiresUserInfo: false
         );
 
   @override
@@ -29,7 +27,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
   String? _desiredField;
   int _jobSearchDuration = 0;
   String? _primaryConcern;
-  List<String> _skillAreas = [];
+  final List<String> _skillAreas = [];
 
   final List<String> _educationLevels = [
     '고등학교 졸업', '전문대 재학/졸업',
@@ -522,7 +520,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   ),
                 ],
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -596,7 +594,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -691,7 +689,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -792,7 +790,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

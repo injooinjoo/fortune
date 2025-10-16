@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/toss_design_system.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_dimensions.dart';
-import '../../../core/theme/app_typography.dart';
 
 enum ButtonVariant {
   
@@ -24,7 +23,7 @@ class CustomButton extends StatelessWidget {
   final Gradient? gradient;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.text,
     this.onPressed,
     this.isLoading = false,
@@ -35,7 +34,7 @@ class CustomButton extends StatelessWidget {
     this.padding,
     this.variant = ButtonVariant.primary,
     this.gradient,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,12 +1,6 @@
 import 'package:go_router/go_router.dart';
-import '../../../features/fortune/presentation/pages/biorhythm_fortune_page.dart' as fortune_pages;
 // import '../../../features/fortune/presentation/pages/pet_fortune_page.dart' as fortune_pages; // Removed - unused
-import '../../../features/fortune/presentation/pages/pet_fortune_unified_page.dart' as fortune_pages;
-import '../../../features/fortune/presentation/pages/moving_fortune_toss_page.dart' as fortune_pages;
 // import '../../../features/fortune/presentation/pages/moving_date_fortune_page.dart' as fortune_pages; // Removed - unused
-import '../../../features/health/presentation/pages/health_fortune_toss_page.dart';
-import '../../../features/sports/presentation/pages/sports_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/pet_compatibility_page.dart';
 
 final healthSportsRoutes = [
   

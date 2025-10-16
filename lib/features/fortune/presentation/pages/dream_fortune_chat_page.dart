@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../widgets/standard_fortune_app_bar.dart';
-import '../../../../shared/components/toss_button.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../shared/components/soul_consume_animation.dart';

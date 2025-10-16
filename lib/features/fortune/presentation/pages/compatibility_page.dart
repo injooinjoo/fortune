@@ -10,13 +10,11 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../constants/fortune_button_spacing.dart';
 import '../widgets/standard_fortune_app_bar.dart';
-import '../widgets/standard_fortune_page_layout.dart';
 import '../../../../services/ad_service.dart';
 
 class CompatibilityPage extends ConsumerStatefulWidget {
@@ -754,7 +752,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                      .fadeIn(duration: 600.ms)
                      .slideX(begin: 0.3),
                   );
-                }).toList(),
+                }),
               ],
             ),
           ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),

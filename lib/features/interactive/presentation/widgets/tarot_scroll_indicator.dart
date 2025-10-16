@@ -7,9 +7,9 @@ class TarotScrollIndicator extends StatefulWidget {
   final String text;
   
   const TarotScrollIndicator({
-    Key? key,
+    super.key,
     this.isVisible = true,
-    this.text = 'Tap to pick your card'}) : super(key: key);
+    this.text = 'Tap to pick your card'});
 
   @override
   State<TarotScrollIndicator> createState() => _TarotScrollIndicatorState();
@@ -177,8 +177,8 @@ class TarotScrollHint extends StatefulWidget {
   final bool isVisible;
   
   const TarotScrollHint({
-    Key? key,
-    this.isVisible = true}) : super(key: key);
+    super.key,
+    this.isVisible = true});
 
   @override
   State<TarotScrollHint> createState() => _TarotScrollHintState();

@@ -240,8 +240,9 @@ class CrawlPriorityCalculator {
     
     // 검색량 보너스
     if (celebrity.searchVolume != null) {
-      if (celebrity.searchVolume! > 1000000) priority += 100;
-      else if (celebrity.searchVolume! > 500000) priority += 50;
+      if (celebrity.searchVolume! > 1000000) {
+        priority += 100;
+      } else if (celebrity.searchVolume! > 500000) priority += 50;
       else if (celebrity.searchVolume! > 100000) priority += 20;
     }
     
@@ -251,8 +252,9 @@ class CrawlPriorityCalculator {
       final lastActiveYear = int.tryParse(celebrity.lastActive!);
       if (lastActiveYear != null) {
         final yearsDiff = now.year - lastActiveYear;
-        if (yearsDiff <= 1) priority += 30;
-        else if (yearsDiff <= 3) priority += 15;
+        if (yearsDiff <= 1) {
+          priority += 30;
+        } else if (yearsDiff <= 3) priority += 15;
       }
     }
     

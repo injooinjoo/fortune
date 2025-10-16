@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
@@ -130,8 +129,8 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
           
           // User name at bottom
           Positioned(
-            bottom: 20,
-            child: Container(
+            bottom = 20,
+            child = Container(
               padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingS),
               decoration: BoxDecoration(
                 color: TossDesignSystem.white.withValues(alpha: 0.9),

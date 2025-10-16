@@ -1,20 +1,10 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:async';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../glassmorphism/glass_container.dart';
-import '../glassmorphism/glass_effects.dart';
-import '../../core/theme/app_theme.dart';
-import '../../core/theme/app_theme_extensions.dart';
 import '../../presentation/providers/auth_provider.dart';
-import '../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 // import '../../presentation/widgets/ads/common_ad_placements.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import '../../core/components/toss_fortune_loading_screen.dart';
 
 class AdLoadingScreen extends ConsumerStatefulWidget {
@@ -23,10 +13,10 @@ class AdLoadingScreen extends ConsumerStatefulWidget {
   final bool canSkip;
 
   const AdLoadingScreen({
-    Key? key,
+    super.key,
     required this.onComplete,
     required this.fortuneType,
-    this.canSkip = false}) : super(key: key);
+    this.canSkip = false});
 
   @override
   ConsumerState<AdLoadingScreen> createState() => _AdLoadingScreenState();

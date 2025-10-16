@@ -6,12 +6,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/storage_service.dart';
 import '../../core/utils/supabase_helper.dart';
 import '../../core/utils/logger.dart';
-import '../../constants/fortune_constants.dart';
 import '../../utils/date_utils.dart';
 import 'profile_edit_dialogs/index.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../shared/components/base_card.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 
 class UserInfoCard extends StatefulWidget {
   final Map<String, dynamic>? userProfile;
@@ -353,7 +351,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
         age--;
       }
       
-      return '${age}세';
+      return '$age세';
     } catch (e) {
       return '나이 미상';
     }

@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 import '../../../../shared/components/app_header.dart';
-import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
@@ -91,7 +90,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
   final FocusNode _focusNode = FocusNode();
   bool _isProcessing = false;
   bool _hasCheckedDeck = false;
-  bool _showCardDrawing = false;
+  final bool _showCardDrawing = false;
   late AnimationController _cardAnimationController;
   late Animation<double> _cardAnimation;
 
@@ -129,7 +128,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
     if (!_hasCheckedDeck) {
       _hasCheckedDeck = true;
       final selectedDeck = ref.read(selectedTarotDeckProvider);
-      if (selectedDeck == null || selectedDeck.isEmpty) {
+      if (selectedDeck.isEmpty) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             context.pushReplacementNamed('fortune-tarot');
@@ -304,17 +303,17 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
     
     baseInterpretation += '🌟 **미래의 가능성**\n';
     baseInterpretation += '카드: ${cards[2].name}${cards[2].isReversed ? " (역방향)" : ""}\n';
-    baseInterpretation += '${cards[2].meaning}';
+    baseInterpretation += cards[2].meaning;
     
     // 질문 키워드에 따른 추가 해석
     if (question.contains('연애') || question.contains('사랑')) {
-      baseInterpretation = '❤️ **연애운 3장 타로 리딩**\n\n' + baseInterpretation;
+      baseInterpretation = '❤️ **연애운 3장 타로 리딩**\n\n$baseInterpretation';
     } else if (question.contains('직장') || question.contains('일')) {
-      baseInterpretation = '💼 **직장운 3장 타로 리딩**\n\n' + baseInterpretation;
+      baseInterpretation = '💼 **직장운 3장 타로 리딩**\n\n$baseInterpretation';
     } else if (question.contains('돈') || question.contains('재물')) {
-      baseInterpretation = '💰 **금전운 3장 타로 리딩**\n\n' + baseInterpretation;
+      baseInterpretation = '💰 **금전운 3장 타로 리딩**\n\n$baseInterpretation';
     } else {
-      baseInterpretation = '🎴 **종합 3장 타로 리딩**\n\n' + baseInterpretation;
+      baseInterpretation = '🎴 **종합 3장 타로 리딩**\n\n$baseInterpretation';
     }
     
     return baseInterpretation;
@@ -613,7 +612,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
         child: Column(
           children: [
             // 카드 이미지
-            Container(
+            SizedBox(
               height: 120,
               width: 100,
               child: Image.asset(

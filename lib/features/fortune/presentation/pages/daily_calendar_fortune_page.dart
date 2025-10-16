@@ -4,26 +4,22 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/services/personalized_fortune_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 
 class DailyCalendarFortunePage extends BaseFortunePage {
   const DailyCalendarFortunePage({
-    Key? key,
-    Map<String, dynamic>? initialParams,
+    super.key,
+    super.initialParams,
   }) : super(
-          key: key,
           title: '특정일 운세',
           description: '선택한 날짜의 전체적인 운세를 확인하세요',
           fortuneType: 'daily_calendar',
           requiresUserInfo: false,
-          initialParams: initialParams,
         );
 
   @override
@@ -347,7 +343,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             ),
           ),
           Text(
-            '${score}점',
+            '$score점',
             style: TossDesignSystem.heading4.copyWith(
               color: _getScoreColor(score),
               fontWeight: FontWeight.w700,
@@ -476,7 +472,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
     final dayOfYear = date.difference(DateTime(date.year, 1, 1)).inDays;
     final lunarDay = (dayOfYear % 30) + 1;
     final lunarMonth = ((dayOfYear ~/ 30) + 1) % 12 + 1;
-    return '음력 ${lunarMonth}월 ${lunarDay}일';
+    return '음력 $lunarMonth월 $lunarDay일';
   }
   
   String _getGradeText(int score) {

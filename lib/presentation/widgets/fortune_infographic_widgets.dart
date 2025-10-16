@@ -982,7 +982,7 @@ class FortuneInfographicWidgets {
     final elements = <String>[];
 
     if (zodiacAnimal != null) {
-      elements.add('${zodiacAnimal}띠');
+      elements.add('$zodiacAnimal띠');
     }
     if (zodiacSign != null) {
       elements.add(zodiacSign);
@@ -991,9 +991,9 @@ class FortuneInfographicWidgets {
       elements.add(mbti);
     }
 
-    final profile = elements.isNotEmpty ? elements.join(', ') + '의 ' : '';
+    final profile = elements.isNotEmpty ? '${elements.join(', ')}의 ' : '';
 
-    return '${profile}오늘의 운세를 종합적으로 분석한 결과, 전반적으로 균형 잡힌 하루가 될 것으로 예상됩니다. 새로운 기회와 도전이 함께 찾아올 수 있으니 긍정적인 마음가짐을 유지하세요.';
+    return '$profile오늘의 운세를 종합적으로 분석한 결과, 전반적으로 균형 잡힌 하루가 될 것으로 예상됩니다. 새로운 기회와 도전이 함께 찾아올 수 있으니 긍정적인 마음가짐을 유지하세요.';
   }
 
   static Widget _buildProfileTag(String text, bool isDark) {
@@ -1096,15 +1096,15 @@ class FortuneInfographicWidgets {
                 Row(
                   children: [
                     if (userZodiacAnimal != null) ...[
-                      _buildProfileTag(userZodiacAnimal!, isDark),
+                      _buildProfileTag(userZodiacAnimal, isDark),
                       const SizedBox(width: 8),
                     ],
                     if (userZodiacSign != null) ...[
-                      _buildProfileTag(userZodiacSign!, isDark),
+                      _buildProfileTag(userZodiacSign, isDark),
                       const SizedBox(width: 8),
                     ],
                     if (userMBTI != null) ...[
-                      _buildProfileTag(userMBTI!, isDark),
+                      _buildProfileTag(userMBTI, isDark),
                     ],
                   ],
                 ),
@@ -1671,7 +1671,7 @@ class FortuneInfographicWidgets {
                       ),
                     ],
                   ),
-                )).toList(),
+                )),
               ],
 
               // Fallback when no data
@@ -1775,7 +1775,7 @@ class FortuneInfographicWidgets {
                     separatorBuilder: (context, index) => const SizedBox(width: 8),
                     itemBuilder: (context, index) {
                       final celebrity = celebrities[index];
-                      return Container(
+                      return SizedBox(
                         width: 80,
                         child: Column(
                           children: [
@@ -2377,7 +2377,7 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                _touchedHour != null ? '${displayHour}시' : '현재 ${displayHour}시',
+                _touchedHour != null ? '$displayHour시' : '현재 $displayHour시',
                 style: TextStyle(
                   color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
                   fontSize: 12,
@@ -2385,7 +2385,7 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
                 ),
               ),
               Text(
-                '${displayScore}점',
+                '$displayScore점',
                 style: TextStyle(
                   color: isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue,
                   fontSize: 14,

@@ -10,10 +10,10 @@ class HealingProgressWidget extends StatefulWidget {
   final VoidCallback? onTap;
 
   const HealingProgressWidget({
-    Key? key,
+    super.key,
     required this.currentStage,
     required this.progress,
-    this.onTap}) : super(key: key);
+    this.onTap});
 
   @override
   State<HealingProgressWidget> createState() => _HealingProgressWidgetState();
@@ -199,7 +199,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                       ),
                     ),
                   );
-                }).toList(),
+                }),
               ],
             ),
             

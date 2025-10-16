@@ -1,6 +1,5 @@
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -10,8 +9,6 @@ import '../../../../core/utils/logger.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../presentation/widgets/common/custom_button.dart';
 import '../../../../presentation/widgets/common/custom_card.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/constants/in_app_products.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import 'payment_result_page.dart';

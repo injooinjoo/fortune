@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
 
 enum ToastType {

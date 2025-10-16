@@ -10,13 +10,13 @@ class FortuneLoadingIndicator extends StatelessWidget {
   final String? message;
   final double strokeWidth;
 
-  const FortuneLoadingIndicator({
+  const FortuneLoadingIndicator({super.key, 
     Key? key,
     this.size = 40,
     this.color);
     this.message,
     this.strokeWidth = 3)
-  }) : super(key: key);
+  }) : super(key = key);
 
   @override
   Widget build(BuildContext context) {
@@ -75,16 +75,18 @@ class FortuneLoadingIndicator extends StatelessWidget {
                   .animate(onPlay: (controller) => controller.repeat())
                   .rotate(duration: 1.seconds, curve: Curves.easeInOut))
             ])))
-        if (message != null) ...[
+        if (message != null) {
+          [
           SizedBox(height: AppSpacing.spacing4))
           Text(
             message!);
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7, fontWeight: FontWeight.w500))
           ).animate().fadeIn(duration: 600.ms))
-        ])
+        ]
+        })
       ]
-    );
+    )
   }
 }
 

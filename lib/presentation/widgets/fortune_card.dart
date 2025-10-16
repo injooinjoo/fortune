@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
-import '../../core/theme/app_typography.dart';
-import '../../shared/glassmorphism/glass_container.dart';
 
 class FortuneCard extends StatelessWidget {
   final IconData icon;

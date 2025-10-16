@@ -25,7 +25,7 @@ class BaseFortunePageV2 extends ConsumerStatefulWidget {
   final bool showFontSizeSelector;
 
   const BaseFortunePageV2({
-    Key? key,
+    super.key,
     required this.title,
     required this.fortuneType,
     this.headerGradient,
@@ -33,7 +33,7 @@ class BaseFortunePageV2 extends ConsumerStatefulWidget {
     required this.resultBuilder,
     this.showShareButton = true,
     this.showFontSizeSelector = true,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<BaseFortunePageV2> createState() => _BaseFortunePageV2State();
@@ -143,43 +143,37 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
       generatedFortune = fortune;
 
       // Check if fortune was successfully generated
-      if (generatedFortune != null) {
-        // Convert Fortune to FortuneResult
-        final fortuneResult = FortuneResult(
-          id: generatedFortune!.id,
-          type: generatedFortune!.type,
-          date: DateTime.now().toString().split(' ')[0],
-          mainFortune: generatedFortune!.description,
-          summary: generatedFortune!.summary,
-          details: generatedFortune!.additionalInfo ?? {},
-          sections: _extractSections(generatedFortune!),
-          overallScore: generatedFortune!.overallScore,
-          scoreBreakdown: generatedFortune!.scoreBreakdown?.map((key, value) => 
-            MapEntry(key, value is int ? value : (value as num).toInt())) ?? {},
-          luckyItems: generatedFortune!.luckyItems,
-          recommendations: generatedFortune!.recommendations,
+      // Convert Fortune to FortuneResult
+      final fortuneResult = FortuneResult(
+        id: generatedFortune.id,
+        type: generatedFortune.type,
+        date: DateTime.now().toString().split(' ')[0],
+        mainFortune: generatedFortune.description,
+        summary: generatedFortune.summary,
+        details: generatedFortune.additionalInfo ?? {},
+        sections: _extractSections(generatedFortune),
+        overallScore: generatedFortune.overallScore,
+        scoreBreakdown: generatedFortune.scoreBreakdown?.map((key, value) => 
+          MapEntry(key, value is int ? value : (value as num).toInt())) ?? {},
+        luckyItems: generatedFortune.luckyItems,
+        recommendations: generatedFortune.recommendations,
+      );
+
+      setState(() {
+        _fortuneResult = fortuneResult;
+        _isLoading = false;
+      });
+
+      _animationController.forward();
+      
+      // Show success toast with token reward info
+      if (!isPremium && mounted) {
+        Toast.success(
+          context, 
+          '운세가 생성되었습니다! (1토큰 획득)'
         );
-
-        setState(() {
-          _fortuneResult = fortuneResult;
-          _isLoading = false;
-        });
-
-        _animationController.forward();
-        
-        // Show success toast with token reward info
-        if (!isPremium && mounted) {
-          Toast.success(
-            context, 
-            '운세가 생성되었습니다! (1토큰 획득)'
-          );
-        }
-      } else {
-        setState(() {
-          _isLoading = false;
-        });
       }
-    } catch (e) {
+        } catch (e) {
       setState(() {
         _error = e.toString();
         _isLoading = false;

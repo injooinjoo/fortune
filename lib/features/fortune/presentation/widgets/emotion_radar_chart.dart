@@ -10,11 +10,11 @@ class EmotionRadarChart extends StatelessWidget {
   final Color backgroundColor;
 
   const EmotionRadarChart({
-    Key? key,
+    super.key,
     required this.emotions,
     this.size = 200,
     this.primaryColor = TossDesignSystem.purple,
-    this.backgroundColor = TossDesignSystem.gray200}) : super(key: key);
+    this.backgroundColor = TossDesignSystem.gray200});
 
   @override
   Widget build(BuildContext context) {

@@ -90,7 +90,7 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
                           builder: (context, child) {
                             return Transform.rotate(
                               angle: _rotationAnimation.value,
-                              child: Container(
+                              child: SizedBox(
                                 width: 200,
                                 height: 200,
                                 child: CustomPaint(

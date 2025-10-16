@@ -109,7 +109,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                 transform: Matrix4.identity()
                   ..setEntry(3, 2, 0.001)
                   ..rotateY(_flipAnimation.value * math.pi),
-                child: Container(
+                child: SizedBox(
                   width: 80,
                   height: AppSpacing.spacing24 * 1.25,
                   child: isShowingFront

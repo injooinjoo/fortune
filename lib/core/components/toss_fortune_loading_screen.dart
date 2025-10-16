@@ -8,11 +8,11 @@ class TossFortuneLoadingScreen extends StatefulWidget {
   final Duration? duration;
 
   const TossFortuneLoadingScreen({
-    Key? key,
+    super.key,
     this.fortuneType = 'default',
     this.onComplete,
     this.duration,
-  }) : super(key: key);
+  });
 
   @override
   State<TossFortuneLoadingScreen> createState() => _TossFortuneLoadingScreenState();
@@ -281,10 +281,10 @@ class TossFortuneLoadingWidget extends StatefulWidget {
   final double size;
   
   const TossFortuneLoadingWidget({
-    Key? key,
+    super.key,
     this.message,
     this.size = 40,
-  }) : super(key: key);
+  });
 
   @override
   State<TossFortuneLoadingWidget> createState() => _TossFortuneLoadingWidgetState();

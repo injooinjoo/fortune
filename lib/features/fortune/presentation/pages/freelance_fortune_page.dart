@@ -11,15 +11,13 @@ import '../../../../core/theme/toss_design_system.dart';
 
 class FreelanceFortunePage extends BaseFortunePage {
   const FreelanceFortunePage({
-    Key? key,
-    Map<String, dynamic>? initialParams
+    super.key,
+    super.initialParams
   }) : super(
-          key: key,
           title: '프리랜서 운세',
           description: '프리랜서로서의 성공 가능성을 예측해드립니다',
           fortuneType: 'freelance',
-          requiresUserInfo: false,
-          initialParams: initialParams
+          requiresUserInfo: false
         );
 
   @override

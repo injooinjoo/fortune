@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/ad_provider.dart';
-import '../../../services/ad_service.dart';
 import '../../../core/utils/logger.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 

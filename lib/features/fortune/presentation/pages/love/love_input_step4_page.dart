@@ -18,9 +18,9 @@ class LoveInputStep4Page extends StatefulWidget {
 
 class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
   double _appearanceConfidence = 5.0;
-  Set<String> _charmPoints = {};
+  final Set<String> _charmPoints = {};
   LifestyleType? _lifestyle;
-  Set<HobbyType> _hobbies = {};
+  final Set<HobbyType> _hobbies = {};
 
   final List<String> _charmPointOptions = [
     '유머감각', '배려심', '경제력', '외모', '성실함', '지적능력', 

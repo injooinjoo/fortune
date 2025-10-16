@@ -495,21 +495,27 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return DarkModeHelper.getColor(
+    if (score >= 80) {
+      return DarkModeHelper.getColor(
       context: context,
       light: TossDesignSystem.successGreen,
       dark: TossDesignSystem.primaryGreen,
     );
-    if (score >= 60) return DarkModeHelper.getColor(
+    }
+    if (score >= 60) {
+      return DarkModeHelper.getColor(
       context: context,
       light: TossDesignSystem.tossBlue,
       dark: TossDesignSystem.primaryBlue,
     );
-    if (score >= 40) return DarkModeHelper.getColor(
+    }
+    if (score >= 40) {
+      return DarkModeHelper.getColor(
       context: context,
       light: TossDesignSystem.warningOrange,
       dark: TossDesignSystem.primaryYellow,
     );
+    }
     return DarkModeHelper.getColor(
       context: context,
       light: TossDesignSystem.errorRed,

@@ -14,14 +14,14 @@ class PersonalityAnalysisOptions extends StatelessWidget {
   final ValueChanged<Map<String, bool>> onOptionsChanged;
   
   const PersonalityAnalysisOptions({
-    Key? key,
+    super.key,
     required this.wantRelationshipAnalysis,
     required this.wantCareerGuidance,
     required this.wantPersonalGrowth,
     required this.wantCompatibility,
     required this.wantDailyAdvice,
     required this.onOptionsChanged,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
@@ -110,14 +110,13 @@ class _AnalysisOptionCard extends StatefulWidget {
   final ValueChanged<bool> onChanged;
   
   const _AnalysisOptionCard({
-    Key? key,
     required this.title,
     required this.description,
     required this.icon,
     required this.color,
     required this.value,
     required this.onChanged,
-  }) : super(key: key);
+  });
   
   @override
   State<_AnalysisOptionCard> createState() => _AnalysisOptionCardState();

@@ -16,8 +16,8 @@ class LoveInputStep2Page extends StatefulWidget {
 }
 
 class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
-  Set<DatingStyle> _selectedStyles = {};
-  Map<String, double> _valueImportance = {
+  final Set<DatingStyle> _selectedStyles = {};
+  final Map<String, double> _valueImportance = {
     '외모': 3.0,
     '성격': 3.0,
     '경제력': 3.0,
@@ -168,7 +168,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
                 const SizedBox(height: 20),
                 ..._valueImportance.entries.map((entry) {
                   return _buildValueSlider(entry.key, entry.value);
-                }).toList(),
+                }),
               ],
             ),
           ).animate(delay: 600.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),

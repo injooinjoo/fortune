@@ -115,10 +115,6 @@ class CelebrityCrawlingService {
         issues.add('이름이 비어있습니다');
       }
       
-      if (celebrity.birthDate == null) {
-        issues.add('생년월일 정보가 없습니다');
-      }
-      
       if (celebrity.notes?.isEmpty ?? true) {
         issues.add('설명이 비어있습니다');
       }

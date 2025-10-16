@@ -9,7 +9,7 @@ class TarotAnimations {
 
   /// Standard durations
   static const Duration cardFlipDuration = AppAnimations.durationXLong;
-  static const Duration fanSpreadDuration = const Duration(milliseconds: 1500);
+  static const Duration fanSpreadDuration = Duration(milliseconds: 1500);
   static const Duration cardSelectionDuration = Duration(milliseconds: 600);
   static const Duration hoverDuration = AppAnimations.durationShort;
   static const Duration shuffleDuration = Duration(milliseconds: 2000);
@@ -203,10 +203,10 @@ class TarotCardEntrance extends StatelessWidget {
   final int index;
 
   const TarotCardEntrance({
-    Key? key,
+    super.key,
     required this.child,
     required this.animation,
-    required this.index}) : super(key: key);
+    required this.index});
 
   @override
   Widget build(BuildContext context) {

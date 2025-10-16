@@ -1,13 +1,8 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import '../../../core/theme/app_theme_extensions.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 
 class PhoneVerificationStep extends StatefulWidget {
   final String phoneNumber;
@@ -227,7 +222,7 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                         )),
                     )
                   : Text(
-                      '${_resendTimer}초 후 다시 받기',
+                      '$_resendTimer초 후 다시 받기',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: context.fortuneTheme.subtitleText
                       )),

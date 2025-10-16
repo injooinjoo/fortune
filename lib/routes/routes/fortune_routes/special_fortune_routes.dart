@@ -2,7 +2,6 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/fortune_metadata.dart';
 import '../../../features/fortune/presentation/pages/dream_fortune_chat_page.dart';
 import '../../../features/fortune/presentation/pages/dream_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/family_fortune_unified_page.dart';
 import '../../../features/fortune/presentation/pages/fortune_best_practices_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_job_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_sidejob_fortune_page.dart';

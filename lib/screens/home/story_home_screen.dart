@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,7 +9,6 @@ import '../../domain/entities/user_profile.dart';
 import '../../presentation/providers/fortune_provider.dart';
 import '../../presentation/providers/fortune_story_provider.dart';
 import '../../services/cache_service.dart';
-import '../../models/fortune_model.dart';
 import '../../services/weather_service.dart';
 import '../../services/fortune_history_service.dart';
 import '../../widgets/emotional_loading_checklist.dart';
@@ -796,8 +794,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
       // 태그 생성
       final tags = <String>['일일', '${now.year}년${now.month}월'];
       final score = fortune.overallScore ?? 80;
-      if (score >= 90) tags.add('최고운');
-      else if (score >= 80) tags.add('대길');
+      if (score >= 90) {
+        tags.add('최고운');
+      } else if (score >= 80) tags.add('대길');
       else if (score >= 70) tags.add('길');
       else if (score >= 60) tags.add('보통');
       else tags.add('주의');
@@ -823,13 +822,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
   Future<void> _generateStory(fortune_entity.Fortune fortune) async {
     try {
       // Ensure we have the user profile loaded
-      if (userProfile == null || userProfile!.name == null || userProfile!.name!.isEmpty) {
+      if (userProfile == null || userProfile!.name.isEmpty) {
         await _loadUserProfile();
       }
       
       // Use the actual name from userProfile, fallback to '사용자' only if really empty
-      final userName = (userProfile?.name != null && userProfile!.name!.isNotEmpty) 
-          ? userProfile!.name! 
+      final userName = (userProfile?.name != null && userProfile!.name.isNotEmpty) 
+          ? userProfile!.name 
           : '사용자';
       
       debugPrint('🎯 Generating story with userName: "$userName" (profile name: "${userProfile?.name}")');
@@ -889,8 +888,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
     } catch (e) {
       debugPrint('❌ Error generating story: $e');
       // 에러 발생시에도 기본 스토리 생성
-      final userName = (userProfile?.name != null && userProfile!.name!.isNotEmpty) 
-          ? userProfile!.name! 
+      final userName = (userProfile?.name != null && userProfile!.name.isNotEmpty) 
+          ? userProfile!.name 
           : '사용자';
       final fallbackSegments = _createDetailedStorySegments(userName, fortune);
       setState(() {
@@ -927,7 +926,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
     
     // 1. 인사 페이지
     segments.add(StorySegment(
-      text: userName.isNotEmpty ? userName + '님' : '오늘의 주인공',
+      text: userName.isNotEmpty ? '$userName님' : '오늘의 주인공',
       fontSize: TossDesignSystem.heading1.fontSize!,
       fontWeight: FontWeight.w200,
     ));
@@ -941,8 +940,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
     ));
 
     // 3-5. 운세 상세 (3페이지에 걸쳐)
-    if (fortune.content != null && fortune.content!.isNotEmpty) {
-      final sentences = _splitIntoSentences(fortune.content!);
+    if (fortune.content.isNotEmpty) {
+      final sentences = _splitIntoSentences(fortune.content);
       final chunkSize = (sentences.length / 3).ceil();
 
       for (int i = 0; i < 3; i++) {
@@ -1037,7 +1036,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
     final regex = RegExp(r'[.!?]+');
     return text.split(regex)
         .where((s) => s.trim().isNotEmpty)
-        .map((s) => s.trim() + '.')
+        .map((s) => '${s.trim()}.')
         .toList();
   }
   

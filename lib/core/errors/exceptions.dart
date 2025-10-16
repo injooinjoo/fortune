@@ -19,10 +19,10 @@ class ServerException extends AppException {
   final int? statusCode;
 
   const ServerException({
-    required String message,
+    required super.message,
     this.statusCode,
-    String? code,
-    dynamic data}) : super(message: message, code: code, data: data);
+    super.code,
+    super.data});
 
   @override
   String toString() => 'ServerException: $message (${statusCode ?? 'Unknown'})';
@@ -73,9 +73,9 @@ class ValidationException extends AppException {
   final Map<String, dynamic>? errors;
 
   const ValidationException({
-    required String message,
+    required super.message,
     this.errors,
-    String? code}) : super(message: message, code: code);
+    super.code});
 
   @override
   String toString() => 'ValidationException: $message';

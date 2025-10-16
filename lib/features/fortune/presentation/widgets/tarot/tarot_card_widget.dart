@@ -22,7 +22,7 @@ class TarotCardWidget extends StatefulWidget {
   final bool enableFlipAnimation;
 
   const TarotCardWidget({
-    Key? key,
+    super.key,
     required this.cardIndex,
     required this.deck,
     this.width = 120,
@@ -34,7 +34,7 @@ class TarotCardWidget extends StatefulWidget {
     this.onTap,
     this.flipDuration = AppAnimations.durationXLong,
     this.enableFlipAnimation = true,
-  }) : super(key: key);
+  });
 
   @override
   State<TarotCardWidget> createState() => _TarotCardWidgetState();

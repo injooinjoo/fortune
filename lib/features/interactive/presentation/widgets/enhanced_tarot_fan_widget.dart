@@ -9,10 +9,10 @@ class EnhancedTarotFanWidget extends StatefulWidget {
   final Function(int) onCardSelected;
   
   const EnhancedTarotFanWidget({
-    Key? key,
+    super.key,
     required this.fortuneType,
     required this.primaryColor,
-    required this.onCardSelected}) : super(key: key);
+    required this.onCardSelected});
 
   @override
   State<EnhancedTarotFanWidget> createState() => _EnhancedTarotFanWidgetState();

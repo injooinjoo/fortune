@@ -11,12 +11,12 @@ class DirectionCompass extends StatefulWidget {
   final bool animated;
   
   const DirectionCompass({
-    Key? key,
+    super.key,
     required this.auspiciousDirections,
     this.avoidDirections = const [],
     this.primaryDirection,
     this.animated = true,
-  }) : super(key: key);
+  });
 
   @override
   State<DirectionCompass> createState() => _DirectionCompassState();

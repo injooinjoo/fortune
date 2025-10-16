@@ -1,6 +1,5 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/blood_type_analysis_service.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
@@ -16,13 +15,13 @@ class BloodTypeCompatibilityMatrix extends StatefulWidget {
   final bool showAnimation;
 
   const BloodTypeCompatibilityMatrix({
-    Key? key,
+    super.key,
     this.selectedType1,
     this.selectedRh1,
     this.selectedType2,
     this.selectedRh2,
     required this.onPairSelected,
-    this.showAnimation = true}) : super(key: key);
+    this.showAnimation = true});
 
   @override
   State<BloodTypeCompatibilityMatrix> createState() => _BloodTypeCompatibilityMatrixState();

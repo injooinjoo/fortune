@@ -1,7 +1,6 @@
 import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
-import 'package:flutter/services.dart';
 import 'dart:math';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../core/constants/tarot_minor_arcana.dart';
@@ -13,9 +12,9 @@ class TarotCardDetailModal extends StatefulWidget {
   final String? position;
 
   const TarotCardDetailModal({
-    Key? key,
+    super.key,
     required this.cardIndex,
-    this.position}) : super(key: key);
+    this.position});
 
   static Future<void> show({
     required BuildContext context,
@@ -483,7 +482,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ],
       ),
@@ -1039,7 +1038,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   ),
                 ),
               )
-            ).toList(),
+            ),
           ],
           
           if (tarotCardInfo?.meditation != null) ...[
@@ -1094,7 +1093,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   ),
                 ),
               )
-            ).toList(),
+            ),
           ],
         ],
       ),
@@ -1156,7 +1155,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 ),
               ),
             ),
-          ).toList(),
+          ),
           
           if (tarotCardInfo.colorSymbolism != null) ...[
             const SizedBox(height: TossDesignSystem.spacingXL),
@@ -1209,7 +1208,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   ),
                 ),
               ),
-            ).toList(),
+            ),
           ],
         ],
       ),

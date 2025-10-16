@@ -6,11 +6,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../shared/components/korean_date_picker.dart';
-import '../../../../core/constants/api_endpoints.dart';
-import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
-import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
@@ -148,7 +144,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  List<String> _selectedTags = [];
+  final List<String> _selectedTags = [];
 
   final List<String> _availableTags = [
     '가족', '친구', '연인', '동물', '자연', '물', '불', '하늘',

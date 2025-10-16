@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../../core/config/environment.dart';
 import '../../../core/utils/logger.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 
 /// Widget to display Google AdSense ads on Flutter Web

@@ -3,7 +3,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
 import '../../domain/models/talisman_models.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 class TalismanDesignCanvas extends StatefulWidget {
@@ -171,14 +170,14 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
   Widget _buildUserInfo() {
     return Column(
       children: [
-        if (widget.result.design.personalText?.isNotEmpty ?? false) ...[
+        if (widget.result.design.personalText.isNotEmpty ?? false) ...[
           Container(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
             decoration: BoxDecoration(
               color: TossDesignSystem.white.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(20)),
             child: Text(
-              widget.result.design.personalText!,
+              widget.result.design.personalText,
               style: TextStyle(
                 fontSize: widget.size * 0.045,
                 fontWeight: FontWeight.w600,
@@ -235,12 +234,12 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
             color: TossDesignSystem.errorRed,
             shape: BoxShape.circle),
           child: Center(
-            child: Text(
-              '符',),
-              style: TextStyle(
+            style: TextStyle(
                 fontSize: widget.size * 0.05,
                 color: TossDesignSystem.white,
-                fontWeight: FontWeight.bold)))]);
+                fontWeight: FontWeight.bold),
+            child: Text(
+              '符',)))]);
   }
 }
 

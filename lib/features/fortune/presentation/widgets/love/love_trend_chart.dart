@@ -48,7 +48,7 @@ class _LoveTrendChartState extends State<LoveTrendChart>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 220,
       child: AnimatedBuilder(
         animation: _animation,

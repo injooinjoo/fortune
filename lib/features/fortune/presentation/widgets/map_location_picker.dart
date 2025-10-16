@@ -17,12 +17,12 @@ class MapLocationPicker extends StatefulWidget {
   final List<String>? auspiciousDirections;
   
   const MapLocationPicker({
-    Key? key,
+    super.key,
     required this.onLocationSelected,
     this.initialLocation,
     this.initialAddress,
     this.showDirectionOverlay = false,
-    this.auspiciousDirections}) : super(key: key);
+    this.auspiciousDirections});
 
   @override
   State<MapLocationPicker> createState() => _MapLocationPickerState();

@@ -247,7 +247,7 @@ class FamilyCategoryChart extends StatelessWidget {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

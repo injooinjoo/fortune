@@ -1,14 +1,11 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../glassmorphism/glass_container.dart';
 import '../../core/utils/haptic_utils.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 
 class SoulConsumeAnimation {
@@ -205,7 +202,7 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                 ),
               ),
             ).animate(delay: particle.delay)
-                  .fadeIn(duration: 200.ms)).toList(),
+                  .fadeIn(duration: 200.ms)),
             
             // Main soul animation
             Positioned(

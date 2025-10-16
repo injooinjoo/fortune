@@ -155,7 +155,6 @@ class _CareerTypeCard extends StatelessWidget {
   final CareerFortuneType careerType;
 
   const _CareerTypeCard({
-    super.key,
     required this.careerType,
   });
 

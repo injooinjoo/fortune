@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/fortune_snap_scroll.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/constants/fortune_card_images.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
-import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../domain/entities/fortune.dart';
 import 'base_fortune_page.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -16,14 +13,11 @@ class FortuneSnapScrollPage extends BaseFortunePage {
   final List<String> fortuneTypes;
   
   const FortuneSnapScrollPage({
-    Key? key,
-    required String title,
-    required String description,
+    super.key,
+    required super.title,
+    required super.description,
     required this.fortuneTypes,
   }) : super(
-    key: key,
-    title: title,
-    description: description,
     fortuneType: 'multi',
     requiresUserInfo: true
   );

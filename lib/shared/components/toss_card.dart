@@ -10,14 +10,14 @@ class TossCard extends StatelessWidget {
   final List<BoxShadow>? boxShadow;
 
   const TossCard({
-    Key? key,
+    super.key,
     required this.child,
     this.padding,
     this.margin,
     this.backgroundColor,
     this.borderRadius,
     this.boxShadow,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

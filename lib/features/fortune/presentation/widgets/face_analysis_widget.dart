@@ -291,7 +291,7 @@ class FaceStrengthsWidget extends StatelessWidget {
             final index = entry.key;
             final strength = entry.value;
             return _buildStrengthItem(context, index + 1, strength);
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -449,7 +449,7 @@ class LifeAdviceWidget extends StatelessWidget {
             final index = entry.key;
             final adviceText = entry.value;
             return _buildAdviceItem(context, index + 1, adviceText);
-          }).toList(),
+          }),
         ],
       ),
     );

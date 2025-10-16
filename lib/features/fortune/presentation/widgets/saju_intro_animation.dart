@@ -247,7 +247,7 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
           scale: _scaleAnimation.value,
           child: Opacity(
             opacity: _fadeAnimation.value,
-            child: Container(
+            child: SizedBox(
               width: 200,
               height: 200,
               child: Stack(

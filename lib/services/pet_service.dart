@@ -18,9 +18,7 @@ class PetService {
           .order('created_at', ascending: false)
           .timeout(Duration(seconds: 10)); // 10초 타임아웃 추가
 
-      Logger.info('Pet query response received: ${response?.length ?? 0} pets');
-      
-      if (response == null) return [];
+      Logger.info('Pet query response received: ${response.length ?? 0} pets');
       
       return (response as List)
           .map((json) => PetProfile.fromJson(json))

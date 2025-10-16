@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import '../glassmorphism/glass_container.dart';
-import '../glassmorphism/glass_effects.dart';
 import 'token_balance_widget.dart';
 
 enum FontSize {

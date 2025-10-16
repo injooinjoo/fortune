@@ -12,9 +12,9 @@ class BatchFortunePackageCard extends ConsumerWidget {
   final VoidCallback? onTap;
 
   const BatchFortunePackageCard({
-    Key? key,
+    super.key,
     required this.packageType,
-    this.onTap}) : super(key: key);
+    this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -195,7 +195,7 @@ class BatchFortunePackageCard extends ConsumerWidget {
 
 /// 배치 운세 결과 리스트
 class BatchFortuneResultsList extends ConsumerWidget {
-  const BatchFortuneResultsList({Key? key}) : super(key: key);
+  const BatchFortuneResultsList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

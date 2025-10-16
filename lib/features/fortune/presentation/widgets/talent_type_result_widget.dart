@@ -189,7 +189,7 @@ class TalentStrengthCards extends StatelessWidget {
             final index = entry.key;
             final strength = entry.value;
             return _buildStrengthItem(context, index + 1, strength);
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -349,7 +349,7 @@ class ActionPlanWidget extends StatelessWidget {
             final index = entry.key;
             final plan = entry.value;
             return _buildActionItem(context, index + 1, plan);
-          }).toList(),
+          }),
         ],
       ),
     );

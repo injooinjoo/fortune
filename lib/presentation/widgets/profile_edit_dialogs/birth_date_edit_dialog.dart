@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../shared/components/custom_calendar_date_picker.dart';
 import 'profile_field_edit_dialog.dart';
-import 'package:fortune/core/theme/app_typography.dart';
 
 class BirthDateEditDialog extends StatefulWidget {
   final DateTime? initialDate;

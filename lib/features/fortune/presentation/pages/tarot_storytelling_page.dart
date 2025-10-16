@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
@@ -12,7 +11,6 @@ import '../../../../shared/components/app_header.dart'; // For FontSize enum
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../widgets/tarot_card_reveal_widget.dart';
 import '../widgets/tarot_interpretation_bubble.dart';
-import '../widgets/tarot_card_detail_modal.dart';
 import '../widgets/mystical_background.dart';
 import '../providers/tarot_storytelling_provider.dart';
 import 'package:go_router/go_router.dart';
@@ -23,11 +21,11 @@ class TarotStorytellingPage extends ConsumerStatefulWidget {
   final String? question;
 
   const TarotStorytellingPage({
-    Key? key,
+    super.key,
     required this.selectedCards,
     required this.spreadType,
     this.question,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<TarotStorytellingPage> createState() => _TarotStorytellingPageState();

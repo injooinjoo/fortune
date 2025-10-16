@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 
 class GlassEffects {
@@ -97,7 +96,7 @@ class LiquidGlassContainer extends StatefulWidget {
   final List<Color> liquidColors;
 
   const LiquidGlassContainer({
-    Key? key,
+    super.key,
     required this.child,
     this.width,
     this.height,
@@ -109,7 +108,7 @@ class LiquidGlassContainer extends StatefulWidget {
       TossDesignSystem.purple,
       TossDesignSystem.gray600,
       TossDesignSystem.tossBlue]
-  }) : super(key: key);
+  });
 
   @override
   State<LiquidGlassContainer> createState() => _LiquidGlassContainerState();
@@ -184,12 +183,12 @@ class ShimmerGlass extends StatefulWidget {
   final Color shimmerColor;
 
   const ShimmerGlass({
-    Key? key,
+    super.key,
     required this.child,
     this.width,
     this.height,
     this.borderRadius,
-    this.shimmerColor = TossDesignSystem.gray900}) : super(key: key);
+    this.shimmerColor = TossDesignSystem.gray900});
 
   @override
   State<ShimmerGlass> createState() => _ShimmerGlassState();

@@ -5,7 +5,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
 
@@ -581,7 +580,7 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
                   ],
                 ),
               ),
-              Container(
+              SizedBox(
                 width: 60,
                 height: 60,
                 child: Stack(
@@ -743,7 +742,7 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
               ),
             ],
           ),
-        )).toList(),
+        )),
       ],
     );
   }
@@ -783,13 +782,15 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
     
     // 감정과 시간에 따른 치유 진행도 계산
     int healingProgress = 30;
-    if (input.timeSinceBreakup == 'verylong') healingProgress += 40;
-    else if (input.timeSinceBreakup == 'long') healingProgress += 30;
+    if (input.timeSinceBreakup == 'verylong') {
+      healingProgress += 40;
+    } else if (input.timeSinceBreakup == 'long') healingProgress += 30;
     else if (input.timeSinceBreakup == 'medium') healingProgress += 20;
     else if (input.timeSinceBreakup == 'short') healingProgress += 10;
     
-    if (input.currentEmotion == 'acceptance') healingProgress += 20;
-    else if (input.currentEmotion == 'relief') healingProgress += 15;
+    if (input.currentEmotion == 'acceptance') {
+      healingProgress += 20;
+    } else if (input.currentEmotion == 'relief') healingProgress += 15;
     else if (input.currentEmotion == 'sadness') healingProgress += 5;
     
     healingProgress = healingProgress.clamp(0, 100);
@@ -798,8 +799,9 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
     int reunionPossibility = 25;
     if (input.currentEmotion == 'miss') reunionPossibility += 20;
     if (input.timeSinceBreakup == 'recent') reunionPossibility += 15;
-    if (input.breakupReason == 'timing') reunionPossibility += 20;
-    else if (input.breakupReason == 'trust') reunionPossibility -= 20;
+    if (input.breakupReason == 'timing') {
+      reunionPossibility += 20;
+    } else if (input.breakupReason == 'trust') reunionPossibility -= 20;
     
     reunionPossibility = reunionPossibility.clamp(5, 85);
     
@@ -808,8 +810,9 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
     readinessScore = readinessScore.clamp(0, 100);
     
     String readinessLevel;
-    if (readinessScore >= 80) readinessLevel = 'ready';
-    else if (readinessScore >= 60) readinessLevel = 'almost_ready';
+    if (readinessScore >= 80) {
+      readinessLevel = 'ready';
+    } else if (readinessScore >= 60) readinessLevel = 'almost_ready';
     else if (readinessScore >= 40) readinessLevel = 'preparing';
     else readinessLevel = 'not_ready';
     
@@ -1003,11 +1006,11 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
     }
     
     if (score >= 80) {
-      return base + '오늘은 정말 좋은 날이에요. 긍정적인 에너지가 당신을 감싸고 있어요.';
+      return '$base오늘은 정말 좋은 날이에요. 긍정적인 에너지가 당신을 감싸고 있어요.';
     } else if (score >= 60) {
-      return base + '괜찮아요, 모든 것이 잘 될 거예요. 시간이 해결해줄 거예요.';
+      return '$base괜찮아요, 모든 것이 잘 될 거예요. 시간이 해결해줄 거예요.';
     } else {
-      return base + '힘든 시기지만, 이것도 지나갈 거예요. 조금만 더 힘내세요.';
+      return '$base힘든 시기지만, 이것도 지나갈 거예요. 조금만 더 힘내세요.';
     }
   }
 

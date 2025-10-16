@@ -11,10 +11,10 @@ class FortuneCalendarView extends StatefulWidget {
   final Function(FortuneHistory)? onDateTap;
 
   const FortuneCalendarView({
-    Key? key,
+    super.key,
     required this.history,
     this.onDateTap,
-  }) : super(key: key);
+  });
 
   @override
   State<FortuneCalendarView> createState() => _FortuneCalendarViewState();

@@ -3,19 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:math' as dart_math;
-import 'dart:math';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
-import '../../../../core/constants/tarot_metadata.dart';
 import '../widgets/tarot/tarot_question_selector.dart';
-import '../widgets/tarot/tarot_loading_button.dart';
-import '../widgets/tarot/tarot_result_card.dart';
 import '../widgets/tarot/tarot_spread_selector.dart';
 import '../widgets/tarot/tarot_multi_card_result.dart';
 import '../../domain/models/tarot_card_model.dart';
-import '../../services/tarot_service.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
@@ -42,7 +36,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   String? _customQuestion;
   TarotSpreadType? _selectedSpread;
   TarotSpreadResult? _tarotResult;
-  TarotDeckType _selectedDeck = TarotDeckType.riderWaite; // 기본 덱
+  final TarotDeckType _selectedDeck = TarotDeckType.riderWaite; // 기본 덱
   
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -110,9 +104,9 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
       appBar: _buildAppBar(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 400),
-        child: _buildCurrentStateWidget(),
         switchInCurve: Curves.easeInOut,
         switchOutCurve: Curves.easeInOut,
+        child: _buildCurrentStateWidget(),
       ),
     );
   }

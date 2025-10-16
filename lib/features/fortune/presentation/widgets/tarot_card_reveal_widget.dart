@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
-import 'dart:ui' as ui;
 import '../../../../core/constants/tarot_metadata.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
@@ -20,14 +18,14 @@ class TarotCardRevealWidget extends StatefulWidget {
   final bool showParticles;
 
   const TarotCardRevealWidget({
-    Key? key,
+    super.key,
     required this.cardIndex,
     required this.isRevealed,
     this.onTap,
     this.width = 180,
     this.height = 280,
     this.showGlow = true,
-    this.showParticles = true}) : super(key: key);
+    this.showParticles = true});
 
   @override
   State<TarotCardRevealWidget> createState() => _TarotCardRevealWidgetState();
@@ -219,7 +217,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                   ..rotateY(math.pi * _flipAnimation.value)
                   ..translate(0.0, _floatAnimation.value)
                   ..scale(_scaleAnimation.value, _scaleAnimation.value),
-                child: Container(
+                child: SizedBox(
                   width: widget.width,
                   height: widget.height,
                   child: isShowingFront

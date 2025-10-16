@@ -151,6 +151,6 @@ class AuspiciousDaysCalculator {
   static String? getSolarTerm(DateTime date) {
     final lunar = Lunar.fromDate(date);
     final jieQi = lunar.getPrevJieQi();
-    return jieQi?.getName();
+    return jieQi.getName();
   }
 }

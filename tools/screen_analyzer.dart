@@ -6,6 +6,7 @@
 /// 사용법:
 ///   dart run tools/screen_analyzer.dart
 ///   dart run tools/screen_analyzer.dart --output analysis_result.json
+library;
 
 import 'dart:io';
 import 'dart:convert';
@@ -105,8 +106,9 @@ class ScreenAnalyzer {
       final isWidget = widgetRefs.contains(screen.className);
 
       String usageType = 'unused';
-      if (isInRoute) usageType = 'route';
-      else if (isInMaterialRoute) usageType = 'material_route';
+      if (isInRoute) {
+        usageType = 'route';
+      } else if (isInMaterialRoute) usageType = 'material_route';
       else if (isDialog) usageType = 'dialog';
       else if (isWidget) usageType = 'widget';
 

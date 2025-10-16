@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
@@ -148,10 +147,6 @@ class InAppPurchaseService {
         (product) => product.id == productId);
     } catch (e) {
       throw Exception('상품을 찾을 수 없습니다: $productId');
-    }
-    
-    if (productDetails == null) {
-      throw Exception('상품 정보를 찾을 수 없습니다.');
     }
     
     // 구매 파라미터 설정

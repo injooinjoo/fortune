@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/social_auth_service.dart';
 import '../../core/utils/logger.dart';
-import 'auth_provider.dart';
 import 'providers.dart';
 
 // Social Auth Service Provider
