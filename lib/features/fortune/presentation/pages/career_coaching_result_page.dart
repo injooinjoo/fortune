@@ -102,8 +102,8 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
           icon: Icon(Icons.arrow_back_ios_new,
             color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
           onPressed: () {
-            // Go back to fortune list instead of loading page
-            Navigator.of(context).popUntil((route) => route.settings.name == '/fortune');
+            // Pop back to fortune list (first route)
+            Navigator.of(context).popUntil((route) => route.isFirst);
           },
         ),
         actions: [
