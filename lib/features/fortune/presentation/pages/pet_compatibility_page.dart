@@ -101,10 +101,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final petState = ref.watch(petProvider);
 
     return Scaffold(
-      backgroundColor: TossTheme.backgroundSecondary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundSecondary,
       appBar: StandardFortuneAppBar(
         title: widget.title,
         actions: [
@@ -233,8 +234,9 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   }
 
   Widget _buildPetCard(PetProfile pet, int index) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final species = PetSpecies.fromString(pet.species);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: GestureDetector(
@@ -242,7 +244,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: TossDesignSystem.white,
+            color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -278,7 +280,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
-                        color: TossTheme.textBlack,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -286,7 +288,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                       '${species.displayName} • ${pet.age}세',
                       style: TextStyle(
                         fontSize: 15,
-                        color: TossTheme.textGray600,
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                       ),
                     ),
                   ],
@@ -314,12 +316,13 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   }
 
   Widget _buildEmptyState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Container(
         margin: const EdgeInsets.all(20),
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: TossDesignSystem.white,
+          color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -351,7 +354,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: TossTheme.textBlack,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               ),
             ),
             const SizedBox(height: 12),
@@ -360,7 +363,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: TossTheme.textGray600,
+                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                 height: 1.4,
               ),
             ),
@@ -393,10 +396,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   }
 
   Widget _buildAddPetForm() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: StatefulBuilder(
@@ -417,20 +421,20 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: TossTheme.borderGray200,
+                      color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Header
                 Text(
                   '반려동물 등록',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
-                    color: TossTheme.textBlack,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -438,7 +442,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   '반려동물의 정보를 입력해주세요',
                   style: TextStyle(
                     fontSize: 16,
-                    color: TossTheme.textGray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -454,7 +458,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: TossTheme.textBlack,
+                            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -467,18 +471,25 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: TossTheme.textBlack,
+                            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                           ),
                         ),
                         const SizedBox(height: 12),
                         TextField(
                           controller: _nameController,
+                          style: TextStyle(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                           decoration: InputDecoration(
                             hintText: '반려동물의 이름을 입력하세요',
-                            hintStyle: TextStyle(color: TossTheme.textGray400),
+                            hintStyle: TextStyle(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400),
+                            filled: true,
+                            fillColor: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: TossTheme.borderGray200),
+                              borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -496,20 +507,28 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: TossTheme.textBlack,
+                            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                           ),
                         ),
                         const SizedBox(height: 12),
                         TextField(
                           controller: _ageController,
                           keyboardType: TextInputType.number,
+                          style: TextStyle(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                           decoration: InputDecoration(
                             hintText: '나이를 입력하세요',
-                            hintStyle: TextStyle(color: TossTheme.textGray400),
+                            hintStyle: TextStyle(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400),
                             suffixText: '세',
+                            suffixStyle: TextStyle(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                            filled: true,
+                            fillColor: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: TossTheme.borderGray200),
+                              borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -546,6 +565,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   }
 
   Widget _buildSpeciesSelector(StateSetter setModalState) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Wrap(
       spacing: 12,
       runSpacing: 12,
@@ -556,11 +576,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected 
+              color: isSelected
                 ? TossTheme.primaryBlue.withValues(alpha: 0.1)
-                : TossDesignSystem.gray50,
+                : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50),
               border: Border.all(
-                color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+                color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                 width: isSelected ? 2 : 1,
               ),
               borderRadius: BorderRadius.circular(20),
@@ -578,7 +598,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? TossTheme.primaryBlue : TossTheme.textGray600,
+                    color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
                   ),
                 ),
               ],
@@ -687,6 +707,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   }
 
   Widget _buildFortuneResult() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final petState = ref.watch(petProvider);
     final selectedPet = petState.selectedPet;
 
@@ -707,7 +728,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               gradient: LinearGradient(
                 colors: [
                   TossTheme.primaryBlue.withValues(alpha: 0.1),
-                  TossDesignSystem.white,
+                  isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -744,7 +765,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -752,7 +773,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                         '${species.displayName} • ${selectedPet.age}세',
                         style: TextStyle(
                           fontSize: 16,
-                          color: TossTheme.textGray600,
+                          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                         ),
                       ),
                     ],
@@ -767,7 +788,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: TossDesignSystem.white,
+              color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -793,7 +814,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
-                        color: TossTheme.textBlack,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                       ),
                     ),
                   ],
@@ -803,7 +824,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   _fortune!.content,
                   style: TextStyle(
                     fontSize: 16,
-                    color: TossTheme.textBlack,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     height: 1.6,
                   ),
                 ),
