@@ -23,51 +23,51 @@ class FortuneColors {
   
   // Fortune type specific gradients
   static const LinearGradient loveGradient = LinearGradient(
-    colors: [Color(0xFFE91E63), Color(0xFFC2185B)]),
+    colors: [Color(0xFFE91E63), Color(0xFFC2185B)],
     begin: Alignment.topLeft,
-    end: Alignment.bottomRight
+    end: Alignment.bottomRight,
   );
-  
+
   static const LinearGradient loveGradientDark = LinearGradient(
-    colors: [Color(0xFFFF6090), Color(0xFFFF80AB)]),
+    colors: [Color(0xFFFF6090), Color(0xFFFF80AB)],
     begin: Alignment.topLeft,
-    end: Alignment.bottomRight
+    end: Alignment.bottomRight,
   );
-  
+
   static const LinearGradient spiritualGradient = LinearGradient(
-    colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)]),
+    colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
     begin: Alignment.topLeft,
-    end: Alignment.bottomRight
+    end: Alignment.bottomRight,
   );
-  
+
   static const LinearGradient spiritualGradientDark = LinearGradient(
-    colors: [Color(0xFFA78BFA), Color(0xFFC4B5FD)]),
+    colors: [Color(0xFFA78BFA), Color(0xFFC4B5FD)],
     begin: Alignment.topLeft,
-    end: Alignment.bottomRight
+    end: Alignment.bottomRight,
   );
-  
+
   static const LinearGradient energyGradient = LinearGradient(
-    colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
+    colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
     begin: Alignment.topLeft,
-    end: Alignment.bottomRight
+    end: Alignment.bottomRight,
   );
-  
+
   static const LinearGradient energyGradientDark = LinearGradient(
-    colors: [Color(0xFFFBBF24), Color(0xFFFCD34D)]),
+    colors: [Color(0xFFFBBF24), Color(0xFFFCD34D)],
     begin: Alignment.topLeft,
-    end: Alignment.bottomRight
+    end: Alignment.bottomRight,
   );
   
   static const LinearGradient earthGradient = LinearGradient(
-    colors: [Color(0xFF8B6F47), Color(0xFF6F5637)]),
+    colors: [Color(0xFF8B6F47), Color(0xFF6F5637)],
     begin: Alignment.topLeft,
-    end: Alignment.bottomRight
+    end: Alignment.bottomRight,
   );
-  
+
   static const LinearGradient earthGradientDark = LinearGradient(
-    colors: [Color(0xFFBCA08E), Color(0xFFD4B5A0)]),
+    colors: [Color(0xFFBCA08E), Color(0xFFD4B5A0)],
     begin: Alignment.topLeft,
-    end: Alignment.bottomRight
+    end: Alignment.bottomRight,
   );
   
   // Sports team colors (theme-aware)
