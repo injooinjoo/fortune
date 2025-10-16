@@ -75,19 +75,26 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
   }
   
   Widget _buildBody(SajuState sajuState) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     if (sajuState.isLoading) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('사주 데이터를 불러오는 중...'),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(
+              '사주 데이터를 불러오는 중...',
+              style: TextStyle(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              ),
+            ),
           ],
         ),
       );
     }
-    
+
     if (sajuState.error != null) {
       return Center(
         child: Column(
@@ -98,7 +105,9 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
             Text(
               sajuState.error!,
               textAlign: TextAlign.center,
-              style: TossTheme.body3,
+              style: TossTheme.body3.copyWith(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              ),
             ),
             const SizedBox(height: 24),
             TossButton(
@@ -112,24 +121,30 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
         ),
       );
     }
-    
+
     if (sajuState.sajuData == null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.hourglass_empty, size: 48, color: TossTheme.textGray500),
+            Icon(
+              Icons.hourglass_empty,
+              size: 48,
+              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+            ),
             const SizedBox(height: 16),
             Text(
               '사주 데이터가 없습니다.\n먼저 사주 계산을 완료해주세요.',
               textAlign: TextAlign.center,
-              style: TossTheme.body3,
+              style: TossTheme.body3.copyWith(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              ),
             ),
           ],
         ),
       );
     }
-    
+
     // 사주 데이터가 있으면 메인 화면 표시
     return _buildMainScreen(sajuState.sajuData!);
   }
@@ -417,6 +432,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
   }
 
   Widget _buildQuestionSelectionSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final predefinedQuestions = [
       '언제 돈이 들어올까요?',
       '어떤 일이 나에게 맞을까요?',
@@ -432,7 +448,9 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
         children: [
           Text(
             '궁금한 질문을 선택하세요',
-            style: TossTheme.heading3,
+            style: TossTheme.heading3.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            ),
           ),
           const SizedBox(height: TossTheme.spacingM),
           
@@ -529,9 +547,10 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
 
   Widget _buildFortuneResult(Map<String, dynamic> sajuData) {
     if (_selectedQuestion == null) return const SizedBox.shrink();
-    
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     String answer = _getAnswerForQuestion(_selectedQuestion!, sajuData);
-    
+
     return TossCard(
       padding: const EdgeInsets.all(TossTheme.spacingL),
       child: Column(
@@ -543,12 +562,14 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
               const SizedBox(width: TossTheme.spacingS),
               Text(
                 '운세 결과',
-                style: TossTheme.heading3,
+                style: TossTheme.heading3.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
               ),
             ],
           ),
           const SizedBox(height: TossTheme.spacingM),
-          
+
           // 질문
           Container(
             width: double.infinity,
@@ -573,20 +594,23 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
                   _selectedQuestion!,
                   style: TossTheme.body3.copyWith(
                     fontWeight: FontWeight.w600,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(height: TossTheme.spacingM),
-          
+
           // 답변
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(TossTheme.spacingM),
             decoration: BoxDecoration(
-              color: TossTheme.backgroundSecondary,
+              color: isDark
+                  ? TossDesignSystem.surfaceBackgroundDark
+                  : TossDesignSystem.surfaceBackgroundLight,
               borderRadius: BorderRadius.circular(TossTheme.radiusM),
             ),
             child: Column(
@@ -596,7 +620,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
                   'A.',
                   style: TossTheme.body3.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: TossTheme.textBlack,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -604,6 +628,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
                   answer,
                   style: TossTheme.body3.copyWith(
                     height: 1.6,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
               ],

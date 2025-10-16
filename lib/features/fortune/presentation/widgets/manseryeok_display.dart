@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 
 /// 토스 스타일의 만세력 사주 표시 위젯
@@ -15,24 +16,29 @@ class ManseryeokDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return TossCard(
       padding: const EdgeInsets.all(TossTheme.spacingL),
-      child: Column(
-        children: [
-          // 제목
-          _buildTitle(),
-          const SizedBox(height: TossTheme.spacingL),
-          
-          // 만세력 표
-          _buildManseryeokTable(),
-          const SizedBox(height: TossTheme.spacingM),
-          
-          // 하단 설명
-          _buildDescription(),
-        ],
+      child: Builder(
+        builder: (context) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          return Column(
+            children: [
+              // 제목
+              _buildTitle(isDark),
+              const SizedBox(height: TossTheme.spacingL),
+
+              // 만세력 표
+              _buildManseryeokTable(isDark),
+              const SizedBox(height: TossTheme.spacingM),
+
+              // 하단 설명
+              _buildDescription(isDark),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(bool isDark) {
     return Column(
       children: [
         // 한문 제목
@@ -40,6 +46,7 @@ class ManseryeokDisplay extends StatelessWidget {
           '사주 명식',
           style: TossTheme.heading2.copyWith(
             fontWeight: FontWeight.bold,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
         const SizedBox(height: TossTheme.spacingXS),
@@ -47,14 +54,14 @@ class ManseryeokDisplay extends StatelessWidget {
         Text(
           '당신의 타고난 사주팔자입니다',
           style: TossTheme.caption.copyWith(
-            color: TossTheme.textGray600,
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildManseryeokTable() {
+  Widget _buildManseryeokTable(bool isDark) {
     final year = sajuData['year'];
     final month = sajuData['month'];
     final day = sajuData['day'];
@@ -62,10 +69,10 @@ class ManseryeokDisplay extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: TossTheme.backgroundWhite,
+        color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
         border: Border.all(
-          color: TossTheme.borderPrimary,
+          color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
           width: 1,
         ),
       ),
@@ -75,67 +82,69 @@ class ManseryeokDisplay extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingM),
             decoration: BoxDecoration(
-              color: TossTheme.backgroundSecondary,
+              color: isDark
+                  ? TossDesignSystem.cardBackgroundDark.withValues(alpha: 0.5)
+                  : TossDesignSystem.surfaceBackgroundLight,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(TossTheme.radiusM),
                 topRight: Radius.circular(TossTheme.radiusM),
               ),
               border: Border(
                 bottom: BorderSide(
-                  color: TossTheme.borderPrimary,
+                  color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
                   width: 1,
                 ),
               ),
             ),
             child: Row(
               children: [
-                _buildColumnHeader('時柱', '시주'),
-                _buildVerticalDivider(),
-                _buildColumnHeader('日柱', '일주', isHighlight: true),
-                _buildVerticalDivider(),
-                _buildColumnHeader('月柱', '월주'),
-                _buildVerticalDivider(),
-                _buildColumnHeader('年柱', '년주'),
+                _buildColumnHeader('時柱', '시주', isDark: isDark),
+                _buildVerticalDivider(isDark),
+                _buildColumnHeader('日柱', '일주', isHighlight: true, isDark: isDark),
+                _buildVerticalDivider(isDark),
+                _buildColumnHeader('月柱', '월주', isDark: isDark),
+                _buildVerticalDivider(isDark),
+                _buildColumnHeader('年柱', '년주', isDark: isDark),
               ],
             ),
           ),
-          
+
           // 천간 행
           Container(
             padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingL),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: TossTheme.borderPrimary.withValues(alpha: 0.5),
+                  color: (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight).withValues(alpha: 0.5),
                   width: 1,
                 ),
               ),
             ),
             child: Row(
               children: [
-                _buildPillarCell(hour, '천간', isHour: true),
-                _buildVerticalDivider(),
-                _buildPillarCell(day, '천간', isDay: true),
-                _buildVerticalDivider(),
-                _buildPillarCell(month, '천간'),
-                _buildVerticalDivider(),
-                _buildPillarCell(year, '천간'),
+                _buildPillarCell(hour, '천간', isHour: true, isDark: isDark),
+                _buildVerticalDivider(isDark),
+                _buildPillarCell(day, '천간', isDay: true, isDark: isDark),
+                _buildVerticalDivider(isDark),
+                _buildPillarCell(month, '천간', isDark: isDark),
+                _buildVerticalDivider(isDark),
+                _buildPillarCell(year, '천간', isDark: isDark),
               ],
             ),
           ),
-          
+
           // 지지 행
           Container(
             padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingL),
             child: Row(
               children: [
-                _buildPillarCell(hour, '지지', isHour: true),
-                _buildVerticalDivider(),
-                _buildPillarCell(day, '지지', isDay: true),
-                _buildVerticalDivider(),
-                _buildPillarCell(month, '지지'),
-                _buildVerticalDivider(),
-                _buildPillarCell(year, '지지'),
+                _buildPillarCell(hour, '지지', isHour: true, isDark: isDark),
+                _buildVerticalDivider(isDark),
+                _buildPillarCell(day, '지지', isDay: true, isDark: isDark),
+                _buildVerticalDivider(isDark),
+                _buildPillarCell(month, '지지', isDark: isDark),
+                _buildVerticalDivider(isDark),
+                _buildPillarCell(year, '지지', isDark: isDark),
               ],
             ),
           ),
@@ -144,7 +153,7 @@ class ManseryeokDisplay extends StatelessWidget {
     );
   }
 
-  Widget _buildColumnHeader(String hanja, String korean, {bool isHighlight = false}) {
+  Widget _buildColumnHeader(String hanja, String korean, {bool isHighlight = false, required bool isDark}) {
     return Expanded(
       child: Column(
         children: [
@@ -153,7 +162,9 @@ class ManseryeokDisplay extends StatelessWidget {
             style: TossTheme.body1.copyWith(
               fontSize: isHighlight ? 20 : 18,
               fontWeight: FontWeight.bold,
-              color: isHighlight ? TossTheme.brandBlue : TossTheme.textBlack,
+              color: isHighlight
+                  ? TossTheme.brandBlue
+                  : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
               letterSpacing: 2,
             ),
           ),
@@ -161,7 +172,7 @@ class ManseryeokDisplay extends StatelessWidget {
           Text(
             korean,
             style: TossTheme.caption.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
           ),
         ],
@@ -169,15 +180,24 @@ class ManseryeokDisplay extends StatelessWidget {
     );
   }
 
-  Widget _buildPillarCell(Map<String, dynamic>? pillar, String type, {bool isDay = false, bool isHour = false}) {
+  Widget _buildPillarCell(Map<String, dynamic>? pillar, String type, {bool isDay = false, bool isHour = false, required bool isDark}) {
     if (pillar == null && !isHour) {
-      return Expanded(child: Center(child: Text('-')));
+      return Expanded(
+        child: Center(
+          child: Text(
+            '-',
+            style: TextStyle(
+              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+            ),
+          ),
+        ),
+      );
     }
 
     String hanja = '';
     String korean = '';
     String element = '';
-    
+
     if (pillar != null) {
       if (type == '천간') {
         hanja = pillar['cheongan']?['hanja'] ?? '';
@@ -187,7 +207,7 @@ class ManseryeokDisplay extends StatelessWidget {
         hanja = pillar['jiji']?['hanja'] ?? '';
         korean = pillar['jiji']?['char'] ?? '';
         element = pillar['jiji']?['element'] ?? '';
-        
+
         // 지지의 경우 띠 동물도 표시
         if (type == '지지') {
           final animal = pillar['jiji']?['animal'] ?? '';
@@ -212,7 +232,9 @@ class ManseryeokDisplay extends StatelessWidget {
             style: TossTheme.heading3.copyWith(
               fontSize: isDay ? 24 : 20,
               fontWeight: FontWeight.bold,
-              color: isDay ? TossTheme.brandBlue : TossTheme.textBlack,
+              color: isDay
+                  ? TossTheme.brandBlue
+                  : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
               height: 1,
             ),
           ),
@@ -222,9 +244,9 @@ class ManseryeokDisplay extends StatelessWidget {
             korean,
             style: TossTheme.caption.copyWith(
               fontSize: isDay ? 12 : 11,
-              color: isDay 
-                ? TossTheme.brandBlue.withValues(alpha: 0.8)
-                : TossTheme.textGray600,
+              color: isDay
+                  ? TossTheme.brandBlue.withValues(alpha: 0.8)
+                  : (isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight),
               fontWeight: isDay ? FontWeight.w600 : FontWeight.normal,
             ),
           ),
@@ -256,19 +278,21 @@ class ManseryeokDisplay extends StatelessWidget {
     );
   }
 
-  Widget _buildVerticalDivider() {
+  Widget _buildVerticalDivider(bool isDark) {
     return Container(
       width: 1,
       height: 60,
-      color: TossTheme.borderPrimary.withValues(alpha: 0.3),
+      color: (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight).withValues(alpha: 0.3),
     );
   }
 
-  Widget _buildDescription() {
+  Widget _buildDescription(bool isDark) {
     return Container(
       padding: const EdgeInsets.all(TossTheme.spacingM),
       decoration: BoxDecoration(
-        color: TossTheme.backgroundSecondary,
+        color: isDark
+            ? TossDesignSystem.cardBackgroundDark.withValues(alpha: 0.3)
+            : TossDesignSystem.surfaceBackgroundLight,
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
       ),
       child: Row(
@@ -276,14 +300,14 @@ class ManseryeokDisplay extends StatelessWidget {
         children: [
           Icon(
             Icons.info_outline,
-            color: TossTheme.textGray600,
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             size: 16,
           ),
           const SizedBox(width: TossTheme.spacingXS),
           Text(
             '위 사주는 만세력 기준으로 계산되었습니다',
             style: TossTheme.caption.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
           ),
         ],

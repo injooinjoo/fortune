@@ -48,6 +48,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedBuilder(
       animation: widget.animationController,
       builder: (context, child) {
@@ -71,49 +72,50 @@ class _SajuElementChartState extends State<SajuElementChart> {
                       '오행 균형',
                       style: TossTheme.heading2.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
                     ),
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: TossTheme.spacingS),
-              
+
               FadeTransition(
                 opacity: _titleAnimation,
                 child: Text(
                   '천간지지의 오행 분포를 확인해보세요',
                   style: TossTheme.caption.copyWith(
-                    color: TossTheme.textGray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: TossTheme.spacingL),
-              
+
               // 차트와 범례
               Row(
                 children: [
                   // 파이 차트
                   Expanded(
                     flex: 3,
-                    child: _buildPieChart(),
+                    child: _buildPieChart(isDark),
                   ),
-                  
+
                   const SizedBox(width: TossTheme.spacingL),
-                  
+
                   // 범례
                   Expanded(
                     flex: 2,
-                    child: _buildLegend(),
+                    child: _buildLegend(isDark),
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: TossTheme.spacingL),
-              
+
               // 오행 해석
-              _buildElementInterpretation(),
+              _buildElementInterpretation(isDark),
             ],
           ),
         );
@@ -121,9 +123,9 @@ class _SajuElementChartState extends State<SajuElementChart> {
     );
   }
 
-  Widget _buildPieChart() {
+  Widget _buildPieChart(bool isDark) {
     final totalCount = widget.elementBalance.values.fold<int>(0, (sum, count) => sum + (count as int));
-    
+
     if (totalCount == 0) {
       return SizedBox(
         height: 150,
@@ -131,7 +133,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
           child: Text(
             '오행 데이터가 없습니다',
             style: TossTheme.caption.copyWith(
-              color: TossTheme.textGray500,
+              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
             ),
           ),
         ),
@@ -220,7 +222,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
     );
   }
 
-  Widget _buildLegend() {
+  Widget _buildLegend(bool isDark) {
     return FadeTransition(
       opacity: _chartAnimation,
       child: Column(
@@ -230,7 +232,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
           final count = entry.value as int;
           final color = _getElementColor(element);
           final strength = _getElementStrength(count);
-          
+
           return Padding(
             padding: const EdgeInsets.only(bottom: TossTheme.spacingS),
             child: Row(
@@ -255,6 +257,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                             element,
                             style: TossTheme.body2.copyWith(
                               fontWeight: FontWeight.w600,
+                              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                             ),
                           ),
                           Text(
@@ -269,7 +272,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                       Text(
                         strength,
                         style: TossTheme.caption.copyWith(
-                          color: TossTheme.textGray500,
+                          color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
                         ),
                       ),
                     ],
@@ -283,16 +286,18 @@ class _SajuElementChartState extends State<SajuElementChart> {
     );
   }
 
-  Widget _buildElementInterpretation() {
+  Widget _buildElementInterpretation(bool isDark) {
     final dominantElement = _getDominantElement();
     final lackingElement = _getLackingElement();
-    
+
     return FadeTransition(
       opacity: _chartAnimation,
       child: Container(
         padding: const EdgeInsets.all(TossTheme.spacingM),
         decoration: BoxDecoration(
-          color: TossTheme.backgroundSecondary,
+          color: isDark
+              ? TossDesignSystem.cardBackgroundDark.withValues(alpha: 0.3)
+              : TossDesignSystem.surfaceBackgroundLight,
           borderRadius: BorderRadius.circular(TossTheme.radiusM),
         ),
         child: Column(
@@ -310,13 +315,14 @@ class _SajuElementChartState extends State<SajuElementChart> {
                   '오행 분석',
                   style: TossTheme.body2.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
               ],
             ),
-            
+
             const SizedBox(height: TossTheme.spacingM),
-            
+
             // 강한 오행
             _buildAnalysisItem(
               '강한 오행',
@@ -324,10 +330,11 @@ class _SajuElementChartState extends State<SajuElementChart> {
               dominantElement['interpretation'] ?? '',
               _getElementColor(dominantElement['element'] ?? ''),
               Icons.trending_up,
+              isDark,
             ),
-            
+
             const SizedBox(height: TossTheme.spacingS),
-            
+
             // 부족한 오행
             _buildAnalysisItem(
               '부족한 오행',
@@ -335,6 +342,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
               lackingElement['interpretation'] ?? '',
               _getElementColor(lackingElement['element'] ?? ''),
               Icons.trending_down,
+              isDark,
             ),
           ],
         ),
@@ -342,7 +350,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
     );
   }
 
-  Widget _buildAnalysisItem(String title, String element, String interpretation, Color color, IconData icon) {
+  Widget _buildAnalysisItem(String title, String element, String interpretation, Color color, IconData icon, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -368,7 +376,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                   Text(
                     title,
                     style: TossTheme.caption.copyWith(
-                      color: TossTheme.textGray600,
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -394,7 +402,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
               Text(
                 interpretation,
                 style: TossTheme.caption.copyWith(
-                  color: TossTheme.textGray600,
+                  color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                 ),
               ),
             ],

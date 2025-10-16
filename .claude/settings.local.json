@@ -4,7 +4,8 @@
       "Bash(tee:*)",
       "Bash(git push:*)",
       "Bash(flutter:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": [],
