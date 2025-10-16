@@ -192,12 +192,12 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
                 decoration: BoxDecoration(
                   color: isSelected
                       ? option['color'].withValues(alpha: 0.1)
-                      : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50),
+                      : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
                         ? option['color']
-                        : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray300),
+                        : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
                     width: isSelected ? 2 : 1,
                   ),
                 ),
