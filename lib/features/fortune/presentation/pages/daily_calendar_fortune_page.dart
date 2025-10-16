@@ -310,8 +310,15 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
   
   Widget _buildHourlyItem(Map<String, dynamic> hour) {
     final score = hour['score'] as int;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
         children: [
           Container(
@@ -335,7 +342,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             child: Text(
               hour['activity'] as String,
               style: TossDesignSystem.body2.copyWith(
-                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                color: isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
               ),
             ),
           ),

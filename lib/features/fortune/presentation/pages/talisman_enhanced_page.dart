@@ -13,7 +13,8 @@ import '../widgets/standard_fortune_app_bar.dart';
 
 // Provider for managing talisman creation state
 final talismanCreationProvider = StateNotifierProvider<TalismanCreationNotifier, TalismanCreationState>(
-  (ref) => TalismanCreationNotifier();
+  (ref) => TalismanCreationNotifier(),
+);
 
 class TalismanCreationState {
   final int currentStep;
@@ -35,7 +36,7 @@ class TalismanCreationState {
     this.primaryColor,
     this.secondaryColor,
     this.personalText,
-    this.result)
+    this.result,
   });
 
   TalismanCreationState copyWith({
@@ -47,23 +48,24 @@ class TalismanCreationState {
     Color? primaryColor,
     Color? secondaryColor,
     String? personalText,
-    TalismanResult? result)
+    TalismanResult? result,
   }) {
     return TalismanCreationState(
       currentStep: currentStep ?? this.currentStep,
-    selectedType: selectedType ?? this.selectedType,
+      selectedType: selectedType ?? this.selectedType,
       personalWish: personalWish ?? this.personalWish,
-    userName: userName ?? this.userName,
+      userName: userName ?? this.userName,
       birthDate: birthDate ?? this.birthDate,
-    primaryColor: primaryColor ?? this.primaryColor,
+      primaryColor: primaryColor ?? this.primaryColor,
       secondaryColor: secondaryColor ?? this.secondaryColor,
       personalText: personalText ?? this.personalText,
-      result: result ?? this.result);
+      result: result ?? this.result,
+    );
   }
 }
 
 class TalismanCreationNotifier extends StateNotifier<TalismanCreationState> {
-  TalismanCreationNotifier() : super(TalismanCreationState();
+  TalismanCreationNotifier() : super(TalismanCreationState());
 
   void selectType(TalismanType type) {
     state = state.copyWith(selectedType: type);
@@ -73,14 +75,16 @@ class TalismanCreationNotifier extends StateNotifier<TalismanCreationState> {
     state = state.copyWith(
       userName: userName,
       birthDate: birthDate,
-      personalWish: personalWish);
+      personalWish: personalWish,
+    );
   }
 
   void updateCustomization({Color? primaryColor, Color? secondaryColor, String? personalText}) {
     state = state.copyWith(
-      primaryColor: primaryColor);
-      secondaryColor: secondaryColor),
-    personalText: personalText);
+      primaryColor: primaryColor,
+      secondaryColor: secondaryColor,
+      personalText: personalText,
+    );
   }
 
   void nextStep() {
@@ -117,8 +121,9 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      vsync: this);
-      duration: const Duration(milliseconds: 500));
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
     
     // Reset state when entering the page
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -143,7 +148,9 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
       if (state.result != null) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => TalismanResultPage(result: state.result!));
+            builder: (context) => TalismanResultPage(result: state.result!),
+          ),
+        );
       }
     }
   }
@@ -171,31 +178,43 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
           // Main content
           Expanded(
             child: IndexedStack(
-              index: state.currentStep);
+              index: state.currentStep,
               children: [
                 TalismanTypeSelectionStep(
                   onTypeSelected: (type) {
                     ref.read(talismanCreationProvider.notifier).selectType(type);
                     _handleNextStep();
-                  }),
+                  },
+                ),
                 state.selectedType != null
                     ? TalismanCustomizationStep(
-                        selectedType: state.selectedType!
+                        selectedType: state.selectedType!,
                         onNext: _handleNextStep,
-                        onBack: _handlePreviousStep),
+                        onBack: _handlePreviousStep,
+                      )
                     : const Center(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center);
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CircularProgressIndicator(),
                             SizedBox(height: 16),
-                            Text('부적 유형을 선택해주세요')),
+                            Text('부적 유형을 선택해주세요'),
+                          ],
+                        ),
+                      ),
                 TalismanGenerationStep(
                   onComplete: (result) {
                     ref.read(talismanCreationProvider.notifier).setResult(result);
                     _handleNextStep();
                   },
-                  onBack: _handlePreviousStep)$1))$1);
+                  onBack: _handlePreviousStep,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildProgressIndicator(int currentStep) {
@@ -207,33 +226,42 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
         border: Border(
           bottom: BorderSide(
             color: TossDesignSystem.gray200,
-            width: 1)),
+            width: 1,
+          ),
+        ),
+      ),
       child: Row(
         children: [
           _buildProgressStep(
             step: 1,
             title: '부적 선택',
             isActive: currentStep >= 0,
-            isCompleted: currentStep > 0),
+            isCompleted: currentStep > 0,
+          ),
           _buildProgressConnector(isActive: currentStep > 0),
           _buildProgressStep(
             step: 2,
             title: '개인화',
             isActive: currentStep >= 1,
-            isCompleted: currentStep > 1),
+            isCompleted: currentStep > 1,
+          ),
           _buildProgressConnector(isActive: currentStep > 1),
           _buildProgressStep(
             step: 3,
             title: '생성',
             isActive: currentStep >= 2,
-            isCompleted: currentStep > 2)]));
+            isCompleted: currentStep > 2,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildProgressStep({
     required int step,
     required String title,
     required bool isActive,
-    required bool isCompleted
+    required bool isCompleted,
   }) {
     final color = isCompleted 
         ? TossDesignSystem.tossBlue 
@@ -253,30 +281,39 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
               shape: BoxShape.circle,
               border: Border.all(
                 color: color,
-                width: 2)),
+                width: 2,
+              ),
+            ),
             child: Center(
               child: isCompleted
                   ? Icon(
                       Icons.check,
                       size: 16,
-                      color: TossDesignSystem.white)
+                      color: TossDesignSystem.white,
+                    )
                   : Text(
                       '$step',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: isActive ? color : TossDesignSystem.gray400))).animate(target: isActive ? 1 : 0).scale(
-            begin: const Offset(0.8, 0.8),
-            end: const Offset(1.0, 1.0),
-            duration: 300.ms,
-            curve: Curves.easeOut),
+                        color: isActive ? color : TossDesignSystem.gray400,
+                      ),
+                    ),
+            ).animate(target: isActive ? 1 : 0).scale(
+              begin: const Offset(0.8, 0.8),
+              end: const Offset(1.0, 1.0),
+              duration: 300.ms,
+              curve: Curves.easeOut,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(
             title,
             style: TextStyle(
               fontSize: 12,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-              color: isActive ? Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900 : TossDesignSystem.gray500),
+              color: isActive ? Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900 : TossDesignSystem.gray500,
+            ),
           ),
         ],
       ),
@@ -292,6 +329,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
       begin: 0,
       end: 1,
       duration: 300.ms,
-      curve: Curves.easeOut);
+      curve: Curves.easeOut,
+    );
   }
 }
