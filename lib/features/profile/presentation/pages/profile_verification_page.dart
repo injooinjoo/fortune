@@ -21,17 +21,17 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
   bool _isEmailVerified = false;
   bool _isIdentityVerified = false;
   bool _isLoading = false;
-  
+
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _verificationCodeController = TextEditingController();
-  
+
   @override
   void initState() {
     super.initState();
     _loadUserData();
   }
-  
+
   @override
   void dispose() {
     _phoneController.dispose();
@@ -39,7 +39,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     _verificationCodeController.dispose();
     super.dispose();
   }
-  
+
   Future<void> _loadUserData() async {
     final userProfileAsync = ref.read(userProfileProvider);
     userProfileAsync.when(
@@ -57,32 +57,35 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         }
       },
       error: (_, __) {},
-      loading: () {});
+      loading: () {},
+    );
   }
-  
+
   Future<void> _sendPhoneVerification() async {
     if (_phoneController.text.isEmpty) {
       Toast.show(
         context,
         message: '전화번호를 입력해주세요',
-        type: ToastType.error,);
+        type: ToastType.error,
+      );
       return;
     }
-    
+
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       // Simulate sending verification code
       await Future.delayed(const Duration(seconds: 2));
       HapticUtils.mediumImpact();
-      
+
       Toast.show(
         context,
         message: '인증번호가 발송되었습니다',
-        type: ToastType.success,);
-      
+        type: ToastType.success,
+      );
+
       setState(() {
         _currentStep = 1;
       });
@@ -90,76 +93,82 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
       Toast.show(
         context,
         message: '인증번호 발송에 실패했습니다',
-        type: ToastType.error,);
+        type: ToastType.error,
+      );
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
   }
-  
+
   Future<void> _verifyPhone() async {
     if (_verificationCodeController.text.isEmpty) {
       Toast.show(
         context,
         message: '인증번호를 입력해주세요',
-        type: ToastType.error,);
+        type: ToastType.error,
+      );
       return;
     }
-    
+
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       // Simulate verification
       await Future.delayed(const Duration(seconds: 1));
       HapticUtils.success();
-      
+
       setState(() {
         _isPhoneVerified = true;
         _currentStep = 0;
       });
-      
+
       Toast.show(
         context,
         message: '전화번호가 인증되었습니다',
-        type: ToastType.success,);
+        type: ToastType.success,
+      );
     } catch (e) {
       Toast.show(
         context,
         message: '인증에 실패했습니다',
-        type: ToastType.error,);
+        type: ToastType.error,
+      );
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
   }
-  
+
   Future<void> _sendEmailVerification() async {
     if (_emailController.text.isEmpty) {
       Toast.show(
         context,
         message: '이메일을 입력해주세요',
-        type: ToastType.error,);
+        type: ToastType.error,
+      );
       return;
     }
-    
+
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       // Simulate sending verification email
       await Future.delayed(const Duration(seconds: 2));
       HapticUtils.mediumImpact();
-      
+
       Toast.show(
         context,
         message: '인증 이메일이 발송되었습니다',
-        type: ToastType.success,);
-      
+        type: ToastType.success,
+      );
+
       setState(() {
         _isEmailVerified = true;
       });
@@ -167,14 +176,15 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
       Toast.show(
         context,
         message: '이메일 발송에 실패했습니다',
-        type: ToastType.error,);
+        type: ToastType.error,
+      );
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
   }
-  
+
   int get verificationLevel {
     int level = 0;
     if (_isPhoneVerified) level++;
@@ -182,7 +192,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     if (_isIdentityVerified) level++;
     return level;
   }
-  
+
   Color get verificationColor {
     switch (verificationLevel) {
       case 0:
@@ -197,7 +207,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         return TossDesignSystem.gray500;
     }
   }
-  
+
   String get verificationBadge {
     switch (verificationLevel) {
       case 0:
@@ -212,13 +222,13 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         return '미인증';
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fontSize = ref.watch(fontSizeProvider);
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
-    
+
     return Scaffold(
       backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
@@ -226,7 +236,8 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
-          onPressed: () => context.pop(),),
+          onPressed: () => context.pop(),
+        ),
         title: Text(
           '프로필 인증',
           style: TextStyle(
@@ -248,12 +259,16 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                 gradient: LinearGradient(
                   colors: [
                     verificationColor.withValues(alpha: 0.2),
-                    verificationColor.withValues(alpha: 0.1),],
+                    verificationColor.withValues(alpha: 0.1),
+                  ],
                   begin: Alignment.topLeft,
-                  end: Alignment.bottomRight),
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: verificationColor.withValues(alpha: 0.3),),
+                  color: verificationColor.withValues(alpha: 0.3),
+                ),
+              ),
               child: Column(
                 children: [
                   Row(
@@ -262,11 +277,14 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: verificationColor.withValues(alpha: 0.3),
-                          shape: BoxShape.circle,),
+                          shape: BoxShape.circle,
+                        ),
                         child: Icon(
                           Icons.verified_user,
                           color: verificationColor,
-                          size: 32)),
+                          size: 32,
+                        ),
+                      ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
@@ -276,30 +294,46 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               '현재 인증 상태',
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
-                                color: TossDesignSystem.gray600)),
+                                color: TossDesignSystem.gray600,
+                              ),
+                            ),
                             const SizedBox(height: 4),
                             Row(
                               children: [
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
-                                    vertical: 4),
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: verificationColor,
                                     borderRadius: BorderRadius.circular(12),
+                                  ),
                                   child: Text(
                                     verificationBadge,
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
                                       fontWeight: FontWeight.w600,
-                                      color: TossDesignSystem.white,)),
+                                      color: TossDesignSystem.white,
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Lv.$verificationLevel',
                                   style: TextStyle(
                                     fontSize: 16 * fontScale,
                                     fontWeight: FontWeight.bold,
-                                    color: verificationColor,)],),],),],),
+                                    color: verificationColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20),
                   // Progress Bar
                   Column(
@@ -312,13 +346,19 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             '인증 진행도',
                             style: TextStyle(
                               fontSize: 12 * fontScale,
-                              color: TossDesignSystem.gray600)),
+                              color: TossDesignSystem.gray600,
+                            ),
+                          ),
                           Text(
                             '$verificationLevel/3',
                             style: TextStyle(
                               fontSize: 12 * fontScale,
                               fontWeight: FontWeight.w600,
-                              color: verificationColor,)],),
+                              color: verificationColor,
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 8),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
@@ -326,8 +366,15 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                           value: verificationLevel / 3,
                           backgroundColor: TossDesignSystem.gray200,
                           valueColor: AlwaysStoppedAnimation<Color>(verificationColor),
-                          minHeight: 8,),],),],),),
-            
+                          minHeight: 8,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
             // Benefits Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -339,31 +386,40 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     style: TextStyle(
                       fontSize: 18 * fontScale,
                       fontWeight: FontWeight.bold,
-                      color: TossDesignSystem.gray900)),
+                      color: TossDesignSystem.gray900,
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   _buildBenefitItem(
                     icon: Icons.security,
                     title: '계정 보안 강화',
                     description: '2단계 인증으로 계정을 안전하게 보호하세요',
-                    fontScale: fontScale),
+                    fontScale: fontScale,
+                  ),
                   _buildBenefitItem(
                     icon: Icons.star,
                     title: '프리미엄 기능 우선 체험',
                     description: '새로운 기능을 먼저 사용해보실 수 있습니다',
-                    fontScale: fontScale),
+                    fontScale: fontScale,
+                  ),
                   _buildBenefitItem(
                     icon: Icons.badge,
                     title: '인증 배지 표시',
                     description: '프로필에 공식 인증 배지가 표시됩니다',
-                    fontScale: fontScale),
+                    fontScale: fontScale,
+                  ),
                   _buildBenefitItem(
                     icon: Icons.card_giftcard,
                     title: '특별 보상',
                     description: '인증 완료 시 보너스 토큰을 지급합니다',
-                    fontScale: fontScale,)],),),
-            
+                    fontScale: fontScale,
+                  ),
+                ],
+              ),
+            ),
+
             const SizedBox(height: 32),
-            
+
             // Verification Steps
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -375,9 +431,11 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     style: TextStyle(
                       fontSize: 18 * fontScale,
                       fontWeight: FontWeight.bold,
-                      color: TossDesignSystem.gray900)),
+                      color: TossDesignSystem.gray900,
+                    ),
+                  ),
                   const SizedBox(height: 16),
-                  
+
                   // Phone Verification
                   _buildVerificationStep(
                     title: '전화번호 인증',
@@ -399,17 +457,23 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             hintText: '010-0000-0000',
                             hintStyle: TextStyle(
                               fontSize: 14 * fontScale,
-                              color: TossDesignSystem.gray600),
+                              color: TossDesignSystem.gray600,
+                            ),
                             prefixIcon: const Icon(Icons.phone, size: 20),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: TossDesignSystem.gray200)),
+                              borderSide: const BorderSide(color: TossDesignSystem.gray200),
+                            ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: TossDesignSystem.gray200)),
+                              borderSide: const BorderSide(color: TossDesignSystem.gray200),
+                            ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: TossDesignSystem.tossBlue)),
+                              borderSide: const BorderSide(color: TossDesignSystem.tossBlue),
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
@@ -420,20 +484,31 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
                             child: _isLoading
-                                ? SizedBox(
+                                ? const SizedBox(
                                     height: 20,
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: TossDesignSystem.white))
+                                      color: TossDesignSystem.white,
+                                    ),
+                                  )
                                 : Text(
                                     '인증번호 발송',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
-                                      fontWeight: FontWeight.w600)))]),
-                    fontScale: fontScale),
-                  
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    fontScale: fontScale,
+                  ),
+
                   // Verification Code Input (shown after phone number is submitted)
                   if (_currentStep == 1) ...[
                     const SizedBox(height: 16),
@@ -443,7 +518,9 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),),
+                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+                        ),
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -452,7 +529,9 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             style: TextStyle(
                               fontSize: 14 * fontScale,
                               fontWeight: FontWeight.w600,
-                              color: TossDesignSystem.gray900)),
+                              color: TossDesignSystem.gray900,
+                            ),
+                          ),
                           const SizedBox(height: 12),
                           TextField(
                             controller: _verificationCodeController,
@@ -463,17 +542,23 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               hintText: '6자리 인증번호',
                               hintStyle: TextStyle(
                                 fontSize: 14 * fontScale,
-                                color: TossDesignSystem.gray600),
+                                color: TossDesignSystem.gray600,
+                              ),
                               counterText: '',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: TossDesignSystem.gray200)),
+                                borderSide: const BorderSide(color: TossDesignSystem.gray200),
+                              ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: TossDesignSystem.gray200)),
+                                borderSide: const BorderSide(color: TossDesignSystem.gray200),
+                              ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: TossDesignSystem.tossBlue)),
+                                borderSide: const BorderSide(color: TossDesignSystem.tossBlue),
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 12),
                           Row(
                             children: [
@@ -489,11 +574,17 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                     side: const BorderSide(color: TossDesignSystem.gray200),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
                                   child: Text(
                                     '취소',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
-                                      color: TossDesignSystem.gray600)),
+                                      color: TossDesignSystem.gray600,
+                                    ),
+                                  ),
+                                ),
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: ElevatedButton(
@@ -503,22 +594,36 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                     padding: const EdgeInsets.symmetric(vertical: 12),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
                                   child: _isLoading
-                                      ? SizedBox(
+                                      ? const SizedBox(
                                           height: 20,
                                           width: 20,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            color: TossDesignSystem.white))
+                                            color: TossDesignSystem.white,
+                                          ),
+                                        )
                                       : Text(
                                           '확인',
                                           style: TextStyle(
                                             fontSize: 14 * fontScale,
                                             fontWeight: FontWeight.w600,
-                                            color: TossDesignSystem.white)))])]))],
-                  
+                                            color: TossDesignSystem.white,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+
                   const SizedBox(height: 16),
-                  
+
                   // Email Verification
                   _buildVerificationStep(
                     title: '이메일 인증',
@@ -540,17 +645,23 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             hintText: 'example@email.com',
                             hintStyle: TextStyle(
                               fontSize: 14 * fontScale,
-                              color: TossDesignSystem.gray600),
+                              color: TossDesignSystem.gray600,
+                            ),
                             prefixIcon: const Icon(Icons.email, size: 20),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: TossDesignSystem.gray200)),
+                              borderSide: const BorderSide(color: TossDesignSystem.gray200),
+                            ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: TossDesignSystem.gray200)),
+                              borderSide: const BorderSide(color: TossDesignSystem.gray200),
+                            ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: TossDesignSystem.tossBlue)),
+                              borderSide: const BorderSide(color: TossDesignSystem.tossBlue),
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
@@ -561,47 +672,68 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
                             child: _isLoading
-                                ? SizedBox(
+                                ? const SizedBox(
                                     height: 20,
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: TossDesignSystem.white))
+                                      color: TossDesignSystem.white,
+                                    ),
+                                  )
                                 : Text(
                                     '인증 이메일 발송',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
                                       fontWeight: FontWeight.w600,
-                                      color: TossDesignSystem.white)))]),
-                    fontScale: fontScale),
-                  
+                                      color: TossDesignSystem.white,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    fontScale: fontScale,
+                  ),
+
                   const SizedBox(height: 16),
-                  
+
                   // Identity Verification
                   _buildVerificationStep(
                     title: '신원 인증',
                     description: '본인 확인 서류로 인증',
                     isCompleted: _isIdentityVerified,
                     isLocked: !_isPhoneVerified || !_isEmailVerified,
-                    onTap: (_isIdentityVerified || !_isPhoneVerified || !_isEmailVerified) 
-                        ? null 
+                    onTap: (_isIdentityVerified || !_isPhoneVerified || !_isEmailVerified)
+                        ? null
                         : () {
                             Toast.show(
                               context,
                               message: '신원 인증은 준비 중입니다',
-                              type: ToastType.info,);
+                              type: ToastType.info,
+                            );
                           },
-                    fontScale: fontScale)])),
-            
-            const SizedBox(height: 32)])));
+                    fontScale: fontScale,
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
   }
-  
+
   Widget _buildBenefitItem({
     required IconData icon,
     required String title,
     required String description,
-    required double fontScale}) {
+    required double fontScale,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -611,11 +743,14 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),),
+              borderRadius: BorderRadius.circular(8),
+            ),
             child: Icon(
               icon,
               color: TossDesignSystem.tossBlue,
-              size: 20,)),
+              size: 20,
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -626,16 +761,26 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                   style: TextStyle(
                     fontSize: 14 * fontScale,
                     fontWeight: FontWeight.w600,
-                    color: TossDesignSystem.gray900)),
+                    color: TossDesignSystem.gray900,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   description,
                   style: TextStyle(
                     fontSize: 12 * fontScale,
                     color: TossDesignSystem.gray600,
-                    height: 1.4,)],),],),),
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
-  
+
   Widget _buildVerificationStep({
     required String title,
     required String description,
@@ -644,23 +789,28 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     bool isLocked = false,
     VoidCallback? onTap,
     Widget? content,
-    required double fontScale}) {
+    required double fontScale,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: TossDesignSystem.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isCompleted 
+          color: isCompleted
               ? TossDesignSystem.success.withValues(alpha: 0.3)
-              : isLocked 
+              : isLocked
                   ? TossDesignSystem.gray200
-                  : TossDesignSystem.tossBlue.withValues(alpha: 0.2)),
+                  : TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+        ),
         boxShadow: [
           BoxShadow(
             color: TossDesignSystem.black.withValues(alpha: 0.05),
             blurRadius: 10,
-            offset: const Offset(0, 2))]),
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -679,7 +829,8 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                           : isLocked
                               ? TossDesignSystem.gray200
                               : TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                      shape: BoxShape.circle),
+                      shape: BoxShape.circle,
+                    ),
                     child: Icon(
                       isCompleted
                           ? Icons.check_circle
@@ -691,7 +842,9 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                           : isLocked
                               ? TossDesignSystem.gray600
                               : TossDesignSystem.tossBlue,
-                      size: 24)),
+                      size: 24,
+                    ),
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -702,31 +855,51 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                           style: TextStyle(
                             fontSize: 16 * fontScale,
                             fontWeight: FontWeight.w600,
-                            color: isLocked ? TossDesignSystem.gray600 : TossDesignSystem.gray900)),
+                            color: isLocked ? TossDesignSystem.gray600 : TossDesignSystem.gray900,
+                          ),
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           description,
                           style: TextStyle(
                             fontSize: 12 * fontScale,
-                            color: TossDesignSystem.gray600)]),
+                            color: TossDesignSystem.gray600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   if (isCompleted)
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: TossDesignSystem.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Text(
                         '완료',
                         style: TextStyle(
                           fontSize: 12 * fontScale,
                           fontWeight: FontWeight.w600,
-                          color: TossDesignSystem.success)))
+                          color: TossDesignSystem.success,
+                        ),
+                      ),
+                    )
                   else if (!isLocked && onTap != null)
                     Icon(
                       isExpanded ? Icons.expand_less : Icons.expand_more,
-                      color: TossDesignSystem.gray600)]),
+                      color: TossDesignSystem.gray600,
+                    ),
+                ],
+              ),
               if (isExpanded && content != null) ...[
                 const SizedBox(height: 16),
-                content]])));
+                content,
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
