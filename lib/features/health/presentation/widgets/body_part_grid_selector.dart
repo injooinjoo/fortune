@@ -32,6 +32,8 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
         // 헤더
@@ -45,7 +47,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                   Text(
                     '특별히 신경쓰이는 부위가 있나요?',
                     style: TossTheme.heading3.copyWith(
-                      color: TossTheme.textBlack,
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     ),
                   ),
                   if (_selectedParts.isNotEmpty) ...[
@@ -71,7 +73,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
               Text(
                 '최대 ${widget.maxSelection}개까지 선택 가능합니다',
                 style: TossTheme.body3.copyWith(
-                  color: TossTheme.textGray600,
+                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                 ),
               ),
               if (_selectedParts.isNotEmpty) ...[
@@ -95,20 +97,20 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: _buildBodyPartGrid(),
+            child: _buildBodyPartGrid(isDark),
           ),
         ),
 
         // 선택된 부위 요약
         if (_selectedParts.isNotEmpty)
-          _buildSelectedSummary(),
+          _buildSelectedSummary(isDark),
       ],
     );
   }
 
-  Widget _buildBodyPartGrid() {
+  Widget _buildBodyPartGrid(bool isDark) {
     final bodyParts = BodyPart.values.where((part) => part != BodyPart.whole).toList();
-    
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -121,12 +123,12 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
       itemCount: bodyParts.length,
       itemBuilder: (context, index) {
         final part = bodyParts[index];
-        return _buildBodyPartCard(part, index);
+        return _buildBodyPartCard(part, index, isDark);
       },
     );
   }
 
-  Widget _buildBodyPartCard(BodyPart part, int index) {
+  Widget _buildBodyPartCard(BodyPart part, int index, bool isDark) {
     final isSelected = _selectedParts.contains(part);
     final canSelect = _selectedParts.length < widget.maxSelection || isSelected;
 
@@ -135,16 +137,16 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isSelected 
+          color: isSelected
               ? TossTheme.primaryBlue.withValues(alpha: 0.1)
-              : TossDesignSystem.white,
+              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
                 ? TossTheme.primaryBlue
-                : canSelect 
-                    ? TossTheme.borderGray200
-                    : TossTheme.borderGray200.withValues(alpha: 0.5),
+                : canSelect
+                    ? (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200)
+                    : (isDark ? TossDesignSystem.borderDark.withValues(alpha: 0.5) : TossTheme.borderGray200.withValues(alpha: 0.5)),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
@@ -182,14 +184,14 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? TossTheme.primaryBlue.withValues(alpha: 0.2)
-                            : TossTheme.backgroundSecondary,
+                            : (isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         _getBodyPartIcon(part),
                         color: isSelected
                             ? TossTheme.primaryBlue
-                            : TossTheme.textGray600,
+                            : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
                         size: 24,
                       ),
                     ),
@@ -201,7 +203,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                         fontWeight: FontWeight.w600,
                         color: isSelected
                             ? TossTheme.primaryBlue
-                            : TossTheme.textBlack,
+                            : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -209,7 +211,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                     Text(
                       _getShortDescription(part),
                       style: TossTheme.caption.copyWith(
-                        color: TossTheme.textGray500,
+                        color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
                       ),
                       textAlign: TextAlign.center,
                       maxLines: 1,
@@ -248,7 +250,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
       .slideY(begin: 0.1, end: 0);
   }
 
-  Widget _buildSelectedSummary() {
+  Widget _buildSelectedSummary(bool isDark) {
     return Container(
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(16),
@@ -274,7 +276,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                 '선택된 부위',
                 style: TossTheme.body2.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: TossTheme.textBlack,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                 ),
               ),
               const Spacer(),
