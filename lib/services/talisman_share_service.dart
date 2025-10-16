@@ -33,8 +33,11 @@ class TalismanShareService {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: TossDesignSystem.white.withValues(alpha: 0.8)),
-        textDirection: TextDirection.ltr);
+            color: TossDesignSystem.white.withValues(alpha: 0.8),
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
       textPainter.layout();
       
       // Position watermark at bottom right
@@ -47,11 +50,14 @@ class TalismanShareService {
       // Add date
       final datePainter = TextPainter(
         text: TextSpan(
-          text: DateTime.now().toString().split(' '),
+          text: DateTime.now().toString().split(' ')[0],
           style: TextStyle(
             fontSize: 14,
-            color: TossDesignSystem.white.withValues(alpha: 0.6)),
-        textDirection: TextDirection.ltr);
+            color: TossDesignSystem.white.withValues(alpha: 0.6),
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
       datePainter.layout();
       
       final datePosition = Offset(
@@ -77,7 +83,8 @@ class TalismanShareService {
     required Uint8List imageData,
     required SharePlatform platform,
     required String talismanType,
-    required String userName}) async {
+    required String userName,
+  }) async {
     try {
       switch (platform) {
         case SharePlatform.kakaoTalk:
