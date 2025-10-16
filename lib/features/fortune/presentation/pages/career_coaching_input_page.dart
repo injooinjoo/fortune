@@ -494,7 +494,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: goalOptions.map((goal) => 
+            children: goalOptions.map((goal) =>
               GestureDetector(
                 onTap: () => setState(() => _shortTermGoal = goal.id),
                 child: Container(
@@ -502,7 +502,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                   decoration: BoxDecoration(
                     color: _shortTermGoal == goal.id
                       ? TossDesignSystem.tossBlue
-                      : TossDesignSystem.gray100,
+                      : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
@@ -515,7 +515,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                         style: TossDesignSystem.body2.copyWith(
                           color: _shortTermGoal == goal.id
                             ? TossDesignSystem.white
-                            : TossDesignSystem.gray800,
+                            : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray800),
                           fontWeight: _shortTermGoal == goal.id
                             ? FontWeight.bold
                             : FontWeight.normal,
@@ -545,15 +545,15 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: valueOptions.map((value) => 
+            children: valueOptions.map((value) =>
               GestureDetector(
                 onTap: () => setState(() => _coreValue = value.id),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
                     color: _coreValue == value.id
-                      ? Color(value.color)
-                      : TossDesignSystem.gray100,
+                      ? TossDesignSystem.tossBlue
+                      : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -561,7 +561,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                     style: TossDesignSystem.body2.copyWith(
                       color: _coreValue == value.id
                         ? TossDesignSystem.white
-                        : TossDesignSystem.gray800,
+                        : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray800),
                       fontWeight: _coreValue == value.id
                         ? FontWeight.bold
                         : FontWeight.normal,
@@ -619,7 +619,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                           decoration: BoxDecoration(
                             color: _skillsToImprove.contains(skill)
                               ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                              : TossDesignSystem.gray100,
+                              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100),
                             borderRadius: BorderRadius.circular(16),
                             border: _skillsToImprove.contains(skill)
                               ? Border.all(color: TossDesignSystem.tossBlue, width: 1.5)
@@ -630,7 +630,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                             style: TossDesignSystem.caption.copyWith(
                               color: _skillsToImprove.contains(skill)
                                 ? TossDesignSystem.tossBlue
-                                : TossDesignSystem.gray800,
+                                : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray800),
                               fontWeight: _skillsToImprove.contains(skill)
                                 ? FontWeight.bold
                                 : FontWeight.normal,

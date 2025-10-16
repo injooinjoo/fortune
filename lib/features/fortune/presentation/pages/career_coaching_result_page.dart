@@ -88,9 +88,9 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     }
 
     return Scaffold(
-      backgroundColor: TossDesignSystem.gray50,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.gray50,
       appBar: AppBar(
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+        backgroundColor: (isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white).withValues(alpha: 0.0),
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
@@ -119,7 +119,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 24),
             decoration: BoxDecoration(
-              color: TossDesignSystem.gray100,
+              color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100,
               borderRadius: BorderRadius.circular(12),
             ),
             child: TabBar(
@@ -130,7 +130,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
               ),
               indicatorPadding: const EdgeInsets.all(2),
               labelColor: TossDesignSystem.white,
-              unselectedLabelColor: TossDesignSystem.gray600,
+              unselectedLabelColor: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray600,
               labelStyle: TossDesignSystem.caption.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -176,6 +176,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                   '커리어 건강도',
                   style: TossDesignSystem.heading3.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : null,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -263,6 +264,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                       '시장 트렌드',
                       style: TossDesignSystem.body1.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : null,
                       ),
                     ),
                   ],
@@ -273,16 +275,19 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                   '업계 전망',
                   _getTrendLabel(_result!.marketTrends.industryOutlook),
                   _getTrendColor(_result!.marketTrends.industryOutlook),
+                  isDark,
                 ),
                 _buildTrendItem(
                   '수요 수준',
                   _getDemandLabel(_result!.marketTrends.demandLevel),
                   _getDemandColor(_result!.marketTrends.demandLevel),
+                  isDark,
                 ),
                 _buildTrendItem(
                   '연봉 추세',
                   _result!.marketTrends.salaryTrend,
                   TossDesignSystem.gray800,
+                  isDark,
                 ),
               ],
             ),
@@ -853,7 +858,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     );
   }
 
-  Widget _buildTrendItem(String label, String value, Color color) {
+  Widget _buildTrendItem(String label, String value, Color color, bool isDark) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -862,7 +867,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
           Text(
             label,
             style: TossDesignSystem.body2.copyWith(
-              color: TossDesignSystem.gray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
             ),
           ),
           Container(
