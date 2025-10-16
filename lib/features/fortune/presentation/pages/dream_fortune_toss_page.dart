@@ -90,8 +90,9 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
   
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: TossDesignSystem.white,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: StandardFortuneAppBar(
         title: '꿈 해몽',
         onBackPressed: () {
@@ -172,18 +173,28 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '꿈을 들려주세요',
-                    style: TossTheme.heading2.copyWith(
-                      color: const Color(0xFF191F28),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '어떤 꿈을 꾸셨나요?',
-                    style: TossTheme.subtitle2.copyWith(
-                      color: const Color(0xFF8B95A1),
-                    ),
+                  Builder(
+                    builder: (context) {
+                      final isDark = Theme.of(context).brightness == Brightness.dark;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '꿈을 들려주세요',
+                            style: TossTheme.heading2.copyWith(
+                              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '어떤 꿈을 꾸셨나요?',
+                            style: TossTheme.subtitle2.copyWith(
+                              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -192,29 +203,35 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
         ),
         
         const SizedBox(height: 20),
-        
+
         // 부제목
-        Text(
-          '꿈의 상황과 느낌을 자세히 적어주시면\n더 정확한 해몽을 받을 수 있어요',
-          style: TossTheme.body3.copyWith(
-            color: const Color(0xFF6B7280),
-            height: 1.6,
-          ),
+        Builder(
+          builder: (context) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            return Text(
+              '꿈의 상황과 느낌을 자세히 적어주시면\n더 정확한 해몽을 받을 수 있어요',
+              style: TossTheme.body3.copyWith(
+                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                height: 1.6,
+              ),
+            );
+          },
         ),
       ],
     );
   }
   
   Widget _buildDreamInputSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasText = _dreamController.text.isNotEmpty;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '꿈 내용',
           style: TossTheme.body1.copyWith(
-            color: const Color(0xFF191F28),
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -227,11 +244,11 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
           decoration: BoxDecoration(
             color: _isInputFocused || hasText
                 ? TossTheme.primaryBlue.withValues(alpha:0.05)
-                : const Color(0xFFF8F9FA),
+                : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.surfaceBackgroundLight),
             border: Border.all(
               color: _isInputFocused || hasText
                   ? TossTheme.primaryBlue
-                  : const Color(0xFFE5E7EB),
+                  : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
               width: _isInputFocused || hasText ? 2 : 1,
             ),
             borderRadius: BorderRadius.circular(16),
@@ -254,13 +271,13 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
               setState(() {});
             },
             style: TossTheme.body3.copyWith(
-              color: const Color(0xFF191F28),
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               height: 1.5,
             ),
             decoration: InputDecoration(
               hintText: '예: 높은 하늘을 날아다니는 꿈을 꾸었어요. 구름 위를 자유롭게 날아다니며 기분이 정말 좋았고, 아래로 보이는 풍경이 아름다웠어요. 그런데 갑자기 떨어질 것 같은 불안감이 들었어요...',
               hintStyle: TossTheme.body3.copyWith(
-                color: const Color(0xFF9CA3AF),
+                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
                 height: 1.5,
               ),
               border: InputBorder.none,
@@ -279,7 +296,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
             Text(
               '꿈의 상황, 등장인물, 감정 등을 구체적으로 써주세요',
               style: TossTheme.caption.copyWith(
-                color: const Color(0xFF9CA3AF),
+                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
               ),
             ),
             Text(
@@ -287,7 +304,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
               style: TossTheme.caption.copyWith(
                 color: _dreamController.text.length > 450
                     ? TossTheme.error
-                    : const Color(0xFF9CA3AF),
+                    : (isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight),
               ),
             ),
           ],
