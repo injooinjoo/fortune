@@ -104,21 +104,27 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
 
   @override
   Widget buildFortuneResult() {
-    return SingleChildScrollView(
-      physics: const ClampingScrollPhysics(),
-      child: Column(
-        children: [
-          // 기본 운세 결과는 제외하고 특정일에 맞는 정보만 표시
-          _buildOverallScoreSection(),
-          _buildTodaysCoreSection(), 
-          _buildHourlyFortuneSection(),
-          _buildLuckyElementsSection(),
-          _buildRelationshipSection(),
-          _buildMoneySection(),
-          _buildHealthSection(),
-          if (_isSpecialDay()) _buildSpecialDaySection(),
-          const SizedBox(height: 32),
-        ],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
+      child: SingleChildScrollView(
+        controller: scrollController,
+        physics: const ClampingScrollPhysics(),
+        child: Column(
+          children: [
+            // 기본 운세 결과는 제외하고 특정일에 맞는 정보만 표시
+            _buildOverallScoreSection(),
+            _buildTodaysCoreSection(),
+            _buildHourlyFortuneSection(),
+            _buildLuckyElementsSection(),
+            _buildRelationshipSection(),
+            _buildMoneySection(),
+            _buildHealthSection(),
+            if (_isSpecialDay()) _buildSpecialDaySection(),
+            const SizedBox(height: 32),
+          ],
+        ),
       ),
     );
   }
