@@ -686,17 +686,18 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
   }
 
   Widget _buildBodyPartHealthSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final concernedParts = _fortuneResult!.bodyPartHealthList
         .where((bph) => _selectedBodyParts.contains(bph.bodyPart))
         .toList();
-    
+
     if (concernedParts.isEmpty) return const SizedBox();
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -713,7 +714,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
           Text(
             '관심 부위 상태',
             style: TossTheme.heading3.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 16),
@@ -738,7 +739,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                         bph.bodyPart.displayName,
                         style: TossTheme.body1.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                         ),
                       ),
                       const Spacer(),
@@ -762,7 +763,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                   Text(
                     bph.description,
                     style: TossTheme.body3.copyWith(
-                      color: TossTheme.textGray600,
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                       height: 1.4,
                     ),
                   ),
@@ -776,11 +777,13 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
   }
 
   Widget _buildRecommendationsSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -797,17 +800,17 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
           Text(
             '오늘의 건강 관리',
             style: TossTheme.heading3.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 16),
-          
+
           ..._fortuneResult!.recommendations.map((rec) {
             return Container(
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TossTheme.backgroundSecondary,
+                color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -825,14 +828,14 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                           rec.title,
                           style: TossTheme.body2.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: TossTheme.textBlack,
+                            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           rec.description,
                           style: TossTheme.body3.copyWith(
-                            color: TossTheme.textGray600,
+                            color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                           ),
                         ),
                       ],
