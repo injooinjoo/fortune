@@ -18,7 +18,8 @@ class TalismanGenerationStep extends ConsumerStatefulWidget {
   const TalismanGenerationStep({
     super.key,
     required this.onComplete,
-    required this.onBack});
+    required this.onBack,
+  });
 
   @override
   ConsumerState<TalismanGenerationStep> createState() => _TalismanGenerationStepState();
@@ -38,12 +39,12 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat();
-    
+
     // Start generation process
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _generateTalisman();
     });
-}
+  }
 
   @override
   void dispose() {
@@ -81,7 +82,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
     // Simulate progress updates
     _updateProgress(0.2, '사용자 정보를 분석하고 있습니다...');
     await Future.delayed(const Duration(seconds: 1));
-    
+
     _updateProgress(0.4, '부적 문양을 그리고 있습니다...');
     await Future.delayed(const Duration(seconds: 1));
 
@@ -109,14 +110,14 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
           },
         },
       );
-      
+
       if (response['success'] == true) {
         _updateProgress(1.0, '부적이 완성되었습니다!');
-        
+
         // Parse response and create TalismanResult
         final data = response['data'] ?? {};
         final fortune = data['fortune'] ?? {};
-        
+
         final result = TalismanResult(
           type: state.selectedType!,
           design: TalismanDesign(
@@ -127,7 +128,8 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
             protectionSymbol: '護',
             createdDate: DateTime.now(),
             userBirthInfo: state.birthDate,
-            userName: state.userName),
+            userName: state.userName,
+          ),
           meaning: fortune['meaning'] ?? '이 부적은 당신의 소원을 이루어주고 행운을 가져다 줄 것입니다.',
           usage: fortune['usage'] ?? '항상 몸에 지니고 다니시거나, 집안의 깨끗한 곳에 보관하세요.',
           effectiveness: fortune['effectiveness'] ?? '이 부적은 당신의 긍정적인 에너지와 함께 작용하여 효과를 발휘합니다.',
@@ -135,17 +137,18 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
             '부적을 타인에게 보여주지 마세요',
             '항상 깨끗하게 보관하세요',
             '부정적인 생각을 품지 마세요',
-          ]);
-        
+          ]),
+        );
+
         await Future.delayed(const Duration(seconds: 1));
-        
+
         setState(() {
           _isGenerating = false;
         });
-        
+
         // Haptic feedback for completion
         HapticUtils.successNotification();
-        
+
         // Complete after a short delay
         await Future.delayed(const Duration(milliseconds: 500));
         widget.onComplete(result);
@@ -166,13 +169,13 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
       _progress = progress;
       _statusMessage = message;
     });
-}
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final state = ref.watch(talismanCreationProvider);
-    
+
     return Scaffold(
       backgroundColor: TossDesignSystem.white,
       body: SafeArea(
@@ -197,8 +200,11 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                             colors: [
                               state.selectedType!.gradientColors[0].withValues(alpha: 0.3),
                               state.selectedType!.gradientColors[1].withValues(alpha: 0.1),
-                              TossDesignSystem.white.withValues(alpha: 0.0)],
-                            stops: const [0.3, 0.7, 1.0]),
+                              TossDesignSystem.white.withValues(alpha: 0.0),
+                            ],
+                            stops: const [0.3, 0.7, 1.0],
+                          ),
+                        ),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -216,13 +222,20 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                                       border: Border.all(
                                         color: state.selectedType!.gradientColors[0]
                                             .withValues(alpha: 0.5),
-                                        width: 2),
+                                        width: 2,
+                                      ),
+                                    ),
                                     child: CustomPaint(
                                       painter: _MagicCirclePainter(
                                         progress: _progress,
-                                        color: state.selectedType!.gradientColors[0])),;
-}),
-                            
+                                        color: state.selectedType!.gradientColors[0],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+
                             // Center icon
                             Container(
                               width: 100,
@@ -232,38 +245,50 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                                 gradient: LinearGradient(
                                   colors: state.selectedType!.gradientColors,
                                   begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight),
+                                  end: Alignment.bottomRight,
+                                ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: state.selectedType!.gradientColors[0]
                                         .withValues(alpha: 0.5),
                                     blurRadius: 20,
-                                    spreadRadius: 5)]),
+                                    spreadRadius: 5,
+                                  ),
+                                ],
+                              ),
                               child: Icon(
                                 state.selectedType!.icon,
                                 color: TossDesignSystem.white,
-                                size: 50),.animate(onPlay: (controller) => controller.repeat(),
-                              .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withValues(alpha: 0.3)
+                                size: 50,
+                              ),
+                            ).animate(onPlay: (controller) => controller.repeat())
+                              .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withValues(alpha: 0.3))
                               .scale(
                                 begin: const Offset(0.9, 0.9),
                                 end: const Offset(1.1, 1.1),
                                 duration: 1000.ms,
-                                curve: Curves.easeInOut)]),
-                      
+                                curve: Curves.easeInOut,
+                              ),
+                          ],
+                        ),
+                      ),
+
                       const SizedBox(height: 40),
-                      
+
                       // Status message
                       Text(
                         _statusMessage,
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600),
-                        textAlign: TextAlign.center).animate(onPlay: (controller) => controller.repeat(),
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ).animate(onPlay: (controller) => controller.repeat())
                         .fadeIn(duration: 500.ms)
                         .then()
                         .fadeOut(duration: 500.ms),
-                      
+
                       const SizedBox(height: 20),
-                      
+
                       // Progress bar
                       Container(
                         width: 250,
@@ -271,30 +296,47 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                         decoration: BoxDecoration(
                           color: TossDesignSystem.gray300,
                           borderRadius: BorderRadius.circular(3),
+                        ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(3),
                           child: LinearProgressIndicator(
                             value: _progress,
                             backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              state.selectedType!.gradientColors[0])),
-                      
+                              state.selectedType!.gradientColors[0],
+                            ),
+                          ),
+                        ),
+                      ),
+
                       const SizedBox(height: 12),
-                      
+
                       // Progress percentage
                       Text(
                         '${(_progress * 100).toInt()}%',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: TossDesignSystem.gray600)])),
-              
+                          color: TossDesignSystem.gray600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
               // Bottom actions
-              if (!_isGenerating) TossButton(
+              if (!_isGenerating)
+                TossButton(
                   text: '다시 만들기',
                   onPressed: widget.onBack,
                   style: TossButtonStyle.ghost,
                   size: TossButtonSize.large,
                 ),
-}
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _MagicCirclePainter extends CustomPainter {
@@ -303,16 +345,15 @@ class _MagicCirclePainter extends CustomPainter {
 
   _MagicCirclePainter({
     required this.progress,
-    required this.color});
+    required this.color,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color.withValues(alpha: 0.5)
       ..style = PaintingStyle.stroke
-     
-   
-    ..strokeWidth = 2;
+      ..strokeWidth = 2;
 
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
@@ -322,16 +363,14 @@ class _MagicCirclePainter extends CustomPainter {
       ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4
-     
-   
-    ..strokeCap = StrokeCap.round;
+      ..strokeCap = StrokeCap.round;
 
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius - 20),
       -3.14159 / 2,
       2 * 3.14159 * progress,
       false,
-      progressPaint
+      progressPaint,
     );
 
     // Draw decorative elements
@@ -340,12 +379,13 @@ class _MagicCirclePainter extends CustomPainter {
       final angle = i * 2 * 3.14159 / elementCount;
       final x = center.dx + (radius - 10) * math.cos(angle);
       final y = center.dy + (radius - 10) * math.sin(angle);
-      
+
       canvas.drawCircle(
         Offset(x, y),
         4,
-        paint..style = PaintingStyle.fill);
-}
+        paint..style = PaintingStyle.fill,
+      );
+    }
   }
 
   @override
