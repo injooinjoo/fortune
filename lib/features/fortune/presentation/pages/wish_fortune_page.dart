@@ -352,17 +352,22 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
 
   /// 메인 헤더
   Widget _buildMainHeader() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '🌟 소원을 빌어보세요',
-          style: TossTheme.heading2,
+          style: TossTheme.heading2.copyWith(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
         ),
         const SizedBox(height: TossTheme.spacingS),
         Text(
           '간절한 마음으로 소원을 작성하면\n신의 특별한 응답을 받을 수 있어요',
-          style: TossTheme.subtitle1,
+          style: TossTheme.subtitle1.copyWith(
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+          ),
         ),
       ],
     );
@@ -380,7 +385,9 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
             children: [
               Text(
                 '어떤 소원인가요?',
-                style: TossTheme.heading5,
+                style: TossTheme.heading5.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
               ),
               const SizedBox(height: TossTheme.spacingM),
               Wrap(
@@ -397,7 +404,9 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.backgroundSecondary,
+                        color: isSelected
+                            ? TossDesignSystem.tossBlue
+                            : (isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isSelected
@@ -447,7 +456,9 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
             children: [
               Text(
                 '소원을 자세히 적어주세요',
-                style: TossTheme.heading5,
+                style: TossTheme.heading5.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
               ),
               const SizedBox(height: TossTheme.spacingM),
               TextField(
@@ -472,10 +483,12 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
                     borderSide: BorderSide(color: TossDesignSystem.tossBlue),
                   ),
                   filled: true,
-                  fillColor: TossDesignSystem.backgroundSecondary,
+                  fillColor: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
                   contentPadding: const EdgeInsets.all(16),
                 ),
-                style: TossTheme.body3,
+                style: TossTheme.body3.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
               ),
             ],
           );
@@ -488,37 +501,46 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   Widget _buildUrgencyLevel() {
     return TossCard(
       style: TossCardStyle.outlined,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '얼마나 간절한가요?',
-            style: TossTheme.heading5,
-          ),
-          const SizedBox(height: TossTheme.spacingM),
-          Row(
+      child: Builder(
+        builder: (context) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Slider(
-                  value: _urgencyLevel.toDouble(),
-                  min: 1,
-                  max: 5,
-                  divisions: 4,
-                  activeColor: TossDesignSystem.tossBlue,
-                  onChanged: (value) {
-                    setState(() {
-                      _urgencyLevel = value.round();
-                    });
-                  },
+              Text(
+                '얼마나 간절한가요?',
+                style: TossTheme.heading5.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+              const SizedBox(height: TossTheme.spacingM),
+              Row(
+                children: [
+                  Expanded(
+                    child: Slider(
+                      value: _urgencyLevel.toDouble(),
+                      min: 1,
+                      max: 5,
+                      divisions: 4,
+                      activeColor: TossDesignSystem.tossBlue,
+                      onChanged: (value) {
+                        setState(() {
+                          _urgencyLevel = value.round();
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                _getUrgencyText(_urgencyLevel),
+                style: TossTheme.caption.copyWith(
+                  color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                 ),
               ),
             ],
-          ),
-          Text(
-            _getUrgencyText(_urgencyLevel),
-            style: TossTheme.caption,
-          ),
-        ],
+          );
+        },
       ),
     );
   }
