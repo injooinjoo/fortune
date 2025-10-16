@@ -196,12 +196,13 @@ class TalentStrengthCards extends StatelessWidget {
   }
 
   Widget _buildStrengthItem(BuildContext context, int rank, String strength) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final colors = [
       const Color(0xFFFFD700), // 금색
       const Color(0xFFC0C0C0), // 은색
       const Color(0xFFCD7F32), // 동색
     ];
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -237,6 +238,7 @@ class TalentStrengthCards extends StatelessWidget {
               strength,
               style: TossTheme.body2.copyWith(
                 fontWeight: FontWeight.w600,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
             ),
           ),
@@ -356,11 +358,12 @@ class ActionPlanWidget extends StatelessWidget {
   }
 
   Widget _buildActionItem(BuildContext context, int step, String plan) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TossTheme.borderGray200.withValues(alpha: 0.5),
+        color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
         borderRadius: BorderRadius.circular(TossTheme.radiusM),
       ),
       child: Row(
@@ -388,6 +391,7 @@ class ActionPlanWidget extends StatelessWidget {
               plan,
               style: TossTheme.subtitle2.copyWith(
                 fontWeight: FontWeight.w500,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
             ),
           ),
