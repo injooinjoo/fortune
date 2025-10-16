@@ -467,11 +467,12 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
     _searchController.clear();
     _searchResults.clear();
     _isSearching = false;
-    
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.white,
+      backgroundColor: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),

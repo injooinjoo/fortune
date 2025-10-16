@@ -27,10 +27,10 @@ class GlassCard extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+          color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
           width: 1,
         ),
       ),
@@ -70,10 +70,10 @@ class GlassButton extends StatelessWidget {
           height: height,
           padding: padding ?? const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+            color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+              color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
               width: 1,
             ),
           ),
@@ -120,10 +120,10 @@ class GlassContainer extends StatelessWidget {
       height: height,
       padding: padding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50,
         borderRadius: borderRadius ?? BorderRadius.circular(12),
         border: border ?? Border.all(
-          color: borderColor ?? (isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200),
+          color: borderColor ?? (isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200),
           width: borderWidth ?? 1,
         ),
       ),
