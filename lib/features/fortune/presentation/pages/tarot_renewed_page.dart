@@ -112,18 +112,23 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   }
 
   PreferredSizeWidget _buildAppBar() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return AppBar(
-      backgroundColor: TossDesignSystem.white,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF191919)),
+        icon: Icon(
+          Icons.arrow_back_ios,
+          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+        ),
         onPressed: () => context.pop(),
       ),
-      title: const Text(
+      title: Text(
         '타로 카드',
         style: TextStyle(
-          color: Color(0xFF191919),
+          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
@@ -149,7 +154,8 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
 
   Widget _buildInitialScreen() {
     final userProfile = ref.watch(userProfileProvider).value;
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(
@@ -160,7 +166,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              
+
               // 사용자 인사말 (토스 스타일)
               Row(
                 children: [
@@ -189,18 +195,18 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
                       children: [
                         Text(
                           '${userProfile?.name ?? '익명'}님의',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: Color(0xFF8B95A1),
+                            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                           ),
                         ),
-                        const Text(
+                        Text(
                           '타로 운세',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF191919),
+                            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                             height: 1.2,
                           ),
                         ),
@@ -251,16 +257,16 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
               ),
               
               const SizedBox(height: 40),
-              
+
               // 설명 텍스트
-              const Center(
+              Center(
                 child: Text(
                   '카드가 전하는 신비로운 메시지를\n받아보세요',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
-                    color: Color(0xFF6B7280),
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                     height: 1.5,
                   ),
                 ),
@@ -346,6 +352,8 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   }
 
   Widget _buildLoadingScreen() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -369,12 +377,12 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
+          Text(
             '카드를 뽑고 있어요...',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF6B7280),
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
           ),
         ],
