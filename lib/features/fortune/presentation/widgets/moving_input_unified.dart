@@ -147,8 +147,9 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: TossTheme.backgroundWhite,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: const StandardFortuneAppBar(
         title: '이사운',
       ),
@@ -166,6 +167,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                     height: 1.2,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
 
@@ -202,16 +204,19 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
   }
 
   Widget _buildLocationSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '지역',
-          style: TossTheme.body1.copyWith(
-            fontWeight: FontWeight.w700,
-            color: TossTheme.textBlack,
-          ),
-        ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '지역',
+              style: TossTheme.body1.copyWith(
+                fontWeight: FontWeight.w700,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              ),
+            ),
         const SizedBox(height: TossTheme.spacingM),
         
         // 현재 지역
@@ -240,12 +245,16 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                   children: [
                     Text(
                       '현재',
-                      style: TossTheme.caption.copyWith(color: TossTheme.textGray500),
+                      style: TossTheme.caption.copyWith(
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      ),
                     ),
                     Text(
                       _currentArea ?? '현재 거주지를 선택하세요',
                       style: TossTheme.body2.copyWith(
-                        color: _currentArea != null ? TossTheme.textBlack : TossTheme.textGray400,
+                        color: _currentArea != null
+                            ? (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight)
+                            : (isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight),
                       ),
                     ),
                   ],
@@ -253,24 +262,24 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
               ),
               Icon(
                 Icons.chevron_right,
-                color: TossTheme.textGray400,
+                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
               ),
             ],
           ),
         ),
         
-        const SizedBox(height: TossTheme.spacingS),
-        
-        // 화살표
-        Center(
-          child: Icon(
-            Icons.arrow_downward,
-            color: TossTheme.textGray400,
-            size: 20,
-          ),
-        ),
-        
-        const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: TossTheme.spacingS),
+
+            // 화살표
+            Center(
+              child: Icon(
+                Icons.arrow_downward,
+                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+                size: 20,
+              ),
+            ),
+
+            const SizedBox(height: TossTheme.spacingS),
         
         // 목표 지역
         TossCard(
@@ -298,12 +307,16 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                   children: [
                     Text(
                       '이사할 곳',
-                      style: TossTheme.caption.copyWith(color: TossTheme.textGray500),
+                      style: TossTheme.caption.copyWith(
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      ),
                     ),
                     Text(
                       _targetArea ?? '이사할 곳을 선택하세요',
                       style: TossTheme.body2.copyWith(
-                        color: _targetArea != null ? TossTheme.textBlack : TossTheme.textGray400,
+                        color: _targetArea != null
+                            ? (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight)
+                            : (isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight),
                       ),
                     ),
                   ],
@@ -311,26 +324,31 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
               ),
               Icon(
                 Icons.chevron_right,
-                color: TossTheme.textGray400,
+                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
               ),
             ],
           ),
         ),
-      ],
+          ],
+        );
+      },
     );
   }
 
   Widget _buildPeriodSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '언제',
-          style: TossTheme.body1.copyWith(
-            fontWeight: FontWeight.w700,
-            color: TossTheme.textBlack,
-          ),
-        ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '언제',
+              style: TossTheme.body1.copyWith(
+                fontWeight: FontWeight.w700,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              ),
+            ),
         const SizedBox(height: TossTheme.spacingM),
         
         Row(
@@ -366,7 +384,9 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                           period['title']!,
                           style: TossTheme.body3.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: isSelected ? TossTheme.primaryBlue : TossTheme.textBlack,
+                            color: isSelected
+                                ? TossTheme.primaryBlue
+                                : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -374,7 +394,9 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                         Text(
                           period['subtitle']!,
                           style: TossTheme.caption.copyWith(
-                            color: isSelected ? TossTheme.primaryBlue : TossTheme.textGray500,
+                            color: isSelected
+                                ? TossTheme.primaryBlue
+                                : (isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -386,21 +408,26 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
             );
           }).toList(),
         ),
-      ],
+          ],
+        );
+      },
     );
   }
 
   Widget _buildPurposeSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '왜',
-          style: TossTheme.body1.copyWith(
-            fontWeight: FontWeight.w700,
-            color: TossTheme.textBlack,
-          ),
-        ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '왜',
+              style: TossTheme.body1.copyWith(
+                fontWeight: FontWeight.w700,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              ),
+            ),
         const SizedBox(height: TossTheme.spacingM),
         
         GridView.builder(
@@ -448,7 +475,9 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                       purpose['title']!,
                       style: TossTheme.caption.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isSelected ? TossTheme.primaryBlue : TossTheme.textBlack,
+                        color: isSelected
+                            ? TossTheme.primaryBlue
+                            : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -458,7 +487,9 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
             );
           },
         ),
-      ],
+          ],
+        );
+      },
     );
   }
 
