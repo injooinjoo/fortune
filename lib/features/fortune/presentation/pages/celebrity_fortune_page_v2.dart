@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/components/app_header.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
-import '../../../../shared/components/bottom_navigation_bar.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/glassmorphism/glass_effects.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../data/models/celebrity_saju.dart';
-import '../../../../presentation/providers/celebrity_saju_provider.dart';
+import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/widgets/celebrity_search_widget.dart';
 import '../../../../presentation/widgets/celebrity_saju_info_widget.dart';
 
