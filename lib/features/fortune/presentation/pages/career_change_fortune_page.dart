@@ -94,7 +94,8 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
   @override
   Widget buildInputForm() {
     final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: AppSpacing.paddingAll16,
       child: Column(
@@ -114,7 +115,9 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                     SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '이직 정보',
-                      style: theme.textTheme.titleLarge,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                      ),
                     ),
                   ],
                 ),

@@ -100,7 +100,8 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
   @override
   Widget buildInputForm() {
     final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -120,7 +121,9 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                     SizedBox(width: TossDesignSystem.spacingS),
                     Text(
                       '커리어 미래 계획',
-                      style: theme.textTheme.titleLarge,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                      ),
                     ),
                   ],
                 ),

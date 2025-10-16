@@ -94,9 +94,10 @@ class CareerFortuneSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: TossDesignSystem.white,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
       appBar: AppBar(
         title: const Text('커리어 운세'),
         backgroundColor: TossDesignSystem.transparent,
@@ -113,7 +114,9 @@ class CareerFortuneSelector extends StatelessWidget {
                     Text(
                       '당신의 커리어 상황은?',
                       style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.spacing2),
                     Text(
@@ -161,7 +164,8 @@ class _CareerTypeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return InkWell(
       onTap: () => context.push(careerType.route),
       borderRadius: BorderRadius.circular(20),
@@ -208,7 +212,10 @@ class _CareerTypeCard extends StatelessWidget {
             Text(
               careerType.title,
               style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold,
+                color: isDark ? TossDesignSystem.textPrimaryDark : null,
+              ),
+            ),
             const SizedBox(height: AppSpacing.spacing1),
             Text(
               careerType.subtitle,

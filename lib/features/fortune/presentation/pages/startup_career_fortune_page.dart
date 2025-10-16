@@ -96,7 +96,8 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
   @override
   Widget buildInputForm() {
     final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -116,7 +117,9 @@ class _StartupCareerFortunePageState extends BaseFortunePageState<StartupCareerF
                     const SizedBox(width: 8),
                     Text(
                       '스타트업 전직 분석',
-                      style: theme.textTheme.titleLarge,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                      ),
                     ),
                   ],
                 ),
