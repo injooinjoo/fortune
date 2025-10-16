@@ -539,10 +539,10 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                           color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                         ),
                       ),
-                    const SizedBox(height: TossTheme.spacingM),
-                    
-                    // 검색 바
-                    TextField(
+                      const SizedBox(height: TossTheme.spacingM),
+
+                      // 검색 바
+                      TextField(
                       controller: _searchController,
                       style: TextStyle(
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
@@ -610,7 +610,8 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
               ),
             ],
           ),
-        ),
+        );
+      },
       ),
     );
   }
