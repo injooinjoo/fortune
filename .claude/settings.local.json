@@ -5,7 +5,15 @@
       "Bash(git push:*)",
       "Bash(flutter:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(cat:*)",
+      "Bash(JIRA_EMAIL=\"injooinjoo@gmail.com\" JIRA_TOKEN=\"ATATT3xFfGF0e3diiy0TFqT7AyCmZDVHQ5o_7ysG2ioH9bu0uIf6Ai1n0mGLgSIvtzGXzNqAxchMeCR3hyH1WTb1b7zqpz6vVbDwXfn1i9N28V3etR2bMZVRGm3xsxL9vRi89EU9z2uzH3XoRwBRVAW5yWUo1AS3PGaETYHJPEPtFqh8ft82RRE=CAF65568\" JIRA_URL=\"https://beyond-app.atlassian.net\")",
+      "Bash(python3:*)",
+      "Bash(export:*)",
+      "Bash(export JIRA_TOKEN=\"ATATT3xFfGF0e3diiy0TFqT7AyCmZDVHQ5o_7ysG2ioH9bu0uIf6Ai1n0mGLgSIvtzGXzNqAxchMeCR3hyH1WTb1b7zqpz6vVbDwXfn1i9N28V3etR2bMZVRGm3xsxL9vRi89EU9z2uzH3XoRwBRVAW5yWUo1AS3PGaETYHJPEPtFqh8ft82RRE=CAF65568\")",
+      "Bash(export JIRA_URL=\"https://beyond-app.atlassian.net\")",
+      "Bash(./scripts/parse_ux_request.sh:*)",
+      "Bash(./scripts/git_jira_commit.sh:*)"
     ],
     "deny": [],
     "ask": [],
