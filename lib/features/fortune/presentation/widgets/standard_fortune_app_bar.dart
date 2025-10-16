@@ -36,7 +36,7 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
           onPressed: onBackPressed ?? () => Navigator.pop(context),
           style: IconButton.styleFrom(
             backgroundColor: isDark
-                ? TossDesignSystem.grayDark700
+                ? TossDesignSystem.grayDark200
                 : TossTheme.backgroundSecondary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -44,7 +44,7 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
           ),
           icon: Icon(
             Icons.arrow_back_ios_new,
-            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             size: 20,
           ),
         ),
