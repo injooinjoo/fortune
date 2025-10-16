@@ -99,9 +99,12 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, 
+          icon: Icon(Icons.arrow_back_ios_new,
             color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            // Go back to fortune list instead of loading page
+            Navigator.of(context).popUntil((route) => route.settings.name == '/fortune');
+          },
         ),
         actions: [
           IconButton(
@@ -584,6 +587,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                       '성장 로드맵',
                       style: TossDesignSystem.body1.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : null,
                       ),
                     ),
                   ],
@@ -599,7 +603,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: TossDesignSystem.gray200,
+                              color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray200,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Column(
@@ -607,7 +611,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                                 Text(
                                   '현재',
                                   style: TossDesignSystem.caption.copyWith(
-                                    color: TossDesignSystem.gray600,
+                                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -615,6 +619,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                                   _result!.growthRoadmap.currentStage,
                                   style: TossDesignSystem.body2.copyWith(
                                     fontWeight: FontWeight.bold,
+                                    color: isDark ? TossDesignSystem.textPrimaryDark : null,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -678,18 +683,18 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.gray100,
+                    color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.schedule, 
-                        color: TossDesignSystem.gray600, size: 20),
+                      Icon(Icons.schedule,
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         '예상 기간: ${_result!.growthRoadmap.estimatedMonths}개월',
                         style: TossDesignSystem.body2.copyWith(
-                          color: TossDesignSystem.gray700,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700,
                         ),
                       ),
                     ],
@@ -745,6 +750,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                       '추천 스킬',
                       style: TossDesignSystem.body1.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : null,
                       ),
                     ),
                   ],
