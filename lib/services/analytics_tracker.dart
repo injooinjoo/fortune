@@ -238,13 +238,13 @@ class AnalyticsTracker {
       await _abTestManager.setUserId(userId);
     }
     
-    final properties = <String, dynamic>{};
-    if (isPremium != null) properties['is_premium'] = isPremium;
+    final properties = <String, String>{};
+    if (isPremium != null) properties['is_premium'] = isPremium.toString();
     if (userType != null) properties['user_type'] = userType;
     if (gender != null) properties['gender'] = gender;
-    if (birthYear != null) properties['birth_year'] = birthYear;
+    if (birthYear != null) properties['birth_year'] = birthYear.toString();
     if (mbti != null) properties['mbti'] = mbti;
-    
+
     if (properties.isNotEmpty) {
       await _abTestManager.setUserProperties(properties);
     }

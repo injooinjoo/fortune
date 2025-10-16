@@ -265,7 +265,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
               _buildDirectionOverlay(),
               if (_isLoading)
                 Container(
-                  color: TossDesignSystem.black26,
+                  color: TossDesignSystem.black.withValues(alpha: 0.26),
                   child: const Center(
                     child: CircularProgressIndicator(),
                   ),

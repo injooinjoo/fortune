@@ -64,7 +64,7 @@ class TarotFortuneCard extends StatelessWidget {
                     child: GlassContainer(
                       width: 50,
                       height: AppSpacing.spacing12 * 1.04,
-                      borderRadius: AppDimensions.radiusLarge,
+                      borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
                       gradient: LinearGradient(
                         colors: [
                           TossDesignSystem.grayDark900.withValues(alpha: 0.2),

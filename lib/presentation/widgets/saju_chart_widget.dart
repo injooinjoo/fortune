@@ -96,7 +96,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
       debugPrint('type: ${e.runtimeType}');
       debugPrint('Fortune cached');
       debugPrint('trace:');
-      debugPrint(stackTrace);
+      debugPrint(stackTrace.toString());
     }
     
     debugPrint('=== SAJU INITIALIZATION END ===');

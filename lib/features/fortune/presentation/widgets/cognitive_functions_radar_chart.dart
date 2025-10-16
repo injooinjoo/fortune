@@ -513,10 +513,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
-        padding: AppSpacing.paddingAll24,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+          padding: AppSpacing.paddingAll24,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             Container(
               width: 40,
               height: AppSpacing.spacing1,
@@ -587,6 +587,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               ),
             ),
           ],
+          ),
         );
       },
     );

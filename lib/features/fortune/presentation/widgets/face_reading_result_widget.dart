@@ -147,7 +147,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                 onPressed: onShare,
                 style: TossButtonStyle.primary,
                 size: TossButtonSize.large,
-                icon: Icons.share,
+                icon: const Icon(Icons.share),
               ),
             ),
         ],

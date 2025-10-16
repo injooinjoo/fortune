@@ -170,7 +170,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                     Container(
                       width: 60,
                       height: 60,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: TossDesignSystem.white,
                         boxShadow: [

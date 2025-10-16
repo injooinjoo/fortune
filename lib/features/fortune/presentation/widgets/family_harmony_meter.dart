@@ -387,7 +387,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       keyword,
-                      style: TossDesignSystem.overline.copyWith(
+                      style: TextStyle(
                         fontSize: 10,
                         color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                       ),
