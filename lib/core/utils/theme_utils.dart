@@ -1,7 +1,5 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_theme_extensions.dart';
 
 /// Utility class for theme-related operations and dark mode support

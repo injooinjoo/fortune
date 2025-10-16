@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
