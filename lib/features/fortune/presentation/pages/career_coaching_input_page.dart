@@ -141,7 +141,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
     }
 
     return Scaffold(
-      backgroundColor: TossDesignSystem.gray50,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.gray50,
       appBar: const StandardFortuneAppBar(
         title: '직업 운세',
       ),
@@ -256,6 +256,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                         '현재 상황을 알려주세요',
                         style: TossDesignSystem.heading3.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : null,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -279,6 +280,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             '현재 포지션',
             style: TossDesignSystem.body1.copyWith(
               fontWeight: FontWeight.bold,
+              color: isDark ? TossDesignSystem.textPrimaryDark : null,
             ),
           ),
           const SizedBox(height: 12),
@@ -341,6 +343,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             '가장 큰 고민은?',
             style: TossDesignSystem.body1.copyWith(
               fontWeight: FontWeight.bold,
+              color: isDark ? TossDesignSystem.textPrimaryDark : null,
             ),
           ),
           const SizedBox(height: 12),
@@ -459,6 +462,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                         '목표와 가치를 들려주세요',
                         style: TossDesignSystem.heading3.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : null,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -482,6 +486,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             '3-6개월 내 목표',
             style: TossDesignSystem.body1.copyWith(
               fontWeight: FontWeight.bold,
+              color: isDark ? TossDesignSystem.textPrimaryDark : null,
             ),
           ),
           const SizedBox(height: 12),
@@ -532,6 +537,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             '가장 중요한 가치',
             style: TossDesignSystem.body1.copyWith(
               fontWeight: FontWeight.bold,
+              color: isDark ? TossDesignSystem.textPrimaryDark : null,
             ),
           ),
           const SizedBox(height: 12),
@@ -575,6 +581,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             '개선하고 싶은 스킬 (복수 선택)',
             style: TossDesignSystem.body1.copyWith(
               fontWeight: FontWeight.bold,
+              color: isDark ? TossDesignSystem.textPrimaryDark : null,
             ),
           ),
           const SizedBox(height: 12),
@@ -646,7 +653,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
 
   Widget _buildAnalyzingView(bool isDark) {
     return Scaffold(
-      backgroundColor: TossDesignSystem.gray50,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.gray50,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -680,6 +687,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
               '직업 전략 분석 중...',
               style: TossDesignSystem.heading3.copyWith(
                 fontWeight: FontWeight.bold,
+                color: isDark ? TossDesignSystem.textPrimaryDark : null,
               ),
             ).animate()
               .fadeIn(duration: 500.ms)
