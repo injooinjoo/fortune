@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(tee:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(flutter:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": [],

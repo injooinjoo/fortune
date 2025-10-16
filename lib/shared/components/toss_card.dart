@@ -21,15 +21,16 @@ class TossCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: padding,
       margin: margin,
       decoration: BoxDecoration(
-        color: backgroundColor ?? TossDesignSystem.white,
+        color: backgroundColor ?? (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight),
         borderRadius: borderRadius ?? BorderRadius.circular(16),
         boxShadow: boxShadow ?? [
           BoxShadow(
-            color: TossDesignSystem.gray900.withValues(alpha: 0.05),
+            color: (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

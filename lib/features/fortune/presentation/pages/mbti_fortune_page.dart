@@ -429,6 +429,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Widget _buildSelectedMbtiInfo() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final colors = _mbtiColors[_selectedMbti]!;
 
     return TossCard(
@@ -460,7 +461,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: TossDesignSystem.gray900,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
               ),
@@ -471,7 +472,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             _getMbtiDescription(_selectedMbti!),
             style: TextStyle(
               fontSize: 14,
-              color: TossDesignSystem.gray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
               height: 1.5,
             ),
           ),
@@ -483,6 +484,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Widget _buildCategorySelection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -491,7 +493,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: TossDesignSystem.gray900,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
         const SizedBox(height: 12),
@@ -499,7 +501,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           '원하는 카테고리를 선택하면 더 자세한 운세를 볼 수 있어요',
           style: TextStyle(
             fontSize: 14,
-            color: TossDesignSystem.gray600,
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
           ),
         ),
         const SizedBox(height: 16),
@@ -535,12 +537,16 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               selectedColor: category['color'],
               checkmarkColor: TossDesignSystem.white,
               labelStyle: TextStyle(
-                color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray700,
+                color: isSelected
+                    ? TossDesignSystem.white
+                    : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
-              backgroundColor: TossDesignSystem.gray50,
+              backgroundColor: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight,
               side: BorderSide(
-                color: isSelected ? category['color'] : TossDesignSystem.gray200,
+                color: isSelected
+                    ? category['color']
+                    : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
               ),
             );
           }).toList(),
@@ -586,6 +592,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Widget _buildEnergyCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final colors = _mbtiColors[_selectedMbti!]!;
 
     return TossCard(
@@ -604,7 +611,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: TossDesignSystem.gray900,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
               ),
             ],
@@ -646,6 +653,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Widget _buildMainFortuneCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final fortune = this.fortune;
     if (fortune == null) return const SizedBox();
 
@@ -676,7 +684,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             fortune.description ?? '오늘은 특별한 하루가 될 것입니다.',
             style: TextStyle(
               fontSize: 15,
-              color: TossDesignSystem.gray800,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               height: 1.6,
             ),
           ),
@@ -692,6 +700,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Widget _buildLuckyItems(Map<String, dynamic> items) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -706,7 +715,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: TossDesignSystem.gray900,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
             ),
           ],
@@ -737,6 +746,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Widget _buildCognitiveFunctionsCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TossCard(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -753,7 +763,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: TossDesignSystem.gray900,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
               ),
             ],
@@ -782,6 +792,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Widget _buildCategoryFortunesCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final fortune = this.fortune;
     if (fortune == null) return const SizedBox();
 
@@ -811,7 +822,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.gray900,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
                     ),
                   ],
@@ -821,7 +832,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                   _getCategoryFortune(category),
                   style: TextStyle(
                     fontSize: 14,
-                    color: TossDesignSystem.gray700,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                     height: 1.5,
                   ),
                 ),
@@ -834,6 +845,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Widget _buildCompatibilityCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final compatibleTypes = _getCompatibleTypes(_selectedMbti!);
 
     return TossCard(
@@ -852,7 +864,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: TossDesignSystem.gray900,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
               ),
             ],
