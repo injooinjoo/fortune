@@ -33,6 +33,8 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
         // 설명 텍스트
@@ -43,7 +45,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
               Text(
                 '특별히 신경쓰이는 부위가 있나요?',
                 style: TossTheme.heading3.copyWith(
-                  color: TossTheme.textBlack,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -51,7 +53,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
               Text(
                 '아래 인체 그림에서 해당 부위를 터치해주세요\n(선택하지 않아도 괜찮습니다)',
                 style: TossTheme.body3.copyWith(
-                  color: TossTheme.textGray600,
+                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                   height: 1.4,
                 ),
                 textAlign: TextAlign.center,
@@ -65,7 +67,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
           height: 400,
           margin: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
-            color: TossDesignSystem.white,
+            color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -90,16 +92,16 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
                 ),
                 
                 // 터치 가능한 영역들 오버레이
-                _buildTouchableAreas(),
+                _buildTouchableAreas(isDark),
               ],
             ),
           ),
         ),
-        
+
         // 선택된 부위 리스트
         if (_selectedParts.isNotEmpty) ...[
           const SizedBox(height: 20),
-          _buildSelectedPartsList(),
+          _buildSelectedPartsList(isDark),
         ],
       ],
     ).animate()
@@ -107,22 +109,22 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
       .slideY(begin: 0.1, end: 0);
   }
 
-  Widget _buildTouchableAreas() {
+  Widget _buildTouchableAreas(bool isDark) {
     return Stack(
       children: BodyPart.values
           .where((part) => part != BodyPart.whole)
-          .map((part) => _buildTouchableArea(part))
+          .map((part) => _buildTouchableArea(part, isDark))
           .toList(),
     );
   }
 
-  Widget _buildTouchableArea(BodyPart part) {
+  Widget _buildTouchableArea(BodyPart part, bool isDark) {
     final isSelected = _selectedParts.contains(part);
     final healthLevel = widget.bodyPartHealthMap?[part];
-    
+
     // 각 신체 부위별 위치와 크기 정의
     final areaConfig = _getAreaConfig(part);
-    
+
     return Positioned(
       left: areaConfig['left'],
       top: areaConfig['top'],
@@ -136,9 +138,9 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
             color: _getAreaColor(part, isSelected, healthLevel),
             borderRadius: BorderRadius.circular(areaConfig['borderRadius'] ?? 8),
             border: Border.all(
-              color: isSelected 
-                  ? TossTheme.primaryBlue 
-                  : TossTheme.borderGray200.withValues(alpha: 0.5),
+              color: isSelected
+                  ? TossTheme.primaryBlue
+                  : (isDark ? TossDesignSystem.borderDark.withValues(alpha: 0.5) : TossTheme.borderGray200.withValues(alpha: 0.5)),
               width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected
@@ -159,7 +161,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
                 Text(
                   part.displayName,
                   style: TossTheme.caption.copyWith(
-                    color: TossTheme.textGray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     fontWeight: FontWeight.w500,
                     fontSize: 10,
                   ),
@@ -243,12 +245,12 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
     widget.onSelectionChanged(_selectedParts);
   }
 
-  Widget _buildSelectedPartsList() {
+  Widget _buildSelectedPartsList(bool isDark) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TossTheme.backgroundSecondary,
+        color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -258,7 +260,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
             '선택된 부위',
             style: TossTheme.body2.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 12),
