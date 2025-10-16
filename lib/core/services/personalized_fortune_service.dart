@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import '../../data/models/user_profile.dart';
 
 /// 사용자 프로필 기반 맞춤형 운세 컨텐츠 생성 서비스
