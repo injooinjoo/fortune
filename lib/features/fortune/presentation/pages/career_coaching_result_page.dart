@@ -897,7 +897,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
 
   Widget _buildLoadingView(bool isDark) {
     return Scaffold(
-      backgroundColor: TossDesignSystem.gray50,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.gray50,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -909,7 +909,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
             Text(
               '결과를 불러오는 중...',
               style: TossDesignSystem.body2.copyWith(
-                color: TossDesignSystem.gray600,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray600,
               ),
             ),
           ],
