@@ -54,8 +54,10 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: TossTheme.backgroundSecondary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundSecondary,
       appBar: const StandardFortuneAppBar(
         title: '유명인 운세',
       ),
@@ -103,13 +105,15 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Widget _buildProgressIndicator() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(20),
-      color: TossTheme.backgroundWhite,
+      color: isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundWhite,
       child: Row(
         children: List.generate(3, (index) {
           final isActive = index <= _currentStep;
-          
+
           return Expanded(
             child: Row(
               children: [
@@ -117,7 +121,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                   child: Container(
                     height: 4,
                     decoration: BoxDecoration(
-                      color: isActive ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
+                      color: isActive ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.backgroundSecondary),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -132,6 +136,8 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Widget _buildStep1CategorySelection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -142,7 +148,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w700,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               height: 1.3,
             ),
           ),
@@ -151,7 +157,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             '관심 있는 분야를 선택해주세요',
             style: TextStyle(
               fontSize: 15,
-              color: TossTheme.textGray500,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
               height: 1.4,
             ),
           ),
@@ -179,8 +185,9 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Widget _buildCategoryCard(CelebrityType? category, String title, String description, IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = _selectedCategory == category;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() => _selectedCategory = category);
@@ -198,9 +205,9 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.08) : TossTheme.backgroundWhite,
+          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.08) : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundWhite),
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+            color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             width: isSelected ? 1.5 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
@@ -211,12 +218,12 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
+                color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
-                color: isSelected ? TossDesignSystem.white : TossTheme.textGray500,
+                color: isSelected ? TossDesignSystem.white : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500),
                 size: 22,
               ),
             ),
@@ -230,7 +237,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
-                      color: isSelected ? TossTheme.primaryBlue : TossTheme.textBlack,
+                      color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -238,7 +245,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                     description,
                     style: TextStyle(
                       fontSize: 13,
-                      color: TossTheme.textGray500,
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
                     ),
                   ),
                 ],
@@ -300,8 +307,9 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Widget _buildCelebritySelectionContent(List<Celebrity> celebrities) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     // 검색 결과가 있으면 검색 결과를 표시, 없으면 전체 목록 표시
-    final displayCelebrities = _searchResults.isNotEmpty 
+    final displayCelebrities = _searchResults.isNotEmpty
         ? _searchResults.take(20).toList()
         : celebrities.take(20).toList();
 
@@ -315,7 +323,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w700,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               height: 1.3,
             ),
           ),
@@ -324,34 +332,34 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             '선택한 유명인과의 운세를 분석해드려요',
             style: TextStyle(
               fontSize: 15,
-              color: TossTheme.textGray500,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
               height: 1.4,
             ),
           ),
           const SizedBox(height: 32),
-          
+
           // Search bar
           Container(
             height: 48,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: TossTheme.backgroundSecondary,
+              color: isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary,
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(
               style: TextStyle(
                 fontSize: 15,
-                color: TossTheme.textBlack,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               ),
               decoration: InputDecoration(
                 hintText: '이름으로 검색',
                 hintStyle: TextStyle(
-                  color: TossTheme.textGray400,
+                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400,
                   fontSize: 15,
                 ),
                 prefixIcon: Icon(
                   Icons.search,
-                  color: TossTheme.textGray400,
+                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400,
                   size: 20,
                 ),
                 border: InputBorder.none,
@@ -394,9 +402,9 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.08) : TossTheme.backgroundWhite,
+                    color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.08) : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundWhite),
                     border: Border.all(
-                      color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+                      color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                       width: isSelected ? 1.5 : 1,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -456,7 +464,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
-                                  color: isSelected ? TossTheme.primaryBlue : TossTheme.textBlack,
+                                  color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -466,7 +474,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                                 celebrity.celebrityType.displayName,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: TossTheme.textGray500,
+                                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
                                 ),
                               ),
                               ...[
@@ -475,7 +483,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                                 '${celebrity.age}세',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: TossTheme.textGray400,
+                                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400,
                                 ),
                               ),
                             ],
@@ -495,6 +503,8 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Widget _buildStep3QuestionType() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -505,7 +515,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w700,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               height: 1.3,
             ),
           ),
@@ -514,38 +524,38 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             '${_selectedCelebrity?.name ?? '선택한 유명인'}님과의 관계에서\n궁금한 부분을 선택해주세요',
             style: TextStyle(
               fontSize: 15,
-              color: TossTheme.textGray500,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
               height: 1.4,
             ),
           ),
           const SizedBox(height: 32),
-          
+
           // Connection type
           Text(
             '관계 유형',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 16),
-          
+
           _buildConnectionOption('ideal_match', '이상형 매치', '나와 잘 맞는 이상형인지 알아보기', Icons.favorite),
           const SizedBox(height: 12),
           _buildConnectionOption('compatibility', '전체 궁합', '종합적인 궁합 점수와 분석', Icons.people),
           const SizedBox(height: 12),
           _buildConnectionOption('career_advice', '조언 구하기', '인생과 진로에 대한 조언', Icons.lightbulb_outline),
-          
+
           const SizedBox(height: 32),
-          
+
           // Question type
           Text(
             '궁금한 영역',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 16),
@@ -563,15 +573,16 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Widget _buildConnectionOption(String value, String title, String description, IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = _connectionType == value;
     return GestureDetector(
       onTap: () => setState(() => _connectionType = value),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : TossDesignSystem.white,
+          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white),
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+            color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(16),
@@ -589,10 +600,10 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
+                color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: isSelected ? TossDesignSystem.white : TossTheme.textGray600, size: 20),
+              child: Icon(icon, color: isSelected ? TossDesignSystem.white : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600), size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -604,14 +615,14 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: TossTheme.textBlack,
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     ),
                   ),
                   Text(
                     description,
                     style: TextStyle(
                       fontSize: 14,
-                      color: TossTheme.textGray600,
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     ),
                   ),
                 ],
@@ -626,15 +637,16 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Widget _buildQuestionOption(String value, String title, String description, IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = _questionType == value;
     return GestureDetector(
       onTap: () => setState(() => _questionType = value),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? Color(0xFFFF6B6B).withValues(alpha: 0.05) : TossDesignSystem.white,
+          color: isSelected ? Color(0xFFFF6B6B).withValues(alpha: 0.05) : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white),
           border: Border.all(
-            color: isSelected ? Color(0xFFFF6B6B) : TossTheme.borderGray200,
+            color: isSelected ? Color(0xFFFF6B6B) : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(16),
@@ -652,10 +664,10 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: isSelected ? Color(0xFFFF6B6B) : TossTheme.backgroundSecondary,
+                color: isSelected ? Color(0xFFFF6B6B) : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: isSelected ? TossDesignSystem.white : TossTheme.textGray600, size: 20),
+              child: Icon(icon, color: isSelected ? TossDesignSystem.white : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600), size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -667,14 +679,14 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: TossTheme.textBlack,
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     ),
                   ),
                   Text(
                     description,
                     style: TextStyle(
                       fontSize: 14,
-                      color: TossTheme.textGray600,
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     ),
                   ),
                 ],
@@ -811,6 +823,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
 
   Widget _buildResultScreen() {
     if (_fortune == null) return const SizedBox();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Stack(
       children: [
@@ -822,7 +835,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: TossDesignSystem.white,
+              color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -862,14 +875,14 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                         ),
                       ),
                       Text(
                         _getConnectionTypeText(_connectionType),
                         style: TextStyle(
                           fontSize: 14,
-                          color: TossTheme.textGray600,
+                          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                         ),
                       ),
                     ],
@@ -894,12 +907,12 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             ),
           ),
           const SizedBox(height: 20),
-          
+
           // Main fortune message
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: TossDesignSystem.white,
+              color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -922,7 +935,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                   style: TextStyle(
                     fontSize: 16,
                     height: 1.6,
-                    color: TossTheme.textGray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -936,7 +949,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: TossDesignSystem.white,
+                color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -958,7 +971,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                         ),
                       ),
                     ],
@@ -985,7 +998,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                             style: TextStyle(
                               fontSize: 14,
                               height: 1.5,
-                              color: TossTheme.textGray600,
+                              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                             ),
                           ),
                         ),
@@ -1138,6 +1151,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   }
 
   Widget _buildErrorState(dynamic error) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: FortuneCard(
         margin: const EdgeInsets.all(20),
@@ -1147,7 +1161,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             Icon(
               Icons.error_outline,
               size: 64,
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
             const SizedBox(height: 24),
             Text(
@@ -1155,7 +1169,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: TossTheme.textBlack,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               ),
               textAlign: TextAlign.center,
             ),
@@ -1164,7 +1178,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               '잠시 후 다시 시도해주세요',
               style: TextStyle(
                 fontSize: 14,
-                color: TossTheme.textGray500,
+                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
               ),
               textAlign: TextAlign.center,
             ),
