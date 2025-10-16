@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../shared/components/floating_bottom_button.dart';
 
 enum RelationshipStatus { single, dating, breakup, crush }
 
@@ -60,6 +61,8 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -69,17 +72,17 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
           Text(
             '기본 정보를 알려주세요',
             style: TossTheme.heading2.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               fontWeight: FontWeight.w800,
             ),
           ).animate().slideX(begin: -0.3, duration: 600.ms).fadeIn(),
-          
+
           const SizedBox(height: 8),
-          
+
           Text(
             '더 정확한 연애운세를 위해 필요해요',
             style: TossTheme.body1.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
           ).animate(delay: 200.ms).slideX(begin: -0.3, duration: 600.ms).fadeIn(),
           
@@ -89,9 +92,9 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: TossTheme.backgroundSecondary,
+              color: isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: TossTheme.borderGray200),
+              border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,7 +104,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
                     Text(
                       '나이',
                       style: TossTheme.heading4.copyWith(
-                        color: TossTheme.textBlack,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -128,11 +131,15 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
                   children: [
                     Text(
                       '18세',
-                      style: TossTheme.body2.copyWith(color: TossTheme.textGray500),
+                      style: TossTheme.body2.copyWith(
+                        color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
+                      ),
                     ),
                     Text(
                       '50세',
-                      style: TossTheme.body2.copyWith(color: TossTheme.textGray500),
+                      style: TossTheme.body2.copyWith(
+                        color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
+                      ),
                     ),
                   ],
                 ),
@@ -140,7 +147,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     activeTrackColor: TossTheme.primaryBlue,
-                    inactiveTrackColor: TossTheme.borderGray200,
+                    inactiveTrackColor: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
                     thumbColor: TossTheme.primaryBlue,
                     overlayColor: TossTheme.primaryBlue.withValues(alpha: 0.2),
                     thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
@@ -184,7 +191,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
           Text(
             '성별',
             style: TossTheme.heading4.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -192,11 +199,11 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
           Row(
             children: [
               Expanded(
-                child: _buildGenderButton('남성', '남성', Icons.male),
+                child: _buildGenderButton('남성', '남성', Icons.male, isDark),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _buildGenderButton('여성', '여성', Icons.female),
+                child: _buildGenderButton('여성', '여성', Icons.female, isDark),
               ),
             ],
           ).animate(delay: 600.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
@@ -207,7 +214,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
           Text(
             '현재 연애 상태',
             style: TossTheme.heading4.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -216,28 +223,27 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
             children: RelationshipStatus.values.map((status) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: _buildRelationshipStatusButton(status),
+                child: _buildRelationshipStatusButton(status, isDark),
               );
             }).toList(),
           ).animate(delay: 800.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
-          
-          const SizedBox(height: 40),
-          
-          // Next Button
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '다음 단계',
-              onPressed: _canProceed ? _handleNext : null,
-              style: _canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
-            ),
-          ).animate(delay: 1000.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
+
+          const BottomButtonSpacing(),
         ],
       ),
     );
   }
 
-  Widget _buildGenderButton(String value, String label, IconData icon) {
+  // Floating Button Widget
+  Widget buildFloatingButton() {
+    return FloatingBottomButton(
+      text: '다음 단계로',
+      onPressed: _canProceed ? _handleNext : null,
+      style: _canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
+    );
+  }
+
+  Widget _buildGenderButton(String value, String label, IconData icon, bool isDark) {
     final isSelected = _gender == value;
     return GestureDetector(
       onTap: () {
@@ -248,9 +254,13 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.1) : TossTheme.backgroundSecondary,
+          color: isSelected
+              ? TossTheme.primaryBlue.withValues(alpha: 0.1)
+              : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+            color: isSelected
+                ? TossTheme.primaryBlue
+                : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
@@ -259,14 +269,18 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
           children: [
             Icon(
               icon,
-              color: isSelected ? TossTheme.primaryBlue : TossTheme.textGray600,
+              color: isSelected
+                  ? TossTheme.primaryBlue
+                  : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
               size: 32,
             ),
             const SizedBox(height: 8),
             Text(
               label,
               style: TossTheme.body1.copyWith(
-                color: isSelected ? TossTheme.primaryBlue : TossTheme.textGray600,
+                color: isSelected
+                    ? TossTheme.primaryBlue
+                    : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
             ),
@@ -276,7 +290,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
     );
   }
 
-  Widget _buildRelationshipStatusButton(RelationshipStatus status) {
+  Widget _buildRelationshipStatusButton(RelationshipStatus status, bool isDark) {
     final isSelected = _relationshipStatus == status;
     return GestureDetector(
       onTap: () {
@@ -288,9 +302,13 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.1) : TossTheme.backgroundSecondary,
+          color: isSelected
+              ? TossTheme.primaryBlue.withValues(alpha: 0.1)
+              : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+            color: isSelected
+                ? TossTheme.primaryBlue
+                : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
@@ -306,7 +324,9 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
               child: Text(
                 _getRelationshipStatusText(status),
                 style: TossTheme.body1.copyWith(
-                  color: isSelected ? TossTheme.primaryBlue : TossTheme.textBlack,
+                  color: isSelected
+                      ? TossTheme.primaryBlue
+                      : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),

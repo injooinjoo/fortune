@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
+import '../../../../../shared/components/floating_bottom_button.dart';
 
 enum DatingStyle { active, passive, emotional, logical, independent, dependent, serious, casual }
 
@@ -80,6 +81,8 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -89,18 +92,18 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
           Text(
             '연애 스타일을\n알려주세요',
             style: TossTheme.heading2.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               fontWeight: FontWeight.w800,
               height: 1.2,
             ),
           ).animate().slideX(begin: -0.3, duration: 600.ms).fadeIn(),
-          
+
           const SizedBox(height: 8),
-          
+
           Text(
             '여러 개 선택 가능해요',
             style: TossTheme.body1.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
           ).animate(delay: 200.ms).slideX(begin: -0.3, duration: 600.ms).fadeIn(),
           
@@ -115,7 +118,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
             mainAxisSpacing: 12,
             childAspectRatio: 2.5,
             children: DatingStyle.values.map((style) {
-              return _buildStyleChip(style);
+              return _buildStyleChip(style, isDark);
             }).toList(),
           ).animate(delay: 400.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
@@ -125,9 +128,9 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: TossTheme.backgroundSecondary,
+              color: isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: TossTheme.borderGray200),
+              border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +140,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
                     Text(
                       '중요한 가치',
                       style: TossTheme.heading4.copyWith(
-                        color: TossTheme.textBlack,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -162,34 +165,33 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
                 Text(
                   '각 항목이 연애할 때 얼마나 중요한지 점수를 매겨주세요',
                   style: TossTheme.body2.copyWith(
-                    color: TossTheme.textGray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                   ),
                 ),
                 const SizedBox(height: 20),
                 ..._valueImportance.entries.map((entry) {
-                  return _buildValueSlider(entry.key, entry.value);
+                  return _buildValueSlider(entry.key, entry.value, isDark);
                 }),
               ],
             ),
           ).animate(delay: 600.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
-          
-          const SizedBox(height: 40),
-          
-          // Next Button
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '다음 단계',
-              onPressed: _canProceed ? _handleNext : null,
-              style: _canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
-            ),
-          ).animate(delay: 800.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
+
+          const BottomButtonSpacing(),
         ],
       ),
     );
   }
 
-  Widget _buildStyleChip(DatingStyle style) {
+  // Floating Button Widget
+  Widget buildFloatingButton() {
+    return FloatingBottomButton(
+      text: '다음 단계로',
+      onPressed: _canProceed ? _handleNext : null,
+      style: _canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
+    );
+  }
+
+  Widget _buildStyleChip(DatingStyle style, bool isDark) {
     final isSelected = _selectedStyles.contains(style);
     return GestureDetector(
       onTap: () {
@@ -204,10 +206,14 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
+          color: isSelected
+              ? TossTheme.primaryBlue
+              : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+            color: isSelected
+                ? TossTheme.primaryBlue
+                : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -223,7 +229,9 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
               child: Text(
                 _getDatingStyleText(style),
                 style: TossTheme.body1.copyWith(
-                  color: isSelected ? TossDesignSystem.white : TossTheme.textBlack,
+                  color: isSelected
+                      ? TossDesignSystem.white
+                      : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
@@ -235,7 +243,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
     );
   }
 
-  Widget _buildValueSlider(String label, double value) {
+  Widget _buildValueSlider(String label, double value, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -247,7 +255,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
               Text(
                 label,
                 style: TossTheme.body1.copyWith(
-                  color: TossTheme.textBlack,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -271,7 +279,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: _getScoreColor(value),
-              inactiveTrackColor: TossTheme.borderGray200,
+              inactiveTrackColor: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
               thumbColor: _getScoreColor(value),
               overlayColor: _getScoreColor(value).withValues(alpha: 0.2),
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
