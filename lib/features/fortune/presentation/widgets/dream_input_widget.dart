@@ -107,9 +107,10 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
   
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
     final chatState = ref.watch(dreamChatProvider);
-    
+
     return Container(
       padding: EdgeInsets.only(
         left: TossTheme.spacingM,
@@ -117,11 +118,11 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
         bottom: MediaQuery.of(context).padding.bottom + TossTheme.spacingM,
         top: TossTheme.spacingS,
       ),
-      decoration: const BoxDecoration(
-        color: TossTheme.backgroundWhite,
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
         border: Border(
           top: BorderSide(
-            color: TossTheme.borderGray200,
+            color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
             width: 1,
           ),
         ),
@@ -130,41 +131,43 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
         top: false,
         child: Column(
           children: [
-            if (chatState.isListening) _buildVoiceListeningIndicator(theme),
+            if (chatState.isListening) _buildVoiceListeningIndicator(theme, isDark),
             Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: TossTheme.spacingS, 
+                horizontal: TossTheme.spacingS,
                 vertical: TossTheme.spacingXS,
               ),
               decoration: BoxDecoration(
-                color: TossTheme.backgroundSecondary,
+                color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
                 borderRadius: BorderRadius.circular(TossTheme.radiusL),
                 border: Border.all(
-                  color: _focusNode.hasFocus 
-                      ? TossTheme.primaryBlue 
-                      : TossTheme.borderGray300,
+                  color: _focusNode.hasFocus
+                      ? TossTheme.primaryBlue
+                      : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
                   width: _focusNode.hasFocus ? 2 : 1,
                 ),
               ),
               child: Row(
                 children: [
                   // Voice button
-                  _buildVoiceButton(theme),
+                  _buildVoiceButton(theme, isDark),
                   const SizedBox(width: TossTheme.spacingS),
-                  
+
                   // Text input
                   Expanded(
                     child: TextField(
                       controller: _textController,
                       focusNode: _focusNode,
                       enabled: widget.enabled && !_isVoiceMode,
-                      style: TossTheme.body3.copyWith(color: TossTheme.textBlack),
+                      style: TossTheme.body3.copyWith(
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      ),
                       decoration: InputDecoration(
-                        hintText: _isVoiceMode 
-                            ? '음성으로 말씀해주세요...' 
+                        hintText: _isVoiceMode
+                            ? '음성으로 말씀해주세요...'
                             : '꿈 이야기를 입력하세요...',
                         hintStyle: TossTheme.body3.copyWith(
-                          color: TossTheme.textGray400,
+                          color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
                         ),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
@@ -177,23 +180,24 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                       onSubmitted: (_) => _sendMessage(),
                     ),
                   ),
-                  
+
+
                   // Send button
-                  _buildSendButton(theme),
+                  _buildSendButton(theme, isDark),
                 ],
               ),
             ),
             const SizedBox(height: TossTheme.spacingS),
-            
+
             // Quick response buttons
-            if (widget.enabled && !_isVoiceMode) _buildQuickResponses(theme),
+            if (widget.enabled && !_isVoiceMode) _buildQuickResponses(theme, isDark),
           ],
         ),
       ),
     ).animate().fadeIn().slideY(begin: 0.2, end: 0);
   }
   
-  Widget _buildVoiceButton(ThemeData theme) {
+  Widget _buildVoiceButton(ThemeData theme, bool isDark) {
     return GestureDetector(
       onTap: widget.enabled ? _toggleVoiceMode : null,
       child: AnimatedContainer(
@@ -204,7 +208,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
           shape: BoxShape.circle,
           color: _isVoiceMode
               ? TossTheme.error
-              : TossTheme.textGray400,
+              : (isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight),
         ),
         child: Icon(
           _isVoiceMode ? Icons.stop : Icons.mic,
@@ -215,9 +219,9 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
     );
   }
   
-  Widget _buildSendButton(ThemeData theme) {
+  Widget _buildSendButton(ThemeData theme, bool isDark) {
     final canSend = _hasText && widget.enabled && !_isVoiceMode;
-    
+
     return GestureDetector(
       onTap: canSend ? _sendMessage : null,
       child: AnimatedContainer(
@@ -228,7 +232,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
           shape: BoxShape.circle,
           color: canSend
               ? TossTheme.primaryBlue
-              : TossTheme.disabledGray,
+              : (isDark ? TossDesignSystem.gray600 : TossDesignSystem.gray300),
         ),
         child: Icon(
           Icons.send_rounded,
@@ -239,16 +243,16 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
     );
   }
   
-  Widget _buildVoiceListeningIndicator(ThemeData theme) {
+  Widget _buildVoiceListeningIndicator(ThemeData theme, bool isDark) {
     return Container(
       margin: const EdgeInsets.only(bottom: TossTheme.spacingS),
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: TossTheme.spacingM, 
+          horizontal: TossTheme.spacingM,
           vertical: TossTheme.spacingS,
         ),
         decoration: BoxDecoration(
-          color: TossTheme.backgroundWhite,
+          color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight,
           borderRadius: BorderRadius.circular(TossTheme.radiusL),
           boxShadow: [
             BoxShadow(
@@ -269,7 +273,9 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
             const SizedBox(width: TossTheme.spacingS),
             Text(
               '듣고 있습니다...',
-              style: TossTheme.body3.copyWith(color: TossTheme.textBlack),
+              style: TossTheme.body3.copyWith(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              ),
             ),
             const SizedBox(width: TossTheme.spacingS),
             ValueListenableBuilder<String>(
@@ -279,7 +285,9 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                   return Flexible(
                     child: Text(
                       text,
-                      style: TossTheme.body3.copyWith(color: TossTheme.textBlack),
+                      style: TossTheme.body3.copyWith(
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -292,7 +300,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                       width: 4,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: TossTheme.textGray400,
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                         shape: BoxShape.circle,
                       ),
                     )
@@ -322,13 +330,13 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
         .scale(begin: const Offset(0.95, 0.95));
   }
   
-  Widget _buildQuickResponses(ThemeData theme) {
+  Widget _buildQuickResponses(ThemeData theme, bool isDark) {
     // Show quick responses based on conversation state
     final chatState = ref.watch(dreamChatProvider);
     final messageCount = chatState.messages.where((m) => m.type == MessageType.user).length;
-    
+
     List<String> quickResponses = [];
-    
+
     if (messageCount == 0) {
       // Initial responses
       quickResponses = [
@@ -342,9 +350,9 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
         '기뻤어요',
         '혼란스러웠어요'];
 }
-    
+
     if (quickResponses.isEmpty) return const SizedBox.shrink();
-    
+
     return SizedBox(
       height: 36,
       child: ListView.separated(
