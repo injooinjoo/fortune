@@ -231,6 +231,52 @@ flutter run -d 1B54EF52-7E41-4040-A236-C169898F5527
 
 ---
 
+## 🎨 표준 UI 컴포넌트 패턴
+
+### 📱 표준 뒤로가기 버튼 (AppBar Leading)
+
+**모든 페이지의 뒤로가기 버튼은 이 패턴을 따릅니다:**
+
+```dart
+// 참조: lib/features/fortune/presentation/pages/tarot_renewed_page.dart:123-129
+AppBar(
+  backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+  elevation: 0,
+  scrolledUnderElevation: 0,
+  leading: IconButton(
+    icon: Icon(
+      Icons.arrow_back_ios,  // iOS 스타일 < 아이콘
+      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+    ),
+    onPressed: () => context.pop(),  // go_router의 pop 사용
+  ),
+  title: Text(
+    '페이지 제목',
+    style: TextStyle(
+      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+  centerTitle: true,
+)
+```
+
+**핵심 원칙:**
+- ✅ `Icons.arrow_back_ios` 사용 (iOS 스타일)
+- ✅ 다크모드 색상 자동 대응 (`isDark` 조건)
+- ✅ `context.pop()` 사용 (go_router 표준)
+- ✅ AppBar 배경색도 다크모드 대응
+- ❌ `Icons.arrow_back` 사용 금지 (안드로이드 스타일)
+- ❌ 하드코딩된 색상 사용 금지
+
+**새 페이지 생성 시:**
+1. 위 코드를 복사하여 사용
+2. `'페이지 제목'` 부분만 변경
+3. 다른 부분은 수정하지 말 것
+
+---
+
 ## 📚 문서 관리 정책
 
 ### 📂 문서 위치 원칙
