@@ -502,20 +502,23 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                   ),
                 ],
               ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFFFF9C4),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.lightbulb,
-                      color: Color(0xFFF57F17),
-                      size: 24,
-                    ),
-                  ),
+              child: Builder(
+                builder: (context) {
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  return Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFFF57F17).withValues(alpha: 0.2) : const Color(0xFFFFF9C4),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.lightbulb,
+                          color: isDark ? const Color(0xFFFDD835) : const Color(0xFFF57F17),
+                          size: 24,
+                        ),
+                      ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -542,6 +545,8 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                     ),
                   ),
                 ],
+              );
+                },
               ),
             ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
 
@@ -662,23 +667,28 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
           const SizedBox(height: 16),
           
           // 추천사항
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Color(0xFFF7F8FA),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              category['recommendation'],
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF4E5968),
-                height: 1.4,
-              ),
-            ),
+          Builder(
+            builder: (context) {
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              return Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDark ? TossDesignSystem.grayDark200 : const Color(0xFFF7F8FA),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  category['recommendation'],
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF4E5968),
+                    height: 1.4,
+                  ),
+                ),
+              );
+            },
           ),
-          
+
           const SizedBox(height: 16),
           
           // 상세 정보
