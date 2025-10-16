@@ -111,17 +111,22 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
     return Column(
       children: [
         Text(
-          '護身符',),
+          '護身符',
           style: TextStyle(
             fontSize: widget.size * 0.08,
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white,
-            letterSpacing: 4)),
+            letterSpacing: 4,
+          ),
+        ),
         const SizedBox(height: AppSpacing.spacing1),
         Container(
           width: widget.size * 0.5,
           height: 4 * 0.5,
-          color: TossDesignSystem.white.withValues(alpha: 0.6))]);
+          color: TossDesignSystem.white.withValues(alpha: 0.6),
+        ),
+      ],
+    );
   }
   
   Widget _buildCentralSymbol() {
@@ -187,17 +192,24 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25),
           decoration: BoxDecoration(
             color: TossDesignSystem.white.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(AppSpacing.spacing6 * 1.04)),
+            borderRadius: BorderRadius.circular(AppSpacing.spacing6 * 1.04),
             border: Border.all(
               color: widget.result.design.primaryColor.withValues(alpha: 0.5),
-              width: 2)),
+              width: 2,
+            ),
+          ),
           child: Text(
             widget.result.design.userName ?? '소유자',
             style: TextStyle(
               fontSize: widget.size * 0.06,
               fontWeight: FontWeight.bold,
               color: widget.result.design.primaryColor,
-              letterSpacing: 2)))]);
+              letterSpacing: 2,
+            ),
+          ),
+        ),
+      ],
+    );
   }
   
   Widget _buildBottomSeal() {
@@ -287,9 +299,10 @@ class _TalismanSymbolPainter extends CustomPainter {
     canvas.drawCircle(center, radius * 0.9, paint);
     
     // Draw inner patterns
-    final symbols = \['['☰', '☷', '☵', '☲', '☳', '☴', '☶', '☱'];
+    final symbols = ['☰', '☷', '☵', '☲', '☳', '☴', '☶', '☱'];
     final symbolPaint = TextPainter(
-      textDirection: TextDirection.ltr);
+      textDirection: TextDirection.ltr,
+    );
     
     for (int i = 0; i < 8; i++) {
       final angle = i * 3.14159 * 2 / 8;

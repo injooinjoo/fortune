@@ -1,6 +1,7 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'dart:html' as html;
 import 'dart:ui_web' as ui;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../../core/config/environment.dart';
 import '../../../core/utils/logger.dart';
