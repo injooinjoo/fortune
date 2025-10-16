@@ -132,6 +132,8 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -141,18 +143,18 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
           Text(
             '나의 매력을\n알려주세요',
             style: TossTheme.heading2.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               fontWeight: FontWeight.w800,
               height: 1.2,
             ),
           ).animate().slideX(begin: -0.3, duration: 600.ms).fadeIn(),
-          
+
           const SizedBox(height: 8),
-          
+
           Text(
             '솔직하게 답할수록 정확한 조언을 드려요',
             style: TossTheme.body1.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
           ).animate(delay: 200.ms).slideX(begin: -0.3, duration: 600.ms).fadeIn(),
           
@@ -162,9 +164,9 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: TossTheme.backgroundSecondary,
+              color: isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: TossTheme.borderGray200),
+              border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,7 +174,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
                 Text(
                   '외모 자신감',
                   style: TossTheme.heading4.copyWith(
-                    color: TossTheme.textBlack,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -180,7 +182,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
                 Text(
                   '1점 (전혀 자신 없음) ~ 10점 (매우 자신 있음)',
                   style: TossTheme.body2.copyWith(
-                    color: TossTheme.textGray600,
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -243,7 +245,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
           Text(
             '나의 매력 포인트',
             style: TossTheme.heading4.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -251,7 +253,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
           Text(
             '최대 3개까지 선택',
             style: TossTheme.body2.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
           ),
           const SizedBox(height: 12),
@@ -259,7 +261,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             spacing: 8,
             runSpacing: 8,
             children: _charmPointOptions.map((charm) {
-              return _buildCharmPointChip(charm);
+              return _buildCharmPointChip(charm, isDark);
             }).toList(),
           ).animate(delay: 600.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
@@ -269,7 +271,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
           Text(
             '현재 라이프스타일',
             style: TossTheme.heading4.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -282,7 +284,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             mainAxisSpacing: 12,
             childAspectRatio: 3,
             children: LifestyleType.values.map((lifestyle) {
-              return _buildLifestyleChip(lifestyle);
+              return _buildLifestyleChip(lifestyle, isDark);
             }).toList(),
           ).animate(delay: 700.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
@@ -292,7 +294,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
           Text(
             '취미 활동',
             style: TossTheme.heading4.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -305,7 +307,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             mainAxisSpacing: 12,
             childAspectRatio: 2.2,
             children: HobbyType.values.map((hobby) {
-              return _buildHobbyChip(hobby);
+              return _buildHobbyChip(hobby, isDark);
             }).toList(),
           ).animate(delay: 800.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
@@ -325,10 +327,10 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
     );
   }
 
-  Widget _buildCharmPointChip(String charm) {
+  Widget _buildCharmPointChip(String charm, bool isDark) {
     final isSelected = _charmPoints.contains(charm);
     final canSelect = _charmPoints.length < 3 || isSelected;
-    
+
     return GestureDetector(
       onTap: canSelect ? () {
         setState(() {
@@ -342,17 +344,17 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
-          color: isSelected 
-              ? TossTheme.primaryBlue 
-              : canSelect 
-                  ? TossTheme.backgroundSecondary 
+          color: isSelected
+              ? TossTheme.primaryBlue
+              : canSelect
+                  ? (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary)
                   : TossTheme.disabledGray.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected 
-                ? TossTheme.primaryBlue 
-                : canSelect 
-                    ? TossTheme.borderGray200 
+            color: isSelected
+                ? TossTheme.primaryBlue
+                : canSelect
+                    ? (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200)
                     : TossTheme.disabledGray,
             width: isSelected ? 2 : 1,
           ),
@@ -360,10 +362,10 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
         child: Text(
           charm,
           style: TossTheme.body2.copyWith(
-            color: isSelected 
+            color: isSelected
                 ? TossDesignSystem.white
-                : canSelect 
-                    ? TossTheme.textBlack 
+                : canSelect
+                    ? (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)
                     : TossTheme.disabledGray,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           ),
@@ -372,7 +374,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
     );
   }
 
-  Widget _buildLifestyleChip(LifestyleType lifestyle) {
+  Widget _buildLifestyleChip(LifestyleType lifestyle, bool isDark) {
     final isSelected = _lifestyle == lifestyle;
     return GestureDetector(
       onTap: () {
@@ -383,10 +385,14 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
+          color: isSelected
+              ? TossTheme.primaryBlue
+              : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+            color: isSelected
+                ? TossTheme.primaryBlue
+                : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -404,7 +410,9 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
                 child: Text(
                   _getLifestyleText(lifestyle),
                   style: TossTheme.body1.copyWith(
-                    color: isSelected ? TossDesignSystem.white : TossTheme.textBlack,
+                    color: isSelected
+                        ? TossDesignSystem.white
+                        : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,
@@ -418,7 +426,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
     );
   }
 
-  Widget _buildHobbyChip(HobbyType hobby) {
+  Widget _buildHobbyChip(HobbyType hobby, bool isDark) {
     final isSelected = _hobbies.contains(hobby);
     return GestureDetector(
       onTap: () {
@@ -433,10 +441,14 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
+          color: isSelected
+              ? TossTheme.primaryBlue
+              : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+            color: isSelected
+                ? TossTheme.primaryBlue
+                : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -453,7 +465,9 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
               child: Text(
                 _getHobbyText(hobby),
                 style: TossTheme.caption.copyWith(
-                  color: isSelected ? TossDesignSystem.white : TossTheme.textBlack,
+                  color: isSelected
+                      ? TossDesignSystem.white
+                      : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
