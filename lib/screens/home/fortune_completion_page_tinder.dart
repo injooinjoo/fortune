@@ -97,7 +97,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     debugPrint('🔍 [FortuneCompletionPageTinder] userName: ${widget.userName}, profileName: ${widget.userProfile?.name}, displayName: $displayUserName');
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF8F9FA),
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : const Color(0xFFF8F9FA),
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [

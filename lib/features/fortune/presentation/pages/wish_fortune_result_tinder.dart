@@ -66,7 +66,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF8F9FA),
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : const Color(0xFFF8F9FA),
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
