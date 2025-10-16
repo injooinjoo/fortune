@@ -475,16 +475,17 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
           ),
           
           const SizedBox(height: TossTheme.spacingL),
-          
+
           // 직접 질문 입력
           Text(
             '또는 직접 질문을 작성해주세요',
             style: TossTheme.body3.copyWith(
               fontWeight: FontWeight.w600,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
           ),
           const SizedBox(height: TossTheme.spacingM),
-          
+
           TextField(
             controller: _customQuestionController,
             onChanged: (value) {
@@ -498,10 +499,16 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
             },
             decoration: InputDecoration(
               hintText: '예: 언제 직장을 옮겨야 할까요?',
-              hintStyle: TossTheme.hintStyle,
+              hintStyle: TossTheme.hintStyle.copyWith(
+                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+              ),
+              fillColor: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
+              filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                borderSide: BorderSide(color: TossTheme.borderPrimary),
+                borderSide: BorderSide(
+                  color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
+                ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(TossTheme.radiusM),
@@ -509,11 +516,15 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                borderSide: BorderSide(color: TossTheme.borderPrimary),
+                borderSide: BorderSide(
+                  color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
+                ),
               ),
               contentPadding: const EdgeInsets.all(TossTheme.spacingM),
             ),
-            style: TossTheme.body3,
+            style: TossTheme.body3.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            ),
             maxLines: 2,
           ),
         ],
