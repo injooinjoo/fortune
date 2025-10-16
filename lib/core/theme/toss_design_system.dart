@@ -9,7 +9,7 @@ class TossDesignSystem {
   // ==========================================
   
   /// Primary Brand Colors
-  static const Color tossBlue = Color(0xFF3182F6);  // 토스 시그니처 블루
+  static const Color tossBlue = Color(0xFF1F4EF5);  // 토스 시그니처 블루 (실제 토스 앱 색상)
   static const Color tossBlueDark = Color(0xFF1E5EDB);  // 다크 모드용 블루
   static const Color tossBlueLight = Color(0xFF4A9EFF);  // 라이트 블루
   
@@ -46,13 +46,23 @@ class TossDesignSystem {
   static const Color backgroundLight = white;          // 라이트모드 메인 배경 (흰색)
   static const Color cardBackgroundDark = grayDark100; // 다크모드 카드 배경
   static const Color cardBackgroundLight = white;      // 라이트모드 카드 배경
+  static const Color surfaceBackgroundDark = grayDark200; // 다크모드 서브 배경 (카드 안의 섹션)
+  static const Color surfaceBackgroundLight = Color(0xFFF7F8FA); // 라이트모드 서브 배경
 
   /// Semantic Text Colors (명확한 텍스트색 정의)
   /// 텍스트 색상 사용 시 항상 이 상수들을 사용하세요!
   static const Color textPrimaryDark = grayDark900;    // 다크모드 주 텍스트 (흰색)
   static const Color textPrimaryLight = gray900;       // 라이트모드 주 텍스트 (검은색)
   static const Color textSecondaryDark = grayDark400;  // 다크모드 보조 텍스트
-  static const Color textSecondaryLight = gray600;     // 라이트모드 보조 텍스트
+  static const Color textSecondaryLight = gray500;     // 라이트모드 보조 텍스트
+  static const Color textTertiaryDark = grayDark500;   // 다크모드 3차 텍스트 (힌트, placeholder)
+  static const Color textTertiaryLight = gray400;      // 라이트모드 3차 텍스트
+
+  /// Semantic Divider & Border Colors (구분선 및 테두리 색상)
+  static const Color dividerDark = grayDark300;        // 다크모드 구분선
+  static const Color dividerLight = gray200;           // 라이트모드 구분선
+  static const Color borderDark = grayDark300;         // 다크모드 테두리
+  static const Color borderLight = gray300;            // 라이트모드 테두리
 
   /// Semantic Colors (의미론적 색상)
   static const Color successGreen = Color(0xFF10B981);  // 성공, 긍정

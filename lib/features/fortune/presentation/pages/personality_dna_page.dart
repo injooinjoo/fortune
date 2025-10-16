@@ -76,7 +76,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark
         ? TossDesignSystem.backgroundDark
-        : const Color(0xFFF7F8FA); // 토스 배경색
+        : TossDesignSystem.surfaceBackgroundLight;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -129,7 +129,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
               padding: const EdgeInsets.only(bottom: 80), // 네비게이션 바 영역 피하기
               child: FloatingActionButton.extended(
                 onPressed: _showPersonalityDNABottomSheet,
-                backgroundColor: const Color(0xFF1F4EF5), // 토스 블루
+                backgroundColor: TossDesignSystem.tossBlue,
                 foregroundColor: TossDesignSystem.white,
                 elevation: 0,
                 label: const Text(
@@ -155,7 +155,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
             width: 80,
             height: 80,
             decoration: const BoxDecoration(
-              color: Color(0xFF1F4EF5), // 토스 블루
+              color: TossDesignSystem.tossBlue,
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -165,26 +165,35 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
             ),
           ),
           const SizedBox(height: 32),
-          const Text(
-            '당신만의 성격 DNA를\n발견해보세요!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF191F28),
-              height: 1.3,
-            ),
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'MBTI, 혈액형, 별자리, 띠를 조합하여\n특별한 성격 분석 결과를 확인하세요',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF8B95A1),
-              height: 1.4,
-            ),
+          Builder(
+            builder: (context) {
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              return Column(
+                children: [
+                  Text(
+                    '당신만의 성격 DNA를\n발견해보세요!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'MBTI, 혈액형, 별자리, 띠를 조합하여\n특별한 성격 분석 결과를 확인하세요',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -264,7 +273,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
               if (icon != null) ...[
                 Icon(
                   icon,
-                  color: const Color(0xFF1F4EF5),
+                  color: TossDesignSystem.tossBlue,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
@@ -383,15 +392,16 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
   }
 
   Widget _buildTodayHighlight() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return _buildTossSection(
       title: '오늘의 하이라이트',
       icon: Icons.star,
       child: Text(
         _currentDNA!.todayHighlight!,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w400,
-          color: Color(0xFF191F28),
+          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           height: 1.5,
         ),
       ),
@@ -399,6 +409,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
   }
 
   Widget _buildLoveStyleSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final loveStyle = _currentDNA!.loveStyle!;
     return _buildTossSection(
       title: '연애 스타일',
@@ -408,20 +419,20 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
         children: [
           Text(
             loveStyle.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1F4EF5),
+              color: TossDesignSystem.tossBlue,
               height: 1.3,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             loveStyle.description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
-              color: Color(0xFF191F28),
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               height: 1.5,
             ),
           ),
@@ -481,7 +492,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1F4EF5),
+              color: TossDesignSystem.tossBlue,
               height: 1.3,
             ),
           ),
@@ -575,7 +586,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1F4EF5),
+                    color: TossDesignSystem.tossBlue,
                     height: 1.4,
                   ),
                 ),
@@ -629,7 +640,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1F4EF5),
+                  color: TossDesignSystem.tossBlue,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -678,7 +689,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF1F4EF5),
+                color: TossDesignSystem.tossBlue,
                 height: 1.3,
               ),
             ),
@@ -699,15 +710,16 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
   }
 
   Widget _buildFunnyFactSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return _buildTossSection(
       title: '재미있는 사실',
       icon: Icons.lightbulb_outline,
       child: Text(
         _currentDNA!.funnyFact!,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w400,
-          color: Color(0xFF191F28),
+          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           height: 1.5,
         ),
       ),
