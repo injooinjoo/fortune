@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../widgets/standard_fortune_app_bar.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
@@ -18,7 +18,8 @@ class TalismanResultPage extends ConsumerStatefulWidget {
 
   const TalismanResultPage({
     super.key,
-    required this.result});
+    required this.result,
+  });
 
   @override
   ConsumerState<TalismanResultPage> createState() => _TalismanResultPageState();
@@ -36,7 +37,8 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4))..repeat();
+      duration: const Duration(seconds: 4),
+    )..repeat();
   }
 
   @override
@@ -49,19 +51,19 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
     try {
       setState(() => _isCapturing = true);
       HapticUtils.lightImpact();
-      
-      final RenderRepaintBoundary boundary = 
+
+      final RenderRepaintBoundary boundary =
           _talismanKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      
+
       final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
       final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      
+
       if (byteData != null) {
         final Uint8List pngBytes = byteData.buffer.asUint8List();
-        
+
         // Add watermark
         final watermarkedImage = await _shareService.addWatermark(pngBytes);
-        
+
         // Show share bottom sheet
         if (mounted) {
           _showShareOptions(watermarkedImage);
@@ -89,27 +91,52 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             imageData: imageData,
             platform: platform,
             talismanType: widget.result.type.displayName,
-            userName: widget.result.design.userName ?? '');
-        });
+            userName: widget.result.design.userName ?? '',
+          );
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: TossDesignSystem.white,
-      appBar: StandardFortuneAppBar(
-        title: '부적 완성',
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      appBar: AppBar(
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          '부적 완성',
+          style: TextStyle(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: _isCapturing 
+            icon: _isCapturing
                 ? const SizedBox(
                     width: 24,
                     height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2)),
-                : const Icon(Icons.share),
-            onPressed: _isCapturing ? null : _captureTalisman)]),
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Icon(
+                    Icons.share,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  ),
+            onPressed: _isCapturing ? null : _captureTalisman,
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -121,67 +148,74 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                 key: _talismanKey,
                 child: TalismanDesignCanvas(
                   result: widget.result,
-                  size: 300)).animate()
-                  .fadeIn(duration: 800.ms,
-              .scale(
-                begin: const Offset(0.8, 0.8),
-                end: const Offset(1, 1),
-                duration: 800.ms,
-                curve: Curves.easeOutBack),
-            
+                  size: 300,
+                ),
+              ).animate().fadeIn(duration: 800.ms).scale(
+                    begin: const Offset(0.8, 0.8),
+                    end: const Offset(1, 1),
+                    duration: 800.ms,
+                    curve: Curves.easeOutBack,
+                  ),
+            ),
+
             const SizedBox(height: 32),
-            
+
             // Meaning section
             _buildSectionCard(
+              isDark: isDark,
               title: '부적의 의미',
               icon: Icons.auto_awesome,
-              content: widget.result.meaning).animate()
-                  .fadeIn(duration: 600.ms, delay: 400.ms,
-              .slideY(begin: 0.2, end: 0),
-            
+              content: widget.result.meaning,
+            ).animate().fadeIn(duration: 600.ms, delay: 400.ms).slideY(begin: 0.2, end: 0),
+
             const SizedBox(height: 16),
-            
+
             // Usage section
             _buildSectionCard(
+              isDark: isDark,
               title: '사용 방법',
               icon: Icons.info_outline,
-              content: widget.result.usage).animate()
-                  .fadeIn(duration: 600.ms, delay: 600.ms,
-              .slideY(begin: 0.2, end: 0),
-            
+              content: widget.result.usage,
+            ).animate().fadeIn(duration: 600.ms, delay: 600.ms).slideY(begin: 0.2, end: 0),
+
             const SizedBox(height: 16),
-            
+
             // Effectiveness section
             _buildSectionCard(
+              isDark: isDark,
               title: '효과',
               icon: Icons.star_outline,
-              content: widget.result.effectiveness).animate()
-                  .fadeIn(duration: 600.ms, delay: 800.ms,
-              .slideY(begin: 0.2, end: 0),
-            
+              content: widget.result.effectiveness,
+            ).animate().fadeIn(duration: 600.ms, delay: 800.ms).slideY(begin: 0.2, end: 0),
+
             const SizedBox(height: 16),
-            
+
             // Precautions section
             if (widget.result.precautions.isNotEmpty)
-              _buildPrecautionsCard().animate()
-                  .fadeIn(duration: 600.ms, delay: 1000.ms,
-                .slideY(begin: 0.2, end: 0),
-            
+              _buildPrecautionsCard(isDark).animate()
+                  .fadeIn(duration: 600.ms, delay: 1000.ms)
+                  .slideY(begin: 0.2, end: 0),
+
             const SizedBox(height: 32),
-            
+
             // Action buttons
-            _buildActionButtons().animate()
-                  .fadeIn(duration: 600.ms, delay: 1200.ms),
-            
-            const SizedBox(height: 40)]));
+            _buildActionButtons(isDark).animate().fadeIn(duration: 600.ms, delay: 1200.ms),
+
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
   }
-  
+
   Widget _buildSectionCard({
+    required bool isDark,
     required String title,
     required IconData icon,
-    required String content}) {
+    required String content,
+  }) {
     final theme = Theme.of(context);
-    
+
     return GlassContainer(
       borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(20),
@@ -192,30 +226,43 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             children: [
               Icon(
                 icon,
-                color: widget.result.type.gradientColors[0]),
+                color: widget.result.type.gradientColors[0],
+              ),
               const SizedBox(width: 8),
               Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold))]),
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
           Text(
             content,
             style: theme.textTheme.bodyLarge?.copyWith(
-            height: 1.6,
-              color: TossDesignSystem.gray600)]);
+              height: 1.6,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+            ),
+          ),
+        ],
+      ),
+    );
   }
-  
-  Widget _buildPrecautionsCard() {
+
+  Widget _buildPrecautionsCard(bool isDark) {
     final theme = Theme.of(context);
-    
+
     return GlassContainer(
       borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
           TossDesignSystem.warningOrange.withValues(alpha: 0.1),
-          TossDesignSystem.warningOrange.withValues(alpha: 0.05)]),
+          TossDesignSystem.warningOrange.withValues(alpha: 0.05),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -223,32 +270,50 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             children: [
               Icon(
                 Icons.warning_amber_outlined,
-                color: TossDesignSystem.warningOrange),
+                color: TossDesignSystem.warningOrange,
+              ),
               const SizedBox(width: 8),
               Text(
                 '주의사항',
                 style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-                  color: TossDesignSystem.warningOrange))]),
+                  fontWeight: FontWeight.bold,
+                  color: TossDesignSystem.warningOrange,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
-          ...widget.result.precautions.map((precaution) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '• ',
-                  style: TextStyle(
-                    color: TossDesignSystem.warningOrange,
-                    fontWeight: FontWeight.bold)),
-                Expanded(
-                  child: Text(
-                    precaution,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-            color: TossDesignSystem.warningOrange)]).toList()]));
+          ...widget.result.precautions.map(
+            (precaution) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '• ',
+                    style: TextStyle(
+                      color: TossDesignSystem.warningOrange,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      precaution,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: TossDesignSystem.warningOrange,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
-  
-  Widget _buildActionButtons() {
+
+  Widget _buildActionButtons(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -259,29 +324,34 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
         const SizedBox(height: 12),
         OutlinedButton.icon(
           onPressed: () async {
             setState(() => _isCapturing = true);
             HapticUtils.lightImpact();
-            
+
             try {
-              final RenderRepaintBoundary boundary = 
+              final RenderRepaintBoundary boundary =
                   _talismanKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-              
+
               final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
               final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-              
+
               if (byteData != null) {
                 final Uint8List pngBytes = byteData.buffer.asUint8List();
                 await _shareService.saveToGallery(pngBytes);
-                
+
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('부적이 갤러리에 저장되었습니다'),
-                      duration: Duration(seconds: 2));
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
                 }
               }
             } catch (e) {
@@ -290,7 +360,9 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('저장 중 오류가 발생했습니다'),
-                    duration: Duration(seconds: 2));
+                    duration: Duration(seconds: 2),
+                  ),
+                );
               }
             } finally {
               setState(() => _isCapturing = false);
@@ -301,15 +373,21 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
         const SizedBox(height: 12),
         TextButton(
           onPressed: () {
             Navigator.of(context).popUntil((route) => route.isFirst);
           },
           style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16)),
-          child: const Text('홈으로 돌아가기')]
+            padding: const EdgeInsets.symmetric(vertical: 16),
+          ),
+          child: const Text('홈으로 돌아가기'),
+        ),
+      ],
     );
   }
 }
