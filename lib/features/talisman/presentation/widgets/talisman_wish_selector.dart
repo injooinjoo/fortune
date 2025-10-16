@@ -29,18 +29,22 @@ class _TalismanWishSelectorState extends State<TalismanWishSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '오늘 이루고 싶은 것은?',
-          style: TossTheme.heading2,
+          style: TossTheme.heading2.copyWith(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           '구체적인 소원을 알려주시면\n더욱 효과적인 부적을 만들어드려요',
           style: TossTheme.subtitle1.copyWith(
-            color: TossTheme.textGray600,
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             height: 1.4,
           ),
         ),
@@ -64,6 +68,7 @@ class _TalismanWishSelectorState extends State<TalismanWishSelector> {
             return _CategoryCard(
               category: category,
               isSelected: isSelected,
+              isDark: isDark,
               onTap: () {
                 setState(() {
                   _selectedCategory = category;
@@ -83,11 +88,13 @@ class _TalismanWishSelectorState extends State<TalismanWishSelector> {
 class _CategoryCard extends StatelessWidget {
   final TalismanCategory category;
   final bool isSelected;
+  final bool isDark;
   final VoidCallback onTap;
 
   const _CategoryCard({
     required this.category,
     required this.isSelected,
+    required this.isDark,
     required this.onTap,
   });
 
@@ -99,10 +106,14 @@ class _CategoryCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.1) : TossDesignSystem.white,
+          color: isSelected
+              ? TossTheme.primaryBlue.withValues(alpha: 0.1)
+              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+            color: isSelected
+                ? TossTheme.primaryBlue
+                : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
@@ -123,7 +134,7 @@ class _CategoryCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isSelected
                     ? TossTheme.primaryBlue.withValues(alpha: 0.2)
-                    : TossTheme.backgroundSecondary,
+                    : (isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
@@ -138,7 +149,9 @@ class _CategoryCard extends StatelessWidget {
               category.displayName,
               style: TossTheme.body3.copyWith(
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected ? TossTheme.primaryBlue : TossTheme.textBlack,
+                color: isSelected
+                    ? TossTheme.primaryBlue
+                    : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
               ),
               textAlign: TextAlign.center,
             ),
