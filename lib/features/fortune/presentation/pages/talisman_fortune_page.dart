@@ -51,16 +51,30 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
   }
 
   Widget _buildAppBar(BuildContext context, WidgetRef ref, TalismanGenerationStep step, String? userId, bool isDark) {
-    // 결과 페이지에서는 앱바 숨김
-    if (step == TalismanGenerationStep.result) {
-      return const SizedBox.shrink();
-    }
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         children: [
-          if (step != TalismanGenerationStep.categorySelection)
+          if (step == TalismanGenerationStep.result)
+            // 결과 페이지: 홈으로 돌아가기
+            GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 20,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+            )
+          else if (step != TalismanGenerationStep.categorySelection)
+            // 중간 단계: 이전 단계로
             GestureDetector(
               onTap: () {
                 ref.read(talismanGenerationProvider(userId).notifier).goBack();
@@ -80,6 +94,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
               ),
             )
           else
+            // 첫 페이지: 닫기 버튼
             GestureDetector(
               onTap: () => Navigator.of(context).pop(),
               child: Container(
