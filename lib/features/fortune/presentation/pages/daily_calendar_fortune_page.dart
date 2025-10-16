@@ -104,9 +104,10 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
 
   @override
   Widget buildFortuneResult() {
-    final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
-    final backgroundColor = isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark
+        ? TossDesignSystem.backgroundDark
+        : TossDesignSystem.backgroundLight;
 
     return Container(
       color: backgroundColor,

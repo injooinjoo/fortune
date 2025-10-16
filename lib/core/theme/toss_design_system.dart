@@ -39,7 +39,21 @@ class TossDesignSystem {
   static const Color grayDark700 = Color(0xFFF2F4F6);  // 매우 밝은 텍스트
   static const Color grayDark800 = Color(0xFFF9FAFB);  // 거의 화이트
   static const Color grayDark900 = Color(0xFFFFFFFF);  // 다크모드 주 텍스트
-  
+
+  /// Semantic Background Colors (명확한 배경색 정의)
+  /// 배경색 사용 시 항상 이 상수들을 사용하세요!
+  static const Color backgroundDark = grayDark50;      // 다크모드 메인 배경 (어두운 회색)
+  static const Color backgroundLight = white;          // 라이트모드 메인 배경 (흰색)
+  static const Color cardBackgroundDark = grayDark100; // 다크모드 카드 배경
+  static const Color cardBackgroundLight = white;      // 라이트모드 카드 배경
+
+  /// Semantic Text Colors (명확한 텍스트색 정의)
+  /// 텍스트 색상 사용 시 항상 이 상수들을 사용하세요!
+  static const Color textPrimaryDark = grayDark900;    // 다크모드 주 텍스트 (흰색)
+  static const Color textPrimaryLight = gray900;       // 라이트모드 주 텍스트 (검은색)
+  static const Color textSecondaryDark = grayDark400;  // 다크모드 보조 텍스트
+  static const Color textSecondaryLight = gray600;     // 라이트모드 보조 텍스트
+
   /// Semantic Colors (의미론적 색상)
   static const Color successGreen = Color(0xFF10B981);  // 성공, 긍정
   static const Color warningOrange = Color(0xFFF59E0B);  // 경고, 주의

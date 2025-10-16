@@ -231,7 +231,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
 
     // Show MBTI selection UI
     return Scaffold(
-      backgroundColor: widget.backgroundColor ?? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white),
+      backgroundColor: widget.backgroundColor ?? (isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white),
       appBar: StandardFortuneAppBar(
         title: widget.title,
       ),

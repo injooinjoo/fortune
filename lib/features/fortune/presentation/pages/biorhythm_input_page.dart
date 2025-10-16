@@ -256,7 +256,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
       appBar: const StandardFortuneAppBar(
         title: '바이오리듬 분석',
       ),

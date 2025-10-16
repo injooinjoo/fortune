@@ -114,7 +114,7 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
       appBar: StandardFortuneAppBar(
         title: '연애운',
         onBackPressed: _currentStep == 0 ? () => Navigator.pop(context) : _previousStep,

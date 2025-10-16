@@ -124,7 +124,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       body: SafeArea(
         child: RefreshIndicator(
           color: isDark ? TossDesignSystem.white : TossDesignSystem.tossBlue,

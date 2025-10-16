@@ -138,9 +138,9 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
 
     // Input UI 표시
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),

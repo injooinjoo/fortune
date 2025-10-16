@@ -198,9 +198,9 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
     final currentStepData = _analysisSteps[_currentStep];
     
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.grayDark900.withValues(alpha: 0.0) : TossDesignSystem.white.withValues(alpha: 0.0),
+        backgroundColor: isDark ? TossDesignSystem.textPrimaryDark.withValues(alpha: 0.0) : TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(

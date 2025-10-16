@@ -70,7 +70,16 @@
       "Bash(./scripts/parse_ux_request.sh:*)",
       "Bash(git restore:*)",
       "Bash(./scripts/git_jira_commit.sh:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(grep:*)",
+      "Bash(\"lib/features/fortune/presentation/pages/biorhythm_loading_page.dart\" )",
+      "Bash(\"lib/features/fortune/presentation/pages/biorhythm_result_page.dart\" )",
+      "Bash(\"lib/features/fortune/presentation/pages/compatibility_page.dart\" )",
+      "Bash(\"lib/features/fortune/presentation/pages/love/love_fortune_main_page.dart\" )",
+      "Bash(\"lib/features/fortune/presentation/pages/mbti_fortune_page.dart\" )",
+      "Bash(\"lib/screens/premium/premium_screen.dart\")"
     ],
     "deny": [],
     "ask": [],

@@ -236,7 +236,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
       appBar: const StandardFortuneAppBar(
         title: '궁합 분석',
       ),

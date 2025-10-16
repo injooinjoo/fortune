@@ -69,7 +69,7 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
       appBar: AppBar(
         backgroundColor: TossDesignSystem.transparent,
         elevation: 0,

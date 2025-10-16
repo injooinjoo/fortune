@@ -62,8 +62,8 @@ class FortuneCard extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: adjustedGradient)
               : null,
-          color: adjustedGradient == null 
-              ? (backgroundColor ?? (isDarkMode ? TossDesignSystem.gray900 : TossDesignSystem.grayDark900)) 
+          color: adjustedGradient == null
+              ? (backgroundColor ?? (isDarkMode ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight))
               : null,
           borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
           boxShadow: [

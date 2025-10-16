@@ -30,7 +30,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('운세 패키지'),
-        backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.tossBlue,
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.tossBlue,
         foregroundColor: TossDesignSystem.white,
         elevation: 0),
       body: SingleChildScrollView(

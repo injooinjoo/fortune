@@ -18,7 +18,7 @@ class PremiumScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: AppHeader(
               title: '프리미엄 사주',
-              backgroundColor: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
+              backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
             ),
           ),
           SliverPadding(
