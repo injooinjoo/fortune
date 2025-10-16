@@ -119,10 +119,10 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
                 _buildDreamInputSection(),
                 
                 const SizedBox(height: 32),
-                
+
                 // 안내 카드
-                _buildGuideCard(),
-                
+                _buildGuideCard(isDark),
+
                 const SizedBox(height: 40),
                 
                 // 해몽 시작 버튼
@@ -313,14 +313,18 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
     );
   }
   
-  Widget _buildGuideCard() {
+  Widget _buildGuideCard(bool isDark) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0F9FF),
+        color: isDark
+            ? TossDesignSystem.surfaceBackgroundDark
+            : const Color(0xFFF0F9FF),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFBAE6FD),
+          color: isDark
+              ? TossDesignSystem.borderDark
+              : const Color(0xFFBAE6FD),
           width: 1,
         ),
       ),
@@ -346,21 +350,23 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
               Text(
                 '더 정확한 해몽을 위한 팁',
                 style: TossTheme.body1.copyWith(
-                  color: const Color(0xFF0C4A6E),
+                  color: isDark
+                      ? TossDesignSystem.textPrimaryDark
+                      : const Color(0xFF0C4A6E),
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           Column(
             children: [
-              _buildTipItem('꿈 속 장소와 시간대'),
-              _buildTipItem('등장인물과의 관계'),
-              _buildTipItem('꿈에서 느꼈던 감정'),
-              _buildTipItem('특별히 기억나는 상징이나 물건'),
+              _buildTipItem('꿈 속 장소와 시간대', isDark),
+              _buildTipItem('등장인물과의 관계', isDark),
+              _buildTipItem('꿈에서 느꼈던 감정', isDark),
+              _buildTipItem('특별히 기억나는 상징이나 물건', isDark),
             ],
           ),
         ],
@@ -368,7 +374,7 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
     );
   }
   
-  Widget _buildTipItem(String text) {
+  Widget _buildTipItem(String text, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -386,7 +392,9 @@ class _DreamFortuneTossPageState extends ConsumerState<DreamFortuneTossPage>
             child: Text(
               text,
               style: TossTheme.body3.copyWith(
-                color: const Color(0xFF0C4A6E),
+                color: isDark
+                    ? TossDesignSystem.textSecondaryDark
+                    : const Color(0xFF0C4A6E),
               ),
             ),
           ),
