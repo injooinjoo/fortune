@@ -60,11 +60,11 @@ class TossCard extends StatelessWidget {
       case TossCardStyle.elevated:
       case TossCardStyle.outlined:
       case TossCardStyle.filled:
-        return isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white;
+        return isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white;
       case TossCardStyle.transparent:
         return TossDesignSystem.white.withValues(alpha: 0.0);
       case TossCardStyle.glassmorphism:
-        return (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white)
+        return (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white)
             .withValues(alpha: 0.7);
     }
   }
@@ -172,7 +172,7 @@ class TossListCard extends StatelessWidget {
               children: [
                 DefaultTextStyle(
                   style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
                     fontWeight: FontWeight.w600,
                   ),
                   child: title,
@@ -181,7 +181,7 @@ class TossListCard extends StatelessWidget {
                   SizedBox(height: TossDesignSystem.spacingXS),
                   DefaultTextStyle(
                     style: TossDesignSystem.body3.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray400,
                     ),
                     child: subtitle!,
                   ),
@@ -233,7 +233,7 @@ class TossSectionCard extends StatelessWidget {
             Text(
               title!,
               style: TossDesignSystem.heading4.copyWith(
-                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
               ),
             ),
             if (subtitle != null) ...[
@@ -241,7 +241,7 @@ class TossSectionCard extends StatelessWidget {
               Text(
                 subtitle!,
                 style: TossDesignSystem.body3.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                  color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray400,
                 ),
               ),
             ],
