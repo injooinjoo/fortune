@@ -110,6 +110,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
   @override
   Widget build(BuildContext context) {
     debugPrint('🟠 TarotQuestionSelector build - selectedQuestion: ${widget.selectedQuestion}');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasSelection = widget.selectedQuestion != null ||
                         (widget.customQuestion?.isNotEmpty == true);
     final hasCustomInput = widget.customQuestion?.isNotEmpty == true;
@@ -132,12 +133,12 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 제목
-                  const Text(
+                  Text(
                     '어떤 것이 궁금하신가요?',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF191919),
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       height: 1.2,
                     ),
                   ),
@@ -145,12 +146,12 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                   const SizedBox(height: 8),
 
                   // 부제목
-                  const Text(
+                  Text(
                     '카드가 답해드릴게요',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xFF8B95A1),
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                     ),
                   ),
 
@@ -169,6 +170,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                         icon: question['icon'] as IconData,
                         color: question['color'] as Color,
                         isSelected: isSelected,
+                        isDark: isDark,
                         onTap: () {
                           debugPrint('🔵 Question tapped: ${question['question']}');
                           _focusNode.unfocus();
@@ -185,12 +187,12 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                   const SizedBox(height: 24),
 
                   // 직접 입력 섹션
-                  const Text(
+                  Text(
                     '직접 입력하기',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF191919),
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                     ),
                   ),
 
@@ -201,11 +203,11 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                     decoration: BoxDecoration(
                       color: hasCustomInput
                           ? const Color(0xFF3182F6).withValues(alpha: 0.05)
-                          : TossDesignSystem.white,
+                          : (isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight),
                       border: Border.all(
                         color: hasCustomInput || _focusNode.hasFocus
                             ? const Color(0xFF3182F6)
-                            : const Color(0xFFE5E7EB),
+                            : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
                         width: hasCustomInput || _focusNode.hasFocus ? 2 : 1,
                       ),
                       borderRadius: BorderRadius.circular(12),
@@ -231,20 +233,20 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                           widget.onQuestionSelected('');
                         }
                       },
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: '궁금한 것을 자유롭게 입력해주세요\n예: 새로운 직장에서 잘 적응할 수 있을까요?',
                         hintStyle: TextStyle(
-                          color: Color(0xFF9CA3AF),
+                          color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
                           fontSize: 14,
                           height: 1.4,
                         ),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.all(16),
+                        contentPadding: const EdgeInsets.all(16),
                         counterText: '',
                       ),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
-                        color: Color(0xFF191919),
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                         height: 1.4,
                       ),
                     ),
@@ -272,6 +274,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
     required Color color,
     required bool isSelected,
     required VoidCallback onTap,
+    required bool isDark,
   }) {
     return Material(
       color: TossDesignSystem.white.withValues(alpha: 0.0),
@@ -280,11 +283,11 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
         decoration: BoxDecoration(
           color: isSelected
               ? color.withValues(alpha: 0.1)
-              : TossDesignSystem.white,
+              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight),
           border: Border.all(
             color: isSelected
                 ? color
-                : const Color(0xFFE5E7EB),
+                : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
@@ -336,7 +339,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                   fontWeight: FontWeight.w500,
                   color: isSelected
                       ? color
-                      : const Color(0xFF191919),
+                      : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
                 ),
               ),
             ),
