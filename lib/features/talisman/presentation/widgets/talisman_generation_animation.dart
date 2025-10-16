@@ -96,6 +96,8 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(40),
       child: Column(
@@ -154,7 +156,7 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
           Text(
             '부적 생성 중...',
             style: TossTheme.heading2.copyWith(
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
           ).animate()
             .fadeIn(duration: 400.ms),
@@ -165,13 +167,13 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: TossTheme.backgroundSecondary,
+              color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
               '"${widget.wishText}"',
               style: TossTheme.body3.copyWith(
-                color: TossTheme.textGray600,
+                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                 fontStyle: FontStyle.italic,
               ),
               textAlign: TextAlign.center,
@@ -189,7 +191,7 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
               _steps[_currentStep],
               key: ValueKey(_currentStep),
               style: TossTheme.subtitle1.copyWith(
-                color: TossTheme.textGray600,
+                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
               ),
               textAlign: TextAlign.center,
             ),
