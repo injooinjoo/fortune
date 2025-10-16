@@ -229,8 +229,8 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.grayDark700
-                        : TossDesignSystem.gray50,
+                        ? TossDesignSystem.surfaceBackgroundDark
+                        : TossDesignSystem.surfaceBackgroundLight,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(

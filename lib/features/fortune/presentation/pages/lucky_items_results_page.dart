@@ -374,6 +374,7 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final user = ref.watch(userProfileProvider);
     final userName = user.value?.name ?? '당신';
 
@@ -381,8 +382,8 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('오늘의 행운 아이템'),
-          backgroundColor: TossDesignSystem.white,
-          foregroundColor: TossDesignSystem.black,
+          backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+          foregroundColor: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           elevation: 0,
         ),
         body: const Center(
@@ -392,11 +393,11 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
     }
 
     return Scaffold(
-      backgroundColor: TossDesignSystem.gray50,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: AppBar(
         title: const Text('오늘의 행운 아이템'),
-        backgroundColor: TossDesignSystem.white,
-        foregroundColor: TossDesignSystem.black,
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        foregroundColor: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
         elevation: 0,
         actions: [
           IconButton(
@@ -492,7 +493,7 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: TossDesignSystem.white,
+                color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
@@ -502,42 +503,39 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                   ),
                 ],
               ),
-              child: Builder(
-                builder: (context) {
-                  final isDark = Theme.of(context).brightness == Brightness.dark;
-                  return Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFFF57F17).withValues(alpha: 0.2) : const Color(0xFFFFF9C4),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.lightbulb,
-                          color: isDark ? const Color(0xFFFDD835) : const Color(0xFFF57F17),
-                          size: 24,
-                        ),
-                      ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFFF57F17).withValues(alpha: 0.2) : const Color(0xFFFFF9C4),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.lightbulb,
+                      color: isDark ? const Color(0xFFFDD835) : const Color(0xFFF57F17),
+                      size: 24,
+                    ),
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           '오늘의 행운 팁',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF191F28),
+                            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           _generatedResults['dailyTip'],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
-                            color: Color(0xFF4E5968),
+                            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                             height: 1.4,
                           ),
                         ),
@@ -545,20 +543,18 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                     ),
                   ),
                 ],
-              );
-                },
               ),
             ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
 
             const SizedBox(height: 24),
 
             // 카테고리 섹션 제목
-            const Text(
+            Text(
               '8가지 행운 카테고리',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF191F28),
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
             ),
             const SizedBox(height: 16),
@@ -585,20 +581,23 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
   }
 
   Widget _buildCategoryCard(Map<String, dynamic> category, int index) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: TossDesignSystem.black.withValues(alpha: 0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
+          child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -624,10 +623,10 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                       children: [
                         Text(
                           category['title'],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF191F28),
+                            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                           ),
                         ),
                         const Spacer(),
@@ -654,9 +653,9 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                     const SizedBox(height: 4),
                     Text(
                       category['description'],
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: Color(0xFF8B95A1),
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                       ),
                     ),
                   ],
@@ -681,7 +680,7 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                   category['recommendation'],
                   style: TextStyle(
                     fontSize: 14,
-                    color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF4E5968),
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                     height: 1.4,
                   ),
                 ),
@@ -712,9 +711,9 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
                     Expanded(
                       child: Text(
                         category['items'][itemIndex],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF4E5968),
+                          color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                           height: 1.3,
                         ),
                       ),
@@ -725,7 +724,9 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
             ),
           ),
         ],
-      ),
+          ),
+        );
+      },
     );
   }
 
