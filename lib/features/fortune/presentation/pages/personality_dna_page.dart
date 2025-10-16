@@ -248,11 +248,12 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
     required Widget child,
     IconData? icon,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -270,10 +271,10 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
               ],
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF191F28),
+                  color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
                   height: 1.3,
                 ),
               ),
@@ -287,11 +288,12 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
   }
 
   Widget _buildDNAHeader() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -329,7 +331,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
             ),
             const SizedBox(height: 16),
           ],
-          
+
           // 이모지와 제목 (토스 스타일)
           Text(
             _currentDNA!.emoji,
@@ -338,8 +340,8 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
           const SizedBox(height: 16),
           Text(
             _currentDNA!.title,
-            style: const TextStyle(
-              color: Color(0xFF191F28),
+            style: TextStyle(
+              color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
               fontSize: 22,
               fontWeight: FontWeight.w700,
               height: 1.3,
@@ -349,8 +351,8 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
           const SizedBox(height: 8),
           Text(
             _currentDNA!.description,
-            style: const TextStyle(
-              color: Color(0xFF8B95A1),
+            style: TextStyle(
+              color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
               fontSize: 16,
               fontWeight: FontWeight.w400,
               height: 1.4,
@@ -362,13 +364,13 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F8FA),
+              color: isDark ? TossDesignSystem.grayDark200 : const Color(0xFFF7F8FA),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
               _currentDNA!.dnaCode,
-              style: const TextStyle(
-                color: Color(0xFF191F28),
+              style: TextStyle(
+                color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'monospace',
@@ -433,10 +435,11 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
   }
 
   Widget _buildLoveStyleDetailCard(String title, String content) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F8FA),
+        color: isDark ? TossDesignSystem.grayDark200 : const Color(0xFFF7F8FA),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -444,19 +447,19 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF8B95A1),
+              color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
             ),
           ),
           const SizedBox(height: 4),
           Text(
             content,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
-              color: Color(0xFF191F28),
+              color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
               height: 1.4,
             ),
           ),
@@ -494,10 +497,11 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
   }
 
   Widget _buildWorkStyleDetailCard(String title, String content) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F8FA),
+        color: isDark ? TossDesignSystem.grayDark200 : const Color(0xFFF7F8FA),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -505,19 +509,19 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF8B95A1),
+              color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
             ),
           ),
           const SizedBox(height: 4),
           Text(
             content,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
-              color: Color(0xFF191F28),
+              color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
               height: 1.4,
             ),
           ),
