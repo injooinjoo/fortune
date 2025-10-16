@@ -4,6 +4,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../providers/saju_provider.dart';
 import '../widgets/saju_element_chart.dart';
 import '../widgets/manseryeok_display.dart';
@@ -58,10 +59,11 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
   
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final sajuState = ref.watch(sajuProvider);
-    
+
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: StandardFortuneAppBar(
         title: '전통 사주팔자',
         onBackPressed: () {

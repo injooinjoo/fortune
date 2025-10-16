@@ -282,7 +282,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
   Widget _buildInputView() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: TossDesignSystem.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: StandardFortuneAppBar(
         title: '소원 빌기',
         onBackPressed: () {

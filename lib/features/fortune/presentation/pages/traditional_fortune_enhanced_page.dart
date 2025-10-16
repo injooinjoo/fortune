@@ -45,15 +45,17 @@ class _TraditionalFortuneEnhancedPageState extends ConsumerState<TraditionalFort
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFFEF4444).withValues(alpha: 0.05),
-              TossDesignSystem.white,
+              Color(0xFFEF4444).withValues(alpha: isDark ? 0.02 : 0.05),
+              isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
             ],
           ),
         ),

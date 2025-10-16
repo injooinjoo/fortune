@@ -32,13 +32,15 @@ class TraditionalFortuneUnifiedPage extends ConsumerStatefulWidget {
 class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortuneUnifiedPage> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     // Navigate directly to the saju toss page
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.pushReplacement('/traditional-saju');
     });
-    
+
     // Show loading while navigating
     return Scaffold(
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       body: Center(
         child: CircularProgressIndicator(
           color: Color(0xFFEF4444),
