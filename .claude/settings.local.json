@@ -79,7 +79,9 @@
       "Bash(\"lib/features/fortune/presentation/pages/compatibility_page.dart\" )",
       "Bash(\"lib/features/fortune/presentation/pages/love/love_fortune_main_page.dart\" )",
       "Bash(\"lib/features/fortune/presentation/pages/mbti_fortune_page.dart\" )",
-      "Bash(\"lib/screens/premium/premium_screen.dart\")"
+      "Bash(\"lib/screens/premium/premium_screen.dart\")",
+      "Bash(do if ! grep -q \"import.*toss_design_system\" \"$file\")",
+      "Bash(then echo \"$file\" fi done)"
     ],
     "deny": [],
     "ask": [],

@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import 'dart:math' as math;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/theme/toss_design_system.dart';
 import '../../domain/entities/fortune.dart' as fortune_entity;
 import '../../domain/entities/user_profile.dart';
 import '../../presentation/widgets/fortune_infographic_widgets.dart';
