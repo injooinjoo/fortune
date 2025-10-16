@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../services/ad_service.dart';
+import '../../../../../shared/components/floating_bottom_button.dart';
+import '../../../../../shared/components/toss_button.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
 import 'love_input_step1_page.dart';
 import 'love_input_step2_page.dart';
@@ -119,60 +121,104 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
         title: '연애운',
         onBackPressed: _currentStep == 0 ? () => Navigator.pop(context) : _previousStep,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Progress Bar
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            children: [
+              // Progress Bar
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '${_currentStep + 1} / $_totalSteps',
-                      style: TossTheme.body2.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${_currentStep + 1} / $_totalSteps',
+                          style: TossTheme.body2.copyWith(
+                            color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          '${((_currentStep + 1) / _totalSteps * 100).round()}%',
+                          style: TossTheme.body2.copyWith(
+                            color: TossTheme.primaryBlue,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      '${((_currentStep + 1) / _totalSteps * 100).round()}%',
-                      style: TossTheme.body2.copyWith(
-                        color: TossTheme.primaryBlue,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    const SizedBox(height: 8),
+                    LinearProgressIndicator(
+                      value: (_currentStep + 1) / _totalSteps,
+                      backgroundColor: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200,
+                      valueColor: const AlwaysStoppedAnimation<Color>(TossTheme.primaryBlue),
+                      minHeight: 6,
+                      borderRadius: BorderRadius.circular(3),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                LinearProgressIndicator(
-                  value: (_currentStep + 1) / _totalSteps,
-                  backgroundColor: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200,
-                  valueColor: const AlwaysStoppedAnimation<Color>(TossTheme.primaryBlue),
-                  minHeight: 6,
-                  borderRadius: BorderRadius.circular(3),
+              ),
+
+              // Page Content
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    LoveInputStep1Page(onNext: _nextStep, key: ValueKey('step1_$_currentStep')),
+                    LoveInputStep2Page(onNext: _nextStep, key: ValueKey('step2_$_currentStep')),
+                    LoveInputStep3Page(onNext: _nextStep, key: ValueKey('step3_$_currentStep')),
+                    LoveInputStep4Page(onNext: _nextStep, key: ValueKey('step4_$_currentStep')),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          
-          // Page Content
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                LoveInputStep1Page(onNext: _nextStep),
-                LoveInputStep2Page(onNext: _nextStep),
-                LoveInputStep3Page(onNext: _nextStep),
-                LoveInputStep4Page(onNext: _nextStep),
-              ],
-            ),
-          ),
+
+          // Floating Bottom Button
+          if (_currentStep < 3) _buildFloatingButton(),
         ],
       ),
+    );
+  }
+
+  Widget _buildFloatingButton() {
+    // Step 4는 인라인 버튼 사용, Step 1-3만 FloatingBottomButton 사용
+    if (_currentStep >= 3) return const SizedBox.shrink();
+
+    String buttonText;
+    bool canProceed = false;
+
+    switch (_currentStep) {
+      case 0: // Step 1: 나이, 성별, 연애 상태
+        canProceed = _loveFortuneData['gender'] != null &&
+                     _loveFortuneData['relationshipStatus'] != null;
+        buttonText = '다음 단계로';
+        break;
+      case 1: // Step 2: 연애 스타일, 중요한 가치
+        canProceed = _loveFortuneData['datingStyles'] != null &&
+                     (_loveFortuneData['datingStyles'] as List).isNotEmpty;
+        buttonText = '다음 단계로';
+        break;
+      case 2: // Step 3: 이상형, 만남 장소, 원하는 관계
+        canProceed = _loveFortuneData['preferredPersonality'] != null &&
+                     (_loveFortuneData['preferredPersonality'] as List).isNotEmpty &&
+                     _loveFortuneData['preferredMeetingPlaces'] != null &&
+                     (_loveFortuneData['preferredMeetingPlaces'] as List).isNotEmpty &&
+                     _loveFortuneData['relationshipGoal'] != null;
+        buttonText = '다음 단계로';
+        break;
+      default:
+        return const SizedBox.shrink();
+    }
+
+    return FloatingBottomButton(
+      text: buttonText,
+      onPressed: canProceed ? _nextStep : null,
+      style: canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
     );
   }
 }
