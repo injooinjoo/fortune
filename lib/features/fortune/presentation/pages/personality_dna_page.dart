@@ -548,10 +548,11 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
   }
 
   Widget _buildDailyMatchingCard(String title, String content) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F8FA),
+        color: isDark ? TossDesignSystem.grayDark200 : const Color(0xFFF7F8FA),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -562,10 +563,10 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF8B95A1),
+                    color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -604,10 +605,11 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
   }
 
   Widget _buildCompatibilityCard(String type, String mbti, String description) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F8FA),
+        color: isDark ? TossDesignSystem.grayDark200 : const Color(0xFFF7F8FA),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -617,10 +619,10 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
             children: [
               Text(
                 type,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF8B95A1),
+                  color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
                 ),
               ),
               const Spacer(),
@@ -644,10 +646,10 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
           const SizedBox(height: 8),
           Text(
             description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
-              color: Color(0xFF191F28),
+              color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
               height: 1.4,
             ),
           ),
@@ -657,6 +659,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
   }
 
   Widget _buildCelebritySection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final celebrity = _currentDNA!.celebrity!;
     return _buildTossSection(
       title: '닮은 유명인',
@@ -664,7 +667,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFFF7F8FA),
+          color: isDark ? TossDesignSystem.grayDark200 : const Color(0xFFF7F8FA),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -682,10 +685,10 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
             const SizedBox(height: 8),
             Text(
               celebrity.reason,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
-                color: Color(0xFF191F28),
+                color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
                 height: 1.4,
               ),
             ),
