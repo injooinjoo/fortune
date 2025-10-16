@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
 import '../../domain/models/talisman_models.dart';
-
-
 
 class TalismanPreviewWidget extends StatefulWidget {
   final TalismanType type;
@@ -61,6 +58,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
             offset: const Offset(0, 10),
           ),
         ],
+      ),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -78,7 +76,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
               ),
             ),
           ),
-          
+
           // Pattern overlay
           Container(
             decoration: BoxDecoration(
@@ -93,7 +91,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
               ),
             ),
           ),
-          
+
           // Central symbol
           AnimatedBuilder(
             animation: _animationController,
@@ -121,17 +119,16 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                       color: widget.primaryColor,
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
-            }),
-          
+
           // User name at bottom
           Positioned(
-            bottom = 20,
-            child = Container(
-              padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingS),
+            bottom: 20,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: TossDesignSystem.white.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(20),
@@ -149,22 +146,23 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
               ),
             ),
           ),
-          
+
           // Decorative corners
           ..._buildCornerDecorations(),
         ],
       ),
     );
   }
-  
+
   List<Widget> _buildCornerDecorations() {
     final decorations = <Widget>[];
     final positions = [
       (top: 10.0, left: 10.0, right: null, bottom: null),
       (top: 10.0, left: null, right: 10.0, bottom: null),
       (top: null, left: 10.0, right: null, bottom: 10.0),
-      (top: null, left: null, right: 10.0, bottom: 10.0)];
-    
+      (top: null, left: null, right: 10.0, bottom: 10.0),
+    ];
+
     for (final pos in positions) {
       decorations.add(
         Positioned(
@@ -174,31 +172,31 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
           bottom: pos.bottom,
           child: Container(
             width: 30,
-            height: AppSpacing.spacing7 * 1.07,
+            height: 30,
             decoration: BoxDecoration(
               color: TossDesignSystem.white.withValues(alpha: 0.3),
               borderRadius: BorderRadius.only(
-                topLeft: pos.top != null && pos.left != null 
-                    ? const Radius.circular(0) 
+                topLeft: pos.top != null && pos.left != null
+                    ? const Radius.circular(0)
                     : const Radius.circular(15),
-                topRight: pos.top != null && pos.right != null 
-                    ? const Radius.circular(0) 
+                topRight: pos.top != null && pos.right != null
+                    ? const Radius.circular(0)
                     : const Radius.circular(15),
-                bottomLeft: pos.bottom != null && pos.left != null 
-                    ? const Radius.circular(0) 
+                bottomLeft: pos.bottom != null && pos.left != null
+                    ? const Radius.circular(0)
                     : const Radius.circular(15),
-                bottomRight: pos.bottom != null && pos.right != null 
-                    ? const Radius.circular(0) 
+                bottomRight: pos.bottom != null && pos.right != null
+                    ? const Radius.circular(0)
                     : const Radius.circular(15),
               ),
             ),
           ),
-        );
-      }
+        ),
+      );
     }
-    
+
     return decorations;
-}
+  }
 }
 
 class _TalismanPatternPainter extends CustomPainter {
@@ -237,10 +235,10 @@ class _TalismanPatternPainter extends CustomPainter {
     // Draw traditional Korean pattern
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width * 0.4;
-    
+
     // Outer circle
     canvas.drawCircle(center, radius, paint);
-    
+
     // Inner patterns
     for (int i = 0; i < 8; i++) {
       final angle = i * 3.14159 / 4;
@@ -254,17 +252,17 @@ class _TalismanPatternPainter extends CustomPainter {
     // Draw geometric modern pattern
     final path = Path();
     final points = <Offset>[];
-    
+
     for (int i = 0; i < 6; i++) {
       final angle = i * 3.14159 / 3;
       final x = size.width / 2 + size.width * 0.3 * math.cos(angle);
       final y = size.height / 2 + size.height * 0.3 * math.sin(angle);
       points.add(Offset(x, y));
     }
-    
+
     path.addPolygon(points, true);
     canvas.drawPath(path, paint);
-}
+  }
 
   void _drawMinimalPattern(Canvas canvas, Size size, Paint paint) {
     // Draw simple lines
@@ -278,23 +276,23 @@ class _TalismanPatternPainter extends CustomPainter {
       Offset(size.width * 0.8, size.height * 0.8),
       paint,
     );
-}
+  }
 
   void _drawOrnatePattern(Canvas canvas, Size size, Paint paint) {
     // Draw complex ornate pattern
     final center = Offset(size.width / 2, size.height / 2);
-    
+
     for (int i = 0; i < 3; i++) {
       final radius = size.width * (0.2 + i * 0.1);
       canvas.drawCircle(center, radius, paint);
     }
-    
+
     // Draw decorative elements
     for (int i = 0; i < 12; i++) {
       final angle = i * 3.14159 / 6;
       final startRadius = size.width * 0.3;
       final endRadius = size.width * 0.45;
-      
+
       final start = Offset(
         center.dx + startRadius * math.cos(angle),
         center.dy + startRadius * math.sin(angle),
@@ -303,7 +301,7 @@ class _TalismanPatternPainter extends CustomPainter {
         center.dx + endRadius * math.cos(angle),
         center.dy + endRadius * math.sin(angle),
       );
-      
+
       canvas.drawLine(start, end, paint);
     }
   }
