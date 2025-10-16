@@ -8,6 +8,7 @@ import '../../../talisman/presentation/widgets/talisman_generation_animation.dar
 import '../../../talisman/presentation/widgets/talisman_result_card.dart';
 import '../../../talisman/presentation/providers/talisman_provider.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../talisman/presentation/widgets/talisman_premium_bottom_sheet.dart';
 import '../../../../services/in_app_purchase_service.dart';
@@ -25,22 +26,23 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final authState = ref.watch(authStateProvider).value;
     final userId = authState?.session?.user.id;
-    
+
     final talismanState = ref.watch(talismanGenerationProvider(userId));
 
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       body: SafeArea(
         child: Column(
           children: [
             // App Bar
-            _buildAppBar(context, ref, talismanState.step, userId),
-            
+            _buildAppBar(context, ref, talismanState.step, userId, isDark),
+
             // Content
             Expanded(
-              child: _buildContent(context, ref, talismanState, userId),
+              child: _buildContent(context, ref, talismanState, userId, isDark),
             ),
           ],
         ),
@@ -48,12 +50,12 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, WidgetRef ref, TalismanGenerationStep step, String? userId) {
+  Widget _buildAppBar(BuildContext context, WidgetRef ref, TalismanGenerationStep step, String? userId, bool isDark) {
     // 결과 페이지에서는 앱바 숨김
     if (step == TalismanGenerationStep.result) {
       return const SizedBox.shrink();
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
@@ -67,12 +69,13 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: TossTheme.backgroundSecondary,
+                  color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.arrow_back_ios_new,
                   size: 20,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
               ),
             )
@@ -83,25 +86,28 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: TossTheme.backgroundSecondary,
+                  color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.close,
                   size: 20,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
               ),
             ),
-          
+
           const SizedBox(width: 16),
-          
+
           Text(
             '부적',
-            style: TossTheme.heading3,
+            style: TossTheme.heading3.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            ),
           ),
-          
+
           const Spacer(),
-          
+
           // Premium Badge (추후 구현)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -122,9 +128,9 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
     );
   }
 
-  Widget _buildContent(BuildContext context, WidgetRef ref, TalismanGenerationState state, String? userId) {
+  Widget _buildContent(BuildContext context, WidgetRef ref, TalismanGenerationState state, String? userId, bool isDark) {
     if (state.error != null) {
-      return _buildErrorState(context, ref, state.error!, userId);
+      return _buildErrorState(context, ref, state.error!, userId, isDark);
     }
 
     switch (state.step) {
@@ -222,7 +228,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
     );
   }
 
-  Widget _buildErrorState(BuildContext context, WidgetRef ref, String error, String? userId) {
+  Widget _buildErrorState(BuildContext context, WidgetRef ref, String error, String? userId, bool isDark) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -236,14 +242,16 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
           const SizedBox(height: 24),
           Text(
             '오류가 발생했습니다',
-            style: TossTheme.heading3,
+            style: TossTheme.heading3.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
           Text(
             error,
             style: TossTheme.body3.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
             textAlign: TextAlign.center,
           ),
