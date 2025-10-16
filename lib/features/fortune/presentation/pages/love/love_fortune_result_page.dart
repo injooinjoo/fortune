@@ -14,10 +14,12 @@ class LoveFortuneResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: TossTheme.backgroundPrimary,
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
@@ -26,13 +28,13 @@ class LoveFortuneResultPage extends StatelessWidget {
           },
           icon: Icon(
             Icons.close,
-            color: TossTheme.textBlack,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
           ),
         ),
         title: Text(
           '연애운세 결과',
           style: TossTheme.heading3.copyWith(
-            color: TossTheme.textBlack,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
           ),
         ),
         centerTitle: true,
@@ -105,6 +107,7 @@ class LoveFortuneResultPage extends StatelessWidget {
 
             // Detail sections
             _buildDetailSection(
+              context,
               '연애 성향',
               _getLoveStyle(),
               Icons.psychology_rounded,
@@ -112,6 +115,7 @@ class LoveFortuneResultPage extends StatelessWidget {
             ),
 
             _buildDetailSection(
+              context,
               '매력 포인트',
               _getCharmPoints(),
               Icons.star_rounded,
@@ -119,6 +123,7 @@ class LoveFortuneResultPage extends StatelessWidget {
             ),
 
             _buildDetailSection(
+              context,
               '개선 포인트',
               _getImprovementPoints(),
               Icons.trending_up_rounded,
@@ -126,6 +131,7 @@ class LoveFortuneResultPage extends StatelessWidget {
             ),
 
             _buildDetailSection(
+              context,
               '오늘의 조언',
               _getAdvice(),
               Icons.lightbulb_rounded,
@@ -161,14 +167,16 @@ class LoveFortuneResultPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailSection(String title, String content, IconData icon, Color color) {
+  Widget _buildDetailSection(BuildContext context, String title, String content, IconData icon, Color color) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: TossTheme.borderGray200),
+        border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +201,7 @@ class LoveFortuneResultPage extends StatelessWidget {
                 title,
                 style: TossTheme.body1.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: TossTheme.textBlack,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                 ),
               ),
             ],
@@ -202,7 +210,7 @@ class LoveFortuneResultPage extends StatelessWidget {
           Text(
             content,
             style: TossTheme.body2.copyWith(
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
               height: 1.6,
             ),
           ),

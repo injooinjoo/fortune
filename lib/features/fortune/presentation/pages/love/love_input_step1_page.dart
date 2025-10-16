@@ -9,8 +9,13 @@ enum RelationshipStatus { single, dating, breakup, crush }
 
 class LoveInputStep1Page extends StatefulWidget {
   final Function(Map<String, dynamic>) onNext;
-  
-  const LoveInputStep1Page({super.key, required this.onNext});
+  final ValueNotifier<bool>? canProceedNotifier;
+
+  const LoveInputStep1Page({
+    super.key,
+    required this.onNext,
+    this.canProceedNotifier,
+  });
 
   @override
   State<LoveInputStep1Page> createState() => _LoveInputStep1PageState();
@@ -22,6 +27,16 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
   RelationshipStatus? _relationshipStatus;
 
   bool get _canProceed => _gender != null && _relationshipStatus != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateCanProceed();
+  }
+
+  void _updateCanProceed() {
+    widget.canProceedNotifier?.value = _canProceed;
+  }
 
   String _getRelationshipStatusText(RelationshipStatus status) {
     switch (status) {
@@ -250,6 +265,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
         setState(() {
           _gender = value;
         });
+        _updateCanProceed();
       },
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -297,6 +313,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
         setState(() {
           _relationshipStatus = status;
         });
+        _updateCanProceed();
       },
       child: Container(
         width: double.infinity,

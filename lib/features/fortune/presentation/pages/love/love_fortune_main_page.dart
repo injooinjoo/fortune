@@ -27,15 +27,19 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
   // 전체 입력 데이터 저장
   final Map<String, dynamic> _loveFortuneData = {};
 
-  // 각 step의 GlobalKey
-  final _step1Key = GlobalKey<_LoveInputStep1PageState>();
-  final _step2Key = GlobalKey<_LoveInputStep2PageState>();
-  final _step3Key = GlobalKey<_LoveInputStep3PageState>();
-  final _step4Key = GlobalKey<_LoveInputStep4PageState>();
+  // ValueNotifiers for tracking button activation state
+  final _step1CanProceed = ValueNotifier<bool>(false);
+  final _step2CanProceed = ValueNotifier<bool>(false);
+  final _step3CanProceed = ValueNotifier<bool>(false);
+  final _step4CanProceed = ValueNotifier<bool>(false);
 
   @override
   void dispose() {
     _pageController.dispose();
+    _step1CanProceed.dispose();
+    _step2CanProceed.dispose();
+    _step3CanProceed.dispose();
+    _step4CanProceed.dispose();
     super.dispose();
   }
 
@@ -174,10 +178,10 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
                   controller: _pageController,
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    LoveInputStep1Page(key: _step1Key, onNext: _nextStep),
-                    LoveInputStep2Page(key: _step2Key, onNext: _nextStep),
-                    LoveInputStep3Page(key: _step3Key, onNext: _nextStep),
-                    LoveInputStep4Page(key: _step4Key, onNext: _nextStep),
+                    LoveInputStep1Page(onNext: _nextStep, canProceedNotifier: _step1CanProceed),
+                    LoveInputStep2Page(onNext: _nextStep, canProceedNotifier: _step2CanProceed),
+                    LoveInputStep3Page(onNext: _nextStep, canProceedNotifier: _step3CanProceed),
+                    LoveInputStep4Page(onNext: _nextStep, canProceedNotifier: _step4CanProceed),
                   ],
                 ),
               ),
@@ -192,18 +196,39 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
   }
 
   Widget _buildFloatingButton() {
-    // 각 step page의 buildFloatingButton 메서드 호출
+    String buttonText;
+    ValueNotifier<bool> canProceedNotifier;
+
     switch (_currentStep) {
       case 0:
-        return _step1Key.currentState?.buildFloatingButton() ?? const SizedBox.shrink();
+        buttonText = '다음 단계로';
+        canProceedNotifier = _step1CanProceed;
+        break;
       case 1:
-        return _step2Key.currentState?.buildFloatingButton() ?? const SizedBox.shrink();
+        buttonText = '다음 단계로';
+        canProceedNotifier = _step2CanProceed;
+        break;
       case 2:
-        return _step3Key.currentState?.buildFloatingButton() ?? const SizedBox.shrink();
+        buttonText = '다음 단계로';
+        canProceedNotifier = _step3CanProceed;
+        break;
       case 3:
-        return _step4Key.currentState?.buildFloatingButton() ?? const SizedBox.shrink();
+        buttonText = '연애운세 보기';
+        canProceedNotifier = _step4CanProceed;
+        break;
       default:
         return const SizedBox.shrink();
     }
+
+    return ValueListenableBuilder<bool>(
+      valueListenable: canProceedNotifier,
+      builder: (context, canProceed, child) {
+        return FloatingBottomButton(
+          text: buttonText,
+          onPressed: canProceed ? _nextStep : null,
+          style: canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
+        );
+      },
+    );
   }
 }

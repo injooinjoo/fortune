@@ -9,8 +9,13 @@ enum DatingStyle { active, passive, emotional, logical, independent, dependent, 
 
 class LoveInputStep2Page extends StatefulWidget {
   final Function(Map<String, dynamic>) onNext;
-  
-  const LoveInputStep2Page({super.key, required this.onNext});
+  final ValueNotifier<bool>? canProceedNotifier;
+
+  const LoveInputStep2Page({
+    super.key,
+    required this.onNext,
+    this.canProceedNotifier,
+  });
 
   @override
   State<LoveInputStep2Page> createState() => _LoveInputStep2PageState();
@@ -27,6 +32,16 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
   };
 
   bool get _canProceed => _selectedStyles.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateCanProceed();
+  }
+
+  void _updateCanProceed() {
+    widget.canProceedNotifier?.value = _canProceed;
+  }
 
   String _getDatingStyleText(DatingStyle style) {
     switch (style) {
@@ -202,6 +217,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
             _selectedStyles.add(style);
           }
         });
+        _updateCanProceed();
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

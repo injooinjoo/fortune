@@ -10,8 +10,13 @@ enum RelationshipGoal { casual, serious, marriage }
 
 class LoveInputStep3Page extends StatefulWidget {
   final Function(Map<String, dynamic>) onNext;
-  
-  const LoveInputStep3Page({super.key, required this.onNext});
+  final ValueNotifier<bool>? canProceedNotifier;
+
+  const LoveInputStep3Page({
+    super.key,
+    required this.onNext,
+    this.canProceedNotifier,
+  });
 
   @override
   State<LoveInputStep3Page> createState() => _LoveInputStep3PageState();
@@ -28,9 +33,19 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
     '모험적인', '안정적인', '로맨틱한', '현실적인', '창의적인', '체계적인'
   ];
 
-  bool get _canProceed => _preferredPersonality.isNotEmpty && 
-                         _preferredMeetingPlaces.isNotEmpty && 
+  bool get _canProceed => _preferredPersonality.isNotEmpty &&
+                         _preferredMeetingPlaces.isNotEmpty &&
                          _relationshipGoal != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateCanProceed();
+  }
+
+  void _updateCanProceed() {
+    widget.canProceedNotifier?.value = _canProceed;
+  }
 
   String _getMeetingPlaceText(MeetingPlace place) {
     switch (place) {
@@ -300,6 +315,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
             _preferredPersonality.add(trait);
           }
         });
+        _updateCanProceed();
       } : null,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -345,9 +361,10 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
             _preferredMeetingPlaces.add(place);
           }
         });
+        _updateCanProceed();
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
           color: isSelected
               ? TossTheme.primaryBlue
@@ -362,24 +379,29 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               _getMeetingPlaceEmoji(place),
-              style: const TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 18),
             ),
-            const SizedBox(height: 4),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                _getMeetingPlaceText(place),
-                style: TossTheme.body2.copyWith(
-                  color: isSelected
-                      ? TossDesignSystem.white
-                      : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            const SizedBox(height: 2),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  _getMeetingPlaceText(place),
+                  style: TossTheme.caption.copyWith(
+                    color: isSelected
+                        ? TossDesignSystem.white
+                        : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    fontSize: 11,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
               ),
             ),
           ],
@@ -395,6 +417,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
         setState(() {
           _relationshipGoal = goal;
         });
+        _updateCanProceed();
       },
       child: Container(
         width: double.infinity,

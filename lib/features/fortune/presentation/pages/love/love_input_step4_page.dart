@@ -10,8 +10,13 @@ enum HobbyType { exercise, reading, travel, cooking, gaming, movie }
 
 class LoveInputStep4Page extends StatefulWidget {
   final Function(Map<String, dynamic>) onNext;
-  
-  const LoveInputStep4Page({super.key, required this.onNext});
+  final ValueNotifier<bool>? canProceedNotifier;
+
+  const LoveInputStep4Page({
+    super.key,
+    required this.onNext,
+    this.canProceedNotifier,
+  });
 
   @override
   State<LoveInputStep4Page> createState() => _LoveInputStep4PageState();
@@ -28,9 +33,19 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
     '사교성', '요리실력', '운동신경', '예술감각', '리더십', '따뜻함'
   ];
 
-  bool get _canProceed => _charmPoints.isNotEmpty && 
-                         _lifestyle != null && 
+  bool get _canProceed => _charmPoints.isNotEmpty &&
+                         _lifestyle != null &&
                          _hobbies.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateCanProceed();
+  }
+
+  void _updateCanProceed() {
+    widget.canProceedNotifier?.value = _canProceed;
+  }
 
   String _getLifestyleText(LifestyleType lifestyle) {
     switch (lifestyle) {
@@ -205,6 +220,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
                       setState(() {
                         _appearanceConfidence = value;
                       });
+                      _updateCanProceed();
                     },
                   ),
                 ),
@@ -340,6 +356,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             _charmPoints.add(charm);
           }
         });
+        _updateCanProceed();
       } : null,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -381,6 +398,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
         setState(() {
           _lifestyle = lifestyle;
         });
+        _updateCanProceed();
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -437,9 +455,10 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             _hobbies.add(hobby);
           }
         });
+        _updateCanProceed();
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
         decoration: BoxDecoration(
           color: isSelected
               ? TossTheme.primaryBlue
@@ -454,24 +473,29 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               _getHobbyEmoji(hobby),
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 2),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                _getHobbyText(hobby),
-                style: TossTheme.caption.copyWith(
-                  color: isSelected
-                      ? TossDesignSystem.white
-                      : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  _getHobbyText(hobby),
+                  style: TossTheme.caption.copyWith(
+                    color: isSelected
+                        ? TossDesignSystem.white
+                        : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    fontSize: 11,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
               ),
             ),
           ],

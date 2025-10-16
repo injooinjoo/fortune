@@ -217,10 +217,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
       child: Container(
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+          color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+            color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
             width: 1,
           ),
         ),
@@ -334,10 +334,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+          color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
           width: 1,
         ),
       ),
@@ -346,7 +346,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
         children: [
           Text(
             '기본 정보',
-            style: theme.textTheme.headlineSmall
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : null,
+            ),
           ),
           const SizedBox(height: 16),
           // Name Input
@@ -401,7 +403,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             children: [
               Text(
                 '성별',
-                style: theme.textTheme.bodyLarge
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                ),
               ),
               const SizedBox(height: 8),
               Row(
@@ -551,10 +555,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+              color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+                color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
                 width: 1,
               ),
             ),
@@ -570,7 +574,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   const SizedBox(width: 8),
                   Text(
                     '만남 정보',
-                    style: theme.textTheme.headlineSmall
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                    ),
                   )
                 ]
               ),
@@ -612,8 +618,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               Text(
                 '만남 시간대',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold
-                )
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                ),
               ),
               const SizedBox(height: 8),
               Wrap(
@@ -649,6 +656,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 '만남 방식',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
                 ),
               ),
               const SizedBox(height: 8),
@@ -676,8 +684,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               Text(
                 '소개 경로',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold
-                )
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                ),
               ),
               const SizedBox(height: 8),
               Wrap(
@@ -716,10 +725,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+              color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200,
+                color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
                 width: 1,
               ),
             ),
@@ -735,7 +744,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   const SizedBox(width: 8),
                   Text(
                     '선호 사항',
-                    style: theme.textTheme.headlineSmall,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                    ),
                   ),
                 ],
               ),
@@ -745,6 +756,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 '중요하게 생각하는 것 (3개 이상)',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
                 ),
               ),
               const SizedBox(height: 8),
@@ -789,6 +801,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 '나이 선호도',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
                 ),
               ),
               const SizedBox(height: 8),
@@ -841,6 +854,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 '이상적인 첫 데이트',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
                 ),
               ),
               const SizedBox(height: 8),
@@ -885,7 +899,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   const SizedBox(width: 8),
                   Text(
                     '자기 평가',
-                    style: theme.textTheme.headlineSmall,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                    ),
                   ),
                 ],
               ),
@@ -895,6 +911,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 '소개팅 자신감',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
                 ),
               ),
               const SizedBox(height: 8),
@@ -959,6 +976,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 '걱정되는 부분 (선택)',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
                 ),
               ),
               const SizedBox(height: 8),
@@ -1076,7 +1094,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     const SizedBox(width: 8),
                     Text(
                       '내 사진 분석',
-                      style: theme.textTheme.headlineSmall,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.textPrimaryDark : null,
+                      ),
                     ),
                   ],
                 ),
@@ -1113,7 +1133,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     const SizedBox(width: 8),
                     Text(
                       '상대방 정보 (선택)',
-                      style: theme.textTheme.headlineSmall,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.textPrimaryDark : null,
+                      ),
                     ),
                   ],
                 ),
@@ -2126,7 +2148,9 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 const SizedBox(width: 8),
                 Text(
                   '대화 분석',
-                  style: theme.textTheme.headlineSmall,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.textPrimaryDark : null,
+                  ),
                 ),
               ],
             ),
@@ -2144,6 +2168,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               '대화 플랫폼',
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.textPrimaryDark : null,
               ),
             ),
             const SizedBox(height: 8),
@@ -2181,6 +2206,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
               '대화 내용',
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.textPrimaryDark : null,
               ),
             ),
             const SizedBox(height: 8),
@@ -2282,12 +2308,12 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     : null,
                 color: isSelected
                     ? null
-                    : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50),
+                    : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isSelected
                       ? TossDesignSystem.tossBlue
-                      : (isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray200),
+                      : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200),
                   width: isSelected ? 2 : 1,
                 ),
               ),
