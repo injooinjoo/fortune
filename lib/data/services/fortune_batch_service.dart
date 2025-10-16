@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/config/environment.dart';
 import '../../core/constants/edge_functions_endpoints.dart';
 import '../../core/config/feature_flags.dart';
 import '../../core/network/api_client.dart';

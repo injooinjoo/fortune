@@ -9,7 +9,6 @@ import '../../../../core/components/toss_card.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/services/unified_fortune_service.dart';

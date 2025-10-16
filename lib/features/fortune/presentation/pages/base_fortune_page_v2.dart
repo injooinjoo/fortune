@@ -7,7 +7,6 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../domain/entities/fortune.dart';

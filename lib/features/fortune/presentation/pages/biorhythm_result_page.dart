@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
-import 'package:fl_chart/fl_chart.dart';
-import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../widgets/biorhythm_widgets.dart';
 import '../../../../core/theme/toss_design_system.dart';
