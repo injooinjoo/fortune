@@ -92,15 +92,17 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     // Navigation bar is automatically hidden by Scaffold structure
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         // No need to hide navigation bar explicitly
       }
     });
-    
+
     return Scaffold(
-      backgroundColor: TossDesignSystem.white,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: _buildAppBar(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 400),
