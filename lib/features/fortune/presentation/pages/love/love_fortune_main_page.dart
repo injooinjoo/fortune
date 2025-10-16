@@ -20,12 +20,18 @@ class LoveFortuneMainPage extends StatefulWidget {
 
 class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
   final PageController _pageController = PageController();
-  
+
   int _currentStep = 0;
   final int _totalSteps = 4;
-  
+
   // 전체 입력 데이터 저장
   final Map<String, dynamic> _loveFortuneData = {};
+
+  // 각 step의 GlobalKey
+  final _step1Key = GlobalKey<_LoveInputStep1PageState>();
+  final _step2Key = GlobalKey<_LoveInputStep2PageState>();
+  final _step3Key = GlobalKey<_LoveInputStep3PageState>();
+  final _step4Key = GlobalKey<_LoveInputStep4PageState>();
 
   @override
   void dispose() {
@@ -168,57 +174,36 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
                   controller: _pageController,
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    LoveInputStep1Page(onNext: _nextStep, key: ValueKey('step1_$_currentStep')),
-                    LoveInputStep2Page(onNext: _nextStep, key: ValueKey('step2_$_currentStep')),
-                    LoveInputStep3Page(onNext: _nextStep, key: ValueKey('step3_$_currentStep')),
-                    LoveInputStep4Page(onNext: _nextStep, key: ValueKey('step4_$_currentStep')),
+                    LoveInputStep1Page(key: _step1Key, onNext: _nextStep),
+                    LoveInputStep2Page(key: _step2Key, onNext: _nextStep),
+                    LoveInputStep3Page(key: _step3Key, onNext: _nextStep),
+                    LoveInputStep4Page(key: _step4Key, onNext: _nextStep),
                   ],
                 ),
               ),
             ],
           ),
 
-          // Floating Bottom Button
-          if (_currentStep < 3) _buildFloatingButton(),
+          // Floating Bottom Button (모든 스텝에서 표시)
+          _buildFloatingButton(),
         ],
       ),
     );
   }
 
   Widget _buildFloatingButton() {
-    // Step 4는 인라인 버튼 사용, Step 1-3만 FloatingBottomButton 사용
-    if (_currentStep >= 3) return const SizedBox.shrink();
-
-    String buttonText;
-    bool canProceed = false;
-
+    // 각 step page의 buildFloatingButton 메서드 호출
     switch (_currentStep) {
-      case 0: // Step 1: 나이, 성별, 연애 상태
-        canProceed = _loveFortuneData['gender'] != null &&
-                     _loveFortuneData['relationshipStatus'] != null;
-        buttonText = '다음 단계로';
-        break;
-      case 1: // Step 2: 연애 스타일, 중요한 가치
-        canProceed = _loveFortuneData['datingStyles'] != null &&
-                     (_loveFortuneData['datingStyles'] as List).isNotEmpty;
-        buttonText = '다음 단계로';
-        break;
-      case 2: // Step 3: 이상형, 만남 장소, 원하는 관계
-        canProceed = _loveFortuneData['preferredPersonality'] != null &&
-                     (_loveFortuneData['preferredPersonality'] as List).isNotEmpty &&
-                     _loveFortuneData['preferredMeetingPlaces'] != null &&
-                     (_loveFortuneData['preferredMeetingPlaces'] as List).isNotEmpty &&
-                     _loveFortuneData['relationshipGoal'] != null;
-        buttonText = '다음 단계로';
-        break;
+      case 0:
+        return _step1Key.currentState?.buildFloatingButton() ?? const SizedBox.shrink();
+      case 1:
+        return _step2Key.currentState?.buildFloatingButton() ?? const SizedBox.shrink();
+      case 2:
+        return _step3Key.currentState?.buildFloatingButton() ?? const SizedBox.shrink();
+      case 3:
+        return _step4Key.currentState?.buildFloatingButton() ?? const SizedBox.shrink();
       default:
         return const SizedBox.shrink();
     }
-
-    return FloatingBottomButton(
-      text: buttonText,
-      onPressed: canProceed ? _nextStep : null,
-      style: canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
-    );
   }
 }

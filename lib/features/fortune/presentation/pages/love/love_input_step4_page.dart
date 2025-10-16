@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../shared/components/toss_button.dart';
+import '../../../../../shared/components/floating_bottom_button.dart';
 
 enum LifestyleType { employee, student, freelancer, business }
 enum HobbyType { exercise, reading, travel, cooking, gaming, movie }
@@ -310,20 +311,19 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
               return _buildHobbyChip(hobby, isDark);
             }).toList(),
           ).animate(delay: 800.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
-          
-          const SizedBox(height: 40),
-          
-          // Next Button
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '연애운세 보기',
-              onPressed: _canProceed ? _handleNext : null,
-              style: _canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
-            ),
-          ).animate(delay: 900.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
+
+          const BottomButtonSpacing(),
         ],
       ),
+    );
+  }
+
+  // Floating Button Widget
+  Widget buildFloatingButton() {
+    return FloatingBottomButton(
+      text: '연애운세 보기',
+      onPressed: _canProceed ? _handleNext : null,
+      style: _canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
     );
   }
 
