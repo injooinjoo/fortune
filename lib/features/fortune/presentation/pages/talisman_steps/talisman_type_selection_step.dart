@@ -10,7 +10,8 @@ class TalismanTypeSelectionStep extends StatefulWidget {
 
   const TalismanTypeSelectionStep({
     super.key,
-    required this.onTypeSelected});
+    required this.onTypeSelected,
+  });
 
   @override
   State<TalismanTypeSelectionStep> createState() =>
@@ -36,20 +37,30 @@ class _TalismanTypeSelectionStepState extends State<TalismanTypeSelectionStep> {
                 Icon(
                   Icons.shield_rounded,
                   size: 60,
-                  color: theme.primaryColor).animate().fadeIn(duration: 600.ms).scale(
-                    begin: const Offset(0.5, 0.5), end: const Offset(1, 1),
+                  color: theme.primaryColor,
+                ).animate().fadeIn(duration: 600.ms).scale(
+                    begin: const Offset(0.5, 0.5),
+                    end: const Offset(1, 1),
+                  ),
                 const SizedBox(height: 16),
                 Text(
                   '어떤 부적을 만들고 싶으신가요?',
                   style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center).animate().fadeIn(duration: 600.ms, delay: 200.ms),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ).animate().fadeIn(duration: 600.ms, delay: 200.ms),
                 const SizedBox(height: 8),
                 Text(
                   '당신의 소원에 맞는 부적을 선택해주세요',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: TossDesignSystem.gray600),
-                  textAlign: TextAlign.center).animate().fadeIn(duration: 600.ms, delay: 400.ms)])),
+                    color: TossDesignSystem.gray600,
+                  ),
+                  textAlign: TextAlign.center,
+                ).animate().fadeIn(duration: 600.ms, delay: 400.ms),
+              ],
+            ),
+          ),
           const SizedBox(height: 32),
 
           // Talisman type grid
