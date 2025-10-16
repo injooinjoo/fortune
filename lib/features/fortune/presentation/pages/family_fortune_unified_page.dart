@@ -50,8 +50,9 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: TossTheme.backgroundSecondary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundSecondary,
       appBar: const StandardFortuneAppBar(
         title: '가족 운세',
       ),
@@ -93,13 +94,14 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   }
 
   Widget _buildProgressIndicator() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(20),
-      color: TossTheme.backgroundWhite,
+      color: isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundWhite,
       child: Row(
         children: List.generate(2, (index) {
           final isActive = index <= _currentStep;
-          
+
           return Expanded(
             child: Row(
               children: [
@@ -107,7 +109,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   child: Container(
                     height: 4,
                     decoration: BoxDecoration(
-                      color: isActive ? TossTheme.primaryBlue : TossTheme.backgroundSecondary,
+                      color: isActive ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.backgroundSecondary),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -122,6 +124,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   }
 
   Widget _buildStep1FamilyType() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -132,7 +135,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 8),
@@ -140,7 +143,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
             '가족의 화합과 행복을 위한 맞춤 운세를 제공해드려요',
             style: TextStyle(
               fontSize: 16,
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
           ),
           const SizedBox(height: 32),
@@ -153,6 +156,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   }
 
   List<Widget> _buildFamilyTypeCards() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return FamilyType.values.map((type) {
       final isSelected = _selectedType == type;
       return Padding(
@@ -162,9 +166,9 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isSelected ? TossDesignSystem.tossBlue.withValues(alpha: 0.05) : TossDesignSystem.backgroundPrimary,
+              color: isSelected ? TossDesignSystem.tossBlue.withValues(alpha: 0.05) : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.backgroundPrimary),
               border: Border.all(
-                color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+                color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                 width: isSelected ? 2 : 1,
               ),
               borderRadius: BorderRadius.circular(12),
@@ -194,7 +198,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -202,7 +206,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                         type.description,
                         style: TextStyle(
                           fontSize: 14,
-                          color: TossTheme.textGray600,
+                          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                         ),
                       ),
                     ],
@@ -223,6 +227,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   }
 
   Widget _buildStep2FamilyInfo() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -233,7 +238,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
           const SizedBox(height: 8),
@@ -241,7 +246,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
             '더 정확한 운세를 위해 기본 정보를 입력해주세요',
             style: TextStyle(
               fontSize: 16,
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
           ),
           const SizedBox(height: 32),
@@ -258,18 +263,25 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: TossTheme.textBlack,
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     ),
                   ),
                   const SizedBox(height: 12),
                   TextField(
                     onChanged: (value) => setState(() => _childName = value),
+                    style: TextStyle(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                     decoration: InputDecoration(
                       hintText: '아이의 이름을 입력해주세요',
-                      hintStyle: TextStyle(color: TossTheme.textGray500),
+                      hintStyle: TextStyle(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500),
+                      filled: true,
+                      fillColor: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: TossTheme.borderGray200),
+                        borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -293,14 +305,14 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: TossTheme.textBlack,
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     ),
                   ),
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      border: Border.all(color: TossTheme.borderGray200),
+                      border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -317,7 +329,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: TossTheme.textBlack,
+                              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -347,7 +359,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: TossTheme.textBlack,
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -361,7 +373,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                             decoration: BoxDecoration(
                               color: _childGender == 'boy' ? TossTheme.primaryBlue.withValues(alpha: 0.1) : null,
                               border: Border.all(
-                                color: _childGender == 'boy' ? TossTheme.primaryBlue : TossTheme.borderGray200,
+                                color: _childGender == 'boy' ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                                 width: _childGender == 'boy' ? 2 : 1,
                               ),
                               borderRadius: BorderRadius.circular(12),
@@ -371,14 +383,14 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                               children: [
                                 Icon(
                                   Icons.boy,
-                                  color: _childGender == 'boy' ? TossTheme.primaryBlue : TossTheme.textGray600,
+                                  color: _childGender == 'boy' ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   '남자아이',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    color: _childGender == 'boy' ? TossTheme.primaryBlue : TossTheme.textGray600,
+                                    color: _childGender == 'boy' ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
                                   ),
                                 ),
                               ],
@@ -395,7 +407,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                             decoration: BoxDecoration(
                               color: _childGender == 'girl' ? TossTheme.primaryBlue.withValues(alpha: 0.1) : null,
                               border: Border.all(
-                                color: _childGender == 'girl' ? TossTheme.primaryBlue : TossTheme.borderGray200,
+                                color: _childGender == 'girl' ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                                 width: _childGender == 'girl' ? 2 : 1,
                               ),
                               borderRadius: BorderRadius.circular(12),
@@ -405,14 +417,14 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                               children: [
                                 Icon(
                                   Icons.girl,
-                                  color: _childGender == 'girl' ? TossTheme.primaryBlue : TossTheme.textGray600,
+                                  color: _childGender == 'girl' ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   '여자아이',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    color: _childGender == 'girl' ? TossTheme.primaryBlue : TossTheme.textGray600,
+                                    color: _childGender == 'girl' ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
                                   ),
                                 ),
                               ],
@@ -437,7 +449,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: TossTheme.textBlack,
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -448,7 +460,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                       'grandparent': '조부모님',
                       'sibling': '형제자매',
                     };
-                    
+
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: GestureDetector(
@@ -458,7 +470,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                           decoration: BoxDecoration(
                             color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.1) : null,
                             border: Border.all(
-                              color: isSelected ? TossTheme.primaryBlue : TossTheme.borderGray200,
+                              color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                               width: isSelected ? 2 : 1,
                             ),
                             borderRadius: BorderRadius.circular(12),
@@ -469,7 +481,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                                 labels[rel]!,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  color: isSelected ? TossTheme.primaryBlue : TossTheme.textBlack,
+                                  color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                                 ),
                               ),
                               const Spacer(),
@@ -565,7 +577,8 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
   Widget _buildResultScreen() {
     if (_fortune == null) return const SizedBox.shrink();
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -614,7 +627,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
-                          color: TossTheme.textBlack,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -622,7 +635,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                         _selectedType.description,
                         style: TextStyle(
                           fontSize: 16,
-                          color: TossTheme.textGray600,
+                          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                         ),
                       ),
                     ],
@@ -644,7 +657,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: TossTheme.textBlack,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -652,7 +665,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   _fortune!.content,
                   style: TextStyle(
                     fontSize: 16,
-                    color: TossTheme.textBlack,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     height: 1.6,
                   ),
                 ),
