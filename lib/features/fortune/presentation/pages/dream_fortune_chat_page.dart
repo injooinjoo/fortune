@@ -101,17 +101,18 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
   
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final chatState = ref.watch(dreamChatProvider);
-    
+
     // Auto scroll when new messages arrive
     ref.listen<DreamChatState>(dreamChatProvider, (previous, next) {
       if (previous?.messages.length != next.messages.length) {
         _scrollToBottom();
       }
     });
-    
+
     return Scaffold(
-      backgroundColor: TossTheme.backgroundWhite,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: StandardFortuneAppBar(
         title: '꿈 해몽',
         onBackPressed: () {
@@ -121,11 +122,11 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
       body: SafeArea(
         child: Column(
           children: [
-            
+
             // Chat messages
             Expanded(
               child: Container(
-                color: TossTheme.backgroundSecondary,
+                color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
                 child: ListView.builder(
                   controller: _scrollController,
                   padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingM, vertical: TossTheme.spacingS),
@@ -149,10 +150,10 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
                 ),
               ),
             ),
-            
+
             // Input area
             Container(
-              color: TossTheme.backgroundWhite,
+              color: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
               child: DreamInputWidget(
                 enabled: !chatState.isAnalyzing,
                 onSendPressed: () async {
@@ -204,28 +205,33 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage> {
   
   
   void _showExitConfirmDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final chatState = ref.read(dreamChatProvider);
     final hasMessages = chatState.messages.where((m) => m.type == MessageType.user).isNotEmpty;
-    
+
     if (!hasMessages) {
       Navigator.of(context).pop();
       return;
     }
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: TossTheme.backgroundWhite,
+        backgroundColor: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(TossTheme.radiusL),
         ),
         title: Text(
           '꿈 해몽을 중단하시겠습니까?',
-          style: TossTheme.heading3.copyWith(color: TossTheme.textBlack),
+          style: TossTheme.heading3.copyWith(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
         ),
         content: Text(
           '대화 내용이 저장되지 않습니다.',
-          style: TossTheme.body3.copyWith(color: TossTheme.textGray600),
+          style: TossTheme.body3.copyWith(
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+          ),
         ),
         actions: [
           TextButton(
