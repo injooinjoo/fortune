@@ -508,45 +508,60 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => DraggableScrollableSheet(
-          initialChildSize: 0.8,
-          maxChildSize: 0.9,
-          minChildSize: 0.6,
-          builder: (context, scrollController) => Column(
-            children: [
-              // Handle
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: TossTheme.borderGray300,
-                  borderRadius: BorderRadius.circular(2),
+        builder: (context, setModalState) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          return DraggableScrollableSheet(
+            initialChildSize: 0.8,
+            maxChildSize: 0.9,
+            minChildSize: 0.6,
+            builder: (context, scrollController) => Column(
+              children: [
+                // Handle
+                Container(
+                  margin: const EdgeInsets.only(top: 12),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              
-              // Header
-              Padding(
-                padding: const EdgeInsets.all(TossTheme.spacingL),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      isCurrentArea ? '현재 거주지 선택' : '이사할 곳 선택',
-                      style: TossTheme.heading3,
-                    ),
+
+                // Header
+                Padding(
+                  padding: const EdgeInsets.all(TossTheme.spacingL),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isCurrentArea ? '현재 거주지 선택' : '이사할 곳 선택',
+                        style: TossTheme.heading3.copyWith(
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        ),
+                      ),
                     const SizedBox(height: TossTheme.spacingM),
                     
                     // 검색 바
                     TextField(
                       controller: _searchController,
+                      style: TextStyle(
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      ),
                       decoration: InputDecoration(
                         hintText: '지역명을 검색하세요 (예: 강남, 성남)',
-                        hintStyle: TossTheme.caption,
-                        prefixIcon: Icon(Icons.search, color: TossTheme.textGray400),
+                        hintStyle: TossTheme.caption.copyWith(
+                          color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+                        ),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
-                                icon: Icon(Icons.clear, color: TossTheme.textGray400),
+                                icon: Icon(
+                                  Icons.clear,
+                                  color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+                                ),
                                 onPressed: () {
                                   _searchController.clear();
                                   setModalState(() {
@@ -557,7 +572,15 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                             : null,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                          borderSide: BorderSide(color: TossTheme.borderGray300),
+                          borderSide: BorderSide(
+                            color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(TossTheme.radiusM),
+                          borderSide: BorderSide(
+                            color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(TossTheme.radiusM),
@@ -582,8 +605,8 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
               // 리스트
               Expanded(
                 child: _searchController.text.trim().isNotEmpty
-                    ? _buildSearchResults(setModalState, scrollController, isCurrentArea)
-                    : _buildPopularRegions(setModalState, scrollController, isCurrentArea),
+                    ? _buildSearchResults(setModalState, scrollController, isCurrentArea, isDark)
+                    : _buildPopularRegions(setModalState, scrollController, isCurrentArea, isDark),
               ),
             ],
           ),
@@ -592,17 +615,17 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
     );
   }
   
-  Widget _buildPopularRegions(StateSetter setModalState, ScrollController scrollController, bool isCurrentArea) {
+  Widget _buildPopularRegions(StateSetter setModalState, ScrollController scrollController, bool isCurrentArea, bool isDark) {
     if (_popularRegions.isEmpty) {
       return const Center(
         child: CircularProgressIndicator(color: TossTheme.primaryBlue),
       );
     }
-    
+
     // featured 지역과 일반 지역 분리
     final featured = _popularRegions.where((r) => r.isFeatured).toList();
     final others = _popularRegions.where((r) => !r.isFeatured).toList();
-    
+
     return ListView(
       controller: scrollController,
       children: [
@@ -615,56 +638,62 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                 const SizedBox(width: TossTheme.spacingXS),
                 Text('인기 지역', style: TossTheme.body3.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: TossTheme.textGray600,
+                  color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                 )),
               ],
             ),
           ),
           const SizedBox(height: TossTheme.spacingS),
-          
-          ...featured.map((region) => _buildRegionTile(region, setModalState, isCurrentArea)),
-          
+
+          ...featured.map((region) => _buildRegionTile(region, setModalState, isCurrentArea, isDark)),
+
           const SizedBox(height: TossTheme.spacingL),
-          
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
             child: Text('전체 지역', style: TossTheme.body3.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossTheme.textGray600,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             )),
           ),
           const SizedBox(height: TossTheme.spacingS),
         ],
-        
-        ...others.map((region) => _buildRegionTile(region, setModalState, isCurrentArea)),
+
+        ...others.map((region) => _buildRegionTile(region, setModalState, isCurrentArea, isDark)),
       ],
     );
   }
   
-  Widget _buildSearchResults(StateSetter setModalState, ScrollController scrollController, bool isCurrentArea) {
+  Widget _buildSearchResults(StateSetter setModalState, ScrollController scrollController, bool isCurrentArea, bool isDark) {
     if (_isSearching) {
       return const Center(
         child: CircularProgressIndicator(color: TossTheme.primaryBlue),
       );
     }
-    
+
     if (_searchResults.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off, size: 48, color: TossTheme.textGray400),
+            Icon(
+              Icons.search_off,
+              size: 48,
+              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+            ),
             const SizedBox(height: TossTheme.spacingM),
             Text('검색 결과가 없어요', style: TossTheme.body2.copyWith(
-              color: TossTheme.textGray500,
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             )),
             const SizedBox(height: TossTheme.spacingXS),
-            Text('다른 키워드로 다시 검색해보세요', style: TossTheme.caption),
+            Text('다른 키워드로 다시 검색해보세요', style: TossTheme.caption.copyWith(
+              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+            )),
           ],
         ),
       );
     }
-    
+
     return ListView(
       controller: scrollController,
       children: [
@@ -672,17 +701,17 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
           padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
           child: Text('검색 결과 ${_searchResults.length}개', style: TossTheme.body3.copyWith(
             fontWeight: FontWeight.w600,
-            color: TossTheme.textGray600,
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
           )),
         ),
         const SizedBox(height: TossTheme.spacingS),
-        
-        ..._searchResults.map((region) => _buildRegionTile(region, setModalState, isCurrentArea)),
+
+        ..._searchResults.map((region) => _buildRegionTile(region, setModalState, isCurrentArea, isDark)),
       ],
     );
   }
   
-  Widget _buildRegionTile(Region region, StateSetter setModalState, bool isCurrentArea) {
+  Widget _buildRegionTile(Region region, StateSetter setModalState, bool isCurrentArea, bool isDark) {
     return ListTile(
       leading: region.isFeatured
           ? Container(
@@ -701,7 +730,9 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
           : null,
       title: Text(
         region.displayName,
-        style: TossTheme.body2,
+        style: TossTheme.body2.copyWith(
+          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+        ),
       ),
       trailing: region.isFeatured
           ? Container(
@@ -721,7 +752,10 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                 ),
               ),
             )
-          : Icon(Icons.chevron_right, color: TossTheme.textGray400),
+          : Icon(
+              Icons.chevron_right,
+              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+            ),
       onTap: () {
         // 사용 횟수 증가
         _regionService.incrementUsageCount(region.displayName);
