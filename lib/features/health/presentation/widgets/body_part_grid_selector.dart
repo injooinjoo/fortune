@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/health_fortune_model.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 
 class BodyPartGridSelector extends StatefulWidget {
   final List<BodyPart> selectedParts;
@@ -111,20 +112,27 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
   Widget _buildBodyPartGrid(bool isDark) {
     final bodyParts = BodyPart.values.where((part) => part != BodyPart.whole).toList();
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1.5,
-      ),
-      itemCount: bodyParts.length,
-      itemBuilder: (context, index) {
-        final part = bodyParts[index];
-        return _buildBodyPartCard(part, index, isDark);
-      },
+    return Column(
+      children: [
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 1.5,
+          ),
+          itemCount: bodyParts.length,
+          itemBuilder: (context, index) {
+            final part = bodyParts[index];
+            return _buildBodyPartCard(part, index, isDark);
+          },
+        ),
+
+        // Bottom button spacing
+        const BottomButtonSpacing(),
+      ],
     );
   }
 

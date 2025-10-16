@@ -12,6 +12,7 @@ import '../../data/services/health_fortune_service.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../presentation/providers/providers.dart';
@@ -95,23 +96,30 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // 진행 인디케이터
-            if (_currentStep < 3) _buildProgressIndicator(),
+            Column(
+              children: [
+                // 진행 인디케이터
+                if (_currentStep < 3) _buildProgressIndicator(),
 
-            // 페이지 뷰
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  _buildConditionSelectionPage(isDark), // 0: 컨디션 선택 (Start here)
-                  _buildBodyPartSelectionPage(), // 1: 신체 부위 선택
-                  _buildResultPage(), // 2: 결과 페이지
-                ],
-              ),
+                // 페이지 뷰
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      _buildConditionSelectionPage(isDark), // 0: 컨디션 선택 (Start here)
+                      _buildBodyPartSelectionPage(), // 1: 신체 부위 선택
+                      _buildResultPage(), // 2: 결과 페이지
+                    ],
+                  ),
+                ),
+              ],
             ),
+
+            // Floating 버튼들
+            _buildFloatingButtons(),
           ],
         ),
       ),
@@ -326,20 +334,9 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
             final index = ConditionState.values.indexOf(condition);
             return _buildConditionOption(condition, index, isDark);
           }),
-          
-          const SizedBox(height: 32),
-          
-          // 다음 버튼
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: _currentCondition != null ? '다음 단계로' : '건너뛰기',
-              onPressed: _goToNextStep,
-              style: _currentCondition != null 
-                  ? TossButtonStyle.primary 
-                  : TossButtonStyle.secondary,
-            ),
-          ),
+
+          // Bottom button spacing
+          const BottomButtonSpacing(),
         ],
       ),
     );
@@ -572,39 +569,6 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                       });
                     },
                   ),
-          ),
-        ),
-        
-        // 하단 버튼
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: TossButton(
-                  text: '건강 분석하기',
-                  onPressed: _generateHealthFortune,
-                  isLoading: _isLoading,
-                  icon: _isLoading ? null : const Icon(Icons.auto_awesome_rounded, size: 20),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextButton(
-                onPressed: _isLoading ? null : () {
-                  setState(() {
-                    _selectedBodyParts.clear();
-                  });
-                  _generateHealthFortune();
-                },
-                child: Text(
-                  '전체적으로 분석하기',
-                  style: TossTheme.body2.copyWith(
-                    color: TossTheme.textGray600,
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
       ],
@@ -1104,5 +1068,35 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildFloatingButtons() {
+    // 결과 페이지에서는 버튼 숨김
+    if (_currentStep == 2) {
+      return const SizedBox.shrink();
+    }
+
+    // Step 0: 컨디션 선택 페이지
+    if (_currentStep == 0) {
+      return FloatingBottomButton(
+        text: _currentCondition != null ? '다음 단계로' : '건너뛰기',
+        onPressed: _goToNextStep,
+        style: _currentCondition != null
+            ? TossButtonStyle.primary
+            : TossButtonStyle.secondary,
+      );
+    }
+
+    // Step 1: 신체 부위 선택 페이지
+    if (_currentStep == 1) {
+      return FloatingBottomButton(
+        text: '건강 분석하기',
+        onPressed: _generateHealthFortune,
+        isLoading: _isLoading,
+        icon: _isLoading ? null : const Icon(Icons.auto_awesome_rounded, size: 20),
+      );
+    }
+
+    return const SizedBox.shrink();
   }
 }

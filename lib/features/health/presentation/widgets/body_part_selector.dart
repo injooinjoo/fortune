@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/health_fortune_model.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 
 class BodyPartSelector extends StatefulWidget {
   final List<BodyPart> selectedParts;
@@ -35,36 +36,37 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Column(
-      children: [
-        // 설명 텍스트
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Column(
-            children: [
-              Text(
-                '특별히 신경쓰이는 부위가 있나요?',
-                style: TossTheme.heading3.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // 설명 텍스트
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              children: [
+                Text(
+                  '특별히 신경쓰이는 부위가 있나요?',
+                  style: TossTheme.heading3.copyWith(
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '아래 인체 그림에서 해당 부위를 터치해주세요\n(선택하지 않아도 괜찮습니다)',
-                style: TossTheme.body3.copyWith(
-                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-                  height: 1.4,
+                const SizedBox(height: 8),
+                Text(
+                  '아래 인체 그림에서 해당 부위를 터치해주세요\n(선택하지 않아도 괜찮습니다)',
+                  style: TossTheme.body3.copyWith(
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                    height: 1.4,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        
-        // 인체 실루엣과 터치 가능한 영역들
-        Container(
-          height: 400,
+
+          // 인체 실루엣과 터치 가능한 영역들
+          Container(
+            height: 400,
           margin: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
             color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
@@ -98,15 +100,19 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
           ),
         ),
 
-        // 선택된 부위 리스트
-        if (_selectedParts.isNotEmpty) ...[
-          const SizedBox(height: 20),
-          _buildSelectedPartsList(isDark),
+          // 선택된 부위 리스트
+          if (_selectedParts.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            _buildSelectedPartsList(isDark),
+          ],
+
+          // Bottom button spacing
+          const BottomButtonSpacing(),
         ],
-      ],
+      ),
     ).animate()
-      .fadeIn(duration: 500.ms)
-      .slideY(begin: 0.1, end: 0);
+        .fadeIn(duration: 500.ms)
+        .slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildTouchableAreas(bool isDark) {
