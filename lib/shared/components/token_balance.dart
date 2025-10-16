@@ -56,9 +56,9 @@ class TokenBalance extends ConsumerWidget {
                   ? _buildCompact(context, isUnlimited, tokenCount)
                   : _buildFull(context, isUnlimited, tokenCount),
             );
-            );
-          });
-      }
+          },
+        );
+      },
     );
   }
 
