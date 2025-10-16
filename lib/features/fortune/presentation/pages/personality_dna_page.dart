@@ -73,34 +73,50 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark
+        ? TossDesignSystem.backgroundDark
+        : const Color(0xFFF7F8FA); // 토스 배경색
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA), // 토스 배경색
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F8FA),
+        backgroundColor: backgroundColor,
         elevation: 0,
-        title: const Text(
+        title: Text(
           '성격 DNA',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF191F28),
+            color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
           ),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Color(0xFF191F28)),
+        iconTheme: IconThemeData(
+          color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
+        ),
         actions: [
           if (_currentDNA != null) ...[
             IconButton(
-              icon: const Icon(Icons.share, color: Color(0xFF191F28)),
+              icon: Icon(
+                Icons.share,
+                color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
+              ),
               onPressed: _sharePersonalityDNA,
             ),
             IconButton(
-              icon: const Icon(Icons.refresh, color: Color(0xFF191F28)),
+              icon: Icon(
+                Icons.refresh,
+                color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
+              ),
               onPressed: _showPersonalityDNABottomSheet,
             ),
           ] else
             IconButton(
-              icon: const Icon(Icons.refresh, color: Color(0xFF191F28)),
+              icon: Icon(
+                Icons.refresh,
+                color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
+              ),
               onPressed: _showPersonalityDNABottomSheet,
             ),
         ],
