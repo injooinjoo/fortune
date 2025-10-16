@@ -61,10 +61,12 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: AppBar(
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark.withValues(alpha: 0.0) : TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: Container(
@@ -72,14 +74,14 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
           child: IconButton(
             onPressed: () => Navigator.pop(context), // Always go back to fortune page
             style: IconButton.styleFrom(
-              backgroundColor: TossTheme.backgroundSecondary,
+              backgroundColor: isDark ? TossDesignSystem.surfaceBackgroundDark : TossTheme.backgroundSecondary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             icon: Icon(
               Icons.arrow_back_ios_new,
-              color: TossTheme.textBlack,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               size: 20,
             ),
           ),
@@ -87,7 +89,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
         title: Text(
           '건강운세',
           style: TossTheme.heading3.copyWith(
-            color: TossTheme.textBlack,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
           ),
         ),
         centerTitle: true,
