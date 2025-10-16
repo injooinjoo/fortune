@@ -68,6 +68,8 @@ class _TalismanResultCardState extends State<TalismanResultCard>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -270,7 +272,9 @@ class _TalismanResultCardState extends State<TalismanResultCard>
           if (widget.talismanDesign.blessings.isNotEmpty) ...[
             Text(
               '부적의 축복',
-              style: TossTheme.heading3,
+              style: TossTheme.heading3.copyWith(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              ),
             ),
             const SizedBox(height: 16),
             ...widget.talismanDesign.blessings.map((blessing) {
@@ -299,6 +303,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                         blessing,
                         style: TossTheme.body3.copyWith(
                           height: 1.5,
+                          color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                         ),
                       ),
                     ),
