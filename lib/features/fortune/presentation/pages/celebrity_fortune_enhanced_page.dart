@@ -72,9 +72,6 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
       children: [
         Column(
           children: [
-            // Progress indicator
-            _buildProgressIndicator(),
-
             // Step content
             Expanded(
               child: PageView(
@@ -101,37 +98,6 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         // Floating 버튼
         _buildBottomButton(),
       ],
-    );
-  }
-
-  Widget _buildProgressIndicator() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      color: isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundWhite,
-      child: Row(
-        children: List.generate(3, (index) {
-          final isActive = index <= _currentStep;
-
-          return Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: isActive ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.backgroundSecondary),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                if (index < 2) const SizedBox(width: 8),
-              ],
-            ),
-          );
-        }),
-      ),
     );
   }
 
@@ -191,16 +157,6 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
     return GestureDetector(
       onTap: () {
         setState(() => _selectedCategory = category);
-        // 카테고리 선택 후 자동으로 다음 페이지로 이동
-        Future.delayed(const Duration(milliseconds: 300), () {
-          if (mounted) {
-            _pageController.animateToPage(
-              1,
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeInOut,
-            );
-          }
-        });
       },
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -389,16 +345,6 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               return GestureDetector(
                 onTap: () {
                   setState(() => _selectedCelebrity = celebrity);
-                  // 유명인 선택 후 자동으로 다음 페이지로 이동
-                  Future.delayed(const Duration(milliseconds: 300), () {
-                    if (mounted && _selectedCelebrity != null) {
-                      _pageController.animateToPage(
-                        2,
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.easeInOut,
-                      );
-                    }
-                  });
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -705,58 +651,18 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                       (_currentStep == 1 && _selectedCelebrity != null) ||
                       (_currentStep == 2);
 
-    // 이전/다음 버튼이 있는 경우 Row로 구성
-    if (_currentStep > 0) {
-      return Positioned(
-        left: 0,
-        right: 0,
-        bottom: 0,
-        child: Container(
-          color: Colors.transparent,
-          padding: EdgeInsets.fromLTRB(
-            20,
-            0,
-            20,
-            16 + MediaQuery.of(context).padding.bottom,
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: TossButton(
-                  text: '이전',
-                  style: TossButtonStyle.secondary,
-                  size: TossButtonSize.large,
-                  onPressed: () {
-                    _pageController.animateToPage(
-                      _currentStep - 1,
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeInOut,
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 2,
-                child: TossButton(
-                  text: _currentStep < 2 ? '다음' : _isLoading ? '운세 생성 중...' : '운세 보기',
-                  isLoading: _isLoading,
-                  size: TossButtonSize.large,
-                  onPressed: canProceed ? _handleButtonPress : null,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+    final buttonText = _currentStep < 2
+        ? '다음'
+        : (_isLoading ? '운세 생성 중...' : '운세 보기');
 
-    // 첫 번째 스텝에서는 단일 버튼
     return FloatingBottomButton(
-      text: '다음',
+      text: buttonText,
       isLoading: _isLoading,
       onPressed: canProceed ? _handleButtonPress : null,
+      hideWhenDisabled: true,
+      showProgress: true,
+      currentProgress: _currentStep + 1,
+      totalSteps: 3,
     );
   }
 
