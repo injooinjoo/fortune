@@ -28,9 +28,22 @@ class TimeBasedGenerator {
         'is_holiday': inputConditions['is_holiday'] ?? false,
         'holiday_name': inputConditions['holiday_name'],
         'special_name': inputConditions['special_name'],
+
+        // ✨ 이벤트 기반 운세 정보 추가 (Phase 3)
+        'has_event_details': inputConditions['category'] != null,
+        'event_category': inputConditions['category'],
+        'event_category_type': inputConditions['categoryType'],
+        'user_question': inputConditions['question'],
+        'user_emotion': inputConditions['emotion'],
+        'user_emotion_type': inputConditions['emotionType'],
       };
 
       Logger.info('[TimeBasedGenerator] 📡 API 호출 중...');
+      if (inputConditions['category'] != null) {
+        Logger.info('[TimeBasedGenerator]   🎯 이벤트 카테고리: ${inputConditions['category']}');
+        Logger.info('[TimeBasedGenerator]   💭 사용자 질문: ${inputConditions['question'] ?? '없음'}');
+        Logger.info('[TimeBasedGenerator]   😊 감정 상태: ${inputConditions['emotion'] ?? '없음'}');
+      }
 
       // Edge Function 호출
       final response = await supabase.functions.invoke(
