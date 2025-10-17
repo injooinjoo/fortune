@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-// import '../../../../presentation/widgets/simple_fortune_info_sheet.dart'; // File doesn't exist
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';
-import '../../../../presentation/widgets/time_based_fortune_bottom_sheet.dart';
-import '../../../../presentation/widgets/personality_dna_bottom_sheet.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/fortune_recommendation_provider.dart';
-import '../widgets/lucky_items_bottom_sheet.dart';
-import '../widgets/talent_fortune_bottom_sheet.dart';
 
 class FortuneCategory {
   final String title;
@@ -347,7 +342,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       category: 'lifestyle'),
     FortuneCategory(
       title: '재능 발견',
-      route: '/fortune/talent',
+      route: '/talent',
       type: 'talent',
       icon: Icons.stars_rounded,
       gradientColors: [Color(0xFFFFB300), Color(0xFFFF8F00)],
@@ -681,48 +676,15 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   // 카테고리 탭 처리
   void _handleCategoryTap(FortuneCategory category) {
     String fortuneType = category.type;
-    
-    // Check if this is time-based fortune
-    if (category.route == '/time') {
-      TimeBasedFortuneBottomSheet.show(
-        context,
-        onDismiss: () {},
-      );
-    } else if (category.type == 'personality-dna') {
-      // PersonalityDNA는 바로 BottomSheet 표시
-      showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-        useRootNavigator: true, // 네비게이션 바 숨김
-        builder: (context) => PersonalityDNABottomSheet(
-          onResult: (personalityDNA) {
-            // 결과 페이지로 이동
-            context.push('/personality-dna', extra: personalityDNA);
-          },
-        ),
-      );
-    } else if (category.type == 'tarot') {
-      context.push('/tarot');
-    } else if (category.type == 'lucky_items') {
-      // 행운 아이템은 Bottom Sheet로 처리
-      LuckyItemsBottomSheet.show(context);
-    } else if (category.type == 'talent') {
-      // 재능 발견은 전용 Bottom Sheet로 처리
-      TalentFortuneBottomSheet.show(context);
-    } else if (category.type == 'wish') {
-      // 소원빌기는 바로 페이지로 이동
-      context.push('/wish');
-    } else {
-      // Record visit for recommendation system
-      ref.read(fortuneRecommendationProvider.notifier).recordVisit(
-        fortuneType,
-        category.category
-      );
-      
-      // 다른 운세들은 직접 라우팅
-      context.push(category.route);
-    }
+
+    // Record visit for recommendation system
+    ref.read(fortuneRecommendationProvider.notifier).recordVisit(
+      fortuneType,
+      category.category
+    );
+
+    // 모든 운세를 직접 페이지로 라우팅 (bottomsheet 제거)
+    context.push(category.route);
   }
 
 

@@ -2,7 +2,6 @@ import 'package:go_router/go_router.dart';
 import '../../../features/fortune/presentation/pages/celebrity_fortune_page_v2.dart';
 import '../../../features/fortune/presentation/pages/same_birthday_celebrity_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/personality_dna_page.dart';
-import '../../../core/models/personality_dna_model.dart';
 
 final personalityRoutes = [
 
@@ -23,7 +22,8 @@ final personalityRoutes = [
   GoRoute(
     path: '/personality-dna',
     name: 'fortune-personality-dna',
-    builder: (context, state) => PersonalityDNAPage(
-      initialDNA: state.extra as PersonalityDNA?,
-    )),
+    builder: (context, state) {
+      final extra = state.extra as Map<String, dynamic>?;
+      return PersonalityDNAPage(initialParams: extra);
+    }),
 ];
