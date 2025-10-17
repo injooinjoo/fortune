@@ -307,7 +307,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
 
     // ==================== Career/Work Fortunes (통합) ====================
     FortuneCategory(
-      title: '커리어 운세',
+      title: '직업 운세',
       route: '/career',
       type: 'career',
       icon: Icons.work_rounded,
