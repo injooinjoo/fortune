@@ -342,11 +342,11 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       category: 'lifestyle'),
     FortuneCategory(
       title: '재능 발견',
-      route: '/talent',
+      route: '/talent-fortune-input',
       type: 'talent',
       icon: Icons.stars_rounded,
       gradientColors: [Color(0xFFFFB300), Color(0xFFFF8F00)],
-      description: '숨겨진 재능 발견',
+      description: '사주팔자 기반 재능 분석',
       category: 'lifestyle'),
     FortuneCategory(
       title: '소원 빌기',

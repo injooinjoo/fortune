@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/typography_unified.dart';
 
+/// ⚠️ DEPRECATED: TossTheme은 이제 사용하지 않습니다!
+///
+/// 색상은 TossDesignSystem을 사용하세요.
+/// 타이포그래피는 TypographyUnified를 사용하세요.
+///
+/// 마이그레이션 가이드:
+/// - Colors → TossDesignSystem
+/// - TextStyles → TypographyUnified
+/// - Spacing → TossDesignSystem
 class TossTheme {
   // Colors
   static const Color primaryBlue = Color(0xFF0066FF);
@@ -15,119 +25,57 @@ class TossTheme {
   static const Color borderGray200 = Color(0xFFEEEEEE);
   static const Color borderPrimary = Color(0xFFDDDDDD);
   static const Color disabledGray = Color(0xFFCCCCCC);
-  
+
   // Semantic Colors
   static const Color success = Color(0xFF10B981);
   static const Color error = Color(0xFFEF4444);
   static const Color warning = Color(0xFFF59E0B);
-  
-  // Typography
-  static const String fontFamily = 'Pretendard'; // Toss uses Pretendard font
-  
-  // Text Styles
-  static const TextStyle heading1 = TextStyle(
-    fontSize: 32,
-    fontWeight: FontWeight.w800,
-    color: textBlack,
-    height: 1.1,
-    letterSpacing: -0.5,
-    fontFamily: fontFamily,
-  );
-  
-  static const TextStyle heading2 = TextStyle(
-    fontSize: 28,
-    fontWeight: FontWeight.w700,
-    color: textBlack,
-    height: 1.2,
-    letterSpacing: -0.3,
-    fontFamily: fontFamily,
-  );
-  
-  static const TextStyle heading3 = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
-    color: textBlack,
-    height: 1.3,
-    letterSpacing: -0.2,
-    fontFamily: fontFamily,
-  );
-  
-  static const TextStyle heading4 = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    color: textBlack,
-    height: 1.4,
-    letterSpacing: -0.1,
-    fontFamily: fontFamily,
-  );
-  
-  static const TextStyle heading5 = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w600,
-    color: textBlack,
-    height: 1.4,
-    letterSpacing: -0.1,
-    fontFamily: fontFamily,
-  );
-  
-  static const TextStyle subtitle1 = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w400,
-    color: textGray600,
-    letterSpacing: -0.2,
-    fontFamily: fontFamily,
-  );
-  
-  static const TextStyle subtitle2 = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    color: textGray600,
-    letterSpacing: -0.1,
-    fontFamily: fontFamily,
-  );
-  
-  static const TextStyle body1 = TextStyle(
-    fontSize: 22,
-    fontWeight: FontWeight.w600,
-    color: textBlack,
-    letterSpacing: -0.2,
-    fontFamily: fontFamily,
-  );
-  
-  static const TextStyle body2 = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w500,
-    color: textBlack,
-    letterSpacing: -0.1,
-    fontFamily: fontFamily,
-  );
-  
-  static const TextStyle body3 = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    color: textBlack,
-    letterSpacing: -0.1,
-    fontFamily: fontFamily,
-  );
-  
-  static const TextStyle caption = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    color: textGray600,
-    fontFamily: fontFamily,
-  );
-  
-  static const TextStyle button = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w700,
-    letterSpacing: -0.2,
-    fontFamily: fontFamily,
-  );
-  
+
+  // ⚠️ DEPRECATED: fontFamily는 TypographyUnified를 사용하세요
+  /// @deprecated Use TypographyUnified.fontFamilyKorean instead
+  static const String fontFamily = 'Pretendard';
+
+  // ⚠️ DEPRECATED: Text Styles는 TypographyUnified를 사용하세요
+  /// @deprecated Use TypographyUnified.displaySmall instead
+  static TextStyle get heading1 => TypographyUnified.displaySmall.copyWith(color: textBlack);
+
+  /// @deprecated Use TypographyUnified.heading1 instead
+  static TextStyle get heading2 => TypographyUnified.heading1.copyWith(color: textBlack);
+
+  /// @deprecated Use TypographyUnified.heading3 instead
+  static TextStyle get heading3 => TypographyUnified.heading3.copyWith(color: textBlack);
+
+  /// @deprecated Use TypographyUnified.buttonMedium instead
+  static TextStyle get heading4 => TypographyUnified.buttonMedium.copyWith(color: textBlack);
+
+  /// @deprecated Use TypographyUnified.bodySmall instead
+  static TextStyle get heading5 => TypographyUnified.bodySmall.copyWith(color: textBlack);
+
+  /// @deprecated Use TypographyUnified.heading4 instead
+  static TextStyle get subtitle1 => TypographyUnified.heading4.copyWith(color: textGray600);
+
+  /// @deprecated Use TypographyUnified.buttonMedium instead
+  static TextStyle get subtitle2 => TypographyUnified.buttonMedium.copyWith(color: textGray600);
+
+  /// @deprecated Use TypographyUnified.heading2 instead (크기 다름 주의)
+  static TextStyle get body1 => TypographyUnified.heading2.copyWith(color: textBlack);
+
+  /// @deprecated Use TypographyUnified.heading3 instead
+  static TextStyle get body2 => TypographyUnified.heading3.copyWith(color: textBlack);
+
+  /// @deprecated Use TypographyUnified.buttonMedium instead
+  static TextStyle get body3 => TypographyUnified.buttonMedium.copyWith(color: textBlack);
+
+  /// @deprecated Use TypographyUnified.bodySmall instead
+  static TextStyle get caption => TypographyUnified.bodySmall.copyWith(color: textGray600);
+
+  /// @deprecated Use TypographyUnified.heading4 instead
+  static TextStyle get button => TypographyUnified.heading4.copyWith(fontWeight: FontWeight.w700);
+
   // Input Styles
-  static TextStyle inputStyle = body1;
-  
-  static TextStyle hintStyle = body1.copyWith(
+  static TextStyle get inputStyle => body1;
+
+  static TextStyle get hintStyle => body1.copyWith(
     color: textGray400,
     fontWeight: FontWeight.w400,
   );

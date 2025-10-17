@@ -1,117 +1,123 @@
 import 'package:flutter/material.dart';
-import 'toss_design_system.dart';
+import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
+/// ⚠️ DEPRECATED: AppTextStyles는 이제 사용하지 않습니다!
+///
+/// TypographyUnified를 사용하세요.
+///
+/// 마이그레이션 가이드:
+/// - headline1 → TypographyUnified.displaySmall
+/// - headline2 → TypographyUnified.heading1
+/// - headline3 → TypographyUnified.heading2
+/// - headline4 → TypographyUnified.heading3
+/// - bodyLarge → TypographyUnified.buttonMedium
+/// - bodyMedium → TypographyUnified.bodySmall
+/// - bodySmall → TypographyUnified.labelMedium
+///
+/// 사용 예시:
+/// ```dart
+/// // ❌ 기존
+/// Text('제목', style: AppTextStyles.headline1)
+///
+/// // ✅ 신규
+/// Text('제목', style: TypographyUnified.displaySmall)
+/// Text('제목', style: context.typo.displaySmall)
+/// ```
 class AppTextStyles {
-  // Headline styles
-  static const TextStyle headline1 = TextStyle(
-    fontSize: 32,
-    fontWeight: FontWeight.bold,
+  // Headline styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.displaySmall instead
+  static TextStyle get headline1 => TypographyUnified.displaySmall.copyWith(
     color: TossDesignSystem.gray900,
-    height: 1.2);
+  );
 
-  static const TextStyle headline2 = TextStyle(
-    fontSize: 28,
-    fontWeight: FontWeight.bold,
+  /// @deprecated Use TypographyUnified.heading1 instead
+  static TextStyle get headline2 => TypographyUnified.heading1.copyWith(
     color: TossDesignSystem.gray900,
-    height: 1.3);
+  );
 
-  static const TextStyle headline3 = TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.w600,
+  /// @deprecated Use TypographyUnified.heading2 instead
+  static TextStyle get headline3 => TypographyUnified.heading2.copyWith(
     color: TossDesignSystem.gray900,
-    height: 1.3);
+  );
 
-  static const TextStyle headline4 = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
+  /// @deprecated Use TypographyUnified.heading3 instead
+  static TextStyle get headline4 => TypographyUnified.heading3.copyWith(
     color: TossDesignSystem.gray900,
-    height: 1.4);
+  );
 
-  static const TextStyle headline5 = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w600,
+  /// @deprecated Use TypographyUnified.heading4 instead
+  static TextStyle get headline5 => TypographyUnified.heading4.copyWith(
     color: TossDesignSystem.gray900,
-    height: 1.4);
+  );
 
-  static const TextStyle headline6 = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
+  /// @deprecated Use TypographyUnified.buttonMedium instead
+  static TextStyle get headline6 => TypographyUnified.buttonMedium.copyWith(
     color: TossDesignSystem.gray900,
-    height: 1.5);
+  );
 
-  // Body styles
-  static const TextStyle bodyLarge = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.normal,
+  // Body styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.buttonMedium instead
+  static TextStyle get bodyLarge => TypographyUnified.buttonMedium.copyWith(
     color: TossDesignSystem.gray900,
-    height: 1.5);
+  );
 
-  static const TextStyle bodyMedium = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.normal,
+  /// @deprecated Use TypographyUnified.bodySmall instead
+  static TextStyle get bodyMedium => TypographyUnified.bodySmall.copyWith(
     color: TossDesignSystem.gray900,
-    height: 1.5);
+  );
 
-  static const TextStyle bodySmall = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.normal,
+  /// @deprecated Use TypographyUnified.labelMedium instead
+  static TextStyle get bodySmall => TypographyUnified.labelMedium.copyWith(
     color: TossDesignSystem.gray600,
-    height: 1.5);
+  );
 
-  // Label styles
-  static const TextStyle labelLarge = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
+  // Label styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.bodySmall instead
+  static TextStyle get labelLarge => TypographyUnified.bodySmall.copyWith(
     color: TossDesignSystem.gray900,
-    height: 1.4);
-
-  static const TextStyle labelMedium = TextStyle(
-    fontSize: 12,
     fontWeight: FontWeight.w500,
+  );
+
+  /// @deprecated Use TypographyUnified.labelMedium instead
+  static TextStyle get labelMedium => TypographyUnified.labelMedium.copyWith(
     color: TossDesignSystem.gray900,
-    height: 1.4);
+  );
 
-  static const TextStyle labelSmall = TextStyle(
-    fontSize: 11,
-    fontWeight: FontWeight.w500,
+  /// @deprecated Use TypographyUnified.labelSmall instead
+  static TextStyle get labelSmall => TypographyUnified.labelSmall.copyWith(
     color: TossDesignSystem.gray600,
-    height: 1.4);
+  );
 
-  // Button styles
-  static const TextStyle buttonLarge = TextStyle(
-    fontSize: 16,
+  // Button styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.buttonMedium instead
+  static TextStyle get buttonLarge => TypographyUnified.buttonMedium;
+
+  /// @deprecated Use TypographyUnified.buttonSmall instead
+  static TextStyle get buttonMedium => TypographyUnified.buttonSmall;
+
+  /// @deprecated Use TypographyUnified.labelMedium instead
+  static TextStyle get buttonSmall => TypographyUnified.labelMedium.copyWith(
     fontWeight: FontWeight.w600,
-    height: 1.2);
+  );
 
-  static const TextStyle buttonMedium = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w600,
-    height: 1.2);
-
-  static const TextStyle buttonSmall = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w600,
-    height: 1.2);
-
-  // Caption styles
-  static const TextStyle caption = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.normal,
+  // Caption styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.labelMedium instead
+  static TextStyle get caption => TypographyUnified.labelMedium.copyWith(
     color: TossDesignSystem.gray400,
-    height: 1.4);
+  );
 
-  static const TextStyle overline = TextStyle(
-      fontSize: 10,
-      fontWeight: FontWeight.w500,
-      color: TossDesignSystem.gray400,
-      letterSpacing: 1.5,
-      height: 1.4);
+  /// @deprecated Use TypographyUnified.labelTiny instead
+  static TextStyle get overline => TypographyUnified.labelTiny.copyWith(
+    color: TossDesignSystem.gray400,
+    letterSpacing: 1.5,
+  );
 
   // Aliases for backward compatibility
-  static const TextStyle body1 = bodyMedium;
-  static const TextStyle body2 = bodySmall;
-  static const TextStyle heading2 = headline2;
-  static const TextStyle heading3 = headline3;
-  static const TextStyle headlineLarge = headline1;
-  static const TextStyle headlineMedium = headline3;
+  static TextStyle get body1 => bodyMedium;
+  static TextStyle get body2 => bodySmall;
+  static TextStyle get heading2 => headline2;
+  static TextStyle get heading3 => headline3;
+  static TextStyle get headlineLarge => headline1;
+  static TextStyle get headlineMedium => headline3;
 }

@@ -5,7 +5,9 @@ import '../../../features/fortune/presentation/pages/career_seeker_fortune_page.
 // import '../../../features/fortune/presentation/pages/business_fortune_page.dart'; // Removed - unused
 // import '../../../features/fortune/presentation/pages/startup_fortune_page.dart'; // Removed - unused
 import '../../../features/fortune/presentation/pages/employment_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/talent_fortune_page.dart';
+import '../../../features/fortune/presentation/pages/talent_fortune_input_page.dart';
+import '../../../features/fortune/presentation/pages/talent_fortune_results_page.dart';
+import '../../../features/fortune/domain/models/talent_input_model.dart';
 import '../../../features/fortune/presentation/pages/lucky_investment_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_stock_fortune_page.dart';
 // import '../../../features/fortune/presentation/pages/lucky_crypto_fortune_page.dart'; // Removed - unused
@@ -42,16 +44,19 @@ final careerFortuneRoutes = [
     name: 'fortune-employment',
     builder: (context, state) => const EmploymentFortunePage()),
   
-  // Talent
+  // Talent Input (3단계 입력)
   GoRoute(
-    path: '/talent',
-    name: 'fortune-talent',
+    path: '/talent-fortune-input',
+    name: 'talent-fortune-input',
+    builder: (context, state) => const TalentFortuneInputPage()),
+
+  // Talent Results (새로운 결과 페이지)
+  GoRoute(
+    path: '/talent-fortune-results',
+    name: 'talent-fortune-results',
     builder: (context, state) {
-      final extra = state.extra as Map<String, dynamic>?;
-      return TalentFortunePage(
-        key: ValueKey('talent-${DateTime.now().millisecondsSinceEpoch}'),
-        initialParams: extra,
-      );
+      final inputData = state.extra as TalentInputData;
+      return TalentFortuneResultsPage(inputData: inputData);
     }),
   
   
