@@ -27,7 +27,10 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
         backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            // 페이지 스택을 모두 제거하고 홈으로 이동
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
           icon: Icon(
             Icons.close_rounded,
             color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
@@ -84,18 +87,6 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
               .animate(delay: 300.ms)
               .fadeIn(duration: 400.ms)
               .slideX(begin: -0.05, end: 0),
-            
-            const SizedBox(height: 32),
-            
-            // 다시 보기 버튼
-            SizedBox(
-              width: double.infinity,
-              child: TossButton(
-                text: '다시 보기',
-                onPressed: () => Navigator.pop(context),
-                style: TossButtonStyle.primary,
-              ),
-            ),
             
             const SizedBox(height: 40),
           ],
