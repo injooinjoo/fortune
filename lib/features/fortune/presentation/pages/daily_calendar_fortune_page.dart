@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:go_router/go_router.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/auth_provider.dart';
@@ -661,6 +662,53 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             ),
           ],
         ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // fortune이 있으면 BaseFortunePage의 build 사용
+    if (fortune != null || isLoading || error != null) {
+      return super.build(context);
+    }
+
+    // fortune이 없으면 커스텀 UI 표시
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      appBar: AppBar(
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        bottom: false,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              buildInputForm(),
+              const SizedBox(height: 100), // 하단 버튼 공간
+            ],
+          ),
+        ),
       ),
     );
   }
