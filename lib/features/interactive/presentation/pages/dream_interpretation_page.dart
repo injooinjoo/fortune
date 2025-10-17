@@ -10,6 +10,7 @@ import '../../../../presentation/providers/providers.dart';
 import '../../../../services/speech_recognition_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 final dreamAnalysisProvider = StateNotifierProvider.family<DreamAnalysisNotifier, AsyncValue<DreamAnalysisResult?>, DreamInput>(
   (ref, input) => DreamAnalysisNotifier(ref, input));
@@ -617,7 +618,7 @@ class _DreamResultView extends ConsumerWidget {
             SizedBox(height: 24),
             Text(
               '꿈을 분석하고 있습니다...',
-              style: TextStyle(fontSize: 18),
+              style: TypographyUnified.heading4,
             ),
           ],
         ),
