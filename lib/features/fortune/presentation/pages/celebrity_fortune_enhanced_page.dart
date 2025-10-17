@@ -128,13 +128,14 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: _buildCategoryCard(
-                category, 
+                category,
                 category.displayName,
                 _getCategoryDescription(category),
                 _getCategoryIcon(category),
               ),
             );
           }),
+          const SizedBox(height: 100), // 버튼 높이만큼 여백
         ],
       ),
     ).animate().fadeIn(duration: 500.ms).slideX(begin: 0.1);
@@ -433,6 +434,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               );
             },
           ),
+          const SizedBox(height: 100), // 버튼 높이만큼 여백
         ],
       ),
     ).animate().fadeIn(duration: 500.ms).slideX(begin: 0.1);
@@ -503,6 +505,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           _buildQuestionOption('personality', '성격 분석', '나의 성격과 특징', Icons.psychology),
           const SizedBox(height: 12),
           _buildQuestionOption('future', '미래 전망', '앞으로의 운세와 기회', Icons.trending_up),
+          const SizedBox(height: 100), // 버튼 높이만큼 여백
         ],
       ),
     ).animate().fadeIn(duration: 500.ms).slideX(begin: 0.1);
