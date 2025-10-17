@@ -7,7 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/auth_provider.dart';
@@ -590,23 +590,30 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                   ),
                 ),
 
-                // 하단 버튼 공간만큼 여백 추가
-                const BottomButtonSpacing(),
+                const SizedBox(height: 100),
               ],
             ),
           ),
         ),
 
-        // Floating 버튼
-        FloatingBottomButton(
+        // Floating 버튼 - 조건 미달성 시 숨김
+        TossFloatingProgressButtonPositioned(
           text: '궁합 분석하기',
+          onPressed: _canAnalyze() ? _analyzeCompatibility : null,
+          isEnabled: _canAnalyze(),
+          isVisible: _canAnalyze(),
+          showProgress: false,
           isLoading: _isLoading,
-          onPressed: _analyzeCompatibility,
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
         ),
       ],
     );
+  }
+
+  bool _canAnalyze() {
+    return _person1NameController.text.isNotEmpty &&
+           _person2NameController.text.isNotEmpty &&
+           _person1BirthDate != null &&
+           _person2BirthDate != null;
   }
 
   Widget _buildResultView() {
