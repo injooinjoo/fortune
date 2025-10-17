@@ -960,6 +960,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
             : null,
       ),
       body: SafeArea(
+        bottom: false, // 하단 네비게이션 바는 침범 허용
         child: Stack(
           children: [
             _isLoading
