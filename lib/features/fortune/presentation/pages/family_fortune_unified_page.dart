@@ -5,7 +5,7 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
@@ -65,63 +65,22 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   Widget _buildInputScreen() {
     return Stack(
       children: [
-        Column(
+        // Step content (프로그레스 인디케이터 제거)
+        PageView(
+          physics: const NeverScrollableScrollPhysics(),
+          controller: PageController(initialPage: _currentStep),
           children: [
-            // Progress indicator
-            _buildProgressIndicator(),
-
-            // Step content
-            Expanded(
-              child: PageView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: PageController(initialPage: _currentStep),
-                children: [
-                  _buildStep1FamilyType(),
-                  _buildStep2FamilyInfo(),
-                ],
-              ),
-            ),
-
-            // Space for floating button
-            const SizedBox(height: 80),
+            _buildStep1FamilyType(),
+            _buildStep2FamilyInfo(),
           ],
         ),
 
-        // Floating bottom button
+        // Floating progress button
         _buildBottomButton(),
       ],
     );
   }
 
-  Widget _buildProgressIndicator() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.all(20),
-      color: isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundWhite,
-      child: Row(
-        children: List.generate(2, (index) {
-          final isActive = index <= _currentStep;
-
-          return Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: isActive ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.backgroundSecondary),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                if (index < 1) const SizedBox(width: 8),
-              ],
-            ),
-          );
-        }),
-      ),
-    );
-  }
 
   Widget _buildStep1FamilyType() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -507,11 +466,21 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   }
 
   Widget _buildBottomButton() {
-    return FloatingBottomButton(
-      text: _currentStep == 1 ? '가족 운세 보기' : '다음',
-      onPressed: _canProceed() ? _handleNext : null,
-      isLoading: _isLoading,
-      size: TossButtonSize.large,
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    return Positioned(
+      left: 20,
+      right: 20,
+      bottom: 16 + bottomPadding,
+      child: TossFloatingProgressButton(
+        text: _currentStep == 1 ? '가족 운세 보기' : '다음',
+        currentStep: _currentStep + 1,
+        totalSteps: 2,
+        onPressed: _canProceed() ? _handleNext : null,
+        isEnabled: _canProceed(),
+        isLoading: _isLoading,
+        showProgress: true,
+      ),
     );
   }
 

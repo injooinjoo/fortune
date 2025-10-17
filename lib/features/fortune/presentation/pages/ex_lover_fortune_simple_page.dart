@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
 import '../../../../services/ad_service.dart';
@@ -37,7 +38,18 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
   }
 
   void _nextStep() {
-    if (_currentStep == 0 && _validateStep1()) {
+    if (_currentStep == 0) {
+      if (!_canProceedStep1()) {
+        // 버튼이 비활성화되어 있으므로 메시지 표시
+        if (_timeSinceBreakup == null) {
+          _showMessage('이별한 시기를 선택해주세요');
+        } else if (_currentEmotion == null) {
+          _showMessage('현재 감정을 선택해주세요');
+        } else if (_mainCuriosity == null) {
+          _showMessage('가장 궁금한 것을 선택해주세요');
+        }
+        return;
+      }
       setState(() {
         _currentStep = 1;
       });
@@ -62,20 +74,10 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
     }
   }
 
-  bool _validateStep1() {
-    if (_timeSinceBreakup == null) {
-      _showMessage('이별한 시기를 선택해주세요');
-      return false;
-    }
-    if (_currentEmotion == null) {
-      _showMessage('현재 감정을 선택해주세요');
-      return false;
-    }
-    if (_mainCuriosity == null) {
-      _showMessage('가장 궁금한 것을 선택해주세요');
-      return false;
-    }
-    return true;
+  bool _canProceedStep1() {
+    return _timeSinceBreakup != null &&
+           _currentEmotion != null &&
+           _mainCuriosity != null;
   }
 
   bool _canProceedStep2() {
@@ -177,57 +179,40 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
           }
         },
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Progress Indicator
-          _buildProgressIndicator(isDark),
-          
-          // Page Content
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _buildStep1(isDark),
-                _buildStep2(isDark),
-              ],
-            ),
+          // Page Content (프로그레스 인디케이터 제거)
+          PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              _buildStep1(isDark),
+              _buildStep2(isDark),
+            ],
           ),
+
+          // Floating Progress Button
+          _buildFloatingButton(),
         ],
       ),
     );
   }
 
-  Widget _buildProgressIndicator(bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Column(
-        children: [
-          Row(
-            children: List.generate(2, (index) {
-              return Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(right: index < 1 ? 8 : 0),
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: index <= _currentStep
-                        ? TossDesignSystem.purple
-                        : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray200),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ).animate(target: index <= _currentStep ? 1 : 0)
-                  .scaleX(begin: 0, end: 1, duration: 300.ms),
-              );
-            }),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _currentStep == 0 ? '마음 들여다보기' : '추가 정보 (선택)',
-            style: TossDesignSystem.caption.copyWith(
-              color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-            ),
-          ),
-        ],
+  Widget _buildFloatingButton() {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final canProceed = _currentStep == 0 ? _canProceedStep1() : _canProceedStep2();
+
+    return Positioned(
+      left: 20,
+      right: 20,
+      bottom: 16 + bottomPadding,
+      child: TossFloatingProgressButton(
+        text: _currentStep == 0 ? '다음' : '마음 분석하기',
+        currentStep: _currentStep + 1,
+        totalSteps: 2,
+        onPressed: canProceed ? _nextStep : null,
+        isEnabled: canProceed,
+        showProgress: true,
       ),
     );
   }
@@ -332,18 +317,9 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
           const SizedBox(height: 16),
           
           ...curiosityCards.map((card) => _buildCuriosityCard(card, isDark)),
-          
-          const SizedBox(height: 40),
-          
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '다음',
-              onPressed: _nextStep,
-              style: TossButtonStyle.primary,
-              isEnabled: _validateStep1(),
-            ),
-          ),
+
+          // Floating 버튼 공간 확보
+          const SizedBox(height: 100),
         ],
       ),
     );
