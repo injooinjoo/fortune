@@ -345,8 +345,7 @@ class FCMService {
   // 알림 탭 액션 처리
   void _handleNotificationTap(Map<String, dynamic> data) {
     final type = data['type'];
-    final targetId = data['targetId'];
-    
+
     switch (type) {
       case 'daily_fortune':
         // 일일 운세 페이지로 이동
@@ -460,11 +459,6 @@ class FCMService {
     if (!_settings.dailyFortune || _settings.dailyFortuneTime == null) {
       return;
     }
-    
-    final timeParts = _settings.dailyFortuneTime!.split(':');
-    final hour = int.parse(timeParts[0]);
-    final minute = int.parse(timeParts[1]);
-    
     // 매일 반복 알림 설정
     await _localNotifications.periodicallyShow(
       0, // 알림 ID

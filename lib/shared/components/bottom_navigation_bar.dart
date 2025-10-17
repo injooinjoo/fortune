@@ -49,7 +49,6 @@ class FortuneBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final currentPath = GoRouterState.of(context).uri.path;
     final activeIndex = _getIndexFromPath(currentPath);
 
@@ -121,8 +120,6 @@ class _NavItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Expanded(
       child: InkWell(
         onTap: onTap,

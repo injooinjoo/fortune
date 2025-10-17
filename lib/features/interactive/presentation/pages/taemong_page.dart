@@ -353,8 +353,8 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
     // 토큰 확인
     final tokenBalance = ref.read(tokenBalanceProvider);
     if (tokenBalance?.remainingTokens != null &&
-        tokenBalance!.remainingTokens < _requiredTokens && 
-        !(tokenBalance.hasUnlimitedAccess ?? false)) {
+        tokenBalance!.remainingTokens < _requiredTokens &&
+        !tokenBalance.hasUnlimitedAccess) {
       _showInsufficientTokensModal();
       return;
     }
@@ -374,9 +374,9 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
           fortuneType: 'taemong',
           amount: _requiredTokens);
       }
-      
+
       // 토큰 잔액 새로고침
-      ref.refresh(tokenBalanceProvider);
+      await ref.refresh(tokenBalanceProvider);
       
       setState(() {
         _analysisResult = '''

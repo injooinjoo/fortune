@@ -29,7 +29,6 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
   // 애니메이션 컨트롤러 최소화
   late AnimationController _scrollController;
   late AnimationController _checkController; // 하나의 체크 컨트롤러만 사용
-  late Animation<double> _scrollAnimation;
   late Animation<double> _checkAnimation;
   
   // 로딩 메시지는 핵심만 12개로 줄임
@@ -72,11 +71,6 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
     );
     
     // 애니메이션 생성
-    _scrollAnimation = CurvedAnimation(
-      parent: _scrollController,
-      curve: Curves.easeInOutCubic,
-    );
-    
     _checkAnimation = CurvedAnimation(
       parent: _checkController,
       curve: Curves.elasticOut,
@@ -181,8 +175,7 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final screenHeight = MediaQuery.of(context).size.height;
-    
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(

@@ -56,8 +56,6 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Column(
       children: [
         // 검색 입력 필드
@@ -117,8 +115,6 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
   }
 
   Widget _buildSuggestionsList() {
-    final theme = Theme.of(context);
-
     if (_currentQuery.isEmpty) {
       // 빈 검색어일 때 인기 연예인 표시
       final popularCelebrities = ref.watch(popularCelebritiesProvider(null));
@@ -276,7 +272,6 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
 
   Widget _buildNoResultsWidget() {
     final theme = Theme.of(context);
-    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -314,7 +309,6 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
 
   Widget _buildErrorWidget(String error) {
     final theme = Theme.of(context);
-    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(

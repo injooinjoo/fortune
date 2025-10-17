@@ -110,134 +110,164 @@ class TossDesignSystem {
   // ==========================================
   // 2. TYPOGRAPHY SYSTEM (타이포그래피)
   // ==========================================
-  
-  /// Font Families
-  static const String fontFamilyKorean = 'TossProductSans';  // 토스 전용 폰트
+
+  /// ⚠️ DEPRECATED: 타이포그래피는 이제 TypographyTheme을 사용하세요!
+  /// import 'package:fortune/core/theme/typography_theme.dart';
+  ///
+  /// 사용 예시:
+  /// Text('제목', style: context.typography.headingLarge)
+  /// Text('본문', style: context.typography.bodyMedium)
+  ///
+  /// 이 상수들은 하위 호환성을 위해 유지되지만, 신규 코드에서는 사용하지 마세요.
+  ///
+  /// 마이그레이션 가이드:
+  /// - display1 → displayLarge
+  /// - display2 → displayMedium
+  /// - heading1 → displaySmall
+  /// - heading2 → headingLarge
+  /// - heading3 → headingMedium
+  /// - heading4 → headingSmall
+  /// - body1 → bodyLarge
+  /// - body2 → bodyMedium
+  /// - body3 → bodySmall
+  /// - caption/caption1 → labelMedium
+  /// - small → labelSmall
+  /// - button → labelLarge
+  /// - amountLarge → numberLarge
+  /// - amountMedium → numberMedium
+
+  /// ⚠️ 주의: 이 상수들은 이제 사용자 폰트 설정을 반영하지 않습니다!
+  /// 사용자 설정을 반영하려면 반드시 TypographyTheme을 사용하세요.
+  ///
+  /// 하위 호환성을 위해 유지되는 고정 크기 상수입니다.
+
+  /// Font Families (deprecated - 고정값)
+  static const String fontFamilyKorean = 'Pretendard';
   static const String fontFamilyEnglish = 'SF Pro Display';
-  static const String fontFamilyNumber = 'TossFace';  // 금액 표시용
-  
-  /// Display Styles (큰 제목)
+  static const String fontFamilyNumber = 'TossFace';
+
+  /// Display Styles (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle display1 = TextStyle(
     fontSize: 48,
-    height: 56 / 48,
+    height: 1.17,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.02,
     fontFamily: fontFamilyKorean,
   );
-  
+
   static const TextStyle display2 = TextStyle(
     fontSize: 40,
-    height: 48 / 40,
+    height: 1.2,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.02,
     fontFamily: fontFamilyKorean,
   );
-  
-  /// Heading Styles (제목)
+
+  /// Heading Styles (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle heading1 = TextStyle(
     fontSize: 32,
-    height: 40 / 32,
+    height: 1.25,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.01,
     fontFamily: fontFamilyKorean,
   );
-  
+
   static const TextStyle heading2 = TextStyle(
     fontSize: 28,
-    height: 36 / 28,
+    height: 1.29,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.01,
     fontFamily: fontFamilyKorean,
   );
-  
+
   static const TextStyle heading3 = TextStyle(
     fontSize: 24,
-    height: 32 / 24,
+    height: 1.33,
     fontWeight: FontWeight.w600,
     letterSpacing: 0,
     fontFamily: fontFamilyKorean,
   );
-  
+
   static const TextStyle heading4 = TextStyle(
     fontSize: 20,
-    height: 28 / 20,
+    height: 1.4,
     fontWeight: FontWeight.w600,
     letterSpacing: 0,
     fontFamily: fontFamilyKorean,
   );
-  
-  /// Body Styles (본문)
+
+  /// Body Styles (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle body1 = TextStyle(
     fontSize: 17,
-    height: 26 / 17,
+    height: 1.53,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     fontFamily: fontFamilyKorean,
   );
-  
+
   static const TextStyle body2 = TextStyle(
     fontSize: 15,
-    height: 24 / 15,
+    height: 1.6,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     fontFamily: fontFamilyKorean,
   );
-  
+
   static const TextStyle body3 = TextStyle(
     fontSize: 14,
-    height: 22 / 14,
+    height: 1.57,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     fontFamily: fontFamilyKorean,
   );
-  
-  /// Caption & Small (캡션)
+
+  /// Caption & Small (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle caption = TextStyle(
     fontSize: 13,
-    height: 20 / 13,
+    height: 1.54,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     fontFamily: fontFamilyKorean,
   );
-  
+
   static const TextStyle caption1 = TextStyle(
     fontSize: 13,
-    height: 20 / 13,
+    height: 1.54,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     fontFamily: fontFamilyKorean,
   );
-  
+
   static const TextStyle small = TextStyle(
     fontSize: 12,
-    height: 18 / 12,
+    height: 1.5,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     fontFamily: fontFamilyKorean,
   );
-  
-  /// Button Style
+
+  /// Button Style (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle button = TextStyle(
     fontSize: 16,
-    height: 24 / 16,
+    height: 1.5,
     fontWeight: FontWeight.w600,
     letterSpacing: 0,
     fontFamily: fontFamilyKorean,
   );
-  
-  /// Amount Style (금액 표시)
-  static TextStyle amountLarge = const TextStyle(
+
+  /// Amount Style (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
+  static const TextStyle amountLarge = TextStyle(
     fontSize: 32,
-    height: 40 / 32,
+    height: 1.25,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.02,
     fontFamily: fontFamilyNumber,
     fontFeatures: [FontFeature.tabularFigures()],
   );
-  
-  static TextStyle amountMedium = const TextStyle(
+
+  static const TextStyle amountMedium = TextStyle(
     fontSize: 24,
-    height: 32 / 24,
+    height: 1.33,
     fontWeight: FontWeight.w600,
     letterSpacing: -0.01,
     fontFamily: fontFamilyNumber,
@@ -548,13 +578,22 @@ class TossDesignSystem {
   // ==========================================
   
   /// Light Theme
-  static ThemeData lightTheme() {
+  /// [fontScale] 사용자 폰트 크기 배율 (기본값: 1.0)
+  static ThemeData lightTheme({double fontScale = 1.0}) {
+    final baseTheme = ThemeData.light();
+
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
       primaryColor: tossBlue,
       scaffoldBackgroundColor: backgroundPrimary,
-      
+
+      // 🎯 앱 전체 폰트 크기 조절
+      textTheme: baseTheme.textTheme.apply(
+        fontSizeFactor: fontScale,
+        fontFamily: fontFamilyKorean,
+      ),
+
       // Color Scheme
       colorScheme: const ColorScheme.light(
         primary: tossBlue,
@@ -576,26 +615,7 @@ class TossDesignSystem {
         titleTextStyle: heading4.copyWith(color: gray900),
         iconTheme: const IconThemeData(color: gray900),
       ),
-      
-      // Text Theme
-      textTheme: TextTheme(
-        displayLarge: display1.copyWith(color: gray900),
-        displayMedium: display2.copyWith(color: gray900),
-        displaySmall: heading1.copyWith(color: gray900),
-        headlineLarge: heading1.copyWith(color: gray900),
-        headlineMedium: heading2.copyWith(color: gray900),
-        headlineSmall: heading3.copyWith(color: gray900),
-        titleLarge: heading4.copyWith(color: gray900),
-        titleMedium: body1.copyWith(color: gray900),
-        titleSmall: body2.copyWith(color: gray900),
-        bodyLarge: body1.copyWith(color: gray900),
-        bodyMedium: body2.copyWith(color: gray900),
-        bodySmall: body3.copyWith(color: gray900),
-        labelLarge: button.copyWith(color: gray900),
-        labelMedium: caption.copyWith(color: gray600),
-        labelSmall: small.copyWith(color: gray600),
-      ),
-      
+
       // Elevated Button Theme
       // REMOVED: elevatedButtonTheme to allow per-button customization
       // Each button should define its own style using ElevatedButton.styleFrom()
@@ -680,13 +700,22 @@ class TossDesignSystem {
   }
   
   /// Dark Theme
-  static ThemeData darkTheme() {
+  /// [fontScale] 사용자 폰트 크기 배율 (기본값: 1.0)
+  static ThemeData darkTheme({double fontScale = 1.0}) {
+    final baseTheme = ThemeData.dark();
+
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       primaryColor: tossBlueDark,
       scaffoldBackgroundColor: grayDark50,
-      
+
+      // 🎯 앱 전체 폰트 크기 조절
+      textTheme: baseTheme.textTheme.apply(
+        fontSizeFactor: fontScale,
+        fontFamily: fontFamilyKorean,
+      ),
+
       // Color Scheme (개선된 대비)
       colorScheme: const ColorScheme.dark(
         primary: tossBlueDark,
@@ -710,26 +739,7 @@ class TossDesignSystem {
         titleTextStyle: heading4.copyWith(color: grayDark900),
         iconTheme: const IconThemeData(color: grayDark900),
       ),
-      
-      // Text Theme
-      textTheme: TextTheme(
-        displayLarge: display1.copyWith(color: grayDark900),
-        displayMedium: display2.copyWith(color: grayDark900),
-        displaySmall: heading1.copyWith(color: grayDark900),
-        headlineLarge: heading1.copyWith(color: grayDark900),
-        headlineMedium: heading2.copyWith(color: grayDark900),
-        headlineSmall: heading3.copyWith(color: grayDark900),
-        titleLarge: heading4.copyWith(color: grayDark900),
-        titleMedium: body1.copyWith(color: grayDark900),
-        titleSmall: body2.copyWith(color: grayDark900),
-        bodyLarge: body1.copyWith(color: grayDark900),
-        bodyMedium: body2.copyWith(color: grayDark900),
-        bodySmall: body3.copyWith(color: grayDark900),
-        labelLarge: button.copyWith(color: grayDark900),
-        labelMedium: caption.copyWith(color: grayDark400),
-        labelSmall: small.copyWith(color: grayDark400),
-      ),
-      
+
       // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

@@ -8,6 +8,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class RouteObserverLogger extends RouteObserver<PageRoute<dynamic>> {
   static final RouteObserverLogger _instance = RouteObserverLogger._internal();
@@ -15,7 +16,7 @@ class RouteObserverLogger extends RouteObserver<PageRoute<dynamic>> {
   RouteObserverLogger._internal();
 
   final Map<String, VisitInfo> _visits = {};
-  final String _logFilePath = 'visited_screens.json';
+  String? _logFilePath;  // Will be initialized with app directory
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
@@ -109,9 +110,23 @@ class RouteObserverLogger extends RouteObserver<PageRoute<dynamic>> {
     return route.settings.name;
   }
 
-  void _saveToFile() {
+  Future<void> _ensureLogFilePath() async {
+    if (_logFilePath != null) return;
+
     try {
-      final file = File(_logFilePath);
+      final directory = await getApplicationDocumentsDirectory();
+      _logFilePath = '${directory.path}/visited_screens.json';
+    } catch (e) {
+      debugPrint('⚠️ RouteObserver: 경로 초기화 실패 - $e');
+    }
+  }
+
+  void _saveToFile() async {
+    try {
+      await _ensureLogFilePath();
+      if (_logFilePath == null) return;
+
+      final file = File(_logFilePath!);
       final data = {
         'last_updated': DateTime.now().toIso8601String(),
         'total_screens': _visits.length,
@@ -119,7 +134,7 @@ class RouteObserverLogger extends RouteObserver<PageRoute<dynamic>> {
         'visits': _visits.values.map((v) => v.toJson()).toList(),
       };
 
-      file.writeAsStringSync(jsonEncode(data));
+      await file.writeAsString(jsonEncode(data));
     } catch (e) {
       debugPrint('⚠️ RouteObserver: 파일 저장 실패 - $e');
     }
@@ -147,7 +162,10 @@ class RouteObserverLogger extends RouteObserver<PageRoute<dynamic>> {
   /// 기존 로그 파일에서 데이터 로드
   Future<void> loadFromFile() async {
     try {
-      final file = File(_logFilePath);
+      await _ensureLogFilePath();
+      if (_logFilePath == null) return;
+
+      final file = File(_logFilePath!);
       if (await file.exists()) {
         final content = await file.readAsString();
         final data = jsonDecode(content) as Map<String, dynamic>;

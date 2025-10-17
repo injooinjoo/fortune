@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import '../../core/utils/logger.dart';
@@ -247,11 +246,8 @@ class InAppPurchaseService {
   Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) async {
     try {
       final Map<String, dynamic> verificationData = {};
-      
       if (!kIsWeb && Platform.isAndroid) {
         // Android 영수증 데이터
-        final InAppPurchaseAndroidPlatformAddition androidAddition =
-            _inAppPurchase.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
         verificationData['platform'] = 'android';
         verificationData['purchaseToken'] = purchaseDetails.verificationData.serverVerificationData;
         verificationData['productId'] = purchaseDetails.productID;

@@ -3,7 +3,6 @@ import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -208,7 +207,7 @@ ${topRecommendations.join('\n')}
       final mbtiHash = userProfile.mbtiType.hashCode;
       mbtiLucky = (mbtiHash.abs() % 45) + 1;
     }
-    
+
     // 혈액형 기반 에너지
     int bloodLucky = 21;
     if (userProfile.bloodType != null) {
@@ -219,8 +218,8 @@ ${topRecommendations.join('\n')}
         case 'O': bloodLucky = 33; break;
       }
     }
-    
-    Set<int> numbers = {personalLucky, dailyLucky, mbtiLucky};
+
+    Set<int> numbers = {personalLucky, dailyLucky, mbtiLucky, bloodLucky};
     
     // 6개 번호가 될 때까지 추가
     while (numbers.length < 6) {
@@ -269,7 +268,6 @@ ${topRecommendations.join('\n')}
     ];
   }
 
-  @override
   Widget buildContent(BuildContext context) {
     return Column(
       children: [
@@ -522,243 +520,6 @@ ${topRecommendations.join('\n')}
     );
   }
 
-  Widget _buildLuckyItemsGrid() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildLuckyItemCard(
-                title: '행운의 색깔',
-                icon: Icons.palette_rounded,
-                value: _fortuneResult?.luckyColor ?? '',
-                gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-                delay: 0,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildLuckyItemCard(
-                title: '행운의 숫자',
-                icon: Icons.looks_one_rounded,
-                value: _fortuneResult?.luckyNumber?.toString() ?? '',
-                gradientColors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
-                delay: 100,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _buildLuckyItemCard(
-                title: '행운의 음식',
-                icon: Icons.restaurant_rounded,
-                value: _fortuneResult?.luckyItems?['food'] as String? ?? '',
-                gradientColors: [Color(0xFFEF4444), Color(0xFFDC2626)],
-                delay: 200,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildLuckyItemCard(
-                title: '행운의 아이템',
-                icon: Icons.diamond_rounded,
-                value: _fortuneResult?.luckyItems?['item'] as String? ?? '',
-                gradientColors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-                delay: 300,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLuckyItemCard({
-    required String title,
-    required IconData icon,
-    required String value,
-    required List<Color> gradientColors,
-    required int delay}) {
-    // Special handling for color
-    Widget valueWidget;
-    if (title == '행운의 색깔' && value.isNotEmpty) {
-      // Try to parse color name to actual color
-      Color? displayColor = _getColorFromName(value);
-      if (displayColor != null) {
-        valueWidget = Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                color: displayColor,
-                shape: BoxShape.circle,
-                border: Border.all(color: TossDesignSystem.gray100, width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: displayColor.withValues(alpha: 0.4),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: TossDesignSystem.gray100,
-              ),
-            ),
-          ],
-        );
-      } else {
-        valueWidget = Text(
-          value,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: TossDesignSystem.gray100,
-          ),
-        );
-      }
-    } else {
-      valueWidget = Text(
-        value,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: TossDesignSystem.gray100),
-        textAlign: TextAlign.center
-      );
-    }
-
-    return Container(
-      height: 140,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: gradientColors,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: gradientColors[0].withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 32,
-            color: TossDesignSystem.gray100.withValues(alpha: 0.9),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 12,
-              color: TossDesignSystem.gray100.withValues(alpha: 0.8),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Flexible(child: valueWidget),
-        ],
-      ),
-    ).animate(delay: delay.ms)
-      .fadeIn(duration: 500.ms)
-      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0));
-  }
-
-  Widget _buildOverallMessage() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppTheme.dividerColor,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.auto_awesome,
-                color: Color(0xFF7C3AED),
-                size: 24,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '종합 운세',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF7C3AED),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            _fortuneResult!.message,
-            style: TextStyle(
-              fontSize: 14,
-              height: 1.6,
-              color: AppTheme.textColor,
-            ),
-          ),
-          if (_fortuneResult!.advice != null) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Color(0xFF7C3AED).withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.lightbulb_outline,
-                    size: 18,
-                    color: Color(0xFF7C3AED),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _fortuneResult!.advice!,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    ).animate()
-      .fadeIn(duration: 600.ms, delay: 400.ms)
-      .slideY(begin: 0.1, end: 0);
-  }
-
   Widget _buildRefreshButton() {
     return Center(
       child: TextButton.icon(
@@ -837,19 +598,6 @@ ${topRecommendations.join('\n')}
   }
   
   /// 장소 데이터 생성
-  Map<String, dynamic> _generateLocationData(dynamic userProfile, DateTime date, Random random) {
-    final powerSpots = ['강남역 주변', '경복궁 근처', '남산타워 주변', '여의도 한강공원'];
-    final cafes = ['스타벅스 강남역점', '블루보틀 성수', '엔트러사이트 한남', '테라로사 광화문'];
-    final restaurants = ['일식당 (초밥,라면)', '한식당 (국밥,찌개)', '양식당 (파스타,스테이크)', '중식당 (지지장,탕수육)'];
-    
-    return {
-      'power_spot': powerSpots[random.nextInt(powerSpots.length)],
-      'cafe': cafes[random.nextInt(cafes.length)],
-      'restaurant': restaurants[random.nextInt(restaurants.length)],
-      'direction': ['동쪽', '서쪽', '남쪽', '북쪽'][random.nextInt(4)],
-      'tip': '오늘은 물가 있는 곳에서 더 좋은 기운이 느껴질 것입니다',
-    };
-  }
   
   /// 게임 데이터 생성
   Map<String, dynamic> _generateGameData(dynamic userProfile, DateTime date, Random random) {
@@ -867,19 +615,6 @@ ${topRecommendations.join('\n')}
   }
   
   /// 금융 데이터 생성
-  Map<String, dynamic> _generateFinanceData(dynamic userProfile, DateTime date, Random random) {
-    final sectors = ['IT/반도체', '바이오', '엔터테인먼트', '차량/전기차', '금융'];
-    final strategies = ['단기 매매', '장기 투자', '분할 매수', '지수 투자'];
-    final timings = ['오전 9:30-10:00', '오후 2:30-3:00', '오후 3:00-3:20'];
-    
-    return {
-      'sector': sectors[random.nextInt(sectors.length)],
-      'strategy': strategies[random.nextInt(strategies.length)],
-      'timing': timings[random.nextInt(timings.length)],
-      'risk_level': random.nextInt(5) + 1,
-      'tip': '오늘은 안정적인 종목보다는 성장주가 좋습니다',
-    };
-  }
   
   /// 음식 데이터 생성
   Map<String, dynamic> _generateFoodData(dynamic userProfile, DateTime date, Random random) {
@@ -897,35 +632,8 @@ ${topRecommendations.join('\n')}
   }
   
   /// 교통 데이터 생성
-  Map<String, dynamic> _generateTransportData(dynamic userProfile, DateTime date, Random random) {
-    final taxiApps = ['카카오T', '땅시', '로댔엑', '우버'];
-    final parkingTips = ['지상 동쪽 구역', '지하 B2층', '길거리 편의점 앞', '백화점 지하'];
-    final directions = ['제주/부산', '동남아', '일본', '유럽'];
-    
-    return {
-      'taxi_app': taxiApps[random.nextInt(taxiApps.length)],
-      'taxi_chance': 75 + random.nextInt(20),
-      'parking_tip': parkingTips[random.nextInt(parkingTips.length)],
-      'travel_direction': directions[random.nextInt(directions.length)],
-      'tip': '대중교통보다는 개인 차량이 오늘 좋습니다',
-    };
-  }
   
   /// 만남 데이터 생성
-  Map<String, dynamic> _generateMeetingData(dynamic userProfile, DateTime date, Random random) {
-    final mbtiTypes = ['ENTJ', 'ENTP', 'INTJ', 'INTP', 'ENFJ', 'ENFP'];
-    final bloodTypes = ['A', 'B', 'AB', 'O'];
-    final industries = ['IT', '금융', '미디어', '학술', '비즈니스'];
-    
-    return {
-      'good_mbti': mbtiTypes[random.nextInt(mbtiTypes.length)],
-      'good_blood': bloodTypes[random.nextInt(bloodTypes.length)],
-      'industry': industries[random.nextInt(industries.length)],
-      'meeting_time': '${19 + random.nextInt(3)}:00-${21 + random.nextInt(2)}:00',
-      'match_chance': 65 + random.nextInt(25),
-      'tip': '오늘은 실내에서의 만남이 실외보다 좋습니다',
-    };
-  }
   
   /// 쇼핑 데이터 생성
   Map<String, dynamic> _generateShoppingData(dynamic userProfile, DateTime date, Random random) {
@@ -943,19 +651,6 @@ ${topRecommendations.join('\n')}
   }
   
   /// 업무 데이터 생성
-  Map<String, dynamic> _generateWorkData(dynamic userProfile, DateTime date, Random random) {
-    final focusTimes = ['09:00-11:00', '14:00-16:00', '10:00-12:00'];
-    final tasks = ['기획서 작성', '프레젠테이션', '브레인스토밍', '데이터 분석'];
-    final meetings = ['새로운 프로젝트', '팀 회의', '고객 상담', '성과 발표'];
-    
-    return {
-      'focus_time': focusTimes[random.nextInt(focusTimes.length)],
-      'best_task': tasks[random.nextInt(tasks.length)],
-      'meeting_type': meetings[random.nextInt(meetings.length)],
-      'productivity': 75 + random.nextInt(20),
-      'tip': '오늘은 새로운 아이디어가 떠오르기 좋은 날입니다',
-    };
-  }
   
   /// 건강 데이터 생성
   Map<String, dynamic> _generateHealthData(dynamic userProfile, DateTime date, Random random) {
@@ -1263,31 +958,7 @@ ${topRecommendations.join('\n')}
   Widget _buildHealthDetail(Map<String, dynamic> data, Map<String, dynamic> category) {
     return _buildBasicCard('건강 가이드', data, category);
   }
-  
-  /// 색상 이름을 Color 객체로 변환
-  Color? _getColorFromName(String colorName) {
-    final colorMap = {
-      '빨강': TossDesignSystem.errorRed,
-      '파랑': TossDesignSystem.tossBlue,
-      '노랑': TossDesignSystem.warningOrange,
-      '초록': TossDesignSystem.successGreen,
-      '보라': const Color(0xFF9C27B0),
-      '핑크': const Color(0xFFE91E63),
-      '주황': const Color(0xFFFF9800),
-      '검정': TossDesignSystem.gray900,
-      '흰색': TossDesignSystem.gray100,
-      '회색': TossDesignSystem.gray600,
-      '청색': const Color(0xFF3F51B5),
-      '하늘색': const Color(0xFF03A9F4),
-      '연두': const Color(0xFF8BC34A),
-      '갈색': const Color(0xFF795548),
-      '금색': const Color(0xFFFFC107),
-      '은색': const Color(0xFFE0E0E0),
-    };
-    
-    return colorMap[colorName];
-  }
-  
+
   /// 여행/장소 데이터 생성
   Map<String, dynamic> _generateTravelData(dynamic userProfile, DateTime date, Random random) {
     final dateSpots = ['한강공원 산책로', '남산타워 전망대', '경복궁 후원', '이태원 로시길'];

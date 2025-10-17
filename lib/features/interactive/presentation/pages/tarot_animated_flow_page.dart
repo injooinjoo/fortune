@@ -15,17 +15,13 @@ class TarotAnimatedFlowPage extends StatefulWidget {
 class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
     with TickerProviderStateMixin {
   PageController? _pageController;
-  int _currentPage = 0;
   int? _selectedCardIndex;
 
   late AnimationController _heroController;
-  late Animation<double> _heroAnimation;
 
   late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation;
 
   late AnimationController _scaleController;
-  late Animation<double> _scaleAnimation;
 
   final List<Map<String, dynamic>> _majorArcana = [
     {
@@ -63,37 +59,16 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    _heroAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _heroController,
-      curve: Curves.easeInOut,
-    ));
 
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeIn,
-    ));
 
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
   }
 
   @override
@@ -112,9 +87,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {
-          setState(() {
-            _currentPage = index;
-          });
+          setState(() {});
         },
         children: [
           _buildWelcomePage(),

@@ -415,9 +415,9 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             const SizedBox(height: 16),
             TossButton(
               text: '초기화',
-              onPressed: () {
+              onPressed: () async {
                 ref.read(crawlingResultProvider.notifier).reset();
-                ref.refresh(crawlingStatsProvider);
+                await ref.refresh(crawlingStatsProvider);
               },
               style: TossButtonStyle.secondary,
             ),

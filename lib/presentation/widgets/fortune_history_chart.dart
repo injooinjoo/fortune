@@ -133,15 +133,15 @@ class FortuneHistoryChart extends StatelessWidget {
 
     return randomScores;
   }
-  
+
   Widget _buildChart(BuildContext context, List<int> scores) {
     final theme = Theme.of(context);
-    
+
     // 최근 7일 데이터만 사용
-    final recentScores = scores.length > 7 
-        ? scores.sublist(scores.length - 7) 
+    final recentScores = scores.length > 7
+        ? scores.sublist(scores.length - 7)
         : scores;
-    
+
     return LineChart(
       LineChartData(
         gridData: FlGridData(
@@ -232,8 +232,6 @@ class FortuneHistoryChart extends StatelessWidget {
   }
   
   Widget _buildStatistics(BuildContext context, List<int> scores) {
-    final theme = Theme.of(context);
-    
     final average = scores.reduce((a, b) => a + b) / scores.length;
     final highest = scores.reduce((a, b) => a > b ? a : b);
     final lowest = scores.reduce((a, b) => a < b ? a : b);
@@ -262,10 +260,10 @@ class FortuneHistoryChart extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildStatItem(BuildContext context, String label, String value, IconData icon) {
     final theme = Theme.of(context);
-    
+
     return Column(
       children: [
         Icon(

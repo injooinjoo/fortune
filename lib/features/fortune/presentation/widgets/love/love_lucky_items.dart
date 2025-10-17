@@ -11,21 +11,6 @@ class LoveLuckyItems extends StatelessWidget {
     required this.luckyItems,
   });
 
-  IconData _getItemIcon(String category) {
-    switch (category) {
-      case '향수':
-        return Icons.local_florist;
-      case '색상':
-        return Icons.palette;
-      case '액세서리':
-        return Icons.diamond;
-      case '꽃':
-        return Icons.local_florist;
-      default:
-        return Icons.star;
-    }
-  }
-
   Color _getItemColor(String category) {
     switch (category) {
       case '향수':

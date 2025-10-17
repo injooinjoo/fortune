@@ -5,7 +5,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/storage_service.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../core/theme/toss_design_system.dart';
-import '../../services/social_auth_service.dart';
 import '../../data/services/fortune_api_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../presentation/providers/auth_provider.dart';
@@ -22,7 +21,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final supabase = Supabase.instance.client;
   final _storageService = StorageService();
-  late final SocialAuthService _socialAuthService;
   Map<String, dynamic>? userProfile;
   Map<String, dynamic>? localProfile;
   Map<String, dynamic>? userStats;
@@ -197,8 +195,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _socialAuthService = SocialAuthService(supabase);
-    
+
     // Initialize scroll controller with navigation bar hiding logic
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
@@ -853,36 +850,6 @@ Android: $playStoreUrl
       shareText,
       subject: 'Fortune 앱 초대',
     );
-  }
-
-  Future<void> _handleLogout() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('로그아웃'),
-        content: const Text('정말 로그아웃 하시겠습니까?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('취소'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(
-              foregroundColor: TossDesignSystem.errorRed,
-            ),
-            child: const Text('로그아웃'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      await supabase.auth.signOut();
-      if (mounted) {
-        context.go('/landing');
-      }
-    }
   }
 }
 

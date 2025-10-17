@@ -26,6 +26,7 @@ import '../features/support/presentation/pages/help_page.dart';
 import '../features/policy/presentation/pages/privacy_policy_page.dart';
 import '../features/policy/presentation/pages/terms_of_service_page.dart';
 import '../features/payment/presentation/pages/token_purchase_page_v2.dart';
+import '../features/settings/presentation/pages/font_settings_page.dart';
 
 // Import pages that need to hide navigation bar
 import '../features/fortune/presentation/pages/moving_fortune_toss_page.dart';
@@ -248,6 +249,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               context,
               state,
               const NotificationSettingsPage(),
+            ),
+          ),
+          GoRoute(
+            path: 'font',
+            name: 'font-settings',
+            pageBuilder: (context, state) => PageTransitions.slideTransition(
+              context,
+              state,
+              const FontSettingsPage(),
             ),
           ),
         ],

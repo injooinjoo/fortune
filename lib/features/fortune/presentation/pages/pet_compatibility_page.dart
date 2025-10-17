@@ -32,14 +32,11 @@ class PetCompatibilityPage extends ConsumerStatefulWidget {
 
 class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> with TickerProviderStateMixin {
   late AnimationController _fadeController;
-  late AnimationController _scaleController;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
-  
+
   bool _isInitialized = false;
-  final bool _showAddPetForm = false;
   Fortune? _fortune;
-  
+
   // Pet registration form controllers
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
@@ -59,22 +56,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _scaleController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
-    );
 
     _fadeController.forward();
-    Future.delayed(const Duration(milliseconds: 200), () {
-      _scaleController.forward();
-    });
   }
 
   Future<void> _initializePets() async {
@@ -93,7 +80,6 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   @override
   void dispose() {
     _fadeController.dispose();
-    _scaleController.dispose();
     _nameController.dispose();
     _ageController.dispose();
     super.dispose();
@@ -666,11 +652,6 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     await _generateFortune(pet);
   }
 
-  void _resetFortune() {
-    setState(() {
-      _fortune = null;
-    });
-  }
 
   Future<void> _generateFortune(PetProfile pet) async {
     try {

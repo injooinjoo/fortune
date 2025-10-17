@@ -25,7 +25,6 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
-  int? _touchedIndex;
 
   // 오행 정보
   static const Map<String, Map<String, dynamic>> elementInfo = {
@@ -241,8 +240,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
 
   Widget _buildCenterInfo() {
     final strongestElement = _getStrongestElement();
-    final weakestElement = _getWeakestElement();
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

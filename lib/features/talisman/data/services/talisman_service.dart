@@ -28,14 +28,11 @@ class TalismanService {
           .lt('created_at', endOfDay.toIso8601String());
 
       final todayCount = (response as List).length;
-      
+
       // TODO: 프리미엄 사용자 체크 로직 추가
-      final isProUser = false; // await _checkPremiumStatus(userId);
-      
-      if (isProUser) {
-        return true; // 프리미엄 사용자는 무제한
-      }
-      
+      // final isProUser = await _checkPremiumStatus(userId);
+      // if (isProUser) return true; // 프리미엄 사용자는 무제한
+
       return todayCount < 1; // 무료 사용자는 하루 1개
     } catch (e, stackTrace) {
       Logger.error('Failed to check talisman limit', e, stackTrace);

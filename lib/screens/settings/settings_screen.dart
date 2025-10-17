@@ -6,7 +6,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/providers/token_provider.dart';
-import '../../services/storage_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -17,7 +16,6 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final supabase = Supabase.instance.client;
-  final _storageService = StorageService();
 
   // TOSS Design System Helper Methods (프로필 페이지와 동일)
   bool _isDarkMode(BuildContext context) {
@@ -56,7 +54,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final tokenState = ref.watch(tokenProvider);
     final themeMode = ref.watch(themeModeProvider);
     final isDarkMode = themeMode == ThemeMode.dark ||

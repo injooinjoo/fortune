@@ -120,8 +120,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
       
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks.first;
-        String address = '';
-        
+
         // 광역시/도 단위로 간소화된 주소 생성
         String simplifiedAddress = _getSimplifiedKoreanAddress(place);
         

@@ -245,9 +245,8 @@ class FortuneHistoryService {
   }) async {
     try {
       final now = DateTime.now();
-      
+
       // 이미 오늘 일일 운세가 저장되어 있는지 확인
-      final todayKey = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
       final existingFortune = await _supabase
         .from(_tableName)
         .select('id')

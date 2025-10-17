@@ -24,11 +24,11 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController();
   final StorageService _storageService = StorageService();
-  
+
   int _currentStep = 0;
-  bool _isLoading = false;
   User? _currentUser;
-  
+  bool _isLoading = false;
+
   // Form values
   String _name = '';
   DateTime? _birthDate;

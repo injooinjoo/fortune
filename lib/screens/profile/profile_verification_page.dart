@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/toss_design_system.dart';
-import '../../presentation/providers/theme_provider.dart';
 
 class ProfileVerificationPage extends ConsumerStatefulWidget {
   const ProfileVerificationPage({super.key});
@@ -243,11 +242,6 @@ class _ProfileVerificationPageState
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeModeProvider);
-    final isDarkMode = themeMode == ThemeMode.dark ||
-        (themeMode == ThemeMode.system &&
-            MediaQuery.of(context).platformBrightness == Brightness.dark);
-
     return Scaffold(
       backgroundColor: _getBackgroundColor(context),
       appBar: AppBar(

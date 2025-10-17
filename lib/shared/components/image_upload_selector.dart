@@ -57,7 +57,6 @@ class ImageUploadSelector extends StatefulWidget {
 class _ImageUploadSelectorState extends State<ImageUploadSelector> {
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
-  String? _instagramUrl;
   ImageUploadType? _selectedType;
   final _instagramController = TextEditingController();
   bool _showInstagramInput = false;
@@ -666,15 +665,6 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
       _selectedImage = null;
       _selectedType = null;
     });
-  }
-
-  bool _isValidInstagramUrl(String url) {
-    if (url.isEmpty) return false;
-    final regex = RegExp(
-      r'^(https?://)?(www\.)?(instagram\.com|instagr\.am)/[A-Za-z0-9_\.]+/?$',
-      caseSensitive: false,
-    );
-    return regex.hasMatch(url);
   }
 
   void _showImageSelectionBottomSheet(BuildContext context, bool isDark) {

@@ -85,11 +85,9 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
     final theme = Theme.of(context);
     final fontSize = ref.watch(fontSizeProvider);
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
-    
+
     final currentDeckId = ref.watch(selectedTarotDeckProvider);
-    final experienceLevel = ref.watch(tarotExperienceLevelProvider);
     final recommendedDecks = ref.watch(recommendedDecksProvider);
-    final deckStats = ref.watch(tarotDeckStatsProvider);
     final mostUsedDeckId = ref.read(tarotDeckStatsProvider.notifier).getMostUsedDeck();
 
     return Scaffold(

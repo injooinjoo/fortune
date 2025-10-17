@@ -32,8 +32,7 @@ class PerformanceMonitor {
     
     if (logMetrics) {
       final durationMs = duration.inMilliseconds;
-      final level = durationMs > 3000 ? '🔴' : durationMs > 1000 ? '🟡' : '🟢';
-      
+
       if (kDebugMode) {
         debugPrint('Completed: $operationName in ${durationMs}ms');
       }

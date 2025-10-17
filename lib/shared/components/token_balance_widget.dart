@@ -197,8 +197,7 @@ class TokenBalanceStats extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final tokenState = ref.watch(tokenProvider);
-    
+
     return Container(
       padding: EdgeInsets.all(TossDesignSystem.spacingM),
       decoration: BoxDecoration(
@@ -246,34 +245,5 @@ class TokenBalanceStats extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildTokenStat({
-    required BuildContext context,
-    required String label,
-    required String value,
-    required Color color,
-    required IconData icon}) {
-    final theme = Theme.of(context);
-    
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Icon(
-              icon,
-              size: 20,
-              color: color),
-            SizedBox(width: TossDesignSystem.spacingXS),
-            Text(
-              label,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]),
-        Text(
-          value,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: color))]);
   }
 }

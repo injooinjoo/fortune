@@ -11,9 +11,6 @@ class DailyTokenBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
     return Container(
       margin: AppSpacing.paddingAll16,
       child: GlassContainer(
@@ -128,14 +125,9 @@ class DailyTokenClaimWidget extends ConsumerStatefulWidget {
 class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget> {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    // Check if token has been claimed today
-    final hasClaimed = false; // This would come from your state management
-    
     return Container(
       child: ElevatedButton(
-        onPressed: hasClaimed ? null : () {
+        onPressed: () {
           // Handle claim logic
         },
         style: ElevatedButton.styleFrom(
@@ -145,9 +137,9 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget> {
             borderRadius: BorderRadius.circular(8),
           ),
         ),
-        child: Text(
-          hasClaimed ? '완료' : '받기',
-          style: const TextStyle(
+        child: const Text(
+          '받기',
+          style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),

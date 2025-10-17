@@ -117,7 +117,9 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         ...?data,
         'userId': userId,
         if (userProfileResponse != null) ...{
-          'name': userProfileResponse['name'] ?? '',
+          'name': (userProfileResponse['name'] != null && (userProfileResponse['name'] as String).isNotEmpty)
+              ? userProfileResponse['name']
+              : '사용자',  // Default to '사용자' instead of empty string
           'birthDate': userProfileResponse['birth_date'],
           'birthTime': userProfileResponse['birth_time'],
           'gender': userProfileResponse['gender'],

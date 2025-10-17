@@ -35,12 +35,6 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
         : TossDesignSystem.gray50;
   }
 
-  Color _getCardColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark100
-        : TossDesignSystem.white;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

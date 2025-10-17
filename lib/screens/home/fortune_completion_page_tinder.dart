@@ -213,7 +213,6 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     bool isDark,
     String displayUserName,
   ) {
-    final screenHeight = MediaQuery.of(context).size.height;
     final topPadding = MediaQuery.of(context).padding.top;
 
     return Container(
@@ -504,10 +503,6 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
   /// 📈 5대 영역 레이더 카드 - ChatGPT Pulse 스타일
   Widget _buildRadarCard(int score, bool isDark) {
     final radarData = _getRadarChartDataDouble(score);
-
-    // 각 영역의 평균 색상 계산
-    final avgScore = radarData.values.reduce((a, b) => a + b) / radarData.length;
-    final cardColor = _getPulseScoreColor(avgScore.round());
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1226,19 +1221,6 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     );
   }
 
-  /// 빈 카드
-  Widget _buildEmptyCard(String message, bool isDark) {
-    return Center(
-      child: Text(
-        message,
-        style: TextStyle(
-          color: isDark ? Colors.white60 : Colors.black54,
-          fontSize: 16,
-        ),
-      ),
-    );
-  }
-
   // ========== Helper Functions ==========
 
   /// 날씨 상태에 따른 이모지 반환
@@ -1332,14 +1314,6 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     if (score >= 50) return const Color(0xFF8B5CF6); // 부드러운 보라
     if (score >= 30) return const Color(0xFFF59E0B); // 따뜻한 노랑
     return const Color(0xFFEF4444); // 절제된 빨강
-  }
-
-  Color _getScoreColor(int score) {
-    if (score >= 90) return const Color(0xFF00D2FF);
-    if (score >= 80) return const Color(0xFF0066FF);
-    if (score >= 70) return const Color(0xFF7C4DFF);
-    if (score >= 60) return const Color(0xFFFF6B35);
-    return const Color(0xFFFF4757);
   }
 
   Map<String, double> _getRadarChartDataDouble(int score) {
@@ -1566,104 +1540,6 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
   }
 
   // ========== 새로운 카드 빌더 함수들 (8개) ==========
-
-  /// 🌤️ 오늘의 날씨 연계 운세 카드
-  Widget _buildWeatherFortuneCard(bool isDark) {
-    final weatherData = widget.fortune?.weatherSummary;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '오늘의 날씨 운세',
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          '날씨와 함께하는 당신의 하루',
-          style: TextStyle(
-            color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 16,
-          ),
-        ),
-
-        const SizedBox(height: 40),
-
-        // 날씨 정보 카드
-        Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                isDark ? const Color(0xFF3B82F6) : const Color(0xFF60A5FA),
-                isDark ? const Color(0xFF2563EB) : const Color(0xFF3B82F6),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        weatherData?['condition']?.toString() ?? '맑음',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${weatherData?['temperature']?.toString() ?? '22'}°C',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 48,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Icon(
-                    Icons.wb_sunny_rounded,
-                    color: Colors.white,
-                    size: 80,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  weatherData?['fortune_message']?.toString() ??
-                  '맑은 날씨처럼 당신의 하루도 밝고 긍정적일 것입니다. 야외 활동이나 새로운 도전을 시작하기 좋은 날입니다.',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    height: 1.6,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 
   /// 🔮 사주 인사이트 카드
   Widget _buildSajuInsightCard(bool isDark) {
@@ -2195,10 +2071,10 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     }
 
     // 베스트/워스트 시간 찾기
+    double bestScore = spots.isNotEmpty ? spots[0].y : 50.0;
+    double worstScore = spots.isNotEmpty ? spots[0].y : 50.0;
     int bestHour = 0;
     int worstHour = 0;
-    double bestScore = spots[0].y;
-    double worstScore = spots[0].y;
 
     for (int i = 1; i < spots.length; i++) {
       if (spots[i].y > bestScore) {
@@ -2631,9 +2507,6 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     final spots = hourlyData['spots'] as List<FlSpot>;
     final bestHour = hourlyData['bestHour'] as int;
     final worstHour = hourlyData['worstHour'] as int;
-    final bestScore = hourlyData['bestScore'] as int;
-    final worstScore = hourlyData['worstScore'] as int;
-    final hourlyAdvice = hourlyData['advice'] as Map<int, String>;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2675,6 +2548,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,  // Fix overflow
                     children: [
                       Text(
                         '베스트',
@@ -2708,6 +2582,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,  // Fix overflow
                     children: [
                       Text(
                         '주의',

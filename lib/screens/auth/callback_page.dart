@@ -148,8 +148,6 @@ class _CallbackPageState extends State<CallbackPage> {
           // Check if we have access_token and refresh_token in fragment
           final accessToken = fragmentParams['access_token'];
           final refreshToken = fragmentParams['refresh_token'];
-          final tokenType = fragmentParams['token_type'];
-          final expiresIn = fragmentParams['expires_in'];
           
           if (accessToken != null) {
             debugPrint('Access token found in fragment, creating session...');

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/toss_design_system.dart';
-import '../../presentation/providers/theme_provider.dart';
 import '../../services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -265,11 +264,6 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeModeProvider);
-    final isDarkMode = themeMode == ThemeMode.dark ||
-        (themeMode == ThemeMode.system &&
-            MediaQuery.of(context).platformBrightness == Brightness.dark);
-
     if (isLoading) {
       return Scaffold(
         backgroundColor: _getBackgroundColor(context),

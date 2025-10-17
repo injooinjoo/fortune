@@ -25,7 +25,6 @@ class FortuneListCard extends ConsumerStatefulWidget {
 class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTickerProviderStateMixin {
   bool isFavorite = false;
   final GlobalKey _cardKey = GlobalKey();
-  double _parallaxOffset = 0.0;
   ScrollPosition? _scrollPosition;
   
   @override
@@ -59,13 +58,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
         // Calculate parallax offset based on card position relative to screen center
         final offset = (cardCenter - screenCenter) / screenHeight;
         // Clamp the offset to prevent extreme values
-        final clampedOffset = offset.clamp(-1.0, 1.0);
-        
-        if (mounted) {
-          setState(() {
-            _parallaxOffset = clampedOffset * 30; // Adjust multiplier for effect intensity
-          });
-        }
+        offset.clamp(-1.0, 1.0);
       }
     } catch (e) {
       // Ignore errors when widget is being disposed

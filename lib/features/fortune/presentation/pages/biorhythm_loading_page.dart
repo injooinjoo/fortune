@@ -195,7 +195,6 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
 
     final theme = Theme.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final currentStepData = _analysisSteps[_currentStep];
     
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,

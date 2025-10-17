@@ -190,7 +190,6 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tokenBalance = ref.watch(tokenBalanceProvider);
 
     return Scaffold(
       extendBodyBehindAppBar: true,

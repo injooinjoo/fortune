@@ -86,7 +86,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     if (userProfile == null) return const SizedBox.shrink();
     
     return BaseCard(
@@ -193,8 +193,6 @@ class _UserInfoCardState extends State<UserInfoCard> {
   }
   
   Widget _buildInfoGrid(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Column(
       children: [
         _buildInfoRow(context, [
@@ -288,7 +286,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
   
   Widget _buildInfoItem(BuildContext context, _InfoItem item, List<_InfoItem> items) {
     final theme = Theme.of(context);
-    
+
     return Material(
       color: TossDesignSystem.white.withValues(alpha: 0.0),
       child: InkWell(

@@ -169,10 +169,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final fontSize = ref.watch(fontSizeProvider);
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
-    final spread = TarotMetadata.spreads[widget.spreadType];
 
     return Scaffold(
       backgroundColor: TossDesignSystem.black,

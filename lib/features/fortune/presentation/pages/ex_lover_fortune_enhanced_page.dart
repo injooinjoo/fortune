@@ -258,8 +258,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
   @override
   Widget build(BuildContext context) {
     final currentStep = ref.watch(exLoverStepProvider);
-    final theme = Theme.of(context);
-    
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: StandardFortuneAppBar(
@@ -342,8 +341,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           Row(
             children: List.generate(4, (index) {
               final isActive = index <= currentStep;
-              final isCompleted = index < currentStep;
-              
+
               return Expanded(
                 child: Row(
                   children: [
@@ -1767,8 +1765,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
   
   Future<void> _startFortuneTelling() async {
     final data = ref.read(exLoverDataProvider);
-    final totalSouls = _calculateTotalSouls();
-    
+
     // 로딩 다이얼로그 표시 with comforting messages
     final loadingMessages = [
       '당신의 마음을 읽고 있어요...',
@@ -1884,10 +1881,10 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         inputConditions: inputConditions,
       );
 
-      final fortune = _convertToFortune(fortuneResult);
-      
+      _convertToFortune(fortuneResult);
+
       Navigator.pop(context); // 로딩 닫기
-      
+
       // Clear saved progress after successful completion
       await _clearSavedProgress();
       

@@ -139,9 +139,8 @@ class BloodTypeAnalysisService {
   // 혈액형별 일일 바이오리듬 계산
   static Map<String, double> calculateDailyBiorhythm(String bloodType, String rh, DateTime date) {
     final dayOfYear = date.difference(DateTime(date.year, 1, 1)).inDays;
-    final characteristics = bloodTypeCharacteristics[bloodType]!;
     final rhData = rhCharacteristics[rh]!;
-    
+
     // 기본 에너지 레벨
     final baseEnergy = (rhData['energy_level'] ?? 0.8) as double;
     
@@ -203,9 +202,6 @@ class BloodTypeAnalysisService {
   
   // 혈액형별 성격 강도 분석
   static Map<String, double> analyzePersonalityStrengths(String bloodType, String rh) {
-    final characteristics = bloodTypeCharacteristics[bloodType]!;
-    final positiveTraits = characteristics['positive_traits'] as List<String>;
-    
     // 기본 강도 맵
     final strengths = {
       '리더십': 0.5,

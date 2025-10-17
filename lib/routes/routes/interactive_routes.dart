@@ -72,7 +72,6 @@ final interactiveRoutes = [
             path: 'animated-flow',
             name: 'tarot-animated-flow',
             builder: (context, state) {
-              final extra = state.extra as Map<String, dynamic>?;
               return const TarotAnimatedFlowPage();
             })]),
       GoRoute(

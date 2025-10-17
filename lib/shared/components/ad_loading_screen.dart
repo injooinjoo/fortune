@@ -84,7 +84,6 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final userProfile = ref.watch(userProfileProvider).value;
     final isPremium = userProfile?.isPremiumActive ?? false;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;

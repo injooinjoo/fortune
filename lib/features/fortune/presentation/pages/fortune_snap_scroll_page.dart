@@ -84,7 +84,6 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
     }
   }
 
-  @override
   Widget buildContent(BuildContext context) {
     if (_isLoadingAll) {
       return const Center(

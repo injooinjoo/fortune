@@ -121,7 +121,6 @@ class Logger {
   
   // 실제 로그 출력
   static void _log(String level, String message, [dynamic data]) {
-    final timestamp = DateTime.now().toIso8601String();
     final logMessage = '$_prefix $level $message';
     
     if (kDebugMode) {
@@ -182,8 +181,7 @@ class Logger {
   // 보안 체크포인트 로그
   static void securityCheckpoint(String checkpoint, {bool passed = true}) {
     final icon = passed ? '✅' : '❌';
-    final color = passed ? _green : _red;
-    
+
     if (kDebugMode) {
       debugPrint('$icon SECURITY: $checkpoint');
     }
@@ -205,10 +203,8 @@ class Logger {
     int? overallScore,
     String? errorMessage}) {
     if (!kDebugMode) return;
-    
-    final color = success ? _green : _red;
     final icon = success ? '✨' : '❌';
-    
+
     debugPrint('\n${"=" * 60}');
     debugPrint('$icon FORTUNE GENERATION SUMMARY');
     debugPrint('Fortune Type: $fortuneType');

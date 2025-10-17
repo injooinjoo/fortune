@@ -47,11 +47,10 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final fontSize = ref.watch(fontSizeProvider);
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
     final historyState = ref.watch(fortuneHistoryProvider);
-    
+
     return Scaffold(
       backgroundColor: TossTheme.backgroundWhite,
       appBar: AppHeader(

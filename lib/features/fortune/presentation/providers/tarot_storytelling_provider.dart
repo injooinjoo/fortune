@@ -18,10 +18,9 @@ class TarotInterpretationRequest {
 
 final tarotInterpretationProvider = FutureProvider.family<String, TarotInterpretationRequest>(
   (ref, request) async {
-    final apiService = ref.read(fortuneApiServiceEdgeFunctionsProvider);
     final supabase = ref.read(supabaseProvider);
     final user = supabase.auth.currentUser;
-    
+
     if (user == null) {
       throw Exception('사용자 인증이 필요합니다');
 }
@@ -31,14 +30,6 @@ final tarotInterpretationProvider = FutureProvider.family<String, TarotInterpret
     final positionMeaning = TarotHelper.getPositionDescription(
       request.spreadType,
       request.position);
-    
-    // Create interpretation prompt
-    final prompt = _createInterpretationPrompt(
-      cardInfo: cardInfo,
-      position: positionMeaning,
-      question: request.question,
-      isFirstCard: request.position == 0
-    );
 
     try {
       // TODO: Implement tarot interpretation via Edge Functions
@@ -57,16 +48,14 @@ final tarotInterpretationProvider = FutureProvider.family<String, TarotInterpret
 // 타로 전체 해석 프로바이더
 final tarotFullInterpretationProvider = FutureProvider.family<Map<String, dynamic>, Map<String, dynamic>>(
   (ref, params) async {
-    final apiService = ref.read(fortuneApiServiceEdgeFunctionsProvider);
     final supabase = ref.read(supabaseProvider);
     final user = supabase.auth.currentUser;
-    
+
     if (user == null) {
       throw Exception('사용자 인증이 필요합니다');
 }
 
     final cards = params['cards'] as List<int>;
-    final interpretations = params['interpretations'] as List<String>;
     final spreadType = params['spreadType'] as String;
     final question = params['question'] as String?;
 
@@ -103,14 +92,12 @@ Map<String, dynamic> _getCardInfo(int cardIndex) {
         'advice': null};
 }
   }
-  
+
   // Minor Arcana (22-77,
   TarotCardInfo? minorCard;
-  String suit = '';
-  
+
   // Wands (22-35,
   if (cardIndex >= 22 && cardIndex < 36) {
-    suit = 'Wands';
     final wandsCards = TarotMinorArcana.wands.values.toList();
     final index = cardIndex - 22;
     if (index < wandsCards.length) {
@@ -119,7 +106,6 @@ Map<String, dynamic> _getCardInfo(int cardIndex) {
   }
   // Cups (36-49,
   else if (cardIndex >= 36 && cardIndex < 50) {
-    suit = 'Cups';
     final cupsCards = TarotMinorArcana.cups.values.toList();
     final index = cardIndex - 36;
     if (index < cupsCards.length) {
@@ -128,7 +114,6 @@ Map<String, dynamic> _getCardInfo(int cardIndex) {
   }
   // Swords (50-63,
   else if (cardIndex >= 50 && cardIndex < 64) {
-    suit = 'Swords';
     final swordsCards = TarotMinorArcana.swords.values.toList();
     final index = cardIndex - 50;
     if (index < swordsCards.length) {
@@ -137,7 +122,6 @@ Map<String, dynamic> _getCardInfo(int cardIndex) {
   }
   // Pentacles (64-77,
   else if (cardIndex >= 64 && cardIndex < 78) {
-    suit = 'Pentacles';
     final pentaclesCards = TarotMinorArcana.pentacles.values.toList();
     final index = cardIndex - 64;
     if (index < pentaclesCards.length) {
@@ -165,46 +149,6 @@ Map<String, dynamic> _getCardInfo(int cardIndex) {
     'keywords': [],
     'element': 'Unknown',
     'meaning': 'Card information not available'};
-}
-
-String _createInterpretationPrompt({
-  required Map<String, dynamic> cardInfo,
-  required String position,
-  required String? question,
-  required bool isFirstCard}) {
-  final buffer = StringBuffer();
-  
-  buffer.writeln('타로 카드 해석을 스토리텔링 방식으로 작성해주세요.');
-  buffer.writeln();
-  buffer.writeln('정보:');
-  buffer.writeln('이름: ${cardInfo['name']}');
-  buffer.writeln('Fortune cached');
-  buffer.writeln('- 키워드: ${(cardInfo['keywords'] as List).join(', ')}');
-  buffer.writeln('- 원소: ${cardInfo['element']}');
-  
-  if (question != null && question.isNotEmpty) {
-    buffer.writeln();
-    buffer.writeln('Fortune cached');
-}
-  
-  buffer.writeln();
-  buffer.writeln('지침:');
-  buffer.writeln('1. 친근하고 대화하듯이 설명해주세요');
-  buffer.writeln('2. 카드의 상징과 의미를 구체적으로 연결해주세요');
-  buffer.writeln('3. 질문자의 상황에 맞는 실용적인 조언을 포함해주세요');
-  buffer.writeln('4. 희망적이고 긍정적인 톤을 유지해주세요');
-  
-  if (isFirstCard) {
-    buffer.writeln('5. 첫 카드이므로 전체적인 분위기를 설정해주세요');
-}
-  
-  buffer.writeln();
-  buffer.writeln('형식:');
-  buffer.writeln('- 2-3개의 문단으로 구성');
-  buffer.writeln('- 중요한 부분은 **강조**로 표시');
-  buffer.writeln('- 핵심 조언은 💡 이모지로 시작');
-  
-  return buffer.toString();
 }
 
 String _generateLocalInterpretation({
@@ -275,35 +219,6 @@ Map<String, dynamic> _generateLocalSummary({
     'timeline': '앞으로 3-6개월 동안 중요한 변화가 예상됩니다.'};
 }
 
-List<String> _getMinorArcanaKeywords(String suit, int number) {
-  switch (suit) {
-    case 'Wands':
-      return ['열정', '창의성', '영감', '행동'];
-    case 'Cups':
-      return ['감정', '직관', '관계', '사랑'];
-    case 'Swords':
-      return ['생각', '소통', '도전', '진실'];
-    case 'Pentacles':
-      return ['물질', '안정', '성취', '건강'];
-    default:
-      return ['변화', '성장', '기회'];
-}
-}
-
-String _getSuitElement(String suit) {
-  switch (suit) {
-    case 'Wands': return '불';
-    case 'Cups':
-      return '물';
-    case 'Swords':
-      return '공기';
-    case 'Pentacles':
-      return '땅';
-    default:
-      return '영혼';
-  }
-}
-
 String _getSuitMeaning(String suit) {
   switch (suit) {
     case 'Wands': return '열정과 창의적 에너지';
@@ -316,21 +231,4 @@ String _getSuitMeaning(String suit) {
     default:
       return '삶의 변화';
   }
-}
-
-String _getMinorArcanaMeaning(String suit, int number) {
-  if (number == 1) {
-    return '새로운 시작과 순수한 잠재력을 나타냅니다.';
-} else if (number <= 10) {
-    return '$suit 에너지의 발전 과정을 보여줍니다.';
-} else if (number == 11) {
-    return '젊고 신선한 에너지, 새로운 메시지를 전달합니다.';
-} else if (number == 12) {
-    return '행동과 모험, 적극적인 추진력을 상징합니다.';
-} else if (number == 13) {
-    return '성숙하고 직관적인 여성성, 감정의 깊이를 나타냅니다.';
-} else if (number == 14) {
-    return '권위와 리더십, 안정적인 통치력을 상징합니다.';
-}
-  return '이 카드의 에너지가 당신의 상황에 영향을 미치고 있습니다.';
 }

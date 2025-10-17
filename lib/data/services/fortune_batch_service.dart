@@ -162,9 +162,6 @@ class FortuneBatchService {
     required String userId,
     required BatchPackageType packageType,
     Map<String, dynamic>? userProfile}) async {
-    // 패키지에 따른 운세 타입 매핑
-    final fortuneTypes = _getFortuneTypesForPackage(packageType);
-    
     final response = await _apiClient.post(
       '/api/fortune/generate-batch',
       data: {

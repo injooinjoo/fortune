@@ -1081,8 +1081,6 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         return '프로게이머, 이스포츠 선수';
       case CelebrityType.business:
         return '기업인, 경영자';
-      default:
-        return '다양한 분야의 유명인';
     }
   }
 
@@ -1104,8 +1102,6 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         return Icons.sports_esports;
       case CelebrityType.business:
         return Icons.business;
-      default:
-        return Icons.person;
     }
   }
 
@@ -1184,9 +1180,9 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             ),
             const SizedBox(height: 20),
             FortuneButton.retry(
-              onPressed: () {
+              onPressed: () async {
                 // Refresh the provider
-                ref.refresh(allCelebritiesProvider);
+                await ref.refresh(allCelebritiesProvider);
               },
             ),
           ],

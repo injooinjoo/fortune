@@ -16,19 +16,9 @@ class NotificationSettingsPage extends ConsumerStatefulWidget {
 class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsPage> {
   late final FCMService _fcmService;
   late NotificationSettings _settings;
-  bool _isLoading = false;
   TimeOfDay _morningTime = const TimeOfDay(hour: 7, minute: 0);
   TimeOfDay _eveningTime = const TimeOfDay(hour: 21, minute: 0);
-
-  // Fortune types for selective notifications
-  final Map<String, bool> _fortuneTypeNotifications = {
-    'daily': true,
-    'love': false,
-    'career': false,
-    'wealth': false,
-    'health': false,
-    'lucky': true,
-  };
+  bool _isLoading = false;
 
   // TOSS Design System Helper Methods
   bool _isDarkMode(BuildContext context) {

@@ -44,12 +44,10 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _flipController;
   late Animation<double> _flipAnimation;
-  bool _isShowingFront = false;
 
   @override
   void initState() {
     super.initState();
-    _isShowingFront = widget.showFront;
     
     _flipController = AnimationController(
       duration: widget.flipDuration,
@@ -78,9 +76,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
       } else {
         _flipController.reverse();
       }
-      _isShowingFront = widget.showFront;
     } else if (!widget.enableFlipAnimation) {
-      _isShowingFront = widget.showFront;
       _flipController.value = widget.showFront ? 1.0 : 0.0;
     }
   }

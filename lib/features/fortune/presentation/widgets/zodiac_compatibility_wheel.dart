@@ -23,7 +23,6 @@ class ZodiacCompatibilityWheel extends StatefulWidget {
 class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _rotationAnimation;
   late Animation<double> _scaleAnimation;
   String? _hoveredZodiac;
 
@@ -33,13 +32,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this);
-    
-    _rotationAnimation = Tween<double>(
-      begin: 0,
-      end: 2 * math.pi).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut));
-    
+
     _scaleAnimation = Tween<double>(
       begin: 0,
       end: 1).animate(CurvedAnimation(
@@ -355,8 +348,6 @@ class _ZodiacRelationshipPainter extends CustomPainter {
   }
 
   void _drawHarmonyLines(Canvas canvas, Offset center, double radius) {
-    final selectedIndex = ZodiacCompatibilityService.zodiacAnimals.indexOf(selectedZodiac);
-    
     for (final group in ZodiacCompatibilityService.harmonyGroups) {
       if (group.contains(selectedZodiac)) {
         final paint = Paint()

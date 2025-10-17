@@ -158,27 +158,6 @@ class TarotCard {
     return majorCardNames[number] ?? 'unknown';
   }
 
-  /// 마이너 아르카나 파일명 생성
-  String _getMinorCardFileName() {
-    final minorCardNames = {
-      1: 'ace',
-      2: 'two',
-      3: 'three',
-      4: 'four',
-      5: 'five',
-      6: 'six',
-      7: 'seven',
-      8: 'eight',
-      9: 'nine',
-      10: 'ten',
-      11: 'page',
-      12: 'knight',
-      13: 'queen',
-      14: 'king',
-    };
-    return minorCardNames[number] ?? 'unknown';
-  }
-
   /// 카드의 전체 이름 (정방향/역방향 포함)
   String get fullName {
     final reversed = isReversed ? ' (역방향)' : '';

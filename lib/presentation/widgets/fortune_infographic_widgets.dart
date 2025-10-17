@@ -148,28 +148,12 @@ class FortuneInfographicWidgets {
   }
 
   /// Helper methods for color scoring
-  static Color _getScoreColor(int score) {
-    if (score >= 90) return const Color(0xFF00D2FF);
-    if (score >= 80) return const Color(0xFF0066FF);
-    if (score >= 70) return const Color(0xFF7C4DFF);
-    if (score >= 60) return const Color(0xFFFF6B35);
-    return const Color(0xFFFF4757);
-  }
-
   static String _getScoreGrade(int score) {
     if (score >= 90) return 'S';
     if (score >= 80) return 'A';
     if (score >= 70) return 'B';
     if (score >= 60) return 'C';
     return 'D';
-  }
-
-  static Color _getScoreGradeColor(int score) {
-    if (score >= 90) return const Color(0xFF00D2FF);
-    if (score >= 80) return const Color(0xFF0066FF);
-    if (score >= 70) return const Color(0xFF7C4DFF);
-    if (score >= 60) return const Color(0xFFFF6B35);
-    return const Color(0xFFFF4757);
   }
 
   static Color _getKeywordColor(double weight) {

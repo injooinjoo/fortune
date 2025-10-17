@@ -18,7 +18,7 @@ class FaceReadingResultWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Parse result content for display
-    final content = result.content ?? '';
+    final content = result.content;
     final sections = _parseContent(content);
 
     return Container(

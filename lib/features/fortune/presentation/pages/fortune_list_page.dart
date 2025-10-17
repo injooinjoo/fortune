@@ -87,11 +87,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     with SingleTickerProviderStateMixin {
   OverlayEntry? _overlayEntry;
   late AnimationController _animationController;
-  late Animation<double> _slideAnimation;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
-  final Map<String, GlobalKey> _thumbnailKeys = {};
-  
+
   // Scroll controller for navigation bar hiding
   late ScrollController _scrollController;
   bool _isScrollingDown = false;
@@ -113,27 +109,6 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(navigationVisibilityProvider.notifier).show();
     });
-    
-    _slideAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0, // Will be used as a progress indicator
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic));
-    
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.0, // No scaling for now, will calculate dynamically
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic));
-    
-    _fadeAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.0, // Keep opacity at 1.0 (no fade)
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut));
   }
 
   @override
@@ -189,148 +164,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     _overlayEntry = null;
   }
 
-  GlobalKey _getThumbnailKey(String categoryRoute) {
-    return _thumbnailKeys.putIfAbsent(categoryRoute, () => GlobalKey());
-  }
 
-  void _showAnimatedThumbnail(BuildContext context, GlobalKey cardKey, String imagePath, VoidCallback onDismiss) {
-    final RenderBox? renderBox = cardKey.currentContext?.findRenderObject() as RenderBox?;
-    if (renderBox == null) return;
-
-    final cardSize = renderBox.size;
-    final cardPosition = renderBox.localToGlobal(Offset.zero);
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    
-    // Calculate the height for the top portion (60% of screen to overlap with bottom sheet),
-            final topPortionHeight = screenHeight * 0.6;
-
-    _overlayEntry = OverlayEntry(
-      builder: (context) {
-        return AnimatedBuilder(
-          animation: _animationController,
-          builder: (context, child) {
-            final progress = _slideAnimation.value;
-            
-            // Interpolate position
-            final currentLeft = cardPosition.dx * (1 - progress);
-            final currentTop = cardPosition.dy * (1 - progress);
-            final currentWidth = cardSize.width + (screenWidth - cardSize.width) * progress;
-            final currentHeight = cardSize.width + (topPortionHeight - cardSize.width) * progress;
-            
-            // Interpolate border radius
-            final borderRadius = 12.0 * (1 - progress);
-            
-            return Positioned(
-              left: currentLeft,
-              top: currentTop,
-              width: currentWidth,
-              height: currentHeight,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  boxShadow: [
-                    BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.3 * (1 - progress * 0.5)),
-                      blurRadius: 20 + (10 * progress),
-                      offset: Offset(0, 10 * (1 - progress)),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  child: Image.asset(
-                    imagePath,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark300
-                            : TossDesignSystem.gray300,
-                        child: Icon(
-                          Icons.image,
-                          size: 60,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark400
-                              : TossDesignSystem.gray600,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            );
-          });
-      }
-    );
-
-    Overlay.of(context).insert(_overlayEntry!);
-    
-    // Start the animation but don't remove the overlay
-    _animationController.forward();
-    
-    // Store the dismiss callback to be called when bottom sheet closes
-    _currentDismissCallback = () {
-      // Play reverse animation with faster duration
-      _animationController.duration = const Duration(milliseconds: 400);
-      _animationController.reverse().then((_) {
-        _removeOverlay();
-        _animationController.reset();
-        // Reset to original duration for next forward animation
-        _animationController.duration = const Duration(milliseconds: 600);
-        onDismiss();
-      });
-    };
-  }
-  
-  VoidCallback? _currentDismissCallback;
-
-  static const List<FilterCategory> _filterOptions = [
-    FilterCategory(
-      type: FortuneCategoryType.all,
-      name: '전체',
-      icon: Icons.star_rounded,
-      color: Color(0xFF7C3AED)),
-    FilterCategory(
-      type: FortuneCategoryType.love,
-      name: '연애·인연',
-      icon: Icons.favorite_rounded,
-      color: Color(0xFFEC4899)),
-    FilterCategory(
-      type: FortuneCategoryType.career,
-      name: '취업·사업',
-      icon: Icons.work_rounded,
-      color: Color(0xFF3B82F6)),
-    FilterCategory(
-      type: FortuneCategoryType.money,
-      name: '재물·투자',
-      icon: Icons.attach_money_rounded,
-      color: Color(0xFFF59E0B)),
-    FilterCategory(
-      type: FortuneCategoryType.health,
-      name: '건강·라이프',
-      icon: Icons.spa_rounded,
-      color: Color(0xFF10B981)),
-    FilterCategory(
-      type: FortuneCategoryType.traditional,
-      name: '전통·사주',
-      icon: Icons.auto_awesome_rounded,
-      color: Color(0xFFEF4444)),
-    FilterCategory(
-      type: FortuneCategoryType.lifestyle,
-      name: '생활·운세',
-      icon: Icons.calendar_today_rounded,
-      color: Color(0xFF06B6D4)),
-    FilterCategory(
-      type: FortuneCategoryType.interactive,
-      name: '인터랙티브',
-      icon: Icons.touch_app_rounded,
-      color: Color(0xFF9333EA)),
-    FilterCategory(
-      type: FortuneCategoryType.petFamily,
-      name: '반려·육아',
-      icon: Icons.family_restroom_rounded,
-      color: Color(0xFFE11D48))];
 
   static const List<FortuneCategory> _categories = [
     // ==================== Time-based Fortunes (통합) ====================
@@ -646,7 +480,6 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final groupedCategories = _groupCategoriesByType();
 
     return Scaffold(

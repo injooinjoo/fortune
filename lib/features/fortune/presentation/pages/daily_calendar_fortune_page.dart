@@ -28,15 +28,12 @@ class DailyCalendarFortunePage extends BaseFortunePage {
 
 class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarFortunePage> {
   DateTime _selectedDate = DateTime.now();
-  int? _selectedHour;
   String? _holidayName;
   String? _specialName;
   bool _isHoliday = false;
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final userId = ref.read(userProvider).value?.id ?? 'anonymous';
-
     // UnifiedFortuneService 사용
     final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 

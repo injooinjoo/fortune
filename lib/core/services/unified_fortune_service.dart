@@ -365,16 +365,6 @@ class UnifiedFortuneService {
 
     return normalized;
   }
-
-  /// JSONB를 안전하게 문자열로 변환
-  String _jsonbToString(Map<String, dynamic> json) {
-    try {
-      return jsonEncode(_normalizeJsonb(json));
-    } catch (e) {
-      Logger.warning('[UnifiedFortune] JSONB 변환 실패: $e');
-      return '{}';
-    }
-  }
 }
 
 /// ==================== 데이터 모델 ====================

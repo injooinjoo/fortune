@@ -90,9 +90,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
   final FocusNode _focusNode = FocusNode();
   bool _isProcessing = false;
   bool _hasCheckedDeck = false;
-  final bool _showCardDrawing = false;
   late AnimationController _cardAnimationController;
-  late Animation<double> _cardAnimation;
 
   @override
   void initState() {
@@ -101,10 +99,6 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
     _cardAnimationController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
-    );
-    _cardAnimation = CurvedAnimation(
-      parent: _cardAnimationController,
-      curve: Curves.easeInOut,
     );
     // Clear messages when entering the page
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -337,11 +331,9 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final messages = ref.watch(chatMessagesProvider);
     final fontSize = ref.watch(fontSizeProvider);
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
-    final selectedDeck = ref.watch(currentTarotDeckProvider);
 
     return Scaffold(
       backgroundColor: TossDesignSystem.gray50,
@@ -616,7 +608,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
               height: 120,
               width: 100,
               child: Image.asset(
-                card.imageUrl ?? 'assets/images/tarot/major_00.jpg',
+                card.imageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(

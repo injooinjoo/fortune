@@ -32,8 +32,8 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
   
   double _dragStartX = 0;
   double _currentRotation = 0;
-  int _selectedIndex = 15; // Center card selected by default
-  
+  int? _selectedIndex;
+
   @override
   void initState() {
     super.initState();

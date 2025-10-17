@@ -47,8 +47,6 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
     with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late AnimationController _slideController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
 
   // Controllers for input fields
   final TextEditingController _wishController = TextEditingController();
@@ -69,22 +67,6 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
       duration: TossTheme.animationNormal,
       vsync: this,
     );
-
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
 
     // 페이지 로드시 광고 미리 로드
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -125,7 +107,6 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
             // API 호출
             try {
               final supabase = Supabase.instance.client;
-              final session = supabase.auth.currentSession;
               final userProfile = await _getUserProfile();
 
               final response = await supabase.functions.invoke(

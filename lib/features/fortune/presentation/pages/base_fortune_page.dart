@@ -6,7 +6,6 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/glassmorphism/glass_effects.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../data/models/user_profile.dart';
@@ -198,10 +197,15 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       final score = fortune.overallScore ?? 75;
       if (score >= 90) {
         tags.add('최고운');
-      } else if (score >= 80) tags.add('대길');
-      else if (score >= 70) tags.add('길');
-      else if (score >= 60) tags.add('보통');
-      else tags.add('주의');
+      } else if (score >= 80) {
+        tags.add('대길');
+      } else if (score >= 70) {
+        tags.add('길');
+      } else if (score >= 60) {
+        tags.add('보통');
+      } else {
+        tags.add('주의');
+      }
 
       // FortuneHistoryService에 저장
       final historyService = FortuneHistoryService();
@@ -1102,66 +1106,4 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     );
   }
 
-  Widget _buildGenerateButton() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        boxShadow: GlassEffects.glassShadow(elevation: 10)),
-      child: TossButton(
-        text: '운세 보기',
-        onPressed: () async {
-          Logger.info('🖱️ [BaseFortunePage] User clicked generate fortune button', {
-            'fortuneType': widget.fortuneType,
-            'title': widget.title,
-            'hasUserProfile': _userProfile != null,
-            'requiresUserInfo': widget.requiresUserInfo,
-            'timestamp': DateTime.now().toIso8601String()});
-
-          Logger.debug('📺 [BaseFortunePage] Showing interstitial ad before fortune', {
-            'fortuneType': widget.fortuneType});
-
-          // Show interstitial ad before opening bottom sheet
-          await AdService.instance.showInterstitialAdWithCallback(
-            onAdCompleted: () async {
-              Logger.debug('✅ [BaseFortunePage] Ad completed, opening fortune explanation bottom sheet', {
-                'fortuneType': widget.fortuneType});
-
-              // Show bottom sheet for fortune settings after ad
-              FortuneExplanationBottomSheet.show(
-                context,
-                fortuneType: widget.fortuneType,
-                fortuneData: null,
-                onFortuneButtonPressed: () {
-                  Logger.debug('📋 [BaseFortunePage] Bottom sheet fortune button pressed', {
-                    'fortuneType': widget.fortuneType,
-                    'timestamp': DateTime.now().toIso8601String()});
-                  // This will be handled by the bottom sheet
-                }
-              );
-            },
-            onAdFailed: () async {
-              Logger.debug('❌ [BaseFortunePage] Ad failed, still opening fortune explanation bottom sheet', {
-                'fortuneType': widget.fortuneType});
-
-              // Still show bottom sheet even if ad fails
-              FortuneExplanationBottomSheet.show(
-                context,
-                fortuneType: widget.fortuneType,
-                fortuneData: null,
-                onFortuneButtonPressed: () {
-                  Logger.debug('📋 [BaseFortunePage] Bottom sheet fortune button pressed', {
-                    'fortuneType': widget.fortuneType,
-                    'timestamp': DateTime.now().toIso8601String()});
-                  // This will be handled by the bottom sheet
-                }
-              );
-            },
-          );
-        },
-        style: TossButtonStyle.primary,
-        size: TossButtonSize.large,
-        width: double.infinity,
-      ),
-    );
-  }
 }

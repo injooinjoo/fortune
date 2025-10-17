@@ -226,7 +226,7 @@ class SupabaseConnectionService extends ResilientService {
         _isConnected = false;
         _connectionStateController.add(false);
 
-        final success = await initialize(
+        await initialize(
           maxRetries: 3,
           timeout: Duration(seconds: 20),
         );

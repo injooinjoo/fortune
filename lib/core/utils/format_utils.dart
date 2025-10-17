@@ -6,7 +6,6 @@ class FormatUtils {
   // Date formatters
   static final DateFormat _dateFormatFull = DateFormat('yyyy년 M월 d일', 'ko_KR');
   static final DateFormat _dateFormatMedium = DateFormat('M월 d일', 'ko_KR');
-  static final DateFormat _dateFormatShort = DateFormat('M/d', 'ko_KR');
   static final DateFormat _dateFormatWeekday = DateFormat('EEEE', 'ko_KR');
   
   // Time formatters
@@ -17,7 +16,6 @@ class FormatUtils {
   // Number formatters
   static final NumberFormat _numberFormat = NumberFormat('#,###', 'ko_KR');
   static final NumberFormat _decimalFormat = NumberFormat('#,##0.0#', 'ko_KR');
-  static final NumberFormat _percentFormat = NumberFormat.percentPattern('ko_KR');
   static final NumberFormat _currencyFormat = NumberFormat.currency(
     locale: 'ko_KR',
     symbol: '₩',

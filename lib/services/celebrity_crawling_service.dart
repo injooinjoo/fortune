@@ -153,7 +153,7 @@ class CelebrityCrawlingService {
           .select('id')
           .count(CountOption.exact);
 
-      final totalCount = totalResponse.count ?? 0;
+      final totalCount = totalResponse.count;
 
       // 최근 업데이트 시간
       DateTime? lastCrawledAt;

@@ -58,7 +58,6 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,

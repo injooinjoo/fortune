@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../services/social_auth_service.dart';
-import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/widgets/social_accounts_section.dart';
 
 class SocialAccountsScreen extends ConsumerStatefulWidget {
@@ -320,11 +319,6 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeModeProvider);
-    final isDarkMode = themeMode == ThemeMode.dark ||
-        (themeMode == ThemeMode.system &&
-            MediaQuery.of(context).platformBrightness == Brightness.dark);
-
     if (isLoading) {
       return Scaffold(
         backgroundColor: _getBackgroundColor(context),
@@ -429,7 +423,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                     children: [
                       for (int i = 0; i < userIdentities.length; i++)
                         _buildConnectedAccount(
-                          provider: userIdentities[i].provider ?? '',
+                          provider: userIdentities[i].provider,
                           email: userIdentities[i].identityData?['email'] ?? '',
                           isPrimary: userIdentities[i].provider ==
                               userProfile?['primary_provider'],

@@ -71,7 +71,6 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
     return fortune;
   }
 
-  @override
   Widget buildContent(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),

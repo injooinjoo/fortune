@@ -29,7 +29,6 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
   bool _isLoading = false;
 
   late AnimationController _buttonController;
-  late Animation<double> _buttonAnimation;
 
   List<Region> _popularRegions = [];
   List<Region> _searchResults = [];
@@ -59,9 +58,6 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
     _buttonController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
-    );
-    _buttonAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _buttonController, curve: Curves.easeInOut),
     );
     _loadPopularRegions();
   }

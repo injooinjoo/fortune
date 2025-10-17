@@ -17,10 +17,12 @@ import 'presentation/providers/theme_provider.dart';
 //     if (dart.library.html) 'core/utils/url_cleaner_web.dart';
 import 'services/ad_service.dart';
 import 'services/remote_config_service.dart';
-import 'presentation/providers/font_size_provider.dart';
+// import 'presentation/providers/font_size_provider.dart'; // ⚠️ REMOVED: 이제 user_settings_provider 사용
 import 'core/services/test_auth_service.dart';
 import 'core/services/supabase_connection_service.dart';
 import 'core/utils/route_observer_logger.dart';
+import 'core/services/error_reporter_service.dart';
+import 'core/providers/user_settings_provider.dart';
 
 void main() async {
   debugPrint('🚀 [STARTUP] App main() started');
@@ -63,9 +65,10 @@ void main() async {
     Logger.error('Hive initialization failed', e);
   }
 
-  // Firebase is initialized automatically by the firebase_core plugin
-  // No manual initialization needed here
-  debugPrint('🚀 [STARTUP] Using Firebase (auto-initialized by plugin)');
+  // Initialize Firebase
+  // Firebase Core는 플러그인에 의해 자동 초기화되지만,
+  // Remote Config 같은 일부 서비스는 명시적 초기화가 필요할 수 있음
+  debugPrint('🚀 [STARTUP] Firebase initialized by plugin');
 
   // Initialize Supabase with enhanced connection management
   try {
@@ -88,18 +91,16 @@ void main() async {
     Logger.warning('Supabase initialization failed (optional feature, using offline mode): $e');
   }
 
-  // Initialize Firebase Remote Config (after Firebase initialization)
-  Future(() async {
-    try {
-      debugPrint('🚀 [STARTUP] Initializing Firebase Remote Config...');
-      await RemoteConfigService().initialize();
-      debugPrint('🚀 [STARTUP] Remote Config initialized successfully');
-      Logger.info('Remote Config initialized successfully');
-    } catch (e) {
-      debugPrint('⚠️ [STARTUP] Remote Config initialization failed: $e');
-      Logger.warning('Remote Config initialization failed (using default values): $e');
-    }
-  });
+  // Initialize Firebase Remote Config (synchronously to ensure Firebase is ready)
+  try {
+    debugPrint('🚀 [STARTUP] Initializing Firebase Remote Config...');
+    await RemoteConfigService().initialize();
+    debugPrint('🚀 [STARTUP] Remote Config initialized successfully');
+    Logger.info('Remote Config initialized successfully');
+  } catch (e) {
+    debugPrint('⚠️ [STARTUP] Remote Config initialization failed: $e');
+    Logger.warning('Remote Config initialization failed (using default values): $e');
+  }
 
   // Initialize Social Login SDKs with error handling
   if (!kIsWeb) {
@@ -145,10 +146,9 @@ void main() async {
     Logger.info('Ad Service disabled for testing');
   }
   
-  // Initialize SharedPreferences
-  SharedPreferences? sharedPreferences;
+  // Initialize SharedPreferences (used by user settings)
   try {
-    sharedPreferences = await SharedPreferences.getInstance();
+    await SharedPreferences.getInstance();
   } catch (e) {
     Logger.error('SharedPreferences initialization failed', e);
   }
@@ -176,20 +176,23 @@ void main() async {
     }
   }
 
-  debugPrint('🚀 [STARTUP] All initializations complete, starting app...');
-  if (sharedPreferences != null) {
-    runApp(
-      ProviderScope(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-        ],
-        child: const MyApp()));
-  } else {
-    // Run without SharedPreferences override if it failed
-    runApp(
-      const ProviderScope(
-        child: MyApp()));
+  // Initialize Error Reporter Service (all modes)
+  try {
+    debugPrint('🚨 [STARTUP] Initializing Error Reporter Service...');
+    ErrorReporterService().initialize();
+    debugPrint('🚨 [STARTUP] Error Reporter Service initialized');
+    Logger.info('Real-time error monitoring enabled');
+  } catch (e) {
+    debugPrint('⚠️ [STARTUP] Error Reporter Service initialization failed: $e');
+    Logger.error('Error Reporter Service initialization failed', e);
   }
+
+  debugPrint('🚀 [STARTUP] All initializations complete, starting app...');
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
   debugPrint('🚀 [STARTUP] App started successfully');
 }
 
@@ -200,11 +203,13 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final router = ref.watch(appRouterProvider);
-    
+    // 🎯 사용자 폰트 설정을 앱 전체에 적용
+    final userSettings = ref.watch(userSettingsProvider);
+
     return MaterialApp.router(
       title: 'Fortune - 운세 서비스',
-      theme: TossDesignSystem.lightTheme(),
-      darkTheme: TossDesignSystem.darkTheme(),
+      theme: TossDesignSystem.lightTheme(fontScale: userSettings.fontScale),
+      darkTheme: TossDesignSystem.darkTheme(fontScale: userSettings.fontScale),
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
       routerConfig: router,

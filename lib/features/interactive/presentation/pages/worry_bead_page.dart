@@ -402,8 +402,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
     // 토큰 확인
     final tokenBalance = ref.read(tokenBalanceProvider);
     if (tokenBalance?.remainingTokens != null &&
-        tokenBalance!.remainingTokens < _requiredTokens && 
-        !(tokenBalance.hasUnlimitedAccess ?? false)) {
+        tokenBalance!.remainingTokens < _requiredTokens &&
+        !tokenBalance.hasUnlimitedAccess) {
       _showInsufficientTokensModal();
       return;
     }
@@ -448,9 +448,9 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           fortuneType: 'worry_bead',
           amount: _requiredTokens);
       }
-      
+
       // 토큰 잔액 새로고침
-      ref.refresh(tokenBalanceProvider);
+      await ref.refresh(tokenBalanceProvider);
       
       // TODO: 실제 API 호출로 대체
       await Future.delayed(const Duration(seconds: 1));

@@ -23,7 +23,6 @@ class Toast {
       // Overlay가 없는 경우 조기 리턴
       return;
     }
-    final theme = Theme.of(context);
 
     final toast = OverlayEntry(
       builder: (context) => _ToastWidget(
@@ -140,19 +139,6 @@ class _ToastWidgetState extends State<_ToastWidget>
         return Icons.warning_rounded;
       case ToastType.info:
         return Icons.info_rounded;
-    }
-  }
-
-  Color get _color {
-    switch (widget.type) {
-      case ToastType.success:
-        return TossDesignSystem.successGreen;
-      case ToastType.error:
-        return TossDesignSystem.errorRed;
-      case ToastType.warning:
-        return TossDesignSystem.warningOrange;
-      case ToastType.info:
-        return TossDesignSystem.tossBlue;
     }
   }
 

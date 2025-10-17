@@ -132,7 +132,6 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
       child: Row(
         children: List.generate(2, (index) { // Changed from 3 to 2 steps
           final isActive = index <= _currentStep - 1; // Adjust for starting at step 1
-          final isCompleted = index < _currentStep - 1;
           
           return Expanded(
             child: Container(
@@ -152,154 +151,6 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
     );
   }
 
-  Widget _buildWelcomePage() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          const SizedBox(height: 40),
-          
-          // 헤더 아이콘
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  TossTheme.primaryBlue.withValues(alpha: 0.1),
-                  TossTheme.success.withValues(alpha: 0.1),
-                ],
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.favorite_rounded,
-              size: 60,
-              color: TossTheme.primaryBlue,
-            ),
-          ).animate()
-            .scale(duration: 600.ms, curve: Curves.elasticOut)
-            .then()
-            .shimmer(duration: 1500.ms),
-          
-          const SizedBox(height: 32),
-          
-          // 제목
-          Text(
-            'AI가 당신의\n건강 상태를 분석해드릴게요',
-            style: TossTheme.heading1.copyWith(
-              color: TossTheme.textBlack,
-              height: 1.3,
-            ),
-            textAlign: TextAlign.center,
-          ).animate()
-            .fadeIn(delay: 200.ms, duration: 600.ms)
-            .slideY(begin: 0.2, end: 0),
-          
-          const SizedBox(height: 16),
-          
-          // 설명
-          Text(
-            '오늘의 컨디션과 신경쓰이는 부위를 알려주시면\n맞춤형 건강 조언을 제공해드릴게요',
-            style: TossTheme.subtitle1.copyWith(
-              color: TossTheme.textGray600,
-              height: 1.5,
-            ),
-            textAlign: TextAlign.center,
-          ).animate()
-            .fadeIn(delay: 400.ms, duration: 600.ms)
-            .slideY(begin: 0.2, end: 0),
-          
-          const SizedBox(height: 48),
-          
-          // 특징 리스트
-          _buildFeatureList(),
-          
-          const SizedBox(height: 48),
-          
-          // 시작 버튼
-          SizedBox(
-            width: double.infinity,
-            child: TossButton(
-              text: '건강 분석 시작하기',
-              onPressed: _goToNextStep,
-              icon: const Icon(Icons.auto_awesome_rounded, size: 20),
-            ),
-          ).animate()
-            .fadeIn(delay: 800.ms, duration: 600.ms)
-            .slideY(begin: 0.2, end: 0),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeatureList() {
-    final features = [
-      {'icon': Icons.psychology_rounded, 'title': 'AI 맞춤 분석', 'desc': '개인 상태에 맞는 건강 조언'},
-      {'icon': Icons.schedule_rounded, 'title': '시간대별 컨디션', 'desc': '하루 컨디션 변화 예측'},
-      {'icon': Icons.healing_rounded, 'title': '실용적 건강 팁', 'desc': '실생활에 도움되는 관리법'},
-    ];
-
-    return Column(
-      children: features.asMap().entries.map((entry) {
-        final index = entry.key;
-        final feature = entry.value;
-        
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: TossDesignSystem.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: TossTheme.borderGray200),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  feature['icon'] as IconData,
-                  color: TossTheme.primaryBlue,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      feature['title'] as String,
-                      style: TossTheme.body1.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: TossTheme.textBlack,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      feature['desc'] as String,
-                      style: TossTheme.body3.copyWith(
-                        color: TossTheme.textGray600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ).animate(delay: (600 + index * 100).ms)
-          .fadeIn(duration: 500.ms)
-          .slideX(begin: -0.1, end: 0);
-      }).toList(),
-    );
-  }
 
   Widget _buildConditionSelectionPage(bool isDark) {
     return SingleChildScrollView(
@@ -943,19 +794,6 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
     }
   }
 
-  void _goToPreviousStep() {
-    if (_currentStep > 1) { // Adjusted for starting at step 1
-      HapticFeedback.lightImpact();
-      setState(() {
-        _currentStep--;
-      });
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutCubic,
-      );
-    }
-  }
-
   Future<void> _generateHealthFortune() async {
     setState(() {
       _isLoading = true;
@@ -1038,7 +876,6 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
 
   /// FortuneResult를 HealthFortuneResult로 변환
   HealthFortuneResult _convertToHealthFortuneResult(core_fortune.FortuneResult fortuneResult) {
-    final fortuneData = fortuneResult.data['fortune_data'] as Map<String, dynamic>? ?? {};
 
     // 간단한 mock 변환 (기존 UI 호환)
     return HealthFortuneResult(

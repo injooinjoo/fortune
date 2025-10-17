@@ -143,7 +143,6 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
     }
   }
 
-  @override
   Widget buildContent(BuildContext context, Fortune fortune) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),

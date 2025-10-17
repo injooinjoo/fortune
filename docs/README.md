@@ -77,6 +77,7 @@ docs/
 - [Git + JIRA 워크플로우](development/GIT_JIRA_WORKFLOW.md) - Git과 JIRA 통합
 - [JIRA 설정](development/JIRA_CONFIG.md) - JIRA 프로젝트 설정
 - [UX 요청 처리 가이드](development/UX_REQUEST_GUIDE.md) - UX 피드백 자동 처리
+- [실시간 에러 모니터링](development/RUNTIME_ERROR_MONITORING.md) ⭐️ - 런타임 에러 자동 JIRA 등록
 
 ### MCP & Agent
 - [MCP 설정 가이드](development/MCP_SETUP_GUIDE.md) - Model Context Protocol 서버 설정

@@ -411,9 +411,9 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
       await ref.read(tokenProvider.notifier).consumeTokens(
         fortuneType: 'face_reading',
         amount: _requiredTokens);
-      
+
       // 토큰 잔액 새로고침
-      ref.refresh(tokenBalanceProvider);
+      await ref.refresh(tokenBalanceProvider);
       
       setState(() {
         _analysisResult = '''

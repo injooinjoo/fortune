@@ -742,8 +742,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
   
   Widget _buildNetworkTypesChart(Map<String, dynamic> types, ThemeData theme) {
     final List<PieChartSectionData> sections = [];
-    int index = 0;
-    
+
     types.forEach((key, value) {
       sections.add(
         PieChartSectionData(
@@ -758,7 +757,6 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
           ),
         ),
       );
-      index++;
     });
     
     return PieChart(

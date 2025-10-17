@@ -11,7 +11,6 @@ final basicFortuneRoutes = [
     path: '/saju',
     name: 'fortune-saju',
     builder: (context, state) {
-      final extra = state.extra as Map<String, dynamic>?;
       return const SajuPage();
     }),
 

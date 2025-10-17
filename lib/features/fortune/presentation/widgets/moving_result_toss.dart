@@ -37,11 +37,9 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
   late List<DateTime> _luckyDates;
   late String _luckyDirection;
   late String _mainAdvice;
-  
+
   late AnimationController _scoreController;
-  late Animation<double> _scoreAnimation;
   late AnimationController _cardController;
-  late Animation<double> _cardAnimation;
 
   @override
   void initState() {
@@ -52,16 +50,12 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
       duration: const Duration(seconds: 2),
       vsync: this,
     );
-    _scoreAnimation = Tween<double>(begin: 0, end: _overallScore / 100)
-        .animate(CurvedAnimation(parent: _scoreController, curve: Curves.easeOutCubic));
-    
+
     _cardController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _cardAnimation = Tween<double>(begin: 0, end: 1)
-        .animate(CurvedAnimation(parent: _cardController, curve: Curves.easeOut));
-    
+
     // Start animations
     Future.delayed(const Duration(milliseconds: 300), () {
       _scoreController.forward();

@@ -26,13 +26,6 @@ class CacheService {
     await cleanExpiredCache();
   }
 
-  String _generateCacheKey(String fortuneType, Map<String, dynamic> params) {
-    final userId = params['userId'] ?? 'anonymous';
-    final dateKey = _getDateKeyForType(fortuneType);
-    // Simplify the key generation to avoid inconsistencies
-    return '$userId:$fortuneType:$dateKey';
-  }
-
   String _getDateKeyForType(String fortuneType) {
     final now = DateTime.now();
 

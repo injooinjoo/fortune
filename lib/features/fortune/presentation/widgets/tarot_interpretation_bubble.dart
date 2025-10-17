@@ -29,9 +29,8 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<int> _typingAnimation;
-  
+
   bool _isExpanded = false;
-  final int _maxLines = 4;
   String _displayedText = '';
   bool _typingComplete = false;
 
@@ -101,7 +100,6 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final lines = (_typingComplete ? widget.interpretation : _displayedText).split('\n\n');
     
     return FadeTransition(

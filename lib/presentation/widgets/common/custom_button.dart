@@ -42,21 +42,17 @@ class CustomButton extends StatelessWidget {
     
     // Determine colors based on variant
     Color? bgColor;
-    Color? fgColor;
     BorderSide? borderSide;
-    
+
     switch (variant) {
       case ButtonVariant.primary:
         bgColor = backgroundColor ?? theme.primaryColor;
-        fgColor = textColor ?? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.white);
         break;
       case ButtonVariant.secondary:
         bgColor = backgroundColor ?? theme.primaryColor.withValues(alpha: 0.1);
-        fgColor = textColor ?? theme.primaryColor;
         break;
       case ButtonVariant.outline:
         bgColor = backgroundColor ?? TossDesignSystem.white.withValues(alpha: 0.0);
-        fgColor = textColor ?? theme.primaryColor;
         borderSide = BorderSide(color: theme.primaryColor);
         break;
     }

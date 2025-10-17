@@ -201,9 +201,8 @@ class WidgetDataManager {
   /// Handle widget click from native side
   static Future<void> handleWidgetClick(Map<String, dynamic> params) async {
     try {
-      final widgetType = params['widget_type'];
       Logger.info('Supabase initialized successfully');
-      
+
       // Navigate to appropriate screen based on widget type
       // This should be implemented based on your navigation structure
     } catch (e) {

@@ -11,7 +11,6 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../talisman/presentation/widgets/talisman_premium_bottom_sheet.dart';
-import '../../../../services/in_app_purchase_service.dart';
 
 class TalismanFortunePage extends ConsumerStatefulWidget {
   const TalismanFortunePage({super.key});
@@ -306,9 +305,9 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
   Future<void> _handleSubscription() async {
     try {
       // TODO: 실제 구독 처리 로직
-      final purchaseService = InAppPurchaseService();
+      // final purchaseService = InAppPurchaseService();
       // await purchaseService.purchaseSubscription('premium_monthly');
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('구독 기능은 준비 중입니다')),
       );
@@ -322,9 +321,9 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
   Future<void> _handleOneTimePurchase() async {
     try {
       // TODO: 실제 일회성 구매 처리 로직
-      final purchaseService = InAppPurchaseService();
+      // final purchaseService = InAppPurchaseService();
       // await purchaseService.purchaseOneTime('premium_talisman');
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('구매 기능은 준비 중입니다')),
       );

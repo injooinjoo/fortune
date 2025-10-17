@@ -54,51 +54,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
   bool _showPreviewScreen = false; // 프리뷰 화면 표시 여부
   bool _isInitializing = false; // 초기화 중복 방지
   bool _hasCachedData = false; // 캐시 데이터 존재 여부
-  
-  // Pull-to-refresh를 위한 새로고침 함수 (하루 1회 제한)
-  Future<void> _refreshFortuneData() async {
-    try {
-      // 마지막 새로고침 시간 확인 (하루 1회 제한)
-      final prefs = await SharedPreferences.getInstance();
-      final today = DateTime.now();
-      final todayKey = '${today.year}-${today.month}-${today.day}';
-      final lastRefreshDate = prefs.getString('last_refresh_date');
-
-      if (lastRefreshDate == todayKey) {
-        debugPrint('🔄 Pull-to-refresh 제한: 오늘 이미 새로고침 완료');
-        return; // 오늘 이미 새로고침했으면 실행하지 않음
-      }
-
-      debugPrint('🔄 Pull-to-refresh initiated - clearing cache and loading fresh data');
-
-      // 캐시 무효화
-      final userId = supabase.auth.currentUser?.id;
-      if (userId != null) {
-        await _cacheService.removeCachedFortune('daily', {'userId': userId});
-        await _cacheService.removeCachedStorySegments('daily', {'userId': userId});
-      }
-
-      // Provider 상태 초기화
-      ref.read(dailyFortuneProvider.notifier).reset();
-
-      // 새로운 데이터 로드
-      setState(() {
-        isLoadingFortune = true;
-        todaysFortune = null;
-        storySegments = null;
-        _hasViewedStoryToday = false; // 새로운 스토리 보기 위해 재설정
-      });
-
-      await _loadTodaysFortune();
-
-      // 새로고침 날짜 저장
-      await prefs.setString('last_refresh_date', todayKey);
-
-      debugPrint('✅ Pull-to-refresh completed');
-    } catch (e) {
-      debugPrint('❌ Pull-to-refresh failed: $e');
-    }
-  }
 
   @override
   void initState() {
@@ -903,8 +858,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
     String userName,
     fortune_entity.Fortune fortune,
   ) {
-    final now = DateTime.now();
-    
     // 유효한 운세 데이터가 없으면 빈 세그먼트 반환하고 새로 로드 시도
     if (fortune.overallScore == null) {
       debugPrint('⚠️ Fortune overallScore is null, triggering fortune reload');
@@ -1118,12 +1071,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
       return '무리한 도전보다는\n안정을 추구하세요.';
     }
   }
-  
-  String _getWeekdayKorean(int weekday) {
-    const weekdays = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
-    return weekdays[weekday - 1];
-  }
-  
+
   String _getColorName(dynamic color) {
     if (color is String) {
       if (color.startsWith('#')) {

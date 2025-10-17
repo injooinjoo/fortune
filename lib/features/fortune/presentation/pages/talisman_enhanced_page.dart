@@ -161,7 +161,6 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final state = ref.watch(talismanCreationProvider);
 
     return Scaffold(

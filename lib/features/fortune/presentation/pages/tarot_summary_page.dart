@@ -11,7 +11,6 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../shared/components/app_header.dart'; // For FontSize enum
 import '../../../../presentation/providers/font_size_provider.dart';
-import '../../../../presentation/providers/token_provider.dart';
 import '../providers/tarot_storytelling_provider.dart';
 import '../widgets/mystical_background.dart';
 import 'package:go_router/go_router.dart';
@@ -164,10 +163,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final fontSize = ref.watch(fontSizeProvider);
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
-    final spread = TarotMetadata.spreads[widget.spreadType];
 
     return Scaffold(
       backgroundColor: TossDesignSystem.black,
@@ -414,11 +411,10 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
 
   Widget _buildMiniCard(int index, double fontScale) {
     if (index >= widget.cards.length) return const SizedBox();
-    
+
     final cardIndex = widget.cards[index];
     final imagePath = _getCardImagePath(cardIndex);
-    final position = TarotHelper.getPositionDescription(widget.spreadType, index);
-    
+
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -773,63 +769,6 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildActionButtons(double fontScale) {
-    final tokenCount = ref.watch(tokenProvider).balance?.remainingTokens ?? 0;
-    
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: TossButton(
-            text: '새로운 리딩 시작하기',
-            onPressed: () {
-              context.goNamed('interactive-tarot');
-            },
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
-            icon: Icon(Icons.refresh),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: TossButton(
-                text: '과거 리딩',
-                onPressed: () {
-                  context.pushNamed('history');
-                },
-                style: TossButtonStyle.ghost,
-                size: TossButtonSize.medium,
-                icon: Icon(Icons.history),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: TossButton(
-                text: '홈으로',
-                onPressed: () {
-                  context.go('/');
-                },
-                style: TossButtonStyle.ghost,
-                size: TossButtonSize.medium,
-                icon: Icon(Icons.home),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Text(
-          '소울: $tokenCount',
-          style: TextStyle(
-            fontSize: 12 * fontScale,
-            color: TossDesignSystem.white.withValues(alpha: 0.54),
-          ),
-        ),
-      ],
     );
   }
 

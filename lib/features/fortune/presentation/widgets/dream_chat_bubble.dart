@@ -38,8 +38,6 @@ class _FortuneTellerBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     final content = Padding(
       padding: const EdgeInsets.symmetric(
         vertical: TossTheme.spacingS,
@@ -134,7 +132,6 @@ class _UserBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(
@@ -193,7 +190,6 @@ class _LoadingBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(
@@ -298,7 +294,6 @@ class _ResultBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(

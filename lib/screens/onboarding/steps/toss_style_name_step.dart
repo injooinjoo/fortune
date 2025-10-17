@@ -29,7 +29,6 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
   final FocusNode _focusNode = FocusNode();
   late final SocialAuthService _socialAuthService;
   bool _isValid = false;
-  bool _isLoading = false;
   bool _bottomSheetLoading = false;
 
   @override
@@ -194,62 +193,6 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
         ),
       ],
     );
-  }
-
-  Future<void> _handleSocialLogin(String provider) async {
-    // Close the bottom sheet first
-    Navigator.pop(context);
-    
-    setState(() {
-      _isLoading = true;
-    });
-    
-    try {
-      AuthResponse? response;
-      
-      switch (provider) {
-        case 'google':
-          response = await _socialAuthService.signInWithGoogle(context: context);
-          break;
-        case 'apple':
-          response = await _socialAuthService.signInWithApple();
-          break;
-        case 'kakao':
-          response = await _socialAuthService.signInWithKakao();
-          break;
-        case 'naver':
-          response = await _socialAuthService.signInWithNaver();
-          break;
-      }
-      
-      // OAuth flows return null (handled by deep linking)
-      // Direct auth flows return AuthResponse
-      if (response != null && response.user != null && mounted) {
-        // Login successful, navigate to home
-        context.go('/home');
-      }
-      // For OAuth flows, the auth state listener will handle navigation
-      
-    } catch (error) {
-      Logger.error('소셜 로그인 실패: $provider', error);
-      
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('로그인에 실패했습니다. 다시 시도해주세요.'),
-            backgroundColor: TossDesignSystem.errorRed,
-          ),
-        );
-        
-        // Reopen the bottom sheet for retry
-        _showSocialLoginBottomSheet(context);
-      }
-    }
   }
 
   Future<void> _handleSocialLoginInBottomSheet(String provider, StateSetter setBottomSheetState) async {

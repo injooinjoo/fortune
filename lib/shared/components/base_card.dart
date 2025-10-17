@@ -34,10 +34,9 @@ class BaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fortuneTheme = context.fortuneTheme;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     final cardColor = backgroundColor ?? (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white);
     
     Widget content = Container(

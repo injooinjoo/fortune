@@ -70,7 +70,6 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -98,7 +97,6 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
   }
 
   Widget _buildPlatformSelector() {
-    final theme = Theme.of(context);
     return Container(
       height: 50,
       decoration: BoxDecoration(
@@ -125,8 +123,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
 
   Widget _buildPlatformTab(String platform, String label, IconData icon) {
     final isSelected = selectedPlatform == platform;
-    final theme = Theme.of(context);
-    
+
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -168,8 +165,6 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
 
   Widget _buildInfluencerGrid() {
     final influencers = influencerData[selectedPlatform] ?? [];
-    final theme = Theme.of(context);
-    
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -276,171 +271,6 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
             .fadeIn(delay: (50 * index).ms, duration: 600.ms)
             .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
       },
-    );
-  }
-
-  Future<void> _generateFortune(BuildContext context) async {
-    // final authProvider = context.read<AuthProvider>();
-    // final fortuneProvider = context.read<FortuneProvider>();
-    // final userProfile = authProvider.userProfile;
-
-    final requestData = {
-      'fortuneType': 'influencer',
-      'userId': 'user123', // authProvider.userId,
-      'name': '사용자', // userProfile?.name ?? '사용자',
-      'birthDate': DateTime.now().toIso8601String(), // userProfile?.birthDate ?? DateTime.now().toIso8601String(),
-      'platform': selectedPlatform,
-      'influencer': selectedInfluencer
-    };
-
-    try {
-      // final result = await fortuneProvider.generateFortune(
-      //   fortuneType: 'influencer',
-      //   requestData: requestData
-      // );
-      
-      final result = {'message': 'Test fortune result'};
-
-      if (mounted) {
-        _showFortuneResult(context, result);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('오류가 발생했습니다: $e')),
-        );
-      }
-    }
-  }
-
-  void _showFortuneResult(BuildContext context, Map<String, dynamic> result) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        builder: (context, scrollController) => Container(
-          decoration: const BoxDecoration(
-            color: TossDesignSystem.gray100,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: ListView(
-            controller: scrollController,
-            padding: const EdgeInsets.all(20),
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: TossDesignSystem.gray300,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                '$selectedInfluencer님처럼 성공하는 인플루언서 운세',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              _buildResultSection('콘텐츠 성공 예측', result['contentSuccess']),
-              _buildResultSection('구독자 증가 예측', result['subscriberGrowth']),
-              _buildResultSection('추천 콘텐츠', result['recommendedContent']),
-              _buildResultSection('최적 업로드 시간', result['bestUploadTime']),
-              _buildResultSection('협업 운', result['collaborationLuck']),
-              _buildResultSection('수익화 전망', result['monetizationOutlook']),
-              if (result['tips'] != null)
-                  _buildTipsSection(result['tips']),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildResultSection(String title, dynamic content) {
-    if (content == null) return const SizedBox.shrink();
-    
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [TossDesignSystem.errorRed, TossDesignSystem.errorRed.withValues(alpha: 0.7)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: TossDesignSystem.white,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            content.toString(),
-            style: const TextStyle(
-              fontSize: 14,
-              color: TossDesignSystem.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTipsSection(List<dynamic> tips) {
-    return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: TossDesignSystem.backgroundPrimary,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: TossDesignSystem.errorRed.withValues(alpha: 0.3))
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '성공 팁 💡',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: TossDesignSystem.errorRed),
-          ),
-          const SizedBox(height: 8),
-          ...tips.map((tip) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('• ', style: TextStyle(color: TossDesignSystem.errorRed)),
-                Expanded(
-                  child: Text(
-                    tip.toString(),
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-          )),
-        ],
-      ),
     );
   }
 }

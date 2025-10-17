@@ -38,13 +38,11 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
   late AnimationController _shuffleController;
   late AnimationController _spreadController;
   late AnimationController _glowController;
-  late Animation<double> _shuffleAnimation;
   late Animation<double> _spreadAnimation;
   late Animation<double> _glowAnimation;
 
   // Card states
   final Map<int, bool> _cardFlipped = {};
-  final Map<int, Offset> _cardPositions = {};
 
   @override
   void initState() {
@@ -64,11 +62,6 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat(reverse: true);
-
-    _shuffleAnimation = CurvedAnimation(
-      parent: _shuffleController,
-      curve: Curves.easeInOut,
-    );
 
     _spreadAnimation = CurvedAnimation(
       parent: _spreadController,

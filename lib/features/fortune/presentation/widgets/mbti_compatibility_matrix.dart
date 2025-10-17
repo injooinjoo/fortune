@@ -198,7 +198,6 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                     children: [
                       const SizedBox(width: AppSpacing.spacing15), // 왼쪽 여백
                       ..._mbtiTypes.map((type) {
-                        final col = _mbtiTypes.indexOf(type);
                         return SizedBox(
                           width: 45,
                           child: Center(

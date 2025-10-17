@@ -43,7 +43,7 @@ class FortuneApiService {
         .maybeSingle();
     
     final params = {
-      'userId': null,
+      'userId': userId,  // Fixed: was null, now properly set
       if (date != null) 'date': null,
       if (userProfileResponse != null) ...{
         'birthDate': userProfileResponse['birth_date'],

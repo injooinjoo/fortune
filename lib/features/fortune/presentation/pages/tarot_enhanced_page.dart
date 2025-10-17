@@ -41,13 +41,11 @@ class TarotEnhancedPage extends ConsumerStatefulWidget {
   ConsumerState<TarotEnhancedPage> createState() => _TarotEnhancedPageState();
 }
 
-class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage> 
+class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
     with TickerProviderStateMixin {
   late AnimationController _heroController;
   late AnimationController _fadeController;
-  late Animation<double> _heroAnimation;
-  late Animation<double> _fadeAnimation;
-  
+
   TarotSpreadType? _selectedSpread;
   bool _showSpreadSelection = false;  // Start with question input, not spread selection
   bool _showQuestionInput = true;
@@ -63,15 +61,7 @@ class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this);
-    
-    _heroAnimation = CurvedAnimation(
-      parent: _heroController,
-      curve: Curves.easeInOut);
-    
-    _fadeAnimation = CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeIn);
-    
+
     _heroController.forward();
     _fadeController.forward();
   }

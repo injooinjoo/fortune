@@ -53,17 +53,6 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
     }
   }
 
-  void _previousStep() {
-    if (_currentStep > 0) {
-      setState(() {
-        _currentStep--;
-      });
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
 
   bool _validateStep1() {
     if (_currentRole == null) {

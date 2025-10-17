@@ -122,7 +122,6 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
     
     for (final bloodType in _bloodTypes) {
       for (final rh in _rhTypes) {
-        final col = _bloodTypes.indexOf(bloodType) * 2 + _rhTypes.indexOf(rh);
         headers.add(
           Expanded(
             child: Center(
@@ -346,8 +345,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
 
   Widget _buildBloodTypeInfo(String bloodType, String rh) {
     final characteristics = BloodTypeAnalysisService.bloodTypeCharacteristics[bloodType]!;
-    final rhData = BloodTypeAnalysisService.rhCharacteristics[rh]!;
-    
+
     return Column(
       children: [
         Container(

@@ -527,8 +527,6 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
         return TarotDeckType.thoth;
       case 'after_tarot':
         return TarotDeckType.afterTarot;
-      case 'before_tarot':
-        return TarotDeckType.beforeTarot;
       case 'golden_dawn_cicero':
         return TarotDeckType.goldenDawnCicero;
       case 'golden_dawn_wang':

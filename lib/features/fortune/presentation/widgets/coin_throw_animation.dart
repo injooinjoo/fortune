@@ -25,8 +25,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
   late AnimationController _rotationController;
   late AnimationController _splashController;
   late AnimationController _rippleController;
-  
-  late Animation<Offset> _trajectoryAnimation;
+
   late Animation<double> _rotationAnimation;
   late Animation<double> _splashAnimation;
   late Animation<double> _rippleAnimation;
@@ -58,16 +57,6 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
-    // 포물선 궤적 애니메이션
-    _trajectoryAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 1.0), // 하단에서 시작
-      end: const Offset(0.0, 0.0), // 중앙에서 끝
-    ).animate(CurvedAnimation(
-      parent: _throwController,
-      curve: Curves.easeIn,
-    ));
-    
     // 동전 회전 애니메이션
     _rotationAnimation = Tween<double>(
       begin: 0.0,

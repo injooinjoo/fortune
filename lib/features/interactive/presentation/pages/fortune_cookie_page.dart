@@ -5,14 +5,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
 import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
 import '../../../fortune/presentation/widgets/fortune_button.dart';
 import '../../../fortune/presentation/widgets/standard_fortune_app_bar.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../../../../core/models/fortune_result.dart';
 
 /// 포춘쿠키 타입
 enum CookieType {
@@ -56,10 +54,8 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   bool _isShaking = false;
   bool _isCracking = false;
   bool _showPaper = false;
-  bool _isLoading = false;
   bool _isProcessing = false; // 애니메이션 중복 방지
-  Fortune? _fortune;
-  
+
   // Fortune content
   String _mainMessage = '';
   String _chineseProverb = '';
@@ -852,7 +848,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
 
   Future<void> _getFortune() async {
     setState(() {
-      _isLoading = true;
+      _isProcessing = true;
     });
 
     try {
@@ -863,55 +859,21 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         'cookie_type': _selectedCookie?.name ?? 'luck',
       };
 
-      final fortuneResult = await fortuneService.getFortune(
+      await fortuneService.getFortune(
         fortuneType: 'fortune_cookie',
         dataSource: FortuneDataSource.local,
         inputConditions: inputConditions,
       );
 
-      _parseFortuneResult(fortuneResult);
+      _generateMockFortune();
     } catch (e) {
       Logger.error('Failed to get fortune', e);
       _generateMockFortune();
     } finally {
       setState(() {
-        _isLoading = false;
+        _isProcessing = false;
       });
     }
-  }
-
-  void _parseFortune(Fortune fortune) {
-    final result = fortune.metadata ?? {};
-    
-    setState(() {
-      _mainMessage = result['message'] ?? fortune.content ?? _generateDefaultMessage();
-      _chineseProverb = result['proverb'] ?? _generateDefaultProverb();
-      _chineseProverbMeaning = result['proverbMeaning'] ?? _generateDefaultProverbMeaning();
-      _luckyNumbers = _parseNumbers(result['luckyNumbers']) ?? _generateLuckyNumbers();
-      _luckyColor = _parseColor(result['luckyColor']) ?? _generateLuckyColor();
-      _luckyColorName = result['luckyColorName'] ?? _getLuckyColorName(_luckyColor);
-      _advice = result['advice'] ?? _generateAdvice();
-    });
-  }
-
-  List<int>? _parseNumbers(dynamic numbers) {
-    if (numbers is List) {
-      return numbers.map((e) => e as int).toList();
-    } else if (numbers is String) {
-      return numbers.split(',').map((e) => int.tryParse(e.trim()) ?? 0).toList();
-    }
-    return null;
-  }
-
-  Color? _parseColor(dynamic color) {
-    if (color is String) {
-      if (color.startsWith('#')) {
-        return Color(int.parse(color.substring(1), radix: 16) | 0xFF000000);
-      } else if (color.startsWith('0x')) {
-        return Color(int.parse(color));
-      }
-    }
-    return null;
   }
 
   void _generateMockFortune() {
@@ -1150,20 +1112,3 @@ class ImprovedCrackPainter extends CustomPainter {
   }
 }
 
-extension on _FortuneCookiePageState {
-  /// FortuneResult를 UI 상태로 파싱
-  void _parseFortuneResult(FortuneResult fortuneResult) {
-    final data = fortuneResult.data;
-    final summary = fortuneResult.summary;
-
-    setState(() {
-      _mainMessage = summary['message'] as String? ?? data['message'] as String? ?? _generateDefaultMessage();
-      _luckyNumbers = [summary['lucky_number'] as int? ?? _generateLuckyNumbers().first];
-      _luckyColorName = summary['lucky_color'] as String? ?? _getLuckyColorName(_luckyColor);
-      _luckyColor = _generateLuckyColor(); // 색상 매핑 로직 필요시 추가
-      _chineseProverb = _generateDefaultProverb();
-      _chineseProverbMeaning = _generateDefaultProverbMeaning();
-      _advice = _generateAdvice();
-    });
-  }
-}

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../services/ad_service.dart';
-import '../../../../../shared/components/floating_bottom_button.dart';
-import '../../../../../shared/components/toss_button.dart';
+import '../../../../../shared/components/toss_floating_progress_button.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
 import 'love_input_step1_page.dart';
 import 'love_input_step2_page.dart';
@@ -133,62 +132,19 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
       ),
       body: Stack(
         children: [
-          Column(
+          // Page Content (상단 프로그레스 바 제거)
+          PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
             children: [
-              // Progress Bar
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '${_currentStep + 1} / $_totalSteps',
-                          style: TossTheme.body2.copyWith(
-                            color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          '${((_currentStep + 1) / _totalSteps * 100).round()}%',
-                          style: TossTheme.body2.copyWith(
-                            color: TossTheme.primaryBlue,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    LinearProgressIndicator(
-                      value: (_currentStep + 1) / _totalSteps,
-                      backgroundColor: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200,
-                      valueColor: const AlwaysStoppedAnimation<Color>(TossTheme.primaryBlue),
-                      minHeight: 6,
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Page Content
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    LoveInputStep1Page(onNext: _nextStep, canProceedNotifier: _step1CanProceed),
-                    LoveInputStep2Page(onNext: _nextStep, canProceedNotifier: _step2CanProceed),
-                    LoveInputStep3Page(onNext: _nextStep, canProceedNotifier: _step3CanProceed),
-                    LoveInputStep4Page(onNext: _nextStep, canProceedNotifier: _step4CanProceed),
-                  ],
-                ),
-              ),
+              LoveInputStep1Page(onNext: _nextStep, canProceedNotifier: _step1CanProceed),
+              LoveInputStep2Page(onNext: _nextStep, canProceedNotifier: _step2CanProceed),
+              LoveInputStep3Page(onNext: _nextStep, canProceedNotifier: _step3CanProceed),
+              LoveInputStep4Page(onNext: _nextStep, canProceedNotifier: _step4CanProceed),
             ],
           ),
 
-          // Floating Bottom Button (모든 스텝에서 표시)
+          // Floating Progress Button (프로그레스 통합)
           _buildFloatingButton(),
         ],
       ),
@@ -223,10 +179,20 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
     return ValueListenableBuilder<bool>(
       valueListenable: canProceedNotifier,
       builder: (context, canProceed, child) {
-        return FloatingBottomButton(
-          text: buttonText,
-          onPressed: canProceed ? _nextStep : null,
-          style: canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
+        final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+        return Positioned(
+          left: 20,
+          right: 20,
+          bottom: 16 + bottomPadding,
+          child: TossFloatingProgressButton(
+            text: buttonText,
+            currentStep: _currentStep + 1,
+            totalSteps: _totalSteps,
+            onPressed: canProceed ? _nextStep : null,
+            isEnabled: canProceed,
+            showProgress: true,
+          ),
         );
       },
     );

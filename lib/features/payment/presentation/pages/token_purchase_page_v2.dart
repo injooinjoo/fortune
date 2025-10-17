@@ -416,9 +416,9 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
       if (!success) {
         throw Exception('구매를 완료할 수 없습니다');
       }
-      
+
       // 구매 완료 후 토큰 잔액 새로고침
-      ref.refresh(tokenBalanceProvider);
+      await ref.refresh(tokenBalanceProvider);
       
       // 결과 페이지로 이동
       if (mounted) {
@@ -452,9 +452,9 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
     
     try {
       await _purchaseService.restorePurchases();
-      
+
       // 복원 후 토큰 잔액 새로고침
-      ref.refresh(tokenBalanceProvider);
+      await ref.refresh(tokenBalanceProvider);
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

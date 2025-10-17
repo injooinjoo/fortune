@@ -22,7 +22,6 @@ class PreviewScreen extends StatefulWidget {
 
 class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateMixin {
   late final SocialAuthService _socialAuthService;
-  final bool _isLoading = false;
   bool _bottomSheetLoading = false;
   late AnimationController _fadeController;
   late AnimationController _slideController;

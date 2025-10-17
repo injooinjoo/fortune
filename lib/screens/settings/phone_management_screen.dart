@@ -104,7 +104,6 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
   
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final hasPhone = userProfile?['phone'] != null && 
                      userProfile!['phone'].toString().isNotEmpty;
     
