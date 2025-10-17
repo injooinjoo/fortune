@@ -100,33 +100,34 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : const Color(0xFFF8F9FA),
       extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          // PageView (틴더 카드 스타일) - 전체 화면 사용
-          Positioned.fill(
-            top: 0,
-            bottom: 0,
-            child: PageView.builder(
-              controller: _pageController,
-              scrollDirection: Axis.vertical,
-              itemCount: 17,
-              itemBuilder: (context, index) {
-                return _buildFullSizeCard(
-                  context,
-                  index,
-                  score,
-                  isDark,
-                  displayUserName,
-                );
-              },
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // PageView (틴더 카드 스타일) - 전체 화면 사용
+            Positioned.fill(
+              top: 0,
+              bottom: 0,
+              child: PageView.builder(
+                controller: _pageController,
+                scrollDirection: Axis.vertical,
+                itemCount: 17,
+                itemBuilder: (context, index) {
+                  return _buildFullSizeCard(
+                    context,
+                    index,
+                    score,
+                    isDark,
+                    displayUserName,
+                  );
+                },
+              ),
             ),
-          ),
 
-          // 프로그레스 바 (노치 영역 고려)
-          Positioned(
-            top: MediaQuery.of(context).padding.top,
-            left: 0,
-            right: 0,
+            // 프로그레스 바 (맨 위, 여백 없음)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
             child: Container(
               height: 3,
               margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -202,7 +203,8 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
               ),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }
