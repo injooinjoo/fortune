@@ -93,7 +93,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
               ),
             )
           else
-            // 첫 페이지: 닫기 버튼
+            // 첫 페이지: 뒤로가기 버튼
             GestureDetector(
               onTap: () => Navigator.of(context).pop(),
               child: Container(
@@ -104,7 +104,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  Icons.close,
+                  Icons.arrow_back_ios_new,
                   size: 20,
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
