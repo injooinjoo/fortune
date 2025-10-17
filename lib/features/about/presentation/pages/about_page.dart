@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/theme/typography_unified.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/shared/components/app_header.dart';
 
@@ -93,23 +94,20 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               size: 50,
               color: TossDesignSystem.white)).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'Fortune',
-            style: TextStyle(
-              fontSize: 32,
+            style: TypographyUnified.numberLarge.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.white)).animate().fadeIn(delay: 200.ms),
           const SizedBox(height: 8),
           Text(
             'AI가 읽어주는 나만의 운세',
-            style: TextStyle(
-              fontSize: 18,
+            style: TypographyUnified.heading4.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.9))).animate().fadeIn(delay: 400.ms),
           const SizedBox(height: 16),
           Text(
             '매일 새로운 인사이트와 함께\n더 나은 하루를 시작하세요',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.7),
               height: 1.5),
             textAlign: TextAlign.center).animate().fadeIn(delay: 600.ms)]));
@@ -151,10 +149,9 @@ class _AboutPageState extends ConsumerState<AboutPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '주요 기능',
-          style: TextStyle(
-            fontSize: 24,
+          style: TypographyUnified.displaySmall.copyWith(
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white)),
         const SizedBox(height: 16),
@@ -201,16 +198,14 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           const SizedBox(height: 8),
           Text(
             title,
-            style: const TextStyle(
+            style: TypographyUnified.bodySmall.copyWith(
               color: TossDesignSystem.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 14)),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
           Text(
             description,
-            style: TextStyle(
+            style: TypographyUnified.labelSmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.7),
-              fontSize: 11,
               height: 1.3),
             textAlign: TextAlign.center)]));
   }
@@ -225,10 +220,9 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          const Text(
+          Text(
             '우리의 미션',
-            style: TextStyle(
-              fontSize: 20,
+            style: TypographyUnified.heading3.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.white)),
           const SizedBox(height: 16),
@@ -257,14 +251,12 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       children: [
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 24,
+          style: TypographyUnified.displaySmall.copyWith(
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white)),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
+          style: TypographyUnified.labelMedium.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.7)))]);
   }
 
@@ -274,15 +266,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         const SizedBox(height: 16),
         Text(
           '버전 $_version',
-          style: TextStyle(
-            color: TossDesignSystem.white.withValues(alpha: 0.5),
-            fontSize: 12)),
+          style: TypographyUnified.labelMedium.copyWith(
+            color: TossDesignSystem.white.withValues(alpha: 0.5))),
         const SizedBox(height: 8),
         Text(
           '© 2025 Fortune. All rights reserved.',
-          style: TextStyle(
-            color: TossDesignSystem.white.withValues(alpha: 0.5),
-            fontSize: 12)),
+          style: TypographyUnified.labelMedium.copyWith(
+            color: TossDesignSystem.white.withValues(alpha: 0.5))),
         const SizedBox(height: 32)]);
   }
 }

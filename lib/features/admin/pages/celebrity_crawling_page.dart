@@ -6,6 +6,7 @@ import '../../../core/components/toss_card.dart';
 import '../../../shared/components/toss_button.dart';
 import '../../../core/theme/toss_theme.dart';
 import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/typography_unified.dart';
 
 class CelebrityCrawlingPage extends ConsumerStatefulWidget {
   const CelebrityCrawlingPage({super.key});
@@ -86,10 +87,9 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 size: 24,
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 '크롤링 현황',
-                style: TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -146,15 +146,13 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
+          style: TypographyUnified.bodySmall.copyWith(
             color: TossDesignSystem.gray600,
           ),
         ),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 16,
+          style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.w600,
             color: color,
           ),
@@ -176,10 +174,9 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 size: 24,
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 '단일 크롤링',
-                style: TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -245,10 +242,9 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 size: 24,
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 '일괄 크롤링',
-                style: TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -339,8 +335,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               const SizedBox(width: 8),
               Text(
                 _getStatusTitle(state.status),
-                style: TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.w600,
                   color: statusColor,
                 ),
@@ -352,8 +347,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
           if (state.message != null)
             Text(
               state.message!,
-              style: TextStyle(
-                fontSize: 14,
+              style: TypographyUnified.bodySmall.copyWith(
                 color: TossDesignSystem.gray700,
               ),
             ),
@@ -365,15 +359,13 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               children: [
                 Text(
                   '진행률',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: TossDesignSystem.gray600,
                   ),
                 ),
                 Text(
                   '${state.current}/${state.total}',
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -432,8 +424,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
       children: [
         Text(
           value,
-          style: TextStyle(
-            fontSize: 20,
+          style: TypographyUnified.heading3.copyWith(
             fontWeight: FontWeight.w600,
             color: color,
           ),
@@ -441,8 +432,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
+          style: TypographyUnified.labelMedium.copyWith(
             color: TossDesignSystem.gray600,
           ),
         ),
