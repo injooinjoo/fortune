@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fortune/core/theme/font_size_system.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
 

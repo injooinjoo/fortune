@@ -1,117 +1,122 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/theme/typography_unified.dart';
 
-/// Typography system mapped to TossDesignSystem for consistency
+/// ⚠️ DEPRECATED: AppTypography는 이제 사용하지 않습니다!
+///
+/// TypographyUnified를 사용하세요.
+///
+/// 마이그레이션 가이드:
+/// - displayLarge → TypographyUnified.heading1
+/// - headlineMedium → TypographyUnified.heading2
+/// - bodyLarge → TypographyUnified.bodySmall
+/// - numberLarge → TypographyUnified.numberLarge
+///
+/// 사용 예시:
+/// ```dart
+/// // ❌ 기존
+/// Text('제목', style: AppTypography.headlineLarge)
+///
+/// // ✅ 신규
+/// Text('제목', style: TypographyUnified.heading1)
+/// Text('제목', style: context.typo.heading1)
+/// ```
 class AppTypography {
-  // Font family - using system font
+  // Font family - TypographyUnified로 통합
+  /// @deprecated Use TypographyUnified.fontFamilyEnglish instead
   static const String fontFamily = 'SF Pro Display';
 
-  // Display styles - mapped to TossDesignSystem
-  static const TextStyle displayLarge = TossDesignSystem.heading1;
+  // Display styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.heading1 instead
+  static TextStyle get displayLarge => TypographyUnified.heading1;
 
-  static const TextStyle displayMedium = TossDesignSystem.heading1;
+  /// @deprecated Use TypographyUnified.heading1 instead
+  static TextStyle get displayMedium => TypographyUnified.heading1;
 
-  static const TextStyle displaySmall = TossDesignSystem.heading2;
+  /// @deprecated Use TypographyUnified.heading1 instead
+  static TextStyle get displaySmall => TypographyUnified.heading1;
 
-  // Headline styles - mapped to TossDesignSystem
-  static const TextStyle headlineLarge = TossDesignSystem.heading2;
+  // Headline styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.heading1 instead
+  static TextStyle get headlineLarge => TypographyUnified.heading1;
 
-  static const TextStyle headlineMedium = TossDesignSystem.heading3;
+  /// @deprecated Use TypographyUnified.heading2 instead
+  static TextStyle get headlineMedium => TypographyUnified.heading2;
 
-  static const TextStyle headlineSmall = TossDesignSystem.heading4;
+  /// @deprecated Use TypographyUnified.heading3 instead
+  static TextStyle get headlineSmall => TypographyUnified.heading3;
 
-  // Title styles - mapped to TossDesignSystem
-  static const TextStyle titleLarge = TossDesignSystem.heading4;
+  // Title styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.heading3 instead
+  static TextStyle get titleLarge => TypographyUnified.heading3;
 
-  static const TextStyle titleMedium = TossDesignSystem.body1;
+  /// @deprecated Use TypographyUnified.bodyLarge instead
+  static TextStyle get titleMedium => TypographyUnified.bodyLarge;
 
-  static const TextStyle titleSmall = TossDesignSystem.body2;
+  /// @deprecated Use TypographyUnified.bodyMedium instead
+  static TextStyle get titleSmall => TypographyUnified.bodyMedium;
 
-  // Body styles - mapped to TossDesignSystem
-  static const TextStyle bodyLarge = TossDesignSystem.body3;
+  // Body styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.bodySmall instead
+  static TextStyle get bodyLarge => TypographyUnified.bodySmall;
 
-  static const TextStyle bodyMedium = TossDesignSystem.body3;
+  /// @deprecated Use TypographyUnified.bodySmall instead
+  static TextStyle get bodyMedium => TypographyUnified.bodySmall;
 
-  static const TextStyle bodySmall = TossDesignSystem.caption;
+  /// @deprecated Use TypographyUnified.labelLarge instead
+  static TextStyle get bodySmall => TypographyUnified.labelLarge;
 
-  // Label styles - mapped to TossDesignSystem
-  static const TextStyle labelLarge = TossDesignSystem.button;
+  // Label styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.buttonMedium instead
+  static TextStyle get labelLarge => TypographyUnified.buttonMedium;
 
-  static const TextStyle labelMedium = TossDesignSystem.button;
+  /// @deprecated Use TypographyUnified.buttonMedium instead
+  static TextStyle get labelMedium => TypographyUnified.buttonMedium;
 
-  static const TextStyle labelSmall = TossDesignSystem.caption;
+  /// @deprecated Use TypographyUnified.labelLarge instead
+  static TextStyle get labelSmall => TypographyUnified.labelLarge;
 
-  // Caption styles - mapped to TossDesignSystem
-  static const TextStyle captionLarge = TossDesignSystem.caption;
+  // Caption styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.labelLarge instead
+  static TextStyle get captionLarge => TypographyUnified.labelLarge;
 
-  static const TextStyle captionMedium = TossDesignSystem.caption;
+  /// @deprecated Use TypographyUnified.labelLarge instead
+  static TextStyle get captionMedium => TypographyUnified.labelLarge;
 
-  static const TextStyle captionSmall = TossDesignSystem.caption;
+  /// @deprecated Use TypographyUnified.labelLarge instead
+  static TextStyle get captionSmall => TypographyUnified.labelLarge;
 
-  // Extra small label for tiny UI elements
-  static const TextStyle labelXSmall = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 10,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-    letterSpacing: 0);
+  // Extra small label → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.labelTiny instead
+  static TextStyle get labelXSmall => TypographyUnified.labelTiny;
 
-  // Special styles
-  static const TextStyle button = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 16,
+  // Special styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.buttonMedium instead
+  static TextStyle get button => TypographyUnified.buttonMedium;
+
+  /// @deprecated Use TypographyUnified.buttonSmall instead
+  static TextStyle get buttonSmall => TypographyUnified.buttonSmall;
+
+  /// @deprecated Use TypographyUnified.labelMedium instead
+  static TextStyle get overline => TypographyUnified.labelMedium.copyWith(
     fontWeight: FontWeight.w600,
-    height: 1.4,
-    letterSpacing: 0);
+    letterSpacing: 0.04,
+  );
 
-  static const TextStyle buttonSmall = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 14,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-    letterSpacing: 0);
+  // Numeric styles → TypographyUnified로 리다이렉트
+  /// @deprecated Use TypographyUnified.numberXLarge instead
+  static TextStyle get numberXLarge => TypographyUnified.numberXLarge;
 
-  static const TextStyle overline = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 12,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-    letterSpacing: 0.04);
+  /// @deprecated Use TypographyUnified.numberLarge instead
+  static TextStyle get numberLarge => TypographyUnified.numberLarge;
 
-  // Numeric styles - optimized for numbers
-  static const TextStyle numberXLarge = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 40,
-    fontWeight: FontWeight.w700,
-    height: 1.2,
-    letterSpacing: -0.5,
-    fontFeatures: [FontFeature.tabularFigures()]);
+  /// @deprecated Use TypographyUnified.numberMedium instead
+  static TextStyle get numberMedium => TypographyUnified.numberMedium;
 
-  static const TextStyle numberLarge = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 32,
-    fontWeight: FontWeight.w700,
-    height: 1.2,
-    letterSpacing: -0.02,
-    fontFeatures: [FontFeature.tabularFigures()]);
-
-  static const TextStyle numberMedium = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 24,
-    fontWeight: FontWeight.w600,
-    height: 1.3,
-    letterSpacing: -0.01,
-    fontFeatures: [FontFeature.tabularFigures()]);
-
-  static const TextStyle numberSmall = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 18,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-    letterSpacing: 0,
-    fontFeatures: [FontFeature.tabularFigures()]);
+  /// @deprecated Use TypographyUnified.numberSmall instead
+  static TextStyle get numberSmall => TypographyUnified.numberSmall;
 
   // Get text theme for Material Theme
+  /// @deprecated Build TextTheme manually with TypographyUnified instead
   static TextTheme getTextTheme({Color? color}) {
     return TextTheme(
       displayLarge: displayLarge.copyWith(color: color),
@@ -132,6 +137,7 @@ class AppTypography {
   }
 
   // Responsive font size calculator
+  /// @deprecated Responsive sizing is now handled by FontSizeSystem
   static double responsiveFontSize(BuildContext context, double baseSize) {
     final screenWidth = MediaQuery.of(context).size.width;
     final scaleFactor = screenWidth / 375.0; // Based on iPhone 11 Pro width
@@ -140,28 +146,29 @@ class AppTypography {
 }
 
 /// Extension for easy access to typography styles
+/// @deprecated Use TypographyUnifiedExtension instead
 extension TypographyExtension on BuildContext {
   AppTypography get typography => AppTypography();
 
-  TextStyle get displayLarge => TossDesignSystem.heading1;
-  TextStyle get displayMedium => TossDesignSystem.heading1;
-  TextStyle get displaySmall => TossDesignSystem.heading2;
+  TextStyle get displayLarge => TypographyUnified.heading1;
+  TextStyle get displayMedium => TypographyUnified.heading1;
+  TextStyle get displaySmall => TypographyUnified.heading1;
 
-  TextStyle get headlineLarge => TossDesignSystem.heading1;
-  TextStyle get headlineMedium => TossDesignSystem.heading2;
-  TextStyle get headlineSmall => TossDesignSystem.heading3;
+  TextStyle get headlineLarge => TypographyUnified.heading1;
+  TextStyle get headlineMedium => TypographyUnified.heading2;
+  TextStyle get headlineSmall => TypographyUnified.heading3;
 
-  TextStyle get titleLarge => TossDesignSystem.heading2;
-  TextStyle get titleMedium => TossDesignSystem.heading3;
-  TextStyle get titleSmall => TossDesignSystem.heading4;
+  TextStyle get titleLarge => TypographyUnified.heading2;
+  TextStyle get titleMedium => TypographyUnified.heading3;
+  TextStyle get titleSmall => TypographyUnified.heading4;
 
-  TextStyle get bodyLarge => TossDesignSystem.body1;
-  TextStyle get bodyMedium => TossDesignSystem.body2;
-  TextStyle get bodySmall => TossDesignSystem.body3;
+  TextStyle get bodyLarge => TypographyUnified.bodyLarge;
+  TextStyle get bodyMedium => TypographyUnified.bodyMedium;
+  TextStyle get bodySmall => TypographyUnified.bodySmall;
 
-  TextStyle get labelLarge => TossDesignSystem.button;
-  TextStyle get labelMedium => TossDesignSystem.caption;
-  TextStyle get labelSmall => TossDesignSystem.caption;
+  TextStyle get labelLarge => TypographyUnified.buttonMedium;
+  TextStyle get labelMedium => TypographyUnified.labelLarge;
+  TextStyle get labelSmall => TypographyUnified.labelLarge;
 
   TextStyle get captionLarge => AppTypography.captionLarge;
   TextStyle get captionMedium => AppTypography.captionMedium;
