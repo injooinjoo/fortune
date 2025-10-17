@@ -10,6 +10,7 @@ import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 // Psychology test questions
 final psychologyQuestions = [
@@ -632,7 +633,7 @@ class _TestResultView extends ConsumerWidget {
             SizedBox(height: 24),
             Text(
               '심리를 분석하고 있습니다...',
-              style: TextStyle(fontSize: 18)),
+              style: TypographyUnified.heading4),
           ],
         ),
       ),
