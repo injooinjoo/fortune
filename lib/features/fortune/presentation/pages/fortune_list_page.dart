@@ -400,7 +400,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     // ==================== Interactive Fortunes ====================
     FortuneCategory(
       title: '포춘 쿠키',
-      route: '/interactive/fortune-cookie',
+      route: '/fortune-cookie',
       type: 'fortune-cookie',
       icon: Icons.cookie_rounded,
       gradientColors: [Color(0xFF9333EA), Color(0xFF7C3AED)],

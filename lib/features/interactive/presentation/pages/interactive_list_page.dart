@@ -13,7 +13,7 @@ class InteractiveListPage extends StatelessWidget {
         title: '포춘 쿠키',
         subtitle: '오늘의 행운 메시지를 확인해보세요',
         icon: Icons.cookie_outlined,
-        route: '/interactive/fortune-cookie',
+        route: '/fortune-cookie',
         isAvailable: true,
       ),
       _InteractiveFeature(
