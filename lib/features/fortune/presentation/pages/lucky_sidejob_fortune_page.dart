@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../domain/models/fortune_result.dart';
 import 'base_fortune_page_v2.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class LuckySideJobFortunePage extends ConsumerWidget {
   static const String routeName = '/fortune/lucky-sidejob';
@@ -37,10 +38,9 @@ class LuckySideJobFortunePage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               '부업 정보를 입력해주세요',
-              style: TextStyle(
-                fontSize: 20,
+              style: TypographyUnified.heading3.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -187,8 +187,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               '부업 운세 요약',
-              style: TextStyle(
-                fontSize: 24,
+              style: TypographyUnified.displaySmall.copyWith(
                 fontWeight: FontWeight.bold,
                 color: TossDesignSystem.error,
               ),
@@ -196,7 +195,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               summary,
-              style: const TextStyle(fontSize: 16, height: 1.6),
+              style: TypographyUnified.buttonMedium.copyWith(height: 1.6),
               textAlign: TextAlign.center,
             ),
           ],
@@ -233,8 +232,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 20,
+                    style: TypographyUnified.heading3.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -244,7 +242,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               content,
-              style: const TextStyle(fontSize: 16, height: 1.6),
+              style: TypographyUnified.buttonMedium.copyWith(height: 1.6),
             ),
           ],
         ),
@@ -274,10 +272,9 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                   child: Icon(Icons.balance, color: TossDesignSystem.purple, size: 28),
                 ),
                 const SizedBox(width: 16),
-                const Text(
+                Text(
                   '일과 삶의 균형',
-                  style: TextStyle(
-                    fontSize: 20,
+                  style: TypographyUnified.heading3.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -286,7 +283,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               balance,
-              style: const TextStyle(fontSize: 16, height: 1.6),
+              style: TypographyUnified.buttonMedium.copyWith(height: 1.6),
             ),
           ],
         ),
@@ -316,10 +313,9 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                   child: Icon(Icons.trending_up, color: TossDesignSystem.tossBlue, size: 28),
                 ),
                 const SizedBox(width: 16),
-                const Text(
+                Text(
                   '성장 가능성',
-                  style: TextStyle(
-                    fontSize: 20,
+                  style: TypographyUnified.heading3.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -328,7 +324,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               potential,
-              style: const TextStyle(fontSize: 16, height: 1.6),
+              style: TypographyUnified.buttonMedium.copyWith(height: 1.6),
             ),
           ],
         ),
