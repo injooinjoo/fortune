@@ -71,7 +71,7 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
     return Container(
       height: screenHeight * 0.9,
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
+        color: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -134,10 +134,10 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
               16 + MediaQuery.of(context).padding.bottom, // 하단 패딩 조정
             ),
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
+              color: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
               boxShadow: [
                 BoxShadow(
-                  color: TossDesignSystem.black.withValues(alpha: 0.05),
+                  color: (isDark ? TossDesignSystem.black : TossDesignSystem.black).withValues(alpha: isDark ? 0.2 : 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -5),
                 ),
@@ -173,7 +173,7 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
           question,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: isDark ? TossDesignSystem.white : null,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
         const SizedBox(height: 12),
@@ -209,7 +209,7 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
                       size: 28,
                       color: isSelected
                           ? option['color']
-                          : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600),
+                          : (isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -217,7 +217,7 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: isSelected
                             ? option['color']
-                            : (isDark ? TossDesignSystem.white : TossDesignSystem.gray700),
+                            : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700),
                         fontWeight: isSelected
                             ? FontWeight.w600
                             : FontWeight.normal,
