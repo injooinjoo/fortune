@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 // import '../../../../shared/glassmorphism/glass_container.dart'; // TODO: Remove if not needed
 import '../../domain/models/fortune_history.dart';
@@ -183,9 +184,8 @@ class MonthlyTrendChart extends StatelessWidget {
                         if (value.toInt() >= 0 && value.toInt() < months.length) {
                           return Text(
                             months[value.toInt()],
-                            style: TextStyle(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                              fontSize: 12));
+                            style: TypographyUnified.labelMedium.copyWith(
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)));
                         }
                         return const Text('');
                       })),
@@ -195,9 +195,8 @@ class MonthlyTrendChart extends StatelessWidget {
                       getTitlesWidget: (value, meta) {
                         return Text(
                           value.toInt().toString(),
-                          style: TextStyle(
+                          style: TypographyUnified.labelMedium.copyWith(
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                            fontSize: 12,
                           ),
                         );
                       },
