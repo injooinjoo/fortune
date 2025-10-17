@@ -17,6 +17,7 @@ import '../../../../core/models/holiday_models.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../widgets/event_category_selector.dart';
 import '../widgets/event_detail_input_form.dart';
+import '../../../../shared/components/toss_button.dart';
 
 class DailyCalendarFortunePage extends BaseFortunePage {
   const DailyCalendarFortunePage({
@@ -171,23 +172,54 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
     };
   }
 
-  @override
-  Widget buildInputForm() {
-    return Column(
-      children: [
-        // Step 1: 캘린더 선택
-        if (_currentStep == 0) ...[
+  // 헤어진 애인과 동일한 구조
+  Widget _buildCurrentStep() {
+    switch (_currentStep) {
+      case 0:
+        return _buildStep1Calendar();
+      case 1:
+        return _buildStep2Category();
+      case 2:
+        return _buildStep3Details();
+      default:
+        return _buildStep1Calendar();
+    }
+  }
+
+  // Step 1: 캘린더 선택 (헤어진 애인 구조와 동일)
+  Widget _buildStep1Calendar() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
           _buildCalendar(),
           const SizedBox(height: 12),
           _buildSelectedDateInfo(),
-          const SizedBox(height: 12),
-          _buildNextStepButton(),
-        ],
+          const SizedBox(height: 24),
 
-        // Step 2: 카테고리 선택
-        if (_currentStep == 1) ...[
-          _buildStepIndicator(),
-          const SizedBox(height: 16),
+          // 다음 버튼 (헤어진 애인과 동일)
+          TossButton(
+            text: '다음',
+            onPressed: () {
+              setState(() {
+                _currentStep = 1;
+              });
+            },
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
+            width: double.infinity,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Step 2: 카테고리 선택 (헤어진 애인 구조와 동일)
+  Widget _buildStep2Category() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
           EventCategorySelector(
             selectedCategory: _selectedCategory,
             onCategorySelected: (category) {
@@ -196,14 +228,31 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
               });
             },
           ),
-          const SizedBox(height: 12),
-          _buildNavigationButtons(),
-        ],
+          const SizedBox(height: 24),
 
-        // Step 3: 상세 입력
-        if (_currentStep == 2 && _selectedCategory != null) ...[
-          _buildStepIndicator(),
-          const SizedBox(height: 16),
+          // 다음 버튼 (헤어진 애인과 동일)
+          TossButton(
+            text: '다음',
+            onPressed: _selectedCategory != null ? () {
+              setState(() {
+                _currentStep = 2;
+              });
+            } : null,
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
+            width: double.infinity,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Step 3: 상세 입력 (헤어진 애인 구조와 동일)
+  Widget _buildStep3Details() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
           EventDetailInputForm(
             category: _selectedCategory!,
             questionController: _questionController,
@@ -214,186 +263,73 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
               });
             },
             onAddPartner: () {
-              // TODO: 상대방 정보 입력 다이얼로그
               debugPrint('상대방 정보 추가');
             },
           ),
-          const SizedBox(height: 12),
-          _buildNavigationButtons(),
-        ],
-      ],
-    );
-  }
+          const SizedBox(height: 24),
 
-  Widget _buildStepIndicator() {
-    return TossCard(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildStepDot(0, '날짜'),
-          _buildStepLine(0),
-          _buildStepDot(1, '유형'),
-          _buildStepLine(1),
-          _buildStepDot(2, '입력'),
+          // 운세 보기 버튼 (헤어진 애인과 동일)
+          TossButton(
+            text: '운세 보기',
+            onPressed: _selectedEmotion != null ? () {
+              _generateFortuneWithEventDetails();
+            } : null,
+            style: TossButtonStyle.primary,
+            size: TossButtonSize.large,
+            width: double.infinity,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStepDot(int step, String label) {
+  @override
+  Widget buildInputForm() {
+    // 더 이상 사용하지 않지만 BaseFortunePage 때문에 남겨둠
+    return Container();
+  }
+
+  Widget _buildProgressIndicator() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isActive = _currentStep >= step;
-    final isCurrent = _currentStep == step;
-
-    return Column(
-      children: [
-        Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: isActive
-                ? AppTheme.primaryColor
-                : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
-            shape: BoxShape.circle,
-            border: isCurrent
-                ? Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.5), width: 3)
-                : null,
-          ),
-          child: Center(
-            child: Text(
-              '${step + 1}',
-              style: TextStyle(
-                color: isActive ? TossDesignSystem.white : TossDesignSystem.gray600,
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: isActive
-                ? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900)
-                : (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600),
-            fontWeight: isCurrent ? FontWeight.w600 : FontWeight.normal,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStepLine(int step) {
-    final isActive = _currentStep > step;
-
-    return Container(
-      width: 40,
-      height: 2,
-      margin: const EdgeInsets.only(bottom: 20),
-      color: isActive
-          ? AppTheme.primaryColor
-          : (Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark300
-              : TossDesignSystem.gray300),
-    );
-  }
-
-  Widget _buildNextStepButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            _currentStep = 1;
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.primaryColor,
-          foregroundColor: TossDesignSystem.white,
-          minimumSize: const Size(double.infinity, 52),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: const Text(
-          '다음',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavigationButtons() {
-    final canProceed = _currentStep == 1 ? _selectedCategory != null : _selectedEmotion != null;
+    final steps = ['날짜 선택', '유형 선택', '세부 입력'];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
         children: [
-          // 이전 버튼
-          Expanded(
-            child: OutlinedButton(
-              onPressed: () {
-                setState(() {
-                  _currentStep--;
-                });
-              },
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppTheme.primaryColor,
-                side: BorderSide(color: AppTheme.primaryColor),
-                minimumSize: const Size(0, 52),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          Row(
+            children: List.generate(3, (index) {
+              final isActive = index <= _currentStep;
+
+              return Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: isActive
+                            ? AppTheme.primaryColor
+                            : (isDark
+                                ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
+                                : TossDesignSystem.gray300),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    if (index < 2) const SizedBox(width: 8),
+                  ],
                 ),
-              ),
-              child: const Text(
-                '이전',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+              );
+            }),
           ),
-          const SizedBox(width: 12),
-          // 다음/완료 버튼
-          Expanded(
-            flex: 2,
-            child: ElevatedButton(
-              onPressed: canProceed
-                  ? () {
-                      if (_currentStep == 2) {
-                        // 운세 생성
-                        _generateFortuneWithEventDetails();
-                      } else {
-                        setState(() {
-                          _currentStep++;
-                        });
-                      }
-                    }
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: TossDesignSystem.white,
-                minimumSize: const Size(0, 52),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                _currentStep == 2 ? '운세 보기' : '다음',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+          const SizedBox(height: 12),
+          Text(
+            steps[_currentStep],
+            style: TextStyle(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
         ],
@@ -687,7 +623,16 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             Icons.arrow_back_ios,
             color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            // Step이 0보다 크면 이전 단계로, 0이면 페이지 나가기
+            if (_currentStep > 0) {
+              setState(() {
+                _currentStep--;
+              });
+            } else {
+              context.pop();
+            }
+          },
         ),
         title: Text(
           widget.title,
@@ -700,14 +645,16 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
         centerTitle: true,
       ),
       body: SafeArea(
-        bottom: false,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              buildInputForm(),
-              const SizedBox(height: 100), // 하단 버튼 공간
-            ],
-          ),
+        child: Column(
+          children: [
+            // Progress Indicator (헤어진 애인과 동일)
+            _buildProgressIndicator(),
+
+            // Content (헤어진 애인과 동일 - PageView 사용)
+            Expanded(
+              child: _buildCurrentStep(),
+            ),
+          ],
         ),
       ),
     );

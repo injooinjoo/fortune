@@ -34,7 +34,6 @@ import '../features/fortune/presentation/pages/traditional_saju_toss_page.dart';
 import '../features/fortune/presentation/pages/talisman_fortune_page.dart';
 import '../features/fortune/presentation/pages/biorhythm_fortune_page.dart';
 import '../features/fortune/presentation/pages/love/love_fortune_main_page.dart';
-import '../features/fortune/presentation/pages/ex_lover_fortune_enhanced_page.dart';
 import '../features/fortune/presentation/pages/ex_lover_fortune_simple_page.dart';
 import '../features/fortune/presentation/pages/ex_lover_emotional_result_page.dart';
 import '../features/fortune/domain/models/ex_lover_simple_model.dart';
@@ -426,11 +425,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/love',
         name: 'fortune-love',
         builder: (context, state) => const LoveFortuneMainPage(),
-      ),
-      GoRoute(
-        path: '/ex-lover-enhanced',
-        name: 'fortune-ex-lover-enhanced',
-        builder: (context, state) => const ExLoverFortuneEnhancedPage(),
       ),
       GoRoute(
         path: '/ex-lover-simple',

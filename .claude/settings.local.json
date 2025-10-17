@@ -61,7 +61,9 @@
       "Bash(lib/features/fortune/presentation/pages/family_fortune_unified_page.dart )",
       "Bash(npx supabase functions deploy:*)",
       "Bash(tac:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(git log:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": [],
