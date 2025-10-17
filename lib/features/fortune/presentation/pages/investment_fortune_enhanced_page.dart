@@ -9,7 +9,7 @@ import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
 
@@ -190,27 +190,14 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       ),
       body: Stack(
         children: [
-          Column(
+          PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
             children: [
-              // Step indicator
-              _buildStepIndicator(currentStep),
-
-              // Content
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _buildStep1(),
-                    _buildStep2(),
-                    _buildStep3(),
-                    _buildStep4(),
-                  ],
-                ),
-              ),
-
-              // Bottom spacing for floating button
-              const BottomButtonSpacing(),
+              _buildStep1(),
+              _buildStep2(),
+              _buildStep3(),
+              _buildStep4(),
             ],
           ),
 
@@ -220,139 +207,18 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
       ),
     );
   }
-  
-  
-  Widget _buildStepIndicator(int currentStep) {
-    final steps = ['투자 프로필', '관심 섹터', '상세 분석', '운세 보기'];
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.gray900.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: List.generate(steps.length, (index) {
-          final isActive = index == currentStep;
-          final isCompleted = index < currentStep;
-
-          return Expanded(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    if (index > 0)
-                      Expanded(
-                        child: Container(
-                          height: 2,
-                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: isCompleted
-                                ? TossDesignSystem.tossBlue
-                                : isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-                            borderRadius: BorderRadius.circular(1),
-                          ),
-                        ),
-                      ),
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isActive || isCompleted
-                            ? TossDesignSystem.tossBlue
-                            : isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-                        boxShadow: isActive || isCompleted
-                            ? [
-                                BoxShadow(
-                                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : [],
-                      ),
-                      child: Center(
-                        child: isCompleted
-                            ? const Icon(
-                                Icons.check_rounded,
-                                size: 18,
-                                color: TossDesignSystem.white,
-                              )
-                            : Text(
-                                '${index + 1}',
-                                style: TextStyle(
-                                  color: isActive
-                                      ? TossDesignSystem.white
-                                      : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray500,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
-                              ),
-                      ),
-                    ),
-                    if (index < steps.length - 1)
-                      Expanded(
-                        child: Container(
-                          height: 2,
-                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: isCompleted && index < currentStep - 1
-                                ? TossDesignSystem.tossBlue
-                                : isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-                            borderRadius: BorderRadius.circular(1),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  steps[index],
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-                    color: isActive
-                        ? TossDesignSystem.tossBlue
-                        : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          );
-        }),
-      ),
-    );
-  }
-  
   Widget _buildFloatingBottomButton(BuildContext context, int currentStep) {
     final data = ref.watch(investmentDataProvider);
     final isValid = _validateStep(currentStep, data);
 
-    if (currentStep == 3) {
-      return FloatingBottomButton(
-        text: '💰 나의 투자 운명 확인하기',
-        onPressed: isValid ? _generateFortune : null,
-        isEnabled: isValid,
-        isLoading: false,
-        style: TossButtonStyle.primary,
-        hideWhenDisabled: true,
-      );
-    } else {
-      return FloatingBottomButton(
-        text: '다음',
-        onPressed: isValid
+    final buttonText = currentStep == 3
+        ? '💰 나의 투자 운명 확인하기'
+        : '다음';
+
+    final onPressed = currentStep == 3
+        ? (isValid ? _generateFortune : null)
+        : (isValid
             ? () {
                 ref.read(investmentStepProvider.notifier).nextStep();
                 _pageController.nextPage(
@@ -360,12 +226,18 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   curve: Curves.easeOut,
                 );
               }
-            : null,
-        hideWhenDisabled: true,
-        isEnabled: isValid,
-        style: TossButtonStyle.primary,
-      );
-    }
+            : null);
+
+    return TossFloatingProgressButtonPositioned(
+      text: buttonText,
+      currentStep: currentStep + 1,
+      totalSteps: 4,
+      onPressed: onPressed,
+      isEnabled: isValid,
+      isVisible: true,
+      showProgress: true,
+      isLoading: false,
+    );
   }
   
   bool _validateStep(int step, InvestmentFortuneData data) {

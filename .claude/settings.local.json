@@ -59,7 +59,8 @@
       "Bash(lib/features/fortune/presentation/pages/celebrity_fortune_enhanced_page.dart )",
       "Bash(lib/features/fortune/presentation/pages/pet_compatibility_page.dart )",
       "Bash(lib/features/fortune/presentation/pages/family_fortune_unified_page.dart )",
-      "Bash(npx supabase functions deploy:*)"
+      "Bash(npx supabase functions deploy:*)",
+      "Bash(tac:*)"
     ],
     "deny": [],
     "ask": [],
