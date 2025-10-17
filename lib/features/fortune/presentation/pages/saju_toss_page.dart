@@ -8,6 +8,7 @@ import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/saju_calculation_service.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 토스 스타일 사주팔자 페이지
 class SajuTossPage extends ConsumerStatefulWidget {
@@ -228,26 +229,23 @@ class _SajuTossPageState extends ConsumerState<SajuTossPage> {
           const SizedBox(height: TossTheme.spacingS),
           Text(
             pillar['stemHanja'] ?? '?',
-            style: TossTheme.heading1.copyWith(
+            style: TypographyUnified.numberLarge.copyWith(
               color: elementColor,
-              fontSize: 32,
               fontWeight: FontWeight.w800,
             ),
           ),
           Text(
             pillar['branchHanja'] ?? '?',
-            style: TossTheme.heading1.copyWith(
+            style: TypographyUnified.numberLarge.copyWith(
               color: elementColor,
-              fontSize: 32,
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: TossTheme.spacingXS),
           Text(
             '${pillar['stem'] ?? '?'}${pillar['branch'] ?? '?'}',
-            style: TossTheme.caption.copyWith(
+            style: TypographyUnified.labelSmall.copyWith(
               color: TossTheme.textGray400,
-              fontSize: 11,
             ),
           ),
         ],
@@ -281,9 +279,8 @@ class _SajuTossPageState extends ConsumerState<SajuTossPage> {
           const SizedBox(height: TossTheme.spacingXS),
           Text(
             '시간\n미입력',
-            style: TossTheme.caption.copyWith(
+            style: TypographyUnified.labelTiny.copyWith(
               color: TossTheme.textGray400,
-              fontSize: 10,
             ),
             textAlign: TextAlign.center,
           ),
