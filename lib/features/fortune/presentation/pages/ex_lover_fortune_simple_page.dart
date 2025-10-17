@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/components/toss_card.dart';
@@ -544,7 +545,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
             children: [
               Text(
                 card.emoji,
-                style: const TextStyle(fontSize: 32),
+                style: TypographyUnified.numberLarge,
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -629,7 +630,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
                 child: Center(
                   child: Text(
                     card.icon,
-                    style: const TextStyle(fontSize: 24),
+                    style: TypographyUnified.displaySmall,
                   ),
                 ),
               ),
