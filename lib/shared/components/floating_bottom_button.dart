@@ -13,6 +13,7 @@ class FloatingBottomButton extends StatelessWidget {
   final bool showShadow;
   final Color? backgroundColor;
   final EdgeInsetsGeometry? padding;
+  final bool hideWhenDisabled;
 
   const FloatingBottomButton({
     super.key,
@@ -26,12 +27,18 @@ class FloatingBottomButton extends StatelessWidget {
     this.showShadow = true,
     this.backgroundColor,
     this.padding,
+    this.hideWhenDisabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
-    
+
+    // hideWhenDisabled가 true이고 onPressed가 null이면 버튼을 숨김
+    if (hideWhenDisabled && onPressed == null) {
+      return const SizedBox.shrink();
+    }
+
     return Positioned(
       left: 0,
       right: 0,

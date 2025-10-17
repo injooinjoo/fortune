@@ -340,6 +340,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
       text: '연애운세 보기',
       onPressed: _canProceed ? _handleNext : null,
       style: _canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
+      hideWhenDisabled: true,
     );
   }
 

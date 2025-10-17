@@ -255,6 +255,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
       text: '다음 단계로',
       onPressed: _canProceed ? _handleNext : null,
       style: _canProceed ? TossButtonStyle.primary : TossButtonStyle.secondary,
+      hideWhenDisabled: true,
     );
   }
 

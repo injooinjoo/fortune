@@ -158,6 +158,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                   : null,
               style: TossButtonStyle.primary,
               size: TossButtonSize.large,
+              hideWhenDisabled: true,
             ),
           ],
         ),

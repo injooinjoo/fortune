@@ -347,6 +347,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         isEnabled: isValid,
         isLoading: false,
         style: TossButtonStyle.primary,
+        hideWhenDisabled: true,
       );
     } else {
       return FloatingBottomButton(
@@ -360,6 +361,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 );
               }
             : null,
+        hideWhenDisabled: true,
         isEnabled: isValid,
         style: TossButtonStyle.primary,
       );

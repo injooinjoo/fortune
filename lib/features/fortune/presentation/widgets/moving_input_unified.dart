@@ -193,6 +193,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
             onPressed: _canContinue() ? _handleComplete : null,
             style: TossButtonStyle.primary,
             size: TossButtonSize.large,
+            hideWhenDisabled: true,
           ),
         ],
       ),

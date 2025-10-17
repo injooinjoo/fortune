@@ -179,6 +179,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
           onPressed: hasQuestion && !_isFortuneLoading ? _onFortuneButtonPressed : null,
           style: TossButtonStyle.primary,
           size: TossButtonSize.large,
+          hideWhenDisabled: true,
         ),
       ],
     );
