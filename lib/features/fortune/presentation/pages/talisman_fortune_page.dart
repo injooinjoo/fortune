@@ -33,112 +33,66 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // App Bar
-            _buildAppBar(context, ref, talismanState.step, userId, isDark),
-
-            // Content
-            Expanded(
-              child: _buildContent(context, ref, talismanState, userId, isDark),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAppBar(BuildContext context, WidgetRef ref, TalismanGenerationStep step, String? userId, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Row(
-        children: [
-          if (step == TalismanGenerationStep.result)
-            // 결과 페이지: 홈으로 돌아가기
-            GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.arrow_back_ios_new,
-                  size: 20,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                ),
-              ),
-            )
-          else if (step != TalismanGenerationStep.categorySelection)
-            // 중간 단계: 이전 단계로
-            GestureDetector(
-              onTap: () {
-                ref.read(talismanGenerationProvider(userId).notifier).goBack();
-              },
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.arrow_back_ios_new,
-                  size: 20,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                ),
-              ),
-            )
-          else
-            // 첫 페이지: 뒤로가기 버튼
-            GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.arrow_back_ios_new,
-                  size: 20,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                ),
-              ),
-            ),
-
-          const SizedBox(width: 16),
-
-          Text(
-            '부적',
-            style: TossTheme.heading3.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        automaticallyImplyLeading: false,
+        leading: _buildBackButton(context, ref, talismanState.step, userId, isDark),
+        title: Text(
+          '부적',
+          style: TossTheme.heading3.copyWith(
+            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
           ),
-
-          const Spacer(),
-
-          // Premium Badge (추후 구현)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              'BASIC',
-              style: TossTheme.caption.copyWith(
-                color: TossTheme.primaryBlue,
-                fontWeight: FontWeight.w600,
+        ),
+        centerTitle: true,
+        actions: [
+          // Premium Badge
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  'BASIC',
+                  style: TossTheme.caption.copyWith(
+                    color: TossTheme.primaryBlue,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ),
         ],
       ),
+      body: _buildContent(context, ref, talismanState, userId, isDark),
+    );
+  }
+
+  Widget _buildBackButton(BuildContext context, WidgetRef ref, TalismanGenerationStep step, String? userId, bool isDark) {
+    VoidCallback onTap;
+
+    if (step == TalismanGenerationStep.result) {
+      // 결과 페이지: 홈으로 돌아가기
+      onTap = () => Navigator.of(context).pop();
+    } else if (step != TalismanGenerationStep.categorySelection) {
+      // 중간 단계: 이전 단계로
+      onTap = () {
+        ref.read(talismanGenerationProvider(userId).notifier).goBack();
+      };
+    } else {
+      // 첫 페이지: 뒤로가기 버튼
+      onTap = () => Navigator.of(context).pop();
+    }
+
+    return IconButton(
+      icon: const Icon(Icons.arrow_back_ios),
+      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+      onPressed: onTap,
     );
   }
 
