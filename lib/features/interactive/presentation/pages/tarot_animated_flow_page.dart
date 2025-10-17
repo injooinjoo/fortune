@@ -2,6 +2,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class TarotAnimatedFlowPage extends StatefulWidget {
   const TarotAnimatedFlowPage({
@@ -324,9 +325,8 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                             const SizedBox(height: 20),
                             Text(
                               cardData['name'] ?? 'Unknown',
-                              style: const TextStyle(
+                              style: TypographyUnified.displaySmall.copyWith(
                                 color: TossDesignSystem.white,
-                                fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -344,22 +344,20 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
             // Card info
             Text(
               cardData['name'] ?? 'Unknown Card',
-              style: const TextStyle(
+              style: TypographyUnified.heading1.copyWith(
                 color: TossDesignSystem.white,
-                fontSize: 28,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 2,
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             Text(
               '"Go forward and do whatever\nyour heart tells you"',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: TypographyUnified.buttonMedium.copyWith(
                 color: TossDesignSystem.white.withValues(alpha: 0.8),
-                fontSize: 16,
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -391,10 +389,9 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'View Full Reading',
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -412,9 +409,8 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
         const SizedBox(width: 8),
         Text(
           text,
-          style: TextStyle(
+          style: TypographyUnified.bodySmall.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.6),
-            fontSize: 14,
           ),
         ),
       ],
