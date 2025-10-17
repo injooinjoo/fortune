@@ -85,33 +85,49 @@ class ApiClient {
         onError: (error, handler) {
           // Calculate response time even for errors
           final requestTime = error.requestOptions.extra['requestTime'] as DateTime?;
-          final responseTime = requestTime != null 
-              ? DateTime.now().difference(requestTime).inMilliseconds 
+          final responseTime = requestTime != null
+              ? DateTime.now().difference(requestTime).inMilliseconds
               : null;
-          
-          Logger.apiResponse(
-            error.requestOptions.method,
-            error.requestOptions.uri.toString(),
-            error.response?.statusCode ?? 0,
-            error.response?.data
-          );
-          
-          // Log fortune-specific errors
-          if (error.requestOptions.uri.toString().contains('/fortune/')) {
-            final fortuneType = error.requestOptions.uri.pathSegments.lastOrNull ?? 'unknown';
-            final errorMessage = error.response?.data?.toString() ?? error.message ?? 'Unknown error';
-            Logger.error('❌ [ApiClient] Fortune API request failed', {
-              'requestId': error.requestOptions.extra['requestId'],
-              'fortuneType': fortuneType,
-              'statusCode': error.response?.statusCode ?? 0,
-              'errorType': error.type.toString(),
-              'responseTime': responseTime != null ? '${responseTime}ms' : 'unknown',
-              'errorMessage': errorMessage,
-              'requestUrl': error.requestOptions.uri.toString(),
-              'requestMethod': error.requestOptions.method,
-              'requestData': error.requestOptions.data?.toString()});
+
+          // Graceful handling for 404 errors on optional endpoints
+          final statusCode = error.response?.statusCode ?? 0;
+          final uri = error.requestOptions.uri.toString();
+          final isOptionalEndpoint = uri.contains('/soul-transaction') ||
+                                     uri.contains('/subscription-check') ||
+                                     uri.contains('/token-consumption');
+
+          // Use DEBUG log level for 404 errors on optional endpoints
+          if (statusCode == 404 && isOptionalEndpoint) {
+            Logger.debug('🔍 [ApiClient] Optional endpoint not found (gracefully handled)', {
+              'endpoint': uri,
+              'statusCode': statusCode,
+              'message': 'This is expected - endpoint is optional'
+            });
+          } else {
+            Logger.apiResponse(
+              error.requestOptions.method,
+              error.requestOptions.uri.toString(),
+              statusCode,
+              error.response?.data
+            );
+
+            // Log fortune-specific errors
+            if (error.requestOptions.uri.toString().contains('/fortune/')) {
+              final fortuneType = error.requestOptions.uri.pathSegments.lastOrNull ?? 'unknown';
+              final errorMessage = error.response?.data?.toString() ?? error.message ?? 'Unknown error';
+              Logger.error('❌ [ApiClient] Fortune API request failed', {
+                'requestId': error.requestOptions.extra['requestId'],
+                'fortuneType': fortuneType,
+                'statusCode': statusCode,
+                'errorType': error.type.toString(),
+                'responseTime': responseTime != null ? '${responseTime}ms' : 'unknown',
+                'errorMessage': errorMessage,
+                'requestUrl': error.requestOptions.uri.toString(),
+                'requestMethod': error.requestOptions.method,
+                'requestData': error.requestOptions.data?.toString()});
+            }
           }
-          
+
           handler.next(error);
         })]);
     
