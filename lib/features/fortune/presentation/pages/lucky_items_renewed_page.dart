@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/glass_container.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/components/toss_card.dart';
+import '../widgets/standard_fortune_app_bar.dart';
 
 // ==================== State Management ====================
 
@@ -73,11 +75,129 @@ class LuckyItemsRenewedPage extends ConsumerStatefulWidget {
 }
 
 class _LuckyItemsRenewedPageState extends ConsumerState<LuckyItemsRenewedPage> {
+  final PageController _pageController = PageController();
+
   @override
   void dispose() {
-    // Reset state when leaving page
+    _pageController.dispose();
     ref.read(luckyItemsStepProvider.notifier).reset();
     super.dispose();
+  }
+
+  void _nextStep() {
+    final currentStep = ref.read(luckyItemsStepProvider);
+
+    if (currentStep == 0) {
+      if (!_canProceedStep1()) {
+        final data = ref.read(luckyItemsDataProvider);
+        if (data.birthDate == null) {
+          _showMessage('생년월일을 선택해주세요');
+        } else if (data.birthTime == null) {
+          _showMessage('태어난 시간을 선택해주세요');
+        } else if (data.gender == null) {
+          _showMessage('성별을 선택해주세요');
+        }
+        return;
+      }
+      ref.read(luckyItemsStepProvider.notifier).nextStep();
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else if (currentStep == 1) {
+      if (!_canProceedStep2()) {
+        _showMessage('관심 분야를 최소 1개 선택해주세요');
+        return;
+      }
+      ref.read(luckyItemsStepProvider.notifier).nextStep();
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else if (currentStep == 2) {
+      _generateLuckyItems();
+    }
+  }
+
+  void _previousStep() {
+    final currentStep = ref.read(luckyItemsStepProvider);
+    if (currentStep > 0) {
+      ref.read(luckyItemsStepProvider.notifier).previousStep();
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  bool _canProceedStep1() {
+    final data = ref.watch(luckyItemsDataProvider);
+    return data.birthDate != null && data.birthTime != null && data.gender != null;
+  }
+
+  bool _canProceedStep2() {
+    final data = ref.watch(luckyItemsDataProvider);
+    return data.selectedInterests.isNotEmpty;
+  }
+
+  bool _canProceedStep3() {
+    return true;
+  }
+
+  void _showMessage(String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: TossDesignSystem.warningOrange,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+    });
+  }
+
+  void _generateLuckyItems() {
+    // TODO: Implement lucky items generation logic
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(
+                color: AppTheme.primaryColor,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '행운 아이템 생성 중...',
+                style: TossDesignSystem.body2,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // Simulate processing
+    Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('행운 아이템이 준비되었습니다!')),
+      );
+      // TODO: Navigate to result page
+    });
   }
 
   @override
@@ -86,330 +206,322 @@ class _LuckyItemsRenewedPageState extends ConsumerState<LuckyItemsRenewedPage> {
     final currentStep = ref.watch(luckyItemsStepProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-          ),
-          onPressed: () {
-            if (currentStep > 0) {
-              ref.read(luckyItemsStepProvider.notifier).previousStep();
-            } else {
-              context.pop();
-            }
-          },
-        ),
-        title: Text(
-          '행운 아이템',
-          style: TextStyle(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
+      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      appBar: StandardFortuneAppBar(
+        title: '행운 아이템',
+        onBackPressed: () {
+          if (currentStep > 0) {
+            _previousStep();
+          } else {
+            context.pop();
+          }
+        },
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildProgressIndicator(),
-            Expanded(
-              child: _buildCurrentStep(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ==================== Progress Indicator ====================
-
-  Widget _buildProgressIndicator() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final currentStep = ref.watch(luckyItemsStepProvider);
-    final steps = ['기본 정보', '관심 분야', '확인'];
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
+      body: Stack(
         children: [
-          Row(
-            children: List.generate(3, (index) {
-              final isActive = index <= currentStep;
-              return Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: isActive
-                              ? AppTheme.primaryColor
-                              : (isDark
-                                  ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
-                                  : TossDesignSystem.gray300),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                    if (index < 2) const SizedBox(width: 8),
-                  ],
-                ),
-              );
-            }),
+          // Page Content
+          PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              _buildStep1(isDark),
+              _buildStep2(isDark),
+              _buildStep3(isDark),
+            ],
           ),
-          const SizedBox(height: 12),
-          Text(
-            steps[currentStep],
-            style: TextStyle(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-            ),
-          ),
+
+          // Floating Progress Button
+          _buildFloatingButton(),
         ],
       ),
     );
   }
 
-  // ==================== Step Router ====================
-
-  Widget _buildCurrentStep() {
+  Widget _buildFloatingButton() {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     final currentStep = ref.watch(luckyItemsStepProvider);
+
+    bool canProceed;
+    String buttonText;
 
     switch (currentStep) {
       case 0:
-        return _buildStep1BasicInfo();
+        canProceed = _canProceedStep1();
+        buttonText = '다음';
+        break;
       case 1:
-        return _buildStep2InterestAreas();
+        canProceed = _canProceedStep2();
+        buttonText = '다음';
+        break;
       case 2:
-        return _buildStep3Confirmation();
+        canProceed = _canProceedStep3();
+        buttonText = '행운 아이템 확인하기';
+        break;
       default:
-        return _buildStep1BasicInfo();
+        canProceed = false;
+        buttonText = '다음';
     }
+
+    return Positioned(
+      left: 20,
+      right: 20,
+      bottom: 16 + bottomPadding,
+      child: TossFloatingProgressButton(
+        text: buttonText,
+        currentStep: currentStep + 1,
+        totalSteps: 3,
+        onPressed: canProceed ? _nextStep : null,
+        isEnabled: canProceed,
+        showProgress: true,
+      ),
+    );
   }
 
   // ==================== Step 1: 기본 정보 (생년월일시 + 성별) ====================
 
-  Widget _buildStep1BasicInfo() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget _buildStep1(bool isDark) {
     final data = ref.watch(luckyItemsDataProvider);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GlassContainer(
+          // 안내 카드
+          TossCard(
+            style: TossCardStyle.elevated,
+            padding: const EdgeInsets.all(24),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '생년월일',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                InkWell(
-                  onTap: () async {
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate: data.birthDate ?? DateTime.now(),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime.now(),
-                    );
-                    if (picked != null) {
-                      ref.read(luckyItemsDataProvider.notifier).state =
-                          data.copyWith(birthDate: picked);
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? TossDesignSystem.grayDark200
-                          : TossDesignSystem.gray100,
-                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          data.birthDate == null
-                              ? '날짜를 선택해주세요'
-                              : '${data.birthDate!.year}년 ${data.birthDate!.month}월 ${data.birthDate!.day}일',
-                          style: TextStyle(
-                            color: data.birthDate == null
-                                ? (isDark
-                                    ? TossDesignSystem.textSecondaryDark
-                                    : TossDesignSystem.textSecondaryLight)
-                                : (isDark
-                                    ? TossDesignSystem.textPrimaryDark
-                                    : TossDesignSystem.textPrimaryLight),
-                            fontSize: 15,
-                          ),
-                        ),
-                        Icon(
-                          Icons.calendar_today,
-                          size: 20,
-                          color: isDark
-                              ? TossDesignSystem.textSecondaryDark
-                              : TossDesignSystem.textSecondaryLight,
-                        ),
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppTheme.primaryColor.withValues(alpha: 0.8),
+                        const Color(0xFFEC4899).withValues(alpha: 0.8),
                       ],
                     ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.stars_rounded,
+                    color: TossDesignSystem.white,
+                    size: 32,
                   ),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          GlassContainer(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                const SizedBox(height: 16),
                 Text(
-                  '태어난 시간',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  '당신만의 행운을 찾아드릴게요',
+                  style: TossDesignSystem.heading3.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                   ),
                 ),
-                const SizedBox(height: 12),
-                InkWell(
-                  onTap: () async {
-                    final picked = await showTimePicker(
-                      context: context,
-                      initialTime: data.birthTime ?? TimeOfDay.now(),
-                    );
-                    if (picked != null) {
-                      ref.read(luckyItemsDataProvider.notifier).state =
-                          data.copyWith(birthTime: picked);
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? TossDesignSystem.grayDark200
-                          : TossDesignSystem.gray100,
-                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          data.birthTime == null
-                              ? '시간을 선택해주세요'
-                              : '${data.birthTime!.hour.toString().padLeft(2, '0')}:${data.birthTime!.minute.toString().padLeft(2, '0')}',
-                          style: TextStyle(
-                            color: data.birthTime == null
-                                ? (isDark
-                                    ? TossDesignSystem.textSecondaryDark
-                                    : TossDesignSystem.textSecondaryLight)
-                                : (isDark
-                                    ? TossDesignSystem.textPrimaryDark
-                                    : TossDesignSystem.textPrimaryLight),
-                            fontSize: 15,
-                          ),
-                        ),
-                        Icon(
-                          Icons.access_time,
-                          size: 20,
-                          color: isDark
-                              ? TossDesignSystem.textSecondaryDark
-                              : TossDesignSystem.textSecondaryLight,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          GlassContainer(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                const SizedBox(height: 8),
                 Text(
-                  '성별',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  '기본 정보를 입력해주세요',
+                  style: TossDesignSystem.body2.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                   ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildGenderButton('남성', '남성', data.gender == '남성'),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildGenderButton('여성', '여성', data.gender == '여성'),
-                    ),
-                  ],
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
           ),
+
+          const SizedBox(height: 32),
+
+          // 생년월일
+          Text(
+            '생년월일',
+            style: TossDesignSystem.body1.copyWith(
+              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          TossCard(
+            style: TossCardStyle.filled,
+            padding: const EdgeInsets.all(16),
+            onTap: () async {
+              final date = await showDatePicker(
+                context: context,
+                initialDate: data.birthDate ?? DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: ColorScheme.light(
+                        primary: AppTheme.primaryColor,
+                      ),
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+              if (date != null) {
+                ref.read(luckyItemsDataProvider.notifier).state =
+                    data.copyWith(birthDate: date);
+              }
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.calendar_today_rounded,
+                  color: AppTheme.primaryColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    data.birthDate != null
+                        ? '${data.birthDate!.year}년 ${data.birthDate!.month}월 ${data.birthDate!.day}일'
+                        : '생년월일 선택',
+                    style: TossDesignSystem.body2.copyWith(
+                      color: data.birthDate != null
+                          ? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900)
+                          : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                  size: 20,
+                ),
+              ],
+            ),
+          ),
+
           const SizedBox(height: 24),
-          TossButton(
-            text: '다음',
-            onPressed: _canProceedFromStep1()
-                ? () {
-                    ref.read(luckyItemsStepProvider.notifier).nextStep();
-                  }
-                : null,
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
-            width: double.infinity,
+
+          // 태어난 시간
+          Text(
+            '태어난 시간',
+            style: TossDesignSystem.body1.copyWith(
+              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          const SizedBox(height: 12),
+
+          TossCard(
+            style: TossCardStyle.filled,
+            padding: const EdgeInsets.all(16),
+            onTap: () async {
+              final time = await showTimePicker(
+                context: context,
+                initialTime: data.birthTime ?? TimeOfDay.now(),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: ColorScheme.light(
+                        primary: AppTheme.primaryColor,
+                      ),
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+              if (time != null) {
+                ref.read(luckyItemsDataProvider.notifier).state =
+                    data.copyWith(birthTime: time);
+              }
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.access_time_rounded,
+                  color: AppTheme.primaryColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    data.birthTime != null
+                        ? '${data.birthTime!.hour.toString().padLeft(2, '0')}:${data.birthTime!.minute.toString().padLeft(2, '0')}'
+                        : '시간 선택',
+                    style: TossDesignSystem.body2.copyWith(
+                      color: data.birthTime != null
+                          ? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900)
+                          : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                  size: 20,
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // 성별
+          Text(
+            '성별',
+            style: TossDesignSystem.body1.copyWith(
+              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          Row(
+            children: [
+              Expanded(
+                child: _buildGenderChip('남성', '남성', data.gender == '남성', isDark),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildGenderChip('여성', '여성', data.gender == '여성', isDark),
+              ),
+            ],
+          ),
+
+          // Floating 버튼 공간 확보
+          const SizedBox(height: 100),
         ],
       ),
     );
   }
 
-  Widget _buildGenderButton(String label, String value, bool isSelected) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return InkWell(
+  Widget _buildGenderChip(String label, String value, bool isSelected, bool isDark) {
+    return GestureDetector(
       onTap: () {
         final data = ref.read(luckyItemsDataProvider);
         ref.read(luckyItemsDataProvider.notifier).state =
             data.copyWith(gender: value);
+        HapticFeedback.lightImpact();
       },
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppTheme.primaryColor
-              : (isDark
-                  ? TossDesignSystem.grayDark200
-                  : TossDesignSystem.gray100),
-          borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+              ? AppTheme.primaryColor.withValues(alpha: 0.1)
+              : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? AppTheme.primaryColor
+                : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200),
+            width: isSelected ? 1.5 : 1,
+          ),
         ),
         child: Center(
           child: Text(
             label,
-            style: TextStyle(
+            style: TossDesignSystem.body2.copyWith(
               color: isSelected
-                  ? TossDesignSystem.white
-                  : (isDark
-                      ? TossDesignSystem.textPrimaryDark
-                      : TossDesignSystem.textPrimaryLight),
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
+                  ? AppTheme.primaryColor
+                  : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             ),
           ),
         ),
@@ -417,15 +529,9 @@ class _LuckyItemsRenewedPageState extends ConsumerState<LuckyItemsRenewedPage> {
     );
   }
 
-  bool _canProceedFromStep1() {
-    final data = ref.watch(luckyItemsDataProvider);
-    return data.birthDate != null && data.birthTime != null && data.gender != null;
-  }
-
   // ==================== Step 2: 관심 분야 선택 ====================
 
-  Widget _buildStep2InterestAreas() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget _buildStep2(bool isDark) {
     final data = ref.watch(luckyItemsDataProvider);
 
     final interests = [
@@ -440,147 +546,233 @@ class _LuckyItemsRenewedPageState extends ConsumerState<LuckyItemsRenewedPage> {
     ];
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GlassContainer(
+          // 안내 카드
+          TossCard(
+            style: TossCardStyle.elevated,
+            padding: const EdgeInsets.all(24),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+                        AppTheme.primaryColor.withValues(alpha: 0.8),
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.auto_awesome_rounded,
+                    color: TossDesignSystem.white,
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Text(
-                  '관심 있는 분야를 선택해주세요',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  '어떤 분야가 궁금하세요?',
+                  style: TossDesignSystem.heading3.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   '최대 3개까지 선택 가능합니다',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                    fontSize: 14,
+                  style: TossDesignSystem.body2.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                   ),
-                ),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: interests.map((interest) {
-                    final isSelected = data.selectedInterests.contains(interest);
-                    return FilterChip(
-                      label: Text(interest),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        final currentInterests = List<String>.from(data.selectedInterests);
-                        if (selected && currentInterests.length < 3) {
-                          currentInterests.add(interest);
-                        } else if (!selected) {
-                          currentInterests.remove(interest);
-                        }
-                        ref.read(luckyItemsDataProvider.notifier).state =
-                            data.copyWith(selectedInterests: currentInterests);
-                      },
-                      selectedColor: AppTheme.primaryColor,
-                      checkmarkColor: TossDesignSystem.white,
-                      backgroundColor: isDark
-                          ? TossDesignSystem.grayDark200
-                          : TossDesignSystem.gray100,
-                      labelStyle: TextStyle(
-                        color: isSelected
-                            ? TossDesignSystem.white
-                            : (isDark
-                                ? TossDesignSystem.textPrimaryDark
-                                : TossDesignSystem.textPrimaryLight),
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      ),
-                    );
-                  }).toList(),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
-          TossButton(
-            text: '다음',
-            onPressed: data.selectedInterests.isNotEmpty
-                ? () {
-                    ref.read(luckyItemsStepProvider.notifier).nextStep();
-                  }
-                : null,
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
-            width: double.infinity,
+
+          const SizedBox(height: 32),
+
+          // 관심 분야 선택
+          Text(
+            '관심 분야',
+            style: TossDesignSystem.body1.copyWith(
+              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          const SizedBox(height: 12),
+
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: interests.map((interest) {
+              final isSelected = data.selectedInterests.contains(interest);
+              return _buildInterestChip(interest, isSelected, isDark);
+            }).toList(),
+          ),
+
+          // Floating 버튼 공간 확보
+          const SizedBox(height: 100),
         ],
+      ),
+    );
+  }
+
+  Widget _buildInterestChip(String label, bool isSelected, bool isDark) {
+    return GestureDetector(
+      onTap: () {
+        final data = ref.read(luckyItemsDataProvider);
+        final currentInterests = List<String>.from(data.selectedInterests);
+
+        if (isSelected) {
+          currentInterests.remove(label);
+        } else {
+          if (currentInterests.length < 3) {
+            currentInterests.add(label);
+          } else {
+            _showMessage('최대 3개까지만 선택 가능합니다');
+            return;
+          }
+        }
+
+        ref.read(luckyItemsDataProvider.notifier).state =
+            data.copyWith(selectedInterests: currentInterests);
+        HapticFeedback.lightImpact();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.primaryColor.withValues(alpha: 0.1)
+              : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isSelected
+                ? AppTheme.primaryColor
+                : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200),
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TossDesignSystem.body2.copyWith(
+            color: isSelected
+                ? AppTheme.primaryColor
+                : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+          ),
+        ),
       ),
     );
   }
 
   // ==================== Step 3: 확인 ====================
 
-  Widget _buildStep3Confirmation() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget _buildStep3(bool isDark) {
     final data = ref.watch(luckyItemsDataProvider);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GlassContainer(
+          // 안내 카드
+          TossCard(
+            style: TossCardStyle.elevated,
+            padding: const EdgeInsets.all(24),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '입력 정보 확인',
-                  style: TextStyle(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF10B981).withValues(alpha: 0.8),
+                        AppTheme.primaryColor.withValues(alpha: 0.8),
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.check_circle_rounded,
+                    color: TossDesignSystem.white,
+                    size: 32,
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildConfirmationRow('생년월일', data.birthDate == null
-                    ? '-'
-                    : '${data.birthDate!.year}년 ${data.birthDate!.month}월 ${data.birthDate!.day}일'),
-                const SizedBox(height: 12),
-                _buildConfirmationRow('태어난 시간', data.birthTime == null
-                    ? '-'
-                    : '${data.birthTime!.hour.toString().padLeft(2, '0')}:${data.birthTime!.minute.toString().padLeft(2, '0')}'),
-                const SizedBox(height: 12),
-                _buildConfirmationRow('성별', data.gender ?? '-'),
-                const SizedBox(height: 12),
-                _buildConfirmationRow('관심 분야', data.selectedInterests.isEmpty
-                    ? '-'
-                    : data.selectedInterests.join(', ')),
+                Text(
+                  '입력 정보를 확인해주세요',
+                  style: TossDesignSystem.heading3.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '정확한 정보로 더 좋은 결과를 받아보세요',
+                  style: TossDesignSystem.body2.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
-          TossButton(
-            text: '행운 아이템 확인하기',
-            onPressed: () {
-              // TODO: Navigate to result page
-              // For now, just show a placeholder
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('행운 아이템 생성 중...')),
-              );
-            },
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
-            width: double.infinity,
+
+          const SizedBox(height: 32),
+
+          // 입력 정보 확인
+          TossCard(
+            style: TossCardStyle.filled,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildConfirmationRow(
+                  '생년월일',
+                  data.birthDate == null
+                      ? '-'
+                      : '${data.birthDate!.year}년 ${data.birthDate!.month}월 ${data.birthDate!.day}일',
+                  isDark,
+                ),
+                const SizedBox(height: 16),
+                _buildConfirmationRow(
+                  '태어난 시간',
+                  data.birthTime == null
+                      ? '-'
+                      : '${data.birthTime!.hour.toString().padLeft(2, '0')}:${data.birthTime!.minute.toString().padLeft(2, '0')}',
+                  isDark,
+                ),
+                const SizedBox(height: 16),
+                _buildConfirmationRow(
+                  '성별',
+                  data.gender ?? '-',
+                  isDark,
+                ),
+                const SizedBox(height: 16),
+                _buildConfirmationRow(
+                  '관심 분야',
+                  data.selectedInterests.isEmpty
+                      ? '-'
+                      : data.selectedInterests.join(', '),
+                  isDark,
+                ),
+              ],
+            ),
           ),
+
+          // Floating 버튼 공간 확보
+          const SizedBox(height: 100),
         ],
       ),
     );
   }
 
-  Widget _buildConfirmationRow(String label, String value) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
+  Widget _buildConfirmationRow(String label, String value, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -588,18 +780,16 @@ class _LuckyItemsRenewedPageState extends ConsumerState<LuckyItemsRenewedPage> {
           width: 100,
           child: Text(
             label,
-            style: TextStyle(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-              fontSize: 14,
+            style: TossDesignSystem.body2.copyWith(
+              color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
             ),
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: TextStyle(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-              fontSize: 14,
+            style: TossDesignSystem.body2.copyWith(
+              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
               fontWeight: FontWeight.w600,
             ),
           ),

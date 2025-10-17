@@ -17,7 +17,7 @@ import '../../../../core/models/holiday_models.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../widgets/event_category_selector.dart';
 import '../widgets/event_detail_input_form.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 
 class DailyCalendarFortunePage extends BaseFortunePage {
   const DailyCalendarFortunePage({
@@ -195,20 +195,9 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           _buildCalendar(),
           const SizedBox(height: 12),
           _buildSelectedDateInfo(),
-          const SizedBox(height: 24),
 
-          // 다음 버튼 (헤어진 애인과 동일)
-          TossButton(
-            text: '다음',
-            onPressed: () {
-              setState(() {
-                _currentStep = 1;
-              });
-            },
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
-            width: double.infinity,
-          ),
+          // Floating 버튼 공간 확보
+          const SizedBox(height: 100),
         ],
       ),
     );
@@ -228,20 +217,9 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
               });
             },
           ),
-          const SizedBox(height: 24),
 
-          // 다음 버튼 (헤어진 애인과 동일)
-          TossButton(
-            text: '다음',
-            onPressed: _selectedCategory != null ? () {
-              setState(() {
-                _currentStep = 2;
-              });
-            } : null,
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
-            width: double.infinity,
-          ),
+          // Floating 버튼 공간 확보
+          const SizedBox(height: 100),
         ],
       ),
     );
@@ -266,18 +244,9 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
               debugPrint('상대방 정보 추가');
             },
           ),
-          const SizedBox(height: 24),
 
-          // 운세 보기 버튼 (헤어진 애인과 동일)
-          TossButton(
-            text: '운세 보기',
-            onPressed: _selectedEmotion != null ? () {
-              _generateFortuneWithEventDetails();
-            } : null,
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
-            width: double.infinity,
-          ),
+          // Floating 버튼 공간 확보
+          const SizedBox(height: 100),
         ],
       ),
     );
@@ -287,6 +256,55 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
   Widget buildInputForm() {
     // 더 이상 사용하지 않지만 BaseFortunePage 때문에 남겨둠
     return Container();
+  }
+
+  Widget _buildFloatingButton() {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    bool canProceed = false;
+    String buttonText = '';
+    VoidCallback? onPressed;
+
+    switch (_currentStep) {
+      case 0:
+        canProceed = true;
+        buttonText = '다음';
+        onPressed = () {
+          setState(() {
+            _currentStep = 1;
+          });
+        };
+        break;
+      case 1:
+        canProceed = _selectedCategory != null;
+        buttonText = '다음';
+        onPressed = canProceed ? () {
+          setState(() {
+            _currentStep = 2;
+          });
+        } : null;
+        break;
+      case 2:
+        canProceed = _selectedEmotion != null;
+        buttonText = '운세 보기';
+        onPressed = canProceed ? () {
+          _generateFortuneWithEventDetails();
+        } : null;
+        break;
+    }
+
+    return Positioned(
+      left: 20,
+      right: 20,
+      bottom: 16 + bottomPadding,
+      child: TossFloatingProgressButton(
+        text: buttonText,
+        currentStep: _currentStep + 1,
+        totalSteps: 3,
+        onPressed: onPressed,
+        isEnabled: canProceed,
+        showProgress: true,
+      ),
+    );
   }
 
   Widget _buildProgressIndicator() {
@@ -645,15 +663,22 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // Progress Indicator (헤어진 애인과 동일)
-            _buildProgressIndicator(),
+            Column(
+              children: [
+                // Progress Indicator (헤어진 애인과 동일)
+                _buildProgressIndicator(),
 
-            // Content (헤어진 애인과 동일 - PageView 사용)
-            Expanded(
-              child: _buildCurrentStep(),
+                // Content (헤어진 애인과 동일 - PageView 사용)
+                Expanded(
+                  child: _buildCurrentStep(),
+                ),
+              ],
             ),
+
+            // Floating Progress Button
+            _buildFloatingButton(),
           ],
         ),
       ),
