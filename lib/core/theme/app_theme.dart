@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_theme_extensions.dart';
 import 'toss_design_system.dart';
+import 'typography_unified.dart';
 
 class AppTheme {
   // Use TossDesignSystem colors
@@ -57,15 +58,13 @@ class AppTheme {
           // background is deprecated, use surface instead
         ),
         scaffoldBackgroundColor: TossDesignSystem.gray50,
-        appBarTheme: const AppBarTheme(
+        appBarTheme: AppBarTheme(
           backgroundColor: TossDesignSystem.transparent,
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
-          iconTheme: IconThemeData(color: Color(0xFF1F2937)),
-          titleTextStyle: TextStyle(
-            color: Color(0xFF1F2937),
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+          iconTheme: const IconThemeData(color: Color(0xFF1F2937)),
+          titleTextStyle: TypographyUnified.heading4.copyWith(
+            color: const Color(0xFF1F2937),
           ),
         ),
         fontFamily: TossDesignSystem.fontFamilyKorean,
@@ -149,15 +148,13 @@ class AppTheme {
           // background is deprecated, use surface instead
         ),
         scaffoldBackgroundColor: TossDesignSystem.black,
-        appBarTheme: const AppBarTheme(
+        appBarTheme: AppBarTheme(
           backgroundColor: TossDesignSystem.transparent,
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle.light,
-          iconTheme: IconThemeData(color: TossDesignSystem.white),
-          titleTextStyle: TextStyle(
+          iconTheme: const IconThemeData(color: TossDesignSystem.white),
+          titleTextStyle: TypographyUnified.heading4.copyWith(
             color: TossDesignSystem.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
           ),
         ),
         fontFamily: TossDesignSystem.fontFamilyKorean,

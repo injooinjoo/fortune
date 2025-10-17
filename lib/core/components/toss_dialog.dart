@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/toss_design_system.dart';
+import '../theme/typography_unified.dart';
 import '../../shared/components/toss_button.dart';
 
 /// TOSS 스타일 Dialog
@@ -358,8 +359,7 @@ class _TossSuccessDialog extends StatelessWidget {
           SizedBox(height: TossDesignSystem.spacingM),
           Text(
             message!,
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: Theme.of(context).brightness == Brightness.light
                   ? TossDesignSystem.gray600.withValues(alpha: 0.7)
                   : TossDesignSystem.gray600.withValues(alpha: 0.3),

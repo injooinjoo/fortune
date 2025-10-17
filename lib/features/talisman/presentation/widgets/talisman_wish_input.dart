@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/toss_button.dart';
 
 class TalismanWishInput extends StatefulWidget {
@@ -90,7 +91,7 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
             children: [
               Text(
                 widget.selectedCategory.emoji,
-                style: const TextStyle(fontSize: 20),
+                style: TypographyUnified.heading3,
               ),
               const SizedBox(width: 12),
               Text(

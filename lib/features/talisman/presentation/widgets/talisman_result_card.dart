@@ -7,6 +7,7 @@ import '../../domain/models/talisman_design.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/toss_button.dart';
 
 class TalismanResultCard extends StatefulWidget {
@@ -153,7 +154,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                     children: [
                       Text(
                         widget.talismanDesign.category.emoji,
-                        style: const TextStyle(fontSize: 16),
+                        style: TypographyUnified.buttonMedium,
                       ),
                       const SizedBox(width: 6),
                       Text(
@@ -402,7 +403,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
           const SizedBox(height: 12),
           Text(
             widget.talismanDesign.category.emoji,
-            style: const TextStyle(fontSize: 32),
+            style: TypographyUnified.numberLarge,
           ),
           const SizedBox(height: 8),
           Text(

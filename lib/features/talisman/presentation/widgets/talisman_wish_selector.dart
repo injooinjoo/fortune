@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class TalismanWishSelector extends StatefulWidget {
   final Function(TalismanCategory) onCategorySelected;
@@ -140,7 +141,7 @@ class _CategoryCard extends StatelessWidget {
               child: Center(
                 child: Text(
                   category.emoji,
-                  style: const TextStyle(fontSize: 24),
+                  style: TypographyUnified.displaySmall,
                 ),
               ),
             ),
