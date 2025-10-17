@@ -241,29 +241,33 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
   }
 
   void _generateFortune() async {
-    // 바텀시트 닫기
-    Navigator.of(context).pop();
+    // Context 저장
+    if (!mounted) return;
+    final navigator = Navigator.of(context);
+    final routerContext = context;
 
-    // 광고 표시 후 재능 발견 페이지로 이동
-    await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () async {
-        _navigateToTalentPage();
-      },
-      onAdFailed: () async {
-        // 광고 실패해도 페이지로 이동
-        _navigateToTalentPage();
-      },
-    );
-  }
-
-  void _navigateToTalentPage() {
-    context.go('/talent', extra: {
+    // 파라미터 저장
+    final params = {
       'autoGenerate': true,
       'fortuneParams': {
         'interest': _selectedInterest,
         'strength': _selectedStrength,
         'goal': _selectedGoal,
       },
-    });
+    };
+
+    // 바텀시트 닫기
+    navigator.pop();
+
+    // 광고 표시 후 재능 발견 페이지로 이동
+    await AdService.instance.showInterstitialAdWithCallback(
+      onAdCompleted: () async {
+        routerContext.push('/talent', extra: params);
+      },
+      onAdFailed: () async {
+        // 광고 실패해도 페이지로 이동
+        routerContext.push('/talent', extra: params);
+      },
+    );
   }
 }
