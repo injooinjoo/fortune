@@ -175,41 +175,45 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
   // 헤어진 애인과 동일한 구조
   Widget _buildCurrentStep() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          if (_currentStep == 0) ...[
-            _buildCalendar(),
-            const SizedBox(height: 12),
-            _buildSelectedDateInfo(),
-          ] else if (_currentStep == 1) ...[
-            EventCategorySelector(
-              selectedCategory: _selectedCategory,
-              onCategorySelected: (category) {
-                setState(() {
-                  _selectedCategory = category;
-                });
-              },
-            ),
-          ] else if (_currentStep == 2) ...[
-            EventDetailInputForm(
-              category: _selectedCategory!,
-              questionController: _questionController,
-              selectedEmotion: _selectedEmotion,
-              onEmotionSelected: (emotion) {
-                setState(() {
-                  _selectedEmotion = emotion;
-                });
-              },
-              onAddPartner: () {
-                debugPrint('상대방 정보 추가');
-              },
-            ),
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: 16 + 80, // 버튼 높이(56) + 여유 공간(24)
+        ),
+        child: Column(
+          children: [
+            if (_currentStep == 0) ...[
+              _buildCalendar(),
+              const SizedBox(height: 12),
+              _buildSelectedDateInfo(),
+            ] else if (_currentStep == 1) ...[
+              EventCategorySelector(
+                selectedCategory: _selectedCategory,
+                onCategorySelected: (category) {
+                  setState(() {
+                    _selectedCategory = category;
+                  });
+                },
+              ),
+            ] else if (_currentStep == 2) ...[
+              EventDetailInputForm(
+                category: _selectedCategory!,
+                questionController: _questionController,
+                selectedEmotion: _selectedEmotion,
+                onEmotionSelected: (emotion) {
+                  setState(() {
+                    _selectedEmotion = emotion;
+                  });
+                },
+                onAddPartner: () {
+                  debugPrint('상대방 정보 추가');
+                },
+              ),
+            ],
           ],
-
-          // Floating 버튼 공간 확보
-          const SizedBox(height: 100),
-        ],
+        ),
       ),
     );
   }

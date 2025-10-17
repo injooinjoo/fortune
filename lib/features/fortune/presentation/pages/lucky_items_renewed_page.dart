@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
@@ -76,6 +77,61 @@ class LuckyItemsRenewedPage extends ConsumerStatefulWidget {
 
 class _LuckyItemsRenewedPageState extends ConsumerState<LuckyItemsRenewedPage> {
   final PageController _pageController = PageController();
+
+  @override
+  void initState() {
+    super.initState();
+    // 프로필 정보에서 생년월일 로드
+    _loadProfileData();
+  }
+
+  Future<void> _loadProfileData() async {
+    try {
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      if (userId == null) return;
+
+      final response = await Supabase.instance.client
+          .from('profiles')
+          .select('birth_date, birth_time, gender')
+          .eq('id', userId)
+          .single();
+
+      if (response != null) {
+        final data = ref.read(luckyItemsDataProvider);
+
+        // 생년월일 파싱
+        DateTime? birthDate;
+        if (response['birth_date'] != null) {
+          birthDate = DateTime.tryParse(response['birth_date']);
+        }
+
+        // 생년시간 파싱
+        TimeOfDay? birthTime;
+        if (response['birth_time'] != null) {
+          final timeStr = response['birth_time'] as String;
+          final parts = timeStr.split(':');
+          if (parts.length >= 2) {
+            birthTime = TimeOfDay(
+              hour: int.tryParse(parts[0]) ?? 0,
+              minute: int.tryParse(parts[1]) ?? 0,
+            );
+          }
+        }
+
+        // 성별
+        String? gender = response['gender'];
+
+        // 데이터 업데이트
+        ref.read(luckyItemsDataProvider.notifier).state = data.copyWith(
+          birthDate: birthDate ?? data.birthDate,
+          birthTime: birthTime ?? data.birthTime,
+          gender: gender ?? data.gender,
+        );
+      }
+    } catch (e) {
+      print('프로필 로드 실패: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -161,42 +217,14 @@ class _LuckyItemsRenewedPageState extends ConsumerState<LuckyItemsRenewedPage> {
   }
 
   void _generateLuckyItems() {
-    // TODO: Implement lucky items generation logic
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Center(
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: TossDesignSystem.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(
-                color: AppTheme.primaryColor,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '행운 아이템 생성 중...',
-                style: TossDesignSystem.body2,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    // 행운 아이템 결과 페이지로 바로 이동
+    final data = ref.read(luckyItemsDataProvider);
 
-    // Simulate processing
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!mounted) return;
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('행운 아이템이 준비되었습니다!')),
-      );
-      // TODO: Navigate to result page
+    context.push('/lucky-items-results', extra: {
+      'birthDate': data.birthDate,
+      'birthTime': data.birthTime,
+      'gender': data.gender,
+      'interests': data.selectedInterests,
     });
   }
 
