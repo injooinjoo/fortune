@@ -5,7 +5,7 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/celebrity_provider.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../data/models/celebrity_simple.dart';
@@ -70,28 +70,18 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   Widget _buildInputScreen() {
     return Stack(
       children: [
-        Column(
+        PageView(
+          physics: const NeverScrollableScrollPhysics(),
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _currentStep = index;
+            });
+          },
           children: [
-            // Step content
-            Expanded(
-              child: PageView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentStep = index;
-                  });
-                },
-                children: [
-                  _buildStep1CategorySelection(),
-                  _buildStep2CelebritySelection(),
-                  _buildStep3QuestionType(),
-                ],
-              ),
-            ),
-
-            // 버튼 높이만큼 여백 확보
-            const BottomButtonSpacing(),
+            _buildStep1CategorySelection(),
+            _buildStep2CelebritySelection(),
+            _buildStep3QuestionType(),
           ],
         ),
 
@@ -655,14 +645,15 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         ? '다음'
         : (_isLoading ? '운세 생성 중...' : '운세 보기');
 
-    return FloatingBottomButton(
+    return TossFloatingProgressButtonPositioned(
       text: buttonText,
-      isLoading: _isLoading,
-      onPressed: canProceed ? _handleButtonPress : null,
-      hideWhenDisabled: true,
-      showProgress: true,
-      currentProgress: _currentStep + 1,
+      currentStep: _currentStep + 1,
       totalSteps: 3,
+      onPressed: canProceed ? _handleButtonPress : null,
+      isEnabled: canProceed,
+      isVisible: true,
+      showProgress: true,
+      isLoading: _isLoading,
     );
   }
 
@@ -916,9 +907,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             ),
             const SizedBox(height: 20),
           ],
-
-              // 버튼 높이만큼 여백 확보
-              const BottomButtonSpacing(),
+          const SizedBox(height: 100), // Floating 버튼을 위한 하단 여백
             ],
           ),
         ),
