@@ -1,6 +1,5 @@
 import 'package:go_router/go_router.dart';
 import '../../features/interactive/presentation/pages/interactive_list_page.dart';
-import '../../features/interactive/presentation/pages/fortune_cookie_page.dart';
 import '../../features/interactive/presentation/pages/dream_interpretation_page.dart';
 import '../../features/interactive/presentation/pages/psychology_test_page.dart';
 import '../../features/interactive/presentation/pages/tarot_chat_page.dart';
@@ -19,10 +18,7 @@ final interactiveRoutes = [
     name: 'interactive',
     builder: (context, state) => const InteractiveListPage(),
     routes: [
-      GoRoute(
-        path: 'fortune-cookie',
-        name: 'interactive-fortune-cookie',
-        builder: (context, state) => const FortuneCookiePage()),
+      // fortune-cookie는 /fortune-cookie 경로로 ShellRoute 밖에서 처리 (네비게이션 바 숨김)
       GoRoute(
         path: 'dream',
         name: 'interactive-dream',
