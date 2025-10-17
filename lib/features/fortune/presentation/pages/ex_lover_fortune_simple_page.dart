@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
@@ -463,52 +462,9 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
               _buildReasonChip('기타', 'other', isDark),
             ],
           ),
-          
-          const SizedBox(height: 40),
-          
-          // 버튼
-          Row(
-            children: [
-              Expanded(
-                child: TossButton(
-                  text: '건너뛰기',
-                  onPressed: _analyzeAndShowResult,
-                  style: TossButtonStyle.secondary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TossButton(
-                  text: '분석 시작',
-                  onPressed: _analyzeAndShowResult,
-                  style: TossButtonStyle.primary,
-                  isEnabled: _canProceedStep2(),
-                ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 16),
-          
-          Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.favorite_rounded,
-                  size: 16,
-                  color: TossDesignSystem.purple,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '5 영혼 필요',
-                  style: TossDesignSystem.caption.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                  ),
-                ),
-              ],
-            ),
-          ),
+
+          // Floating 버튼 공간 확보
+          const SizedBox(height: 100),
         ],
       ),
     );
