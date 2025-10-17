@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class InfluencerFortunePage extends ConsumerWidget {
   const InfluencerFortunePage({super.key});
@@ -149,8 +150,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                 const SizedBox(width: 4),
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: TypographyUnified.labelMedium.copyWith(
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray500,
                   ),
@@ -224,9 +224,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                         : TossDesignSystem.errorRed.withValues(alpha: 0.1),
                     child: Text(
                       influencer['name']![0],
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                      style: TypographyUnified.displaySmall.copyWith(
                         color: isSelected
                             ? TossDesignSystem.white
                             : TossDesignSystem.errorRed,
@@ -236,8 +234,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                   const SizedBox(height: 8),
                   Text(
                     influencer['name']!,
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isSelected
                           ? TossDesignSystem.white
@@ -247,8 +244,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                   ),
                   Text(
                     influencer['category']!,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: TypographyUnified.labelMedium.copyWith(
                       color: isSelected
                           ? TossDesignSystem.white.withValues(alpha: 0.8)
                           : TossDesignSystem.gray500,
@@ -256,8 +252,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                   ),
                   Text(
                     influencer['followers'] ?? influencer['subscribers']!,
-                    style: TextStyle(
-                      fontSize: 11,
+                    style: TypographyUnified.labelSmall.copyWith(
                       color: isSelected
                           ? TossDesignSystem.white.withValues(alpha: 0.7)
                           : TossDesignSystem.gray400,

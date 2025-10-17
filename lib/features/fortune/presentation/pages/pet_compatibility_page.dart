@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../data/models/pet_profile.dart';
 import '../../../../providers/pet_provider.dart';
@@ -185,9 +186,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               Expanded(
                 child: Text(
                   '반려동물 궁합',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
+                  style: TypographyUnified.displaySmall.copyWith(
                     color: TossDesignSystem.white,
                   ),
                 ),
@@ -197,8 +196,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           const SizedBox(height: 16),
           Text(
             '나와 반려동물의 특별한 궁합을\n확인해보세요',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.bodyLarge.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.9),
               height: 1.4,
             ),
@@ -252,7 +250,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                 child: Center(
                   child: Text(
                     species.emoji,
-                    style: const TextStyle(fontSize: 28),
+                    style: TypographyUnified.displaySmall.copyWith(fontSize: 28),
                   ),
                 ),
               ),
@@ -263,17 +261,14 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   children: [
                     Text(
                       pet.name,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
+                      style: TypographyUnified.heading3.copyWith(
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       '${species.displayName} • ${pet.age}세',
-                      style: TextStyle(
-                        fontSize: 15,
+                      style: TypographyUnified.bodyMedium.copyWith(
                         color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                       ),
                     ),
@@ -337,9 +332,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             const SizedBox(height: 24),
             Text(
               '등록된 반려동물이 없어요',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
+              style: TypographyUnified.heading3.copyWith(
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               ),
             ),
@@ -347,8 +340,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             Text(
               '오른쪽 위 + 버튼을 눌러\n반려동물을 등록해보세요',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
+              style: TypographyUnified.bodyLarge.copyWith(
                 color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                 height: 1.4,
               ),
@@ -417,17 +409,14 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                 // Header
                 Text(
                   '반려동물 등록',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
+                  style: TypographyUnified.displaySmall.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   '반려동물의 정보를 입력해주세요',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.bodyLarge.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                   ),
                 ),
@@ -441,8 +430,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                         // Species selection
                         Text(
                           '종류',
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: TypographyUnified.bodyLarge.copyWith(
                             fontWeight: FontWeight.w600,
                             color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                           ),
@@ -454,8 +442,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                         // Name input
                         Text(
                           '이름',
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: TypographyUnified.bodyLarge.copyWith(
                             fontWeight: FontWeight.w600,
                             color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                           ),
@@ -490,8 +477,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                         // Age input
                         Text(
                           '나이',
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: TypographyUnified.bodyLarge.copyWith(
                             fontWeight: FontWeight.w600,
                             color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                           ),
@@ -576,13 +562,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               children: [
                 Text(
                   species.emoji,
-                  style: const TextStyle(fontSize: 20),
+                  style: TypographyUnified.heading3.copyWith(fontSize: 20),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   species.displayName,
-                  style: TextStyle(
-                    fontSize: 15,
+                  style: TypographyUnified.bodyMedium.copyWith(
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
                   ),
@@ -732,7 +717,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   child: Center(
                     child: Text(
                       species.emoji,
-                      style: const TextStyle(fontSize: 36),
+                      style: TypographyUnified.displayLarge.copyWith(fontSize: 36),
                     ),
                   ),
                 ),
@@ -743,17 +728,14 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     children: [
                       Text(
                         selectedPet.name,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
+                        style: TypographyUnified.displaySmall.copyWith(
                           color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '${species.displayName} • ${selectedPet.age}세',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: TypographyUnified.bodyLarge.copyWith(
                           color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                         ),
                       ),
@@ -792,9 +774,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     const SizedBox(width: 12),
                     Text(
                       '궁합 운세',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
+                      style: TypographyUnified.heading3.copyWith(
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                       ),
                     ),
@@ -803,8 +783,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                 const SizedBox(height: 20),
                 Text(
                   _fortune!.content,
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.bodyLarge.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     height: 1.6,
                   ),

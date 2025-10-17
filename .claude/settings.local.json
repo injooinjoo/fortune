@@ -63,7 +63,11 @@
       "Bash(tac:*)",
       "Bash(git mv:*)",
       "Bash(git log:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(xargs -I {} sh -c 'echo \"\"\"\"$(grep -c \"\"\"\"fontSize: [0-9]\"\"\"\" {}) {}\"\"\"\"')",
+      "Bash(xargs:*)",
+      "Bash(while read f)",
+      "Bash(do grep -n \"fontSize:\" \"$f\")"
     ],
     "deny": [],
     "ask": [],

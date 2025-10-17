@@ -4,6 +4,7 @@ import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/constants/tarot_metadata.dart';
@@ -268,9 +269,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
           const SizedBox(height: 16),
           Text(
             '리딩이 완료되었습니다',
-            style: TextStyle(
-              fontSize: 24 * fontScale,
-              fontWeight: FontWeight.bold,
+            style: TypographyUnified.displaySmall.copyWith(
+              fontSize: TypographyUnified.displaySmall.fontSize! * fontScale,
               color: TossDesignSystem.white,
             ),
           ),
@@ -278,8 +278,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             const SizedBox(height: 8),
             Text(
               widget.question!,
-              style: TextStyle(
-                fontSize: 16 * fontScale,
+              style: TypographyUnified.bodyLarge.copyWith(
+                fontSize: TypographyUnified.bodyLarge.fontSize! * fontScale,
                 color: TossDesignSystem.white.withValues(alpha: 0.7),
                 fontStyle: FontStyle.italic),
               textAlign: TextAlign.center,
@@ -303,9 +303,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
         children: [
           Text(
             '카드 스프레드',
-            style: TextStyle(
-              fontSize: 18 * fontScale,
-              fontWeight: FontWeight.bold,
+            style: TypographyUnified.heading4.copyWith(
+              fontSize: TypographyUnified.heading4.fontSize! * fontScale,
               color: TossDesignSystem.white,
             ),
           ),
@@ -462,8 +461,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 ),
                 child: Text(
                   '${index + 1}',
-                  style: TextStyle(
-                    fontSize: 10 * fontScale,
+                  style: TypographyUnified.labelTiny.copyWith(
+                    fontSize: TypographyUnified.labelTiny.fontSize! * fontScale,
                     color: TossDesignSystem.white,
                     fontWeight: FontWeight.w500,
                   ),
@@ -562,17 +561,16 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
           const SizedBox(height: 16),
           Text(
             '전체 해석',
-            style: TextStyle(
-              fontSize: 20 * fontScale,
-              fontWeight: FontWeight.bold,
+            style: TypographyUnified.heading3.copyWith(
+              fontSize: TypographyUnified.heading3.fontSize! * fontScale,
               color: TossDesignSystem.white,
             ),
           ),
           const SizedBox(height: 16),
           Text(
             _summaryData!['summary'] ?? '해석을 생성할 수 없습니다.',
-            style: TextStyle(
-              fontSize: 16 * fontScale,
+            style: TypographyUnified.bodyLarge.copyWith(
+              fontSize: TypographyUnified.bodyLarge.fontSize! * fontScale,
               color: TossDesignSystem.white,
               height: 1.5,
             ),
@@ -593,9 +591,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
         children: [
           Text(
             '원소 균형',
-            style: TextStyle(
-              fontSize: 18 * fontScale,
-              fontWeight: FontWeight.bold,
+            style: TypographyUnified.heading4.copyWith(
+              fontSize: TypographyUnified.heading4.fontSize! * fontScale,
               color: TossDesignSystem.white,
             ),
           ),
@@ -616,8 +613,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                     width: 60,
                     child: Text(
                       entry.key,
-                      style: TextStyle(
-                        fontSize: 14 * fontScale,
+                      style: TypographyUnified.bodySmall.copyWith(
+                        fontSize: TypographyUnified.bodySmall.fontSize! * fontScale,
                         color: TossDesignSystem.white,
                       ),
                     ),
@@ -644,8 +641,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   const SizedBox(width: 8),
                   Text(
                     '$percentage%',
-                    style: TextStyle(
-                      fontSize: 14 * fontScale,
+                    style: TypographyUnified.bodySmall.copyWith(
+                      fontSize: TypographyUnified.bodySmall.fontSize! * fontScale,
                       color: TossDesignSystem.white.withValues(alpha: 0.7),
                     ),
                   ),
@@ -657,8 +654,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             const SizedBox(height: 12),
             Text(
               '${_summaryData!['dominantElement']} 원소가 우세합니다',
-              style: TextStyle(
-                fontSize: 14 * fontScale,
+              style: TypographyUnified.bodySmall.copyWith(
+                fontSize: TypographyUnified.bodySmall.fontSize! * fontScale,
                 color: TossDesignSystem.purple.withValues(alpha: 0.6),
                 fontStyle: FontStyle.italic,
               ),
@@ -690,9 +687,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
           const SizedBox(height: 12),
           Text(
             '조언',
-            style: TextStyle(
-              fontSize: 18 * fontScale,
-              fontWeight: FontWeight.bold,
+            style: TypographyUnified.heading4.copyWith(
+              fontSize: TypographyUnified.heading4.fontSize! * fontScale,
               color: TossDesignSystem.white,
             ),
           ),
@@ -704,16 +700,16 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               children: [
                 Text(
                   '• ',
-                  style: TextStyle(
-                    fontSize: 16 * fontScale,
+                  style: TypographyUnified.bodyLarge.copyWith(
+                    fontSize: TypographyUnified.bodyLarge.fontSize! * fontScale,
                     color: TossDesignSystem.successGreen,
                   ),
                 ),
                 Expanded(
                   child: Text(
                     item,
-                    style: TextStyle(
-                      fontSize: 14 * fontScale,
+                    style: TypographyUnified.bodySmall.copyWith(
+                      fontSize: TypographyUnified.bodySmall.fontSize! * fontScale,
                       color: TossDesignSystem.white,
                       height: 1.4,
                     ),
@@ -750,8 +746,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               children: [
                 Text(
                   '예상 시기',
-                  style: TextStyle(
-                    fontSize: 16 * fontScale,
+                  style: TypographyUnified.bodyLarge.copyWith(
+                    fontSize: TypographyUnified.bodyLarge.fontSize! * fontScale,
                     fontWeight: FontWeight.bold,
                     color: TossDesignSystem.white,
                   ),
@@ -759,8 +755,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 const SizedBox(height: 4),
                 Text(
                   _summaryData!['timeline'],
-                  style: TextStyle(
-                    fontSize: 14 * fontScale,
+                  style: TypographyUnified.bodySmall.copyWith(
+                    fontSize: TypographyUnified.bodySmall.fontSize! * fontScale,
                     color: TossDesignSystem.white.withValues(alpha: 0.7),
                   ),
                 ),
@@ -806,8 +802,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               const SizedBox(height: 20),
               Text(
                 position,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.bodyLarge.copyWith(
                   color: TossDesignSystem.purple,
                   fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center),
@@ -825,17 +820,14 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               const SizedBox(height: 20),
               Text(
                 '해석',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                style: TypographyUnified.heading4.copyWith(
                   color: TossDesignSystem.white,
                 ),
               ),
               const SizedBox(height: 12),
               Text(
                 widget.interpretations[index],
-                style: TextStyle(
-                  fontSize: 14,
+                style: TypographyUnified.bodySmall.copyWith(
                   color: TossDesignSystem.white.withValues(alpha: 0.7),
                   height: 1.5,
                 ),
@@ -874,8 +866,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               const SizedBox(width: 8),
               Text(
                 '친구와 공유하기',
-                style: TextStyle(
-                  fontSize: 16 * fontScale,
+                style: TypographyUnified.buttonMedium.copyWith(
+                  fontSize: TypographyUnified.buttonMedium.fontSize! * fontScale,
                   fontWeight: FontWeight.bold,
                   color: TossDesignSystem.white,
                 ),
@@ -982,8 +974,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12 * fontScale,
+              style: TypographyUnified.labelMedium.copyWith(
+                fontSize: TypographyUnified.labelMedium.fontSize! * fontScale,
                 color: color,
                 fontWeight: FontWeight.w500,
               ),

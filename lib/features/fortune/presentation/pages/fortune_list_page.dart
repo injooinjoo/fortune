@@ -7,6 +7,7 @@ import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../presentation/providers/fortune_recommendation_provider.dart';
 
 class FortuneCategory {
@@ -511,13 +512,10 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                         padding: const EdgeInsets.fromLTRB(20, 32, 20, 16),
                         child: Text(
                           categoryDisplayName,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
+                          style: TypographyUnified.heading4.copyWith(
                             color: Theme.of(context).brightness == Brightness.dark
-                                ? TossDesignSystem.white
-                                : const Color(0xFF191919),
-                            height: 1.2,
+                                ? TossDesignSystem.textPrimaryDark
+                                : TossDesignSystem.textPrimaryLight,
                           ),
                         ),
                       ),
@@ -600,12 +598,11 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                           Flexible(
                             child: Text(
                               category.title,
-                              style: TextStyle(
-                                fontSize: 16,
+                              style: TypographyUnified.buttonMedium.copyWith(
                                 fontWeight: FontWeight.w500,
                                 color: Theme.of(context).brightness == Brightness.dark
-                                    ? TossDesignSystem.white
-                                    : const Color(0xFF191919),
+                                    ? TossDesignSystem.textPrimaryDark
+                                    : TossDesignSystem.textPrimaryLight,
                                 height: 1.3,
                               ),
                             ),
@@ -621,8 +618,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                               ),
                               child: Text(
                                 'NEW',
-                                style: TextStyle(
-                                  fontSize: 10,
+                                style: TypographyUnified.labelTiny.copyWith(
                                   fontWeight: FontWeight.w600,
                                   color: Theme.of(context).brightness == Brightness.dark
                                       ? TossDesignSystem.grayDark100
@@ -639,12 +635,10 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                       // 부제목 (설명)
                       Text(
                         category.description,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
+                        style: TypographyUnified.bodySmall.copyWith(
                           color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark600
-                              : const Color(0xFF8B95A1),
+                              ? TossDesignSystem.textSecondaryDark
+                              : TossDesignSystem.textSecondaryLight,
                           height: 1.3,
                         ),
                       ),
@@ -657,12 +651,10 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                 // 우측 액션 텍스트 (토스 스타일)
                 Text(
                   category.isFreeFortune ? '포인트 받기' : '${category.soulCost}원 받기',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.grayDark700
-                        : const Color(0xFF4E5968),
+                        ? TossDesignSystem.textTertiaryDark
+                        : TossDesignSystem.textTertiaryLight,
                   ),
                 ),
               ],

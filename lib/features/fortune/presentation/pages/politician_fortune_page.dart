@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class PoliticianFortunePage extends StatefulWidget {
   const PoliticianFortunePage({super.key});
@@ -114,8 +115,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
               const SizedBox(width: 4),
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 13,
+                style: TypographyUnified.labelMedium.copyWith(
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray500,
                 ),
@@ -184,9 +184,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                         : partyColor.withValues(alpha: 0.1),
                     child: Text(
                       politician['name']!.substring(0, 1),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                      style: TypographyUnified.heading3.copyWith(
                         color: isSelected ? TossDesignSystem.white : partyColor,
                       ),
                     ),
@@ -194,26 +192,23 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                   const SizedBox(height: 8),
                   Text(
                     politician['name']!,
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
                   ),
                   Text(
                     politician['position']!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isSelected 
+                    style: TypographyUnified.labelMedium.copyWith(
+                      color: isSelected
                           ? TossDesignSystem.white.withValues(alpha: 0.8)
                           : TossDesignSystem.gray500,
                     ),
                   ),
                   Text(
                     politician['party']!,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: isSelected 
+                    style: TypographyUnified.labelSmall.copyWith(
+                      color: isSelected
                           ? TossDesignSystem.white.withValues(alpha: 0.7)
                           : partyColor,
                       fontWeight: FontWeight.w500,

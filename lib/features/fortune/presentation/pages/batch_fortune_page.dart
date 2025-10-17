@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../data/services/fortune_batch_service.dart';
 import '../providers/batch_fortune_provider.dart';
 import '../widgets/batch_fortune_package_card.dart';
@@ -56,19 +57,16 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     '여러 운세를 한 번에!',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                    style: TypographyUnified.displaySmall.copyWith(
                       color: TossDesignSystem.white,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '패키지로 구매하면 최대 50% 토큰 절약',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.bodyLarge.copyWith(
                       color: TossDesignSystem.white.withValues(alpha: 0.7),
                     ),
                   ),
@@ -93,21 +91,18 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                             const SizedBox(width: 8),
                             Text(
                               '보유 토큰',
-                              style: TextStyle(
+                              style: TypographyUnified.bodySmall.copyWith(
                                 color: TossDesignSystem.white.withValues(alpha: 0.7),
-                                fontSize: 14,
                               ),
                             ),
                           ],
                         ),
                         Text(
-                          isAuthenticated 
+                          isAuthenticated
                               ? '$tokenBalance개'
                               : '로그인 필요',
-                          style: const TextStyle(
+                          style: TypographyUnified.heading4.copyWith(
                             color: TossDesignSystem.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
@@ -125,9 +120,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                 children: [
                   Text(
                     '운세 패키지 선택',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                    style: TypographyUnified.heading3.copyWith(
                       color: isDark ? TossDesignSystem.white : null)),
                   const SizedBox(height: 16),
                   
@@ -158,9 +151,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                       children: [
                         Text(
                           '생성된 운세',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                          style: TypographyUnified.heading3.copyWith(
                             color: isDark ? TossDesignSystem.white : null)),
                         TextButton(
                           onPressed: () {

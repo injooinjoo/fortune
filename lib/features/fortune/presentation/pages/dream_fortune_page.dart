@@ -15,6 +15,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../services/speech_recognition_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class DreamFortunePage extends BaseFortunePage {
   const DreamFortunePage({super.key})
@@ -572,9 +573,8 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
                 const SizedBox(width: 8),
                 Text(
                   interpretation['mainTheme'],
-                  style: TextStyle(
+                  style: TypographyUnified.bodyLarge.copyWith(
                     color: TossDesignSystem.white,
-                    fontSize: 16,
                     fontWeight: FontWeight.bold
                   )
                 )
@@ -585,8 +585,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
           // 심리학적 통찰
           Text(
             '심리학적 통찰',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.bodyLarge.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.white
             )
@@ -594,8 +593,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
           const SizedBox(height: 8),
           Text(
             interpretation['psychologicalInsight'],
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.9),
               height: 1.5
             )
@@ -605,8 +603,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
           if ((interpretation['luckyElements'] as List).isNotEmpty) ...[
             Text(
               '긍정적 상징',
-              style: TextStyle(
-                fontSize: 16,
+              style: TypographyUnified.bodyLarge.copyWith(
                 fontWeight: FontWeight.bold,
                 color: TossDesignSystem.white
               )
@@ -625,8 +622,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
                     Expanded(
                       child: Text(
                         element,
-                        style: TextStyle(
-                          fontSize: 14,
+                        style: TypographyUnified.bodySmall.copyWith(
                           color: TossDesignSystem.white.withValues(alpha: 0.8)
                         )
                       )
