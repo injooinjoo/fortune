@@ -101,6 +101,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : const Color(0xFFF8F9FA),
       extendBodyBehindAppBar: true,
       body: SafeArea(
+        bottom: false, // 하단 네비게이션 바는 침범 허용
         child: Stack(
           children: [
             // PageView (틴더 카드 스타일) - 전체 화면 사용
