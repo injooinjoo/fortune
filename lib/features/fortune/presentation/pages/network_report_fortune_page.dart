@@ -9,6 +9,7 @@ import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../shared/components/app_header.dart' show FontSize;
+import '../../../../core/theme/typography_unified.dart';
 
 class NetworkReportFortunePage extends ConsumerWidget {
   const NetworkReportFortunePage({super.key});
@@ -750,8 +751,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
           color: _getTypeColor(key),
           radius: 50,
           title: '$value%',
-          titleStyle: const TextStyle(
-            fontSize: 12,
+          titleStyle: TypographyUnified.labelMedium.copyWith(
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white,
           ),
@@ -812,7 +812,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
               getTitlesWidget: (value, meta) {
                 return Text(
                   '${value.toInt()}',
-                  style: const TextStyle(fontSize: 10));
+                  style: TypographyUnified.labelTiny);
               })),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
@@ -822,7 +822,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                 if (value.toInt() < months.length) {
                   return Text(
                     months[value.toInt()],
-                    style: const TextStyle(fontSize: 10),
+                    style: TypographyUnified.labelTiny,
                   );
                 }
                 return const Text('');
