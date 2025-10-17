@@ -174,76 +174,38 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
 
   // 헤어진 애인과 동일한 구조
   Widget _buildCurrentStep() {
-    switch (_currentStep) {
-      case 0:
-        return _buildStep1Calendar();
-      case 1:
-        return _buildStep2Category();
-      case 2:
-        return _buildStep3Details();
-      default:
-        return _buildStep1Calendar();
-    }
-  }
-
-  // Step 1: 캘린더 선택 (헤어진 애인 구조와 동일)
-  Widget _buildStep1Calendar() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          _buildCalendar(),
-          const SizedBox(height: 12),
-          _buildSelectedDateInfo(),
-
-          // Floating 버튼 공간 확보
-          const SizedBox(height: 100),
-        ],
-      ),
-    );
-  }
-
-  // Step 2: 카테고리 선택 (헤어진 애인 구조와 동일)
-  Widget _buildStep2Category() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          EventCategorySelector(
-            selectedCategory: _selectedCategory,
-            onCategorySelected: (category) {
-              setState(() {
-                _selectedCategory = category;
-              });
-            },
-          ),
-
-          // Floating 버튼 공간 확보
-          const SizedBox(height: 100),
-        ],
-      ),
-    );
-  }
-
-  // Step 3: 상세 입력 (헤어진 애인 구조와 동일)
-  Widget _buildStep3Details() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          EventDetailInputForm(
-            category: _selectedCategory!,
-            questionController: _questionController,
-            selectedEmotion: _selectedEmotion,
-            onEmotionSelected: (emotion) {
-              setState(() {
-                _selectedEmotion = emotion;
-              });
-            },
-            onAddPartner: () {
-              debugPrint('상대방 정보 추가');
-            },
-          ),
+          if (_currentStep == 0) ...[
+            _buildCalendar(),
+            const SizedBox(height: 12),
+            _buildSelectedDateInfo(),
+          ] else if (_currentStep == 1) ...[
+            EventCategorySelector(
+              selectedCategory: _selectedCategory,
+              onCategorySelected: (category) {
+                setState(() {
+                  _selectedCategory = category;
+                });
+              },
+            ),
+          ] else if (_currentStep == 2) ...[
+            EventDetailInputForm(
+              category: _selectedCategory!,
+              questionController: _questionController,
+              selectedEmotion: _selectedEmotion,
+              onEmotionSelected: (emotion) {
+                setState(() {
+                  _selectedEmotion = emotion;
+                });
+              },
+              onAddPartner: () {
+                debugPrint('상대방 정보 추가');
+              },
+            ),
+          ],
 
           // Floating 버튼 공간 확보
           const SizedBox(height: 100),

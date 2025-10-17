@@ -3,7 +3,8 @@ import 'package:go_router/go_router.dart';
 // import '../../../features/fortune/presentation/pages/lucky_number_fortune_page.dart'; // Removed - unused
 // import '../../../features/fortune/presentation/pages/lucky_food_fortune_page.dart'; // Removed - unused
 // import '../../../features/fortune/presentation/pages/lucky_place_fortune_page.dart'; // Removed - unused
-import '../../../features/fortune/presentation/pages/lucky_items_unified_page.dart';
+// import '../../../features/fortune/presentation/pages/lucky_items_unified_page.dart'; // Old version
+import '../../../features/fortune/presentation/pages/lucky_items_renewed_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_outfit_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_series_fortune_page.dart';
 // import '../../../features/fortune/presentation/pages/birthstone_fortune_page.dart'; // Removed - unused
@@ -11,11 +12,11 @@ import '../../../features/fortune/presentation/pages/five_blessings_fortune_page
 import '../../../features/fortune/presentation/pages/lucky_items_results_page.dart';
 
 final luckyItemRoutes = [
-  // Lucky Items Unified
+  // Lucky Items Renewed (새 버전)
   GoRoute(
     path: '/lucky-items',
     name: 'fortune-lucky-items',
-    builder: (context, state) => const LuckyItemsUnifiedPage()),
+    builder: (context, state) => const LuckyItemsRenewedPage()),
     
   // Lucky Items Results (New)
   GoRoute(
