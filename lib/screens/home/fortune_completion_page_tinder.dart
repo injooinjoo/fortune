@@ -102,8 +102,10 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // PageView (틴더 카드 스타일) - MainShell이 padding 처리하므로 bottom 제거
+          // PageView (틴더 카드 스타일) - 전체 화면 사용
           Positioned.fill(
+            top: 0,
+            bottom: 0,
             child: PageView.builder(
               controller: _pageController,
               scrollDirection: Axis.vertical,
@@ -120,9 +122,9 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             ),
           ),
 
-          // 프로그레스 바 (맨 위, Status Bar 바로 아래)
+          // 프로그레스 바 (맨 위, 여백 없음)
           Positioned(
-            top: MediaQuery.of(context).padding.top,
+            top: 0,
             left: 0,
             right: 0,
             child: Container(
@@ -152,7 +154,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
 
           // 고정 헤더 (이름 · 날짜 · 날씨)
           Positioned(
-            top: MediaQuery.of(context).padding.top + 12,
+            top: 12,
             left: 0,
             right: 0,
             child: Container(
@@ -213,11 +215,9 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     bool isDark,
     String displayUserName,
   ) {
-    final topPadding = MediaQuery.of(context).padding.top;
-
     return Container(
       height: double.infinity,
-      margin: EdgeInsets.fromLTRB(20, topPadding + 60, 20, 20),
+      margin: const EdgeInsets.fromLTRB(20, 60, 20, 20),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
         borderRadius: BorderRadius.circular(28),
