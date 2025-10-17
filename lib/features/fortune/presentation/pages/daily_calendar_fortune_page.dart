@@ -307,54 +307,6 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
     );
   }
 
-  Widget _buildProgressIndicator() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final steps = ['날짜 선택', '유형 선택', '세부 입력'];
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          Row(
-            children: List.generate(3, (index) {
-              final isActive = index <= _currentStep;
-
-              return Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: isActive
-                            ? AppTheme.primaryColor
-                            : (isDark
-                                ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
-                                : TossDesignSystem.gray300),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                    if (index < 2) const SizedBox(width: 8),
-                  ],
-                ),
-              );
-            }),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            steps[_currentStep],
-            style: TextStyle(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _generateFortuneWithEventDetails() async {
     // BaseFortunePage의 운세 생성 트리거
     // generateFortuneParams에서 이벤트 정보를 포함하도록 수정
@@ -665,17 +617,8 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
       body: SafeArea(
         child: Stack(
           children: [
-            Column(
-              children: [
-                // Progress Indicator (헤어진 애인과 동일)
-                _buildProgressIndicator(),
-
-                // Content (헤어진 애인과 동일 - PageView 사용)
-                Expanded(
-                  child: _buildCurrentStep(),
-                ),
-              ],
-            ),
+            // Content
+            _buildCurrentStep(),
 
             // Floating Progress Button
             _buildFloatingButton(),
