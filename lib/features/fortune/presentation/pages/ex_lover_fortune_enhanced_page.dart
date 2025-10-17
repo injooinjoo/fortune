@@ -1766,77 +1766,11 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
   Future<void> _startFortuneTelling() async {
     final data = ref.read(exLoverDataProvider);
 
-    // 로딩 다이얼로그 표시 with comforting messages
-    final loadingMessages = [
-      '당신의 마음을 읽고 있어요...',
-      '깊은 감정을 분석하고 있어요...',
-      '최선의 조언을 준비하고 있어요...',
-      '당신을 위한 메시지를 만들고 있어요...',
-    ];
-    
-    int messageIndex = 0;
-    
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            // Change message every 2 seconds
-            Future.delayed(const Duration(seconds: 2), () {
-              if (mounted && Navigator.canPop(context)) {
-                setState(() {
-                  messageIndex = (messageIndex + 1) % loadingMessages.length;
-                });
-              }
-            });
-            
-            return Center(
-              child: GlassContainer(
-                padding: const EdgeInsets.all(32),
-                borderRadius: BorderRadius.circular(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const CircularProgressIndicator(
-                      color: TossDesignSystem.white,
-                      strokeWidth: 3,
-                    ),
-                    const SizedBox(height: 24),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
-                      child: Text(
-                        loadingMessages[messageIndex],
-                        key: ValueKey(messageIndex),
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: TossDesignSystem.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '잠시만 기다려주세요',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: TossDesignSystem.white.withValues(alpha:0.8),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-    
     try {
       final fortuneService = UnifiedFortuneService(Supabase.instance.client);
       final user = ref.read(userProvider).value;
 
       if (user == null) {
-        Navigator.pop(context); // 로딩 닫기
         Toast.error(context, '로그인이 필요합니다');
         return;
       }
@@ -1883,8 +1817,6 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
 
       _convertToFortune(fortuneResult);
 
-      Navigator.pop(context); // 로딩 닫기
-
       // Clear saved progress after successful completion
       await _clearSavedProgress();
       
@@ -1899,10 +1831,8 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
         );
         // TODO: 결과 표시 로직 추가
       }
-      
+
     } catch (e) {
-      Navigator.pop(context); // 로딩 닫기
-      
       // Enhanced error handling with specific messages
       String errorMessage = '운세 분석 중 오류가 발생했습니다';
       String errorDetails = e.toString();
