@@ -11,6 +11,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../fortune/presentation/widgets/fortune_button.dart';
 import '../../../fortune/presentation/widgets/standard_fortune_app_bar.dart';
 import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 포춘쿠키 타입
 enum CookieType {
@@ -320,7 +321,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                 child: Center(
                   child: Text(
                     cookie.emoji,
-                    style: const TextStyle(fontSize: 28),
+                    style: TypographyUnified.heading1,
                   ),
                 ),
               ),
@@ -469,8 +470,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                               // Cookie emoji
                               Text(
                                 _selectedCookie!.emoji,
-                                style: TextStyle(
-                                  fontSize: 60,
+                                style: TypographyUnified.displayLarge.copyWith(
                                   shadows: [
                                     Shadow(
                                       color: TossDesignSystem.black.withValues(alpha: 0.2),
@@ -579,10 +579,9 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                   ),
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         '"',
-                        style: TextStyle(
-                          fontSize: 36,
+                        style: TypographyUnified.heading1.copyWith(
                           fontWeight: FontWeight.w300,
                           color: Color(0xFFFFB74D),
                           height: 0.5,
@@ -599,10 +598,9 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         '"',
-                        style: TextStyle(
-                          fontSize: 36,
+                        style: TypographyUnified.heading1.copyWith(
                           fontWeight: FontWeight.w300,
                           color: Color(0xFFFFB74D),
                           height: 0.5,
