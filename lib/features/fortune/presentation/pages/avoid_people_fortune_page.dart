@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
@@ -550,7 +551,7 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
               ),
               Text(
                 emojis[value - 1],
-                style: const TextStyle(fontSize: 24),
+                style: TypographyUnified.displaySmall,
               ),
             ],
           ),
