@@ -12,6 +12,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../../../data/services/token_api_service.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class WorryBeadPage extends ConsumerStatefulWidget {
   const WorryBeadPage({super.key});
@@ -319,8 +320,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                   )
                 : Text(
                     _hasWorry ? '염주 돌리기' : '먼저 걱정을 적어주세요',
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
