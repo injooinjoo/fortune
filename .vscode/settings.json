@@ -1,4 +1,53 @@
 {
     "IDX.aI.enableInlineCompletion": true,
-    "IDX.aI.enableCodebaseIndexing": true
+    "IDX.aI.enableCodebaseIndexing": true,
+
+    // Claude Code 파일 작업 권한
+    "claude.allowedCommands": [
+        "git add",
+        "git commit",
+        "git push",
+        "git checkout",
+        "git mv",
+        "git log",
+        "flutter run",
+        "flutter analyze",
+        "flutter clean",
+        "flutter pub get",
+        "npm install",
+        "npm run",
+        "npx supabase",
+        "chmod",
+        "pkill",
+        "launchctl",
+        "nc",
+        "find",
+        "grep",
+        "cat",
+        "tee",
+        "awk",
+        "python3",
+        "dart run"
+    ],
+
+    // 파일 읽기 권한
+    "claude.allowedReadPaths": [
+        "/**"
+    ],
+
+    // 파일 쓰기 권한
+    "claude.allowedWritePaths": [
+        "/Users/jacobmac/Desktop/Dev/fortune/**",
+        "/tmp/**"
+    ],
+
+    // 환경변수 접근 권한
+    "claude.allowedEnvVars": [
+        "JIRA_EMAIL",
+        "JIRA_TOKEN",
+        "JIRA_URL",
+        "SUPABASE_URL",
+        "SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY"
+    ]
 }

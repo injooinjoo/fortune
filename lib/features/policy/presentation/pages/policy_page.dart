@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/typography_unified.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/shared/components/app_header.dart';
 import 'package:fortune/core/theme/app_theme.dart';
@@ -93,15 +94,13 @@ class PolicyPage extends ConsumerWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: TypographyUnified.heading4.copyWith(
                       fontWeight: FontWeight.bold,
                       color: TossDesignSystem.white)),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       color: TossDesignSystem.white.withValues(alpha: 0.8),
                     ),
                   ),
@@ -137,17 +136,15 @@ class PolicyPage extends ConsumerWidget {
           Text(
             'Fortune은 이용자의 개인정보를 소중히 여기며,\n'
             '관련 법령에 따라 안전하게 관리하고 있습니다.',
-            style: TextStyle(
+            style: TypographyUnified.bodySmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.8),
-              fontSize: 14,
               height: 1.5),
             textAlign: TextAlign.center),
           const SizedBox(height: 16),
           Text(
             '문의사항이 있으시면 고객지원 페이지를 이용해주세요.',
-            style: TextStyle(
-              color: TossDesignSystem.white.withValues(alpha: 0.6),
-              fontSize: 12),
+            style: TypographyUnified.labelMedium.copyWith(
+              color: TossDesignSystem.white.withValues(alpha: 0.6)),
             textAlign: TextAlign.center,
           ),
         ],

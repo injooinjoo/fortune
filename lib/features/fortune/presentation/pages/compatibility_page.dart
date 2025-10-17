@@ -12,6 +12,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../constants/fortune_button_spacing.dart';
 import '../widgets/standard_fortune_app_bar.dart';
@@ -410,9 +411,8 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                                   children: [
                                     Text(
                                       '생년월일',
-                                      style: TossTheme.caption.copyWith(
+                                      style: TypographyUnified.labelSmall.copyWith(
                                         color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
-                                        fontSize: 11,
                                       ),
                                     ),
                                     const SizedBox(height: 2),
@@ -420,14 +420,13 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                                       _person1BirthDate != null
                                           ? '${_person1BirthDate!.year}년 ${_person1BirthDate!.month}월 ${_person1BirthDate!.day}일'
                                           : '생년월일을 선택해주세요',
-                                      style: TossTheme.body2.copyWith(
+                                      style: TypographyUnified.bodySmall.copyWith(
                                         color: _person1BirthDate != null
                                             ? (isDark ? TossDesignSystem.white : TossTheme.textBlack)
                                             : (isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600),
                                         fontWeight: _person1BirthDate != null
                                             ? FontWeight.w500
                                             : FontWeight.w400,
-                                        fontSize: 14,
                                       ),
                                     ),
                                   ],
