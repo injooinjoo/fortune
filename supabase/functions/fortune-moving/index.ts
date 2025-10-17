@@ -58,8 +58,8 @@ serve(async (req) => {
       purpose
     })
 
-    // 캐시 확인
-    const cacheKey = `moving_fortune_${Buffer.from(`${current_area}_${target_area}_${moving_period}_${purpose}`).toString('base64').slice(0, 50)}`
+    // 캐시 확인 (Deno 네이티브 btoa 사용)
+    const cacheKey = `moving_fortune_${btoa(`${current_area}_${target_area}_${moving_period}_${purpose}`).slice(0, 50)}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')

@@ -45,7 +45,7 @@ serve(async (req) => {
 
     console.log('Exam fortune request:', { exam_type, exam_date })
 
-    const cacheKey = `exam_fortune_${Buffer.from(`${exam_type}_${exam_date}_${study_period}_${confidence}`).toString('base64').slice(0, 50)}`
+    const cacheKey = `exam_fortune_${btoa(`${exam_type}_${exam_date}_${study_period}_${confidence}`).slice(0, 50)}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')

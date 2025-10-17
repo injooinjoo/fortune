@@ -56,8 +56,8 @@ serve(async (req) => {
       person2_name
     })
 
-    // 캐시 확인
-    const cacheKey = `compatibility_fortune_${Buffer.from(`${person1_name}_${person1_birth_date}_${person2_name}_${person2_birth_date}`).toString('base64').slice(0, 50)}`
+    // 캐시 확인 (Deno 네이티브 btoa 사용)
+    const cacheKey = `compatibility_fortune_${btoa(`${person1_name}_${person1_birth_date}_${person2_name}_${person2_birth_date}`).slice(0, 50)}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')

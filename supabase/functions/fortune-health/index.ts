@@ -36,7 +36,7 @@ serve(async (req) => {
 
     console.log('Health fortune request:', { current_condition, concerned_body_parts })
 
-    const cacheKey = `health_fortune_${Buffer.from(`${current_condition}_${concerned_body_parts.join(',')}`).toString('base64').slice(0, 50)}`
+    const cacheKey = `health_fortune_${btoa(`${current_condition}_${concerned_body_parts.join(',')}`).slice(0, 50)}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')

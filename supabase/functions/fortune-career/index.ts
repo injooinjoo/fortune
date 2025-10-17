@@ -265,7 +265,7 @@ serve(async (req) => {
     const predictions = generateCareerPredictions(timeHorizon, careerPath, careerField, currentRole)
 
     // 캐시 확인
-    const cacheKey = `career_fortune_${Buffer.from(`${fortuneType}_${currentRole}_${timeHorizon}_${careerPath}_${skills.join(',')}`).toString('base64').slice(0, 50)}`
+    const cacheKey = `career_fortune_${btoa(`${fortuneType}_${currentRole}_${timeHorizon}_${careerPath}_${skills.join(',')}`).slice(0, 50)}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')

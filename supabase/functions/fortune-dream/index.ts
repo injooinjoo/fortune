@@ -321,7 +321,7 @@ serve(async (req) => {
     const dreamType = classifyDreamType(analysis)
 
     // 캐시 확인
-    const cacheKey = `dream_fortune_${Buffer.from(dream + dreamType).toString('base64').slice(0, 50)}`
+    const cacheKey = `dream_fortune_${btoa(dream + dreamType).slice(0, 50)}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')

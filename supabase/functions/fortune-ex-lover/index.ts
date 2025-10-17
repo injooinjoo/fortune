@@ -51,7 +51,7 @@ serve(async (req) => {
 
     console.log('Ex-lover fortune request:', { name, relationship_duration })
 
-    const cacheKey = `ex_lover_fortune_${Buffer.from(`${name}_${relationship_duration}_${breakup_reason}`).toString('base64').slice(0, 50)}`
+    const cacheKey = `ex_lover_fortune_${btoa(`${name}_${relationship_duration}_${breakup_reason}`).slice(0, 50)}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')

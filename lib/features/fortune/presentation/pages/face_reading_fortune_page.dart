@@ -2,13 +2,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'base_fortune_page_v2.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/image_upload_selector.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../services/ad_service.dart';
+import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart' as core_models;
 
 class FaceReadingFortunePage extends ConsumerStatefulWidget {
   const FaceReadingFortunePage({super.key});
@@ -19,98 +23,48 @@ class FaceReadingFortunePage extends ConsumerStatefulWidget {
 
 class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage> {
   final PageController _pageController = PageController();
-  int _currentStep = 0;
   ImageUploadResult? _uploadResult;
   bool _isAnalyzing = false;
-  
+  FortuneResult? _fortuneResult;
+
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return BaseFortunePageV2(
-      title: '관상',
-      fortuneType: 'face-reading',
-      headerGradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          TossDesignSystem.purple,
-          TossDesignSystem.tossBlue,
-        ],
+
+    return Scaffold(
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      appBar: const StandardFortuneAppBar(
+        title: '관상',
       ),
-      inputBuilder: (context, onSubmit) => _buildTossStyleInputSection(context, onSubmit, isDark),
-      resultBuilder: (context, result, onShare) => _buildTossStyleResult(context, result, isDark)
+      body: _fortuneResult != null
+          ? SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: _buildTossStyleResult(context, _fortuneResult!, isDark),
+            )
+          : _buildTossStyleInputSection(context, isDark),
     );
   }
   
-  Widget _buildTossStyleInputSection(BuildContext context, Function(Map<String, dynamic>) onSubmit, bool isDark) {
-    return Column(
+  Widget _buildTossStyleInputSection(BuildContext context, bool isDark) {
+    return Stack(
       children: [
-        // Progress Indicator
-        _buildProgressIndicator(isDark),
-        const SizedBox(height: 24),
-        
-        // Page View for Steps
-        SizedBox(
-          height: 600,
+        Positioned.fill(
           child: PageView(
             controller: _pageController,
             physics: const NeverScrollableScrollPhysics(),
             children: [
               _buildStep1(context, isDark),
-              _buildStep2(context, onSubmit, isDark),
+              _buildStep2(context, isDark),
             ],
           ),
         ),
       ],
-    );
-  }
-  
-  Widget _buildProgressIndicator(bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: TossDesignSystem.purple,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Container(
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: _currentStep >= 1
-                        ? TossDesignSystem.purple
-                        : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _currentStep == 0 ? '사진 선택' : 'AI 분석',
-            style: TossDesignSystem.body3.copyWith(
-              color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
-            ),
-          ),
-        ],
-      ),
     );
   }
   
@@ -147,7 +101,6 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
               setState(() {
                 _uploadResult = result;
                 if (result.imageFile != null || result.instagramUrl != null) {
-                  _currentStep = 1;
                   _pageController.nextPage(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
@@ -168,12 +121,14 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     );
   }
   
-  Widget _buildStep2(BuildContext context, Function(Map<String, dynamic>) onSubmit, bool isDark) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+  Widget _buildStep2(BuildContext context, bool isDark) {
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           // Title
           Text(
             '분석을 시작할\n준비가 되었습니다',
@@ -287,51 +242,31 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
               ],
             ),
           ).animate().fadeIn(duration: 500.ms, delay: 300.ms),
-          
-          const SizedBox(height: 32),
-          
-          // Action Buttons
-          SizedBox(
-            width: double.infinity,
-            child: TossButton.primary(
-              text: _isAnalyzing ? 'AI가 분석 중...' : 'AI 관상 분석 시작',
-              onPressed: _isAnalyzing ? null : () async {
-                await AdService.instance.showInterstitialAdWithCallback(
-                  onAdCompleted: () async {
-                    _startAnalysis(onSubmit);
-                  },
-                  onAdFailed: () async {
-                    // Still allow fortune generation even if ad fails
-                    _startAnalysis(onSubmit);
-                  },
-                );
-              },
-              isEnabled: !_isAnalyzing,
-              isLoading: _isAnalyzing,
-              icon: _isAnalyzing ? null : const Icon(Icons.psychology, size: 20, color: TossDesignSystem.white),
-            ),
+
+              const SizedBox(height: 100), // Bottom spacing for floating button
+            ],
           ),
-          
-          const SizedBox(height: 12),
-          
-          SizedBox(
-            width: double.infinity,
-            child: TossButton.secondary(
-              text: '다시 선택',
-              onPressed: _isAnalyzing ? null : () {
-                setState(() {
-                  _currentStep = 0;
-                  _uploadResult = null;
-                });
-                _pageController.previousPage(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
+        ),
+
+        // Floating Bottom Button
+        FloatingBottomButton(
+          text: _isAnalyzing ? 'AI가 분석 중...' : 'AI 관상 분석 시작',
+          onPressed: _isAnalyzing ? null : () async {
+            await AdService.instance.showInterstitialAdWithCallback(
+              onAdCompleted: () async {
+                _startAnalysis();
               },
-            ),
-          ),
-        ],
-      ),
+              onAdFailed: () async {
+                _startAnalysis();
+              },
+            );
+          },
+          isLoading: _isAnalyzing,
+          style: TossButtonStyle.primary,
+          size: TossButtonSize.large,
+          icon: _isAnalyzing ? null : const Icon(Icons.psychology, size: 20, color: TossDesignSystem.white),
+        ),
+      ],
     );
   }
   
@@ -364,14 +299,14 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     );
   }
   
-  Future<void> _startAnalysis(Function(Map<String, dynamic>) onSubmit) async {
+  Future<void> _startAnalysis() async {
     debugPrint('🎯 [FaceReadingFortunePage] _startAnalysis started');
     setState(() {
       _isAnalyzing = true;
     });
 
     try {
-      Map<String, dynamic> data = {
+      Map<String, dynamic> inputConditions = {
         'analysis_type': 'comprehensive',
         'include_character': true,
         'include_fortune': true,
@@ -383,26 +318,34 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         final bytes = await _uploadResult!.imageFile!.readAsBytes();
         debugPrint('📏 [FaceReadingFortunePage] Image size: ${bytes.length} bytes (${(bytes.length / 1024 / 1024).toStringAsFixed(2)} MB)');
 
-        // 이미지 크기 체크 (5MB 제한)
         if (bytes.length > 5 * 1024 * 1024) {
           throw '이미지 크기가 너무 큽니다. 5MB 이하의 이미지를 선택해주세요.';
         }
-        data['image'] = base64Encode(bytes);
-        data['analysis_source'] = 'image';
+        inputConditions['image'] = base64Encode(bytes);
+        inputConditions['analysis_source'] = 'image';
         debugPrint('✅ [FaceReadingFortunePage] Image encoded to base64, source: image');
       } else if (_uploadResult?.instagramUrl != null) {
-        data['instagram_url'] = _uploadResult!.instagramUrl;
-        data['analysis_source'] = 'instagram';
+        inputConditions['instagram_url'] = _uploadResult!.instagramUrl;
+        inputConditions['analysis_source'] = 'instagram';
         debugPrint('✅ [FaceReadingFortunePage] Using Instagram URL: ${_uploadResult!.instagramUrl}');
       } else {
         debugPrint('❌ [FaceReadingFortunePage] No image or Instagram URL provided');
         throw '분석할 이미지를 선택해주세요.';
       }
 
-      debugPrint('📤 [FaceReadingFortunePage] Calling onSubmit with data keys: ${data.keys.toList()}');
-      debugPrint('📤 [FaceReadingFortunePage] Analysis source: ${data['analysis_source']}');
+      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+      final result = await fortuneService.getFortune(
+        fortuneType: 'face-reading',
+        dataSource: FortuneDataSource.api,
+        inputConditions: inputConditions,
+      );
 
-      onSubmit(data);
+      if (mounted) {
+        setState(() {
+          _fortuneResult = _convertToFortuneResult(result);
+          _isAnalyzing = false;
+        });
+      }
     } catch (e) {
       debugPrint('❌ [FaceReadingFortunePage] Error in _startAnalysis: $e');
       if (mounted) {
@@ -417,6 +360,18 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         });
       }
     }
+  }
+
+  FortuneResult _convertToFortuneResult(core_models.FortuneResult coreResult) {
+    final sectionsData = coreResult.data['sections'] as Map<String, dynamic>?;
+    final Map<String, String>? sections = sectionsData?.map((key, value) => MapEntry(key, value.toString()));
+
+    return FortuneResult(
+      mainFortune: coreResult.summary['message'] as String?,
+      sections: sections,
+      recommendations: (coreResult.data['recommendations'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      details: coreResult.data,
+    );
   }
   
   Widget _buildTossStyleResult(BuildContext context, FortuneResult result, bool isDark) {
