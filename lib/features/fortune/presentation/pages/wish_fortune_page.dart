@@ -314,6 +314,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
             onPressed: _canSubmit() ? _submitWish : null,
             style: TossButtonStyle.primary,
             size: TossButtonSize.large,
+            hideWhenDisabled: true,
           ),
         ],
       ),
