@@ -86,7 +86,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       // Non-authenticated routes (outside shell)
       ...authRoutes,
-      
+
       // Special onboarding route (not in shell)
       GoRoute(
         path: '/onboarding/toss-style',
@@ -96,7 +96,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return OnboardingPage(isPartialCompletion: isPartial);
         },
       ),
-      
+
+      // Fortune Cookie (outside shell - no navigation bar)
+      GoRoute(
+        path: '/fortune-cookie',
+        name: 'fortune-cookie',
+        builder: (context, state) => const FortuneCookiePage(),
+      ),
+
       // Shell route that provides persistent navigation
       ShellRoute(
         builder: (context, state, child) => MainShell(
@@ -332,15 +339,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LuckyExamFortunePage(),
       ),
       // MBTI - now included in fortuneRoutes (moved back to basic_fortune_routes.dart)
-      
-      
-      // Fortune Cookie (outside shell - no navigation bar)
-      GoRoute(
-        path: '/fortune-cookie',
-        name: 'fortune-cookie',
-        builder: (context, state) => const FortuneCookiePage(),
-      ),
-      
+
       // Celebrity Fortune (outside shell - no navigation bar)
       GoRoute(
         path: '/celebrity',
