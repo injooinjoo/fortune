@@ -73,13 +73,8 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
       appBar: AppBar(
         backgroundColor: TossDesignSystem.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-            size: 20,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
+        iconTheme: IconThemeData(
+          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
         ),
         title: Text(
           '바이오리듬 분석 결과',

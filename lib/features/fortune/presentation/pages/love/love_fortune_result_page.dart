@@ -16,29 +16,28 @@ class LoveFortuneResultPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
-      appBar: AppBar(
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+      child: Scaffold(
         backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            // Pop back to fortune list
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          },
-          icon: Icon(
-            Icons.close,
+        appBar: AppBar(
+          backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
+          elevation: 0,
+          iconTheme: IconThemeData(
             color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
           ),
-        ),
-        title: Text(
-          '연애운세 결과',
-          style: TossTheme.heading3.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+          title: Text(
+            '연애운세 결과',
+            style: TossTheme.heading3.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+            ),
           ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -164,6 +163,7 @@ class LoveFortuneResultPage extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 

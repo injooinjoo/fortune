@@ -87,25 +87,26 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
       );
     }
 
-    return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.gray50,
-      appBar: AppBar(
-        backgroundColor: (isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white).withValues(alpha: 0.0),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text(
-          '커리어 코칭 결과',
-          style: TossDesignSystem.heading3,
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new,
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
-          onPressed: () {
-            // Pop back to fortune list (first route)
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          },
-        ),
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.gray50,
+        appBar: AppBar(
+          backgroundColor: (isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white).withValues(alpha: 0.0),
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          title: Text(
+            '커리어 코칭 결과',
+            style: TossDesignSystem.heading3,
+          ),
+          centerTitle: true,
+          iconTheme: IconThemeData(
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
+          ),
         actions: [
           IconButton(
             icon: Icon(Icons.share_outlined,
@@ -162,6 +163,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
           ),
         ],
       ),
+    ),
     );
   }
 

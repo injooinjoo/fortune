@@ -27,14 +27,10 @@ class FontSettingsPage extends ConsumerWidget {
             : TossDesignSystem.backgroundLight,
         elevation: 0,
         scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: isDark
-                ? TossDesignSystem.textPrimaryDark
-                : TossDesignSystem.textPrimaryLight,
-          ),
-          onPressed: () => context.pop(),
+        iconTheme: IconThemeData(
+          color: isDark
+              ? TossDesignSystem.textPrimaryDark
+              : TossDesignSystem.textPrimaryLight,
         ),
         title: Text(
           '폰트 설정',

@@ -81,9 +81,8 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: _getTextColor(context)),
-          onPressed: () => context.pop(),
+        iconTheme: IconThemeData(
+          color: _getTextColor(context),
         ),
         title: Text(
           '알림 설정',

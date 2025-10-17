@@ -126,9 +126,8 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
       appBar: AppBar(
         backgroundColor: TossDesignSystem.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
-          onPressed: () => context.pop(),
+        iconTheme: const IconThemeData(
+          color: TossDesignSystem.gray900,
         ),
         title: const Text(
           '운세 활용법',

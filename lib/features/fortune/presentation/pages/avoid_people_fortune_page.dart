@@ -142,13 +142,8 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
       appBar: AppBar(
         backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-            size: 20,
-          ),
+        iconTheme: IconThemeData(
+          color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
         ),
         title: Text(
           widget.title,

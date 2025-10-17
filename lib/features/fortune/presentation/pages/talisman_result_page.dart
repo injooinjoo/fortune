@@ -106,12 +106,8 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: AppBar(
         backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-          ),
-          onPressed: () => context.pop(),
+        iconTheme: IconThemeData(
+          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
         ),
         title: Text(
           '부적 완성',
