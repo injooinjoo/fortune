@@ -122,9 +122,9 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             ),
           ),
 
-          // 프로그레스 바 (맨 위, 여백 없음)
+          // 프로그레스 바 (노치 영역 고려)
           Positioned(
-            top: 0,
+            top: MediaQuery.of(context).padding.top,
             left: 0,
             right: 0,
             child: Container(
