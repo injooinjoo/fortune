@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../services/ad_service.dart';
@@ -260,17 +260,16 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
       appBar: const StandardFortuneAppBar(
         title: '바이오리듬 분석',
       ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
 
-                    // 메인 설명 카드
+                  // 메인 설명 카드
                     FadeTransition(
                       opacity: _fadeAnimation,
                       child: TossCard(
@@ -416,20 +415,20 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                       textAlign: TextAlign.center,
                     ),
 
-                    const BottomButtonSpacing(),
+                    const SizedBox(height: 100),
                   ],
                 ),
               ),
             ),
-            FloatingBottomButton(
-              text: '바이오리듬 분석하기',
-              onPressed: _selectedDate != null ? _analyzeBiorhythm : null,
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
-              hideWhenDisabled: true,
-            ),
-          ],
-        ),
+          TossFloatingProgressButtonPositioned(
+            text: '바이오리듬 분석하기',
+            onPressed: _selectedDate != null ? _analyzeBiorhythm : null,
+            isEnabled: _selectedDate != null,
+            isVisible: true,
+            showProgress: false,
+            isLoading: false,
+          ),
+        ],
       ),
     );
   }
