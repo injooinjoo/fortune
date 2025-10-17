@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class TrendPage extends ConsumerStatefulWidget {
   const TrendPage({super.key});
@@ -152,8 +153,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                               Color(0xFF8134AF)]).createShader(bounds),
                           child: Text(
                             '트렌드 & 테스트',
-                            style: TextStyle(
-                              fontSize: 24,
+                            style: TypographyUnified.displaySmall.copyWith(
                               fontWeight: FontWeight.w700,
                               color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
                           ),
@@ -232,9 +232,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                       ),
                       child: Text(
                         isTrend ? '트렌드' : '테스트',
-                        style: const TextStyle(
+                        style: TypographyUnified.labelMedium.copyWith(
                           color: TossDesignSystem.white,
-                          fontSize: 12,
                           fontWeight: FontWeight.w600),
                       ),
                     ),
@@ -244,7 +243,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                       children: [
                         Text(
                           item['emoji'],
-                          style: const TextStyle(fontSize: 32)),
+                          style: TypographyUnified.numberLarge),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -252,17 +251,15 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                             children: [
                               Text(
                                 item['title'],
-                                style: const TextStyle(
+                                style: TypographyUnified.heading3.copyWith(
                                   color: TossDesignSystem.white,
-                                  fontSize: 20,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: -0.5)),
                               const SizedBox(height: 4),
                               Text(
                                 item['subtitle'],
-                                style: TextStyle(
+                                style: TypographyUnified.bodySmall.copyWith(
                                   color: TossDesignSystem.white.withValues(alpha: 0.9),
-                                  fontSize: 14,
                                   fontWeight: FontWeight.w400),
                               ),
                             ],
@@ -281,9 +278,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                         const SizedBox(width: 4),
                         Text(
                           '${item['likes']}',
-                          style: const TextStyle(
+                          style: TypographyUnified.bodySmall.copyWith(
                             color: TossDesignSystem.white,
-                            fontSize: 14,
                             fontWeight: FontWeight.w500)),
                         const SizedBox(width: 16),
                         const Icon(
@@ -293,9 +289,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                         const SizedBox(width: 4),
                         Text(
                           '${item['views']}',
-                          style: const TextStyle(
+                          style: TypographyUnified.bodySmall.copyWith(
                             color: TossDesignSystem.white,
-                            fontSize: 14,
                             fontWeight: FontWeight.w500),
                         ),
                       ],

@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/health_fortune_model.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class HealthTimelineChart extends StatefulWidget {
   final HealthTimeline timeline;
@@ -145,8 +146,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
             reservedSize: 30,
             interval: 1,
             getTitlesWidget: (double value, TitleMeta meta) {
-              const style = TextStyle(
-                fontSize: 12,
+              final style = TypographyUnified.labelMedium.copyWith(
                 fontWeight: FontWeight.w500,
               );
               Widget text;
@@ -181,8 +181,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                 axisSide: meta.axisSide,
                 child: Text(
                   '${value.toInt()}',
-                  style: TextStyle(
-                    fontSize: 11,
+                  style: TypographyUnified.labelSmall.copyWith(
                     color: TossTheme.textGray600,
                   ),
                 ),
@@ -265,9 +264,8 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
               
               return LineTooltipItem(
                 '$timeLabel\n${touchedSpot.y.toInt()}점\n$description',
-                const TextStyle(
+                TypographyUnified.labelMedium.copyWith(
                   color: TossDesignSystem.white,
-                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                   height: 1.3,
                 ),
