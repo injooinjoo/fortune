@@ -30,24 +30,9 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
       backgroundColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 0,
-      leading: Container(
-        margin: const EdgeInsets.only(left: 16),
-        child: IconButton(
-          onPressed: onBackPressed ?? () => Navigator.pop(context),
-          style: IconButton.styleFrom(
-            backgroundColor: isDark
-                ? TossDesignSystem.grayDark200
-                : TossTheme.backgroundSecondary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-            size: 20,
-          ),
-        ),
+      automaticallyImplyLeading: true,
+      iconTheme: IconThemeData(
+        color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
       ),
       title: Text(
         title,
