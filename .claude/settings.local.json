@@ -36,7 +36,8 @@
       "Bash(ls:*)",
       "Bash(git restore:*)",
       "Bash(do echo \"=== $page ===\" grep -n \"FortuneDataSource\\|UnifiedFortuneService\\|getFortune\" \"/Users/jacobmac/Desktop/Dev/fortune/lib/features/fortune/presentation/pages/$page.dart\")",
-      "Bash(do echo \"=== $page ===\")"
+      "Bash(do echo \"=== $page ===\")",
+      "Bash(if grep -q \"UnifiedFortuneService\" \"lib/features/fortune/presentation/pages/$page.dart\")"
     ],
     "deny": [],
     "ask": [],

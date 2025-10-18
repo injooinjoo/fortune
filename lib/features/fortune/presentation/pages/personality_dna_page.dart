@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/models/personality_dna_model.dart';
 import '../../../../core/services/personality_dna_service.dart';
+import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../domain/models/conditions/personality_dna_fortune_conditions.dart';
 
 class PersonalityDNAPage extends BaseFortunePage {
   const PersonalityDNAPage({
@@ -72,31 +75,72 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
     final userProfile = await ref.read(userProfileProvider.future);
     final userName = userProfile?.name ?? 'Unknown';
 
-    // PersonalityDNA 생성
-    _currentDNA = await PersonalityDNAService.generateDNA(
+    // UnifiedFortuneService 사용
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    final inputConditions = {
+      'userId': user.id,
+      'name': userName,
+      'mbti': _selectedMbti,
+      'bloodType': _selectedBloodType,
+      'zodiac': _selectedZodiac,
+      'zodiacAnimal': _selectedAnimal,
+    };
+
+    // Optimization conditions 생성
+    final conditions = PersonalityDnaFortuneConditions(
+      mbti: _selectedMbti,
+      bloodType: _selectedBloodType,
+      zodiac: _selectedZodiac,
+      animal: _selectedAnimal,
+      date: DateTime.now(),
+    );
+
+    final fortuneResult = await fortuneService.getFortune(
+      fortuneType: 'personality-dna',
+      dataSource: FortuneDataSource.api,
+      inputConditions: inputConditions,
+      conditions: conditions,
+    );
+
+    // FortuneResult에서 PersonalityDNA 파싱
+    final metadata = fortuneResult.metadata ?? {};
+    _currentDNA = PersonalityDNA(
+      id: fortuneResult.id,
       userId: user.id,
-      name: userName,
       mbti: _selectedMbti!,
       bloodType: _selectedBloodType!,
       zodiac: _selectedZodiac!,
       zodiacAnimal: _selectedAnimal!,
+      title: metadata['title'] as String? ?? '성격 DNA',
+      emoji: metadata['emoji'] as String? ?? '🧬',
+      description: fortuneResult.content,
+      popularity: metadata['popularity'] as String? ?? 'Unknown',
+      popularityRank: fortuneResult.overallScore ?? 50,
+      personalityTraits: (metadata['personality_traits'] as List?)?.cast<String>() ?? [],
+      relationshipStyle: metadata['relationship_style'] as String? ?? '',
+      careerPath: metadata['career_path'] as String? ?? '',
+      lifeMotto: metadata['life_motto'] as String? ?? '',
+      gradientColors: [],
+      createdAt: DateTime.now(),
     );
 
     // Fortune 객체로 변환
     return Fortune(
-      id: 'personality_dna_${DateTime.now().millisecondsSinceEpoch}',
+      id: fortuneResult.id,
       userId: user.id,
       type: 'personality-dna',
-      content: _currentDNA!.description,
-      createdAt: DateTime.now(),
+      content: fortuneResult.content,
+      createdAt: fortuneResult.createdAt,
       category: 'personality-dna',
-      overallScore: _currentDNA!.popularityRank ?? 50,
-      description: '${_currentDNA!.emoji} ${_currentDNA!.title}\n\n${_currentDNA!.description}',
+      overallScore: fortuneResult.overallScore ?? 50,
+      description: fortuneResult.content,
       metadata: {
         'mbti': _selectedMbti,
         'blood_type': _selectedBloodType,
         'zodiac': _selectedZodiac,
         'animal': _selectedAnimal,
+        ...metadata,
       },
     );
   }

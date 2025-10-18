@@ -43,8 +43,7 @@ class TimelineView extends StatelessWidget {
         children: [
           Text(
             '운세 타임라인',
-            style: TextStyle(
-              fontSize: 20 * fontScale,
+            style: context.heading3.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
           ...sortedMonths.map((monthKey) {
@@ -83,8 +82,7 @@ class TimelineView extends StatelessWidget {
                       children: [
                         Text(
                           DateFormat('yyyy년 MM월').format(monthDate),
-                          style: TextStyle(
-                            fontSize: 16 * fontScale,
+                          style: context.buttonMedium.copyWith(
                             fontWeight: FontWeight.bold,
                             color: theme.colorScheme.primary)),
                         Row(
@@ -96,8 +94,7 @@ class TimelineView extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8)),
                               child: Text(
                                 '평균 $avgScore점',
-                                style: TextStyle(
-                                  fontSize: 12 * fontScale,
+                                style: context.labelMedium.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: _getScoreColor(avgScore),
                                 ),
@@ -106,8 +103,7 @@ class TimelineView extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               '${monthData.length}회',
-                              style: TextStyle(
-                                fontSize: 12 * fontScale,
+                              style: context.labelMedium.copyWith(
                                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
                             ),
@@ -132,8 +128,7 @@ class TimelineView extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20)),
                         child: Text(
                           '${entry.key} ${entry.value}회',
-                          style: TextStyle(
-                            fontSize: 12 * fontScale,
+                          style: context.labelMedium.copyWith(
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.7))));
                     }).toList()),
                   const SizedBox(height: 16),
@@ -160,13 +155,11 @@ class TimelineView extends StatelessWidget {
                                     children: [
                                       Text(
                                         DateFormat('dd').format(item.createdAt),
-                                        style: TextStyle(
-                                          fontSize: 20 * fontScale,
+                                        style: context.heading3.copyWith(
                                           fontWeight: FontWeight.bold)),
                                       Text(
                                         DateFormat('E', 'ko').format(item.createdAt),
-                                        style: TextStyle(
-                                          fontSize: 12 * fontScale,
+                                        style: context.labelMedium.copyWith(
                                           color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                         ),
                                       ),
@@ -179,8 +172,7 @@ class TimelineView extends StatelessWidget {
                                         ),
                                         child: Text(
                                           '$score점',
-                                          style: TextStyle(
-                                            fontSize: 12 * fontScale,
+                                          style: context.labelMedium.copyWith(
                                             fontWeight: FontWeight.bold,
                                             color: _getScoreColor(score),
                                           ),
@@ -204,8 +196,7 @@ class TimelineView extends StatelessWidget {
                                           const SizedBox(width: 8),
                                           Text(
                                             item.title,
-                                            style: TextStyle(
-                                              fontSize: 16 * fontScale,
+                                            style: context.buttonMedium.copyWith(
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -214,8 +205,7 @@ class TimelineView extends StatelessWidget {
                                       const SizedBox(height: 4),
                                       Text(
                                         content,
-                                        style: TextStyle(
-                                          fontSize: 14 * fontScale,
+                                        style: context.bodySmall.copyWith(
                                           color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                         ),
                                         maxLines: 2,

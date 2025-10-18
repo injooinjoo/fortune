@@ -226,9 +226,6 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = ref.watch(fontSizeProvider);
-    final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
-
     return Scaffold(
       backgroundColor: TossDesignSystem.white,
       appBar: AppBar(
@@ -386,25 +383,21 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     icon: Icons.security,
                     title: '계정 보안 강화',
                     description: '2단계 인증으로 계정을 안전하게 보호하세요',
-                    fontScale: fontScale,
                   ),
                   _buildBenefitItem(
                     icon: Icons.star,
                     title: '프리미엄 기능 우선 체험',
                     description: '새로운 기능을 먼저 사용해보실 수 있습니다',
-                    fontScale: fontScale,
                   ),
                   _buildBenefitItem(
                     icon: Icons.badge,
                     title: '인증 배지 표시',
                     description: '프로필에 공식 인증 배지가 표시됩니다',
-                    fontScale: fontScale,
                   ),
                   _buildBenefitItem(
                     icon: Icons.card_giftcard,
                     title: '특별 보상',
                     description: '인증 완료 시 보너스 토큰을 지급합니다',
-                    fontScale: fontScale,
                   ),
                 ],
               ),
@@ -495,7 +488,6 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         ),
                       ],
                     ),
-                    fontScale: fontScale,
                   ),
 
                   // Verification Code Input (shown after phone number is submitted)
@@ -625,11 +617,10 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         TextField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
-                          style: TextStyle(fontSize: 14 * fontScale),
+                          style: context.bodySmall,
                           decoration: InputDecoration(
                             hintText: 'example@email.com',
-                            hintStyle: TextStyle(
-                              fontSize: 14 * fontScale,
+                            hintStyle: context.bodySmall.copyWith(
                               color: TossDesignSystem.gray600,
                             ),
                             prefixIcon: const Icon(Icons.email, size: 20),
@@ -670,8 +661,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                   )
                                 : Text(
                                     '인증 이메일 발송',
-                                    style: TextStyle(
-                                      fontSize: 14 * fontScale,
+                                    style: context.buttonSmall.copyWith(
                                       fontWeight: FontWeight.w600,
                                       color: TossDesignSystem.white,
                                     ),
@@ -680,7 +670,6 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         ),
                       ],
                     ),
-                    fontScale: fontScale,
                   ),
 
                   const SizedBox(height: 16),
@@ -700,7 +689,6 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               type: ToastType.info,
                             );
                           },
-                    fontScale: fontScale,
                   ),
                 ],
               ),
@@ -717,7 +705,6 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     required IconData icon,
     required String title,
     required String description,
-    required double fontScale,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -743,8 +730,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
               children: [
                 Text(
                   title,
-                  style: TextStyle(
-                    fontSize: 14 * fontScale,
+                  style: context.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: TossDesignSystem.gray900,
                   ),
@@ -752,8 +738,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: 12 * fontScale,
+                  style: context.labelMedium.copyWith(
                     color: TossDesignSystem.gray600,
                     height: 1.4,
                   ),
@@ -774,7 +759,6 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     bool isLocked = false,
     VoidCallback? onTap,
     Widget? content,
-    required double fontScale,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -837,8 +821,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                       children: [
                         Text(
                           title,
-                          style: TextStyle(
-                            fontSize: 16 * fontScale,
+                          style: context.buttonMedium.copyWith(
                             fontWeight: FontWeight.w600,
                             color: isLocked ? TossDesignSystem.gray600 : TossDesignSystem.gray900,
                           ),
@@ -846,8 +829,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         const SizedBox(height: 4),
                         Text(
                           description,
-                          style: TextStyle(
-                            fontSize: 12 * fontScale,
+                          style: context.labelMedium.copyWith(
                             color: TossDesignSystem.gray600,
                           ),
                         ),
@@ -863,8 +845,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                       ),
                       child: Text(
                         '완료',
-                        style: TextStyle(
-                          fontSize: 12 * fontScale,
+                        style: context.labelMedium.copyWith(
                           fontWeight: FontWeight.w600,
                           color: TossDesignSystem.success,
                         ),

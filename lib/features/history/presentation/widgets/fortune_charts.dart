@@ -42,8 +42,7 @@ class CategoryPieChart extends StatelessWidget {
         children: [
           Text(
             '운세 유형별 분포',
-            style: TextStyle(
-              fontSize: 18 * fontScale,
+            style: context.heading4.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(
@@ -61,8 +60,7 @@ class CategoryPieChart extends StatelessWidget {
                           value: category.value.toDouble(),
                           title: '${percentage.toStringAsFixed(1)}%',
                           radius: 80,
-                          titleStyle: TextStyle(
-                            fontSize: 12 * fontScale,
+                          titleStyle: context.labelMedium.copyWith(
                             fontWeight: FontWeight.bold,
                             color: TossDesignSystem.white,
                           ),
@@ -97,9 +95,7 @@ class CategoryPieChart extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             category.key,
-                            style: TextStyle(
-                              fontSize: 14 * fontScale,
-                            ),
+                            style: context.bodySmall,
                           ),
                         ],
                       ),
@@ -155,8 +151,7 @@ class MonthlyTrendChart extends StatelessWidget {
         children: [
           Text(
             '월별 운세 조회 추이',
-            style: TextStyle(
-              fontSize: 18 * fontScale,
+            style: context.heading4.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(

@@ -191,8 +191,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                           const SizedBox(width: 12),
                           Text(
                             '운세를 200% 활용하는 방법',
-                            style: TextStyle(
-                              fontSize: 18 * fontScale,
+                            style: context.heading4.copyWith(
                               fontWeight: FontWeight.bold,
                               color: TossDesignSystem.gray900)),
                         ],
@@ -200,8 +199,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                       const SizedBox(height: 16),
                       Text(
                         '운세는 삶의 나침반과 같습니다. 올바른 해석과 활용법을 통해 더 나은 선택을 할 수 있도록 도와드립니다.',
-                        style: TextStyle(
-                          fontSize: 14 * fontScale,
+                        style: context.bodySmall.copyWith(
                           color: TossDesignSystem.gray600,
                           height: 1.5),
                       ),
@@ -294,8 +292,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
           ),
           title: Text(
             category.title,
-            style: TextStyle(
-              fontSize: 16 * fontScale,
+            style: context.buttonMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: TossDesignSystem.gray900),
           ),

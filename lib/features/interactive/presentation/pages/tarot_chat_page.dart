@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 import '../../../../shared/components/app_header.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -394,27 +395,24 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
           // Welcome text
           Text(
             '타로 리딩에 오신 것을 환영합니다',
-            style: TextStyle(
-              fontSize: 24 * fontScale,
+            style: context.heading2.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.gray900)),
-          
+
           const SizedBox(height: 12),
-          
+
           Text(
             '궁금한 것을 물어보시면 타로 카드로 답변해 드릴게요',
-            style: TextStyle(
-              fontSize: 16 * fontScale,
+            style: context.buttonMedium.copyWith(
               color: TossDesignSystem.gray600),
             textAlign: TextAlign.center),
-          
+
           const SizedBox(height: 40),
-          
+
           // Example questions
           Text(
             '이런 질문을 해보세요',
-            style: TextStyle(
-              fontSize: 16 * fontScale,
+            style: context.buttonMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: TossDesignSystem.gray900)),
           
@@ -462,8 +460,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                   offset: const Offset(0, 2))]),
             child: Text(
               question,
-              style: TextStyle(
-                fontSize: 14 * fontScale,
+              style: context.bodySmall.copyWith(
                 color: TossDesignSystem.gray900,
                 fontWeight: FontWeight.w500,
                 height: 1.4),
@@ -542,8 +539,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                         const SizedBox(width: 8),
                         Text(
                           message.text,
-                          style: TextStyle(
-                            fontSize: 14 * fontScale,
+                          style: context.bodySmall.copyWith(
                             color: isUser ? TossDesignSystem.white : TossDesignSystem.gray900,
                           ),
                         ),
@@ -552,8 +548,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                   else
                     Text(
                       message.text,
-                      style: TextStyle(
-                        fontSize: 14 * fontScale,
+                      style: context.bodySmall.copyWith(
                         color: isUser ? TossDesignSystem.white : TossDesignSystem.gray900,
                         height: 1.4,
                       ),
@@ -630,8 +625,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                 children: [
                   Text(
                     card.name,
-                    style: TextStyle(
-                      fontSize: 12 * fontScale,
+                    style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: TossDesignSystem.gray900,
                     ),
@@ -643,8 +637,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                     const SizedBox(height: 2),
                     Text(
                       '(역방향)',
-                      style: TextStyle(
-                        fontSize: 10 * fontScale,
+                      style: context.labelTiny.copyWith(
                         color: TossDesignSystem.gray600,
                       ),
                     ),
@@ -678,13 +671,11 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             child: TextField(
               controller: _inputController,
               focusNode: _focusNode,
-              style: TextStyle(
-                fontSize: 16 * fontScale,
+              style: context.buttonMedium.copyWith(
                 color: TossDesignSystem.gray900),
               decoration: InputDecoration(
                 hintText: '궁금한 것을 물어보세요...',
-                hintStyle: TextStyle(
-                  fontSize: 16 * fontScale,
+                hintStyle: context.buttonMedium.copyWith(
                   color: TossDesignSystem.gray600),
                 filled: true,
                 fillColor: TossDesignSystem.gray50,

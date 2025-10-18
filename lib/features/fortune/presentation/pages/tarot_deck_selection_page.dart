@@ -10,6 +10,7 @@ import '../../../../presentation/providers/tarot_deck_provider.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../widgets/mystical_background.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class TarotDeckSelectionPage extends ConsumerStatefulWidget {
   final String? spreadType;
@@ -121,8 +122,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                               const SizedBox(height: 16),
                               Text(
                                 '당신에게 맞는 타로 덱을 선택하세요',
-                                style: TextStyle(
-                                  fontSize: 24 * fontScale,
+                                style: context.heading2.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: TossDesignSystem.white),
                                 textAlign: TextAlign.center,
@@ -130,8 +130,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                               const SizedBox(height: 8),
                               Text(
                                 '각 덱은 고유한 특성과 에너지를 가지고 있습니다',
-                                style: TextStyle(
-                                  fontSize: 16 * fontScale,
+                                style: context.buttonMedium.copyWith(
                                   color: TossDesignSystem.white.withValues(alpha: 0.7)),
                                 textAlign: TextAlign.center,
                               ),
@@ -182,8 +181,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     backgroundColor: const Color(0xFF9333EA),
                     label: Text(
                       '선택 완료',
-                      style: TextStyle(
-                        fontSize: 16 * fontScale,
+                      style: context.buttonMedium.copyWith(
                         fontWeight: FontWeight.bold,
                         color: TossDesignSystem.white),
                     ),
@@ -217,8 +215,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
         const SizedBox(width: 12),
         Text(
           title,
-          style: TextStyle(
-            fontSize: 20 * fontScale,
+          style: context.heading3.copyWith(
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white),
         ),
@@ -243,8 +240,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
               const SizedBox(width: 8),
               Text(
                 '나의 타로 경험',
-                style: TextStyle(
-                  fontSize: 16 * fontScale,
+                style: context.buttonMedium.copyWith(
                   fontWeight: FontWeight.bold),
               ),
             ],
@@ -258,7 +254,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
               return ChoiceChip(
                 label: Text(
                   level.displayName,
-                  style: TextStyle(fontSize: 14 * fontScale),
+                  style: context.bodySmall,
                 ),
                 selected: isSelected,
                 onSelected: (selected) {
@@ -349,8 +345,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     // 덱 이름
                     Text(
                       deck.koreanName,
-                      style: TextStyle(
-                        fontSize: 16 * fontScale,
+                      style: context.buttonMedium.copyWith(
                         fontWeight: FontWeight.bold,
                         color: TossDesignSystem.white),
                       maxLines: 1,
@@ -360,8 +355,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     // 아티스트와 연도
                     Text(
                       '${deck.artist} (${deck.year})',
-                      style: TextStyle(
-                        fontSize: 12 * fontScale,
+                      style: context.labelMedium.copyWith(
                         color: TossDesignSystem.white.withValues(alpha: 0.7)),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis),
@@ -414,8 +408,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     ),
                     child: Text(
                       '자주 사용',
-                      style: TextStyle(
-                        fontSize: 10 * fontScale,
+                      style: context.labelTiny.copyWith(
                         color: TossDesignSystem.white,
                         fontWeight: FontWeight.bold),
                     ),
@@ -498,8 +491,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
           width: 1)),
       child: Text(
         text,
-        style: TextStyle(
-          fontSize: 10 * fontScale,
+        style: context.labelTiny.copyWith(
           color: TossDesignSystem.white,
           fontWeight: FontWeight.w500),
       ),

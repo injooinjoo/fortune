@@ -287,18 +287,16 @@ class _DreamInputFormState extends State<_DreamInputForm> {
           // Title
           Text(
             '꿈의 의미를 해석해드립니다',
-            style: theme.textTheme.headlineSmall?.copyWith(
+            style: context.heading2.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 24 * widget.fontScale,
             ),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 8),
           Text(
             '꿈 내용을 자세히 입력해주세요',
-            style: theme.textTheme.bodyLarge?.copyWith(
+            style: context.buttonMedium.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              fontSize: 16 * widget.fontScale,
             ),
             textAlign: TextAlign.center,
           ),
@@ -312,15 +310,14 @@ class _DreamInputFormState extends State<_DreamInputForm> {
               children: [
                 Text(
                   '이름',
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  style: context.buttonMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16 * widget.fontScale,
                   ),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: widget.nameController,
-                  style: TextStyle(fontSize: 16 * widget.fontScale),
+                  style: context.buttonMedium,
                   decoration: InputDecoration(
                     hintText: '이름을 입력하세요',
                     filled: true,
@@ -345,9 +342,8 @@ class _DreamInputFormState extends State<_DreamInputForm> {
               children: [
                 Text(
                   '생년월일',
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  style: context.buttonMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16 * widget.fontScale,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -371,9 +367,8 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                   children: [
                     Text(
                       '꿈 내용',
-                      style: theme.textTheme.titleMedium?.copyWith(
+                      style: context.buttonMedium.copyWith(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16 * widget.fontScale,
                       ),
                     ),
                     // Input Type Toggle
@@ -396,7 +391,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                 if (_inputType == 'text')
                   TextField(
                     controller: widget.dreamController,
-                    style: TextStyle(fontSize: 16 * widget.fontScale),
+                    style: context.buttonMedium,
                     maxLines: 5,
                     decoration: InputDecoration(
                       hintText: '예: 넓은 바다에서 헤엄치다가 황금 용을 만나는 꿈을 꾸었습니다.',
@@ -430,8 +425,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                     const SizedBox(width: 8),
                     Text(
                       '꿈 해몽 분석하기',
-                      style: TextStyle(
-                        fontSize: 18 * widget.fontScale,
+                      style: context.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -520,8 +514,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                           ? '듣고 있습니다... 꿈 내용을 말씀해주세요'
                           : '마이크 버튼을 눌러 녹음을 시작하세요')
                       : recognizedText,
-                  style: TextStyle(
-                    fontSize: 16 * widget.fontScale,
+                  style: context.buttonMedium.copyWith(
                     color: recognizedText.isEmpty
                         ? theme.colorScheme.onSurface.withValues(alpha: 0.6)
                         : theme.colorScheme.onSurface,
@@ -670,15 +663,12 @@ class _DreamResultView extends ConsumerWidget {
                       children: [
                         Text(
                           '${input.name}님의 꿈 해몽',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontSize: 20 * fontScale,
-                          ),
+                          style: context.heading3,
                         ),
                         const SizedBox(height: 16),
                         Text(
                           '${result.overallLuck}점',
-                          style: TextStyle(
-                            fontSize: 48 * fontScale,
+                          style: context.numberXLarge.copyWith(
                             fontWeight: FontWeight.bold,
                             color: _getLuckColor(result.overallLuck),
                           ),
@@ -692,10 +682,9 @@ class _DreamResultView extends ConsumerWidget {
                           ),
                           child: Text(
                             _getLuckText(result.overallLuck),
-                            style: TextStyle(
+                            style: context.buttonMedium.copyWith(
                               color: _getLuckColor(result.overallLuck),
                               fontWeight: FontWeight.bold,
-                              fontSize: 16 * fontScale,
                             ),
                           ),
                         ),
@@ -716,9 +705,8 @@ class _DreamResultView extends ConsumerWidget {
                             SizedBox(width: 8),
                             Text(
                               '꿈 요약 및 해석',
-                              style: theme.textTheme.titleLarge?.copyWith(
+                              style: context.heading4.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18 * fontScale,
                               ),
                             ),
                           ],
@@ -746,10 +734,9 @@ class _DreamResultView extends ConsumerWidget {
                                   const SizedBox(width: 4),
                                   Text(
                                     '꿈 요약',
-                                    style: TextStyle(
+                                    style: context.bodySmall.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: theme.colorScheme.primary,
-                                      fontSize: 14 * fontScale,
                                     ),
                                   ),
                                 ],
@@ -757,8 +744,7 @@ class _DreamResultView extends ConsumerWidget {
                               const SizedBox(height: 8),
                               Text(
                                 result.dreamSummary,
-                                style: TextStyle(
-                                  fontSize: 16 * fontScale,
+                                style: context.buttonMedium.copyWith(
                                   height: 1.5,
                                 ),
                               ),
@@ -788,10 +774,9 @@ class _DreamResultView extends ConsumerWidget {
                                   const SizedBox(width: 4),
                                   Text(
                                     '꿈 해석',
-                                    style: TextStyle(
+                                    style: context.bodySmall.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: theme.colorScheme.secondary,
-                                      fontSize: 14 * fontScale,
                                     ),
                                   ),
                                 ],
@@ -799,8 +784,7 @@ class _DreamResultView extends ConsumerWidget {
                               const SizedBox(height: 8),
                               Text(
                                 result.dreamInterpretation,
-                                style: TextStyle(
-                                  fontSize: 16 * fontScale,
+                                style: context.buttonMedium.copyWith(
                                   height: 1.5,
                                 ),
                               ),
@@ -825,9 +809,8 @@ class _DreamResultView extends ConsumerWidget {
                               SizedBox(width: 8),
                               Text(
                                 '행운 요소',
-                                style: theme.textTheme.titleLarge?.copyWith(
+                                style: context.heading4.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18 * fontScale,
                                 ),
                               ),
                             ],
@@ -850,9 +833,8 @@ class _DreamResultView extends ConsumerWidget {
                                 ),
                                 child: Text(
                                   element,
-                                  style: TextStyle(
+                                  style: context.bodySmall.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 14 * fontScale,
                                   ),
                                 ),
                               );
@@ -876,9 +858,8 @@ class _DreamResultView extends ConsumerWidget {
                             SizedBox(width: 8),
                             Text(
                               '조언',
-                              style: theme.textTheme.titleLarge?.copyWith(
+                              style: context.heading4.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18 * fontScale,
                               ),
                             ),
                           ],
@@ -886,8 +867,7 @@ class _DreamResultView extends ConsumerWidget {
                         const SizedBox(height: 16),
                         Text(
                           result.advice,
-                          style: TextStyle(
-                            fontSize: 16 * fontScale,
+                          style: context.buttonMedium.copyWith(
                             height: 1.5,
                           ),
                         ),
@@ -910,8 +890,7 @@ class _DreamResultView extends ConsumerWidget {
                             const SizedBox(width: 8),
                             Text(
                               '다른 꿈 분석하기',
-                              style: TextStyle(
-                                fontSize: 18 * fontScale,
+                              style: context.heading4.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

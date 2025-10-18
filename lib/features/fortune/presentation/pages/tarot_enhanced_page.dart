@@ -10,6 +10,7 @@ import '../../../../shared/components/app_header.dart'; // For FontSize enum
 import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 enum TarotSpreadType {
   
@@ -237,16 +238,14 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
           // Title
           Text(
             '무엇이 궁금하신가요?',
-            style: theme.textTheme.headlineSmall?.copyWith(
+            style: context.heading2.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 24 * widget.fontScale,
               letterSpacing: -0.5)),
           const SizedBox(height: 8),
           Text(
             '마음을 가라앉히고 질문에 집중해주세요',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha:0.7),
-              fontSize: 16 * widget.fontScale)),
+            style: context.buttonMedium.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha:0.7))),
           const SizedBox(height: 32),
           
           // Question input
@@ -264,13 +263,12 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                     const SizedBox(width: 8),
                     Text(
                       '당신의 질문',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16 * widget.fontScale))]),
+                      style: context.buttonMedium.copyWith(
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 12),
                 TextField(
                   controller: _questionController,
-                  style: TextStyle(fontSize: 16 * widget.fontScale),
+                  style: context.buttonMedium,
                   maxLines: 3,
                   autofocus: false,
                   enableInteractiveSelection: true,
@@ -319,9 +317,8 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                 Expanded(
                   child: Text(
                     '질문이 없으시다면 오늘의 전반적인 운세를 봐드립니다',
-                    style: theme.textTheme.bodyMedium?.copyWith(
+                    style: context.bodySmall.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha:0.7),
-                      fontSize: 14 * widget.fontScale,
                     ),
                   ),
                 ),
@@ -351,8 +348,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                         SizedBox(width: 8),
                         Text(
                           '애니메이션 타로 (신규)',
-                          style: TextStyle(
-                            fontSize: 18 * widget.fontScale,
+                          style: context.heading4.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -387,8 +383,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                         const SizedBox(width: 8),
                         Text(
                           '클래식 타로',
-                          style: TextStyle(
-                            fontSize: 18 * widget.fontScale,
+                          style: context.heading4.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -438,14 +433,14 @@ class _SpreadSelectionView extends StatelessWidget {
             '스프레드를 선택하세요',
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 24 * fontScale,
+              // heading2
               letterSpacing: -0.5)),
           const SizedBox(height: 8),
           Text(
             '각 스프레드는 다른 통찰력을 제공합니다',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha:0.7),
-              fontSize: 16 * fontScale)),
+              )),
           const SizedBox(height: 32),
           
           // Spread options
@@ -687,13 +682,13 @@ class _SpreadOptionCard extends StatelessWidget {
                     spread.displayName,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18 * fontScale)),
+                      )),
                   const SizedBox(height: 4),
                   Text(
                     '${spread.cardCount}장의 카드',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha:0.7),
-                      fontSize: 14 * fontScale)),
+                      )),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -707,7 +702,7 @@ class _SpreadOptionCard extends StatelessWidget {
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
-                          fontSize: 13 * fontScale,
+                          // labelMedium
                         ),
                       ),
                     ],
@@ -807,13 +802,13 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                   widget.spreadType.displayName,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 24 * widget.fontScale)),
+                    )),
                 const SizedBox(height: 8),
                 Text(
                   _getSpreadDescription(widget.spreadType),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha:0.7),
-                    fontSize: 16 * widget.fontScale),
+                    ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -839,11 +834,11 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                         '질문하기',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16 * widget.fontScale))]),
+                          ))]),
                   const SizedBox(height: 12),
                   TextField(
                     controller: _questionController,
-                    style: TextStyle(fontSize: 16 * widget.fontScale),
+                    style: context.buttonMedium,
                     maxLines: 3,
                     decoration: InputDecoration(
                       hintText: _getQuestionHint(widget.spreadType),
@@ -880,7 +875,7 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                     Text(
                       '카드 뽑기',
                       style: TextStyle(
-                        fontSize: 18 * widget.fontScale,
+                        // heading4
                         fontWeight: FontWeight.bold,
                       ),
                     ),
