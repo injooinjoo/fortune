@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
+import 'dart:async';
 
 /// Floating 방식의 프로그레스 바 통합 Toss 버튼
 ///
@@ -16,7 +17,7 @@ import 'package:fortune/core/theme/toss_design_system.dart';
 ///   isEnabled: true,
 /// )
 /// ```
-class TossFloatingProgressButton extends StatelessWidget {
+class TossFloatingProgressButton extends StatefulWidget {
   /// 버튼 텍스트
   final String text;
 
@@ -57,19 +58,58 @@ class TossFloatingProgressButton extends StatelessWidget {
     this.icon,
   });
 
+  @override
+  State<TossFloatingProgressButton> createState() => _TossFloatingProgressButtonState();
+}
+
+class _TossFloatingProgressButtonState extends State<TossFloatingProgressButton> {
+  Timer? _debounceTimer;
+  bool _isProcessing = false;
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
   /// 진행률 계산 (0.0 ~ 1.0)
   double get _progressPercentage {
-    if (!showProgress || currentStep == null || totalSteps == null || totalSteps == 0) {
+    if (!widget.showProgress || widget.currentStep == null || widget.totalSteps == null || widget.totalSteps == 0) {
       return 1.0; // 프로그레스 없으면 100%
     }
-    return (currentStep! / totalSteps!).clamp(0.0, 1.0);
+    return (widget.currentStep! / widget.totalSteps!).clamp(0.0, 1.0);
+  }
+
+  /// 중복 호출 방지 + Debouncing을 적용한 onTap 핸들러
+  void _handleTap() {
+    // 이미 처리 중이면 무시
+    if (_isProcessing) return;
+
+    // Debounce 타이머 취소
+    _debounceTimer?.cancel();
+
+    // 500ms 이내 중복 탭 방지
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
+    });
+
+    setState(() {
+      _isProcessing = true;
+    });
+
+    TossDesignSystem.hapticLight();
+    widget.onPressed?.call();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final effectiveEnabled = isEnabled && !isLoading && onPressed != null;
+    final effectiveEnabled = widget.isEnabled && !widget.isLoading && !_isProcessing && widget.onPressed != null;
 
     // 색상 정의
     final backgroundColor = isDark
@@ -86,14 +126,11 @@ class TossFloatingProgressButton extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      height: height,
+      height: widget.height,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: effectiveEnabled ? () {
-            TossDesignSystem.hapticLight();
-            onPressed!();
-          } : null,
+          onTap: effectiveEnabled ? _handleTap : null,
           borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
@@ -102,7 +139,7 @@ class TossFloatingProgressButton extends StatelessWidget {
                 // 배경 레이어 (회색)
                 Container(
                   width: double.infinity,
-                  height: height,
+                  height: widget.height,
                   color: backgroundColor,
                 ),
 
@@ -111,13 +148,13 @@ class TossFloatingProgressButton extends StatelessWidget {
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                   width: MediaQuery.of(context).size.width * _progressPercentage,
-                  height: height,
+                  height: widget.height,
                   color: progressColor,
                 ),
 
                 // 텍스트 및 아이콘 레이어
                 Center(
-                  child: isLoading
+                  child: widget.isLoading
                       ? SizedBox(
                           width: 24,
                           height: 24,
@@ -130,12 +167,12 @@ class TossFloatingProgressButton extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            if (icon != null) ...[
-                              icon!,
+                            if (widget.icon != null) ...[
+                              widget.icon!,
                               const SizedBox(width: TossDesignSystem.spacingXS),
                             ],
                             Text(
-                              text,
+                              widget.text,
                               style: TossDesignSystem.button.copyWith(
                                 color: textColor,
                               ),

@@ -105,6 +105,7 @@ serve(async (req) => {
 긍정적이면서도 현실적인 관점으로 조언해주세요.`
 
       // OpenAI API 호출
+      console.log('Calling OpenAI API with model: gpt-5-nano-2025-08-07')
       const completion = await openai.chat.completions.create({
         model: 'gpt-5-nano-2025-08-07',
         messages: [
@@ -119,14 +120,29 @@ serve(async (req) => {
         ],
         response_format: { type: 'json_object' },
         temperature: 1,
-        max_completion_tokens: 2000,
+        max_completion_tokens: 4000,  // 2000 → 4000 (한글은 토큰 많이 사용)
+      })
+
+      console.log('OpenAI response received:', {
+        id: completion.id,
+        model: completion.model,
+        choices: completion.choices?.length,
+        firstChoice: completion.choices[0] ? {
+          finishReason: completion.choices[0].finish_reason,
+          hasMessage: !!completion.choices[0].message,
+          hasContent: !!completion.choices[0].message?.content,
+          contentLength: completion.choices[0].message?.content?.length
+        } : null
       })
 
       const responseContent = completion.choices[0]?.message?.content
 
       if (!responseContent) {
+        console.error('OpenAI response is empty:', JSON.stringify(completion, null, 2))
         throw new Error('OpenAI API 응답을 받을 수 없습니다.')
       }
+
+      console.log('Response content length:', responseContent.length)
 
       // JSON 파싱
       let parsedResponse: any

@@ -125,19 +125,20 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
   }
 
   void _handleComplete() async {
-    if (!_canContinue()) return;
-    
+    // 🔒 중복 호출 방지: 이미 로딩 중이면 즉시 리턴
+    if (_isLoading || !_canContinue()) return;
+
     HapticFeedback.mediumImpact();
-    
+
     setState(() {
       _isLoading = true;
     });
-    
+
     _buttonController.forward();
-    
+
     // 광고 로딩 시뮬레이션 (3초)
     await Future.delayed(const Duration(seconds: 3));
-    
+
     if (mounted) {
       widget.onComplete(_currentArea!, _targetArea!, _movingPeriod!, _purpose!);
     }
