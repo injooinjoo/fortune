@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../domain/models/conditions/salpuli_fortune_conditions.dart';
 
 class SalpuliFortunePage extends BaseFortunePage {
   const SalpuliFortunePage({super.key})
@@ -82,12 +84,30 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final fortuneService = ref.read(fortuneServiceProvider);
-    
-    return await fortuneService.getFortune(
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    final conditions = SalpuliFortuneConditions(
+      birthDate: _birthDate ?? DateTime.now(),
+      concern: params['concern'] as String?,
+      consultDate: DateTime.now(),
+    );
+
+    final fortuneResult = await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
-      userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params
+      dataSource: FortuneDataSource.api,
+      inputConditions: params,
+      conditions: conditions,
+    );
+
+    return Fortune(
+      id: fortuneResult.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      type: fortuneResult.type,
+      content: fortuneResult.data['content'] as String? ?? '',
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
+      overallScore: fortuneResult.score,
+      summary: fortuneResult.summary['message'] as String?,
+      metadata: fortuneResult.data,
     );
   }
 
