@@ -102,8 +102,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         children: [
           Text(
             '어떤 분야의 유명인과\n궁합을 보고 싶으신가요?',
-            style: TextStyle(
-              fontSize: 26,
+            style: TypographyUnified.heading1.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               height: 1.3,
@@ -112,8 +111,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           const SizedBox(height: 12),
           Text(
             '관심 있는 분야를 선택해주세요',
-            style: TextStyle(
-              fontSize: 15,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
               height: 1.4,
             ),
@@ -182,8 +180,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 17,
+                    style: TypographyUnified.heading4.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                     ),
@@ -267,8 +264,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         children: [
           Text(
             '궁합을 보고 싶은\n유명인을 선택해주세요',
-            style: TextStyle(
-              fontSize: 26,
+            style: TypographyUnified.heading1.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               height: 1.3,
@@ -277,8 +273,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           const SizedBox(height: 12),
           Text(
             '선택한 유명인과의 운세를 분석해드려요',
-            style: TextStyle(
-              fontSize: 15,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
               height: 1.4,
             ),
@@ -294,15 +289,13 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(
-              style: TextStyle(
-                fontSize: 15,
+              style: TypographyUnified.bodySmall.copyWith(
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               ),
               decoration: InputDecoration(
                 hintText: '이름으로 검색',
-                hintStyle: TextStyle(
+                hintStyle: TypographyUnified.bodySmall.copyWith(
                   color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400,
-                  fontSize: 15,
                 ),
                 prefixIcon: Icon(
                   Icons.search,
@@ -397,8 +390,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                             children: [
                               Text(
                                 celebrity.name,
-                                style: TextStyle(
-                                  fontSize: 15,
+                                style: TypographyUnified.bodySmall.copyWith(
                                   fontWeight: FontWeight.w600,
                                   color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                                 ),
@@ -447,8 +439,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         children: [
           Text(
             '어떤 것이 궁금하신가요?',
-            style: TextStyle(
-              fontSize: 26,
+            style: TypographyUnified.heading1.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               height: 1.3,
@@ -457,8 +448,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           const SizedBox(height: 12),
           Text(
             '${_selectedCelebrity?.name ?? '선택한 유명인'}님과의 관계에서\n궁금한 부분을 선택해주세요',
-            style: TextStyle(
-              fontSize: 15,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
               height: 1.4,
             ),

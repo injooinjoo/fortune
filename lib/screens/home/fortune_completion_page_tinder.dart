@@ -365,9 +365,8 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
               // 점수 - 매우 얇은 타이포그래피
               Text(
                 '$score',
-                style: TextStyle(
+                style: TypographyUnified.displayLarge.copyWith(
                   color: scoreColor,
-                  fontSize: 88,
                   fontWeight: FontWeight.w100,
                   letterSpacing: -5,
                   height: 1.0,
@@ -459,7 +458,6 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   subtitle,
                   style: TextStyle(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                    fontSize: 15,
                     fontWeight: FontWeight.w400,
                     height: 1.5,
                   ),
@@ -489,9 +487,8 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           ),
           child: Text(
             fullDescription,
-            style: TextStyle(
+            style: TypographyUnified.bodySmall.copyWith(
               color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
-              fontSize: 15,
               fontWeight: FontWeight.w400,
               height: 1.6,
               letterSpacing: -0.2,
@@ -574,9 +571,8 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         flex: 2,
                         child: Text(
                           entry.key,
-                          style: TextStyle(
+                          style: TypographyUnified.bodySmall.copyWith(
                             color: isDark ? Colors.white : Colors.black87,
-                            fontSize: 15,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -780,9 +776,8 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
+                      style: TypographyUnified.bodySmall.copyWith(
                         color: isDark ? Colors.white : Colors.black87,
-                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -936,7 +931,6 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 advice,
                 style: TextStyle(
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
-                  fontSize: 15,
                   height: 1.6,
                 ),
               ),
@@ -1606,9 +1600,8 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 child: Text(
                   sajuData['insight']?.toString() ??
                   '당신의 사주는 균형잡힌 에너지를 가지고 있습니다. 오늘은 본래의 성향을 잘 활용하면 좋은 결과를 얻을 수 있습니다.',
-                  style: const TextStyle(
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: Colors.white,
-                    fontSize: 15,
                     height: 1.6,
                   ),
                   textAlign: TextAlign.center,
@@ -2819,9 +2812,8 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 const SizedBox(height: 12),
                 Text(
                   fortune['description'] as String,
-                  style: TextStyle(
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: isDark ? Colors.white.withValues(alpha: 0.87) : Colors.black.withValues(alpha: 0.87),
-                    fontSize: 15,
                     height: 1.6,
                   ),
                 ),
@@ -3210,9 +3202,8 @@ ${cardInfo['message']}
                 ),
                 child: Text(
                   '이번 주는 전반적으로 상승세를 타고 있습니다. 특히 수요일부터 금요일까지가 가장 좋은 시기입니다. 새로운 도전이나 중요한 결정을 내리기에 최적의 타이밍입니다.',
-                  style: TextStyle(
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: Colors.white,
-                    fontSize: 15,
                     height: 1.6,
                   ),
                   textAlign: TextAlign.center,
@@ -3346,9 +3337,8 @@ ${cardInfo['message']}
                     if (currentCardInfo['score'] != null)
                       Text(
                         '${currentCardInfo['score']}',
-                        style: const TextStyle(
+                        style: TypographyUnified.displayLarge.copyWith(
                           color: Colors.white,
-                          fontSize: 56,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
