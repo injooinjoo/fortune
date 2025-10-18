@@ -502,7 +502,7 @@ ${idiom}의 의미를 자연스럽게 녹여내면서 오늘 하루를 어떻게
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'gpt-5-nano',
+            model: 'gpt-5-nano-2025-08-07',
             messages: [
               {
                 role: 'system',

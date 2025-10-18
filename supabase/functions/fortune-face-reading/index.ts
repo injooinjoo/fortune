@@ -111,7 +111,7 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
 
     // Call OpenAI Vision API
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
+      model: "gpt-5-nano-2025-08-07",
       messages: [
         {
           role: "user",

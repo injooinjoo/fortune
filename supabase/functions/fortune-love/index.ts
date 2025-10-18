@@ -133,7 +133,7 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-5-nano',
+      model: 'gpt-5-nano-2025-08-07',
       messages: [
         {
           role: 'system',
