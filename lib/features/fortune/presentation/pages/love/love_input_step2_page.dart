@@ -4,6 +4,7 @@ import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../shared/components/floating_bottom_button.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 enum DatingStyle { active, passive, emotional, logical, independent, dependent, serious, casual }
 
@@ -239,7 +240,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
           children: [
             Text(
               _getDatingStyleEmoji(style),
-              style: const TextStyle(fontSize: 18),
+              style: TypographyUnified.heading4,
             ),
             const SizedBox(width: 8),
             Flexible(

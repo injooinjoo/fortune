@@ -4,6 +4,7 @@ import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../shared/components/floating_bottom_button.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 enum MeetingPlace { cafe, gym, library, meeting, app, hobby }
 enum RelationshipGoal { casual, serious, marriage }
@@ -384,7 +385,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
           children: [
             Text(
               _getMeetingPlaceEmoji(place),
-              style: const TextStyle(fontSize: 18),
+              style: TypographyUnified.heading4,
             ),
             const SizedBox(height: 2),
             Flexible(
@@ -397,7 +398,6 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
                         ? TossDesignSystem.white
                         : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    fontSize: 11,
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 2,
@@ -439,7 +439,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
           children: [
             Text(
               _getRelationshipGoalEmoji(goal),
-              style: const TextStyle(fontSize: 24),
+              style: TypographyUnified.displaySmall,
             ),
             const SizedBox(width: 12),
             Expanded(
