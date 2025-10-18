@@ -71,7 +71,14 @@
       "Bash(\"lib/features/history/presentation/pages/fortune_history_page.dart\" )",
       "Bash(\"lib/features/history/presentation/widgets/timeline_view.dart\" )",
       "Bash(\"lib/features/fortune/presentation/pages/lucky_job_fortune_page.dart\")",
-      "Bash(echo \"=== $file ===\")"
+      "Bash(echo \"=== $file ===\")",
+      "Bash(\"lib/features/fortune/presentation/widgets/zodiac_compatibility_wheel.dart\" )",
+      "Bash(\"lib/features/fortune/presentation/widgets/tarot/tarot_result_card.dart\" )",
+      "Bash(\"lib/features/fortune/presentation/widgets/talent_type_result_widget.dart\" )",
+      "Bash(\"lib/features/fortune/presentation/widgets/talent_top3_widget.dart\" )",
+      "Bash(\"lib/features/fortune/presentation/widgets/moving_result_toss.dart\" )",
+      "Bash(\"lib/features/fortune/presentation/widgets/lucky_items_bottom_sheet.dart\")",
+      "Bash(basename:*)"
     ],
     "deny": [],
     "ask": [],

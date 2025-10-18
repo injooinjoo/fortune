@@ -497,8 +497,7 @@ class _TarotResultCardState extends State<TarotResultCard>
           const SizedBox(height: 12),
           Text(
             content,
-            style: const TextStyle(
-              fontSize: 15,
+            style: TypographyUnified.bodySmall.copyWith(
               fontWeight: FontWeight.w400,
               color: Color(0xFF374151),
               height: 1.6,

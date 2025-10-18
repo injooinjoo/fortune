@@ -213,8 +213,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
         children: [
           Text(
             '종합 이사운',
-            style: TossTheme.heading3.copyWith(
-              fontSize: 22,
+            style: TypographyUnified.heading3.copyWith(
               fontWeight: FontWeight.w700,
               color: TossTheme.textBlack,
             ),

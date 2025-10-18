@@ -44,8 +44,7 @@ class TalentTop3Widget extends StatelessWidget {
           // 제목
           Text(
             'TOP 3 재능',
-            style: TextStyle(
-              fontSize: 22,
+            style: TypographyUnified.heading3.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),

@@ -260,9 +260,8 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
                 fontWeight: FontWeight.bold)),
             Text(
               description,
-              style: TextStyle(
-                color: TossDesignSystem.white.withValues(alpha: 0.6),
-                fontSize: 10)),
+              style: TypographyUnified.labelTiny.copyWith(
+                color: TossDesignSystem.white.withValues(alpha: 0.6))),
           ],
         ),
       ],

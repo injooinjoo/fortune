@@ -61,7 +61,7 @@ class TalentTypeResultWidget extends StatelessWidget {
           // 이모지
           Text(
             talentInfo.emoji,
-            style: const TextStyle(fontSize: 64),
+            style: TypographyUnified.displayLarge,
           ),
           const SizedBox(height: 12),
           

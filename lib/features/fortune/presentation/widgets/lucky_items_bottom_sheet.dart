@@ -257,8 +257,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                       const SizedBox(height: 12),
                       Text(
                         '매일 새롭게 업데이트되는 8가지 카테고리의 행운 정보를 확인하세요. 로또 번호부터 오늘의 럭키 컬러까지, 당신의 하루를 더욱 특별하게 만들어 드립니다.',
-                        style: TextStyle(
-                          fontSize: 15,
+                        style: TypographyUnified.bodySmall.copyWith(
                           height: 1.5,
                           color: Theme.of(context).brightness == Brightness.dark
                               ? TossDesignSystem.grayDark400
