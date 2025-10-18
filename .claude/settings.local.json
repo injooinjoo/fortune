@@ -29,7 +29,9 @@
       "Bash(sed:*)",
       "Bash(supabase functions list:*)",
       "Bash(supabase functions deploy:*)",
-      "Bash(supabase functions logs:*)"
+      "Bash(supabase functions logs:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": [],
