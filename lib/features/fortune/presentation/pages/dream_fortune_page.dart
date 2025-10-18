@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../widgets/dream_elements_chart.dart';
 import '../widgets/dream_psychology_chart.dart';
 import '../widgets/dream_timeline_widget.dart';
 import '../widgets/fortune_display.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../services/dream_elements_analysis_service.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
@@ -16,6 +16,9 @@ import '../../../../services/speech_recognition_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
+import '../../domain/models/conditions/dream_fortune_conditions.dart';
 
 class DreamFortunePage extends BaseFortunePage {
   const DreamFortunePage({super.key})
@@ -89,23 +92,51 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
     _elementWeights = DreamElementsAnalysisService.calculateElementWeights(_dreamElements!);
     _psychologicalState = DreamElementsAnalysisService.analyzePsychologicalState(_dreamElements!);
     _emotionalFlow = DreamElementsAnalysisService.analyzeEmotionalFlow(dreamContent);
-    
+
     // 꿈 장면 추출 (간단한 문장 분리)
     _dreamScenes = dreamContent.split('.').where((s) => s.trim().isNotEmpty).toList();
     if (_dreamScenes!.isEmpty) {
       _dreamScenes = [dreamContent];
     }
 
-    // Use the fortune provider to generate dream interpretation
-    final fortune = await ref.read(fortuneServiceProvider).getFortune(
-      userId: user.id,
-      fortuneType: 'dream',
-      params: params
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    final conditions = DreamFortuneConditions(
+      dreamContent: dreamContent,
+      dreamDate: DateTime.now(),
+      dreamEmotion: null, // Could extract from emotional flow if needed
     );
 
-    _fortune = fortune;
-    
-    return fortune;
+    final inputConditions = {
+      'dream': dreamContent,
+      'inputType': params['inputType'],
+      'date': params['date'],
+    };
+
+    final fortuneResult = await fortuneService.getFortune(
+      fortuneType: widget.fortuneType,
+      dataSource: FortuneDataSource.api,
+      inputConditions: inputConditions,
+      conditions: conditions,
+    );
+
+    _fortune = _convertToFortune(fortuneResult);
+
+    return _fortune!;
+  }
+
+  /// FortuneResult를 Fortune 엔티티로 변환
+  Fortune _convertToFortune(FortuneResult fortuneResult) {
+    return Fortune(
+      id: fortuneResult.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      type: fortuneResult.type,
+      content: fortuneResult.data['content'] as String? ?? '',
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
+      overallScore: fortuneResult.score,
+      summary: fortuneResult.summary['message'] as String?,
+      metadata: fortuneResult.data,
+    );
   }
 
   @override
