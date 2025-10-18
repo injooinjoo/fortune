@@ -7,6 +7,7 @@ import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/components/toss_card.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
+import '../../../../core/models/fortune_result.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -118,11 +119,24 @@ class _HealthFortunePageState extends BaseFortunePageState<HealthFortunePage> {
         inputConditions: inputConditions,
       );
 
-      return result.toFortune();
+      return _convertToFortune(result);
     } catch (e) {
       Logger.error('❌ [HealthFortune] 운세 생성 실패', e);
       rethrow;
     }
+  }
+
+  Fortune _convertToFortune(FortuneResult fortuneResult) {
+    return Fortune(
+      id: fortuneResult.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      type: fortuneResult.type,
+      content: fortuneResult.data['content'] as String? ?? '',
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
+      overallScore: fortuneResult.score,
+      summary: fortuneResult.summary['message'] as String?,
+      metadata: fortuneResult.data,
+    );
   }
 
   @override
@@ -163,8 +177,8 @@ class _HealthFortunePageState extends BaseFortunePageState<HealthFortunePage> {
             // Progress indicator
             LinearProgressIndicator(
               value: (_currentStep + 1) / 3,
-              backgroundColor: (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight).withOpacity(0.1),
-              valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.primary),
+              backgroundColor: (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight).withValues(alpha: 0.1),
+              valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.tossBlue),
             ),
             Expanded(
               child: PageView(

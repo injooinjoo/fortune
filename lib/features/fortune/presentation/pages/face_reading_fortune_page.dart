@@ -255,12 +255,17 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           showProgress: false,
           isVisible: true,
           onPressed: _isAnalyzing ? null : () async {
+            // 광고 시작과 동시에 API 호출 시작 (async parallel pattern)
+            final apiCallFuture = _startAnalysis();
+
             await AdService.instance.showInterstitialAdWithCallback(
               onAdCompleted: () async {
-                _startAnalysis();
+                // 광고 완료 후 API 결과 대기
+                await apiCallFuture;
               },
               onAdFailed: () async {
-                _startAnalysis();
+                // 광고 실패해도 API 결과 대기
+                await apiCallFuture;
               },
             );
           },

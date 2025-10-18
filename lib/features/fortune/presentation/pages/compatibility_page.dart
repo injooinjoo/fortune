@@ -136,14 +136,17 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       _isLoading = true;
     });
 
-    // 광고 표시 후 분석 진행
+    // 광고 시작과 동시에 API 호출 시작 (async parallel pattern)
+    final apiCallFuture = _performCompatibilityAnalysis();
+
     await AdService.instance.showInterstitialAdWithCallback(
       onAdCompleted: () async {
-        await _performCompatibilityAnalysis();
+        // 광고 완료 후 API 결과 대기
+        await apiCallFuture;
       },
       onAdFailed: () async {
-        // 광고 실패해도 분석 진행
-        await _performCompatibilityAnalysis();
+        // 광고 실패해도 API 결과 대기
+        await apiCallFuture;
       },
     );
   }
