@@ -300,7 +300,7 @@ class FortuneOptimizationService {
         apiCall: true,
       );
 
-      print('  ✅ DB 저장 완료');
+      print('  ✅ API 호출 성공 및 fortune_results 저장 완료');
       return savedResult;
     } catch (e) {
       print('  ❌ API 호출 실패: $e');
@@ -345,11 +345,13 @@ class FortuneOptimizationService {
           .select()
           .single();
 
+      print('  ✅ fortune_results 저장 완료');
       return CachedFortuneResult.fromJson(response);
     } catch (e) {
-      print('  ⚠️ DB 저장 실패: $e');
+      print('  ❌ fortune_results 저장 실패: $e');
 
       // DB 저장 실패해도 결과는 반환 (메모리에서 생성)
+      // ⚠️ 주의: 저장 실패 시 다음 실행에서 캐시를 찾을 수 없음!
       final now = DateTime.now();
       return CachedFortuneResult(
         id: 'temp_${DateTime.now().millisecondsSinceEpoch}',

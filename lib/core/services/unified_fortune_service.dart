@@ -138,16 +138,16 @@ class UnifiedFortuneService {
 
       // DB 저장 시도 (실패해도 결과는 반환)
       try {
-        Logger.info('[$fortuneType] 💾 DB 저장 시작');
+        Logger.info('[$fortuneType] 💾 DB 저장 시도 (fortune_history)');
         await saveFortune(
           result: result,
           fortuneType: fortuneType,
           inputConditions: inputConditions,
         );
-        Logger.info('[$fortuneType] ✅ DB 저장 완료');
+        Logger.info('[$fortuneType] ✅ fortune_history 저장 완료');
       } catch (saveError) {
         // DB 저장 실패해도 API 결과는 사용자에게 반환
-        Logger.warning('[$fortuneType] ⚠️ DB 저장 실패 (결과는 반환됨): $saveError');
+        Logger.error('[$fortuneType] ❌ fortune_history 저장 실패 (결과는 반환됨): $saveError');
       }
 
       return result;

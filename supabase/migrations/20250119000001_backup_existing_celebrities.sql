@@ -12,11 +12,5 @@ COMMENT ON TABLE public.celebrities_backup IS 'Backup of celebrities data before
 CREATE INDEX IF NOT EXISTS idx_celebrities_backup_id ON public.celebrities_backup(id);
 CREATE INDEX IF NOT EXISTS idx_celebrities_backup_category ON public.celebrities_backup(category);
 
--- Log backup completion
-INSERT INTO public.migration_log (migration_name, status, message, created_at)
-VALUES (
-  'backup_existing_celebrities',
-  'completed',
-  'Successfully backed up ' || (SELECT COUNT(*) FROM public.celebrities_backup) || ' celebrity records',
-  NOW()
-) ON CONFLICT DO NOTHING;
+-- Log backup completion (migration_log 테이블이 없을 수 있으므로 제거)
+-- Backup 완료는 celebrities_backup 테이블 존재로 확인 가능
