@@ -4,6 +4,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../domain/models/fortune_history.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class TimelineView extends StatelessWidget {
   final List<FortuneHistory> history;
@@ -198,7 +199,7 @@ class TimelineView extends StatelessWidget {
                                         children: [
                                           Text(
                                             _getFortuneIcon(item.fortuneType),
-                                            style: TextStyle(fontSize: 16),
+                                            style: TypographyUnified.buttonMedium,
                                           ),
                                           const SizedBox(width: 8),
                                           Text(

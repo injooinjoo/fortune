@@ -595,8 +595,7 @@ class ImportantDatesCard extends StatelessWidget {
             children: [
               Text(
                 '$title - $date',
-                style: TextStyle(
-                  fontSize: 15,
+                style: TypographyUnified.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                 ),
@@ -727,8 +726,7 @@ class WeeklyActivityGuide extends StatelessWidget {
                       children: [
                         Text(
                           activity['title'] as String,
-                          style: TextStyle(
-                            fontSize: 15,
+                          style: TypographyUnified.bodySmall.copyWith(
                             fontWeight: FontWeight.w500,
                             color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                           ),
@@ -911,8 +909,7 @@ class LifestyleAdviceCard extends StatelessWidget {
                       children: [
                         Text(
                           advice['title'] as String,
-                          style: TextStyle(
-                            fontSize: 15,
+                          style: TypographyUnified.bodySmall.copyWith(
                             fontWeight: FontWeight.w500,
                             color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                           ),

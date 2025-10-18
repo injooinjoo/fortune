@@ -485,7 +485,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       Expanded(
                         child: Text(
                           job.toString(),
-                          style: const TextStyle(fontSize: 15),
+                          style: TypographyUnified.bodySmall,
                         ),
                       ),
                     ],

@@ -13,6 +13,7 @@ import '../../domain/models/fortune_history.dart';
 import '../widgets/statistics_dashboard.dart';
 import '../widgets/fortune_charts.dart';
 import '../widgets/timeline_view.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../widgets/fortune_calendar_view.dart';
 
 class FortuneHistoryPage extends ConsumerStatefulWidget {
@@ -317,7 +318,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
             children: [
               Text(
                 '📜',
-                style: TextStyle(fontSize: 64),
+                style: TypographyUnified.displayLarge,
               ),
               const SizedBox(height: TossTheme.spacingL),
               Text(

@@ -455,7 +455,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     final summaryData = _getDynamicSummaryText(score);
     segments.add(StorySegment(
       text: summaryData['text'] ?? '특별한 하루입니다',
-      fontSize: 26,
+      fontSize: 28,  // heading1 size
       fontWeight: FontWeight.w300,
       emoji: summaryData['emoji'] ?? '✨',
     ));
@@ -509,7 +509,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
         if (part.trim().isNotEmpty) {
           segments.add(StorySegment(
             text: part.trim() + (part.endsWith('.') ? '' : '.'),
-            fontSize: 26,
+            fontSize: 28,  // heading1 size
             fontWeight: FontWeight.w300,
           ));
         }
@@ -535,7 +535,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     segments.add(StorySegment(
       subtitle: '⚠️ 주의',
       text: cautionText,
-      fontSize: 22,
+      fontSize: 20,  // heading3 size
       fontWeight: FontWeight.w300,
     ));
 
@@ -632,7 +632,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
         : '천천히 가도\n괜찮은 날';
     segments.add(StorySegment(
       text: energyText,
-      fontSize: 26,
+      fontSize: 28,  // heading1 size
       fontWeight: FontWeight.w300,
       emoji: score >= 80 ? '✨' : score >= 60 ? '☁️' : '🌙',
     ));
@@ -799,7 +799,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     
     segments.add(StorySegment(
       text: '잠깐,\n\n$cautionText',
-      fontSize: 22,
+      fontSize: 20,  // heading3 size
       fontWeight: FontWeight.w300,
     ));
 
@@ -821,7 +821,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     }
     segments.add(StorySegment(
       text: luckyText,
-      fontSize: 26,
+      fontSize: 28,  // heading1 size
       fontWeight: FontWeight.w300,
     ));
 
