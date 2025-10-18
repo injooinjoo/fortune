@@ -1098,8 +1098,7 @@ class HealthTipsCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 15,
+                style: TypographyUnified.bodySmall.copyWith(
                   fontWeight: FontWeight.w500,
                   color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                 ),

@@ -703,8 +703,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             const SizedBox(width: 8),
             Text(
               '오늘의 행운 아이템',
-              style: TextStyle(
-                fontSize: 15,
+              style: TypographyUnified.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),

@@ -290,18 +290,14 @@ class _LuckyItemsRenewedPageState extends ConsumerState<LuckyItemsRenewedPage> {
         buttonText = '다음';
     }
 
-    return Positioned(
-      left: 20,
-      right: 20,
-      bottom: 16 + bottomPadding,
-      child: TossFloatingProgressButton(
-        text: buttonText,
-        currentStep: currentStep + 1,
-        totalSteps: 3,
-        onPressed: canProceed ? _nextStep : null,
-        isEnabled: canProceed,
-        showProgress: true,
-      ),
+    return TossFloatingProgressButtonPositioned(
+      text: buttonText,
+      currentStep: currentStep + 1,
+      totalSteps: 3,
+      onPressed: canProceed ? _nextStep : null,
+      isEnabled: canProceed,
+      showProgress: true,
+      isVisible: true,
     );
   }
 

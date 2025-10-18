@@ -259,18 +259,14 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
         break;
     }
 
-    return Positioned(
-      left: 20,
-      right: 20,
-      bottom: 16 + bottomPadding,
-      child: TossFloatingProgressButton(
-        text: buttonText,
-        currentStep: _currentStep + 1,
-        totalSteps: 3,
-        onPressed: onPressed,
-        isEnabled: canProceed,
-        showProgress: true,
-      ),
+    return TossFloatingProgressButtonPositioned(
+      text: buttonText,
+      currentStep: _currentStep + 1,
+      totalSteps: 3,
+      onPressed: onPressed,
+      isEnabled: canProceed,
+      showProgress: true,
+      isVisible: true,
     );
   }
 

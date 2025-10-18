@@ -199,21 +199,16 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
   }
 
   Widget _buildFloatingButton() {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
     final canProceed = _currentStep == 0 ? _canProceedStep1() : _canProceedStep2();
 
-    return Positioned(
-      left: 20,
-      right: 20,
-      bottom: 16 + bottomPadding,
-      child: TossFloatingProgressButton(
-        text: _currentStep == 0 ? '다음' : '마음 분석하기',
-        currentStep: _currentStep + 1,
-        totalSteps: 2,
-        onPressed: canProceed ? _nextStep : null,
-        isEnabled: canProceed,
-        showProgress: true,
-      ),
+    return TossFloatingProgressButtonPositioned(
+      text: _currentStep == 0 ? '다음' : '마음 분석하기',
+      currentStep: _currentStep + 1,
+      totalSteps: 2,
+      onPressed: canProceed ? _nextStep : null,
+      isEnabled: canProceed,
+      showProgress: true,
+      isVisible: true,
     );
   }
 

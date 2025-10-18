@@ -250,7 +250,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                 child: Center(
                   child: Text(
                     species.emoji,
-                    style: TypographyUnified.displaySmall.copyWith(fontSize: 28),
+                    style: TypographyUnified.displaySmall,
                   ),
                 ),
               ),
@@ -562,7 +562,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               children: [
                 Text(
                   species.emoji,
-                  style: TypographyUnified.heading3.copyWith(fontSize: 20),
+                  style: TypographyUnified.heading3,
                 ),
                 SizedBox(width: 8),
                 Text(
@@ -717,7 +717,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   child: Center(
                     child: Text(
                       species.emoji,
-                      style: TypographyUnified.displayLarge.copyWith(fontSize: 36),
+                      style: TypographyUnified.displayLarge,
                     ),
                   ),
                 ),

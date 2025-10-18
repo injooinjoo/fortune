@@ -179,20 +179,14 @@ class _LoveFortuneMainPageState extends State<LoveFortuneMainPage> {
     return ValueListenableBuilder<bool>(
       valueListenable: canProceedNotifier,
       builder: (context, canProceed, child) {
-        final bottomPadding = MediaQuery.of(context).padding.bottom;
-
-        return Positioned(
-          left: 20,
-          right: 20,
-          bottom: 16 + bottomPadding,
-          child: TossFloatingProgressButton(
-            text: buttonText,
-            currentStep: _currentStep + 1,
-            totalSteps: _totalSteps,
-            onPressed: canProceed ? _nextStep : null,
-            isEnabled: canProceed,
-            showProgress: true,
-          ),
+        return TossFloatingProgressButtonPositioned(
+          text: buttonText,
+          currentStep: _currentStep + 1,
+          totalSteps: _totalSteps,
+          onPressed: canProceed ? _nextStep : null,
+          isEnabled: canProceed,
+          showProgress: true,
+          isVisible: true,
         );
       },
     );

@@ -756,8 +756,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
                               '${entry.key + 1}',
                               style: TextStyle(
                                 color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12),
+                                fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -935,9 +934,8 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
           color: theme.colorScheme.onSurface,
           
           fontWeight: FontWeight.bold),
-        ticksTextStyle: TextStyle(
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-          fontSize: 10),
+        ticksTextStyle: TypographyUnified.labelTiny.copyWith(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
       ),
     );
   }

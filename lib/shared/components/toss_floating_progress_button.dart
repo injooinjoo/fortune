@@ -218,7 +218,7 @@ class TossFloatingProgressButtonPositioned extends StatelessWidget {
     this.isLoading = false,
     this.icon,
     this.keyboardPadding = 16.0,
-    this.bottomPadding = 32.0,
+    this.bottomPadding = 16.0,
   });
 
   @override
