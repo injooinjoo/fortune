@@ -25,7 +25,10 @@
       "Bash(else)",
       "Bash(if grep -q \"apiCallFuture.*=.*_.*Async\\|final.*future.*=.*generate\" \"/Users/jacobmac/Desktop/Dev/fortune/lib/features/fortune/presentation/pages/$page\")",
       "Bash(if grep -q \"apiCallFuture.*=\\|final.*future.*=.*generate\\|final.*future.*=.*_.*Async\" \"/Users/jacobmac/Desktop/Dev/fortune/lib/features/fortune/presentation/pages/$page\")",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(sed:*)",
+      "Bash(supabase functions list:*)",
+      "Bash(supabase functions deploy:*)"
     ],
     "deny": [],
     "ask": [],

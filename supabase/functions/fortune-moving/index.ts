@@ -1,6 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import OpenAI from 'https://esm.sh/openai@4.28.0'
+import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -22,6 +23,15 @@ interface MovingFortuneRequest {
   target_area: string
   moving_period: string
   purpose: string
+}
+
+// UTF-8 안전한 해시 생성 함수 (btoa는 Latin1만 지원하여 한글 불가)
+async function createHash(text: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(text)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 50)
 }
 
 // 메인 핸들러
@@ -58,8 +68,8 @@ serve(async (req) => {
       purpose
     })
 
-    // 캐시 확인 (Deno 네이티브 btoa 사용)
-    const cacheKey = `moving_fortune_${btoa(`${current_area}_${target_area}_${moving_period}_${purpose}`).slice(0, 50)}`
+    // 캐시 확인 (UTF-8 안전한 해시 사용)
+    const cacheKey = `moving_fortune_${await createHash(`${current_area}_${target_area}_${moving_period}_${purpose}`)}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')
