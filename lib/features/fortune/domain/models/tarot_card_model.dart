@@ -122,10 +122,35 @@ class TarotCard {
       final fileName = '${number.toString().padLeft(2, '0')}_${_getCardFileName()}.jpg';
       return basePath + fileName;
     } else {
-      // 마이너 아르카나: 01_of_cups.jpg, 02_of_cups.jpg, ... 14_of_pentacles.jpg
+      // 마이너 아르카나
       final suitName = category.path; // cups, wands, swords, pentacles
-      final fileName = '${number.toString().padLeft(2, '0')}_of_$suitName.jpg';
-      return basePath + fileName;
+
+      // Court 카드 (11-14)는 이름으로 저장됨
+      if (number >= 11 && number <= 14) {
+        final courtName = _getCourtCardName(number);
+        final fileName = '${courtName}_of_$suitName.jpg';
+        return basePath + fileName;
+      } else {
+        // 숫자 카드 (1-10): 01_of_cups.jpg, 02_of_cups.jpg 등
+        final fileName = '${number.toString().padLeft(2, '0')}_of_$suitName.jpg';
+        return basePath + fileName;
+      }
+    }
+  }
+
+  /// Court 카드 이름 반환 (11=Page, 12=Knight, 13=Queen, 14=King)
+  String _getCourtCardName(int courtNumber) {
+    switch (courtNumber) {
+      case 11:
+        return 'page';
+      case 12:
+        return 'knight';
+      case 13:
+        return 'queen';
+      case 14:
+        return 'king';
+      default:
+        return 'unknown';
     }
   }
 
