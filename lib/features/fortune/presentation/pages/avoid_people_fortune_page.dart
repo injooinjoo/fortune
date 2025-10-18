@@ -212,7 +212,7 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
               );
             }),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '${_currentStep + 1} / 3',
             style: TossDesignSystem.caption.copyWith(
@@ -250,14 +250,14 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
                     size: 32,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   '현재 상황 분석',
                   style: TossDesignSystem.heading3.copyWith(
                     color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   '오늘 주로 있을 환경과 일정을 알려주세요',
                   style: TossDesignSystem.body2.copyWith(
@@ -269,7 +269,7 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
             ),
           ),
 
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
 
           Text(
             '오늘의 주요 환경',
@@ -293,7 +293,7 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
             )).toList(),
           ),
 
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
 
           Text(
             '중요한 일정',
@@ -349,14 +349,14 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
                     size: 32,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   '감정 상태 체크',
                   style: TossDesignSystem.heading3.copyWith(
                     color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   '현재 당신의 감정 상태를 평가해주세요',
                   style: TossDesignSystem.body2.copyWith(
@@ -430,14 +430,14 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
                     size: 32,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   '주의할 상황',
                   style: TossDesignSystem.heading3.copyWith(
                     color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   '오늘 예정된 중요한 활동을 선택해주세요',
                   style: TossDesignSystem.body2.copyWith(
@@ -479,7 +479,7 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
             isDark,
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
           Text(
             '분석 결과는 참고용으로만 활용해주세요',
@@ -555,7 +555,7 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: TossDesignSystem.errorRed,
@@ -623,7 +623,7 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
               size: 20,
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16),
           Expanded(
             child: Text(
               title,

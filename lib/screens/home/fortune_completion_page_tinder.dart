@@ -13,6 +13,7 @@ import '../../presentation/widgets/fortune_infographic_widgets.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../presentation/providers/celebrity_saju_provider.dart';
 import '../../services/weather_service.dart';
+import '../../core/theme/typography_unified.dart';
 
 /// 틴더 스타일 카드 기반 운세 완료 페이지
 class FortuneCompletionPageTinder extends ConsumerStatefulWidget {
@@ -168,7 +169,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     displayUserName,
                     style: TextStyle(
                       color: isDark ? Colors.white : Colors.black87,
-                      fontSize: 18,
+                      
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -178,7 +179,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         '${DateTime.now().year}.${DateTime.now().month.toString().padLeft(2, '0')}.${DateTime.now().day.toString().padLeft(2, '0')}',
                         style: TextStyle(
                           color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                          fontSize: 14,
+                          
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -186,14 +187,14 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         const SizedBox(width: 12),
                         Text(
                           _getWeatherEmoji(widget.currentWeather!.condition),
-                          style: const TextStyle(fontSize: 16),
+                          style: TypographyUnified.buttonMedium,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '${widget.currentWeather!.temperature.round()}°',
                           style: TextStyle(
                             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                            fontSize: 14,
+                            
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -337,7 +338,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '오늘의 총운',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -382,7 +383,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 'POINTS',
                 style: TextStyle(
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.35),
-                  fontSize: 12,
+                  
                   fontWeight: FontWeight.w500,
                   letterSpacing: 2,
                 ),
@@ -447,7 +448,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 message,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black87,
-                  fontSize: 18,
+                  
                   fontWeight: FontWeight.w600,
                   height: 1.5,
                 ),
@@ -515,7 +516,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '5대 영역별 운세',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -525,7 +526,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '오늘의 각 분야별 운세를 한눈에',
           style: TextStyle(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 14,
+            
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -625,7 +626,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                           '${entry.value.round()}',
                           style: TextStyle(
                             color: areaColor,
-                            fontSize: 16,
+                            
                             fontWeight: FontWeight.w600,
                           ),
                           textAlign: TextAlign.right,
@@ -665,7 +666,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '시간대별 조언',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -675,7 +676,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '오늘 하루를 시간대별로 준비하세요',
           style: TextStyle(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 14,
+            
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -801,7 +802,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                           '지금',
                           style: TextStyle(
                             color: accentColor,
-                            fontSize: 11,
+                            
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -814,7 +815,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   advice,
                   style: TextStyle(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                    fontSize: 14,
+                    
                     height: 1.5,
                   ),
                 ),
@@ -842,7 +843,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           children: [
             Text(
               emoji,
-              style: const TextStyle(fontSize: 36),
+              style: TypographyUnified.heading1,
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -850,7 +851,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 title,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black87,
-                  fontSize: 28,
+                  
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.5,
                 ),
@@ -885,7 +886,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     '$score',
                     style: TextStyle(
                       color: scoreColor,
-                      fontSize: 48,
+                      
                       fontWeight: FontWeight.w200,
                       height: 1.0,
                     ),
@@ -895,7 +896,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     '점',
                     style: TextStyle(
                       color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4),
-                      fontSize: 18,
+                      
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -960,7 +961,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '오늘의 행운 아이템',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -970,7 +971,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '오늘 행운을 불러올 아이템들',
           style: TextStyle(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 14,
+            
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -1014,7 +1015,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         entry.key,
                         style: TextStyle(
                           color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-                          fontSize: 12,
+                          
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -1023,7 +1024,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         entry.value,
                         style: TextStyle(
                           color: isDark ? Colors.white : Colors.black87,
-                          fontSize: 16,
+                          
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1052,7 +1053,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '나와 비슷한 사주',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -1062,7 +1063,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '유명인과의 사주 궁합',
           style: TextStyle(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 14,
+            
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -1139,7 +1140,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                 name.substring(0, 1),
                 style: TextStyle(
                   color: scoreColor,
-                  fontSize: 24,
+                  
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -1157,7 +1158,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                       name,
                       style: TextStyle(
                         color: isDark ? Colors.white : Colors.black87,
-                        fontSize: 18,
+                        
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1176,7 +1177,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         '$matchScore%',
                         style: TextStyle(
                           color: scoreColor,
-                          fontSize: 14,
+                          
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1188,7 +1189,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   description,
                   style: TextStyle(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                    fontSize: 14,
+                    
                     height: 1.4,
                   ),
                 ),
@@ -1555,7 +1556,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '사주 인사이트',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -1564,7 +1565,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '당신의 사주가 말하는 오늘',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 16,
+            
           ),
         ),
 
@@ -1627,7 +1628,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           label,
           style: TextStyle(
             color: color.withValues(alpha: 0.8),
-            fontSize: 12,
+            
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -1642,7 +1643,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             value,
             style: TextStyle(
               color: color,
-              fontSize: 16,
+              
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -1662,7 +1663,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '오늘의 액션 플랜',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -1671,7 +1672,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '오늘 꼭 실천할 것들',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 16,
+            
           ),
         ),
 
@@ -2212,7 +2213,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   title,
                   style: TextStyle(
                     color: isDark ? Colors.white : Colors.black87,
-                    fontSize: 16,
+                    
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -2222,7 +2223,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     description,
                     style: TextStyle(
                       color: isDark ? Colors.white60 : Colors.black54,
-                      fontSize: 14,
+                      
                       height: 1.4,
                     ),
                   ),
@@ -2250,7 +2251,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '오행 밸런스',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -2259,7 +2260,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '당신의 사주 기반 오행 균형 분석',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 16,
+            
           ),
         ),
 
@@ -2285,7 +2286,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     '📅 사주팔자',
                     style: TextStyle(
                       color: isDark ? Colors.white : Colors.black87,
-                      fontSize: 16,
+                      
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -2294,7 +2295,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     '(만세력 기준)',
                     style: TextStyle(
                       color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-                      fontSize: 13,
+                      
                     ),
                   ),
                 ],
@@ -2339,7 +2340,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   balance,
                   style: TextStyle(
                     color: isDark ? Colors.white : Colors.black87,
-                    fontSize: 14,
+                    
                     fontWeight: FontWeight.w500,
                     height: 1.5,
                   ),
@@ -2380,7 +2381,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                       entry.key,
                       style: TextStyle(
                         color: isDark ? Colors.white : Colors.black87,
-                        fontSize: 16,
+                        
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -2396,7 +2397,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                             getElementStatus(entry.value),
                             style: TextStyle(
                               color: getElementColor(entry.key),
-                              fontSize: 12,
+                              
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -2406,7 +2407,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                           '${entry.value}%',
                           style: TextStyle(
                             color: isDark ? Colors.white60 : Colors.black54,
-                            fontSize: 14,
+                            
                           ),
                         ),
                       ],
@@ -2458,7 +2459,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             explanation,
             style: TextStyle(
               color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
-              fontSize: 14,
+              
               height: 1.7,
               letterSpacing: -0.2,
             ),
@@ -2476,7 +2477,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           label,
           style: TextStyle(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 12,
+            
           ),
         ),
         const SizedBox(height: 6),
@@ -2494,7 +2495,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             value,
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black87,
-              fontSize: 16,
+              
               fontWeight: FontWeight.w700,
               letterSpacing: 1,
             ),
@@ -2518,7 +2519,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '시간대별 운세 그래프',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -2527,7 +2528,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '하루 24시간 운세 흐름과 추천 시간대',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 16,
+            
           ),
         ),
 
@@ -2557,7 +2558,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         '베스트',
                         style: TextStyle(
                           color: const Color(0xFF10B981),
-                          fontSize: 11,
+                          
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -2565,7 +2566,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         '$bestHour시',
                         style: TextStyle(
                           color: isDark ? Colors.white : Colors.black87,
-                          fontSize: 16,
+                          
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -2591,7 +2592,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         '주의',
                         style: TextStyle(
                           color: const Color(0xFFEF4444),
-                          fontSize: 11,
+                          
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -2599,7 +2600,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         '$worstHour시',
                         style: TextStyle(
                           color: isDark ? Colors.white : Colors.black87,
-                          fontSize: 16,
+                          
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -2646,7 +2647,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         '${value.toInt()}시',
                         style: TextStyle(
                           color: isDark ? Colors.white60 : Colors.black54,
-                          fontSize: 12,
+                          
                         ),
                       );
                     },
@@ -2715,7 +2716,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '띠별 운세',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -2724,7 +2725,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           '나와 주변 사람들의 띠 운세',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 16,
+            
           ),
         ),
 
@@ -2751,7 +2752,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   children: [
                     Text(
                       fortune['emoji'] as String,
-                      style: const TextStyle(fontSize: 32),
+                      style: TypographyUnified.numberLarge,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -2764,7 +2765,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                                 '${fortune['year']}년생',
                                 style: TextStyle(
                                   color: isDark ? Colors.white : Colors.black87,
-                                  fontSize: 18,
+                                  
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -2780,7 +2781,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                                     '내 띠',
                                     style: TextStyle(
                                       color: const Color(0xFF3B82F6),
-                                      fontSize: 11,
+                                      
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -2792,7 +2793,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                             fortune['name'] as String,
                             style: TextStyle(
                               color: isDark ? Colors.white60 : Colors.black54,
-                              fontSize: 14,
+                              
                             ),
                           ),
                         ],
@@ -2808,7 +2809,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                         '${fortune['score']}점',
                         style: TextStyle(
                           color: _getZodiacScoreColor(fortune['score'] as int),
-                          fontSize: 14,
+                          
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -3155,7 +3156,7 @@ ${cardInfo['message']}
           '주간 운세 트렌드',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -3164,7 +3165,7 @@ ${cardInfo['message']}
           '이번 주 당신의 운세 흐름',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 16,
+            
           ),
         ),
 
@@ -3185,7 +3186,7 @@ ${cardInfo['message']}
           ),
           child: Column(
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.trending_up, color: Colors.white, size: 40),
@@ -3194,7 +3195,7 @@ ${cardInfo['message']}
                     '상승세',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 32,
+                      
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -3207,7 +3208,7 @@ ${cardInfo['message']}
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
+                child: Text(
                   '이번 주는 전반적으로 상승세를 타고 있습니다. 특히 수요일부터 금요일까지가 가장 좋은 시기입니다. 새로운 도전이나 중요한 결정을 내리기에 최적의 타이밍입니다.',
                   style: TextStyle(
                     color: Colors.white,
@@ -3250,7 +3251,7 @@ ${cardInfo['message']}
                     day,
                     style: TextStyle(
                       color: isDark ? Colors.white : Colors.black87,
-                      fontSize: 14,
+                      
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -3261,7 +3262,7 @@ ${cardInfo['message']}
                       color: score >= 80
                           ? const Color(0xFF10B981)
                           : (isDark ? Colors.white60 : Colors.black54),
-                      fontSize: 12,
+                      
                     ),
                   ),
                 ],
@@ -3285,7 +3286,7 @@ ${cardInfo['message']}
           '운세 공유하기',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -3294,7 +3295,7 @@ ${cardInfo['message']}
           '현재 보고 있는 카드를 공유해보세요',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 16,
+            
           ),
         ),
 
@@ -3328,7 +3329,7 @@ ${cardInfo['message']}
                           currentCardInfo['title'] as String,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
+                            
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -3337,7 +3338,7 @@ ${cardInfo['message']}
                           DateTime.now().toString().split(' ')[0],
                           style: const TextStyle(
                             color: Colors.white70,
-                            fontSize: 14,
+                            
                           ),
                         ),
                       ],
@@ -3364,7 +3365,7 @@ ${cardInfo['message']}
                     currentCardInfo['message'] as String,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.5,
                     ),
@@ -3372,7 +3373,7 @@ ${cardInfo['message']}
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.share, color: Colors.white, size: 20),
@@ -3381,7 +3382,7 @@ ${cardInfo['message']}
                       '공유하기',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -3394,11 +3395,11 @@ ${cardInfo['message']}
 
         const SizedBox(height: 20),
 
-        const Text(
+        Text(
           '💡 Tip: 카드를 탭하면 현재 보고 있는 내용을 공유할 수 있습니다.',
           style: TextStyle(
             color: Color(0xFF6B7280),
-            fontSize: 14,
+            
             height: 1.5,
           ),
         ),

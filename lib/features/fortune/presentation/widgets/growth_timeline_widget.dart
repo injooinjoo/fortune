@@ -9,6 +9,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/sipseong_talent.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class GrowthTimelineWidget extends StatelessWidget {
   final SipseongTalent primaryTalent; // TOP 1 재능
@@ -51,11 +52,10 @@ class GrowthTimelineWidget extends StatelessWidget {
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '대운(大運)으로 보는 당신의 생애 주기와 성장 방향',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               height: 1.5,
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
@@ -92,13 +92,12 @@ class GrowthTimelineWidget extends StatelessWidget {
             children: [
               Text(
                 '🍀',
-                style: const TextStyle(fontSize: 24),
+                style: TypographyUnified.displaySmall,
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Text(
                 '성장을 도와줄 행운의 요소',
-                style: TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
@@ -135,11 +134,10 @@ class GrowthTimelineWidget extends StatelessWidget {
                       color: TossDesignSystem.tossBlue,
                       size: 16,
                     ),
-                    const SizedBox(width: 6),
+                    SizedBox(width: 6),
                     Text(
                       element,
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: TypographyUnified.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
@@ -177,7 +175,7 @@ class GrowthTimelineWidget extends StatelessWidget {
         children: [
           Text(
             '💡',
-            style: const TextStyle(fontSize: 24),
+            style: TypographyUnified.displaySmall,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -186,17 +184,15 @@ class GrowthTimelineWidget extends StatelessWidget {
               children: [
                 Text(
                   '성장 조언',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w700,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   primaryTalent.growthAdvice,
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     height: 1.6,
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                   ),
@@ -218,24 +214,22 @@ class GrowthTimelineWidget extends StatelessWidget {
             children: [
               Text(
                 '📅',
-                style: const TextStyle(fontSize: 24),
+                style: TypographyUnified.displaySmall,
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Text(
                 '대운(大運) 타임라인',
-                style: TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '10년 주기로 변화하는 인생의 흐름',
-            style: TextStyle(
-              fontSize: 13,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
           ),
@@ -305,8 +299,7 @@ class GrowthTimelineWidget extends StatelessWidget {
               children: [
                 Text(
                   '$age세',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w700,
                     color: isActive ? wuxingColor : TossDesignSystem.gray700,
                   ),
@@ -319,10 +312,9 @@ class GrowthTimelineWidget extends StatelessWidget {
                       color: wuxingColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
+                    child: Text(
                       '현재',
-                      style: TextStyle(
-                        fontSize: 10,
+                      style: TypographyUnified.labelTiny.copyWith(
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
                       ),
@@ -348,29 +340,26 @@ class GrowthTimelineWidget extends StatelessWidget {
                       ),
                       child: Text(
                         '$wuxing 운',
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: TypographyUnified.labelMedium.copyWith(
                           fontWeight: FontWeight.w700,
                           color: wuxingColor,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '$gan$zhi',
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: TypographyUnified.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Text(
                   _getDaeunDescription(wuxing, isActive),
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: TypographyUnified.labelMedium.copyWith(
                     height: 1.4,
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                   ),
@@ -493,7 +482,7 @@ class DaeunSummaryWidget extends StatelessWidget {
         children: [
           Text(
             '📅',
-            style: const TextStyle(fontSize: 32),
+            style: TypographyUnified.numberLarge,
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -502,17 +491,15 @@ class DaeunSummaryWidget extends StatelessWidget {
               children: [
                 Text(
                   '현재 대운',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   '$age세 · $gan$zhi ($wuxing 운)',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: TypographyUnified.heading4.copyWith(
                     fontWeight: FontWeight.w700,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 가족 관계도 차트 - 토스 디자인 시스템
 class FamilyRelationshipChart extends StatelessWidget {
@@ -37,11 +38,11 @@ class FamilyRelationshipChart extends StatelessWidget {
                 color: TossDesignSystem.tossBlue,
                 size: 24,
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Text(
                 '우리 가족 관계도',
                 style: TossDesignSystem.heading4.copyWith(
-                  fontSize: 18,
+                  
                   fontWeight: FontWeight.w700,
                   color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                 ),
@@ -126,7 +127,7 @@ class FamilyRelationshipChart extends StatelessWidget {
           child: Center(
             child: Text(
               member.emoji,
-              style: const TextStyle(fontSize: 32),
+              style: TypographyUnified.numberLarge,
             ),
           ),
         ).animate()
@@ -136,7 +137,7 @@ class FamilyRelationshipChart extends StatelessWidget {
               delay: Duration(milliseconds: members.indexOf(member) * 100),
             ),
         
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         
         Text(
           member.name,
@@ -245,7 +246,7 @@ class FamilyRelationshipChart extends StatelessWidget {
             ),
             child: Text(
               member1.emoji,
-              style: const TextStyle(fontSize: 20),
+              style: TypographyUnified.heading3,
             ),
           ),
           
@@ -291,7 +292,7 @@ class FamilyRelationshipChart extends StatelessWidget {
             ),
             child: Text(
               member2.emoji,
-              style: const TextStyle(fontSize: 20),
+              style: TypographyUnified.heading3,
             ),
           ),
         ],
@@ -393,7 +394,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
           Text(
             '관계 궁합 매트릭스',
             style: TossDesignSystem.heading4.copyWith(
-              fontSize: 16,
+              
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
             ),
@@ -419,7 +420,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                       padding: const EdgeInsets.all(8),
                       child: Text(
                         member.emoji,
-                        style: const TextStyle(fontSize: 20),
+                        style: TypographyUnified.heading3,
                       ),
                     ),
                   )),
@@ -436,7 +437,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                       child: Center(
                         child: Text(
                           member1.emoji,
-                          style: const TextStyle(fontSize: 20),
+                          style: TypographyUnified.heading3,
                         ),
                       ),
                     ),
@@ -445,7 +446,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                         return Container(
                           padding: const EdgeInsets.all(8),
                           color: TossDesignSystem.gray100.withValues(alpha: 0.3),
-                          child: const Center(
+                          child: Center(
                             child: Text('-'),
                           ),
                         );
@@ -505,7 +506,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        const SizedBox(width: 4),
+        SizedBox(width: 4),
         Text(
           label,
           style: TossDesignSystem.caption.copyWith(

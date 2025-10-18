@@ -72,14 +72,14 @@ class LoveFortuneResultPage extends StatelessWidget {
                     color: TossDesignSystem.white,
                     size: 48,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   Text(
                     '오늘의 연애운',
                     style: TossTheme.body2.copyWith(
                       color: TossDesignSystem.white.withValues(alpha: 0.9),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     '${_calculateScore()}점',
                     style: TypographyUnified.displayLarge.copyWith(
@@ -87,7 +87,7 @@ class LoveFortuneResultPage extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   Text(
                     _getMainMessage(),
                     style: TossTheme.body1.copyWith(
@@ -196,7 +196,7 @@ class LoveFortuneResultPage extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Text(
                 title,
                 style: TossTheme.body1.copyWith(
@@ -206,7 +206,7 @@ class LoveFortuneResultPage extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             content,
             style: TossTheme.body2.copyWith(

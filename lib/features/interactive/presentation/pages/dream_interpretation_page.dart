@@ -282,7 +282,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           
           // Title
           Text(
@@ -293,7 +293,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '꿈 내용을 자세히 입력해주세요',
             style: theme.textTheme.bodyLarge?.copyWith(
@@ -474,7 +474,7 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                   ? theme.colorScheme.primary
                   : theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
@@ -713,7 +713,7 @@ class _DreamResultView extends ConsumerWidget {
                         Row(
                           children: [
                             Icon(Icons.book_outlined, color: theme.colorScheme.primary),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(
                               '꿈 요약 및 해석',
                               style: theme.textTheme.titleLarge?.copyWith(
@@ -822,7 +822,7 @@ class _DreamResultView extends ConsumerWidget {
                           Row(
                             children: [
                               Icon(Icons.star_outline, color: theme.colorScheme.primary),
-                              const SizedBox(width: 8),
+                              SizedBox(width: 8),
                               Text(
                                 '행운 요소',
                                 style: theme.textTheme.titleLarge?.copyWith(
@@ -873,7 +873,7 @@ class _DreamResultView extends ConsumerWidget {
                         Row(
                           children: [
                             Icon(Icons.lightbulb_outline, color: theme.colorScheme.primary),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(
                               '조언',
                               style: theme.textTheme.titleLarge?.copyWith(

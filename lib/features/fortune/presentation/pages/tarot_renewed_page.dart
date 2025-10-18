@@ -13,6 +13,7 @@ import '../../domain/models/tarot_card_model.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 enum TarotFlowState {
   initial,      // 초기 화면
@@ -127,7 +128,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
         '타로 카드',
         style: TextStyle(
           color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-          fontSize: 18,
+          
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -193,16 +194,14 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
                       children: [
                         Text(
                           '${userProfile?.name ?? '익명'}님의',
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: TypographyUnified.buttonMedium.copyWith(
                             fontWeight: FontWeight.w400,
                             color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                           ),
                         ),
                         Text(
                           '타로 운세',
-                          style: TextStyle(
-                            fontSize: 24,
+                          style: TypographyUnified.displaySmall.copyWith(
                             fontWeight: FontWeight.w700,
                             color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                             height: 1.2,
@@ -261,8 +260,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
                 child: Text(
                   '카드가 전하는 신비로운 메시지를\n받아보세요',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w400,
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                     height: 1.5,
@@ -374,11 +372,10 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
               size: 40,
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           Text(
             '카드를 뽑고 있어요...',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.w500,
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),

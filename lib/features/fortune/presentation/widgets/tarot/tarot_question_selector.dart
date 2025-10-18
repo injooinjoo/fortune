@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../shared/components/floating_bottom_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 class TarotQuestionSelector extends StatefulWidget {
   final Function(String) onQuestionSelected;
@@ -135,21 +136,19 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                   // 제목
                   Text(
                     '어떤 것이 궁금하신가요?',
-                    style: TextStyle(
-                      fontSize: 24,
+                    style: TypographyUnified.displaySmall.copyWith(
                       fontWeight: FontWeight.w700,
                       color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       height: 1.2,
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
 
                   // 부제목
                   Text(
                     '카드가 답해드릴게요',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.w400,
                       color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                     ),
@@ -184,13 +183,12 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                     );
                   }),
 
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
 
                   // 직접 입력 섹션
                   Text(
                     '직접 입력하기',
-                    style: TextStyle(
-                      fontSize: 18,
+                    style: TypographyUnified.heading4.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                     ),
@@ -237,15 +235,14 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                         hintText: '궁금한 것을 자유롭게 입력해주세요\n예: 새로운 직장에서 잘 적응할 수 있을까요?',
                         hintStyle: TextStyle(
                           color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-                          fontSize: 14,
+                          
                           height: 1.4,
                         ),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.all(16),
                         counterText: '',
                       ),
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                         height: 1.4,
                       ),
@@ -329,14 +326,13 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
               ),
             ),
 
-            const SizedBox(width: 16),
+            SizedBox(width: 16),
 
             // 질문 텍스트
             Expanded(
               child: Text(
                 question,
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.w500,
                   color: isSelected
                       ? color

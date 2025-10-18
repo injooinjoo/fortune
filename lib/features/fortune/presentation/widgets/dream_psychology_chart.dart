@@ -5,6 +5,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class DreamPsychologyChart extends StatefulWidget {
   final Map<String, double> psychologicalState;
@@ -97,7 +98,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                 RadarChartData(
                   radarShape: RadarShape.polygon,
                   tickCount: 5,
-                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
+                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? TypographyUnified.labelMedium,
                   tickBorderData: BorderSide(
                     color: TossDesignSystem.white.withValues(alpha: 0.2),
                     width: 1),
@@ -107,7 +108,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                   radarBorderData: BorderSide(
                     color: TossDesignSystem.purple.withValues(alpha: 0.5),
                     width: 2),
-                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
+                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? TypographyUnified.labelMedium,
                   titlePositionPercentageOffset: 0.15,
                   getTitle: (index, angle) {
                     final titles = ['의식', '무의식', '긍정', '부정', '안정', '변화', '내향', '외향'];
@@ -268,7 +269,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                 style: Theme.of(context).textTheme.bodyMedium),
             ],
           ),
-          const SizedBox(height: AppSpacing.spacing3),
+          SizedBox(height: AppSpacing.spacing3),
           Text(
             _generateInsight(),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(

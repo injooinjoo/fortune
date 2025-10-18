@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 토스 스타일 이사운 결과 페이지
 class MovingResultToss extends StatefulWidget {
@@ -121,13 +122,13 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
           padding: const EdgeInsets.all(TossTheme.spacingL),
           child: Column(
             children: [
-              const SizedBox(height: TossTheme.spacingXL),
+              SizedBox(height: TossTheme.spacingXL),
           
           // 인사말
           Text(
             '${widget.name}님의\n이사운을 확인해 보세요',
             style: TossTheme.heading1.copyWith(
-              fontSize: 36,
+              
               fontWeight: FontWeight.w800,
               height: 1.1,
               letterSpacing: -0.6,
@@ -246,7 +247,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                     Text(
                       '$_overallScore',
                       style: TossTheme.heading1.copyWith(
-                        fontSize: 48,
+                        
                         fontWeight: FontWeight.w800,
                         color: _getScoreColor(),
                         letterSpacing: -1.0,
@@ -255,7 +256,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                     Text(
                       '점',
                       style: TossTheme.body2.copyWith(
-                        fontSize: 16,
+                        
                         fontWeight: FontWeight.w600,
                         color: _getScoreColor(),
                       ),
@@ -266,12 +267,12 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
             ),
           ),
           
-          const SizedBox(height: TossTheme.spacingL),
+          SizedBox(height: TossTheme.spacingL),
           
           Text(
             _scoreDescription,
             style: TossTheme.body2.copyWith(
-              fontSize: 18,
+              
               fontWeight: FontWeight.w700,
               color: _getScoreColor(),
               letterSpacing: -0.2,
@@ -290,12 +291,12 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
         children: [
           Row(
             children: [
-              Text('💡', style: const TextStyle(fontSize: 24)),
-              const SizedBox(width: TossTheme.spacingS),
+              Text('💡', style: TypographyUnified.displaySmall),
+              SizedBox(width: TossTheme.spacingS),
               Text(
                 '핵심 조언',
                 style: TossTheme.heading3.copyWith(
-                  fontSize: 20,
+                  
                   fontWeight: FontWeight.w700,
                   color: TossTheme.textBlack,
                 ),
@@ -303,12 +304,12 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
             ],
           ),
           
-          const SizedBox(height: TossTheme.spacingM),
+          SizedBox(height: TossTheme.spacingM),
           
           Text(
             _mainAdvice,
             style: TossTheme.body2.copyWith(
-              fontSize: 18,
+              
               fontWeight: FontWeight.w400,
               color: TossTheme.textGray600,
               height: 1.6,
@@ -327,12 +328,12 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
         children: [
           Row(
             children: [
-              Text('📅', style: const TextStyle(fontSize: 24)),
-              const SizedBox(width: TossTheme.spacingS),
+              Text('📅', style: TypographyUnified.displaySmall),
+              SizedBox(width: TossTheme.spacingS),
               Text(
                 '추천 이사 날짜',
                 style: TossTheme.heading3.copyWith(
-                  fontSize: 20,
+                  
                   fontWeight: FontWeight.w700,
                   color: TossTheme.textBlack,
                 ),
@@ -393,12 +394,12 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
         children: [
           Row(
             children: [
-              Text('🧭', style: const TextStyle(fontSize: 24)),
-              const SizedBox(width: TossTheme.spacingS),
+              Text('🧭', style: TypographyUnified.displaySmall),
+              SizedBox(width: TossTheme.spacingS),
               Text(
                 '길방향',
                 style: TossTheme.heading3.copyWith(
-                  fontSize: 20,
+                  
                   fontWeight: FontWeight.w700,
                   color: TossTheme.textBlack,
                 ),
@@ -444,7 +445,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
           Text(
             '이사 정보',
             style: TossTheme.heading3.copyWith(
-              fontSize: 20,
+              
               fontWeight: FontWeight.w700,
               color: TossTheme.textBlack,
             ),

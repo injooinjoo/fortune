@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/zodiac_compatibility_service.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class ZodiacCompatibilityMatrix extends StatefulWidget {
   final String? selectedZodiac1;
@@ -79,11 +80,10 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           color: TossDesignSystem.purple,
           size: 24,
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Text(
           '띠별 궁합 매트릭스',
-          style: TextStyle(
-            fontSize: 20,
+          style: TypographyUnified.heading3.copyWith(
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white,
           ),
@@ -112,8 +112,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                           quarterTurns: 3,
                           child: Text(
                             zodiac,
-                            style: TextStyle(
-                              fontSize: 12,
+                            style: TypographyUnified.labelMedium.copyWith(
                               fontWeight: FontWeight.bold,
                               color: _hoveredCol == col
                                   ? TossDesignSystem.warningYellow
@@ -136,8 +135,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                       width: 40,
                       child: Text(
                         zodiac1,
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: TypographyUnified.labelMedium.copyWith(
                           fontWeight: FontWeight.bold,
                           color: _hoveredRow == row
                               ? TossDesignSystem.warningYellow
@@ -221,7 +219,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           '매트릭스에서 두 띠를 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
             color: TossDesignSystem.white.withValues(alpha: 0.6),
-            fontSize: 14,
+            
           ),
           textAlign: TextAlign.center,
         ),
@@ -251,11 +249,10 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                       Icons.favorite,
                       color: _getCompatibilityColor(compatibility),
                       size: 32),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       '${(compatibility * 100).toInt()}%',
-                      style: TextStyle(
-                        fontSize: 24,
+                      style: TypographyUnified.displaySmall.copyWith(
                         fontWeight: FontWeight.bold,
                         color: _getCompatibilityColor(compatibility)),
                     ),
@@ -276,8 +273,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                 width: 1)),
             child: Text(
               description,
-              style: const TextStyle(
-                fontSize: 16,
+              style: TypographyUnified.buttonMedium.copyWith(
                 color: TossDesignSystem.white,
                 height: 1.5),
               textAlign: TextAlign.center)),
@@ -292,18 +288,16 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
       children: [
         Text(
           _getZodiacEmoji(zodiac),
-          style: const TextStyle(fontSize: 48)),
-        const SizedBox(height: 8),
+          style: TypographyUnified.displayLarge),
+        SizedBox(height: 8),
         Text(
           zodiac,
-          style: const TextStyle(
-            fontSize: 18,
+          style: TypographyUnified.heading4.copyWith(
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white)),
         Text(
           '${info['hanja']} · ${info['element']}',
-          style: TextStyle(
-            fontSize: 14,
+          style: TypographyUnified.bodySmall.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.8)))]);
   }
 
@@ -344,19 +338,17 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
     return Column(
       children: [
         Icon(icon, color: TossDesignSystem.white.withValues(alpha: 0.6), size: 24),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         Text(
           title,
-          style: TextStyle(
-            fontSize: 12,
+          style: TypographyUnified.labelMedium.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.6),
           ),
         ),
-        const SizedBox(height: 2),
+        SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 14,
+          style: TypographyUnified.bodySmall.copyWith(
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white))]);
   }

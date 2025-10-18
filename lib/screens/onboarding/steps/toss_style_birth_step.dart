@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../widgets/toss_number_pad.dart';
 import '../../../core/theme/toss_theme.dart';
 import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/typography_unified.dart';
 
 class TossStyleBirthStep extends StatefulWidget {
   final DateTime? initialDate;
@@ -516,11 +517,10 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                                   )
                                 : null,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
                             '모르겠어요',
-                            style: TextStyle(
-                              fontSize: 14,
+                            style: TypographyUnified.bodySmall.copyWith(
                               color: TossTheme.textGray600,
                             ),
                           ),

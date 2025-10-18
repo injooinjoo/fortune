@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/typography_theme.dart';
 import 'package:fortune/core/providers/user_settings_provider.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 폰트 설정 페이지
 /// 사용자가 폰트 크기와 글꼴을 조절할 수 있습니다.
@@ -69,7 +70,7 @@ class FontSettingsPage extends ConsumerWidget {
                           : TossDesignSystem.textSecondaryLight,
                     ),
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingM),
+                  SizedBox(height: TossDesignSystem.spacingM),
                   Text(
                     '제목 텍스트',
                     style: typography.headingMedium.copyWith(
@@ -78,7 +79,7 @@ class FontSettingsPage extends ConsumerWidget {
                           : TossDesignSystem.textPrimaryLight,
                     ),
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingS),
+                  SizedBox(height: TossDesignSystem.spacingS),
                   Text(
                     '본문 텍스트입니다. 이 텍스트는 일반적인 본문에 사용됩니다.',
                     style: typography.bodyMedium.copyWith(
@@ -87,7 +88,7 @@ class FontSettingsPage extends ConsumerWidget {
                           : TossDesignSystem.textPrimaryLight,
                     ),
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingS),
+                  SizedBox(height: TossDesignSystem.spacingS),
                   Text(
                     '작은 텍스트 - 캡션이나 부가 설명',
                     style: typography.labelSmall.copyWith(
@@ -322,8 +323,7 @@ class _PresetButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
+          style: TypographyUnified.bodySmall.copyWith(
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             color: isSelected
                 ? TossDesignSystem.white

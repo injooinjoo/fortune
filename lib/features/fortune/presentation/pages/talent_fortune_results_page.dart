@@ -19,6 +19,7 @@ import '../widgets/talent_top3_widget.dart';
 import '../widgets/career_roadmap_widget.dart';
 import '../widgets/growth_timeline_widget.dart';
 import '../../../../core/components/toss_card.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class TalentFortuneResultsPage extends ConsumerStatefulWidget {
   final TalentInputData inputData;
@@ -157,17 +158,15 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
             // 헤더
             Text(
               '종합 브리핑',
-              style: TextStyle(
-                fontSize: 28,
+              style: TypographyUnified.heading1.copyWith(
                 fontWeight: FontWeight.w700,
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               '당신의 타고난 기질과 재능을 한눈에',
-              style: TextStyle(
-                fontSize: 14,
+              style: TypographyUnified.bodySmall.copyWith(
                 color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
               ),
             ),
@@ -217,8 +216,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                 child: Center(
                   child: Text(
                     ilgan,
-                    style: const TextStyle(
-                      fontSize: 24,
+                    style: TypographyUnified.displaySmall.copyWith(
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
                     ),
@@ -232,17 +230,15 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                   children: [
                     Text(
                       '핵심 기질',
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: TypographyUnified.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2),
                     Text(
                       '일간(日干) $ilgan · ${ilganInfo['element']}',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.w700,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
@@ -261,8 +257,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
             ),
             child: Text(
               ilganInfo['character'] ?? '',
-              style: TextStyle(
-                fontSize: 14,
+              style: TypographyUnified.bodySmall.copyWith(
                 height: 1.6,
                 color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
               ),

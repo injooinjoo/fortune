@@ -17,6 +17,7 @@ import '../../../../shared/components/toast.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/models/fortune_result.dart' as core_fortune;
 
 class HealthFortuneTossPage extends ConsumerStatefulWidget {
@@ -158,7 +159,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
 
           // 제목
           Text(
@@ -169,7 +170,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
             ),
           ),
 
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
 
           Text(
             '현재 컨디션을 선택해주세요',
@@ -243,7 +244,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                       color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(
                     _getConditionDescription(condition),
                     style: TossTheme.body3.copyWith(
@@ -329,7 +330,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                               ? TossTheme.primaryBlue
                               : TossTheme.textGray600,
                         ),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6),
                         Text(
                           '목록 선택',
                           style: TossTheme.body3.copyWith(
@@ -378,7 +379,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                               ? TossTheme.primaryBlue
                               : TossTheme.textGray600,
                         ),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6),
                         Text(
                           '실루엣 선택',
                           style: TossTheme.body3.copyWith(
@@ -574,7 +575,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     bph.description,
                     style: TossTheme.body3.copyWith(
@@ -632,7 +633,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                 children: [
                   Text(
                     rec.type.emoji,
-                    style: const TextStyle(fontSize: 20),
+                    style: TypographyUnified.heading3,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -646,7 +647,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                             color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: 2),
                         Text(
                           rec.description,
                           style: TossTheme.body3.copyWith(
@@ -691,7 +692,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                 color: TossTheme.warning,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '오늘 피해야 할 것들',
                 style: TossTheme.heading3.copyWith(
@@ -757,7 +758,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
                 color: TossTheme.primaryBlue,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '내일 건강 미리보기',
                 style: TossTheme.heading3.copyWith(
@@ -766,7 +767,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           
           Text(
             _fortuneResult!.tomorrowPreview!,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 신의 응답을 표시하는 영적이고 신비로운 위젯
 class DivineResponseWidget extends StatefulWidget {
@@ -225,22 +226,20 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                     TossDesignSystem.white,
                   ],
                 ).createShader(bounds),
-                child: const Text(
+                child: Text(
                   '✨ 신의 응답 ✨',
-                  style: TextStyle(
-                    fontSize: 28,
+                  style: TypographyUnified.heading1.copyWith(
                     fontWeight: FontWeight.bold,
                     color: TossDesignSystem.white,
                   ),
                 ),
               ),
               
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               
               Text(
                 '당신의 간절한 소원이 하늘에 닿았습니다',
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   color: TossDesignSystem.white.withValues(alpha:0.8),
                   fontStyle: FontStyle.italic,
                 ),
@@ -274,23 +273,21 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                 color: TossDesignSystem.white.withValues(alpha:0.9),
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '당신의 소원',
-                style: TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.w600,
                   color: TossDesignSystem.white.withValues(alpha:0.9),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           
           Text(
             widget.wishText,
-            style: const TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               color: TossDesignSystem.white,
               height: 1.5,
             ),
@@ -322,15 +319,13 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
         children: [
           Text(
             '$label: ',
-            style: TextStyle(
-              fontSize: 12,
+            style: TypographyUnified.labelMedium.copyWith(
               color: TossDesignSystem.white.withValues(alpha:0.7),
             ),
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 12,
+            style: TypographyUnified.labelMedium.copyWith(
               color: TossDesignSystem.white,
               fontWeight: FontWeight.w500,
             ),
@@ -411,11 +406,10 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                             ),
                           ),
                           const SizedBox(width: 12),
-                          const Expanded(
+                          Expanded(
                             child: Text(
                               '신이 전하는 메시지',
-                              style: TextStyle(
-                                fontSize: 20,
+                              style: TypographyUnified.heading3.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: TossDesignSystem.white,
                               ),
@@ -428,8 +422,7 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                       
                       Text(
                         widget.divineResponse,
-                        style: const TextStyle(
-                          fontSize: 16,
+                        style: TypographyUnified.buttonMedium.copyWith(
                           color: TossDesignSystem.white,
                           height: 1.8,
                           letterSpacing: 0.5,
@@ -474,11 +467,10 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
                 color: const Color(0xFFFFD700),
                 size: 24,
               ),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 '행운의 메시지',
-                style: TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Color(0xFFFFD700),
                 ),
@@ -486,12 +478,11 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
             ],
           ),
           
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           
           Text(
             _getLuckyMessage(),
-            style: const TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: TossDesignSystem.white,
               height: 1.6,
             ),

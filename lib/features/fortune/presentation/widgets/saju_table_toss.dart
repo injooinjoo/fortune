@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 토스 스타일 사주팔자 명식 테이블
 class SajuTableToss extends StatefulWidget {
@@ -307,7 +308,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
             element,
             style: TossTheme.caption.copyWith(
               color: color,
-              fontSize: 10,
+              
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -378,7 +379,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
             element,
             style: TossTheme.caption.copyWith(
               color: color,
-              fontSize: 10,
+              
               fontWeight: FontWeight.bold,
             ),
           ),

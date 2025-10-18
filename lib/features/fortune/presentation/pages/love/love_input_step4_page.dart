@@ -4,6 +4,7 @@ import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../shared/components/floating_bottom_button.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 enum LifestyleType { employee, student, freelancer, business }
 enum HobbyType { exercise, reading, travel, cooking, gaming, movie }
@@ -165,7 +166,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             ),
           ).animate().slideX(begin: -0.3, duration: 600.ms).fadeIn(),
 
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
 
           Text(
             '솔직하게 답할수록 정확한 조언을 드려요',
@@ -194,14 +195,14 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   '1점 (전혀 자신 없음) ~ 10점 (매우 자신 있음)',
                   style: TossTheme.body2.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     activeTrackColor: _getConfidenceColor(_appearanceConfidence),
@@ -241,7 +242,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         _getConfidenceText(_appearanceConfidence),
                         style: TossTheme.body2.copyWith(
@@ -256,7 +257,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             ),
           ).animate(delay: 400.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           
           // Charm Points
           Text(
@@ -266,7 +267,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             '최대 3개까지 선택',
             style: TossTheme.body2.copyWith(
@@ -282,7 +283,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             }).toList(),
           ).animate(delay: 600.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           
           // Lifestyle
           Text(
@@ -305,7 +306,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
             }).toList(),
           ).animate(delay: 700.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           
           // Hobbies
           Text(
@@ -420,7 +421,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
           children: [
             Text(
               _getLifestyleEmoji(lifestyle),
-              style: const TextStyle(fontSize: 18),
+              style: TypographyUnified.heading4,
             ),
             const SizedBox(width: 8),
             Flexible(
@@ -478,7 +479,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
           children: [
             Text(
               _getHobbyEmoji(hobby),
-              style: const TextStyle(fontSize: 16),
+              style: TypographyUnified.buttonMedium,
             ),
             const SizedBox(height: 2),
             Flexible(
@@ -491,7 +492,7 @@ class _LoveInputStep4PageState extends State<LoveInputStep4Page> {
                         ? TossDesignSystem.white
                         : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    fontSize: 11,
+                    
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 1,

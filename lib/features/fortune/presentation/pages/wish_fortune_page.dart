@@ -12,6 +12,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/components/toss_card.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
@@ -344,7 +345,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
             color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
-        const SizedBox(height: TossTheme.spacingS),
+        SizedBox(height: TossTheme.spacingS),
         Text(
           '간절한 마음으로 소원을 작성하면\n신의 특별한 응답을 받을 수 있어요',
           style: TossTheme.subtitle1.copyWith(
@@ -401,7 +402,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage>
                         children: [
                           Text(
                             category.emoji,
-                            style: const TextStyle(fontSize: 16),
+                            style: TypographyUnified.buttonMedium,
                           ),
                           const SizedBox(width: 6),
                           Text(

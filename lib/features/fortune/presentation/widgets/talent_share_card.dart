@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class TalentShareCard extends StatelessWidget {
   final String userName;
@@ -68,7 +69,7 @@ class TalentShareCard extends StatelessWidget {
                   '재능 발견',
                   style: TextStyle(
                     color: TossDesignSystem.white,
-                    fontSize: 20,
+                    
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -81,7 +82,7 @@ class TalentShareCard extends StatelessWidget {
               userName.isNotEmpty ? '$userName님의' : '나의',
               style: TextStyle(
                 color: TossDesignSystem.white.withValues(alpha:0.9),
-                fontSize: 14,
+                
               ),
             ),
             
@@ -104,7 +105,7 @@ class TalentShareCard extends StatelessWidget {
                     '오늘의 재능 포커스',
                     style: TextStyle(
                       color: TossDesignSystem.white.withValues(alpha:0.8),
-                      fontSize: 12,
+                      
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -120,7 +121,7 @@ class TalentShareCard extends StatelessWidget {
                         todaysFocus,
                         style: const TextStyle(
                           color: TossDesignSystem.white,
-                          fontSize: 18,
+                          
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -131,7 +132,7 @@ class TalentShareCard extends StatelessWidget {
                     '활성화 지수: $activationLevel%',
                     style: TextStyle(
                       color: TossDesignSystem.white.withValues(alpha:0.9),
-                      fontSize: 14,
+                      
                     ),
                   ),
                 ],
@@ -145,7 +146,7 @@ class TalentShareCard extends StatelessWidget {
               '상위 재능',
               style: TextStyle(
                 color: TossDesignSystem.white.withValues(alpha:0.8),
-                fontSize: 14,
+                
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -169,7 +170,7 @@ class TalentShareCard extends StatelessWidget {
                       entry.key,
                       style: const TextStyle(
                         color: TossDesignSystem.white,
-                        fontSize: 14,
+                        
                       ),
                     ),
                   ),
@@ -177,7 +178,7 @@ class TalentShareCard extends StatelessWidget {
                     '${entry.value}점',
                     style: const TextStyle(
                       color: TossDesignSystem.white,
-                      fontSize: 14,
+                      
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -192,7 +193,7 @@ class TalentShareCard extends StatelessWidget {
               '추천 직업',
               style: TextStyle(
                 color: TossDesignSystem.white.withValues(alpha:0.8),
-                fontSize: 14,
+                
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -214,7 +215,7 @@ class TalentShareCard extends StatelessWidget {
                   career,
                   style: const TextStyle(
                     color: TossDesignSystem.white,
-                    fontSize: 12,
+                    
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -237,7 +238,7 @@ class TalentShareCard extends StatelessWidget {
                     '운세앱에서 더 자세한 분석 확인하기',
                     style: TextStyle(
                       color: TossDesignSystem.white.withValues(alpha:0.6),
-                      fontSize: 11,
+                      
                     ),
                   ),
                 ],

@@ -147,7 +147,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
             _buildVoiceInput(theme),
           const SizedBox(height: 16),
           _buildDreamCategories(theme),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '꿈의 세부 내용을 자세히 입력할수록 정확한 해몽이 가능합니다',
             style: theme.textTheme.bodySmall?.copyWith(
@@ -215,7 +215,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
                   ? theme.colorScheme.primary
                   : theme.colorScheme.onSurface.withValues(alpha: 0.6)
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
@@ -570,7 +570,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
                   color: TossDesignSystem.purple,
                   size: 20
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(
                   interpretation['mainTheme'],
                   style: TypographyUnified.bodyLarge.copyWith(
@@ -581,7 +581,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
               ]
             )
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           // 심리학적 통찰
           Text(
             '심리학적 통찰',
@@ -590,7 +590,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
               color: TossDesignSystem.white
             )
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             interpretation['psychologicalInsight'],
             style: TypographyUnified.bodySmall.copyWith(

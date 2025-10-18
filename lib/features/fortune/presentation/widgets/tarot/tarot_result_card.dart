@@ -3,6 +3,7 @@ import '../../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 class TarotResultCard extends StatefulWidget {
   final Map<String, dynamic> result;
@@ -156,19 +157,17 @@ class _TarotResultCardState extends State<TarotResultCard>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   '질문',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF7C3AED),
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   widget.question,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF191919),
                     height: 1.4,
@@ -215,8 +214,7 @@ class _TarotResultCardState extends State<TarotResultCard>
               child: Text(
                 widget.result['cardName'] ?? 'Unknown Card',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 28,
+                style: TypographyUnified.heading1.copyWith(
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF191919),
                   height: 1.2,
@@ -252,8 +250,7 @@ class _TarotResultCardState extends State<TarotResultCard>
                       ),
                       child: Text(
                         keyword,
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: TypographyUnified.bodySmall.copyWith(
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF7C3AED),
                         ),
@@ -425,7 +422,7 @@ class _TarotResultCardState extends State<TarotResultCard>
                         widget.result['cardName'] ?? 'The Fool',
                         style: const TextStyle(
                           color: TossDesignSystem.white,
-                          fontSize: 18,
+                          
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.center,
@@ -487,11 +484,10 @@ class _TarotResultCardState extends State<TarotResultCard>
           Row(
             children: [
               Icon(icon, color: color, size: 20),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: color,
                 ),

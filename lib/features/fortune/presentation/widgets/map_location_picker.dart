@@ -8,6 +8,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class MapLocationPicker extends StatefulWidget {
   final Function(LatLng, String) onLocationSelected;
@@ -265,7 +266,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
               if (_isLoading)
                 Container(
                   color: TossDesignSystem.black.withValues(alpha: 0.26),
-                  child: const Center(
+                  child: Center(
                     child: CircularProgressIndicator(),
                   ),
                 ),
@@ -352,8 +353,7 @@ class DirectionOverlayPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: TextSpan(
           text: direction,
-          style: TextStyle(
-            fontSize: 14,
+          style: TypographyUnified.bodySmall.copyWith(
             color: TossDesignSystem.black,
             fontWeight: FontWeight.bold)),
         textDirection: TextDirection.ltr);

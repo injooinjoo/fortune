@@ -4,7 +4,8 @@ import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../glassmorphism/glass_container.dart';
-// import 'daily_token_claim_widget.dart'; // defined in same file
+// import 'daily_token_claim_widget.dart';
+import '../../core/theme/typography_unified.dart'; // defined in same file
 
 class DailyTokenBanner extends ConsumerWidget {
   const DailyTokenBanner({super.key});
@@ -84,17 +85,15 @@ class DailyTokenBanner extends ConsumerWidget {
                         children: [
                           Text(
                             '매일 무료 토큰 받기',
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: TypographyUnified.buttonMedium.copyWith(
                               fontWeight: FontWeight.bold,
                               color: TossDesignSystem.white,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             '매일 접속하여 토큰을 받아보세요!',
-                            style: TextStyle(
-                              fontSize: 12,
+                            style: TypographyUnified.labelMedium.copyWith(
                               color: TossDesignSystem.white.withValues(alpha: 0.8),
                             ),
                           ),
@@ -137,7 +136,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget> {
             borderRadius: BorderRadius.circular(8),
           ),
         ),
-        child: const Text(
+        child: Text(
           '받기',
           style: TextStyle(
             fontWeight: FontWeight.bold,

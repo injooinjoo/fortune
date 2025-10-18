@@ -15,6 +15,7 @@ import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/fortune_loading_skeleton.dart';
 import '../widgets/fortune_button.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class CelebrityFortuneEnhancedPage extends ConsumerStatefulWidget {
   const CelebrityFortuneEnhancedPage({super.key});
@@ -187,11 +188,10 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                       color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 13,
+                    style: TypographyUnified.bodySmall.copyWith(
                       color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
                     ),
                   ),
@@ -361,8 +361,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                             Center(
                               child: Text(
                                 celebrity.name.substring(0, 1),
-                                style: TextStyle(
-                                  fontSize: 48,
+                                style: TypographyUnified.displayLarge.copyWith(
                                   fontWeight: FontWeight.w700,
                                   color: TossDesignSystem.white,
                                 ),
@@ -409,17 +408,15 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                               const SizedBox(height: 2),
                               Text(
                                 celebrity.celebrityType.displayName,
-                                style: TextStyle(
-                                  fontSize: 12,
+                                style: TypographyUnified.labelMedium.copyWith(
                                   color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
                                 ),
                               ),
                               ...[
-                              const SizedBox(height: 2),
+                              SizedBox(height: 2),
                               Text(
                                 '${celebrity.age}세',
-                                style: TextStyle(
-                                  fontSize: 12,
+                                style: TypographyUnified.labelMedium.copyWith(
                                   color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400,
                                 ),
                               ),
@@ -466,13 +463,12 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               height: 1.4,
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
 
           // Connection type
           Text(
             '관계 유형',
-            style: TextStyle(
-              fontSize: 18,
+            style: TypographyUnified.heading4.copyWith(
               fontWeight: FontWeight.w600,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
@@ -485,13 +481,12 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           const SizedBox(height: 12),
           _buildConnectionOption('career_advice', '조언 구하기', '인생과 진로에 대한 조언', Icons.lightbulb_outline),
 
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
 
           // Question type
           Text(
             '궁금한 영역',
-            style: TextStyle(
-              fontSize: 18,
+            style: TypographyUnified.heading4.copyWith(
               fontWeight: FontWeight.w600,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
@@ -551,16 +546,14 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     ),
                   ),
                   Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     ),
                   ),
@@ -615,16 +608,14 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     ),
                   ),
                   Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     ),
                   ),
@@ -757,8 +748,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                   child: Center(
                     child: Text(
                       _selectedCelebrity?.name.substring(0, 1) ?? '?',
-                      style: TextStyle(
-                        fontSize: 24,
+                      style: TypographyUnified.displaySmall.copyWith(
                         fontWeight: FontWeight.w700,
                         color: TossDesignSystem.white,
                       ),
@@ -772,16 +762,14 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                     children: [
                       Text(
                         '${_selectedCelebrity?.name}님과의 궁합',
-                        style: TextStyle(
-                          fontSize: 18,
+                        style: TypographyUnified.heading4.copyWith(
                           fontWeight: FontWeight.w700,
                           color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                         ),
                       ),
                       Text(
                         _getConnectionTypeText(_connectionType),
-                        style: TextStyle(
-                          fontSize: 14,
+                        style: TypographyUnified.bodySmall.copyWith(
                           color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                         ),
                       ),
@@ -796,8 +784,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                   ),
                   child: Text(
                     '${_fortune!.score}점',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.w700,
                       color: _getScoreColor(_fortune!.score),
                     ),
@@ -829,11 +816,10 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                   color: Color(0xFFFF6B6B),
                   size: 32,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   _fortune!.message,
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     height: 1.6,
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                   ),
@@ -865,11 +851,10 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                   Row(
                     children: [
                       Icon(Icons.lightbulb_outline, color: TossTheme.primaryBlue, size: 24),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         '추천 조언',
-                        style: TextStyle(
-                          fontSize: 18,
+                        style: TypographyUnified.heading4.copyWith(
                           fontWeight: FontWeight.w600,
                           color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                         ),
@@ -895,8 +880,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                         Expanded(
                           child: Text(
                             advice,
-                            style: TextStyle(
-                              fontSize: 14,
+                            style: TypographyUnified.bodySmall.copyWith(
                               height: 1.5,
                               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                             ),
@@ -1057,21 +1041,19 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               size: 64,
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             Text(
               '유명인 정보를 불러올 수 없어요',
-              style: TextStyle(
-                fontSize: 18,
+              style: TypographyUnified.heading4.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               '잠시 후 다시 시도해주세요',
-              style: TextStyle(
-                fontSize: 14,
+              style: TypographyUnified.bodySmall.copyWith(
                 color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
               ),
               textAlign: TextAlign.center,

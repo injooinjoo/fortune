@@ -184,7 +184,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
         child: Column(
           children: [
             Icon(Icons.work_outline, size: 48, color: TossDesignSystem.error),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               '부업 운세 요약',
               style: TypographyUnified.displaySmall.copyWith(
@@ -192,7 +192,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                 color: TossDesignSystem.error,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               summary,
               style: TypographyUnified.buttonMedium.copyWith(height: 1.6),
@@ -228,7 +228,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                   ),
                   child: Icon(icon, color: color, size: 28),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     title,
@@ -239,7 +239,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               content,
               style: TypographyUnified.buttonMedium.copyWith(height: 1.6),
@@ -271,7 +271,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                   ),
                   child: Icon(Icons.balance, color: TossDesignSystem.purple, size: 28),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 Text(
                   '일과 삶의 균형',
                   style: TypographyUnified.heading3.copyWith(
@@ -280,7 +280,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               balance,
               style: TypographyUnified.buttonMedium.copyWith(height: 1.6),
@@ -312,7 +312,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                   ),
                   child: Icon(Icons.trending_up, color: TossDesignSystem.tossBlue, size: 28),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 Text(
                   '성장 가능성',
                   style: TypographyUnified.heading3.copyWith(
@@ -321,7 +321,7 @@ class LuckySideJobFortunePage extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               potential,
               style: TypographyUnified.buttonMedium.copyWith(height: 1.6),

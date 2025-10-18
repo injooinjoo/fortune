@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/providers/token_provider.dart';
+import '../../core/theme/typography_unified.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -480,7 +481,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               'PRO',
                               style: TossDesignSystem.caption.copyWith(
                                 color: TossDesignSystem.white,
-                                fontSize: 10,
+                                
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

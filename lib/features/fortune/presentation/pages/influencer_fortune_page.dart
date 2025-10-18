@@ -147,7 +147,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                 color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray500,
               ),
               if (MediaQuery.of(context).size.width > 360) ...[
-                const SizedBox(width: 4),
+                SizedBox(width: 4),
                 Text(
                   label,
                   style: TypographyUnified.labelMedium.copyWith(
@@ -231,7 +231,7 @@ class _InfluencerInputFormState extends State<_InfluencerInputForm> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     influencer['name']!,
                     style: TypographyUnified.bodySmall.copyWith(

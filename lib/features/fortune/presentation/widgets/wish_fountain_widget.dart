@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 소원 빌기 분수대 위젯
 class WishFountainWidget extends StatefulWidget {
@@ -128,19 +129,17 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
   Widget _buildHeader() {
     return Column(
       children: [
-        const Text(
+        Text(
           '🌊 소원의 분수대 🌊',
-          style: TextStyle(
-            fontSize: 28,
+          style: TypographyUnified.heading1.copyWith(
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Text(
           '간절한 마음으로 소원을 빌고\n분수대에 동전을 던져보세요',
-          style: TextStyle(
-            fontSize: 16,
+          style: TypographyUnified.buttonMedium.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.9),
             height: 1.5,
           ),
@@ -171,7 +170,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                 '분수대 동전: ${widget.coinCount}개',
                 style: const TextStyle(
                   color: TossDesignSystem.white,
-                  fontSize: 14,
+                  
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -258,11 +257,10 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                       color: TossDesignSystem.white.withValues(alpha: 0.8),
                       size: 20,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '소원 빌기 가이드',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: TossDesignSystem.white.withValues(alpha: 0.9),
                       ),
@@ -274,8 +272,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                   widget.hasWish 
                     ? '소원을 작성하셨군요! 이제 간절한 마음으로 동전을 던져보세요. 신이 당신의 소원을 들어주실 것입니다.'
                     : '1. 먼저 간절한 소원을 작성해주세요\n2. 소원을 작성한 후 동전을 던져보세요\n3. 신의 응답을 기다려보세요',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: TossDesignSystem.white.withValues(alpha: 0.8),
                     height: 1.5,
                   ),

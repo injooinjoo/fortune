@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../core/theme/toss_design_system.dart';
+import '../core/theme/typography_unified.dart';
 
 class ProfileCompletionDialog extends StatelessWidget {
   final List<String> missingFields;
@@ -51,7 +52,7 @@ class ProfileCompletionDialog extends StatelessWidget {
                 curve: Curves.easeOutBack,
               ),
             
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             
             // Title
             Text(
@@ -65,7 +66,7 @@ class ProfileCompletionDialog extends StatelessWidget {
               .fadeIn(delay: 200.ms, duration: 400.ms)
               .slideY(begin: 0.1, end: 0, delay: 200.ms, duration: 400.ms),
             
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             
             // Subtitle
             Text(
@@ -132,8 +133,7 @@ class ProfileCompletionDialog extends StatelessWidget {
                 ),
                 child: Text(
                   '정보 입력하기',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: TossDesignSystem.white,
                   ),

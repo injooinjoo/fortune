@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme/toss_design_system.dart';
 import '../presentation/providers/navigation_visibility_provider.dart';
+import '../core/theme/typography_unified.dart';
 
 /// 최적화된 감성적인 로딩 체크리스트 위젯
 class EmotionalLoadingChecklistOptimized extends ConsumerStatefulWidget {
@@ -371,8 +372,7 @@ class _OptimizedStepItem extends StatelessWidget {
                   opacity: 1.0,
                   child: Text(
                     step.subtitle,
-                    style: TextStyle(
-                      fontSize: 13,
+                    style: TypographyUnified.bodySmall.copyWith(
                       fontWeight: FontWeight.w300,
                       color: (isDark ? TossDesignSystem.white : TossDesignSystem.black)
                           .withValues(alpha: 0.6),

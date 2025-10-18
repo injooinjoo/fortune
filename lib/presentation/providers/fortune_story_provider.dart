@@ -7,6 +7,7 @@ import '../../domain/entities/fortune.dart' as fortune_entity;
 import '../../domain/entities/user_profile.dart';
 import '../../core/utils/logger.dart';
 import 'dart:async';
+import '../../core/theme/typography_unified.dart';
 import 'dart:math' as math;
 
 /// 운세 스토리 상태
@@ -401,7 +402,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
             // 에러가 나도 기본 세그먼트 추가
             resultSegments.add(StorySegment(
               text: '...',
-              fontSize: 24,
+              
             ));
           }
         }
@@ -439,14 +440,14 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     // 1. 인사
     segments.add(StorySegment(
       text: userName.isNotEmpty ? '$userName님' : '오늘의 주인공',
-      fontSize: 36,
+      
       fontWeight: FontWeight.w200,
     ));
 
     // 2. 날짜
     segments.add(StorySegment(
       text: '${now.month}월 ${now.day}일\n${_getWeekdayKorean(now.weekday)}',
-      fontSize: 28,
+      
       fontWeight: FontWeight.w300,
     ));
 
@@ -496,7 +497,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     for (String text in fortuneTexts) {
       segments.add(StorySegment(
         text: text,
-        fontSize: 24,
+        
         fontWeight: FontWeight.w300,
       ));
     }
@@ -557,7 +558,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     segments.add(StorySegment(
       subtitle: '🍀 행운',
       text: luckyTexts.join('\n'),
-      fontSize: 24,
+      
       fontWeight: FontWeight.w300,
     ));
 
@@ -583,7 +584,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     segments.add(StorySegment(
       subtitle: '💡 조언',
       text: adviceText,
-      fontSize: 24,
+      
       fontWeight: FontWeight.w300,
     ));
 
@@ -591,7 +592,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     segments.add(StorySegment(
       subtitle: '마무리',
       text: '좋은 하루 되세요',
-      fontSize: 28,
+      
       fontWeight: FontWeight.w300,
       emoji: '✨',
     ));
@@ -612,14 +613,14 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     // 1. 인사
     segments.add(StorySegment(
       text: userName.isNotEmpty ? '$userName님' : '오늘의 주인공',
-      fontSize: 36,
+      
       fontWeight: FontWeight.w200,
     ));
 
     // 2. 날짜
     segments.add(StorySegment(
       text: '${now.month}월 ${now.day}일\n${_getWeekdayKorean(now.weekday)}',
-      fontSize: 28,
+      
       fontWeight: FontWeight.w300,
     ));
 
@@ -748,7 +749,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     for (String text in fortuneTexts) {
       segments.add(StorySegment(
         text: text,
-        fontSize: 24,
+        
         fontWeight: FontWeight.w300,
       ));
     }
@@ -858,14 +859,14 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
     
     segments.add(StorySegment(
       text: adviceText,
-      fontSize: 24,
+      
       fontWeight: FontWeight.w300,
     ));
 
     // 10. 마무리
     segments.add(StorySegment(
       text: '오늘도\n멋진 하루가\n되길 바라요\n\n✨',
-      fontSize: 28,
+      
       fontWeight: FontWeight.w300,
     ));
 
@@ -904,13 +905,13 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
         // 각 분야별 운세 추가
         segments.add(StorySegment(
           text: '연애운: ${fortune.scoreBreakdown?['love'] ?? 70}점\n직장운: ${fortune.scoreBreakdown?['career'] ?? 70}점',
-          fontSize: 24,
+          
           fontWeight: FontWeight.w300,
         ));
       } else if (segments.length == 8) {
         segments.add(StorySegment(
           text: '금전운: ${fortune.scoreBreakdown?['money'] ?? 70}점\n건강운: ${fortune.scoreBreakdown?['health'] ?? 70}점',
-          fontSize: 24,
+          
           fontWeight: FontWeight.w300,
         ));
       } else if (segments.length == 9) {
@@ -940,7 +941,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
         
         segments.add(StorySegment(
           text: tipText,
-          fontSize: 24,
+          
           fontWeight: FontWeight.w300,
         ));
       } else {
@@ -962,7 +963,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
         
         segments.add(StorySegment(
           text: additionalText,
-          fontSize: 24,
+          
           fontWeight: FontWeight.w300,
         ));
       }

@@ -34,7 +34,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
     return Scaffold(
       backgroundColor: TossTheme.backgroundSecondary,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           '유명인 정보 크롤링',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
@@ -86,7 +86,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 color: TossTheme.primaryBlue,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '크롤링 현황',
                 style: TypographyUnified.heading4.copyWith(
@@ -127,7 +127,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 ],
               ],
             ),
-            loading: () => const Center(
+            loading: () => Center(
               child: CircularProgressIndicator(),
             ),
             error: (error, _) => Text(
@@ -173,7 +173,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 color: TossTheme.primaryBlue,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '단일 크롤링',
                 style: TypographyUnified.heading4.copyWith(
@@ -241,7 +241,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 color: TossTheme.primaryBlue,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '일괄 크롤링',
                 style: TypographyUnified.heading4.copyWith(
@@ -332,7 +332,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 color: statusColor,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 _getStatusTitle(state.status),
                 style: TypographyUnified.heading4.copyWith(
@@ -342,7 +342,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           
           if (state.message != null)
             Text(
@@ -429,7 +429,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             color: color,
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         Text(
           label,
           style: TypographyUnified.labelMedium.copyWith(

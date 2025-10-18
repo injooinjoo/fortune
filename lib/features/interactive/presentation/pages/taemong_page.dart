@@ -85,14 +85,14 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
             size: 48,
             color: TossDesignSystem.tossBlue,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             '태몽의 의미를 해석해드립니다',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '임신 중 꾼 특별한 꿈을 입력하면\n'
             '아기의 미래와 성향을 예측해드립니다.',
@@ -116,7 +116,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                   size: 16,
                   color: TossDesignSystem.tossBlue,
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: 4),
                 Text(
                   '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -178,7 +178,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             '꿈에 나온 주요 상징을 선택하면 더 정확한 해석이 가능합니다',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -293,7 +293,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
                 color: TossDesignSystem.tossBlue,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '태몽 해석 결과',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -302,7 +302,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             _analysisResult!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 import 'event_category_selector.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 감정 상태 정의
 enum EmotionState {
@@ -79,7 +80,7 @@ class EventDetailInputForm extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
 
           // 감정 상태 선택
           Text(
@@ -122,11 +123,10 @@ class EventDetailInputForm extends StatelessWidget {
                             ? emotion.color
                             : (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600),
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6),
                       Text(
                         emotion.label,
-                        style: TextStyle(
-                          fontSize: 14,
+                        style: TypographyUnified.bodySmall.copyWith(
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                           color: isSelected
                               ? emotion.color
@@ -178,7 +178,7 @@ class EventDetailInputForm extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             '궁합 분석을 받을 수 있어요',
                             style: TossDesignSystem.body3.copyWith(

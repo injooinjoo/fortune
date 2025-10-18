@@ -10,6 +10,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/sipseong_talent.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class CareerRoadmapWidget extends StatelessWidget {
   final SipseongTalent primaryTalent; // TOP 1 재능 기반
@@ -50,11 +51,10 @@ class CareerRoadmapWidget extends StatelessWidget {
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '당신의 재능에 맞는 직업과 환경을 추천합니다',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               height: 1.5,
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
@@ -121,8 +121,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                 ),
                 child: Text(
                   '$rank순위 직업군',
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: TypographyUnified.labelMedium.copyWith(
                     fontWeight: FontWeight.w700,
                     color: rank == 1 ? TossDesignSystem.tossBlue : TossDesignSystem.gray700,
                   ),
@@ -131,7 +130,7 @@ class CareerRoadmapWidget extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 rank == 1 ? '🎯' : '✨',
-                style: const TextStyle(fontSize: 20),
+                style: TypographyUnified.heading3,
               ),
             ],
           ),
@@ -156,8 +155,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                 ),
                 child: Text(
                   career,
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     fontWeight: FontWeight.w500,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
@@ -181,14 +179,13 @@ class CareerRoadmapWidget extends StatelessWidget {
               children: [
                 Text(
                   '💡',
-                  style: const TextStyle(fontSize: 16),
+                  style: TypographyUnified.buttonMedium,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     reason,
-                    style: TextStyle(
-                      fontSize: 13,
+                    style: TypographyUnified.bodySmall.copyWith(
                       height: 1.5,
                       color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                     ),
@@ -211,13 +208,12 @@ class CareerRoadmapWidget extends StatelessWidget {
             children: [
               Text(
                 '🏢',
-                style: const TextStyle(fontSize: 24),
+                style: TypographyUnified.displaySmall,
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Text(
                 '추천 업무 환경',
-                style: TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
@@ -256,11 +252,10 @@ class CareerRoadmapWidget extends StatelessWidget {
                             color: Colors.green,
                             size: 16,
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Text(
                             'Best',
-                            style: TextStyle(
-                              fontSize: 12,
+                            style: TypographyUnified.labelMedium.copyWith(
                               fontWeight: FontWeight.w700,
                               color: Colors.green[700],
                             ),
@@ -270,11 +265,10 @@ class CareerRoadmapWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(
                   primaryTalent.bestEnvironment,
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     height: 1.6,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
@@ -314,11 +308,10 @@ class CareerRoadmapWidget extends StatelessWidget {
                             color: Colors.red,
                             size: 16,
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Text(
                             'Worst',
-                            style: TextStyle(
-                              fontSize: 12,
+                            style: TypographyUnified.labelMedium.copyWith(
                               fontWeight: FontWeight.w700,
                               color: Colors.red[700],
                             ),
@@ -328,11 +321,10 @@ class CareerRoadmapWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(
                   primaryTalent.worstEnvironment,
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     height: 1.6,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
@@ -354,13 +346,12 @@ class CareerRoadmapWidget extends StatelessWidget {
             children: [
               Text(
                 '⚠️',
-                style: const TextStyle(fontSize: 24),
+                style: TypographyUnified.displaySmall,
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Text(
                 '주의사항 & 보완점',
-                style: TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
@@ -385,8 +376,7 @@ class CareerRoadmapWidget extends StatelessWidget {
               children: [
                 Text(
                   '주의해야 할 함정',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: TossDesignSystem.warningOrange,
                   ),
@@ -399,8 +389,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                         children: [
                           Text(
                             '•',
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: TypographyUnified.buttonMedium.copyWith(
                               fontWeight: FontWeight.w700,
                               color: TossDesignSystem.warningOrange,
                             ),
@@ -409,8 +398,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                           Expanded(
                             child: Text(
                               pitfall,
-                              style: TextStyle(
-                                fontSize: 14,
+                              style: TypographyUnified.bodySmall.copyWith(
                                 height: 1.5,
                                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                               ),
@@ -440,8 +428,7 @@ class CareerRoadmapWidget extends StatelessWidget {
               children: [
                 Text(
                   '보완할 점',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: TossDesignSystem.tossBlue,
                   ),
@@ -454,8 +441,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                         children: [
                           Text(
                             '✓',
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: TypographyUnified.buttonMedium.copyWith(
                               fontWeight: FontWeight.w700,
                               color: TossDesignSystem.tossBlue,
                             ),
@@ -464,8 +450,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                           Expanded(
                             child: Text(
                               complement,
-                              style: TextStyle(
-                                fontSize: 14,
+                              style: TypographyUnified.bodySmall.copyWith(
                                 height: 1.5,
                                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                               ),

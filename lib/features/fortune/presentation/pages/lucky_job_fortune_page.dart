@@ -8,6 +8,7 @@ import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class LuckyJobFortunePage extends ConsumerStatefulWidget {
   const LuckyJobFortunePage({super.key});
@@ -76,18 +77,16 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-          const Text(
+          Text(
             '당신의 천직 찾기',
-            style: TextStyle(
-              fontSize: 20,
+            style: TypographyUnified.heading3.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8),
+          Text(
             '사주와 성향을 분석하여 당신에게 가장 잘 맞는 직업을 찾아드립니다.',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: TossDesignSystem.gray600,
             ),
           ),
@@ -124,8 +123,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                 _birthdate != null
                     ? '${_birthdate!.year}년 ${_birthdate!.month}월 ${_birthdate!.day}일'
                     : '생년월일을 선택해주세요',
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   color: _birthdate != null ? null : TossDesignSystem.gray600,
                 ),
               ),
@@ -158,13 +156,12 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             },
           ),
           
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           
           // Interest areas
-          const Text(
+          Text(
             '관심 분야 (최대 3개)',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -222,11 +219,10 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
               child: Row(
                 children: [
                   Icon(Icons.info_outline, size: 16, color: TossDesignSystem.tossBlue),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     '${_interests.length}/3개 선택됨',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       color: TossDesignSystem.tossBlue,
                     ),
                   ),
@@ -323,29 +319,26 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   Icons.star,
                   size: 64,
                   color: TossDesignSystem.warningOrange),
-                const SizedBox(height: 16),
-                const Text(
+                SizedBox(height: 16),
+                Text(
                   '당신의 천직',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     color: TossDesignSystem.gray600,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   data['recommended_job'] ?? '분석 중',
-                  style: const TextStyle(
-                    fontSize: 28,
+                  style: TypographyUnified.heading1.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 if (data['job_description'] != null) ...[
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   Text(
                     data['job_description'],
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       color: TossDesignSystem.gray700,
                     ),
                     textAlign: TextAlign.center,
@@ -385,26 +378,23 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         '직업 적합도',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: TypographyUnified.buttonMedium.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         '${result.overallScore}% 일치',
-                        style: TextStyle(
-                          fontSize: 24,
+                        style: TypographyUnified.displaySmall.copyWith(
                           fontWeight: FontWeight.bold,
                           color: _getScoreColor(result.overallScore!),
                         ),
                       ),
                       Text(
                         _getScoreMessage(result.overallScore!),
-                        style: TextStyle(
-                          fontSize: 14,
+                        style: TypographyUnified.bodySmall.copyWith(
                           color: TossDesignSystem.gray600,
                         ),
                       ),
@@ -429,24 +419,22 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.psychology, color: TossDesignSystem.purple),
                     SizedBox(width: 8),
                     Text(
                       '상세 분석',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(
                   result.mainFortune!,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     height: 1.6,
                   ),
                 ),
@@ -468,14 +456,13 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.list, color: TossDesignSystem.warningOrange),
                     SizedBox(width: 8),
                     Text(
                       '다른 추천 직업',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -522,24 +509,22 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.checklist, color: TossDesignSystem.successGreen),
                     SizedBox(width: 8),
                     Text(
                       '필요한 역량',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   result.sections!['required_skills'] ?? '',
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     height: 1.6,
                   ),
                 ),
@@ -565,24 +550,22 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.trending_up, color: TossDesignSystem.purple),
                     SizedBox(width: 8),
                     Text(
                       '경력 개발 경로',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   result.sections!['career_path'] ?? '',
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     height: 1.6,
                   ),
                 ),
@@ -603,14 +586,13 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.rocket_launch, color: TossDesignSystem.successGreen),
                     SizedBox(width: 8),
                     Text(
                       '시작하기 위한 단계',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -634,7 +616,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                             '${entry.key + 1}',
                             style: const TextStyle(
                               color: TossDesignSystem.white,
-                              fontSize: 12,
+                              
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -644,7 +626,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                       Expanded(
                         child: Text(
                           entry.value,
-                          style: const TextStyle(fontSize: 14),
+                          style: TypographyUnified.bodySmall,
                         ),
                       ),
                     ],

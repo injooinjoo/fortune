@@ -11,6 +11,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class PersonalityDNAPage extends BaseFortunePage {
   const PersonalityDNAPage({
@@ -170,8 +171,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
       children: [
         Text(
           '당신만의 성격 DNA를\n발견해보세요',
-          style: TextStyle(
-            fontSize: 28,
+          style: TypographyUnified.heading1.copyWith(
             fontWeight: FontWeight.w700,
             color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.gray900,
             height: 1.3,
@@ -250,11 +250,10 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
         Row(
           children: [
             Icon(icon, size: 20, color: TossDesignSystem.tossBlue),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Text(
               title,
-              style: TextStyle(
-                fontSize: 18,
+              style: TypographyUnified.heading4.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
               ),
@@ -301,8 +300,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
         child: Center(
           child: Text(
             option,
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               color: isSelected
                   ? TossDesignSystem.white
@@ -394,12 +392,11 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
                   color: TossDesignSystem.tossBlue,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
               ],
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
                   height: 1.3,
@@ -442,7 +439,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
                     style: const TextStyle(
                       color: TossDesignSystem.white,
                       fontWeight: FontWeight.w600,
-                      fontSize: 12,
+                      
                     ),
                   ),
                 ],
@@ -467,7 +464,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
             _currentDNA!.description,
             style: TextStyle(
               color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
-              fontSize: 16,
+              
               fontWeight: FontWeight.w400,
               height: 1.4,
             ),
@@ -484,7 +481,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
               _currentDNA!.dnaCode,
               style: TextStyle(
                 color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
-                fontSize: 14,
+                
                 fontWeight: FontWeight.w600,
                 fontFamily: 'monospace',
               ),
@@ -502,8 +499,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
       icon: Icons.star,
       child: Text(
         _currentDNA!.todayHighlight!,
-        style: TextStyle(
-          fontSize: 16,
+        style: TypographyUnified.buttonMedium.copyWith(
           fontWeight: FontWeight.w400,
           color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           height: 1.5,
@@ -523,18 +519,16 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
         children: [
           Text(
             loveStyle.title,
-            style: const TextStyle(
-              fontSize: 18,
+            style: TypographyUnified.heading4.copyWith(
               fontWeight: FontWeight.w600,
               color: TossDesignSystem.tossBlue,
               height: 1.3,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             loveStyle.description,
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.w400,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               height: 1.5,
@@ -562,17 +556,15 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
               color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             content,
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.w400,
               color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
               height: 1.4,
@@ -593,8 +585,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
         children: [
           Text(
             workStyle.title,
-            style: const TextStyle(
-              fontSize: 18,
+            style: TypographyUnified.heading4.copyWith(
               fontWeight: FontWeight.w600,
               color: TossDesignSystem.tossBlue,
               height: 1.3,
@@ -624,17 +615,15 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
               color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             content,
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.w400,
               color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
               height: 1.4,
@@ -678,17 +667,15 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
               children: [
                 Text(
                   title,
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   content,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: TossDesignSystem.tossBlue,
                     height: 1.4,
@@ -734,8 +721,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
             children: [
               Text(
                 type,
-                style: TextStyle(
-                  fontSize: 14,
+                style: TypographyUnified.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
                 ),
@@ -749,8 +735,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
                 ),
                 child: Text(
                   mbti,
-                  style: const TextStyle(
-                    fontSize: 12,
+                  style: TypographyUnified.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: TossDesignSystem.white,
                   ),
@@ -758,11 +743,10 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             description,
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.w400,
               color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
               height: 1.4,
@@ -790,18 +774,16 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
           children: [
             Text(
               celebrity.name,
-              style: const TextStyle(
-                fontSize: 18,
+              style: TypographyUnified.heading4.copyWith(
                 fontWeight: FontWeight.w600,
                 color: TossDesignSystem.tossBlue,
                 height: 1.3,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               celebrity.reason,
-              style: TextStyle(
-                fontSize: 16,
+              style: TypographyUnified.buttonMedium.copyWith(
                 fontWeight: FontWeight.w400,
                 color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
                 height: 1.4,
@@ -820,8 +802,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
       icon: Icons.lightbulb_outline,
       child: Text(
         _currentDNA!.funnyFact!,
-        style: TextStyle(
-          fontSize: 16,
+        style: TypographyUnified.buttonMedium.copyWith(
           fontWeight: FontWeight.w400,
           color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           height: 1.5,

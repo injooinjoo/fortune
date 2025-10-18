@@ -41,7 +41,7 @@ class _TalismanWishSelectorState extends State<TalismanWishSelector> {
             color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text(
           '구체적인 소원을 알려주시면\n더욱 효과적인 부적을 만들어드려요',
           style: TossTheme.subtitle1.copyWith(
@@ -145,7 +145,7 @@ class _CategoryCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               category.displayName,
               style: TossTheme.body3.copyWith(

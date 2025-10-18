@@ -7,6 +7,7 @@ import '../../../core/theme/toss_theme.dart';
 import '../../../core/theme/toss_design_system.dart';
 import '../../../services/social_auth_service.dart';
 import '../../../core/utils/logger.dart';
+import '../../../core/theme/typography_unified.dart';
 
 class TossStyleNameStep extends StatefulWidget {
   final String initialName;
@@ -129,7 +130,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                 Text(
                   '기존 계정으로 로그인하세요',
                   style: TossTheme.heading2.copyWith(
-                    fontSize: 20,
+                    
                   ),
                 ),
                 
@@ -180,8 +181,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                 // Terms text
                 Text(
                   '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: TypographyUnified.labelMedium.copyWith(
                     color: TossTheme.textGray600,
                     height: 1.5,
                   ),
@@ -298,11 +298,10 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
               width: 24,
               height: 24,
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 16,
+              style: TypographyUnified.buttonMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context).brightness == Brightness.dark
                     ? TossDesignSystem.white
@@ -345,8 +344,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                       child: TextField(
                           controller: _nameController,
                           focusNode: _focusNode,
-                          style: TextStyle(
-                            fontSize: 20,
+                          style: TypographyUnified.heading3.copyWith(
                             fontWeight: FontWeight.w500,
                             color: Theme.of(context).brightness == Brightness.dark
                                 ? TossDesignSystem.white
@@ -373,8 +371,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                           },
                           decoration: InputDecoration(
                             hintText: '이름을 알려주세요',
-                            hintStyle: TextStyle(
-                              fontSize: 20,
+                            hintStyle: TypographyUnified.heading3.copyWith(
                               fontWeight: FontWeight.w400,
                               color: Theme.of(context).brightness == Brightness.dark
                                   ? TossDesignSystem.grayDark400
@@ -440,8 +437,7 @@ class _TossStyleNameStepState extends State<TossStyleNameStep> {
                       onTap: () => _showSocialLoginBottomSheet(context),
                       child: Text(
                         '계정이 있어요',
-                        style: TextStyle(
-                          fontSize: 14,
+                        style: TypographyUnified.bodySmall.copyWith(
                           color: TossTheme.textGray600,
                           decoration: TextDecoration.underline,
                           decorationColor: TossTheme.textGray600,

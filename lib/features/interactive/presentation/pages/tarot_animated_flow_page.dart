@@ -170,7 +170,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(Icons.auto_awesome, size: 24),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Text(
                     'Begin Your Journey',
                     style: TossDesignSystem.button.copyWith(
@@ -258,7 +258,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                               size: 60,
                               color: TossDesignSystem.white,
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                             Text(
                               'Card ${index + 1}',
                               style: TossDesignSystem.heading3.copyWith(
@@ -322,7 +322,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                               size: 80,
                               color: TossDesignSystem.white,
                             ),
-                            const SizedBox(height: 20),
+                            SizedBox(height: 20),
                             Text(
                               cardData['name'] ?? 'Unknown',
                               style: TypographyUnified.displaySmall.copyWith(
@@ -339,7 +339,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
               ),
             ),
             
-            const SizedBox(height: 40),
+            SizedBox(height: 40),
             
             // Card info
             Text(
@@ -406,7 +406,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
     return Row(
       children: [
         Icon(icon, color: TossDesignSystem.white.withValues(alpha: 0.6), size: 20),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Text(
           text,
           style: TypographyUnified.bodySmall.copyWith(

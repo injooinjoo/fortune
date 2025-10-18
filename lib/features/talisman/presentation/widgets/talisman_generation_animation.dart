@@ -151,7 +151,7 @@ class _TalismanGenerationAnimationState extends State<TalismanGenerationAnimatio
             .then()
             .shake(duration: 500.ms),
           
-          const SizedBox(height: 40),
+          SizedBox(height: 40),
           
           // Title
           Text(

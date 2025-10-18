@@ -5,6 +5,7 @@
 /// - 오각형 차트로 시각화
 
 import 'package:flutter/material.dart';
+import '../../../../core/theme/typography_unified.dart';
 import 'dart:math' as math;
 
 /// 오행 타입
@@ -365,7 +366,7 @@ class _PentagonPainter extends CustomPainter {
           text: text,
           style: TextStyle(
             color: type.color,
-            fontSize: 12,
+            
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -421,8 +422,7 @@ class WuxingDetailCard extends StatelessWidget {
           // 제목
           Text(
             '오행 분포 분석',
-            style: TextStyle(
-              fontSize: 18,
+            style: TypographyUnified.heading4.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : Colors.black87,
             ),
@@ -436,15 +436,14 @@ class WuxingDetailCard extends StatelessWidget {
               size: 220,
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
 
           // 균형 점수
           Row(
             children: [
               Text(
                 '균형 점수',
-                style: TextStyle(
-                  fontSize: 14,
+                style: TypographyUnified.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),
@@ -452,8 +451,7 @@ class WuxingDetailCard extends StatelessWidget {
               const Spacer(),
               Text(
                 '${distribution.balanceScore.toStringAsFixed(0)}점',
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.w700,
                   color: distribution.balanceScore >= 60
                       ? Colors.green
@@ -464,13 +462,12 @@ class WuxingDetailCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
 
           // 설명
           Text(
             distribution.description,
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               height: 1.5,
               color: isDark ? Colors.white70 : Colors.black87,
             ),
@@ -481,8 +478,7 @@ class WuxingDetailCard extends StatelessWidget {
           if (distribution.recommendations.isNotEmpty) ...[
             Text(
               '추천 사항',
-              style: TextStyle(
-                fontSize: 14,
+              style: TypographyUnified.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark ? Colors.white70 : Colors.black54,
               ),
@@ -495,16 +491,14 @@ class WuxingDetailCard extends StatelessWidget {
                     children: [
                       Text(
                         '• ',
-                        style: TextStyle(
-                          fontSize: 14,
+                        style: TypographyUnified.bodySmall.copyWith(
                           color: isDark ? Colors.white70 : Colors.black87,
                         ),
                       ),
                       Expanded(
                         child: Text(
                           rec,
-                          style: TextStyle(
-                            fontSize: 14,
+                          style: TypographyUnified.bodySmall.copyWith(
                             height: 1.4,
                             color: isDark ? Colors.white70 : Colors.black87,
                           ),

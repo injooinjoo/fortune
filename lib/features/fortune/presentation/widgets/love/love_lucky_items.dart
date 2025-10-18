@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 class LoveLuckyItems extends StatelessWidget {
   final Map<String, String> luckyItems;
@@ -73,7 +74,7 @@ class LoveLuckyItems extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Text(
                   '🎁 이번 달 행운 아이템',
@@ -100,7 +101,7 @@ class LoveLuckyItems extends StatelessWidget {
             ],
           ),
           
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           
           Text(
             '이 아이템들이 연애 운을 높여줄 거예요!',
@@ -155,7 +156,7 @@ class LoveLuckyItems extends StatelessWidget {
                   color: TossTheme.primaryBlue,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '💡 데이트나 중요한 만남 전에 이 아이템들을 활용해보세요!',
@@ -201,9 +202,9 @@ class LoveLuckyItems extends StatelessWidget {
             children: [
               Text(
                 emoji,
-                style: const TextStyle(fontSize: 16),
+                style: TypographyUnified.buttonMedium,
               ),
-              const SizedBox(width: 6),
+              SizedBox(width: 6),
               Expanded(
                 child: Text(
                   category,
@@ -215,7 +216,7 @@ class LoveLuckyItems extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             item,
             style: TossTheme.caption.copyWith(

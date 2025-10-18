@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/typography_unified.dart';
 import 'dart:math' as math;
 
 class TalentDnaChart extends StatelessWidget {
@@ -136,7 +137,7 @@ class _TalentDnaPainter extends CustomPainter {
         text: TextSpan(
           text: talentList[i].key,
           style: textStyle?.copyWith(
-            fontSize: 12,
+            
             fontWeight: FontWeight.w500,
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../shared/components/app_header.dart';
 import '../../shared/glassmorphism/glass_container.dart';
+import '../../core/theme/typography_unified.dart';
 
 class PremiumScreen extends StatelessWidget {
   const PremiumScreen({super.key});
@@ -34,14 +35,14 @@ class PremiumScreen extends StatelessWidget {
                         size: 64,
                         color: theme.colorScheme.primary,
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       Text(
                         '프리미엄 사주',
                         style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         '만화로 보는 재미있는 사주 풀이',
                         style: theme.textTheme.bodyMedium?.copyWith(
@@ -82,10 +83,9 @@ class PremiumScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             backgroundColor: theme.colorScheme.primary,
                           ),
-                          child: const Text(
+                          child: Text(
                             '프리미엄 시작하기',
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: TypographyUnified.buttonMedium.copyWith(
                               fontWeight: FontWeight.bold,
                               color: TossDesignSystem.white,
                             ),
@@ -135,7 +135,7 @@ class PremiumScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 2),
+              SizedBox(height: 2),
               Text(
                 description,
                 style: theme.textTheme.bodySmall?.copyWith(

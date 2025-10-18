@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/typography_unified.dart';
 
 class TossNumberPad extends StatelessWidget {
   final Function(String) onNumberPressed;
@@ -81,8 +82,7 @@ class TossNumberPad extends StatelessWidget {
             child: Center(
               child: Text(
                 number,
-                style: TextStyle(
-                  fontSize: 24,
+                style: TypographyUnified.displaySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: TossDesignSystem.grayDark900,
                 ),

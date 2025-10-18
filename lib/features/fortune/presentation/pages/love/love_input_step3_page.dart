@@ -137,7 +137,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
             ),
           ).animate().slideX(begin: -0.3, duration: 600.ms).fadeIn(),
 
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
 
           Text(
             '구체적일수록 정확한 운세를 알려드려요',
@@ -219,7 +219,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
             ),
           ).animate(delay: 400.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           
           // Preferred Personality
           Text(
@@ -229,7 +229,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             '최대 4개까지 선택',
             style: TossTheme.body2.copyWith(
@@ -245,7 +245,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
             }).toList(),
           ).animate(delay: 600.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           
           // Preferred Meeting Places
           Text(
@@ -268,7 +268,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
             }).toList(),
           ).animate(delay: 700.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           
           // Relationship Goal
           Text(
@@ -441,7 +441,7 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
               _getRelationshipGoalEmoji(goal),
               style: TypographyUnified.displaySmall,
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: Text(
                 _getRelationshipGoalText(goal),

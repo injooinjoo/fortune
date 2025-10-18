@@ -12,6 +12,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 // Step 관리를 위한 StateNotifier
 class InvestmentStepNotifier extends StateNotifier<int> {
@@ -304,17 +305,15 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                             children: [
                               Text(
                                 '투자 성향을 알려주세요',
-                                style: TextStyle(
-                                  fontSize: 20,
+                                style: TypographyUnified.heading3.copyWith(
                                   fontWeight: FontWeight.w700,
                                   color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(height: 4),
                               Text(
                                 '맞춤형 투자 운세를 위해 필요합니다',
-                                style: TextStyle(
-                                  fontSize: 14,
+                                style: TypographyUnified.bodySmall.copyWith(
                                   color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                                 ),
                               ),
@@ -362,8 +361,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
             ),
@@ -461,19 +459,17 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                         children: [
                           Text(
                             option['label'] ?? '',
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: TypographyUnified.buttonMedium.copyWith(
                               fontWeight: FontWeight.w600,
                               color: isSelected
                                   ? TossDesignSystem.tossBlue
                                   : isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             option['description'] ?? '',
-                            style: TextStyle(
-                              fontSize: 14,
+                            style: TypographyUnified.bodySmall.copyWith(
                               color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                             ),
                           ),
@@ -552,19 +548,17 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               children: [
                 Text(
                   option['label'] ?? '',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isSelected
                         ? TossDesignSystem.white
                         : isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   option['description'] ?? '',
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: TypographyUnified.labelMedium.copyWith(
                     color: isSelected
                         ? TossDesignSystem.white.withValues(alpha: 0.9)
                         : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
@@ -659,11 +653,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                       ? TossDesignSystem.white
                       : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   option['label'] as String? ?? '',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: isSelected
                         ? TossDesignSystem.white
                         : isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
@@ -740,8 +733,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
             ),
             child: Text(
               horizon['label'] as String? ?? '',
-              style: TextStyle(
-                fontSize: 14,
+              style: TypographyUnified.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isSelected
                     ? TossDesignSystem.white
@@ -797,17 +789,15 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                         children: [
                           Text(
                             '관심 있는 투자 섹터를 선택하세요',
-                            style: TextStyle(
-                              fontSize: 20,
+                            style: TypographyUnified.heading3.copyWith(
                               fontWeight: FontWeight.w700,
                               color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             '최대 5개까지 선택 가능합니다',
-                            style: TextStyle(
-                              fontSize: 14,
+                            style: TypographyUnified.bodySmall.copyWith(
                               color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                             ),
                           ),
@@ -850,8 +840,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 children: [
                   Text(
                     '우선순위 설정',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                     ),
@@ -964,11 +953,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                             ? isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600
                             : isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   Text(
                     sector.label,
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isSelected
                           ? TossDesignSystem.white
@@ -978,11 +966,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     sector.description,
-                    style: TextStyle(
-                      fontSize: 11,
+                    style: TypographyUnified.labelSmall.copyWith(
                       color: isSelected
                           ? TossDesignSystem.white.withValues(alpha: 0.9)
                           : canSelect
@@ -1067,12 +1054,11 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                     color: TossDesignSystem.white,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     sector.label,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                     ),
@@ -1086,8 +1072,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   ),
                   child: Text(
                     '${priority.round()}%',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       fontWeight: FontWeight.w700,
                       color: sector.gradientColors[0],
                     ),
@@ -1095,7 +1080,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 activeTrackColor: sector.gradientColors[0],
@@ -1185,17 +1170,15 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                         children: [
                           Text(
                             '추가 분석 옵션',
-                            style: TextStyle(
-                              fontSize: 20,
+                            style: TypographyUnified.heading3.copyWith(
                               fontWeight: FontWeight.w700,
                               color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             '더 정확한 운세를 위해 선택하세요',
-                            style: TextStyle(
-                              fontSize: 14,
+                            style: TypographyUnified.bodySmall.copyWith(
                               color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                             ),
                           ),
@@ -1218,8 +1201,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               children: [
                 Text(
                   '분석 옵션',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                   ),
@@ -1350,8 +1332,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               children: [
                 Text(
                   '궁금한 점이 있으신가요?',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                   ),
@@ -1475,19 +1456,17 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: value
                           ? TossDesignSystem.tossBlue
                           : isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                     ),
                   ),
@@ -1571,17 +1550,15 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                         children: [
                           Text(
                             '투자 운세 준비 완료!',
-                            style: TextStyle(
-                              fontSize: 20,
+                            style: TypographyUnified.heading3.copyWith(
                               fontWeight: FontWeight.w700,
                               color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             '입력하신 정보를 확인해주세요',
-                            style: TextStyle(
-                              fontSize: 14,
+                            style: TypographyUnified.bodySmall.copyWith(
                               color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                             ),
                           ),
@@ -1690,11 +1667,10 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   color: TossDesignSystem.tossBlue,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                 ),
@@ -1716,12 +1692,11 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                         shape: BoxShape.circle,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         item,
-                        style: TextStyle(
-                          fontSize: 14,
+                        style: TypographyUnified.bodySmall.copyWith(
                           color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
                         ),
                       ),

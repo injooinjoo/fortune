@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/zodiac_compatibility_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class ZodiacCompatibilityWheel extends StatefulWidget {
   final String selectedZodiac;
@@ -74,11 +75,10 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
           Icons.stars,
           color: TossDesignSystem.warningYellow,
           size: 24),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Text(
           '띠별 궁합 관계도',
-          style: TextStyle(
-            fontSize: 20,
+          style: TypographyUnified.heading3.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.onSurface)),
       ],
@@ -194,23 +194,20 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
         children: [
           Text(
             _getZodiacEmoji(widget.selectedZodiac),
-            style: const TextStyle(fontSize: 32)),
+            style: TypographyUnified.numberLarge),
           Text(
             widget.selectedZodiac,
-            style: const TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.white)),
           Text(
             info['hanja'],
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.8)),
           ),
           Text(
             info['element'],
-            style: TextStyle(
-              fontSize: 12,
+            style: TypographyUnified.labelMedium.copyWith(
               color: TossDesignSystem.warningYellow)),
         ],
       ),
@@ -259,7 +256,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
               label,
               style: TextStyle(
                 color: TossDesignSystem.white,
-                fontSize: 12,
+                
                 fontWeight: FontWeight.bold)),
             Text(
               description,

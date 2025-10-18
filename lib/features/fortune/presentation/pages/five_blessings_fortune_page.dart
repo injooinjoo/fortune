@@ -105,7 +105,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             '오복(五福) 운세',
             style: TypographyUnified.heading3.copyWith(),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '전통 오복 중 당신이 가장 원하는 복을 선택하면, 그 복을 받을 수 있는 방법을 알려드립니다.',
             style: TypographyUnified.bodySmall.copyWith(
@@ -144,7 +144,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             ),
           ),
           
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           
           // Five Blessings Selection
           Text(
@@ -328,14 +328,14 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                 size: 64,
                 color: TossDesignSystem.white,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Text(
                 selectedBlessing['title'],
                 style: TypographyUnified.displaySmall.copyWith(
                   color: TossDesignSystem.white,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 selectedBlessing['subtitle'],
                 style: TypographyUnified.bodyLarge.copyWith(
@@ -363,14 +363,14 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                 Row(
                   children: [
                     Icon(Icons.auto_awesome, color: selectedBlessing['color']),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '당신의 오복 운세',
                       style: TypographyUnified.heading4.copyWith(),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(
                   result.mainFortune!,
                   style: TypographyUnified.bodyLarge.copyWith(
@@ -455,14 +455,14 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                 Row(
                   children: [
                     Icon(Icons.format_list_numbered, color: selectedBlessing['color']),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '복을 받는 방법',
                       style: TypographyUnified.heading4.copyWith(),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   result.sections!['methods'] ?? '',
                   style: TypographyUnified.bodySmall.copyWith(

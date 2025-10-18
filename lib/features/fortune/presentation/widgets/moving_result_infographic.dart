@@ -8,6 +8,7 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 인포그래픽 스타일 이사운 결과 페이지
 class MovingResultInfographic extends StatefulWidget {
@@ -287,7 +288,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
               Text(
                 '이사운 분석 완료',
                 style: TossTheme.heading1.copyWith(
-                  fontSize: 32,
+                  
                   fontWeight: FontWeight.w800,
                   color: TossTheme.textBlack,
                 ),
@@ -377,7 +378,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                           Text(
                             _getScoreDescription(_fortuneData.overallScore),
                             style: TossTheme.body2.copyWith(
-                              fontSize: 16,
+                              
                               fontWeight: FontWeight.w600,
                               color: _getScoreColor(_fortuneData.overallScore),
                             ),
@@ -1171,7 +1172,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
           Text(
             value,
             style: TossTheme.heading3.copyWith(
-              fontSize: 18,
+              
             ),
           ),
         ],

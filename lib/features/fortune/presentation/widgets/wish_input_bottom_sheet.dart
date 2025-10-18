@@ -3,6 +3,7 @@ import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
@@ -116,10 +117,9 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
           // Header
           Container(
             padding: const EdgeInsets.all(20),
-            child: const Text(
+            child: Text(
               '소원을 빌어주세요',
-              style: TextStyle(
-                fontSize: 20,
+              style: TypographyUnified.heading3.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF191F28),
                 fontFamily: 'TossProductSans',
@@ -178,10 +178,9 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '어떤 소원인가요?',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: Color(0xFF191F28),
               fontFamily: 'TossProductSans',
@@ -213,7 +212,7 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
                     children: [
                       Text(
                         category.emoji,
-                        style: const TextStyle(fontSize: 16),
+                        style: TypographyUnified.buttonMedium,
                       ),
                       const SizedBox(width: 6),
                       Text(
@@ -247,10 +246,9 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '소원을 자세히 적어주세요',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: Color(0xFF191F28),
               fontFamily: 'TossProductSans',
@@ -285,7 +283,7 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
             ),
             style: const TextStyle(
               fontFamily: 'TossProductSans',
-              fontSize: 14,
+              
             ),
           ),
         ],
@@ -305,10 +303,9 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '얼마나 간절한가요?',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: Color(0xFF191F28),
               fontFamily: 'TossProductSans',

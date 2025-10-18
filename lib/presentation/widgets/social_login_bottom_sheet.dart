@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/typography_unified.dart';
 
 /// 재사용 가능한 소셜 로그인 BottomSheet
 /// Landing Page, Onboarding 등 여러 곳에서 사용 가능
@@ -66,16 +67,14 @@ class SocialLoginBottomSheet {
                             // Title
                             Text(
                               '시작하기',
-                              style: TextStyle(
-                                  fontSize: 28,
+                              style: TypographyUnified.heading1.copyWith(
                                   fontWeight: FontWeight.w700,
                                   color: TossDesignSystem.gray900,
                                   letterSpacing: -0.5),
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: 12),
                             Text('소셜 계정으로 간편하게 시작해보세요',
-                                style: TextStyle(
-                                    fontSize: 16,
+                                style: TypographyUnified.buttonMedium.copyWith(
                                     color: TossDesignSystem.gray800)),
 
                             const SizedBox(height: 40),
@@ -130,8 +129,7 @@ class SocialLoginBottomSheet {
                             // Terms text
                             Text(
                                 '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                                style: TextStyle(
-                                    fontSize: 12,
+                                style: TypographyUnified.labelMedium.copyWith(
                                     color: TossDesignSystem.gray600,
                                     height: 1.5),
                                 textAlign: TextAlign.center),
@@ -229,11 +227,10 @@ class SocialLoginBottomSheet {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             icon,
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Text(
               text,
-              style: TextStyle(
-                fontSize: 16,
+              style: TypographyUnified.buttonMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: TossDesignSystem.gray900,
                 fontFamily: 'TossProductSans',

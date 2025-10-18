@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class CognitiveFunctionWeather extends StatelessWidget {
   final Map<String, dynamic> cognitiveWeather;
@@ -161,7 +162,7 @@ class CognitiveFunctionWeather extends StatelessWidget {
                   style: TossDesignSystem.caption.copyWith(
                     color: _getFunctionColor(name),
                     fontWeight: FontWeight.w600,
-                    fontSize: 11,
+                    
                   ),
                 ),
               ],

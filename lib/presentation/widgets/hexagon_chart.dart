@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/typography_unified.dart';
 import 'dart:math' as math;
 
 class HexagonChart extends StatelessWidget {
@@ -25,7 +26,7 @@ class HexagonChart extends StatelessWidget {
     final theme = Theme.of(context);
     final effectivePrimaryColor = primaryColor ?? theme.primaryColor;
     final effectiveBackgroundColor = backgroundColor ?? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.1);
-    final effectiveLabelStyle = labelStyle ?? Theme.of(context).textTheme.labelSmall ?? const TextStyle(fontSize: 12);
+    final effectiveLabelStyle = labelStyle ?? Theme.of(context).textTheme.labelSmall ?? TypographyUnified.labelMedium;
 
     return SizedBox(
       width: size * 1.5,

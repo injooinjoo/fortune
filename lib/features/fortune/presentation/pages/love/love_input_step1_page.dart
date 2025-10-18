@@ -93,7 +93,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
             ),
           ).animate().slideX(begin: -0.3, duration: 600.ms).fadeIn(),
 
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
 
           Text(
             '더 정확한 연애운세를 위해 필요해요',
@@ -159,7 +159,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     activeTrackColor: TossTheme.primaryBlue,
@@ -201,7 +201,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
             ),
           ).animate(delay: 400.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           
           // Gender Section
           Text(
@@ -224,7 +224,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
             ],
           ).animate(delay: 600.ms).slideY(begin: 0.3, duration: 600.ms).fadeIn(),
           
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           
           // Relationship Status Section
           Text(
@@ -292,7 +292,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
                   : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
               size: 32,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               label,
               style: TossTheme.body1.copyWith(
@@ -338,7 +338,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
               _getRelationshipStatusEmoji(status),
               style: TypographyUnified.displaySmall,
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: Text(
                 _getRelationshipStatusText(status),

@@ -266,7 +266,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 ]
               );
             }),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             '리딩이 완료되었습니다',
             style: TypographyUnified.displaySmall.copyWith(
@@ -275,7 +275,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             ),
           ),
           if (widget.question != null) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               widget.question!,
               style: TypographyUnified.bodyLarge.copyWith(
@@ -558,7 +558,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             '전체 해석',
             style: TypographyUnified.heading3.copyWith(
@@ -566,7 +566,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               color: TossDesignSystem.white,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             _summaryData!['summary'] ?? '해석을 생성할 수 없습니다.',
             style: TypographyUnified.bodyLarge.copyWith(
@@ -638,7 +638,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     '$percentage%',
                     style: TypographyUnified.bodySmall.copyWith(
@@ -651,7 +651,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             );
           }),
           if (_summaryData!['dominantElement'] != null) ...[
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               '${_summaryData!['dominantElement']} 원소가 우세합니다',
               style: TypographyUnified.bodySmall.copyWith(
@@ -684,7 +684,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
             size: 36,
             color: TossDesignSystem.successGreen,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             '조언',
             style: TypographyUnified.heading4.copyWith(
@@ -752,7 +752,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                     color: TossDesignSystem.white,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   _summaryData!['timeline'],
                   style: TypographyUnified.bodySmall.copyWith(
@@ -799,7 +799,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   )
                 )
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               Text(
                 position,
                 style: TypographyUnified.bodyLarge.copyWith(
@@ -817,14 +817,14 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               Text(
                 '해석',
                 style: TypographyUnified.heading4.copyWith(
                   color: TossDesignSystem.white,
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Text(
                 widget.interpretations[index],
                 style: TypographyUnified.bodySmall.copyWith(
@@ -863,7 +863,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 color: TossDesignSystem.white.withValues(alpha: 0.9),
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '친구와 공유하기',
                 style: TypographyUnified.buttonMedium.copyWith(
@@ -971,7 +971,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
               color: color,
               size: 24,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               label,
               style: TypographyUnified.labelMedium.copyWith(

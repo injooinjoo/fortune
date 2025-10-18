@@ -292,7 +292,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                         ),
                       ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
 
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24),
 
                       Text(
                         '두 사람의 궁합',
@@ -303,7 +303,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                         textAlign: TextAlign.center,
                       ),
 
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
 
                       Text(
                         '이름과 생년월일을 입력하면\n두 사람의 궁합을 자세히 분석해드릴게요',
@@ -336,7 +336,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                             size: 14,
                             color: TossTheme.primaryBlue,
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Text(
                             '나',
                             style: TossTheme.caption.copyWith(
@@ -471,7 +471,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                             size: 16,
                             color: TossDesignSystem.white,
                           ),
-                          const SizedBox(width: 6),
+                          SizedBox(width: 6),
                           Text(
                             '상대방',
                             style: TossTheme.body2.copyWith(
@@ -577,7 +577,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                   ),
                 ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
 
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 Center(
                   child: Text(
@@ -669,7 +669,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                   animationDuration: 1200,
                 ),
                 
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 
                 Text(
                   fortune.summary ?? '궁합 분석 결과',
@@ -705,7 +705,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                         size: 20,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Text(
                       '세부 궁합 분석',
                       style: TossTheme.heading4.copyWith(
@@ -785,7 +785,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                         size: 20,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Text(
                       '궁합 분석 결과',
                       style: TossTheme.heading4.copyWith(
@@ -796,7 +796,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                   ],
                 ),
                 
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 
                 Text(
                   fortune.content,
@@ -831,7 +831,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                           size: 20,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Text(
                         '관계 개선 조언',
                         style: TossTheme.heading4.copyWith(
@@ -842,7 +842,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                     ],
                   ),
                   
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   
                   Text(
                     fortune.advice!,

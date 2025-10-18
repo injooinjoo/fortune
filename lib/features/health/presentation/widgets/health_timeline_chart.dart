@@ -74,7 +74,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                 color: TossTheme.primaryBlue,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '시간대별 컨디션',
                 style: TossTheme.heading3.copyWith(
@@ -352,7 +352,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                             : TossTheme.textBlack,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2),
                     Text(
                       timeSlot.description,
                       style: TossTheme.body3.copyWith(
@@ -423,7 +423,7 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                     color: TossTheme.textBlack,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   widget.timeline.bestTimeActivity!,
                   style: TossTheme.body3.copyWith(

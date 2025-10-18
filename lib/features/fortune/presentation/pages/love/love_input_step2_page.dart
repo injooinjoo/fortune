@@ -114,7 +114,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
             ),
           ).animate().slideX(begin: -0.3, duration: 600.ms).fadeIn(),
 
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
 
           Text(
             '여러 개 선택 가능해요',
@@ -177,7 +177,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   '각 항목이 연애할 때 얼마나 중요한지 점수를 매겨주세요',
                   style: TossTheme.body2.copyWith(
@@ -242,7 +242,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
               _getDatingStyleEmoji(style),
               style: TypographyUnified.heading4,
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Flexible(
               child: Text(
                 _getDatingStyleText(style),
@@ -293,7 +293,7 @@ class _LoveInputStep2PageState extends State<LoveInputStep2Page> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: _getScoreColor(value),

@@ -255,7 +255,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                                   color: TossDesignSystem.white,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: -0.5)),
-                              const SizedBox(height: 4),
+                              SizedBox(height: 4),
                               Text(
                                 item['subtitle'],
                                 style: TypographyUnified.bodySmall.copyWith(
@@ -275,7 +275,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                           Icons.favorite,
                           color: TossDesignSystem.white,
                           size: 16),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Text(
                           '${item['likes']}',
                           style: TypographyUnified.bodySmall.copyWith(
@@ -286,7 +286,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                           Icons.visibility,
                           color: TossDesignSystem.white,
                           size: 16),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Text(
                           '${item['views']}',
                           style: TypographyUnified.bodySmall.copyWith(

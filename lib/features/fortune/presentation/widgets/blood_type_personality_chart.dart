@@ -5,6 +5,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/blood_type_analysis_service.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class BloodTypePersonalityChart extends StatefulWidget {
   final String bloodType;
@@ -343,7 +344,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodyMedium),
-              const SizedBox(height: AppSpacing.spacing1),
+              SizedBox(height: AppSpacing.spacing1),
               Text(
                 content,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -621,7 +622,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                       ticksTextStyle: TextStyle(
                         color: TossDesignSystem.white.withValues(alpha: 0.5),
                         fontSize: Theme.of(context).textTheme.bodySmall?.fontSize),
-                      titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 14),
+                      titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? TypographyUnified.bodySmall,
                     ),
                   ),
                 ),

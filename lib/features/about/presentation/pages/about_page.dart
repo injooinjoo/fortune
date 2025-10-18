@@ -93,18 +93,18 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               Icons.auto_awesome,
               size: 50,
               color: TossDesignSystem.white)).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           Text(
             'Fortune',
             style: TypographyUnified.numberLarge.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.white)).animate().fadeIn(delay: 200.ms),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'AI가 읽어주는 나만의 운세',
             style: TypographyUnified.heading4.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.9))).animate().fadeIn(delay: 400.ms),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             '매일 새로운 인사이트와 함께\n더 나은 하루를 시작하세요',
             style: TypographyUnified.bodySmall.copyWith(
@@ -195,13 +195,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, color: color, size: 32),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             title,
             style: TypographyUnified.bodySmall.copyWith(
               color: TossDesignSystem.white,
               fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             description,
             style: TypographyUnified.labelSmall.copyWith(
@@ -263,12 +263,12 @@ class _AboutPageState extends ConsumerState<AboutPage> {
   Widget _buildVersionInfo() {
     return Column(
       children: [
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Text(
           '버전 $_version',
           style: TypographyUnified.labelMedium.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.5))),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text(
           '© 2025 Fortune. All rights reserved.',
           style: TypographyUnified.labelMedium.copyWith(

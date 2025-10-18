@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../presentation/providers/providers.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class LuckyItemsBottomSheet extends ConsumerStatefulWidget {
   const LuckyItemsBottomSheet({super.key});
@@ -184,19 +185,17 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                   children: [
                     Text(
                       '오늘의 행운 아이템',
-                      style: TextStyle(
-                        fontSize: 24,
+                      style: TypographyUnified.displaySmall.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).brightness == Brightness.dark
                             ? TossDesignSystem.white
                             : TossDesignSystem.grayDark900,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Text(
                       '당신만을 위한 특별한 행운을 찾아보세요',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? TossDesignSystem.grayDark400
                             : TossDesignSystem.gray700,
@@ -243,11 +242,10 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                             color: TossDesignSystem.tossBlue,
                             size: 24,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           Text(
                             '오늘만의 특별한 행운',
-                            style: TextStyle(
-                              fontSize: 18,
+                            style: TypographyUnified.heading4.copyWith(
                               fontWeight: FontWeight.w600,
                               color: Theme.of(context).brightness == Brightness.dark
                                   ? TossDesignSystem.white
@@ -271,13 +269,12 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                   ),
                 ),
                 
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
                 
                 // 카테고리 미리보기
                 Text(
                   '확인할 수 있는 행운 정보',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: TypographyUnified.heading4.copyWith(
                     fontWeight: FontWeight.w600,
                     color: Theme.of(context).brightness == Brightness.dark
                         ? TossDesignSystem.white
@@ -331,8 +328,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                           Expanded(
                             child: Text(
                               category['title'],
-                              style: TextStyle(
-                                fontSize: 13,
+                              style: TypographyUnified.bodySmall.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: Theme.of(context).brightness == Brightness.dark
                                     ? TossDesignSystem.white

@@ -6,6 +6,7 @@ import '../pages/fortune_list_page.dart';
 
 
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class FortuneListCard extends ConsumerStatefulWidget {
   final FortuneCategory category;
@@ -116,7 +117,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         widget.category.title,
                         style: const TextStyle(
                           color: TossDesignSystem.white,
-                          fontSize: 16,
+                          
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.3,
                         ),
@@ -174,7 +175,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                   'NEW',
                   style: TextStyle(
                     color: TossDesignSystem.white,
-                    fontSize: 11,
+                    
                     fontWeight: FontWeight.bold,
                   ),
                 ),

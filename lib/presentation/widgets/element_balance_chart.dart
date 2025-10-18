@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../core/theme/typography_unified.dart';
 
 /// 오행 균형 차트 위젯 - 목/화/토/금/수 균형을 시각화
 class ElementBalanceChart extends StatelessWidget {
@@ -73,7 +74,7 @@ class ElementBalanceChart extends StatelessWidget {
               '${data['icon']} ${data['name']}',
               style: TextStyle(
                 color: TossDesignSystem.gray100.withValues(alpha: 0.8),
-                fontSize: 12,
+                
                 fontWeight: FontWeight.w300,
               ),
             ),
@@ -83,7 +84,7 @@ class ElementBalanceChart extends StatelessWidget {
                 '${(entry.value * 100).toInt()}%',
                 style: TextStyle(
                   color: TossDesignSystem.gray100.withValues(alpha: 0.6),
-                  fontSize: 11,
+                  
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -165,7 +166,7 @@ class ElementCirclePainter extends CustomPainter {
         final iconPainter = TextPainter(
           text: TextSpan(
             text: data['icon'] as String,
-            style: const TextStyle(fontSize: 20),
+            style: TypographyUnified.heading3,
           ),
           textDirection: TextDirection.ltr,
         );
@@ -185,7 +186,7 @@ class ElementCirclePainter extends CustomPainter {
             text: '$percentage%',
             style: TextStyle(
               color: TossDesignSystem.gray100,
-              fontSize: 12,
+              
               fontWeight: FontWeight.bold,
               shadows: [
                 Shadow(
@@ -223,7 +224,7 @@ class ElementCirclePainter extends CustomPainter {
         text: '오행\n균형',
         style: TextStyle(
           color: TossDesignSystem.gray100.withValues(alpha: 0.8),
-          fontSize: 14,
+          
           fontWeight: FontWeight.w300,
           height: 1.2,
         ),

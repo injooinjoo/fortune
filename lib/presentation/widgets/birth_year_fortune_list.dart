@@ -3,6 +3,7 @@ import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/fortune.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../core/theme/typography_unified.dart';
 
 class BirthYearFortuneList extends StatelessWidget {
   final List<BirthYearFortune> fortunes;
@@ -198,7 +199,7 @@ class BirthYearFortuneCard extends StatelessWidget {
       child: Center(
         child: Text(
           zodiacEmojis[zodiac] ?? '🔮',
-          style: const TextStyle(fontSize: 24),
+          style: TypographyUnified.displaySmall,
         ),
       ),
     );
@@ -331,7 +332,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
       child: Center(
         child: Text(
           zodiacEmojis[zodiac] ?? '🔮',
-          style: const TextStyle(fontSize: 24),
+          style: TypographyUnified.displaySmall,
         ),
       ),
     );

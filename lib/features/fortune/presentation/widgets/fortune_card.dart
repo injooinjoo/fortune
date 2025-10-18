@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 운세 카드 컴포넌트 - 토스 디자인 시스템 적용
 class FortuneCard extends StatelessWidget {
@@ -156,7 +157,7 @@ class FortuneCard extends StatelessWidget {
                 Text(
                   title,
                   style: TossDesignSystem.heading4.copyWith(
-                    fontSize: 16,
+                    
                     fontWeight: FontWeight.w600,
                   ),
                 ),

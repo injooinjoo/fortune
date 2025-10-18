@@ -11,6 +11,7 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 // 5가지 가족 운세 관심사
 enum FamilyConcern {
@@ -144,17 +145,15 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
         children: [
           Text(
             '가장 궁금한\n가족 운세를 선택해주세요',
-            style: TextStyle(
-              fontSize: 24,
+            style: TypographyUnified.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '가족의 행복과 안녕을 위한 맞춤 운세를 제공해드려요',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
           ),
@@ -202,17 +201,15 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                           children: [
                             Text(
                               concern.label,
-                              style: TextStyle(
-                                fontSize: 18,
+                              style: TypographyUnified.heading4.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: 4),
                             Text(
                               concern.description,
-                              style: TextStyle(
-                                fontSize: 14,
+                              style: TypographyUnified.bodySmall.copyWith(
                                 color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                               ),
                             ),
@@ -274,11 +271,10 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '최대 3개까지 선택할 수 있어요',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
           ),
@@ -339,8 +335,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                       Expanded(
                         child: Text(
                           question['label']!,
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: TypographyUnified.buttonMedium.copyWith(
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                             color: canSelect
                                 ? (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)
@@ -371,17 +366,15 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
         children: [
           Text(
             '가족 구성원에 대해\n알려주세요',
-            style: TextStyle(
-              fontSize: 24,
+            style: TypographyUnified.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '더 정확한 운세를 위한 정보예요',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
           ),
@@ -395,8 +388,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               children: [
                 Text(
                   '함께 사는 가족 구성원',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                   ),
@@ -419,8 +411,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                       Expanded(
                         child: Text(
                           '$_familyMemberCount명',
-                          style: TextStyle(
-                            fontSize: 18,
+                          style: TypographyUnified.heading4.copyWith(
                             fontWeight: FontWeight.w600,
                             color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                           ),
@@ -449,8 +440,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               children: [
                 Text(
                   '운세를 보고 싶은 대상',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                   ),
@@ -530,17 +520,15 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
         children: [
           Text(
             '특별히 궁금한 점이\n있으신가요?',
-            style: TextStyle(
-              fontSize: 24,
+            style: TypographyUnified.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '선택사항이에요. 운세에 반영해드릴게요',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
             ),
           ),
@@ -552,7 +540,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               controller: _questionController,
               style: TextStyle(
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                fontSize: 16,
+                
               ),
               maxLines: 6,
               decoration: InputDecoration(
@@ -584,12 +572,11 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   color: TossTheme.primaryBlue,
                   size: 20,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     '질문을 남기지 않아도 운세를 볼 수 있어요',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     ),
                   ),
@@ -746,11 +733,10 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                           color: TossDesignSystem.white,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         _selectedConcern!.description,
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: TypographyUnified.buttonMedium.copyWith(
                           color: TossDesignSystem.white.withValues(alpha: 0.9),
                         ),
                       ),
@@ -771,22 +757,20 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                 Row(
                   children: [
                     Icon(Icons.auto_awesome, color: concernColor, size: 24),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '오늘의 운세',
-                      style: TextStyle(
-                        fontSize: 20,
+                      style: TypographyUnified.heading3.copyWith(
                         fontWeight: FontWeight.w700,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   _fortune!.content,
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     height: 1.6,
                   ),

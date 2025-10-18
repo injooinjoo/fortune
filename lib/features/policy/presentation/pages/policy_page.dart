@@ -97,7 +97,7 @@ class PolicyPage extends ConsumerWidget {
                     style: TypographyUnified.heading4.copyWith(
                       fontWeight: FontWeight.bold,
                       color: TossDesignSystem.white)),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: TypographyUnified.bodySmall.copyWith(
@@ -132,7 +132,7 @@ class PolicyPage extends ConsumerWidget {
             Icons.info_outline_rounded,
             color: TossDesignSystem.white.withValues(alpha: 0.6),
             size: 32),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             'Fortune은 이용자의 개인정보를 소중히 여기며,\n'
             '관련 법령에 따라 안전하게 관리하고 있습니다.',
@@ -140,7 +140,7 @@ class PolicyPage extends ConsumerWidget {
               color: TossDesignSystem.white.withValues(alpha: 0.8),
               height: 1.5),
             textAlign: TextAlign.center),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             '문의사항이 있으시면 고객지원 페이지를 이용해주세요.',
             style: TypographyUnified.labelMedium.copyWith(

@@ -6,6 +6,7 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import 'dart:math' as math;
 
 class CareerSeekerFortunePage extends BaseFortunePage {
@@ -700,7 +701,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                                   ? TossDesignSystem.white
                                   : theme.colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
-                              fontSize: 12,
+                              
                             ),
                           ),
                         ),

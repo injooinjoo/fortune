@@ -18,6 +18,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../widgets/event_category_selector.dart';
 import '../widgets/event_detail_input_form.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class DailyCalendarFortunePage extends BaseFortunePage {
   const DailyCalendarFortunePage({
@@ -451,7 +452,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           Row(
             children: [
               Icon(Icons.calendar_today, color: AppTheme.primaryColor, size: 20),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 DateFormat('yyyy년 MM월 dd일 EEEE', 'ko_KR').format(_selectedDate),
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -515,7 +516,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 14, color: color),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
@@ -524,7 +525,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             ),
           ),
           if (score != null) ...[
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             Text(
               '$score점',
               style: theme.textTheme.bodySmall?.copyWith(
@@ -574,7 +575,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           widget.title,
           style: TextStyle(
             color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            fontSize: 18,
+            
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -657,7 +658,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             summaryText,
             style: TossDesignSystem.body1.copyWith(
@@ -696,8 +697,8 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
       children: [
         Row(
           children: [
-            Text(icon, style: const TextStyle(fontSize: 16)),
-            const SizedBox(width: 8),
+            Text(icon, style: TypographyUnified.buttonMedium),
+            SizedBox(width: 8),
             Text(
               title,
               style: TossDesignSystem.heading3.copyWith(
@@ -732,8 +733,8 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
       ),
       child: Row(
         children: [
-          Text('💡', style: const TextStyle(fontSize: 16)),
-          const SizedBox(width: 8),
+          Text('💡', style: TypographyUnified.buttonMedium),
+          SizedBox(width: 8),
           Expanded(
             child: Text(
               advice,
@@ -788,7 +789,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Text(
               hour['activity'] as String,
@@ -857,9 +858,9 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
         children: [
           Text(
             element['icon'] as String,
-            style: const TextStyle(fontSize: 24),
+            style: TypographyUnified.displaySmall,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             element['title'] as String,
             style: TossDesignSystem.body3.copyWith(
@@ -867,7 +868,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             element['value'] as String,
             style: TossDesignSystem.heading4.copyWith(
@@ -909,7 +910,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               '특별한 날에는 평소보다 더 좋은 기운이 함께합니다. 새로운 시작이나 중요한 일을 계획해보세요.',
               style: TossDesignSystem.body2.copyWith(
@@ -997,7 +998,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
             shape: BoxShape.circle,
           ),
           child: Center(
-            child: Text(icon, style: const TextStyle(fontSize: 16)),
+            child: Text(icon, style: TypographyUnified.buttonMedium),
           ),
         ),
         const SizedBox(width: 12),
@@ -1012,7 +1013,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 2),
+              SizedBox(height: 2),
               Text(
                 description,
                 style: TossDesignSystem.body2.copyWith(
@@ -1079,9 +1080,9 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
         children: [
           Text(
             '💰',
-            style: const TextStyle(fontSize: 24),
+            style: TypographyUnified.displaySmall,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '$score점',
             style: TossDesignSystem.heading2.copyWith(
@@ -1089,7 +1090,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             '재물운',
             style: TossDesignSystem.body3.copyWith(
@@ -1154,9 +1155,9 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
         children: [
           Text(
             '🏥',
-            style: const TextStyle(fontSize: 24),
+            style: TypographyUnified.displaySmall,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '$score점',
             style: TossDesignSystem.heading2.copyWith(
@@ -1164,7 +1165,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             '건강운',
             style: TossDesignSystem.body3.copyWith(

@@ -233,7 +233,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         ).animate()
           .fadeIn(duration: 500.ms)
           .slideY(begin: -0.2, end: 0),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Text(
           '오늘의 운세가 담긴 쿠키를 골라보세요',
           style: TossDesignSystem.body2.copyWith(
@@ -264,7 +264,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         ).animate()
           .fadeIn(duration: 500.ms)
           .slideY(begin: -0.2, end: 0),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text(
           '특별한 메시지가 당신을 기다리고 있어요',
           style: TossDesignSystem.body2.copyWith(
@@ -337,7 +337,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       cookie.description,
                       style: TossDesignSystem.body2.copyWith(
@@ -534,7 +534,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Text(
           '오늘의 운세 메시지',
           style: TossDesignSystem.heading2.copyWith(
@@ -587,7 +587,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                           height: 0.5,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         _mainMessage,
                         style: TossDesignSystem.body1.copyWith(
@@ -597,7 +597,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         '"',
                         style: TypographyUnified.heading1.copyWith(
@@ -630,7 +630,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                           letterSpacing: 2,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         _chineseProverbMeaning,
                         style: TossDesignSystem.body2.copyWith(
@@ -683,7 +683,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: 4),
                             Text(
                               _advice,
                               style: TossDesignSystem.body2.copyWith(
@@ -743,14 +743,14 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
             color: color,
             size: 32,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             title,
             style: TossDesignSystem.caption.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             value,
             style: TossDesignSystem.body1.copyWith(

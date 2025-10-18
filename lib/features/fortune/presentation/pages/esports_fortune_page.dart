@@ -7,6 +7,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../services/external_api_service.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 enum GameType {
   lol('리그 오브 레전드', 'lol', 'assets/images/lol_icon.png'),
@@ -226,11 +227,10 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Text(
                       game.label,
-                      style: TextStyle(
-                        fontSize: 11,
+                      style: TypographyUnified.labelSmall.copyWith(
                         fontWeight:
                             isSelected ? FontWeight.bold : FontWeight.normal,
                         color: isSelected
@@ -291,8 +291,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                   children: [
                     Text(
                       '${_selectedGame.label} 운세',
-                      style: const TextStyle(
-                        fontSize: 20,
+                      style: TypographyUnified.heading3.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -308,7 +307,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                         style: TextStyle(
                           color: predictionColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          
                         ),
                       ),
                     ),
@@ -317,11 +316,10 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                 _buildScoreGauge(fortune.score),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               fortune.message,
-              style: const TextStyle(
-                fontSize: 16,
+              style: TypographyUnified.buttonMedium.copyWith(
                 height: 1.5,
               ),
             ),
@@ -350,16 +348,14 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             children: [
               Text(
                 '$score',
-                style: TextStyle(
-                  fontSize: 24,
+                style: TypographyUnified.displaySmall.copyWith(
                   fontWeight: FontWeight.bold,
                   color: _getScoreColor(score),
                 ),
               ),
-              const Text(
+              Text(
                 '승률',
-                style: TextStyle(
-                  fontSize: 10,
+                style: TypographyUnified.labelTiny.copyWith(
                   color: TossDesignSystem.gray500,
                 ),
               ),
@@ -380,11 +376,10 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             Row(
               children: [
                 Icon(Icons.trending_up, color: TossDesignSystem.successGreen, size: 24),
-                const SizedBox(width: 8),
-                const Text(
+                SizedBox(width: 8),
+                Text(
                   '예상 퍼포먼스',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: TypographyUnified.heading4.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -422,7 +417,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
           radarShape: RadarShape.polygon,
           radarBorderData: BorderSide(color: TossDesignSystem.gray300),
           titlePositionPercentageOffset: 0.2,
-          titleTextStyle: const TextStyle(fontSize: 12),
+          titleTextStyle: TypographyUnified.labelMedium,
           getTitle: (index, angle) {
             return RadarChartTitle(
               text: categories[index],
@@ -430,7 +425,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             );
           },
           tickCount: 5,
-          ticksTextStyle: const TextStyle(fontSize: 10),
+          ticksTextStyle: TypographyUnified.labelTiny,
           tickBorderData: BorderSide(color: TossDesignSystem.gray300),
           gridBorderData: BorderSide(
             color: TossDesignSystem.gray300.withValues(alpha: 0.5),
@@ -459,11 +454,10 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             Row(
               children: [
                 Icon(Icons.star, color: TossDesignSystem.warningOrange, size: 24),
-                const SizedBox(width: 8),
-                const Text(
+                SizedBox(width: 8),
+                Text(
                   '오늘의 추천',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: TypographyUnified.heading4.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -492,11 +486,10 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
               ],
             ),
             if (recommendations != null) ...[
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: 16),
+              Text(
                 '추천 캐릭터',
-                style: TextStyle(
-                  fontSize: 14,
+                style: TypographyUnified.bodySmall.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -535,11 +528,10 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             Row(
               children: [
                 Icon(Icons.sports_esports, color: TossDesignSystem.purple, size: 24),
-                const SizedBox(width: 8),
-                const Text(
+                SizedBox(width: 8),
+                Text(
                   'LCK 경기 일정',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: TypographyUnified.heading4.copyWith(
                     fontWeight: FontWeight.bold))
               ]),
             const SizedBox(height: 16),
@@ -576,8 +568,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
               ),
               Text(
                 '${match.matchTime.hour}:${match.matchTime.minute.toString().padLeft(2, '0')}',
-                style: const TextStyle(
-                  fontSize: 12,
+                style: TypographyUnified.labelMedium.copyWith(
                   color: TossDesignSystem.gray500,
                 ),
               ),
@@ -590,11 +581,11 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                 color: TossDesignSystem.tossBlue,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
+              child: Text(
                 '오늘',
                 style: TextStyle(
                   color: TossDesignSystem.white,
-                  fontSize: 12,
+                  
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -614,11 +605,10 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             Row(
               children: [
                 Icon(Icons.lightbulb, color: TossDesignSystem.warningOrange, size: 24),
-                const SizedBox(width: 8),
-                const Text(
+                SizedBox(width: 8),
+                Text(
                   '승리를 위한 팁',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: TypographyUnified.heading4.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -640,8 +630,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                   Expanded(
                     child: Text(
                       '멘탈이 승리의 열쇠입니다. 긍정적인 마음으로 게임하세요!',
-                      style: TextStyle(
-                        fontSize: 12,
+                      style: TypographyUnified.labelMedium.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -670,12 +659,11 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Text(
               tip,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TypographyUnified.bodySmall.copyWith(
                 height: 1.4,
               ),
             ),
@@ -695,19 +683,17 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
       child: Column(
         children: [
           Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 12,
+            style: TypographyUnified.labelMedium.copyWith(
               color: AppTheme.textSecondaryColor,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),

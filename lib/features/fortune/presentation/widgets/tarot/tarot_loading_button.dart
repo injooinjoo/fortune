@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 import 'dart:math' as dart_math;
 
 class TarotLoadingButton extends StatefulWidget {
@@ -119,11 +120,10 @@ class _TarotLoadingButtonState extends State<TarotLoadingButton>
           Icons.auto_awesome,
           size: 20,
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Text(
           widget.text,
-          style: const TextStyle(
-            fontSize: 16,
+          style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -156,11 +156,10 @@ class _TarotLoadingButtonState extends State<TarotLoadingButton>
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Text(
           widget.loadingText ?? '카드를 뽑는 중...',
-          style: const TextStyle(
-            fontSize: 16,
+          style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.w500,
             color: TossDesignSystem.white,
           ),
@@ -350,11 +349,10 @@ class _MysticalTarotLoadingButtonState extends State<MysticalTarotLoadingButton>
           Icons.auto_awesome,
           size: 20,
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Text(
           widget.text,
-          style: const TextStyle(
-            fontSize: 16,
+          style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -380,11 +378,10 @@ class _MysticalTarotLoadingButtonState extends State<MysticalTarotLoadingButton>
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Text(
           widget.loadingText ?? '신비로운 메시지를 받는 중...',
-          style: TextStyle(
-            fontSize: 16,
+          style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.w500,
             color: TossDesignSystem.white.withValues(alpha:_glowAnimation.value),
           ),

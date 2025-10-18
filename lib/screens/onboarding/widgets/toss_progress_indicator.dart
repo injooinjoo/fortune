@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/toss_theme.dart';
 import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/typography_unified.dart';
 
 class TossProgressIndicator extends StatelessWidget {
   final int totalSteps;
@@ -73,16 +74,14 @@ class TossStepIndicator extends StatelessWidget {
                 stepTitles.isNotEmpty && currentStep <= stepTitles.length
                   ? stepTitles[currentStep - 1]
                   : '단계 $currentStep',
-                style: TextStyle(
-                  fontSize: 14,
+                style: TypographyUnified.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: TossDesignSystem.gray700,
                 ),
               ),
               Text(
                 '$currentStep / $totalSteps',
-                style: TextStyle(
-                  fontSize: 14,
+                style: TypographyUnified.bodySmall.copyWith(
                   fontWeight: FontWeight.w500,
                   color: TossDesignSystem.gray500,
                 ),

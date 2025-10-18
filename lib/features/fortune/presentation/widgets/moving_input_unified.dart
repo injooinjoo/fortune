@@ -7,6 +7,7 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../services/region_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import 'standard_fortune_app_bar.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 이사운 통합 입력 페이지 - 토스 스타일
 class MovingInputUnified extends StatefulWidget {
@@ -160,7 +161,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                 Text(
                   '이사 정보 입력',
                   style: TossTheme.heading1.copyWith(
-                    fontSize: 24,
+                    
                     fontWeight: FontWeight.w700,
                     height: 1.2,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
@@ -387,7 +388,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: 2),
                         Text(
                           period['subtitle']!,
                           style: TossTheme.caption.copyWith(
@@ -465,9 +466,9 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                   children: [
                     Text(
                       purpose['icon']!,
-                      style: const TextStyle(fontSize: 24),
+                      style: TypographyUnified.displaySmall,
                     ),
-                    const SizedBox(height: TossTheme.spacingXS),
+                    SizedBox(height: TossTheme.spacingXS),
                     Text(
                       purpose['title']!,
                       style: TossTheme.caption.copyWith(
@@ -615,7 +616,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
   
   Widget _buildPopularRegions(StateSetter setModalState, ScrollController scrollController, bool isCurrentArea, bool isDark) {
     if (_popularRegions.isEmpty) {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator(color: TossTheme.primaryBlue),
       );
     }
@@ -632,8 +633,8 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
             padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
             child: Row(
               children: [
-                Text('🔥', style: const TextStyle(fontSize: 16)),
-                const SizedBox(width: TossTheme.spacingXS),
+                Text('🔥', style: TypographyUnified.buttonMedium),
+                SizedBox(width: TossTheme.spacingXS),
                 Text('인기 지역', style: TossTheme.body3.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
@@ -664,7 +665,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
   
   Widget _buildSearchResults(StateSetter setModalState, ScrollController scrollController, bool isCurrentArea, bool isDark) {
     if (_isSearching) {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator(color: TossTheme.primaryBlue),
       );
     }
@@ -679,11 +680,11 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
               size: 48,
               color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
             ),
-            const SizedBox(height: TossTheme.spacingM),
+            SizedBox(height: TossTheme.spacingM),
             Text('검색 결과가 없어요', style: TossTheme.body2.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             )),
-            const SizedBox(height: TossTheme.spacingXS),
+            SizedBox(height: TossTheme.spacingXS),
             Text('다른 키워드로 다시 검색해보세요', style: TossTheme.caption.copyWith(
               color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
             )),

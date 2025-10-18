@@ -113,7 +113,7 @@ class _SajuPageState extends ConsumerState<SajuPage> {
                 style: TossTheme.heading3,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: TossTheme.spacingS),
+              SizedBox(height: TossTheme.spacingS),
               Text(
                 '사주팔자를 보려면 프로필에서\n생년월일을 설정해주세요',
                 style: TossTheme.caption.copyWith(color: TossTheme.textGray500),
@@ -164,7 +164,7 @@ class _SajuPageState extends ConsumerState<SajuPage> {
                       userProfile.name ?? '사용자',
                       style: TossTheme.heading4,
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2),
                     Text(
                       formatter.format(birthDate),
                       style: TossTheme.caption.copyWith(color: TossTheme.textGray500),
@@ -226,7 +226,7 @@ class _SajuPageState extends ConsumerState<SajuPage> {
             title,
             style: TossTheme.caption.copyWith(color: TossTheme.textGray500),
           ),
-          const SizedBox(height: TossTheme.spacingS),
+          SizedBox(height: TossTheme.spacingS),
           Text(
             pillar['stemHanja'] ?? '?',
             style: TypographyUnified.numberLarge.copyWith(
@@ -241,7 +241,7 @@ class _SajuPageState extends ConsumerState<SajuPage> {
               fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: TossTheme.spacingXS),
+          SizedBox(height: TossTheme.spacingXS),
           Text(
             '${pillar['stem'] ?? '?'}${pillar['branch'] ?? '?'}',
             style: TypographyUnified.labelSmall.copyWith(
@@ -276,7 +276,7 @@ class _SajuPageState extends ConsumerState<SajuPage> {
             color: TossTheme.textGray400,
             size: 40,
           ),
-          const SizedBox(height: TossTheme.spacingXS),
+          SizedBox(height: TossTheme.spacingXS),
           Text(
             '시간\n미입력',
             style: TypographyUnified.labelTiny.copyWith(

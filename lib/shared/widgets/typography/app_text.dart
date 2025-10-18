@@ -65,7 +65,7 @@ class AppText extends StatelessWidget {
 
 /// Display text variants
 class AppDisplayText extends AppText {
-  const AppDisplayText.large(
+  AppDisplayText.large(
     super.text, {
     super.key,
     super.textAlign,
@@ -77,7 +77,7 @@ class AppDisplayText extends AppText {
           style: AppTypography.displayLarge,
         );
 
-  const AppDisplayText.medium(
+  AppDisplayText.medium(
     super.text, {
     super.key,
     super.textAlign,
@@ -89,7 +89,7 @@ class AppDisplayText extends AppText {
           style: AppTypography.displayMedium,
         );
 
-  const AppDisplayText.small(
+  AppDisplayText.small(
     super.text, {
     super.key,
     super.textAlign,
@@ -104,7 +104,7 @@ class AppDisplayText extends AppText {
 
 /// Headline text variants
 class AppHeadlineText extends AppText {
-  const AppHeadlineText.large(
+  AppHeadlineText.large(
     super.text, {
     super.key,
     super.textAlign,
@@ -116,7 +116,7 @@ class AppHeadlineText extends AppText {
           style: AppTypography.headlineLarge,
         );
 
-  const AppHeadlineText.medium(
+  AppHeadlineText.medium(
     super.text, {
     super.key,
     super.textAlign,
@@ -128,7 +128,7 @@ class AppHeadlineText extends AppText {
           style: AppTypography.headlineMedium,
         );
 
-  const AppHeadlineText.small(
+  AppHeadlineText.small(
     super.text, {
     super.key,
     super.textAlign,
@@ -143,7 +143,7 @@ class AppHeadlineText extends AppText {
 
 /// Title text variants
 class AppTitleText extends AppText {
-  const AppTitleText.large(
+  AppTitleText.large(
     super.text, {
     super.key,
     super.textAlign,
@@ -155,7 +155,7 @@ class AppTitleText extends AppText {
           style: AppTypography.titleLarge,
         );
 
-  const AppTitleText.medium(
+  AppTitleText.medium(
     super.text, {
     super.key,
     super.textAlign,
@@ -167,7 +167,7 @@ class AppTitleText extends AppText {
           style: AppTypography.titleMedium,
         );
 
-  const AppTitleText.small(
+  AppTitleText.small(
     super.text, {
     super.key,
     super.textAlign,
@@ -182,7 +182,7 @@ class AppTitleText extends AppText {
 
 /// Body text variants
 class AppBodyText extends AppText {
-  const AppBodyText.large(
+  AppBodyText.large(
     super.text, {
     super.key,
     super.textAlign,
@@ -194,7 +194,7 @@ class AppBodyText extends AppText {
           style: AppTypography.bodyLarge,
         );
 
-  const AppBodyText.medium(
+  AppBodyText.medium(
     super.text, {
     super.key,
     super.textAlign,
@@ -206,7 +206,7 @@ class AppBodyText extends AppText {
           style: AppTypography.bodyMedium,
         );
 
-  const AppBodyText.small(
+  AppBodyText.small(
     super.text, {
     super.key,
     super.textAlign,
@@ -221,7 +221,7 @@ class AppBodyText extends AppText {
 
 /// Label text variants
 class AppLabelText extends AppText {
-  const AppLabelText.large(
+  AppLabelText.large(
     super.text, {
     super.key,
     super.textAlign,
@@ -233,7 +233,7 @@ class AppLabelText extends AppText {
           style: AppTypography.labelLarge,
         );
 
-  const AppLabelText.medium(
+  AppLabelText.medium(
     super.text, {
     super.key,
     super.textAlign,
@@ -245,7 +245,7 @@ class AppLabelText extends AppText {
           style: AppTypography.labelMedium,
         );
 
-  const AppLabelText.small(
+  AppLabelText.small(
     super.text, {
     super.key,
     super.textAlign,
@@ -260,7 +260,7 @@ class AppLabelText extends AppText {
 
 /// Caption text variants
 class AppCaptionText extends AppText {
-  const AppCaptionText.large(
+  AppCaptionText.large(
     super.text, {
     super.key,
     super.textAlign,
@@ -272,7 +272,7 @@ class AppCaptionText extends AppText {
           style: AppTypography.captionLarge,
         );
 
-  const AppCaptionText.medium(
+  AppCaptionText.medium(
     super.text, {
     super.key,
     super.textAlign,
@@ -284,7 +284,7 @@ class AppCaptionText extends AppText {
           style: AppTypography.captionMedium,
         );
 
-  const AppCaptionText.small(
+  AppCaptionText.small(
     super.text, {
     super.key,
     super.textAlign,
@@ -299,7 +299,7 @@ class AppCaptionText extends AppText {
 
 /// Button text
 class AppButtonText extends AppText {
-  const AppButtonText(
+  AppButtonText(
     super.text, {
     super.key,
     super.textAlign,
@@ -312,7 +312,7 @@ class AppButtonText extends AppText {
 
 /// Number text variants
 class AppNumberText extends AppText {
-  const AppNumberText.large(
+  AppNumberText.large(
     super.text, {
     super.key,
     super.textAlign,
@@ -322,7 +322,7 @@ class AppNumberText extends AppText {
           style: AppTypography.numberLarge,
         );
 
-  const AppNumberText.medium(
+  AppNumberText.medium(
     super.text, {
     super.key,
     super.textAlign,
@@ -332,7 +332,7 @@ class AppNumberText extends AppText {
           style: AppTypography.numberMedium,
         );
 
-  const AppNumberText.small(
+  AppNumberText.small(
     super.text, {
     super.key,
     super.textAlign,
@@ -345,7 +345,7 @@ class AppNumberText extends AppText {
 
 /// Overline text
 class AppOverlineText extends AppText {
-  const AppOverlineText(
+  AppOverlineText(
     super.text, {
     super.key,
     super.textAlign,

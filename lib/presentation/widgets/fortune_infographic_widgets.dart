@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../shared/components/toss_button.dart';
+import '../../core/theme/typography_unified.dart';
 
 /// Collection of infographic widgets for fortune completion page
 class FortuneInfographicWidgets {
@@ -57,7 +58,7 @@ class FortuneInfographicWidgets {
                 color: Theme.of(context).brightness == Brightness.dark
                     ? TossDesignSystem.grayDark100
                     : TossDesignSystem.gray700,
-                fontSize: 16,
+                
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
@@ -74,7 +75,7 @@ class FortuneInfographicWidgets {
                   color: Theme.of(context).brightness == Brightness.dark
                       ? TossDesignSystem.grayDark600
                       : TossDesignSystem.gray600,
-                  fontSize: 14,
+                  
                   fontWeight: FontWeight.w400,
                 ),
                 textAlign: TextAlign.center,
@@ -275,17 +276,15 @@ class FortuneInfographicWidgets {
       children: [
         Text(
           value,
-          style: TextStyle(
-            fontSize: 24,
+          style: TypographyUnified.displaySmall.copyWith(
             fontWeight: FontWeight.bold,
             color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         Text(
           title,
-          style: TextStyle(
-            fontSize: 12,
+          style: TypographyUnified.labelMedium.copyWith(
             color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
           ),
         ),
@@ -301,7 +300,7 @@ class FortuneInfographicWidgets {
     Map<String, double>? importance,
   }) {
     if (keywords.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           '키워드가 없습니다',
           style: TextStyle(color: TossDesignSystem.gray500),
@@ -429,7 +428,7 @@ class FortuneInfographicWidgets {
                       '오늘의 키워드',
                       style: TextStyle(
                         color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                        fontSize: 18,
+                        
                         fontWeight: FontWeight.bold,
                         height: 1.2,
                       ),
@@ -439,7 +438,7 @@ class FortuneInfographicWidgets {
                       '당신을 위한 특별한 메시지',
                       style: TextStyle(
                         color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                        fontSize: 13,
+                        
                         height: 1.3,
                       ),
                     ),
@@ -566,7 +565,7 @@ class FortuneInfographicWidgets {
     final actualItems = luckyItems ?? items;
 
     if (actualItems.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           '행운 아이템이 없습니다',
           style: TextStyle(color: TossDesignSystem.gray500),
@@ -620,21 +619,19 @@ class FortuneInfographicWidgets {
                     size: itemSize ?? 32,
                     color: _getLuckyItemColor(type),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     value,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: TypographyUnified.labelMedium.copyWith(
                       color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                     ),
                     textAlign: TextAlign.center,
@@ -681,7 +678,7 @@ class FortuneInfographicWidgets {
             '카테고리 데이터를 불러오는 중...',
             style: TextStyle(
               color: isDarkMode ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-              fontSize: 16,
+              
             ),
           ),
         ),
@@ -782,8 +779,7 @@ class FortuneInfographicWidgets {
             children: [
               Text(
                 '오늘의 총운',
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
                 ),
@@ -796,8 +792,7 @@ class FortuneInfographicWidgets {
                 ),
                 child: Text(
                   '$score점',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     fontWeight: FontWeight.w700,
                     color: scoreColor,
                   ),
@@ -821,8 +816,7 @@ class FortuneInfographicWidgets {
               ),
               child: Text(
                 idiom,
-                style: TextStyle(
-                  fontSize: 28,
+                style: TypographyUnified.heading1.copyWith(
                   fontWeight: FontWeight.w800,
                   color: scoreColor,
                   letterSpacing: 2,
@@ -832,13 +826,12 @@ class FortuneInfographicWidgets {
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
           // 설명 텍스트
           Text(
             description,
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray700,
               height: 1.5,
             ),
@@ -875,8 +868,7 @@ class FortuneInfographicWidgets {
               Expanded(
                 child: Text(
                   title,
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
@@ -890,8 +882,7 @@ class FortuneInfographicWidgets {
                 ),
                 child: Text(
                   '$score점',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: scoreColor,
                   ),
@@ -899,12 +890,11 @@ class FortuneInfographicWidgets {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           // 높이 제한 없이 자연스럽게 표시 (300자 설명 모두 보임)
           Text(
             description,
-            style: TextStyle(
-              fontSize: 13,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
               height: 1.5,
             ),
@@ -991,8 +981,7 @@ class FortuneInfographicWidgets {
       ),
       child: Text(
         text,
-        style: TextStyle(
-          fontSize: 12,
+        style: TypographyUnified.labelMedium.copyWith(
           fontWeight: FontWeight.w500,
           color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
         ),
@@ -1038,12 +1027,11 @@ class FortuneInfographicWidgets {
                     size: 20,
                     color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       title,
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                       ),
@@ -1057,8 +1045,7 @@ class FortuneInfographicWidgets {
                     ),
                     child: Text(
                       '$score점',
-                      style: TextStyle(
-                        fontSize: 12,
+                      style: TypographyUnified.labelMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: _getCategoryScoreColor(score, isDark),
                       ),
@@ -1066,11 +1053,10 @@ class FortuneInfographicWidgets {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Text(
                 summary,
-                style: TextStyle(
-                  fontSize: 14,
+                style: TypographyUnified.bodySmall.copyWith(
                   height: 1.4,
                   color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
                 ),
@@ -1179,11 +1165,10 @@ class FortuneInfographicWidgets {
                     size: 20,
                     color: isDark ? TossDesignSystem.primaryYellow : TossDesignSystem.warningOrange,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     '행운의 요소들',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
@@ -1236,16 +1221,14 @@ class FortuneInfographicWidgets {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 10,
+                style: TypographyUnified.labelTiny.copyWith(
                   fontWeight: FontWeight.w500,
                   color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                 ),
               ),
               Text(
                 value,
-                style: TextStyle(
-                  fontSize: 12,
+                style: TypographyUnified.labelMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                 ),
@@ -1286,7 +1269,7 @@ class FortuneInfographicWidgets {
                   title,
                   style: TextStyle(
                     color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                    fontSize: 18,
+                    
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -1299,7 +1282,7 @@ class FortuneInfographicWidgets {
                         item,
                         style: TextStyle(
                           color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                          fontSize: 14,
+                          
                         ),
                         textAlign: TextAlign.center,
                         maxLines: 2,
@@ -1311,7 +1294,7 @@ class FortuneInfographicWidgets {
                     '행운의 코디 준비 중...',
                     style: TextStyle(
                       color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                      fontSize: 14,
+                      
                     ),
                   ),
               ],
@@ -1342,7 +1325,7 @@ class FortuneInfographicWidgets {
           '사주 행운 아이템 준비 중...',
           style: TextStyle(
             color: isDarkMode ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-            fontSize: 16,
+            
           ),
         ),
       ),
@@ -1383,7 +1366,7 @@ class FortuneInfographicWidgets {
                 '레이더 차트 준비 중...',
                 style: TextStyle(
                   color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                  fontSize: 16,
+                  
                 ),
               ),
             ),
@@ -1412,7 +1395,7 @@ class FortuneInfographicWidgets {
           '액션 체크리스트 준비 중...',
           style: TextStyle(
             color: isDarkMode ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-            fontSize: 16,
+            
           ),
         ),
       ),
@@ -1454,22 +1437,20 @@ class FortuneInfographicWidgets {
                     color: TossDesignSystem.warningOrange,
                     size: 24,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     '날씨 운세',
-                    style: TextStyle(
-                      fontSize: 18,
+                    style: TypographyUnified.heading4.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Text(
                 weatherSummary?['description'] ?? '오늘의 날씨와 함께하는 운세를 확인해보세요.',
-                style: TextStyle(
-                  fontSize: 14,
+                style: TypographyUnified.bodySmall.copyWith(
                   color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
                   height: 1.5,
                 ),
@@ -1484,8 +1465,7 @@ class FortuneInfographicWidgets {
                   ),
                   child: Text(
                     '온도: ${weatherSummary!['temperature']}°C',
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: TypographyUnified.labelMedium.copyWith(
                       color: TossDesignSystem.tossBlue,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1522,7 +1502,7 @@ class FortuneInfographicWidgets {
               '공유 카드 준비 중...',
               style: TextStyle(
                 color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                fontSize: 16,
+                
               ),
             ),
           ),
@@ -1588,7 +1568,7 @@ class FortuneInfographicWidgets {
                     'AI 인사이트',
                     style: TextStyle(
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
-                      fontSize: 16,
+                      
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1610,7 +1590,7 @@ class FortuneInfographicWidgets {
                     insight,
                     style: TextStyle(
                       color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
-                      fontSize: 14,
+                      
                       height: 1.4,
                     ),
                   ),
@@ -1624,7 +1604,7 @@ class FortuneInfographicWidgets {
                   '✨ 추천 팁',
                   style: TextStyle(
                     color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                    fontSize: 12,
+                    
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1648,7 +1628,7 @@ class FortuneInfographicWidgets {
                           tip,
                           style: TextStyle(
                             color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                            fontSize: 12,
+                            
                             height: 1.3,
                           ),
                         ),
@@ -1667,7 +1647,7 @@ class FortuneInfographicWidgets {
                       'AI 인사이트 준비 중...',
                       style: TextStyle(
                         color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                        fontSize: 14,
+                        
                       ),
                     ),
                   ),
@@ -1729,7 +1709,7 @@ class FortuneInfographicWidgets {
                           title,
                           style: TextStyle(
                             color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                            fontSize: 16,
+                            
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -1739,7 +1719,7 @@ class FortuneInfographicWidgets {
                             subtitle,
                             style: TextStyle(
                               color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                              fontSize: 12,
+                              
                             ),
                           ),
                         ],
@@ -1787,7 +1767,7 @@ class FortuneInfographicWidgets {
                                 color: isDark
                                     ? TossDesignSystem.grayDark700
                                     : TossDesignSystem.gray700,
-                                fontSize: 11,
+                                
                                 fontWeight: FontWeight.w500,
                               ),
                               textAlign: TextAlign.center,
@@ -1800,7 +1780,7 @@ class FortuneInfographicWidgets {
                                 '${celebrity['similarity']}%',
                                 style: TextStyle(
                                   color: Color(0xFFf59e0b),
-                                  fontSize: 10,
+                                  
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1818,7 +1798,7 @@ class FortuneInfographicWidgets {
                       '연예인 목록 준비 중...',
                       style: TextStyle(
                         color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                        fontSize: 14,
+                        
                       ),
                     ),
                   ),
@@ -1881,7 +1861,7 @@ class FortuneInfographicWidgets {
                           '$ageGroup 운세',
                           style: TextStyle(
                             color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                            fontSize: 16,
+                            
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -1891,7 +1871,7 @@ class FortuneInfographicWidgets {
                             '$zodiacAnimal띠',
                             style: TextStyle(
                               color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                              fontSize: 12,
+                              
                             ),
                           ),
                         ],
@@ -1908,7 +1888,7 @@ class FortuneInfographicWidgets {
                   title,
                   style: TextStyle(
                     color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
-                    fontSize: 14,
+                    
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1918,7 +1898,7 @@ class FortuneInfographicWidgets {
                     description,
                     style: TextStyle(
                       color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                      fontSize: 12,
+                      
                       height: 1.4,
                     ),
                     maxLines: 3,
@@ -1932,7 +1912,7 @@ class FortuneInfographicWidgets {
                       '연령별 운세 준비 중...',
                       style: TextStyle(
                         color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                        fontSize: 14,
+                        
                       ),
                     ),
                   ),
@@ -1972,7 +1952,7 @@ class FortuneInfographicWidgets {
                 '$shareCount명이 공유했어요',
                 style: TextStyle(
                   color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                  fontSize: 14,
+                  
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -2221,7 +2201,7 @@ class RadarChartPainter extends CustomPainter {
           text: _getCategoryLabel(categories[i]),
           style: TextStyle(
             color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-            fontSize: 11,
+            
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -2364,7 +2344,7 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
                 _touchedHour != null ? '$displayHour시' : '현재 $displayHour시',
                 style: TextStyle(
                   color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
-                  fontSize: 12,
+                  
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -2372,7 +2352,7 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
                 '$displayScore점',
                 style: TextStyle(
                   color: isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue,
-                  fontSize: 14,
+                  
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -2416,7 +2396,7 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
                   '${i.toString().padLeft(2, '0')}:00',
                   style: TextStyle(
                     color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                    fontSize: 10,
+                    
                   ),
                 ),
             ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 동전 던지기 애니메이션 위젯
 class CoinThrowAnimation extends StatefulWidget {
@@ -233,12 +234,12 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                         width: 2,
                       ),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text(
                         '¥',
                         style: TextStyle(
                           color: TossDesignSystem.white,
-                          fontSize: 12,
+                          
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -294,8 +295,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                 children: [
                   Text(
                     _showSplash ? '🌊 소원이 분수대에 담겼습니다!' : '🪙 동전을 던지고 있어요...',
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: TypographyUnified.heading4.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1E3A8A),
                     ),
@@ -306,8 +306,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                     _showSplash 
                       ? '신이 당신의 소원을 들었습니다. 잠시만 기다려주세요.'
                       : '간절한 마음을 담아 동전이 날아가고 있어요.',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       color: const Color(0xFF1E3A8A).withValues(alpha: 0.8),
                     ),
                     textAlign: TextAlign.center,
@@ -352,12 +351,11 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                     size: 20,
                   ),
                 ),
-                const SizedBox(width: 12),
-                const Expanded(
+                SizedBox(width: 12),
+                Expanded(
                   child: Text(
                     '당신의 소원',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1E3A8A),
                     ),
@@ -371,8 +369,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                   ),
                   child: Text(
                     _getCategoryName(),
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: TypographyUnified.labelMedium.copyWith(
                       fontWeight: FontWeight.w500,
                       color: _getCategoryColor(),
                     ),
@@ -380,11 +377,10 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               widget.wishText,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TypographyUnified.bodySmall.copyWith(
                 color: Color(0xFF374151),
                 height: 1.5,
               ),

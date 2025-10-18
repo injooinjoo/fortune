@@ -63,7 +63,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                       color: TossDesignSystem.white,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     '패키지로 구매하면 최대 50% 토큰 절약',
                     style: TypographyUnified.bodyLarge.copyWith(
@@ -88,7 +88,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
                               color: TossDesignSystem.white,
                               size: 20,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(
                               '보유 토큰',
                               style: TypographyUnified.bodySmall.copyWith(
@@ -283,7 +283,7 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               '운세:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),

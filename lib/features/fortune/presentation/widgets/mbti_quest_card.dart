@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class MbtiQuestCard extends StatefulWidget {
   final List<dynamic> dailyQuests;
@@ -76,7 +77,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2),
                     Text(
                       '완료하고 성장 포인트를 획득하세요',
                       style: TossDesignSystem.caption.copyWith(
@@ -197,7 +198,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
               child: Center(
                 child: Text(
                   icon,
-                  style: const TextStyle(fontSize: 20),
+                  style: TypographyUnified.heading3,
                 ),
               ),
             ),
@@ -221,7 +222,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                       _buildDifficultyBadge(difficulty),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     description,
                     style: TossDesignSystem.caption.copyWith(
@@ -298,13 +299,13 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 12, color: color),
-          const SizedBox(width: 3),
+          SizedBox(width: 3),
           Text(
             label,
             style: TossDesignSystem.caption.copyWith(
               color: color,
               fontWeight: FontWeight.w600,
-              fontSize: 11,
+              
             ),
           ),
         ],

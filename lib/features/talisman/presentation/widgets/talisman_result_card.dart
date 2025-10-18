@@ -92,7 +92,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Text(
                 '부적이 완성되었어요!',
                 style: TossTheme.heading3.copyWith(
@@ -156,7 +156,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                         widget.talismanDesign.category.emoji,
                         style: TypographyUnified.buttonMedium,
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6),
                       Text(
                         widget.talismanDesign.category.displayName,
                         style: TossTheme.caption.copyWith(
@@ -298,7 +298,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                         color: _categoryColor,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         blessing,
@@ -405,7 +405,7 @@ class _TalismanResultCardState extends State<TalismanResultCard>
             widget.talismanDesign.category.emoji,
             style: TypographyUnified.numberLarge,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             widget.talismanDesign.category.displayName,
             style: TossTheme.caption.copyWith(

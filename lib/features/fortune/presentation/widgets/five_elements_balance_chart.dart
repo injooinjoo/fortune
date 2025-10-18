@@ -6,6 +6,7 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class FiveElementsBalanceChart extends StatefulWidget {
   final Map<String, int> elementBalance;
@@ -184,7 +185,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                 RadarChartData(
                   radarShape: RadarShape.polygon,
                   tickCount: 4,
-                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
+                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? TypographyUnified.labelMedium,
                   tickBorderData: BorderSide(
                     color: TossDesignSystem.white.withValues(alpha: 0.2),
                     width: 1,
@@ -197,7 +198,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                     color: TossDesignSystem.purple.withValues(alpha: 0.5),
                     width: 2,
                   ),
-                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(fontSize: 12),
+                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? TypographyUnified.labelMedium,
                   titlePositionPercentageOffset: 0.2,
                   getTitle: (index, angle) {
                     final elements = ['목', '화', '토', '금', '수'];

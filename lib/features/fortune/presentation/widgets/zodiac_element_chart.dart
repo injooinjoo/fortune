@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/zodiac_compatibility_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class ZodiacElementChart extends StatefulWidget {
   final String selectedZodiac;
@@ -143,11 +144,10 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
           color: TossDesignSystem.warningOrange,
           size: 24,
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Text(
           '오행 분석',
-          style: TextStyle(
-            fontSize: 20,
+          style: TypographyUnified.heading3.copyWith(
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white,
           ),
@@ -298,15 +298,13 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
         children: [
           Text(
             widget.selectedZodiac,
-            style: const TextStyle(
-              fontSize: 18,
+            style: TypographyUnified.heading4.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.white)),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             _selectedElement!,
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               color: data.color,
               fontWeight: FontWeight.bold)),
           if (isMyElement) ...[
@@ -317,10 +315,9 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 color: data.color.withValues(alpha:0.3),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Text(
+              child: Text(
                 '나의 오행',
-                style: TextStyle(
-                  fontSize: 10,
+                style: TypographyUnified.labelTiny.copyWith(
                   color: TossDesignSystem.white,
                 ),
               ),
@@ -351,16 +348,14 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                   children: [
                     Text(
                       _selectedElement!,
-                      style: TextStyle(
-                        fontSize: 20,
+                      style: TypographyUnified.heading3.copyWith(
                         fontWeight: FontWeight.bold,
                         color: data.color,
                       ),
                     ),
                     Text(
                       '${data.season} · ${data.direction}',
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: TypographyUnified.bodySmall.copyWith(
                         color: TossDesignSystem.white.withValues(alpha:0.8),
                       ),
                     ),
@@ -369,11 +364,10 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             data.description,
-            style: const TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               color: TossDesignSystem.white,
               height: 1.5,
             ),
@@ -395,8 +389,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 ),
                 child: Text(
                   trait,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: TossDesignSystem.white,
                   ),
                 ),
@@ -421,11 +414,10 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                   color: data.color,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(
                   '띠: ',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: TossDesignSystem.white.withValues(alpha:0.8),
                   ),
                 ),
@@ -435,8 +427,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                     padding: const EdgeInsets.only(left: 4),
                     child: Text(
                       zodiac,
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: TypographyUnified.bodySmall.copyWith(
                         fontWeight: isCurrentZodiac ? FontWeight.bold : FontWeight.normal,
                         color: isCurrentZodiac ? data.color : TossDesignSystem.white,
                       ),
@@ -464,11 +455,10 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 color: TossDesignSystem.warningOrange,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '오행 상생상극',
-                style: const TextStyle(
-                  fontSize: 18,
+                style: TypographyUnified.heading4.copyWith(
                   fontWeight: FontWeight.bold,
                   color: TossDesignSystem.white,
                 ),
@@ -512,16 +502,14 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 14,
+                style: TypographyUnified.bodySmall.copyWith(
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
               ),
               Text(
                 relation,
-                style: TextStyle(
-                  fontSize: 14,
+                style: TypographyUnified.bodySmall.copyWith(
                   color: TossDesignSystem.white.withValues(alpha:0.8),
                 ),
               ),

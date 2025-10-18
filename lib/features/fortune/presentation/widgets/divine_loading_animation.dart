@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 신의 응답을 기다리는 신비로운 로딩 애니메이션
 class DivineLoadingAnimation extends StatefulWidget {
@@ -201,7 +202,7 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
                 _loadingSteps[_currentStep],
                 style: TextStyle(
                   color: isDark ? Colors.white : TossDesignSystem.grayDark900,
-                  fontSize: 18,
+                  
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.3,
                 ),
@@ -251,7 +252,7 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
               '${_currentStep + 1} / ${_loadingSteps.length}',
               style: TextStyle(
                 color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-                fontSize: 14,
+                
                 fontWeight: FontWeight.w500,
               ),
             ),

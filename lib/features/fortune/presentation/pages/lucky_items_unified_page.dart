@@ -347,13 +347,12 @@ ${topRecommendations.join('\n')}
                 children: [
                   Text(
                     category['icon'],
-                    style: const TextStyle(fontSize: 24),
+                    style: TypographyUnified.displaySmall,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     category['title'],
-                    style: TextStyle(
-                      fontSize: 11,
+                    style: TypographyUnified.labelSmall.copyWith(
                       fontWeight: isSelected 
                           ? FontWeight.w600 
                           : FontWeight.w400,
@@ -401,7 +400,7 @@ ${topRecommendations.join('\n')}
             children: [
               Text(
                 selectedCategory['icon'],
-                style: const TextStyle(fontSize: 32),
+                style: TypographyUnified.numberLarge,
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -410,17 +409,15 @@ ${topRecommendations.join('\n')}
                   children: [
                     Text(
                       selectedCategory['title'],
-                      style: TextStyle(
-                        fontSize: 20,
+                      style: TypographyUnified.heading3.copyWith(
                         fontWeight: FontWeight.w700,
                         color: selectedCategory['color'],
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       selectedCategory['description'],
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: TypographyUnified.bodySmall.copyWith(
                         color: Color(0xFF666666),
                       ),
                     ),
@@ -468,7 +465,7 @@ ${topRecommendations.join('\n')}
             color: TossDesignSystem.gray100,
           ),
           const SizedBox(height: 12),
-          const Text(
+          Text(
             '오늘의 행운 가이드',
             style: TextStyle(
               fontSize: 22,
@@ -476,11 +473,10 @@ ${topRecommendations.join('\n')}
               color: TossDesignSystem.gray100,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '로또부터 투자까지, 실용적인 행운 정보를 얻어보세요',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: TossDesignSystem.gray100.withValues(alpha: 0.7),
               height: 1.4,
             ),
@@ -496,10 +492,9 @@ ${topRecommendations.join('\n')}
                 color: TossDesignSystem.gray100.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
+              child: Text(
                 '👇 아래 카테고리를 선택하여 상세 정보를 확인하세요',
-                style: TextStyle(
-                  fontSize: 12,
+                style: TypographyUnified.labelMedium.copyWith(
                   color: TossDesignSystem.gray100,
                   fontWeight: FontWeight.w500,
                 ),
@@ -689,11 +684,10 @@ ${topRecommendations.join('\n')}
               Row(
                 children: [
                   const Icon(Icons.confirmation_number, color: Color(0xFFFF6B6B)),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     '추천 번호',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: category['color'],
                     ),
@@ -716,7 +710,7 @@ ${topRecommendations.join('\n')}
                         number.toString(),
                         style: const TextStyle(
                           color: TossDesignSystem.gray100,
-                          fontSize: 16,
+                          
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -738,8 +732,7 @@ ${topRecommendations.join('\n')}
                     Expanded(
                       child: Text(
                         data['tip'] ?? '',
-                        style: const TextStyle(
-                          fontSize: 12,
+                        style: TypographyUnified.labelMedium.copyWith(
                           color: Color(0xFF666666),
                         ),
                       ),
@@ -766,8 +759,8 @@ ${topRecommendations.join('\n')}
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('추천 매장', style: TextStyle(fontSize: 12, color: Color(0xFF666666))),
-                    Text(data['store'] ?? '', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                    Text('추천 매장', style: TypographyUnified.labelMedium.copyWith( color: Color(0xFF666666))),
+                    Text(data['store'] ?? '', style: TypographyUnified.bodySmall.copyWith( fontWeight: FontWeight.w600)),
                   ],
                 ),
               ),
@@ -775,8 +768,8 @@ ${topRecommendations.join('\n')}
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('추천 시간', style: TextStyle(fontSize: 12, color: Color(0xFF666666))),
-                    Text(data['time'] ?? '', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                    Text('추천 시간', style: TypographyUnified.labelMedium.copyWith( color: Color(0xFF666666))),
+                    Text(data['time'] ?? '', style: TypographyUnified.bodySmall.copyWith( fontWeight: FontWeight.w600)),
                   ],
                 ),
               ),
@@ -806,11 +799,10 @@ ${topRecommendations.join('\n')}
                 color: category['color'],
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: category['color'],
                 ),
@@ -834,8 +826,7 @@ ${topRecommendations.join('\n')}
                     Expanded(
                       child: Text(
                         entry.value.toString(),
-                        style: const TextStyle(
-                          fontSize: 12,
+                        style: TypographyUnified.labelMedium.copyWith(
                           color: Color(0xFF666666),
                         ),
                       ),
@@ -853,8 +844,7 @@ ${topRecommendations.join('\n')}
                     width: 80,
                     child: Text(
                       _formatFieldName(entry.key),
-                      style: const TextStyle(
-                        fontSize: 12,
+                      style: TypographyUnified.labelMedium.copyWith(
                         color: Color(0xFF666666),
                       ),
                     ),
@@ -863,8 +853,7 @@ ${topRecommendations.join('\n')}
                   Expanded(
                     child: Text(
                       entry.value.toString(),
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: TypographyUnified.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF191F28),
                       ),

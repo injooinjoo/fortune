@@ -5,6 +5,7 @@ import '../../core/theme/toss_theme.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../services/social_auth_service.dart';
 import '../../core/utils/logger.dart';
+import '../../core/theme/typography_unified.dart';
 
 class PreviewScreen extends StatefulWidget {
   final VoidCallback? onLoginSuccess;
@@ -107,7 +108,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                 Text(
                   '나만의 운세를 확인하세요',
                   style: TossTheme.heading2.copyWith(
-                    fontSize: 20,
+                    
                   ),
                 ),
                 
@@ -158,8 +159,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                 // Terms text
                 Text(
                   '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: TypographyUnified.labelMedium.copyWith(
                     color: TossTheme.textGray600,
                     height: 1.5,
                   ),
@@ -255,11 +255,10 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
               width: 24,
               height: 24,
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 16,
+              style: TypographyUnified.buttonMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900,
               ),
@@ -298,8 +297,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                       // Title
                       Text(
                         '오늘의 이야기가\n완성되었어요!',
-                        style: TextStyle(
-                          fontSize: 28,
+                        style: TypographyUnified.heading1.copyWith(
                           fontWeight: FontWeight.w600,
                           color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                           height: 1.2,
@@ -312,8 +310,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                       // Subtitle
                       Text(
                         '로그인하고 나만의 맞춤 운세를\n확인해보세요',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: TypographyUnified.buttonMedium.copyWith(
                           color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                           height: 1.4,
                         ),
@@ -345,8 +342,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                         onTap: widget.onContinueWithoutLogin,
                         child: Text(
                           '로그인 없이 보기',
-                          style: TextStyle(
-                            fontSize: 14,
+                          style: TypographyUnified.bodySmall.copyWith(
                             color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
                             decoration: TextDecoration.underline,
                             decorationColor: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,

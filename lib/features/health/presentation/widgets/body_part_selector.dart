@@ -52,7 +52,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   '아래 인체 그림에서 해당 부위를 터치해주세요\n(선택하지 않아도 괜찮습니다)',
                   style: TossTheme.body3.copyWith(

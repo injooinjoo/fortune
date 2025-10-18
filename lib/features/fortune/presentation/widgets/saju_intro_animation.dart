@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 사주팔자 시작 애니메이션 위젯
 class SajuIntroAnimation extends StatefulWidget {
@@ -288,7 +289,7 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                           style: TossTheme.caption.copyWith(
                             color: TossTheme.textGray600,
                             fontWeight: FontWeight.bold,
-                            fontSize: 12,
+                            
                           ),
                         ),
                       ),

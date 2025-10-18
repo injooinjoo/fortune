@@ -6,6 +6,7 @@ import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/career_coaching_model.dart';
 import '../../../../services/career_coaching_service.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class CareerCoachingResultPage extends ConsumerStatefulWidget {
   final CareerCoachingInput input;
@@ -209,7 +210,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                           Text(
                             '${_result!.healthScore.overallScore}',
                             style: TossDesignSystem.heading1.copyWith(
-                              fontSize: 48,
+                              
                               fontWeight: FontWeight.bold,
                               color: TossDesignSystem.tossBlue,
                             ),
@@ -264,7 +265,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                   children: [
                     Icon(Icons.trending_up, 
                       color: TossDesignSystem.tossBlue, size: 24),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '시장 트렌드',
                       style: TossDesignSystem.body1.copyWith(
@@ -328,7 +329,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Center(
-                            child: Text(insight.icon, style: const TextStyle(fontSize: 24)),
+                            child: Text(insight.icon, style: TypographyUnified.displaySmall),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -375,7 +376,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Text(
                       insight.description,
                       style: TossDesignSystem.body2.copyWith(
@@ -412,7 +413,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                 Row(
                   children: [
                     Icon(Icons.flag, color: TossDesignSystem.warningOrange, size: 24),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '집중 영역',
                       style: TossDesignSystem.body1.copyWith(
@@ -421,7 +422,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(
                   _result!.thirtyDayPlan.focusArea,
                   style: TossDesignSystem.body2.copyWith(
@@ -584,7 +585,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                 Row(
                   children: [
                     Icon(Icons.route, color: TossDesignSystem.tossBlue, size: 24),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '성장 로드맵',
                       style: TossDesignSystem.body1.copyWith(
@@ -692,7 +693,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                     children: [
                       Icon(Icons.schedule,
                         color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600, size: 20),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         '예상 기간: ${_result!.growthRoadmap.estimatedMonths}개월',
                         style: TossDesignSystem.body2.copyWith(
@@ -703,7 +704,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                   ),
                 ),
                 
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 
                 Text(
                   '핵심 마일스톤',
@@ -747,7 +748,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                 Row(
                   children: [
                     Icon(Icons.school, color: TossDesignSystem.warningOrange, size: 24),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '추천 스킬',
                       style: TossDesignSystem.body1.copyWith(
@@ -794,13 +795,13 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                                 _getPriorityLabel(skill.priority),
                                 style: TossDesignSystem.caption.copyWith(
                                   color: TossDesignSystem.white,
-                                  fontSize: 10,
+                                  
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         Text(
                           skill.reason,
                           style: TossDesignSystem.caption.copyWith(
@@ -907,7 +908,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
             CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.tossBlue),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             Text(
               '결과를 불러오는 중...',
               style: TossDesignSystem.body2.copyWith(

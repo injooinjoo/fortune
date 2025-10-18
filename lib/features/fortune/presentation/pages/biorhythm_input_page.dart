@@ -11,6 +11,7 @@ import '../../../../services/ad_service.dart';
 import '../../../../services/storage_service.dart';
 import 'biorhythm_loading_page.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class BiorhythmInputPage extends StatefulWidget {
   const BiorhythmInputPage({super.key});
@@ -156,8 +157,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                 ),
                 Text(
                   '생년월일 선택',
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: TypographyUnified.heading4.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                   ),
@@ -404,7 +404,7 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32),
 
                     // 안내 문구
                     Text(

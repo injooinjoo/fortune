@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import '../../../../../core/theme/toss_theme.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 class LoveScoreCircle extends StatefulWidget {
   final int score;
@@ -119,9 +120,9 @@ class _LoveScoreCircleState extends State<LoveScoreCircle>
               children: [
                 Text(
                   emoji,
-                  style: const TextStyle(fontSize: 32),
+                  style: TypographyUnified.numberLarge,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   '$currentScore',
                   style: TossTheme.heading1.copyWith(

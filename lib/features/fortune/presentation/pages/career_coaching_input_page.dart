@@ -8,6 +8,7 @@ import '../../domain/models/career_coaching_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class CareerCoachingInputPage extends ConsumerStatefulWidget {
   const CareerCoachingInputPage({super.key});
@@ -248,7 +249,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                           color: isDark ? TossDesignSystem.textPrimaryDark : null,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         '맞춤형 직업 전략을 제공해드려요',
                         style: TossDesignSystem.caption.copyWith(
@@ -262,7 +263,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             ),
           ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2),
           
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           
           // 현재 역할
           Text(
@@ -289,7 +290,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                   style: _currentRole == role.id ? TossCardStyle.filled : TossCardStyle.outlined,
                   child: Row(
                     children: [
-                      Text(role.emoji, style: const TextStyle(fontSize: 20)),
+                      Text(role.emoji, style: TypographyUnified.heading3),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Column(
@@ -325,7 +326,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             ).toList(),
           ),
           
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           
           // 핵심 고민
           Text(
@@ -357,7 +358,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Center(
-                          child: Text(concern.emoji, style: const TextStyle(fontSize: 24)),
+                          child: Text(concern.emoji, style: TypographyUnified.displaySmall),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -376,7 +377,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                                   : null,
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            SizedBox(height: 2),
                             Text(
                               concern.description,
                               style: TossDesignSystem.caption.copyWith(
@@ -454,7 +455,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                           color: isDark ? TossDesignSystem.textPrimaryDark : null,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         '성장 로드맵을 설계해드려요',
                         style: TossDesignSystem.caption.copyWith(
@@ -468,7 +469,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             ),
           ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2),
           
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           
           // 단기 목표
           Text(
@@ -497,8 +498,8 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(goal.emoji, style: const TextStyle(fontSize: 16)),
-                      const SizedBox(width: 6),
+                      Text(goal.emoji, style: TypographyUnified.buttonMedium),
+                      SizedBox(width: 6),
                       Text(
                         goal.title,
                         style: TossDesignSystem.body2.copyWith(
@@ -519,7 +520,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             ).toList(),
           ),
           
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           
           // 핵심 가치
           Text(
@@ -563,7 +564,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             ).toList(),
           ),
           
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           
           // 개선하고 싶은 스킬
           Text(
@@ -670,7 +671,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
               .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withValues(alpha: 0.3))
               .rotate(duration: 3000.ms),
             
-            const SizedBox(height: 32),
+            SizedBox(height: 32),
             
             Text(
               '직업 전략 분석 중...',
@@ -682,7 +683,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
               .fadeIn(duration: 500.ms)
               .slideY(begin: 0.2),
             
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             
             Text(
               '맞춤형 성장 로드맵을 준비하고 있어요',

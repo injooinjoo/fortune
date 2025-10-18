@@ -6,6 +6,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/mbti_cognitive_functions_service.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class CognitiveFunctionsRadarChart extends StatefulWidget {
   final String mbtiType;
@@ -95,7 +96,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                 color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
               ),
             ),
-            const SizedBox(height: AppSpacing.spacing1),
+            SizedBox(height: AppSpacing.spacing1),
             Text(
               '${widget.mbtiType} - ${typeInfo['title']}의 오늘 상태',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -150,8 +151,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   tickCount: 5,
                   ticksTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray600,
-                  ) ?? TextStyle(
-                    fontSize: 12,
+                  ) ?? TypographyUnified.labelMedium.copyWith(
                     color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray600,
                   ),
                   tickBorderData: BorderSide(
@@ -169,8 +169,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   titleTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
                     fontWeight: FontWeight.w600,
-                  ) ?? TextStyle(
-                    fontSize: 12,
+                  ) ?? TypographyUnified.labelMedium.copyWith(
                     color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
                     fontWeight: FontWeight.w600,
                   ),
@@ -312,7 +311,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                     child: Text(
                       info['icon'],
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 16,
+                        
                       ),
                     ),
                   ),
@@ -352,7 +351,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                           ),
                         ],
                       ),
-                      const SizedBox(height: AppSpacing.spacing1),
+                      SizedBox(height: AppSpacing.spacing1),
                       Text(
                         info['nameEn'],
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -418,7 +417,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               _buildStackLegend('열등기능', TossDesignSystem.warningOrange, 'Inferior'),
             ],
           ),
-          const SizedBox(height: AppSpacing.spacing3),
+          SizedBox(height: AppSpacing.spacing3),
           Text(
             '* 주기능부터 열등기능까지 4개가 의식적으로 사용되는 기능입니다',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -445,7 +444,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
             shape: BoxShape.circle,
           ),
         ),
-        const SizedBox(height: AppSpacing.spacing1),
+        SizedBox(height: AppSpacing.spacing1),
         Text(
           name,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -522,30 +521,30 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                 borderRadius: BorderRadius.circular(4 * 0.5),
               ),
             ),
-            const SizedBox(height: AppSpacing.spacing5),
+            SizedBox(height: AppSpacing.spacing5),
             Text(
               info['icon'],
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontSize: 32,
+                
               ),
             ),
-            const SizedBox(height: AppSpacing.spacing3),
+            SizedBox(height: AppSpacing.spacing3),
             Text(
               '$function - ${info['name']}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                 fontWeight: FontWeight.w600,
-                fontSize: 18,
+                
               ),
             ),
             Text(
               info['nameEn'],
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                fontSize: 14,
+                
               ),
             ),
-            const SizedBox(height: AppSpacing.spacing4),
+            SizedBox(height: AppSpacing.spacing4),
             Text(
               info['description'],
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -580,7 +579,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: _getLevelColor(widget.functionLevels[function]!),
                 fontWeight: FontWeight.w600,
-                fontSize: 16,
+                
               ),
             ),
           ],
@@ -602,7 +601,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: color,
             fontWeight: FontWeight.w600,
-            fontSize: 16,
+            
           ),
         ),
         const SizedBox(height: AppSpacing.spacing2),
@@ -620,7 +619,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   item,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
-                    fontSize: 14,
+                    
                   ),
                 ),
               ),

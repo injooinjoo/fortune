@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../presentation/providers/auth_provider.dart';
 // import '../../presentation/widgets/ads/common_ad_placements.dart';
 import '../../core/components/toss_fortune_loading_screen.dart';
+import '../../core/theme/typography_unified.dart';
 
 class AdLoadingScreen extends ConsumerStatefulWidget {
   final VoidCallback onComplete;
@@ -129,11 +130,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                       );
                     },
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     _countdown > 0 ? '$_countdown초' : '',
-                    style: TextStyle(
-                      fontSize: 11,
+                    style: TypographyUnified.labelSmall.copyWith(
                       color: (isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withValues(alpha: 0.4),
                     ),
                   ),
@@ -147,7 +147,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                       color: TossDesignSystem.gray400.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text('광고 영역', style: TextStyle(color: TossDesignSystem.gray500)),
                     ),
                   ),
@@ -168,8 +168,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                 ),
                 child: Text(
                   '건너뛰기',
-                  style: TextStyle(
-                    fontSize: 13,
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: (isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withValues(alpha: 0.6),
                   ),
                 ),

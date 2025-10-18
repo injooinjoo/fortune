@@ -112,7 +112,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                 size: 18,
                 color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray500,
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: 4),
               Text(
                 label,
                 style: TypographyUnified.labelMedium.copyWith(
@@ -189,7 +189,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     politician['name']!,
                     style: TypographyUnified.bodySmall.copyWith(

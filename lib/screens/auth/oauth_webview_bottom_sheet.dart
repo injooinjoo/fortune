@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../core/utils/logger.dart';
+import '../../core/theme/typography_unified.dart';
 
 class OAuthWebViewBottomSheet extends StatefulWidget {
   final String oauthUrl;
@@ -192,7 +193,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                             'Google 로그인 페이지를 로드하는 중...',
                             style: TextStyle(
                               color: TossDesignSystem.gray600,
-                              fontSize: 14,
+                              
                             ),
                           ),
                         ],

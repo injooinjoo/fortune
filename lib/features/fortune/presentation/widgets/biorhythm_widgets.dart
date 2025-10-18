@@ -4,6 +4,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../pages/biorhythm_result_page.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 // 오늘의 전체 컨디션 카드
 class TodayOverallStatusCard extends StatelessWidget {
@@ -52,7 +53,7 @@ class TodayOverallStatusCard extends StatelessWidget {
                   style: theme.textTheme.headlineLarge?.copyWith(
                     color: TossDesignSystem.white,
                     fontWeight: FontWeight.w900,
-                    fontSize: 36,
+                    
                   ),
                 ),
                 Text(
@@ -65,7 +66,7 @@ class TodayOverallStatusCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
 
           Text(
             biorhythmData.statusMessage,
@@ -74,7 +75,7 @@ class TodayOverallStatusCard extends StatelessWidget {
               color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
 
           Text(
             '오늘 ${DateTime.now().month}월 ${DateTime.now().day}일 컨디션',
@@ -165,17 +166,15 @@ class RhythmDetailCards extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       status,
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: TypographyUnified.bodySmall.copyWith(
                         color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                       ),
                     ),
@@ -187,16 +186,14 @@ class RhythmDetailCards extends StatelessWidget {
                 children: [
                   Text(
                     '$score',
-                    style: TextStyle(
-                      fontSize: 24,
+                    style: TypographyUnified.displaySmall.copyWith(
                       fontWeight: FontWeight.w700,
                       color: color,
                     ),
                   ),
                   Text(
                     '점',
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: TypographyUnified.labelMedium.copyWith(
                       color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                     ),
                   ),
@@ -240,7 +237,7 @@ class TodayRecommendationCard extends StatelessWidget {
                 color: TossTheme.primaryBlue,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '오늘의 추천',
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -404,7 +401,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                       '${value.toInt()}',
                       style: TextStyle(
                         color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
-                        fontSize: 12,
+                        
                       ),
                     );
                   },
@@ -420,7 +417,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                         days[value.toInt()],
                         style: TextStyle(
                           color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
-                          fontSize: 11,
+                          
                         ),
                       );
                     }
@@ -604,11 +601,10 @@ class ImportantDatesCard extends StatelessWidget {
                   color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                 ),
               ),
-              const SizedBox(height: 2),
+              SizedBox(height: 2),
               Text(
                 description,
-                style: TextStyle(
-                  fontSize: 13,
+                style: TypographyUnified.bodySmall.copyWith(
                   color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                 ),
               ),
@@ -739,8 +735,7 @@ class WeeklyActivityGuide extends StatelessWidget {
                         ),
                         Text(
                           activity['description'] as String,
-                          style: TextStyle(
-                            fontSize: 13,
+                          style: TypographyUnified.bodySmall.copyWith(
                             color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                           ),
                         ),
@@ -808,7 +803,7 @@ class PersonalAnalysisCard extends StatelessWidget {
               color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
           Text(
             '$age세의 당신은 지금까지 ${biorhythmData.totalDays}일을 살아오셨네요.',
@@ -817,7 +812,7 @@ class PersonalAnalysisCard extends StatelessWidget {
               height: 1.6,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
 
           Text(
             _getPersonalAnalysis(),
@@ -922,11 +917,10 @@ class LifestyleAdviceCard extends StatelessWidget {
                             color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: 2),
                         Text(
                           advice['description'] as String,
-                          style: TextStyle(
-                            fontSize: 14,
+                          style: TypographyUnified.bodySmall.copyWith(
                             color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                             height: 1.4,
                           ),
@@ -1038,7 +1032,7 @@ class HealthTipsCard extends StatelessWidget {
                 color: const Color(0xFF00C896),
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '건강 관리 팁',
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -1113,11 +1107,10 @@ class HealthTipsCard extends StatelessWidget {
                   color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                 ),
               ),
-              const SizedBox(height: 2),
+              SizedBox(height: 2),
               Text(
                 tip,
-                style: TextStyle(
-                  fontSize: 13,
+                style: TypographyUnified.bodySmall.copyWith(
                   color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
                   height: 1.4,
                 ),
@@ -1202,7 +1195,7 @@ class NextAnalysisCard extends StatelessWidget {
                     color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   '바이오리듬은 매일 변화해요',
                   style: theme.textTheme.bodyMedium?.copyWith(

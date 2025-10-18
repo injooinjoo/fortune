@@ -21,6 +21,7 @@ import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import 'dart:convert';
+import '../../../../core/theme/typography_unified.dart';
 
 class BlindDateFortunePage extends BaseFortunePage {
   const BlindDateFortunePage({super.key})
@@ -571,7 +572,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     Icons.calendar_month,
                     color: theme.colorScheme.primary,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     '만남 정보',
                     style: theme.textTheme.headlineSmall?.copyWith(
@@ -613,7 +614,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               // Meeting Time
               Text(
                 '만남 시간대',
@@ -650,7 +651,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   );
                 }).toList()
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               // Meeting Type
               Text(
                 '만남 방식',
@@ -679,7 +680,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     _meetingType = value;
                   });
                 }),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               // Introducer
               Text(
                 '소개 경로',
@@ -741,7 +742,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     Icons.favorite_outline,
                     color: theme.colorScheme.primary,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     '선호 사항',
                     style: theme.textTheme.headlineSmall?.copyWith(
@@ -750,7 +751,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               // Important Qualities
               Text(
                 '중요하게 생각하는 것 (3개 이상)',
@@ -795,7 +796,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   );
                 }).toList()
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               // Age Preference
               Text(
                 '나이 선호도',
@@ -848,7 +849,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   ),
                 );
               }),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               // Ideal First Date
               Text(
                 '이상적인 첫 데이트',
@@ -896,7 +897,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     Icons.psychology,
                     color: theme.colorScheme.primary,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     '자기 평가',
                     style: theme.textTheme.headlineSmall?.copyWith(
@@ -905,7 +906,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               // Confidence Level
               Text(
                 '소개팅 자신감',
@@ -970,7 +971,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   ),
                 );
               }),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               // Concerns
               Text(
                 '걱정되는 부분 (선택)',
@@ -1091,7 +1092,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       Icons.person,
                       color: theme.colorScheme.primary,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '내 사진 분석',
                       style: theme.textTheme.headlineSmall?.copyWith(
@@ -1130,7 +1131,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                       Icons.favorite,
                       color: theme.colorScheme.primary,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '상대방 정보 (선택)',
                       style: theme.textTheme.headlineSmall?.copyWith(
@@ -1139,7 +1140,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   '상대방 사진이 있으면 매칭 확률을 더 정확하게 분석할 수 있습니다',
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -1232,7 +1233,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         '매칭 확률',
                         style: theme.textTheme.bodyLarge,
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         '${analysis.matchingScore}%',
                         style: theme.textTheme.displayMedium?.copyWith(
@@ -1287,7 +1288,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                           size: 16,
                           color: TossDesignSystem.tossBlue,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Text(
                           'AI 추천 포인트',
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -1344,7 +1345,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           Row(
             children: [
               Icon(icon, size: 16, color: theme.colorScheme.primary),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 title,
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -1601,7 +1602,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         Text(
                           tip['detail'] as String,
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -1708,7 +1709,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         Icons.warning_amber_rounded,
                         size: 16,
                         color: TossDesignSystem.errorRed),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         '피해야 할 주제',
                         style: theme.textTheme.bodyMedium?.copyWith(
@@ -1791,7 +1792,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   Icons.palette,
                   size: 20,
                   color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(
                   '행운의 색상',
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -1821,7 +1822,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             color: (color['color'] as Color).computeLuminance() > 0.5
                             ? TossDesignSystem.black
                             : TossDesignSystem.white,
-                        fontSize: 10,
+                        
                       ),
                     ),
                   ),
@@ -2016,7 +2017,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         Icons.check_circle,
                         size: 20,
                         color: TossDesignSystem.successGreen),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         'DO\'s - 꼭 하세요',
                         style: theme.textTheme.bodyLarge?.copyWith(
@@ -2061,7 +2062,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         Icons.cancel,
                         size: 20,
                         color: TossDesignSystem.errorRed),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         'DON\'Ts - 피하세요',
                         style: theme.textTheme.bodyLarge?.copyWith(
@@ -2145,7 +2146,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                   Icons.chat_bubble,
                   color: theme.colorScheme.primary,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(
                   '대화 분석',
                   style: theme.textTheme.headlineSmall?.copyWith(
@@ -2154,14 +2155,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               '상대방과 나눈 대화 내용을 붙여넣으면 AI가 호감도, 대화 스타일, 개선점을 분석해드립니다.',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // Chat Platform Selection
             Text(
@@ -2199,7 +2200,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 );
               }).toList(),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // Chat Content Input
             Text(
@@ -2327,11 +2328,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600),
                     size: 24,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     label,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: TypographyUnified.labelMedium.copyWith(
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                       color: isSelected
                           ? TossDesignSystem.white

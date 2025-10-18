@@ -3,6 +3,7 @@ import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../shared/components/floating_bottom_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 class TarotSpreadSelector extends StatefulWidget {
   final Function(TarotSpreadType) onSpreadSelected;
@@ -84,21 +85,19 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                   // 제목
                   Text(
                     '스프레드를 선택하세요',
-                    style: TextStyle(
-                      fontSize: 24,
+                    style: TypographyUnified.displaySmall.copyWith(
                       fontWeight: FontWeight.w700,
                       color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       height: 1.2,
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
 
                   // 부제목
                   Text(
                     '질문: ${widget.question}',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       fontWeight: FontWeight.w400,
                       color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                     ),
@@ -242,8 +241,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                             children: [
                               Text(
                                 spread.displayName,
-                                style: TextStyle(
-                                  fontSize: 18,
+                                style: TypographyUnified.heading4.copyWith(
                                   fontWeight: FontWeight.w600,
                                   color: isSelected
                                       ? color
@@ -262,8 +260,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                                 ),
                                 child: Text(
                                   '${spread.cardCount}장',
-                                  style: TextStyle(
-                                    fontSize: 12,
+                                  style: TypographyUnified.labelMedium.copyWith(
                                     fontWeight: FontWeight.w500,
                                     color: color,
                                   ),
@@ -271,11 +268,10 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             spread.description,
-                            style: TextStyle(
-                              fontSize: 14,
+                            style: TypographyUnified.bodySmall.copyWith(
                               fontWeight: FontWeight.w400,
                               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                             ),
@@ -314,11 +310,10 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                         size: 14,
                         color: color,
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6),
                       Text(
                         recommended,
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: TypographyUnified.labelMedium.copyWith(
                           fontWeight: FontWeight.w500,
                           color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                         ),
@@ -368,17 +363,16 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                         '${index + 1}',
                         style: TextStyle(
                           color: color,
-                          fontSize: 12,
+                          
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     labels[index],
-                    style: TextStyle(
-                      fontSize: 10,
+                    style: TypographyUnified.labelTiny.copyWith(
                       color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
                     ),
                   ),
@@ -432,8 +426,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
           child: Text(
             '켈틱 크로스 - 10장의 카드로\n가장 상세한 분석을 제공합니다',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12,
+            style: TypographyUnified.labelMedium.copyWith(
               color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
               height: 1.4,
             ),
@@ -465,7 +458,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
           number,
           style: TextStyle(
             color: color,
-            fontSize: 10,
+            
             fontWeight: FontWeight.w600,
           ),
         ),

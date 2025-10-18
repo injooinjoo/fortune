@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import '../../domain/models/talisman_models.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class TalismanDesignCanvas extends StatefulWidget {
   final TalismanResult result;
@@ -358,8 +359,7 @@ class _TalismanSymbolPainter extends CustomPainter {
 
       symbolPaint.text = TextSpan(
         text: symbols[i],
-        style: const TextStyle(
-          fontSize: 14,
+        style: TypographyUnified.bodySmall.copyWith(
           color: TossDesignSystem.white,
         ),
       );

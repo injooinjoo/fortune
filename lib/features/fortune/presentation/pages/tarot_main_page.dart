@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/widgets/animated_tarot_card_widget.dart';
 import '../../../interactive/presentation/widgets/bottom_tarot_deck_widget.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 // Assuming you have a custom TarotCardInfo class
 enum TarotPageState {
@@ -608,7 +609,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                               : 'Daily fortune',
                           style: const TextStyle(
                             color: TossDesignSystem.white,
-                            fontSize: 32,
+                            
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -744,7 +745,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                           dateString,
                           style: TextStyle(
                             color: TossDesignSystem.white.withValues(alpha: 0.7),
-                            fontSize: 14,
+                            
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -752,7 +753,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                           title,
                           style: const TextStyle(
                             color: TossDesignSystem.white,
-                            fontSize: 24,
+                            
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -771,7 +772,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                             'DRAW',
                             style: TextStyle(
                                 color: TossDesignSystem.white,
-                                fontSize: 14,
+                                
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.2,
                               ),
@@ -1057,7 +1058,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                       title,
                                       style: TextStyle(
                                           color: TossDesignSystem.white,
-                                          fontSize: 20,
+                                          
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 1.5,
                                           shadows: [

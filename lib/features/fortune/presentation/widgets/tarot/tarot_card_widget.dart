@@ -5,6 +5,7 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 /// Unified tarot card widget that handles both front and back display
 /// with flip animation support
@@ -231,8 +232,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 child: Center(
                   child: Text(
                     '${widget.selectionOrder}',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.bold,
                       color: widget.deck.primaryColor,
                     ),

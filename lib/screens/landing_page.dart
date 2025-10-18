@@ -15,6 +15,7 @@ import '../presentation/providers/theme_provider.dart';
 import '../core/utils/profile_validation.dart';
 import '../core/theme/toss_design_system.dart';
 import '../presentation/widgets/social_login_bottom_sheet.dart';
+import '../core/theme/typography_unified.dart';
 
 class LandingPage extends ConsumerStatefulWidget {
   const LandingPage({super.key});
@@ -980,11 +981,10 @@ class _LandingPageState extends ConsumerState<LandingPage>
               )
                   .animate(onPlay: (controller) => controller.repeat())
                   .rotate(duration: 2.seconds),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Text(
                 '로그인 상태를 확인하고 있습니다...',
-                style: TextStyle(
-                    fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                     color: Theme.of(context).brightness == Brightness.dark
                         ? TossDesignSystem.grayDark400
                         : TossDesignSystem.gray600),
@@ -1251,13 +1251,12 @@ class _LandingPageState extends ConsumerState<LandingPage>
                             duration: 600.ms,
                             curve: Curves.easeOutBack),
 
-                        const SizedBox(height: 40),
+                        SizedBox(height: 40),
 
                         // App Name
                         Text(
                           'Fortune',
-                          style: TextStyle(
-                              fontSize: 36,
+                          style: TypographyUnified.heading1.copyWith(
                               fontWeight: FontWeight.w700,
                               color: Theme.of(context).colorScheme.onSurface,
                               letterSpacing: -1),
@@ -1268,8 +1267,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
                         // Subtitle
                         Text(
                           '매일 새로운 운세를 만나보세요',
-                          style: TextStyle(
-                              fontSize: 16,
+                          style: TypographyUnified.buttonMedium.copyWith(
                               fontWeight: FontWeight.w400,
                               color: Theme.of(context).brightness ==
                                       Brightness.dark
@@ -1308,8 +1306,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
                                 ),
                                 child: Text(
                                   '시작하기',
-                                  style: TextStyle(
-                                      fontSize: 18,
+                                  style: TypographyUnified.heading4.copyWith(
                                       fontWeight: FontWeight.w600),
                                 ),
                               ),

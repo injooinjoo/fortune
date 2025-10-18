@@ -7,6 +7,7 @@ import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class LuckyOutfitFortunePage extends ConsumerStatefulWidget {
   const LuckyOutfitFortunePage({super.key});
@@ -130,18 +131,16 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-          const Text(
+          Text(
             '오늘의 럭키 스타일링',
-            style: TextStyle(
-              fontSize: 20,
+            style: TypographyUnified.heading3.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8),
+          Text(
             '날짜와 상황에 맞는 행운의 의상을 추천해드립니다.',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: TossDesignSystem.gray400,
             ),
           ),
@@ -165,18 +164,16 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           '날짜 선택',
-                          style: TextStyle(
-                            fontSize: 12,
+                          style: TypographyUnified.labelMedium.copyWith(
                             color: TossDesignSystem.gray400,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일',
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: TypographyUnified.buttonMedium.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -189,13 +186,12 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             ),
           ),
           
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           
           // Occasion selection
-          const Text(
+          Text(
             '어떤 상황인가요?',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -245,11 +241,10 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                             ? TossDesignSystem.white
                             : TossDesignSystem.gray600,
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         occasion['title'],
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: TypographyUnified.labelMedium.copyWith(
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           color: isSelected
                               ? TossDesignSystem.white
@@ -285,8 +280,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                   Expanded(
                     child: Text(
                       occasions.firstWhere((o) => o['id'] == _occasion)['description'],
-                      style: TextStyle(
-                        fontSize: 12,
+                      style: TypographyUnified.labelMedium.copyWith(
                         color: TossDesignSystem.gray600,
                       ),
                     ),
@@ -296,13 +290,12 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             ),
           ],
           
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           
           // Personal style
-          const Text(
+          Text(
             '평소 스타일',
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -415,28 +408,25 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                const Text(
+                SizedBox(height: 16),
+                Text(
                   '오늘의 행운의 색',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: TossDesignSystem.gray400,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   data['lucky_color'] ?? '분석 중',
-                  style: const TextStyle(
-                    fontSize: 24,
+                  style: TypographyUnified.displaySmall.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 if (data['color_meaning'] != null) ...[
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     data['color_meaning'],
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: TypographyUnified.bodySmall.copyWith(
                       color: TossDesignSystem.gray600,
                     ),
                     textAlign: TextAlign.center,
@@ -464,24 +454,22 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.checkroom, color: TossDesignSystem.pinkPrimary),
                     SizedBox(width: 8),
                     Text(
                       '추천 스타일링',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(
                   result.mainFortune!,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     height: 1.6,
                   ),
                 ),
@@ -507,14 +495,13 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.shopping_bag, color: TossDesignSystem.warningOrange),
                     SizedBox(width: 8),
                     Text(
                       '아이템별 추천',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -546,16 +533,14 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                           children: [
                             Text(
                               item['type'] ?? '',
-                              style: const TextStyle(
-                                fontSize: 14,
+                              style: TypographyUnified.bodySmall.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             if (item['description'] != null)
                               Text(
                                 item['description'],
-                                style: const TextStyle(
-                                  fontSize: 13,
+                                style: TypographyUnified.bodySmall.copyWith(
                                   color: TossDesignSystem.gray400,
                                 ),
                               ),
@@ -587,24 +572,22 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.diamond, color: TossDesignSystem.purple),
                     SizedBox(width: 8),
                     Text(
                       '행운의 액세서리',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   result.luckyItems!['accessories'],
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     height: 1.6,
                   ),
                 ),
@@ -625,14 +608,13 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.tips_and_updates, color: TossDesignSystem.warningYellow),
                     SizedBox(width: 8),
                     Text(
                       '스타일링 팁',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -653,7 +635,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       Expanded(
                         child: Text(
                           tip,
-                          style: const TextStyle(fontSize: 14),
+                          style: TypographyUnified.bodySmall,
                         ),
                       ),
                     ],
@@ -676,24 +658,22 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.block, color: TossDesignSystem.errorRed),
                     SizedBox(width: 8),
                     Text(
                       '피해야 할 스타일',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(
                   data['avoid_items'],
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     height: 1.6,
                   ),
                 ),

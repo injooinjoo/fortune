@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 토스 스타일의 만세력 사주 표시 위젯
 class ManseryeokDisplay extends StatelessWidget {
@@ -49,7 +50,7 @@ class ManseryeokDisplay extends StatelessWidget {
             color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
-        const SizedBox(height: TossTheme.spacingXS),
+        SizedBox(height: TossTheme.spacingXS),
         // 한글 부제
         Text(
           '당신의 타고난 사주팔자입니다',
@@ -168,7 +169,7 @@ class ManseryeokDisplay extends StatelessWidget {
               letterSpacing: 2,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             korean,
             style: TossTheme.caption.copyWith(
@@ -238,7 +239,7 @@ class ManseryeokDisplay extends StatelessWidget {
               height: 1,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           // 한글
           Text(
             korean,
@@ -265,8 +266,7 @@ class ManseryeokDisplay extends StatelessWidget {
               ),
               child: Text(
                 '$element행',
-                style: TextStyle(
-                  fontSize: 10,
+                style: TypographyUnified.labelTiny.copyWith(
                   color: _getElementColor(element),
                   fontWeight: FontWeight.bold,
                 ),
@@ -303,7 +303,7 @@ class ManseryeokDisplay extends StatelessWidget {
             color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             size: 16,
           ),
-          const SizedBox(width: TossTheme.spacingXS),
+          SizedBox(width: TossTheme.spacingXS),
           Text(
             '위 사주는 만세력 기준으로 계산되었습니다',
             style: TossTheme.caption.copyWith(

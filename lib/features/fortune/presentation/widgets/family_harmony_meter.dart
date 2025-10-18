@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 가족 화합도 측정기 - 토스 디자인 시스템
 class FamilyHarmonyMeter extends StatelessWidget {
@@ -47,7 +48,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
           Text(
             '오늘의 가족 화합도',
             style: TossDesignSystem.heading4.copyWith(
-              fontSize: 18,
+              
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
             ),
@@ -69,7 +70,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
                   style: TossDesignSystem.display1.copyWith(
                     color: scoreColor,
                     fontWeight: FontWeight.w800,
-                    fontSize: 48,
+                    
                   ),
                 ),
                 Text(
@@ -100,12 +101,12 @@ class FamilyHarmonyMeter extends StatelessWidget {
               style: TossDesignSystem.heading4.copyWith(
                 color: scoreColor,
                 fontWeight: FontWeight.w700,
-                fontSize: 16,
+                
               ),
             ),
           ),
           
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           
           // Description
           Text(
@@ -137,7 +138,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Text(
         emoji,
-        style: const TextStyle(fontSize: 24),
+        style: TypographyUnified.displaySmall,
       ).animate()
           .fadeIn(delay: Duration(milliseconds: emojis.indexOf(emoji) * 100))
           .scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1)),
@@ -181,7 +182,7 @@ class FamilyCategoryChart extends StatelessWidget {
           Text(
             '카테고리별 점수',
             style: TossDesignSystem.heading4.copyWith(
-              fontSize: 16,
+              
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
             ),
@@ -208,7 +209,7 @@ class FamilyCategoryChart extends StatelessWidget {
                         size: 18,
                         color: color,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         label,
                         style: TossDesignSystem.body3.copyWith(
@@ -237,7 +238,7 @@ class FamilyCategoryChart extends StatelessWidget {
                     animation: true,
                     animationDuration: 1000,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     advice,
                     style: TossDesignSystem.caption.copyWith(
@@ -315,7 +316,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
           Text(
             '이번 주 가족 운세',
             style: TossDesignSystem.heading4.copyWith(
-              fontSize: 16,
+              
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
             ),
@@ -376,7 +377,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                       ),
                     ),
                     
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Text(
                       '$score',
                       style: TossDesignSystem.caption.copyWith(
@@ -384,11 +385,10 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                         color: color,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       keyword,
-                      style: TextStyle(
-                        fontSize: 10,
+                      style: TypographyUnified.labelTiny.copyWith(
                         color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                       ),
                       overflow: TextOverflow.ellipsis,

@@ -15,6 +15,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../domain/models/talent_input_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// Provider for talent input data
 final talentInputDataProvider = StateProvider<TalentInputData>((ref) => const TalentInputData());
@@ -295,26 +296,23 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         children: [
           Text(
             '1단계',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
               color: TossDesignSystem.tossBlue,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '변하지 않는 것',
-            style: TextStyle(
-              fontSize: 24,
+            style: TypographyUnified.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '타고난 기질을 파악하기 위한 정보입니다',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
           ),
@@ -329,17 +327,15 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                   children: [
                     Text(
                       '생년월일',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4),
                     Text(
                       '*',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: TossDesignSystem.warningOrange,
                       ),
@@ -379,8 +375,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                           _birthDate != null
                               ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
                               : '날짜를 선택해주세요',
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: TypographyUnified.buttonMedium.copyWith(
                             color: _birthDate != null
                                 ? (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight)
                                 : (isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight),
@@ -404,17 +399,15 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                   children: [
                     Text(
                       '태어난 시간',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4),
                     Text(
                       '*',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: TossDesignSystem.warningOrange,
                       ),
@@ -422,19 +415,17 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                     const Spacer(),
                     Text(
                       '가장 중요!',
-                      style: TextStyle(
-                        fontSize: 12,
+                      style: TypographyUnified.labelMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: TossDesignSystem.tossBlue,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   '모르면 출생 증명서나 가족에게 물어보세요',
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: TypographyUnified.labelMedium.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                   ),
                 ),
@@ -469,8 +460,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                           _birthTime != null
                               ? '${_birthTime!.hour.toString().padLeft(2, '0')}:${_birthTime!.minute.toString().padLeft(2, '0')}'
                               : '시간을 선택해주세요',
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: TypographyUnified.buttonMedium.copyWith(
                             color: _birthTime != null
                                 ? (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight)
                                 : (isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight),
@@ -494,17 +484,15 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                   children: [
                     Text(
                       '성별',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4),
                     Text(
                       '*',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: TossDesignSystem.warningOrange,
                       ),
@@ -535,17 +523,15 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
               children: [
                 Text(
                   '태어난 도시 (선택)',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   '균시차 보정을 위해 사용됩니다',
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: TypographyUnified.labelMedium.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                   ),
                 ),
@@ -562,8 +548,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                     ),
                     contentPadding: const EdgeInsets.all(16),
                   ),
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
@@ -599,8 +584,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         child: Center(
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 16,
+            style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               color: isSelected
                   ? TossDesignSystem.tossBlue
@@ -621,26 +605,23 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         children: [
           Text(
             '2단계',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
               color: TossDesignSystem.tossBlue,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '환경으로 만들어진 것',
-            style: TextStyle(
-              fontSize: 24,
+            style: TypographyUnified.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '현재 당신의 상태를 알려주세요',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
           ),
@@ -653,8 +634,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
               children: [
                 Text(
                   '현재 직업/전공 (선택)',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
@@ -672,8 +652,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                     ),
                     contentPadding: const EdgeInsets.all(16),
                   ),
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
@@ -691,17 +670,15 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                   children: [
                     Text(
                       '고민 분야',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4),
                     Text(
                       '*',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: TossDesignSystem.warningOrange,
                       ),
@@ -709,8 +686,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                     const Spacer(),
                     Text(
                       '복수 선택',
-                      style: TextStyle(
-                        fontSize: 12,
+                      style: TypographyUnified.labelMedium.copyWith(
                         color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                       ),
                     ),
@@ -747,8 +723,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                         ),
                         child: Text(
                           concern,
-                          style: TextStyle(
-                            fontSize: 14,
+                          style: TypographyUnified.bodySmall.copyWith(
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                             color: isSelected
                                 ? TossDesignSystem.tossBlue
@@ -773,17 +748,15 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                   children: [
                     Text(
                       '관심 분야',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4),
                     Text(
                       '*',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: TossDesignSystem.warningOrange,
                       ),
@@ -791,8 +764,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                     const Spacer(),
                     Text(
                       '복수 선택',
-                      style: TextStyle(
-                        fontSize: 12,
+                      style: TypographyUnified.labelMedium.copyWith(
                         color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                       ),
                     ),
@@ -829,8 +801,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                         ),
                         child: Text(
                           interest,
-                          style: TextStyle(
-                            fontSize: 14,
+                          style: TypographyUnified.bodySmall.copyWith(
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                             color: isSelected
                                 ? TossDesignSystem.tossBlue
@@ -853,17 +824,15 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
               children: [
                 Text(
                   '자기평가 (선택)',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   '스스로 생각하는 강점과 약점을 자유롭게 적어주세요',
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: TypographyUnified.labelMedium.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                   ),
                 ),
@@ -881,8 +850,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                     ),
                     contentPadding: const EdgeInsets.all(16),
                   ),
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                   maxLines: 2,
@@ -901,8 +869,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                     ),
                     contentPadding: const EdgeInsets.all(16),
                   ),
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                   maxLines: 2,
@@ -924,26 +891,23 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         children: [
           Text(
             '3단계',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
               color: TossDesignSystem.tossBlue,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '선호하는 것',
-            style: TextStyle(
-              fontSize: 24,
+            style: TypographyUnified.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '당신의 성향을 알려주세요',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
           ),
@@ -1028,28 +992,25 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: 4),
               Text(
                 '*',
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: TossDesignSystem.warningOrange,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             question,
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
           ),
@@ -1081,8 +1042,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                         Expanded(
                           child: Text(
                             option,
-                            style: TextStyle(
-                              fontSize: 16,
+                            style: TypographyUnified.buttonMedium.copyWith(
                               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                               color: isSelected
                                   ? TossDesignSystem.tossBlue

@@ -6,6 +6,7 @@ import 'dart:math' as math;
 
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/typography_unified.dart';
 
 /// 운세 스토리를 페이지별로 보여주는 뷰어
 class FortuneStoryViewer extends ConsumerStatefulWidget {
@@ -147,7 +148,7 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
                     color: isDark
                       ? TossDesignSystem.white.withValues(alpha: 0.5)
                       : TossDesignSystem.black.withValues(alpha: 0.5),
-                    fontSize: 14,
+                    
                   ),
                 ),
               ),
@@ -405,14 +406,14 @@ class FortuneStory {
     // 인사말
     segments.add(StorySegment(
       text: '안녕하세요 $userName님,',
-      fontSize: 32,
+      
       fontWeight: FontWeight.w300,
     ));
 
     // 날짜
     segments.add(StorySegment(
       text: '${date.month}월 ${date.day}일 ${_getWeekdayKorean(date.weekday)},',
-      fontSize: 28,
+      
       fontWeight: FontWeight.w300,
     ));
 
@@ -444,7 +445,7 @@ class FortuneStory {
     if (fortuneData['luckyColor'] != null) {
       segments.add(StorySegment(
         text: '오늘의 행운의 색은\n${fortuneData['luckyColor']}입니다.',
-        fontSize: 24,
+        
         fontWeight: FontWeight.w300,
       ));
     }
@@ -452,7 +453,7 @@ class FortuneStory {
     if (fortuneData['luckyNumber'] != null) {
       segments.add(StorySegment(
         text: '행운의 숫자는\n${fortuneData['luckyNumber']}',
-        fontSize: 32,
+        
         fontWeight: FontWeight.w500,
       ));
     }
@@ -461,7 +462,7 @@ class FortuneStory {
     if (fortuneData['advice'] != null) {
       segments.add(StorySegment(
         text: fortuneData['advice'] as String,
-        fontSize: 24,
+        
         fontWeight: FontWeight.w300,
       ));
     }
@@ -469,7 +470,7 @@ class FortuneStory {
     // 마무리
     segments.add(StorySegment(
       text: '오늘도 좋은 하루 되세요.',
-      fontSize: 28,
+      
       fontWeight: FontWeight.w400,
     ));
 

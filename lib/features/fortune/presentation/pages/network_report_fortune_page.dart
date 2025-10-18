@@ -122,7 +122,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha:0.8),
               height: 1.5)),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           // Name Input
           Text(
             '이름',
@@ -146,7 +146,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           // Birth Date Selection
           Text(
             '생년월일',
@@ -181,7 +181,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           // Job Input
           Text(
             '직업/직무',
@@ -203,7 +203,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           // MBTI Selection
           Text(
             'MBTI 유형',
@@ -260,7 +260,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               },
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           // Networking Style Selection
           Text(
             '네트워킹 스타일',
@@ -289,7 +289,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               );
             }).toList(),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           // Interests Selection
           Text(
             '관심 분야 (복수 선택 가능)',
@@ -487,7 +487,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                       color: TossDesignSystem.purple,
                       size: 24,
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Text(
                       '인맥 유형 분석',
                       style: theme.textTheme.titleMedium?.copyWith(
@@ -547,7 +547,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                         color: TossDesignSystem.warningOrange,
                         size: 24,
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Text(
                         '주목해야 할 인맥',
                         style: theme.textTheme.titleMedium?.copyWith(
@@ -629,7 +629,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                         color: TossDesignSystem.primaryBlue,
                         size: 24,
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Text(
                         '월별 인맥 운세',
                         style: theme.textTheme.titleMedium?.copyWith(
@@ -665,7 +665,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                         color: TossDesignSystem.successGreen,
                         size: 24,
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Text(
                         '네트워킹 전략',
                         style: theme.textTheme.titleMedium?.copyWith(

@@ -5,6 +5,7 @@ import '../pages/fortune_list_page.dart';
 
 
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class FortuneListTile extends ConsumerWidget {
   final FortuneCategory category;
@@ -96,7 +97,7 @@ class FortuneListTile extends ConsumerWidget {
                             'NEW',
                             style: TextStyle(
                               color: TossDesignSystem.white,
-                              fontSize: 10,
+                              
                               fontWeight: FontWeight.bold)),
                         ),
                       if (category.isPremium) Container(

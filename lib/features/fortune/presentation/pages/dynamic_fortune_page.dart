@@ -9,6 +9,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../widgets/fortune_content_card.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// Dynamic fortune page that handles all fortune types
 class DynamicFortunePage extends ConsumerStatefulWidget {
@@ -317,7 +318,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                 color: TossDesignSystem.white,
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               metadata.title,
               style: theme.textTheme.headlineSmall?.copyWith(
@@ -325,7 +326,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               metadata.subtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -401,7 +402,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                           '필요: ${metadata.tokenCost}개 / 보유: ${tokenBalance?.remainingTokens ?? 0}개',
                           style: TextStyle(
                             color: theme.colorScheme.onErrorContainer,
-                            fontSize: 12,
+                            
                           ),
                         ),
                       ],
@@ -436,8 +437,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
                   )
                 : Text(
                     hasEnoughTokens ? '운세 보기' : '토큰 구매하기',
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: TypographyUnified.heading4.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),

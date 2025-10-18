@@ -12,6 +12,7 @@ import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../data/services/fortune_api_service.dart';
+import '../../../../core/theme/typography_unified.dart';
 import 'dart:math' as math;
 
 class MbtiFortunePage extends BaseFortunePage {
@@ -294,8 +295,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       children: [
         Text(
           '당신의 MBTI를\n선택해주세요',
-          style: TextStyle(
-            fontSize: 28,
+          style: TypographyUnified.heading1.copyWith(
             fontWeight: FontWeight.w700,
             color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.gray900,
             height: 1.3,
@@ -338,8 +338,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                   ),
                   Text(
                     groupName,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.gray800,
                     ),
@@ -411,11 +410,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               size: 24,
               color: isSelected ? TossDesignSystem.white : (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               mbti,
-              style: TextStyle(
-                fontSize: 14,
+              style: TypographyUnified.bodySmall.copyWith(
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 color: isSelected ? TossDesignSystem.white : (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700),
               ),
@@ -451,16 +449,15 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                   style: const TextStyle(
                     color: TossDesignSystem.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Expanded(
                 child: Text(
                   _getMbtiTitle(_selectedMbti!),
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
@@ -468,11 +465,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             _getMbtiDescription(_selectedMbti!),
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
               height: 1.5,
             ),
@@ -491,17 +487,15 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       children: [
         Text(
           '운세 카테고리 선택 (선택사항)',
-          style: TextStyle(
-            fontSize: 16,
+          style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.w600,
             color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Text(
           '원하는 카테고리를 선택하면 더 자세한 운세를 볼 수 있어요',
-          style: TextStyle(
-            fontSize: 14,
+          style: TypographyUnified.bodySmall.copyWith(
             color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
           ),
         ),
@@ -606,11 +600,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               Icon(Icons.battery_charging_full,
                 size: 20,
                 color: colors.first),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '오늘의 에너지 레벨',
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
@@ -639,11 +632,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '${(_energyLevel * 100).toInt()}% 충전됨',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
               color: colors.first,
             ),
@@ -676,7 +668,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               style: const TextStyle(
                 color: TossDesignSystem.white,
                 fontWeight: FontWeight.w600,
-                fontSize: 14,
+                
               ),
             ),
           ),
@@ -734,8 +726,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             ),
             child: Text(
               '${entry.value}',
-              style: TextStyle(
-                fontSize: 13,
+              style: TypographyUnified.bodySmall.copyWith(
                 color: TossDesignSystem.warningOrange,
                 fontWeight: FontWeight.w500,
               ),
@@ -758,11 +749,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               Icon(Icons.psychology,
                 size: 20,
                 color: TossDesignSystem.tossBlue),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '인지 기능 분석',
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
@@ -782,7 +772,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 '인지 기능 차트',
                 style: TextStyle(
                   color: TossDesignSystem.gray500,
-                  fontSize: 14,
+                  
                 ),
               ),
             ),
@@ -817,22 +807,20 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                       size: 20,
                       color: categoryInfo['color'],
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       category,
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: TypographyUnified.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(
                   _getCategoryFortune(category),
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                     height: 1.5,
                   ),
@@ -859,11 +847,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               Icon(Icons.people,
                 size: 20,
                 color: TossDesignSystem.purple),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 '오늘의 궁합',
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
@@ -894,16 +881,15 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                         style: const TextStyle(
                           color: TossDesignSystem.white,
                           fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                          
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     _getCompatibilityLabel(compatibleTypes.indexOf(type)),
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: TypographyUnified.labelMedium.copyWith(
                       color: TossDesignSystem.gray600,
                     ),
                   ),

@@ -6,6 +6,7 @@ import 'package:fortune/core/theme/app_animations.dart';
 import '../../services/ad_service.dart';
 import '../../core/utils/logger.dart';
 import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/typography_unified.dart';
 
 class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
   final String fortuneType;
@@ -209,7 +210,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             _getDetailedDescription(widget.fortuneType),
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -322,7 +323,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                           : (Theme.of(context).brightness == Brightness.dark
                               ? TossDesignSystem.grayDark600
                               : TossDesignSystem.gray600),
-                      fontSize: 16,
+                      
                     ),
                   ),
                 ),
@@ -332,7 +333,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           ),
         ),
         
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         
         // Gender selection
         Text(
@@ -372,7 +373,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           ],
         ),
         
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         
         // MBTI selection (optional)
         Text(
@@ -494,11 +495,10 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Text(
             '$score - $meaning',
-            style: const TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -545,11 +545,10 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         ? TossDesignSystem.purple.withValues(alpha: 0.7)
                         : TossDesignSystem.purple,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     'AI가 분석하는 개인 맞춤 운세',
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: TypographyUnified.buttonMedium.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).brightness == Brightness.dark
                           ? TossDesignSystem.purple.withValues(alpha: 0.7)
@@ -559,12 +558,12 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 ],
               ),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 '• 개인 정보를 바탕으로 한 정확한 운세 분석\n'
                 '• 매일 업데이트되는 실시간 운세\n'
                 '• 상세한 운세 해석과 조언 제공\n'
                 '• 다양한 운세 카테고리별 상세 분석',
-                style: TextStyle(fontSize: 14, height: 1.5),
+                style: TypographyUnified.bodySmall.copyWith( height: 1.5),
               ),
             ],
           ),
@@ -659,11 +658,10 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(_getFortuneIcon(widget.fortuneType)),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Text(
                   '${_getFortuneTypeName(widget.fortuneType)} 보기',
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),

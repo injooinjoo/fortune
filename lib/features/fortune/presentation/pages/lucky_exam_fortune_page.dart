@@ -11,6 +11,7 @@ import 'dart:math' as math;
 import '../../../../services/ad_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class LuckyExamFortunePage extends ConsumerStatefulWidget {
   const LuckyExamFortunePage({super.key});
@@ -480,7 +481,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                           Text(
                             '$score',
                             style: TossDesignSystem.heading1.copyWith(
-                              fontSize: 48,
+                              
                               fontWeight: FontWeight.bold,
                               color: TossDesignSystem.successGreen,
                             ),

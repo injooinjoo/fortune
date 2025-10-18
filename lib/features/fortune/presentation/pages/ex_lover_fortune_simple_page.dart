@@ -247,14 +247,14 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
                     size: 32,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   '힘드셨죠?',
                   style: TossDesignSystem.heading3.copyWith(
                     color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   '천천히 답해주세요. 당신의 마음을 읽어드릴게요.',
                   style: TossDesignSystem.body2.copyWith(
@@ -266,7 +266,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
             ),
           ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
           
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           
           // 1. 이별 시기
           Text(
@@ -290,7 +290,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
             ],
           ),
           
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           
           // 2. 현재 감정
           Text(
@@ -304,7 +304,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
           
           ...emotionCards.map((card) => _buildEmotionCard(card, isDark)),
           
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           
           // 3. 가장 궁금한 것
           Text(
@@ -354,14 +354,14 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
                     size: 32,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   '더 정확한 분석을 원하시나요?',
                   style: TossDesignSystem.heading3.copyWith(
                     color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   '선택사항이에요. 건너뛰어도 괜찮아요.',
                   style: TossDesignSystem.body2.copyWith(
@@ -373,7 +373,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
             ),
           ),
           
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           
           // 상대방 생년월일
           Text(
@@ -440,7 +440,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
             ),
           ),
           
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           
           // 이별 이유
           Text(
@@ -559,7 +559,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       card.description,
                       style: TossDesignSystem.caption.copyWith(
@@ -646,7 +646,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       card.description,
                       style: TossDesignSystem.caption.copyWith(

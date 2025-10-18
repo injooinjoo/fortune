@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/models/wish_fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 틴더 스타일 소원 빌기 결과 페이지 (공감/희망/조언/응원 중심)
 class WishFortuneResultTinder extends ConsumerStatefulWidget {
@@ -233,7 +234,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
           '당신의 마음이 느껴져요',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -247,7 +248,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
           textAlign: TextAlign.center,
           style: TextStyle(
             color: isDark ? Colors.white70 : Colors.black54,
-            fontSize: 18,
+            
             height: 1.7,
             fontWeight: FontWeight.w400,
           ),
@@ -282,7 +283,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
           '당신은 할 수 있어요',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -296,7 +297,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
           textAlign: TextAlign.center,
           style: TextStyle(
             color: isDark ? Colors.white70 : Colors.black54,
-            fontSize: 18,
+            
             height: 1.7,
             fontWeight: FontWeight.w400,
           ),
@@ -331,7 +332,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
           '이렇게 해보세요',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -366,7 +367,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
                       '${index + 1}',
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -378,7 +379,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
                     advice,
                     style: TextStyle(
                       color: isDark ? Colors.white70 : Colors.black87,
-                      fontSize: 16,
+                      
                       height: 1.6,
                       fontWeight: FontWeight.w400,
                     ),
@@ -418,7 +419,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
           '힘내세요!',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -432,7 +433,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
           textAlign: TextAlign.center,
           style: TextStyle(
             color: isDark ? Colors.white70 : Colors.black54,
-            fontSize: 18,
+            
             height: 1.7,
             fontWeight: FontWeight.w400,
           ),
@@ -479,7 +480,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
             '신이 전하는 한마디',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 20,
+              
               fontWeight: FontWeight.w600,
               letterSpacing: -0.3,
             ),
@@ -495,7 +496,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 24,
+                
                 height: 1.6,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.5,

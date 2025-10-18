@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../domain/models/tarot_card_model.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 /// 타로 카드 상세 정보를 표시하는 모달
 ///
@@ -60,7 +61,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const SizedBox(width: 40), // 균형 유지
+                    SizedBox(width: 40), // 균형 유지
                     Text(
                       widget.card.cardNameKr,
                       style: TossDesignSystem.heading3.copyWith(
@@ -133,7 +134,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Text(
                       '탭하여 카드를 뒤집어보세요',
                       style: TossDesignSystem.caption.copyWith(
@@ -168,7 +169,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
             errorBuilder: (context, error, stackTrace) {
               return Container(
                 color: const Color(0xFFF5F5F5),
-                child: const Center(
+                child: Center(
                   child: Icon(
                     Icons.image_not_supported,
                     color: Color(0xFF8B95A1),
@@ -214,11 +215,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
                   size: 80,
                   color: Colors.white.withValues(alpha: 0.9),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   'TAROT',
-                  style: TextStyle(
-                    fontSize: 24,
+                  style: TypographyUnified.displaySmall.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.white.withValues(alpha: 0.9),
                     letterSpacing: 4,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/models/celebrity_saju.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../core/theme/typography_unified.dart';
 
 class CelebritySajuInfoWidget extends StatelessWidget {
   final CelebritySaju celebrity;
@@ -38,7 +39,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
                   celebrity.name.isNotEmpty ? celebrity.name[0] : '?',
                   style: TextStyle(
                     color: theme.colorScheme.primary,
-                    fontSize: 18,
+                    
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -186,7 +187,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
                     count > 0 ? '$element$count' : '',
                     style: const TextStyle(
                       color: TossDesignSystem.white,
-                      fontSize: 10,
+                      
                       fontWeight: FontWeight.bold,
                     ),
                   ),

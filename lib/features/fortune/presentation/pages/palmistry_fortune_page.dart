@@ -70,7 +70,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'AI가 당신의 손금을 분석하여 운명과 미래를 예측해드립니다.',
             style: TypographyUnified.bodySmall.copyWith(
@@ -408,20 +408,18 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
         Row(
           children: [
             Icon(icon, size: 20, color: color),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Text(
               lineName,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TypographyUnified.bodySmall.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             if (isOptional) ...[
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 '(선택사항)',
-                style: TextStyle(
-                  fontSize: 12,
+                style: TypographyUnified.labelMedium.copyWith(
                   color: TossDesignSystem.gray500,
                 ),
               ),
@@ -463,10 +461,9 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '기타 손금',
-          style: TextStyle(
-            fontSize: 16,
+          style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -496,7 +493,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
         Expanded(
           child: Text(
             title,
-            style: const TextStyle(fontSize: 14),
+            style: TypographyUnified.bodySmall,
           ),
         ),
         Switch(
@@ -551,20 +548,18 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                 size: 64,
                 color: TossDesignSystem.purple,
               ),
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: 16),
+              Text(
                 '손금 분석 완료',
-                style: TextStyle(
-                  fontSize: 24,
+                style: TypographyUnified.displaySmall.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               if (result.mainFortune != null)
                 Text(
                   result.mainFortune!,
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     color: TossDesignSystem.gray700,
                   ),
                   textAlign: TextAlign.center,
@@ -586,10 +581,9 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
             ),
             child: Column(
               children: [
-                const Text(
+                Text(
                   '종합 손금 점수',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -611,16 +605,14 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                       children: [
                         Text(
                           '${result.overallScore}점',
-                          style: const TextStyle(
-                            fontSize: 32,
+                          style: TypographyUnified.numberLarge.copyWith(
                             fontWeight: FontWeight.bold,
                             color: TossDesignSystem.purple,
                           ),
                         ),
                         Text(
                           '100점 만점',
-                          style: TextStyle(
-                            fontSize: 12,
+                          style: TypographyUnified.labelMedium.copyWith(
                             color: TossDesignSystem.gray600,
                           ),
                         ),
@@ -646,14 +638,13 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.analytics, color: TossDesignSystem.tossBlue),
                     SizedBox(width: 8),
                     Text(
                       '손금별 상세 분석',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -688,14 +679,13 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.lightbulb, color: TossDesignSystem.successGreen),
                     SizedBox(width: 8),
                     Text(
                       '운세 개선 조언',
-                      style: TextStyle(
-                        fontSize: 18,
+                      style: TypographyUnified.heading4.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -716,7 +706,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                       Expanded(
                         child: Text(
                           rec,
-                          style: const TextStyle(fontSize: 14),
+                          style: TypographyUnified.bodySmall,
                         ),
                       ),
                     ],
@@ -755,16 +745,14 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
               children: [
                 Text(
                   lineName,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TypographyUnified.buttonMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   analysis,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TypographyUnified.bodySmall.copyWith(
                     height: 1.4,
                   ),
                 ),

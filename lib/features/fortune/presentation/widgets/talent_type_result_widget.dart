@@ -3,6 +3,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../domain/models/talent_type.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 재능 타입 결과를 표시하는 메인 위젯
 class TalentTypeResultWidget extends StatelessWidget {
@@ -78,7 +79,7 @@ class TalentTypeResultWidget extends StatelessWidget {
           Text(
             talentInfo.subtitle,
             style: TossTheme.subtitle1.copyWith(
-              fontSize: 16,
+              
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
@@ -227,7 +228,7 @@ class TalentStrengthCards extends StatelessWidget {
                 '$rank',
                 style: TossTheme.button.copyWith(
                   color: TossDesignSystem.white,
-                  fontSize: 16,
+                  
                 ),
               ),
             ),

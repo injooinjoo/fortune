@@ -347,7 +347,7 @@ class _TestInputView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           // Title
           Text(
             '당신의 심리 유형을 분석해드립니다',
@@ -723,7 +723,7 @@ class _TestResultView extends ConsumerWidget {
                         Row(
                           children: [
                             Icon(Icons.category_outlined, color: theme.colorScheme.primary),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(
                               '결과 유형',
                               style: theme.textTheme.titleLarge?.copyWith(
@@ -781,7 +781,7 @@ class _TestResultView extends ConsumerWidget {
                         Row(
                           children: [
                             Icon(Icons.description_outlined, color: theme.colorScheme.primary),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(
                               '상세 분석',
                               style: theme.textTheme.titleLarge?.copyWith(
@@ -808,7 +808,7 @@ class _TestResultView extends ConsumerWidget {
                         Row(
                           children: [
                             Icon(Icons.lightbulb_outline, color: theme.colorScheme.primary),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(
                               '조언',
                               style: theme.textTheme.titleLarge?.copyWith(

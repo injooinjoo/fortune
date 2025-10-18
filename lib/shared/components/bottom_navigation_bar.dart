@@ -3,6 +3,7 @@ import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/theme/typography_unified.dart';
 
 class FortuneBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -136,11 +137,10 @@ class _NavItemWidget extends StatelessWidget {
                 : (Theme.of(context).brightness == Brightness.dark
                     ? TossDesignSystem.grayDark400
                     : TossTheme.textGray600)),
-            const SizedBox(height: 2),
+            SizedBox(height: 2),
             Text(
               item.label,
-              style: TextStyle(
-                fontSize: 11,
+              style: TypographyUnified.labelSmall.copyWith(
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 color: isSelected
                   ? (Theme.of(context).brightness == Brightness.dark
