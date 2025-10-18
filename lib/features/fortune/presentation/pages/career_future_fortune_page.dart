@@ -8,6 +8,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
+import '../../domain/models/conditions/career_future_fortune_conditions.dart';
 
 class CareerFutureFortunePage extends BaseFortunePage {
   const CareerFutureFortunePage({
@@ -60,7 +61,14 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
     final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
-    // UnifiedFortuneService용 input_conditions 구성 (snake_case)
+    final conditions = CareerFutureFortuneConditions(
+      currentRole: params['currentRole'] ?? '',
+      careerGoal: params['careerGoal'] ?? '',
+      timeHorizon: params['timeHorizon'] ?? '',
+      careerPath: params['careerPath'] ?? '',
+      skills: List<String>.from(params['skills'] ?? []),
+    );
+
     final inputConditions = {
       'career_type': widget.fortuneType,
       'current_role': params['currentRole'],
@@ -74,6 +82,7 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
       fortuneType: widget.fortuneType,
       dataSource: FortuneDataSource.api,
       inputConditions: inputConditions,
+      conditions: conditions,
     );
 
     return _convertToFortune(fortuneResult);
