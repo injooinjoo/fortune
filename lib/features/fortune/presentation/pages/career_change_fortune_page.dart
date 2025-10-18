@@ -3,11 +3,14 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
+import '../../domain/models/conditions/career_change_fortune_conditions.dart';
 
 class CareerChangeFortunePage extends BaseFortunePage {
   const CareerChangeFortunePage({
@@ -64,12 +67,62 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final fortuneService = ref.read(fortuneServiceProvider);
-    
-    return await fortuneService.getFortune(
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    // Convert careerYears string to experienceYears int
+    int experienceYears = 0;
+    final careerYearsStr = params['careerYears'] as String?;
+    if (careerYearsStr != null) {
+      if (careerYearsStr.contains('1년 미만')) {
+        experienceYears = 0;
+      } else if (careerYearsStr.contains('1-3년')) {
+        experienceYears = 2;
+      } else if (careerYearsStr.contains('3-5년')) {
+        experienceYears = 4;
+      } else if (careerYearsStr.contains('5-10년')) {
+        experienceYears = 7;
+      } else if (careerYearsStr.contains('10년 이상')) {
+        experienceYears = 10;
+      }
+    }
+
+    final conditions = CareerChangeFortuneConditions(
+      currentJob: params['currentCompany'] ?? '',
+      targetJob: params['targetCompany'] ?? '',
+      experienceYears: experienceYears,
+      motivation: params['changeReason'] ?? '',
+      date: DateTime.now(),
+    );
+
+    final inputConditions = {
+      'current_company': params['currentCompany'],
+      'target_company': params['targetCompany'],
+      'change_reason': params['changeReason'],
+      'career_years': params['careerYears'],
+      'preparation_level': params['preparationLevel'],
+    };
+
+    final fortuneResult = await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
-      userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      dataSource: FortuneDataSource.api,
+      inputConditions: inputConditions,
+      conditions: conditions,
+    );
+
+    return _convertToFortune(fortuneResult);
+  }
+
+  /// FortuneResult를 Fortune 엔티티로 변환
+  Fortune _convertToFortune(FortuneResult fortuneResult) {
+    return Fortune(
+      id: fortuneResult.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      type: fortuneResult.type,
+      content: fortuneResult.data['content'] as String? ?? '',
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
+      overallScore: fortuneResult.score,
+      summary: fortuneResult.summary['message'] as String?,
+      metadata: fortuneResult.data,
     );
   }
 

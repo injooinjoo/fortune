@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
+import '../../domain/models/conditions/career_seeker_fortune_conditions.dart';
 import 'dart:math' as math;
 
 class CareerSeekerFortunePage extends BaseFortunePage {
@@ -60,12 +63,45 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final fortuneService = ref.read(fortuneServiceProvider);
-    
-    return await fortuneService.getFortune(
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    final conditions = CareerSeekerFortuneConditions(
+      targetIndustry: params['desiredField'] ?? '',
+      targetPosition: params['desiredField'] ?? '희망 직무',
+      preparationMonths: params['jobSearchDuration'] ?? 0,
+      skills: List<String>.from(params['skillAreas'] ?? []),
+      date: DateTime.now(),
+    );
+
+    final inputConditions = {
+      'education_level': params['educationLevel'],
+      'desired_field': params['desiredField'],
+      'job_search_duration': params['jobSearchDuration'],
+      'primary_concern': params['primaryConcern'],
+      'skill_areas': params['skillAreas'],
+    };
+
+    final fortuneResult = await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
-      userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params
+      dataSource: FortuneDataSource.api,
+      inputConditions: inputConditions,
+      conditions: conditions,
+    );
+
+    return _convertToFortune(fortuneResult);
+  }
+
+  /// FortuneResult를 Fortune 엔티티로 변환
+  Fortune _convertToFortune(FortuneResult fortuneResult) {
+    return Fortune(
+      id: fortuneResult.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      type: fortuneResult.type,
+      content: fortuneResult.data['content'] as String? ?? '',
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
+      overallScore: fortuneResult.score,
+      summary: fortuneResult.summary['message'] as String?,
+      metadata: fortuneResult.data,
     );
   }
 
