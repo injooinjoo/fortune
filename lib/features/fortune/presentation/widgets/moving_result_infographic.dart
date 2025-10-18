@@ -367,8 +367,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                             builder: (context, child) {
                               return Text(
                                 '${(_scoreAnimation.value * 100).toInt()}',
-                                style: TossTheme.heading1.copyWith(
-                                  fontSize: 56,
+                                style: TypographyUnified.displayLarge.copyWith(
                                   fontWeight: FontWeight.w800,
                                   color: _getScoreColor(_fortuneData.overallScore),
                                 ),
@@ -696,7 +695,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                       tickBorderData: BorderSide(color: TossTheme.borderGray200),
                       titleTextStyle: TossTheme.body2,
                       tickCount: 5,
-                      ticksTextStyle: TossTheme.caption.copyWith(fontSize: 10),
+                      ticksTextStyle: TypographyUnified.labelTiny,
                       dataSets: [
                         RadarDataSet(
                           fillColor: TossTheme.primaryBlue.withValues(alpha: 0.2),
@@ -1007,8 +1006,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                     RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
                     (Match m) => '${m[1]},',
                   )}만원',
-                  style: TossTheme.heading1.copyWith(
-                    fontSize: 40,
+                  style: TypographyUnified.displayLarge.copyWith(
                     fontWeight: FontWeight.w800,
                     color: TossTheme.primaryBlue,
                   ),

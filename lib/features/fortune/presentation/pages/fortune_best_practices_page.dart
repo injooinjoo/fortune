@@ -131,9 +131,8 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
         ),
         title: const Text(
           '운세 활용법',
-          style: TextStyle(
+          style: TypographyUnified.heading4.copyWith(
             color: TossDesignSystem.gray900,
-            fontSize: 18,
             fontWeight: FontWeight.w600),
         ),
         bottom: TabBar(

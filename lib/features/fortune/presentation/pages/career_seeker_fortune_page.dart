@@ -930,9 +930,8 @@ class _RadarChartPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: TextSpan(
           text: data[i].label,
-          style: TextStyle(
-            color: primaryColor,
-            fontSize: 12)),
+          style: TypographyUnified.labelMedium.copyWith(
+            color: primaryColor)),
         textDirection: TextDirection.ltr);
       
       textPainter.layout();

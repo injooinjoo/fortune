@@ -467,8 +467,7 @@ ${topRecommendations.join('\n')}
           const SizedBox(height: 12),
           Text(
             '오늘의 행운 가이드',
-            style: TextStyle(
-              fontSize: 22,
+            style: TypographyUnified.heading3.copyWith(
               fontWeight: FontWeight.w700,
               color: TossDesignSystem.gray100,
             ),
