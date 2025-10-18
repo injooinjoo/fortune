@@ -109,7 +109,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
 
     final conditions = LuckyItemsFortuneConditions(
       date: DateTime.now(),
-      birthDate: userProfile.birthDate,
+      category: params['category'] as String?,
     );
 
     final fortuneResult = await fortuneService.getFortune(
