@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -8,6 +9,10 @@ import '../../../../services/external_api_service.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
+import '../../domain/models/conditions/esports_fortune_conditions.dart';
+import '../../../../presentation/providers/auth_provider.dart';
 
 enum GameType {
   lol('리그 오브 레전드', 'lol', 'assets/images/lol_icon.png'),
@@ -61,23 +66,49 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
     params['gameType'] = _selectedGame.value;
-    
-    // Generate a placeholder fortune for now
-    final fortune = Fortune(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      userId: 'user123',
-      type: 'esports',
-      content: 'Your esports fortune for ${params['gameType']} is excellent today!',
-      overallScore: 85,
-      createdAt: DateTime.now(),
-      metadata: params,
-      tokenCost: 1,
+
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    final conditions = EsportsFortuneConditions(
+      game: _selectedGame.value,
+      position: params['role'] ?? params['position'] ?? '',
+      teamRole: params['playStyle'] ?? params['teamRole'] ?? '',
+      date: DateTime.now(),
     );
-    
+
+    final inputConditions = {
+      'game_type': _selectedGame.value,
+      'role': params['role'],
+      'rank': params['rank'],
+      'play_style': params['playStyle'],
+    };
+
+    final fortuneResult = await fortuneService.getFortune(
+      fortuneType: 'esports',
+      dataSource: FortuneDataSource.api,
+      inputConditions: inputConditions,
+      conditions: conditions,
+    );
+
+    final fortune = _convertToFortune(fortuneResult);
+
     // Extract game-specific data from fortune
     _extractGameData(fortune);
-    
+
     return fortune;
+  }
+
+  Fortune _convertToFortune(FortuneResult fortuneResult) {
+    return Fortune(
+      id: fortuneResult.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      type: fortuneResult.type,
+      content: fortuneResult.data['content'] as String? ?? '',
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
+      overallScore: fortuneResult.score,
+      summary: fortuneResult.summary['message'] as String?,
+      metadata: fortuneResult.data,
+    );
   }
 
   void _extractGameData(Fortune fortune) {
