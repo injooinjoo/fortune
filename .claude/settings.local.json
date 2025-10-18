@@ -1,10 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(if grep -q \"import.*toss_floating_progress_button.dart\" \"$file\")",
-      "Bash(! grep -q \"import.*floating_bottom_button.dart\" \"$file\")",
+      "Bash(cat:*)",
+      "Bash(for:*)",
+      "Bash(do)",
+      "Bash(if [ -f \"$file\" ])",
       "Bash(then)",
-      "Bash(fi)"
+      "Bash(echo \"✅ Updated: $file\")",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(find:*)",
+      "Bash(./scripts/parse_ux_request.sh:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(./scripts/git_jira_commit.sh:*)"
     ],
     "deny": [],
     "ask": [],

@@ -233,6 +233,92 @@ flutter run -d 1B54EF52-7E41-4040-A236-C169898F5527
 
 ## 🎨 표준 UI 컴포넌트 패턴
 
+### 📝 **폰트 크기 관리 시스템 (CRITICAL)**
+
+**모든 텍스트는 반드시 TypographyUnified를 사용합니다!**
+
+#### ✅ 올바른 방법 (TypographyUnified 사용)
+
+```dart
+import 'package:fortune/core/theme/typography_unified.dart';
+
+// 방법 1: BuildContext extension 사용 (권장)
+Text('제목', style: context.heading1)
+Text('본문', style: context.bodyMedium)
+Text('버튼', style: context.buttonMedium)
+Text('라벨', style: context.labelMedium)
+
+// 방법 2: 직접 사용
+Text('제목', style: TypographyUnified.heading1)
+Text('본문', style: TypographyUnified.bodyMedium)
+
+// 색상 적용
+Text('제목', style: context.heading1.copyWith(color: Colors.blue))
+```
+
+#### ❌ 잘못된 방법 (절대 사용 금지!)
+
+```dart
+// ❌ TossDesignSystem의 deprecated TextStyle 사용 금지
+Text('제목', style: TossDesignSystem.heading1)  // WRONG!
+Text('본문', style: TossDesignSystem.body2)     // WRONG!
+
+// ❌ 하드코딩된 fontSize 사용 금지
+Text('제목', style: TextStyle(fontSize: 24))   // WRONG!
+```
+
+#### 📋 TypographyUnified 스타일 가이드
+
+**Display (대형 헤드라인)**:
+- `displayLarge` - 48pt (스플래시, 온보딩)
+- `displayMedium` - 40pt (큰 헤드라인)
+- `displaySmall` - 32pt (중간 헤드라인)
+
+**Heading (섹션 제목)**:
+- `heading1` - 28pt (메인 페이지 제목)
+- `heading2` - 24pt (섹션 제목)
+- `heading3` - 20pt (서브 섹션 제목)
+- `heading4` - 18pt (작은 섹션 제목)
+
+**Body (본문)**:
+- `bodyLarge` - 17pt (큰 본문)
+- `bodyMedium` - 15pt (기본 본문)
+- `bodySmall` - 14pt (작은 본문)
+
+**Label (라벨, 캡션)**:
+- `labelLarge` - 13pt (큰 라벨)
+- `labelMedium` - 12pt (기본 라벨)
+- `labelSmall` - 11pt (작은 라벨)
+- `labelTiny` - 10pt (배지, NEW 표시)
+
+**Button (버튼)**:
+- `buttonLarge` - 17pt (큰 버튼)
+- `buttonMedium` - 16pt (기본 버튼)
+- `buttonSmall` - 15pt (작은 버튼)
+- `buttonTiny` - 14pt (매우 작은 버튼)
+
+**Number (숫자 전용, TossFace 폰트)**:
+- `numberXLarge` - 40pt (매우 큰 숫자)
+- `numberLarge` - 32pt (큰 숫자)
+- `numberMedium` - 24pt (중간 숫자)
+- `numberSmall` - 18pt (작은 숫자)
+
+#### 🎯 핵심 원칙
+
+1. **사용자 설정 반영**: TypographyUnified는 FontSizeSystem 기반으로 사용자 폰트 크기 설정을 자동 반영
+2. **일관성**: 모든 화면에서 동일한 타이포그래피 사용
+3. **접근성**: 시각 장애인을 위한 큰 글씨 모드 지원
+4. **유지보수**: 한 곳에서 모든 폰트 크기 관리
+
+#### ⚠️ TossDesignSystem의 TextStyle은 Deprecated
+
+TossDesignSystem에 있는 `heading1`, `body2`, `caption` 등은 **사용 금지**입니다.
+- 사용자 폰트 크기 설정을 반영하지 않음
+- 고정 크기로 접근성 문제 발생
+- 하위 호환성을 위해 남아있지만 신규 코드에서는 사용하지 말 것
+
+---
+
 ### 📱 표준 뒤로가기 버튼 (AppBar Leading)
 
 **모든 페이지의 뒤로가기 버튼은 이 패턴을 따릅니다:**

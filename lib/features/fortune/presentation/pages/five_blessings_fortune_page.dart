@@ -282,9 +282,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                     'birthdate': _birthdate?.toIso8601String(),
                   })
               : null,
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
-          icon: Icon(Icons.auto_awesome),
+          icon: const Icon(Icons.auto_awesome, color: Colors.white),
         ),
       ],
     );

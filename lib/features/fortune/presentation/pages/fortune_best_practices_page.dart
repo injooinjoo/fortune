@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../shared/components/app_header.dart' show FontSize;
 
@@ -129,7 +130,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
         iconTheme: const IconThemeData(
           color: TossDesignSystem.gray900,
         ),
-        title: const Text(
+        title: Text(
           '운세 활용법',
           style: TypographyUnified.heading4.copyWith(
             color: TossDesignSystem.gray900,

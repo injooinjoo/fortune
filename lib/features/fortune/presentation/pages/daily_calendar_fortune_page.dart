@@ -18,6 +18,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../widgets/event_category_selector.dart';
 import '../widgets/event_detail_input_form.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/theme/typography_unified.dart';
 
 class DailyCalendarFortunePage extends BaseFortunePage {
@@ -53,6 +54,9 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
   // UI 단계 (0: 캘린더 선택, 1: 카테고리 선택, 2: 상세 입력)
   int _currentStep = 0;
 
+  // PageView Controller
+  final PageController _pageController = PageController();
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +66,7 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
   @override
   void dispose() {
     _questionController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -173,48 +178,64 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
     };
   }
 
-  // 헤어진 애인과 동일한 구조
-  Widget _buildCurrentStep() {
+  Widget _buildStep0() {
     return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: 16 + 80, // 버튼 높이(56) + 여유 공간(24)
-        ),
-        child: Column(
-          children: [
-            if (_currentStep == 0) ...[
-              _buildCalendar(),
-              const SizedBox(height: 12),
-              _buildSelectedDateInfo(),
-            ] else if (_currentStep == 1) ...[
-              EventCategorySelector(
-                selectedCategory: _selectedCategory,
-                onCategorySelected: (category) {
-                  setState(() {
-                    _selectedCategory = category;
-                  });
-                },
-              ),
-            ] else if (_currentStep == 2) ...[
-              EventDetailInputForm(
-                category: _selectedCategory!,
-                questionController: _questionController,
-                selectedEmotion: _selectedEmotion,
-                onEmotionSelected: (emotion) {
-                  setState(() {
-                    _selectedEmotion = emotion;
-                  });
-                },
-                onAddPartner: () {
-                  debugPrint('상대방 정보 추가');
-                },
-              ),
-            ],
-          ],
-        ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          _buildCalendar(),
+          const SizedBox(height: 12),
+          _buildSelectedDateInfo(),
+          const BottomButtonSpacing(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStep1() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          EventCategorySelector(
+            selectedCategory: _selectedCategory,
+            onCategorySelected: (category) {
+              setState(() {
+                _selectedCategory = category;
+              });
+            },
+          ),
+          const BottomButtonSpacing(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStep2() {
+    // _selectedCategory가 null이면 빈 화면 (Step1에서 선택 전)
+    if (_selectedCategory == null) {
+      return const SizedBox.shrink();
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          EventDetailInputForm(
+            category: _selectedCategory!,
+            questionController: _questionController,
+            selectedEmotion: _selectedEmotion,
+            onEmotionSelected: (emotion) {
+              setState(() {
+                _selectedEmotion = emotion;
+              });
+            },
+            onAddPartner: () {
+              debugPrint('상대방 정보 추가');
+            },
+          ),
+          const BottomButtonSpacing(),
+        ],
       ),
     );
   }
@@ -226,7 +247,6 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
   }
 
   Widget _buildFloatingButton() {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
     bool canProceed = false;
     String buttonText = '';
     VoidCallback? onPressed;
@@ -239,6 +259,10 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           setState(() {
             _currentStep = 1;
           });
+          _pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         };
         break;
       case 1:
@@ -248,6 +272,10 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
           setState(() {
             _currentStep = 2;
           });
+          _pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         } : null;
         break;
       case 2:
@@ -562,6 +590,10 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
               setState(() {
                 _currentStep--;
               });
+              _pageController.previousPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
             } else {
               context.pop();
             }
@@ -577,16 +609,22 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
         ),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // Content
-            _buildCurrentStep(),
+      body: Stack(
+        children: [
+          // PageView
+          PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              _buildStep0(),
+              _buildStep1(),
+              _buildStep2(),
+            ],
+          ),
 
-            // Floating Progress Button
-            _buildFloatingButton(),
-          ],
-        ),
+          // Floating Progress Button
+          _buildFloatingButton(),
+        ],
       ),
     );
   }

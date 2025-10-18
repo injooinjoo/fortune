@@ -224,13 +224,16 @@ class TossFloatingProgressButtonPositioned extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final safeAreaBottom = MediaQuery.of(context).padding.bottom;
     final isKeyboardVisible = keyboardHeight > 0;
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       bottom: isVisible
-          ? (isKeyboardVisible ? keyboardHeight + keyboardPadding : bottomPadding)
+          ? (isKeyboardVisible
+              ? keyboardHeight + keyboardPadding
+              : safeAreaBottom + bottomPadding)
           : -100,
       left: 24,
       right: 24,

@@ -204,9 +204,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                     },
                   );
                 },
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
-                icon: Icon(Icons.auto_awesome_rounded),
+                icon: const Icon(Icons.auto_awesome_rounded, color: Colors.white),
               ),
           ],
         ),

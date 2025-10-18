@@ -338,11 +338,61 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
 
     return TarotSpreadSelector(
       question: question,
-      onSpreadSelected: (spread) {
+      onSpreadSelected: (spread) async {
         setState(() {
           _selectedSpread = spread;
         });
-        _startTarotReading();
+
+        // 광고 시작과 동시에 API 호출 시작
+        final apiCallFuture = _generateTarotResultAsync();
+
+        await AdService.instance.showInterstitialAdWithCallback(
+          onAdCompleted: () async {
+            // 광고 끝났을 때 API 결과 대기
+            final result = await apiCallFuture;
+            if (!mounted) return;
+
+            if (result != null) {
+              setState(() {
+                _tarotResult = result;
+                _currentState = TarotFlowState.result;
+              });
+            } else {
+              // API 실패 시 에러 처리
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('타로 운세를 생성하는 데 실패했습니다. 다시 시도해주세요.'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              setState(() {
+                _currentState = TarotFlowState.spreadSelection;
+              });
+            }
+          },
+          onAdFailed: () async {
+            // 광고 실패해도 API 결과는 대기
+            final result = await apiCallFuture;
+            if (!mounted) return;
+
+            if (result != null) {
+              setState(() {
+                _tarotResult = result;
+                _currentState = TarotFlowState.result;
+              });
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('타로 운세를 생성하는 데 실패했습니다. 다시 시도해주세요.'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              setState(() {
+                _currentState = TarotFlowState.spreadSelection;
+              });
+            }
+          },
+        );
       },
     );
   }
@@ -403,26 +453,11 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
     );
   }
 
-  void _startTarotReading() {
-    if (!mounted) return;
-    
-    setState(() {
-      _currentState = TarotFlowState.loading;
-    });
-    
-    // 로딩 시뮬레이션 후 바로 결과 생성
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!mounted) return;
-      _generateTarotResult();
-    });
-  }
-
-  void _generateTarotResult() async {
-    if (!mounted) return;
-    if (_selectedSpread == null) return;
+  // 광고와 병렬로 실행할 API 호출 (Future 반환)
+  Future<TarotSpreadResult?> _generateTarotResultAsync() async {
+    if (_selectedSpread == null) return null;
 
     try {
-      // UnifiedFortuneService를 사용하여 표준화된 타로 운세 생성
       final question = _selectedQuestion ?? _customQuestion ?? '일반 운세';
 
       // input_conditions 구성
@@ -470,7 +505,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
       }
 
       // TarotSpreadResult 재구성
-      final result = TarotSpreadResult(
+      return TarotSpreadResult(
         spreadType: _selectedSpread!,
         cards: cards,
         question: question,
@@ -480,30 +515,9 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
           tarotData['position_interpretations'] as Map,
         ),
       );
-
-      if (!mounted) return;
-
-      setState(() {
-        _tarotResult = result;
-        _currentState = TarotFlowState.result;
-      });
-
     } catch (error, stackTrace) {
       Logger.error('[TarotPage] 타로 운세 생성 실패', error, stackTrace);
-
-      if (!mounted) return;
-
-      // 에러 발생 시 사용자에게 알림
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('타로 운세를 생성하는 데 실패했습니다. 다시 시도해주세요.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-
-      setState(() {
-        _currentState = TarotFlowState.spreadSelection;
-      });
+      return null;
     }
   }
 

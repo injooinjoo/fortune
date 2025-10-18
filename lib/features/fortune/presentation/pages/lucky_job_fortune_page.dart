@@ -3,6 +3,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -268,9 +269,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
                   );
                 }
               : null,
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
-          icon: Icon(Icons.work_outline),
+          icon: const Icon(Icons.work_outline, color: Colors.white),
         ),
       ],
     );

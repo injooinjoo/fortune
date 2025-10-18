@@ -340,127 +340,138 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       // Show interstitial ad before generating fortune
       Logger.debug('📺 [BaseFortunePage] Attempting to show interstitial ad');
 
-      // Function to generate fortune after ad
-      Future<void> generateFortuneAfterAd() async {
-        Logger.info('🔵 [TRACE-8] generateFortuneAfterAd() ENTERED');
+      // Function to generate fortune asynchronously (for parallel processing with ad)
+      Future<Fortune> generateFortuneAsync() async {
+        Logger.info('🔵 [TRACE-8] _generateFortuneAsync() ENTERED');
 
+        Logger.info('🔵 [TRACE-9] Inside _generateFortuneAsync try block');
+        Logger.debug('🔮 [BaseFortunePage] Calling generateFortune implementation');
+        final fortuneStopwatch = Logger.startTimer('API Call - ${widget.fortuneType}');
+
+        Logger.info('🔵 [TRACE-10] About to call generateFortune()');
+        final fortune = await generateFortune(fortuneParams);
+        Logger.info('🔵 [TRACE-11] generateFortune() returned', {'fortuneId': fortune.id});
+
+        Logger.endTimer('API Call - ${widget.fortuneType}', fortuneStopwatch);
+        Logger.info('✨ [BaseFortunePage] Fortune generated successfully', {
+          'fortuneType': widget.fortuneType,
+          'fortuneId': fortune.id,
+          'overallScore': fortune.overallScore,
+          'hasDescription': fortune.description?.isNotEmpty ?? false,
+          'luckyItemsCount': null,
+        });
+
+        // ✅ 운세를 fortune_history 테이블에 영구 저장
+        Logger.debug('💾 [BaseFortunePage] Saving fortune to history...');
         try {
-          Logger.info('🔵 [TRACE-9] Inside generateFortuneAfterAd try block');
-          Logger.debug('🔮 [BaseFortunePage] Calling generateFortune implementation');
-          final fortuneStopwatch = Logger.startTimer('API Call - ${widget.fortuneType}');
+          await _saveFortuneToHistory(fortune, fortuneParams);
+          Logger.debug('✅ [BaseFortunePage] Fortune saved to history successfully');
+        } catch (historyError) {
+          Logger.warning('⚠️ [BaseFortunePage] Failed to save fortune to history (non-fatal): $historyError');
+        }
 
-          Logger.info('🔵 [TRACE-10] About to call generateFortune()');
-          final fortune = await generateFortune(fortuneParams);
-          Logger.info('🔵 [TRACE-11] generateFortune() returned', {'fortuneId': fortune.id});
+        return fortune;
+      }
 
-          Logger.endTimer('API Call - ${widget.fortuneType}', fortuneStopwatch);
-          Logger.info('✨ [BaseFortunePage] Fortune generated successfully', {
-            'fortuneType': widget.fortuneType,
-            'fortuneId': fortune.id,
-            'overallScore': fortune.overallScore,
-            'hasDescription': fortune.description?.isNotEmpty ?? false,
-            'luckyItemsCount': null,
-          });
+      // Function to process fortune result and update UI
+      Future<void> processFortuneResult(Fortune fortune) async {
+        Logger.info('🔵 [TRACE-12] _processFortuneResult() ENTERED');
 
-          // ✅ 운세를 fortune_history 테이블에 영구 저장
-          Logger.debug('💾 [BaseFortunePage] Saving fortune to history...');
+        Logger.debug('🔄 [BaseFortunePage] Setting state with fortune...');
+        setState(() {
+          _fortune = fortune;
+          _isLoading = false;
+        });
+        Logger.info('🔵 [TRACE-13] setState() completed');
+        Logger.debug('✅ [BaseFortunePage] State updated - isLoading: false, fortune: ${fortune.id}');
+
+        // Track fortune access in statistics
+        final currentUser = ref.read(authStateProvider).value;
+        if (currentUser != null) {
+          Logger.debug('📊 [BaseFortunePage] Updating user statistics');
           try {
-            await _saveFortuneToHistory(fortune, fortuneParams);
-            Logger.debug('✅ [BaseFortunePage] Fortune saved to history successfully');
-          } catch (historyError) {
-            Logger.warning('⚠️ [BaseFortunePage] Failed to save fortune to history (non-fatal): $historyError');
+            await ref.read(userStatisticsNotifierProvider.notifier)
+                .incrementFortuneCount(widget.fortuneType);
+            Logger.debug('✅ [BaseFortunePage] Statistics updated successfully');
+          } catch (e) {
+            Logger.error('❌ [BaseFortunePage] Failed to update statistics', e);
           }
 
-          Logger.info('🔵 [TRACE-12] About to call setState()');
-          Logger.debug('🔄 [BaseFortunePage] Setting state with fortune...');
-          setState(() {
-            _fortune = fortune;
-            _isLoading = false;
-          });
-          Logger.info('🔵 [TRACE-13] setState() completed');
-          Logger.debug('✅ [BaseFortunePage] State updated - isLoading: false, fortune: ${fortune.id}');
+          // Also add to recent fortunes
+          ref.read(recentFortunesProvider.notifier).addFortune(
+            widget.fortuneType,
+            widget.title);
 
-          // Track fortune access in statistics
-          final currentUser = ref.read(authStateProvider).value;
-          if (currentUser != null) {
-            Logger.debug('📊 [BaseFortunePage] Updating user statistics');
-            try {
-              await ref.read(userStatisticsNotifierProvider.notifier)
-                  .incrementFortuneCount(widget.fortuneType);
-              Logger.debug('✅ [BaseFortunePage] Statistics updated successfully');
-            } catch (e) {
-              Logger.error('❌ [BaseFortunePage] Failed to update statistics', e);
-            }
+          // Add to storage service for offline access
+          final storageService = ref.read(storageServiceProvider);
+          await storageService.addRecentFortune(
+            widget.fortuneType,
+            widget.title);
+          Logger.debug('💾 [BaseFortunePage] Fortune saved to recent history');
+        }
 
-            // Also add to recent fortunes
-            ref.read(recentFortunesProvider.notifier).addFortune(
-              widget.fortuneType,
-              widget.title);
+        // 영혼 시스템 처리
+        // 프리미엄 회원이 아닌 경우에만 영혼 처리
+        if (!isPremium) {
+          Logger.debug('💫 [BaseFortunePage] Processing soul transaction');
+          final result = await ref.read(tokenProvider.notifier).processSoulForFortune(
+            widget.fortuneType
+          );
 
-            // Add to storage service for offline access
-            final storageService = ref.read(storageServiceProvider);
-            await storageService.addRecentFortune(
-              widget.fortuneType,
-              widget.title);
-            Logger.debug('💾 [BaseFortunePage] Fortune saved to recent history');
-          }
-
-          // 영혼 시스템 처리
-          // 프리미엄 회원이 아닌 경우에만 영혼 처리
-          if (!isPremium) {
-            Logger.debug('💫 [BaseFortunePage] Processing soul transaction');
-            final result = await ref.read(tokenProvider.notifier).processSoulForFortune(
-              widget.fortuneType
-            );
-
-            final soulAmount = SoulRates.getSoulAmount(widget.fortuneType);
-            if (result == true) {
-              // Show soul animation based on the amount
+          final soulAmount = SoulRates.getSoulAmount(widget.fortuneType);
+          if (result == true) {
+            // Show soul animation based on the amount
+            if (mounted) {
+              await Future.delayed(const Duration(milliseconds: 500));
               if (mounted) {
-                await Future.delayed(const Duration(milliseconds: 500));
-                if (mounted) {
-                  if (soulAmount > 0) {
-                    // Soul earned (free fortune)
-                    SoulEarnAnimation.show(
-                      context: context,
-                      soulAmount: soulAmount
-                    );
-                  } else if (soulAmount < 0) {
-                    // Soul consumed (premium fortune)
-                    SoulConsumeAnimation.show(
-                      context: context,
-                      soulAmount: -soulAmount
-                    );
-                  }
+                if (soulAmount > 0) {
+                  // Soul earned (free fortune)
+                  SoulEarnAnimation.show(
+                    context: context,
+                    soulAmount: soulAmount
+                  );
+                } else if (soulAmount < 0) {
+                  // Soul consumed (premium fortune)
+                  SoulConsumeAnimation.show(
+                    context: context,
+                    soulAmount: -soulAmount
+                  );
                 }
               }
-              Logger.info('💫 [BaseFortunePage] Soul transaction successful', {
-                'fortuneType': widget.fortuneType,
-                'soulAmount': soulAmount,
-              });
-            } else {
-              Logger.warning('⚠️ [BaseFortunePage] Soul transaction failed');
             }
-          }
-        } catch (e, stackTrace) {
-          Logger.error('❌ [BaseFortunePage] Fatal error in generateFortuneAfterAd', e, stackTrace);
-
-          // 에러 발생 시에도 반드시 로딩 중지
-          if (mounted) {
-            setState(() {
-              _isLoading = false;
-              _error = 'Fortune generation failed: ${e.toString()}';
+            Logger.info('💫 [BaseFortunePage] Soul transaction successful', {
+              'fortuneType': widget.fortuneType,
+              'soulAmount': soulAmount,
             });
+          } else {
+            Logger.warning('⚠️ [BaseFortunePage] Soul transaction failed');
           }
         }
       }
 
-      // Try to show ad first
-      Logger.info('🔵 [TRACE-2] Entering ad flow section', {'adShown': false});
+      // ⚡ ASYNC PARALLEL OPTIMIZATION: Start API call BEFORE ad
+      // This reduces total wait time from Ad(5s) + API(2-5s) = 7-10s
+      // to max(Ad(5s), API(2-5s)) = ~5s
+      Logger.info('🔵 [TRACE-2] Starting async parallel processing (ad + API)');
+      Logger.info('⚡ [BaseFortunePage] Starting API call BEFORE ad for parallel processing');
+
+      Future<Fortune>? apiCallFuture;
+      bool shouldProcessResult = true;
+
+      try {
+        // Start API call immediately (will run in background during ad)
+        apiCallFuture = generateFortuneAsync();
+        Logger.info('✅ [BaseFortunePage] API call started, now showing ad...');
+      } catch (e) {
+        Logger.error('❌ [BaseFortunePage] Failed to start API call', e);
+        shouldProcessResult = false;
+      }
+
+      // Try to show ad (API is running in parallel)
+      Logger.info('🔵 [TRACE-3] Attempting to show ad (API running in background)');
 
       bool adShown = false;
       try {
-        Logger.info('🔵 [TRACE-3] Inside ad try block');
         Logger.debug('📺 [BaseFortunePage] Checking ad readiness...');
 
         // Check if ad is ready
@@ -478,42 +489,90 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
           Logger.debug('📺 [BaseFortunePage] Interstitial ad already ready');
         }
 
-        // Show ad if ready
+        // Show ad if ready (API is still running in background)
         if (AdService.instance.isInterstitialAdReady) {
-          Logger.info('📺 [BaseFortunePage] Showing interstitial ad...');
+          Logger.info('📺 [BaseFortunePage] Showing interstitial ad (API call in progress)...');
           await AdService.instance.showInterstitialAdWithCallback(
             onAdCompleted: () async {
-              Logger.info('✅ [BaseFortunePage] Ad completed successfully, generating fortune');
-              await generateFortuneAfterAd();
+              Logger.info('✅ [BaseFortunePage] Ad completed, waiting for API result...');
+              if (shouldProcessResult && apiCallFuture != null) {
+                try {
+                  final fortune = await apiCallFuture;
+                  Logger.info('🎉 [BaseFortunePage] API result received (likely already completed during ad!)');
+                  await processFortuneResult(fortune);
+                } catch (e, stackTrace) {
+                  Logger.error('❌ [BaseFortunePage] Error processing fortune result', e, stackTrace);
+                  if (mounted) {
+                    setState(() {
+                      _isLoading = false;
+                      _error = 'Fortune generation failed: ${e.toString()}';
+                    });
+                  }
+                }
+              }
             },
             onAdFailed: () async {
-              Logger.warning('⚠️ [BaseFortunePage] Ad failed to show, generating fortune anyway');
-              await generateFortuneAfterAd();
+              Logger.warning('⚠️ [BaseFortunePage] Ad failed, waiting for API result anyway...');
+              if (shouldProcessResult && apiCallFuture != null) {
+                try {
+                  final fortune = await apiCallFuture;
+                  Logger.info('🎉 [BaseFortunePage] API result received after ad failure');
+                  await processFortuneResult(fortune);
+                } catch (e, stackTrace) {
+                  Logger.error('❌ [BaseFortunePage] Error processing fortune result', e, stackTrace);
+                  if (mounted) {
+                    setState(() {
+                      _isLoading = false;
+                      _error = 'Fortune generation failed: ${e.toString()}';
+                    });
+                  }
+                }
+              }
             },
           );
           adShown = true;
-          Logger.debug('📺 [BaseFortunePage] Ad show initiated, waiting for callback...');
+          Logger.debug('📺 [BaseFortunePage] Ad show initiated');
         } else {
           Logger.warning('⚠️ [BaseFortunePage] Ad still not ready after load attempt');
         }
 
-        Logger.info('🔵 [TRACE-4] Exiting ad try block', {'adShown': adShown});
+        Logger.info('🔵 [TRACE-4] Ad flow completed', {'adShown': adShown});
 
       } catch (e) {
         Logger.error('❌ [BaseFortunePage] Error in ad flow', e);
       }
 
-      Logger.info('🔵 [TRACE-5] After ad try-catch, checking adShown', {'adShown': adShown});
+      Logger.info('🔵 [TRACE-5] After ad try-catch', {'adShown': adShown, 'shouldProcessResult': shouldProcessResult});
 
-      // If ad wasn't shown, generate fortune directly
-      if (!adShown) {
-        Logger.info('🔵 [TRACE-6] adShown is false, calling generateFortuneAfterAd()');
-        Logger.info('📺 [BaseFortunePage] No ad shown, generating fortune directly');
-        await generateFortuneAfterAd();
-        Logger.info('🔵 [TRACE-7] generateFortuneAfterAd() returned');
-      } else {
-        Logger.debug('📺 [BaseFortunePage] Ad was initiated, fortune will be generated in callback');
-        // Ad was shown, fortune will be generated in the callback
+      // If ad wasn't shown, wait for API result directly
+      if (!adShown && shouldProcessResult && apiCallFuture != null) {
+        Logger.info('🔵 [TRACE-6] No ad shown, waiting for API result directly');
+        try {
+          final fortune = await apiCallFuture;
+          Logger.info('🎉 [BaseFortunePage] API result received (no ad)');
+          await processFortuneResult(fortune);
+        } catch (e, stackTrace) {
+          Logger.error('❌ [BaseFortunePage] Error processing fortune result', e, stackTrace);
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _error = 'Fortune generation failed: ${e.toString()}';
+            });
+          }
+        }
+        Logger.info('🔵 [TRACE-7] Direct API result processing completed');
+      } else if (!shouldProcessResult) {
+        Logger.error('❌ [BaseFortunePage] API call was not started, stopping');
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _error = 'Failed to start fortune generation';
+          });
+        }
+        return;
+      } else if (adShown) {
+        Logger.debug('📺 [BaseFortunePage] Ad was shown, result will be processed in callback');
+        // Ad was shown, result will be processed in the callback
         return;
       }
 

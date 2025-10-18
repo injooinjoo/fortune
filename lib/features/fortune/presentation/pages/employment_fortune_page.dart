@@ -81,9 +81,7 @@ class _EmploymentInputForm extends StatelessWidget {
               },
             );
           },
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
-          icon: Icon(Icons.work),
+          icon: const Icon(Icons.work, color: Colors.white),
         ),
       ],
     );

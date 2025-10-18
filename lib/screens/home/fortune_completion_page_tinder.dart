@@ -2549,17 +2549,15 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     children: [
                       Text(
                         '베스트',
-                        style: TextStyle(
+                        style: TypographyUnified.labelMedium.copyWith(
                           color: const Color(0xFF10B981),
-                          
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
                         '$bestHour시',
-                        style: TextStyle(
+                        style: TypographyUnified.buttonMedium.copyWith(
                           color: isDark ? Colors.white : Colors.black87,
-                          
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -2583,17 +2581,15 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     children: [
                       Text(
                         '주의',
-                        style: TextStyle(
+                        style: TypographyUnified.labelMedium.copyWith(
                           color: const Color(0xFFEF4444),
-                          
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
                         '$worstHour시',
-                        style: TextStyle(
+                        style: TypographyUnified.buttonMedium.copyWith(
                           color: isDark ? Colors.white : Colors.black87,
-                          
                           fontWeight: FontWeight.w700,
                         ),
                       ),

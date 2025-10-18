@@ -82,7 +82,7 @@ serve(async (req) => {
 긍정적이면서도 현실적인 관점으로 조언해주세요.`
 
       const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-5-nano-2025-08-07',
         messages: [
           {
             role: 'system',

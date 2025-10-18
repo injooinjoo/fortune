@@ -265,8 +265,6 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             );
           },
           isLoading: _isAnalyzing,
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
           icon: _isAnalyzing ? null : const Icon(Icons.psychology, size: 20, color: TossDesignSystem.white),
         ),
       ],

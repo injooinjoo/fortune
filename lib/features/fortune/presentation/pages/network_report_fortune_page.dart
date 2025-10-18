@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -365,8 +366,6 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               'interests': _selectedInterests.isEmpty ? ['비즈니스'] : _selectedInterests,
             });
           },
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
         ),
       ],
     );

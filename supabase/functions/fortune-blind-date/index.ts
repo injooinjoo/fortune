@@ -107,7 +107,7 @@ JSON 형식으로 응답:
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-4-vision-preview',
+      model: 'gpt-5-nano-2025-08-07',
       messages,
       response_format: { type: "json_object" },
       max_tokens: 800
@@ -140,7 +140,7 @@ async function analyzeChatConversation(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-4-turbo-preview',
+      model: 'gpt-5-nano-2025-08-07',
       messages: [{
         role: "system",
         content: "당신은 연애 대화 분석 전문가입니다. 소개팅 대화를 분석하여 상대방의 관심도와 개선점을 찾아냅니다."
@@ -283,7 +283,7 @@ ${chatAnalysisResult.redFlags && chatAnalysisResult.redFlags.length > 0 ? `⚠�
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4-turbo-preview',
+          model: 'gpt-5-nano-2025-08-07',
           messages: [
             {
               role: 'system',
