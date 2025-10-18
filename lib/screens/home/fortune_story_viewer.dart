@@ -260,7 +260,7 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
                 if (segment.emoji != null) ...[
                   Text(
                     segment.emoji!,
-                    style: TextStyle(fontSize: 48),
+                    style: TypographyUnified.displayLarge,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -420,7 +420,7 @@ class FortuneStory {
     // 오늘의 기운
     segments.add(StorySegment(
       text: '오늘의 운세를\n알려드릴게요.',
-      fontSize: 30,
+      fontSize: 32,  // numberLarge size
       fontWeight: FontWeight.w400,
     ));
 
@@ -434,7 +434,7 @@ class FortuneStory {
         if (line.isNotEmpty) {
           segments.add(StorySegment(
             text: line.trim() + (line.endsWith('.') ? '' : '.'),
-            fontSize: 26,
+            fontSize: 28,  // heading1 size
             fontWeight: FontWeight.w300,
           ));
         }

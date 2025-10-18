@@ -220,7 +220,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
         // 하트 이모지
         Text(
           '💝',
-          style: const TextStyle(fontSize: 80),
+          style: TypographyUnified.displayLarge,
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
@@ -269,7 +269,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
         // 별 이모지
         Text(
           '✨',
-          style: const TextStyle(fontSize: 80),
+          style: TypographyUnified.displayLarge,
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
@@ -318,7 +318,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
         // 전구 이모지
         Text(
           '💡',
-          style: const TextStyle(fontSize: 80),
+          style: TypographyUnified.displayLarge,
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
@@ -405,7 +405,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
         // 응원 이모지
         Text(
           '🙌',
-          style: const TextStyle(fontSize: 80),
+          style: TypographyUnified.displayLarge,
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
@@ -466,7 +466,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
           // 신비로운 이모지
           Text(
             '🔮',
-            style: const TextStyle(fontSize: 80),
+            style: TypographyUnified.displayLarge,
           )
               .animate()
               .scale(duration: 600.ms, curve: Curves.easeOutBack)
