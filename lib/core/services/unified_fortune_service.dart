@@ -342,7 +342,17 @@ class UnifiedFortuneService {
           }
 
           Logger.info('[UnifiedFortune] ✅ Personality DNA API 호출 성공');
-          return FortuneResult.fromJson(response.data as Map<String, dynamic>);
+
+          // Edge Function 응답을 FortuneResult 형식으로 변환
+          final responseData = response.data as Map<String, dynamic>;
+          return FortuneResult(
+            type: 'personality-dna',
+            title: responseData['title'] as String? ?? '성격 DNA',
+            summary: {},
+            data: responseData, // 전체 응답을 data 필드에 저장
+            score: (responseData['socialRanking'] as num?)?.toInt(),
+            createdAt: DateTime.now(),
+          );
 
         default:
           // 기본 Edge Function 호출 (레거시)
