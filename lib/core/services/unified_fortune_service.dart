@@ -310,9 +310,18 @@ class UnifiedFortuneService {
 
         case 'mbti':
           // MBTI Edge Function 직접 호출 (FortuneApiService 패턴 사용)
+          // Edge Function이 기대하는 필드명으로 변환: mbti_type → mbti, birth_date → birthDate
+          final mbtiPayload = {
+            'mbti': inputConditions['mbti_type'] ?? inputConditions['mbti'],
+            'name': inputConditions['name'],
+            'birthDate': inputConditions['birth_date'] ?? inputConditions['birthDate'],
+            if (inputConditions['categories'] != null) 'categories': inputConditions['categories'],
+            if (inputConditions['userId'] != null) 'userId': inputConditions['userId'],
+          };
+
           final response = await _supabase.functions.invoke(
             'fortune-mbti',
-            body: inputConditions,
+            body: mbtiPayload,
           );
 
           if (response.data == null) {
@@ -324,7 +333,16 @@ class UnifiedFortuneService {
           if (responseData['success'] == true && responseData.containsKey('data')) {
             final fortuneData = responseData['data'] as Map<String, dynamic>;
             Logger.info('[UnifiedFortune] ✅ MBTI API 호출 성공');
-            return FortuneResult.fromJson(fortuneData);
+
+            // Edge Function 응답을 FortuneResult 형식으로 변환
+            return FortuneResult(
+              type: 'mbti',
+              title: 'MBTI 운세 - ${mbtiPayload['mbti']}',
+              summary: {},
+              data: fortuneData, // 전체 응답을 data 필드에 저장
+              score: (fortuneData['energyLevel'] as num?)?.toInt() ?? 75,
+              createdAt: DateTime.now(),
+            );
           } else {
             throw Exception('MBTI API 응답 형식 오류');
           }
