@@ -207,8 +207,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                   result != null && result['overallInterpretation'] != null
                       ? result['overallInterpretation']
                       : _generateDefaultInterpretation(),
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontSize: 16 * fontScale,
+                  style: context.buttonMedium.copyWith(
                     height: 1.6,
                   ),
                 ),
@@ -220,9 +219,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           // Individual card interpretations
           Text(
             '카드별 상세 해석',
-            style: theme.textTheme.titleLarge?.copyWith(
+            style: context.heading4.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 18 * fontScale,
             ),
           ),
           const SizedBox(height: 16),
@@ -261,9 +259,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                           Expanded(
                             child: Text(
                               _getPositionLabel(index),
-                              style: theme.textTheme.titleMedium?.copyWith(
+                              style: context.buttonMedium.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16 * fontScale,
                               ),
                             ),
                           ),
@@ -272,8 +269,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                       const SizedBox(height: 12),
                       Text(
                         interpretation['meaning'] ?? '',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontSize: 14 * fontScale,
+                        style: context.bodySmall.copyWith(
                           height: 1.4,
                         ),
                       ),
@@ -306,9 +302,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                       const SizedBox(width: 8),
                       Text(
                         '조언',
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        style: context.heading4.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18 * fontScale,
                         ),
                       ),
                     ],
@@ -316,8 +311,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                   const SizedBox(height: 16),
                   Text(
                     result['advice'],
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: 16 * fontScale,
+                    style: context.buttonMedium.copyWith(
                       height: 1.5,
                     ),
                   ),

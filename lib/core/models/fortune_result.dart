@@ -50,8 +50,8 @@ class FortuneResult {
   factory FortuneResult.fromJson(Map<String, dynamic> json) {
     return FortuneResult(
       id: json['id'] as String?,
-      type: json['fortune_type'] as String? ?? json['type'] as String,
-      title: json['title'] as String,
+      type: json['fortune_type'] as String? ?? json['type'] as String? ?? 'unknown',
+      title: json['title'] as String? ?? '운세 결과',
       summary: json['summary'] as Map<String, dynamic>? ?? {},
       data: json['fortune_data'] as Map<String, dynamic>? ?? json['data'] as Map<String, dynamic>? ?? {},
       score: json['score'] as int?,

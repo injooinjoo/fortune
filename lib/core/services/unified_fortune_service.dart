@@ -113,33 +113,17 @@ class UnifiedFortuneService {
           }
 
           return fortuneResult;
-        } catch (e) {
-          Logger.warning('[$fortuneType] ⚠️ 최적화 시스템 실패, 레거시 방식으로 폴백: $e');
-          // 폴백: 레거시 방식으로 진행
+        } catch (e, stackTrace) {
+          // ⚠️ 레거시 폴백 제거: 에러 발생 시 즉시 throw
+          // 이유: 폴백으로 인한 중복 API 호출 방지 (2배 비용 절감)
+          Logger.error('[$fortuneType] ❌ 최적화 시스템 실패', e, stackTrace);
+          rethrow;
         }
       }
 
-      // ===== 레거시 방식 (기존 로직) =====
-      Logger.info('[$fortuneType] 📦 레거시 방식 사용');
+      // ===== 최적화 비활성화 시: 기본 API 호출 =====
+      Logger.info('[$fortuneType] 📦 최적화 비활성화 → 직접 API 호출');
 
-      // Step 1: 기존 결과 확인 (중복 방지)
-      Logger.info('[$fortuneType] 🔍 DB 기존 결과 확인 중...');
-      final existing = await checkExistingFortune(
-        fortuneType: fortuneType,
-        inputConditions: inputConditions,
-      );
-
-      if (existing != null) {
-        Logger.info('[$fortuneType] ✅ 기존 결과 발견 → 재사용');
-        Logger.info('[$fortuneType] 🆔 ID: ${existing.id}');
-        Logger.info('[$fortuneType] 📝 제목: ${existing.title}');
-        Logger.info('[$fortuneType] ⭐ 점수: ${existing.score}');
-        return existing;
-      }
-
-      // Step 2: 새로 생성
-      Logger.info('[$fortuneType] ❌ DB에 없음 → 새로 생성');
-      Logger.info('[$fortuneType] 📡 Generator 호출 시작');
       final result = await generateFortune(
         fortuneType: fortuneType,
         dataSource: dataSource,
@@ -152,14 +136,19 @@ class UnifiedFortuneService {
       Logger.info('[$fortuneType] 📊 데이터 크기: ${result.data.toString().length}자');
       Logger.info('[$fortuneType] ⭐ 점수: ${result.score}');
 
-      // Step 3: DB 저장
-      Logger.info('[$fortuneType] 💾 DB 저장 시작');
-      await saveFortune(
-        result: result,
-        fortuneType: fortuneType,
-        inputConditions: inputConditions,
-      );
-      Logger.info('[$fortuneType] ✅ DB 저장 완료');
+      // DB 저장 시도 (실패해도 결과는 반환)
+      try {
+        Logger.info('[$fortuneType] 💾 DB 저장 시작');
+        await saveFortune(
+          result: result,
+          fortuneType: fortuneType,
+          inputConditions: inputConditions,
+        );
+        Logger.info('[$fortuneType] ✅ DB 저장 완료');
+      } catch (saveError) {
+        // DB 저장 실패해도 API 결과는 사용자에게 반환
+        Logger.warning('[$fortuneType] ⚠️ DB 저장 실패 (결과는 반환됨): $saveError');
+      }
 
       return result;
 

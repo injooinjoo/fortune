@@ -37,7 +37,10 @@
       "Bash(git restore:*)",
       "Bash(do echo \"=== $page ===\" grep -n \"FortuneDataSource\\|UnifiedFortuneService\\|getFortune\" \"/Users/jacobmac/Desktop/Dev/fortune/lib/features/fortune/presentation/pages/$page.dart\")",
       "Bash(do echo \"=== $page ===\")",
-      "Bash(if grep -q \"UnifiedFortuneService\" \"lib/features/fortune/presentation/pages/$page.dart\")"
+      "Bash(if grep -q \"UnifiedFortuneService\" \"lib/features/fortune/presentation/pages/$page.dart\")",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(do echo \"Migrating $page_fortune_page...\")",
+      "Bash(do echo \"$page:\")"
     ],
     "deny": [],
     "ask": [],

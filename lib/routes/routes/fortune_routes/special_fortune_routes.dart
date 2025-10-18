@@ -13,7 +13,6 @@ import '../../../features/fortune/presentation/pages/batch_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/dynamic_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/tarot_main_page.dart';
 import '../../../features/fortune/presentation/pages/tarot_deck_selection_page.dart';
-import '../../../features/fortune/presentation/pages/tarot_enhanced_page.dart';
 import '../../../features/fortune/presentation/pages/tarot_storytelling_page.dart';
 import '../../../features/fortune/presentation/pages/tarot_summary_page.dart';
 import '../../../features/fortune/presentation/pages/fortune_snap_scroll_page.dart';
@@ -135,13 +134,7 @@ final specialFortuneRoutes = [
     path: '/tarot-deck-legacy',
     name: 'fortune-tarot-deck-legacy',
     builder: (context, state) => const TarotDeckSelectionPage()),
-  
-  // Tarot Enhanced (Legacy)
-  GoRoute(
-    path: '/tarot-enhanced-legacy',
-    name: 'fortune-tarot-enhanced-legacy',
-    builder: (context, state) => const TarotEnhancedPage()),
-  
+
   // Tarot Storytelling (Legacy)
   GoRoute(
     path: '/tarot-storytelling-legacy',
