@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 class LoveFortuneResultPage extends StatelessWidget {
   final Map<String, dynamic> fortuneData;
@@ -81,9 +82,8 @@ class LoveFortuneResultPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     '${_calculateScore()}점',
-                    style: TossTheme.heading1.copyWith(
+                    style: TypographyUnified.displayLarge.copyWith(
                       color: TossDesignSystem.white,
-                      fontSize: 48,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
