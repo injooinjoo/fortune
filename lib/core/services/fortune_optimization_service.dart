@@ -18,6 +18,7 @@ class FortuneOptimizationService {
   // 상수
   static const int DB_POOL_THRESHOLD = 1000; // DB 풀 최소 크기
   static const double RANDOM_SELECTION_PROBABILITY = 0.3; // 30% 확률
+  static const double PERSONAL_CACHE_AD_PROBABILITY = 0.5; // 개인 캐시 50% 광고 확률
   static const Duration DELAY_DURATION = Duration(seconds: 5); // 5초 대기
 
   FortuneOptimizationService({SupabaseClient? supabase})
@@ -51,7 +52,15 @@ class FortuneOptimizationService {
         conditionsHash: conditionsHash,
       );
       if (personalCache != null) {
-        print('✅ [1단계] 개인 캐시 히트 - 즉시 반환');
+        // 50% 확률로 광고 표시
+        final showAd = Random().nextDouble() < PERSONAL_CACHE_AD_PROBABILITY;
+        if (showAd) {
+          print('✅ [1단계] 개인 캐시 히트 - 50% 광고 표시');
+          await onShowAd();
+          await Future.delayed(DELAY_DURATION);
+        } else {
+          print('✅ [1단계] 개인 캐시 히트 - 즉시 반환 (광고 생략)');
+        }
         return personalCache.copyWith(source: 'personal_cache');
       }
 

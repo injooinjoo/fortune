@@ -400,8 +400,7 @@ class _OptimizedStepItem extends StatelessWidget {
             children: [
               Text(
                 step.title,
-                style: TextStyle(
-                  fontSize: isActive ? 18 : 16,
+                style: (isActive ? TypographyUnified.heading4 : TypographyUnified.buttonMedium).copyWith(
                   fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
                   color: isCompleted || isActive
                     ? (isDark ? TossDesignSystem.white : TossDesignSystem.black)

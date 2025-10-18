@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/utils/haptic_utils.dart';
@@ -239,10 +240,8 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         ),
         title: Text(
           '프로필 인증',
-          style: TextStyle(
+          style: context.heading4.copyWith(
             color: TossDesignSystem.gray900,
-            fontSize: 18 * fontScale,
-            fontWeight: FontWeight.w600,
           ),
         ),
       ),
@@ -291,8 +290,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                           children: [
                             Text(
                               '현재 인증 상태',
-                              style: TextStyle(
-                                fontSize: 14 * fontScale,
+                              style: context.bodySmall.copyWith(
                                 color: TossDesignSystem.gray600,
                               ),
                             ),
@@ -310,8 +308,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                   ),
                                   child: Text(
                                     verificationBadge,
-                                    style: TextStyle(
-                                      fontSize: 14 * fontScale,
+                                    style: context.bodySmall.copyWith(
                                       fontWeight: FontWeight.w600,
                                       color: TossDesignSystem.white,
                                     ),
@@ -320,8 +317,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                 const SizedBox(width: 8),
                                 Text(
                                   'Lv.$verificationLevel',
-                                  style: TextStyle(
-                                    fontSize: 16 * fontScale,
+                                  style: context.buttonMedium.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: verificationColor,
                                   ),
@@ -343,15 +339,13 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         children: [
                           Text(
                             '인증 진행도',
-                            style: TextStyle(
-                              fontSize: 12 * fontScale,
+                            style: context.labelMedium.copyWith(
                               color: TossDesignSystem.gray600,
                             ),
                           ),
                           Text(
                             '$verificationLevel/3',
-                            style: TextStyle(
-                              fontSize: 12 * fontScale,
+                            style: context.labelMedium.copyWith(
                               fontWeight: FontWeight.w600,
                               color: verificationColor,
                             ),
@@ -382,8 +376,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                 children: [
                   Text(
                     '인증 혜택',
-                    style: TextStyle(
-                      fontSize: 18 * fontScale,
+                    style: context.heading4.copyWith(
                       fontWeight: FontWeight.bold,
                       color: TossDesignSystem.gray900,
                     ),
@@ -427,8 +420,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                 children: [
                   Text(
                     '인증 단계',
-                    style: TextStyle(
-                      fontSize: 18 * fontScale,
+                    style: context.heading4.copyWith(
                       fontWeight: FontWeight.bold,
                       color: TossDesignSystem.gray900,
                     ),
@@ -451,11 +443,10 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         TextField(
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
-                          style: TextStyle(fontSize: 14 * fontScale),
+                          style: context.bodySmall,
                           decoration: InputDecoration(
                             hintText: '010-0000-0000',
-                            hintStyle: TextStyle(
-                              fontSize: 14 * fontScale,
+                            hintStyle: context.bodySmall.copyWith(
                               color: TossDesignSystem.gray600,
                             ),
                             prefixIcon: const Icon(Icons.phone, size: 20),
@@ -496,8 +487,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                   )
                                 : Text(
                                     '인증번호 발송',
-                                    style: TextStyle(
-                                      fontSize: 14 * fontScale,
+                                    style: context.buttonSmall.copyWith(
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -525,8 +515,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         children: [
                           Text(
                             '인증번호 입력',
-                            style: TextStyle(
-                              fontSize: 14 * fontScale,
+                            style: context.bodySmall.copyWith(
                               fontWeight: FontWeight.w600,
                               color: TossDesignSystem.gray900,
                             ),
@@ -536,11 +525,10 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             controller: _verificationCodeController,
                             keyboardType: TextInputType.number,
                             maxLength: 6,
-                            style: TextStyle(fontSize: 14 * fontScale),
+                            style: context.bodySmall,
                             decoration: InputDecoration(
                               hintText: '6자리 인증번호',
-                              hintStyle: TextStyle(
-                                fontSize: 14 * fontScale,
+                              hintStyle: context.bodySmall.copyWith(
                                 color: TossDesignSystem.gray600,
                               ),
                               counterText: '',
@@ -577,8 +565,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                   ),
                                   child: Text(
                                     '취소',
-                                    style: TextStyle(
-                                      fontSize: 14 * fontScale,
+                                    style: context.buttonSmall.copyWith(
                                       color: TossDesignSystem.gray600,
                                     ),
                                   ),
@@ -606,8 +593,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                         )
                                       : Text(
                                           '확인',
-                                          style: TextStyle(
-                                            fontSize: 14 * fontScale,
+                                          style: context.buttonSmall.copyWith(
                                             fontWeight: FontWeight.w600,
                                             color: TossDesignSystem.white,
                                           ),
