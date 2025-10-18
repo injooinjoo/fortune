@@ -104,10 +104,10 @@ serve(async (req) => {
 
 긍정적이면서도 현실적인 관점으로 조언해주세요.`
 
-      // OpenAI API 호출
-      console.log('Calling OpenAI API with model: gpt-5-nano-2025-08-07')
+      // OpenAI API 호출 (gpt-4o-mini: reasoning 없는 빠른 모델)
+      console.log('Calling OpenAI API with model: gpt-4o-mini')
       const completion = await openai.chat.completions.create({
-        model: 'gpt-5-nano-2025-08-07',
+        model: 'gpt-4o-mini',  // gpt-5-nano → gpt-4o-mini (빠르고 저렴, reasoning 불필요)
         messages: [
           {
             role: 'system',
@@ -120,7 +120,7 @@ serve(async (req) => {
         ],
         response_format: { type: 'json_object' },
         temperature: 1,
-        max_completion_tokens: 4000,  // 2000 → 4000 (한글은 토큰 많이 사용)
+        max_completion_tokens: 4000,  // 일반 모델은 4000으로 충분 (reasoning_tokens 없음)
       })
 
       console.log('OpenAI response received:', {

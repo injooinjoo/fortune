@@ -171,7 +171,10 @@ const completion = await openai.chat.completions.create({
   ],
   response_format: { type: 'json_object' },  // ✅ JSON 응답 강제
   temperature: 1,                             // ✅ 1.0 사용 (0.7 안됨)
-  max_completion_tokens: 2000,                // ✅ max_completion_tokens (max_tokens 안됨)
+  max_completion_tokens: 16000,               // ✅ max_completion_tokens (max_tokens 안됨)
+                                              // ⚠️ gpt-5-nano는 reasoning 모델!
+                                              // reasoning_tokens (내부 사고) + content (최종 답변) 합산
+                                              // 한글은 토큰 많이 사용하므로 충분히 크게 설정
 })
 ```
 
@@ -201,13 +204,16 @@ temperature: 0.7
 temperature: 1
 ```
 
-#### 3️⃣ **max_completion_tokens 사용**
+#### 3️⃣ **max_completion_tokens 사용 (16000 권장)**
 ```typescript
 // ❌ WRONG - gpt-5-nano는 max_tokens 지원 안함
 max_tokens: 2000
 
-// ✅ CORRECT - 신규 API 표준
-max_completion_tokens: 2000
+// ⚠️ TOO SMALL - gpt-5-nano는 reasoning 모델로 reasoning_tokens를 많이 사용
+max_completion_tokens: 2000  // reasoning에 토큰 전부 소진되어 content가 비어있음
+
+// ✅ CORRECT - reasoning_tokens + content 충분히 확보
+max_completion_tokens: 16000  // 4000 (reasoning) + 12000 (content)
 ```
 
 **에러 메시지**:
@@ -215,6 +221,22 @@ max_completion_tokens: 2000
 400 Unsupported parameter: 'max_tokens' is not supported with this model.
 Use 'max_completion_tokens' instead.
 ```
+
+**⚠️ CRITICAL: gpt-5-nano-2025-08-07은 Reasoning 모델입니다!**
+
+```json
+// finishReason: "length"이고 content가 비어있는 경우:
+{
+  "finish_reason": "length",
+  "message": { "content": "" },
+  "completion_tokens": 4000,
+  "completion_tokens_details": {
+    "reasoning_tokens": 4000  // ← 모든 토큰이 reasoning에 소진!
+  }
+}
+```
+
+**해결 방법**: `max_completion_tokens`를 16000 이상으로 설정하여 reasoning + content 공간 확보
 
 ### 📝 **Edge Function 작성 시 체크리스트**
 
