@@ -164,7 +164,7 @@ class FaceAnalysisResultWidget extends StatelessWidget {
           // 이모지
           Text(
             faceTypeInfo.emoji,
-            style: const TextStyle(fontSize: 72),
+            style: TypographyUnified.displayLarge,
           ),
           const SizedBox(height: 16),
           

@@ -46,8 +46,7 @@ class GrowthTimelineWidget extends StatelessWidget {
           // 제목
           Text(
             '평생 성장 가이드',
-            style: TextStyle(
-              fontSize: 22,
+            style: TypographyUnified.heading3.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),

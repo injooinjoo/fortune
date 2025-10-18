@@ -233,8 +233,7 @@ class FortuneCard extends StatelessWidget {
                             children: [
                               Text(
                                 title!,
-                                style: TossDesignSystem.heading4.copyWith(
-                                  fontSize: 17,
+                                style: TypographyUnified.heading4.copyWith(
                                   fontWeight: FontWeight.w600,
                                   color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
                                 ),

@@ -348,7 +348,7 @@ class _CompassPainter extends CustomPainter {
     
     // Draw direction labels
     final directions = ['북', '동', '남', '서'];
-    final textStyle = TextStyle(color: textColor, fontSize: 14);
+    final textStyle = TypographyUnified.bodySmall.copyWith(color: textColor);
     
     for (int i = 0; i < directions.length; i++) {
       final angle = (i * math.pi / 2) - math.pi / 2;

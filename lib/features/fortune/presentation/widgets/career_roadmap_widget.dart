@@ -45,8 +45,7 @@ class CareerRoadmapWidget extends StatelessWidget {
           // 제목
           Text(
             '커리어 로드맵',
-            style: TextStyle(
-              fontSize: 22,
+            style: TypographyUnified.heading3.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),

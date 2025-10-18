@@ -128,7 +128,6 @@ class _LoveScoreCircleState extends State<LoveScoreCircle>
                   style: TossTheme.heading1.copyWith(
                     color: color,
                     fontWeight: FontWeight.w800,
-                    fontSize: 42,
                   ),
                 ),
                 Text(
