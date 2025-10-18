@@ -103,12 +103,38 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
 
     // FortuneResult의 data 필드에서 PersonalityDNA 정보 추출
     final data = fortuneResult.data;
-    final dnaCode = PersonalityDNA.generateDNACode(
+    final dnaCode = data['dnaCode'] as String? ?? PersonalityDNA.generateDNACode(
       mbti: _selectedMbti!,
       bloodType: _selectedBloodType!,
       zodiac: _selectedZodiac!,
       zodiacAnimal: _selectedAnimal!,
     );
+
+    // Edge Function 응답 구조에 맞게 데이터 추출
+    final loveStyle = data['loveStyle'] as Map<String, dynamic>? ?? {};
+    final workStyle = data['workStyle'] as Map<String, dynamic>? ?? {};
+    final dailyMatching = data['dailyMatching'] as Map<String, dynamic>? ?? {};
+    final compatibility = data['compatibility'] as Map<String, dynamic>? ?? {};
+    final funStats = data['funStats'] as Map<String, dynamic>? ?? {};
+
+    // 상세 설명 생성
+    final detailedDescription = '''
+${data['todayHighlight'] ?? '당신의 성격 DNA를 분석했습니다.'}
+
+💕 연애 스타일: ${loveStyle['title'] ?? ''}
+${loveStyle['description'] ?? ''}
+
+👔 직장 생활: ${workStyle['title'] ?? ''}
+${workStyle['as_boss'] ?? ''}
+
+🎯 오늘의 조언
+${data['todayAdvice'] ?? '평소와 다른 작은 도전을 해보세요.'}
+
+✨ 재미있는 통계
+• 희귀도: ${funStats['rarity_rank'] ?? ''}
+• 유명인 매칭: ${funStats['celebrity_match'] ?? ''}
+• 한국 내 비율: ${funStats['percentage_in_korea'] ?? ''}%
+    '''.trim();
 
     _currentDNA = PersonalityDNA(
       mbti: _selectedMbti!,
@@ -118,12 +144,14 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
       dnaCode: dnaCode,
       title: data['title'] as String? ?? '성격 DNA',
       emoji: data['emoji'] as String? ?? '🧬',
-      description: data['description'] as String? ?? fortuneResult.summary['message'] ?? '',
-      traits: (data['traits'] as List?)?.cast<String>() ?? [],
-      gradientColors: [], // 필요시 로컬에서 생성
-      scores: (data['scores'] as Map?)?.cast<String, int>() ?? {},
-      todaysFortune: data['todaysFortune'] as String? ?? fortuneResult.summary['message'] ?? '',
-      popularityRank: fortuneResult.score,
+      description: detailedDescription,
+      traits: [], // Edge Function에서 traits 대신 loveStyle, workStyle 사용
+      gradientColors: [], // 로컬에서 생성
+      scores: {
+        'socialRanking': (data['socialRanking'] as num?)?.toInt() ?? 50,
+      },
+      todaysFortune: data['todayAdvice'] as String? ?? '평소와 다른 작은 도전을 해보세요.',
+      popularityRank: (data['socialRanking'] as num?)?.toInt() ?? 50,
     );
 
     // Fortune 객체로 변환
@@ -131,17 +159,24 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
       id: 'personality_dna_${DateTime.now().millisecondsSinceEpoch}',
       userId: user.id,
       type: 'personality-dna',
-      content: _currentDNA!.description,
+      content: detailedDescription,
       createdAt: DateTime.now(),
       category: 'personality-dna',
       overallScore: _currentDNA!.popularityRank ?? 50,
-      description: '${_currentDNA!.emoji} ${_currentDNA!.title}\n\n${_currentDNA!.description}',
+      description: '${_currentDNA!.emoji} ${_currentDNA!.title}\n\n$detailedDescription',
       metadata: {
         'mbti': _selectedMbti,
         'blood_type': _selectedBloodType,
         'zodiac': _selectedZodiac,
         'animal': _selectedAnimal,
         'dna_code': dnaCode,
+        'love_style': loveStyle,
+        'work_style': workStyle,
+        'daily_matching': dailyMatching,
+        'compatibility': compatibility,
+        'fun_stats': funStats,
+        'rarity_level': data['rarityLevel'],
+        'social_ranking': data['socialRanking'],
       },
     );
   }
