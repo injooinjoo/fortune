@@ -2,12 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../domain/models/conditions/freelance_fortune_conditions.dart';
 
 class FreelanceFortunePage extends BaseFortunePage {
   const FreelanceFortunePage({
@@ -68,12 +70,40 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final fortuneService = ref.read(fortuneServiceProvider);
-    
-    return await fortuneService.getFortune(
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    int expMonths = 0;
+    final exp = params['experience'] as String?;
+    if (exp != null) {
+      if (exp.contains('준비 중')) expMonths = 0;
+      else if (exp.contains('1년 미만')) expMonths = 6;
+      else if (exp.contains('1-3년')) expMonths = 24;
+      else if (exp.contains('3년 이상')) expMonths = 48;
+    }
+
+    final conditions = FreelanceFortuneConditions(
+      field: params['freelanceType'] ?? '',
+      experienceMonths: expMonths,
+      workStyle: params['challenges']?.toString() ?? '',
+      date: DateTime.now(),
+    );
+
+    final fortuneResult = await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
-      userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params
+      dataSource: FortuneDataSource.api,
+      inputConditions: params,
+      conditions: conditions,
+    );
+
+    return Fortune(
+      id: fortuneResult.id ?? '',
+      userId: ref.read(userProvider).value?.id ?? '',
+      type: fortuneResult.type,
+      content: fortuneResult.data['content'] as String? ?? '',
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
+      overallScore: fortuneResult.score,
+      summary: fortuneResult.summary['message'] as String?,
+      metadata: fortuneResult.data,
     );
   }
 
