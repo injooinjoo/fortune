@@ -14,6 +14,7 @@ import '../../../../presentation/providers/providers.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
+import '../../domain/models/conditions/avoid_people_fortune_conditions.dart';
 
 class AvoidPeopleFortunePage extends BaseFortunePage {
   const AvoidPeopleFortunePage({super.key})
@@ -96,6 +97,18 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
       // UnifiedFortuneService 사용
       final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
+      // 🔮 최적화 시스템: 조건 객체 생성
+      final conditions = AvoidPeopleFortuneConditions(
+        environment: params['environment'] ?? '',
+        importantSchedule: params['importantSchedule'] ?? '',
+        moodLevel: params['moodLevel'] ?? 3,
+        stressLevel: params['stressLevel'] ?? 3,
+        socialFatigue: params['socialFatigue'] ?? 3,
+        hasImportantDecision: params['hasImportantDecision'] ?? false,
+        hasSensitiveConversation: params['hasSensitiveConversation'] ?? false,
+        hasTeamProject: params['hasTeamProject'] ?? false,
+      );
+
       // input_conditions 정규화
       final inputConditions = {
         'environment': params['environment'],
@@ -112,6 +125,7 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
         fortuneType: 'avoid_people',
         dataSource: FortuneDataSource.api,
         inputConditions: inputConditions,
+        conditions: conditions, // ✅ 최적화 활성화!
       );
 
       Logger.info('✅ [AvoidPeopleFortune] UnifiedFortuneService 완료');
