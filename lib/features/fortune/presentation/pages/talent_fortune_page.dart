@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../domain/models/conditions/talent_fortune_conditions.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../widgets/talent_type_result_widget.dart';
 import '../../domain/models/talent_type.dart';
@@ -25,24 +28,37 @@ class _TalentFortunePageState extends BaseFortunePageState<TalentFortunePage> {
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    // 재능 분석 API 호출을 시뮬레이션
-    await Future.delayed(const Duration(seconds: 2));
-    
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    final conditions = TalentFortuneConditions(
+      interests: List<String>.from(params['interests'] ?? []),
+      currentJob: params['currentJob'] as String?,
+      age: int.tryParse(params['age']?.toString() ?? '25') ?? 25,
+      date: DateTime.now(),
+    );
+
+    final fortuneResult = await fortuneService.getFortune(
+      fortuneType: 'talent',
+      dataSource: FortuneDataSource.api,
+      inputConditions: params,
+      conditions: conditions,
+    );
+
     // 사용자 답변을 바탕으로 재능 분석 결과 생성
     final talents = _analyzeTalents(params);
     final talentType = TalentTypeProvider.determineTalentType(talents);
     _talentTypeInfo = TalentTypeProvider.getInfo(talentType);
-    
+
     return Fortune(
-      id: 'talent_${DateTime.now().millisecondsSinceEpoch}',
+      id: fortuneResult.id ?? 'talent_${DateTime.now().millisecondsSinceEpoch}',
       userId: userProfile?.id ?? 'anonymous',
       type: 'talent',
-      content: _generateTalentDescription(_talentTypeInfo!),
-      createdAt: DateTime.now(),
+      content: fortuneResult.data['content'] as String? ?? _generateTalentDescription(_talentTypeInfo!),
+      createdAt: fortuneResult.createdAt ?? DateTime.now(),
       category: 'talent-discovery',
-      overallScore: talents['overall'] as int,
+      overallScore: fortuneResult.score ?? (talents['overall'] as int),
       scoreBreakdown: Map<String, int>.from(talents)..remove('overall'),
-      description: '당신의 재능 타입과 성장 방향을 알려드립니다.',
+      description: fortuneResult.summary['message'] as String? ?? '당신의 재능 타입과 성장 방향을 알려드립니다.',
       luckyItems: {
         'talent_type': talentType.name,
         'talent_info': _talentTypeInfo!,

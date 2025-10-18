@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import 'dart:math';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../domain/models/conditions/lucky_items_fortune_conditions.dart';
 
 class LuckyItemsUnifiedPage extends BaseFortunePage {
   const LuckyItemsUnifiedPage({
@@ -103,13 +105,27 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
       throw Exception('사용자 정보를 찾을 수 없습니다.');
     }
 
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    final conditions = LuckyItemsFortuneConditions(
+      date: DateTime.now(),
+      birthDate: userProfile.birthDate,
+    );
+
+    final fortuneResult = await fortuneService.getFortune(
+      fortuneType: 'lucky-items',
+      dataSource: FortuneDataSource.api,
+      inputConditions: params,
+      conditions: conditions,
+    );
+
     // 행운 가이드 데이터 생성
     final luckyGuide = await _generateLuckyGuide(userProfile, DateTime.now());
-    
+
     setState(() {
       _fortuneResult = luckyGuide;
     });
-    
+
     return luckyGuide;
   }
   

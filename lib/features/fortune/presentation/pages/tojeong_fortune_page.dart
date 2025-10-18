@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart' hide Icon;
 import 'package:flutter/material.dart' as material show Icon;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../domain/models/conditions/tojeong_fortune_conditions.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -100,6 +103,21 @@ class _TojeongFortunePageState extends BaseFortunePageState<TojeongFortunePage> 
 
     final userProfile = await ref.read(userProfileProvider.future);
     final birthDate = userProfile?.birthDate ?? DateTime.now();
+
+    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
+    final conditions = TojeongFortuneConditions(
+      birthDate: birthDate,
+      consultDate: DateTime.now(),
+      lunarCalendar: params['lunarCalendar'] as String?,
+    );
+
+    final fortuneResult = await fortuneService.getFortune(
+      fortuneType: widget.fortuneType,
+      dataSource: FortuneDataSource.api,
+      inputConditions: params,
+      conditions: conditions,
+    );
     final currentYear = DateTime.now().year;
 
     final upperTrigram = _calculateUpperTrigram(birthDate, currentYear);
