@@ -235,6 +235,27 @@ class UnifiedFortuneService {
         case 'health':
           return await HealthGenerator.generate(inputConditions, _supabase);
 
+        case 'mbti':
+          // MBTI Edge Function 직접 호출 (FortuneApiService 패턴 사용)
+          final response = await _supabase.functions.invoke(
+            'fortune-mbti',
+            body: inputConditions,
+          );
+
+          if (response.data == null) {
+            throw Exception('MBTI API 응답 데이터 없음');
+          }
+
+          // fortune-mbti returns {success: true, data: {...}}
+          final responseData = response.data as Map<String, dynamic>;
+          if (responseData['success'] == true && responseData.containsKey('data')) {
+            final fortuneData = responseData['data'] as Map<String, dynamic>;
+            Logger.info('[UnifiedFortune] ✅ MBTI API 호출 성공');
+            return FortuneResult.fromJson(fortuneData);
+          } else {
+            throw Exception('MBTI API 응답 형식 오류');
+          }
+
         default:
           // 기본 Edge Function 호출 (레거시)
           final response = await _supabase.functions.invoke(
