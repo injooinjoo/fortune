@@ -7,6 +7,7 @@ import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 class PalmistryFortunePage extends ConsumerStatefulWidget {
   const PalmistryFortunePage({super.key});
@@ -63,18 +64,16 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '손금 운세',
-            style: TextStyle(
-              fontSize: 20,
+            style: TypographyUnified.heading3.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'AI가 당신의 손금을 분석하여 운명과 미래를 예측해드립니다.',
-            style: TextStyle(
-              fontSize: 14,
+            style: TypographyUnified.bodySmall.copyWith(
               color: TossDesignSystem.gray500,
             ),
           ),
@@ -135,8 +134,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
               SizedBox(width: 8),
               Text(
                 '손 사진 촬영 (선택사항)',
-                style: TextStyle(
-                  fontSize: 16,
+                style: TypographyUnified.buttonMedium.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -215,7 +213,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                 Expanded(
                   child: Text(
                     '밝은 곳에서 손바닥을 평평하게 펴고 촬영해주세요',
-                    style: TextStyle(fontSize: 12, color: TossDesignSystem.tossBlue),
+                    style: TypographyUnified.labelMedium.copyWith(color: TossDesignSystem.tossBlue),
                   ),
                 ),
               ],
@@ -230,10 +228,9 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '주로 사용하는 손',
-          style: TextStyle(
-            fontSize: 16,
+          style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -298,10 +295,9 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '손 모양',
-          style: TextStyle(
-            fontSize: 16,
+          style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -336,10 +332,9 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
                 child: Center(
                   child: Text(
                     entry.value,
-                    style: TextStyle(
+                    style: TypographyUnified.bodySmall.copyWith(
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                       color: isSelected ? TossDesignSystem.purple : TossDesignSystem.gray700,
-                      fontSize: 13,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -356,10 +351,9 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '주요 손금 분석',
-          style: TextStyle(
-            fontSize: 16,
+          style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
