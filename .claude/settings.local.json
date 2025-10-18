@@ -78,7 +78,10 @@
       "Bash(\"lib/features/fortune/presentation/widgets/talent_top3_widget.dart\" )",
       "Bash(\"lib/features/fortune/presentation/widgets/moving_result_toss.dart\" )",
       "Bash(\"lib/features/fortune/presentation/widgets/lucky_items_bottom_sheet.dart\")",
-      "Bash(basename:*)"
+      "Bash(basename:*)",
+      "Bash(while read file)",
+      "Bash(do if grep -q \"FloatingBottomButton\" \"$file\")",
+      "Bash(then echo \"$file\" fi done)"
     ],
     "deny": [],
     "ask": [],

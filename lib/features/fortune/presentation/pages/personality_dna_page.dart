@@ -8,7 +8,7 @@ import '../../../../core/models/personality_dna_model.dart';
 import '../../../../core/services/personality_dna_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -148,12 +148,12 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
               ),
             ),
             if (_canGenerate())
-              FloatingBottomButton(
+              TossFloatingProgressButtonPositioned(
                 text: '🧬 나만의 성격 DNA 발견하기',
                 onPressed: canGenerateFortune ? () => _handleGenerateFortune() : null,
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
-                hideWhenDisabled: true,
+                isEnabled: canGenerateFortune,
+                showProgress: false,
+                isVisible: canGenerateFortune,
               ),
           ],
         ),

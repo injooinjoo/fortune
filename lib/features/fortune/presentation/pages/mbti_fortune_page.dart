@@ -5,7 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../services/mbti_cognitive_functions_service.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_card.dart';
 import '../widgets/standard_fortune_app_bar.dart';
@@ -274,14 +274,14 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               ),
             ),
 
-            // Floating Bottom Button - already contains internal Positioned widget
+            // Floating Bottom Button
             if (_selectedMbti != null)
-              FloatingBottomButton(
+              TossFloatingProgressButtonPositioned(
                 text: '🧠 내 성격이 말하는 오늘',
                 onPressed: canGenerateFortune ? () => _handleGenerateFortune() : null,
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
-                hideWhenDisabled: true,
+                isEnabled: canGenerateFortune,
+                showProgress: false,
+                isVisible: canGenerateFortune,
               ),
           ],
         ),
