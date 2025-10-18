@@ -147,11 +147,12 @@ class FortuneOptimizationService {
       // 2-1. DB 풀 크기 확인
       final countResponse = await _supabase
           .from('fortune_results')
-          .select('id', const FetchOptions(count: CountOption.exact))
+          .select('id')
           .eq('fortune_type', fortuneType)
-          .eq('conditions_hash', conditionsHash);
+          .eq('conditions_hash', conditionsHash)
+          .count();
 
-      final count = countResponse.count;
+      final count = countResponse.count ?? 0;
 
       if (count < DB_POOL_THRESHOLD) {
         print('  ✗ DB 풀 부족 ($count/$DB_POOL_THRESHOLD)');
@@ -167,6 +168,7 @@ class FortuneOptimizationService {
           .select()
           .eq('fortune_type', fortuneType)
           .eq('conditions_hash', conditionsHash)
+          .limit(1)
           .range(randomOffset, randomOffset)
           .single();
 

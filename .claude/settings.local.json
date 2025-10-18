@@ -32,7 +32,9 @@
       "Bash(supabase functions logs:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(supabase db:*)"
+      "Bash(supabase db:*)",
+      "Bash(ls:*)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "ask": [],

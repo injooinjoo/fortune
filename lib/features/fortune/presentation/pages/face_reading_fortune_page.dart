@@ -13,6 +13,8 @@ import '../../../../services/ad_service.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart' as core_models;
+import '../../domain/models/conditions/face_reading_fortune_conditions.dart';
+import 'package:crypto/crypto.dart';
 
 class FaceReadingFortunePage extends ConsumerStatefulWidget {
   const FaceReadingFortunePage({super.key});
@@ -339,11 +341,30 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         throw '분석할 이미지를 선택해주세요.';
       }
 
+      // 이미지 해시 생성
+      String imageHash;
+      if (_uploadResult?.imageFile != null) {
+        final bytes = await _uploadResult!.imageFile!.readAsBytes();
+        imageHash = sha256.convert(bytes).toString();
+      } else if (_uploadResult?.instagramUrl != null) {
+        imageHash = sha256.convert(utf8.encode(_uploadResult!.instagramUrl!)).toString();
+      } else {
+        throw '분석할 이미지를 선택해주세요.';
+      }
+
+      // Optimization conditions 생성
+      final conditions = FaceReadingFortuneConditions(
+        faceImageHash: imageHash,
+        gender: inputConditions['gender'] as String?,
+        age: inputConditions['age'] as int?,
+      );
+
       final fortuneService = UnifiedFortuneService(Supabase.instance.client);
       final result = await fortuneService.getFortune(
         fortuneType: 'face-reading',
         dataSource: FortuneDataSource.api,
         inputConditions: inputConditions,
+        conditions: conditions,
       );
 
       if (mounted) {

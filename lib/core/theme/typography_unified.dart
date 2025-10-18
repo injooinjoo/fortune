@@ -22,16 +22,16 @@ class TypographyUnified {
   // FONT FAMILIES
   // ==========================================
 
-  /// 한글 폰트
-  static const String fontFamilyKorean = 'Pretendard';
+  /// 한글 폰트 (ZenSerif)
+  static const String fontFamilyKorean = 'ZenSerif';
 
   /// 영문 폰트
-  static const String fontFamilyEnglish = 'SF Pro Display';
+  static const String fontFamilyEnglish = 'ZenSerif';
 
-  /// 숫자 전용 폰트 (TossFace)
-  static const String fontFamilyNumber = 'TossFace';
+  /// 숫자 전용 폰트 (ZenSerif)
+  static const String fontFamilyNumber = 'ZenSerif';
 
-  /// 기본 폰트 (한글)
+  /// 기본 폰트 (ZenSerif)
   static const String fontFamilyDefault = fontFamilyKorean;
 
   // ==========================================

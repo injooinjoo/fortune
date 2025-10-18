@@ -244,6 +244,10 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
+    - family: ZenSerif
+      fonts:
+        - asset: assets/fonts/ZEN-SERIF-Regular.otf
+          weight: 400
     - family: NotoSansKR
       fonts:
         - asset: assets/fonts/NotoSansKR/NotoSansKR-Regular.otf

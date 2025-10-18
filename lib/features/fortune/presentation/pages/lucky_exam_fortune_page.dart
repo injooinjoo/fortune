@@ -12,6 +12,7 @@ import '../../../../services/ad_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../domain/models/conditions/lucky_exam_fortune_conditions.dart';
 
 class LuckyExamFortunePage extends ConsumerStatefulWidget {
   const LuckyExamFortunePage({super.key});
@@ -76,10 +77,24 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
         'difficulty': _difficulty,
       };
 
+      // Optimization conditions 생성
+      final examDate = DateTime.tryParse(_examDate) ?? DateTime.now();
+      final prepLevel = _confidenceLevels.indexOf(_confidence) + 1;
+      final anxietyLevel = 6 - prepLevel; // 자신감과 반비례
+
+      final conditions = LuckyExamFortuneConditions(
+        examType: _examType,
+        examDate: examDate,
+        subject: null,
+        preparationLevel: prepLevel,
+        anxietyLevel: anxietyLevel,
+      );
+
       final fortuneResult = await fortuneService.getFortune(
         fortuneType: 'exam',
         dataSource: FortuneDataSource.api,
         inputConditions: inputConditions,
+        conditions: conditions,
       );
 
       final fortune = _convertToFortune(fortuneResult);

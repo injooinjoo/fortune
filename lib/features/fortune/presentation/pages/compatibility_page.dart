@@ -17,6 +17,7 @@ import '../../../../core/models/fortune_result.dart';
 import '../constants/fortune_button_spacing.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
+import '../../domain/models/conditions/compatibility_fortune_conditions.dart';
 
 class CompatibilityPage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -168,10 +169,19 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         },
       };
 
+      // Optimization conditions 생성
+      final conditions = CompatibilityFortuneConditions(
+        person1Name: _person1NameController.text,
+        person1BirthDate: _person1BirthDate!,
+        person2Name: _person2NameController.text,
+        person2BirthDate: _person2BirthDate!,
+      );
+
       final fortuneResult = await fortuneService.getFortune(
         fortuneType: 'compatibility',
         dataSource: FortuneDataSource.api,
         inputConditions: inputConditions,
+        conditions: conditions,
       );
 
       // FortuneResult → Fortune 엔티티 변환
