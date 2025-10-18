@@ -625,7 +625,7 @@ class _TestResultView extends ConsumerWidget {
     final analysisAsync = ref.watch(psychologyTestProvider(input));
 
     return analysisAsync.when(
-      loading: () => const Center(
+      loading: () => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

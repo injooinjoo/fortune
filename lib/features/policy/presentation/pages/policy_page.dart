@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/theme/typography_unified.dart';
+import '../../../../core/theme/typography_unified.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/shared/components/app_header.dart';
 import 'package:fortune/core/theme/app_theme.dart';

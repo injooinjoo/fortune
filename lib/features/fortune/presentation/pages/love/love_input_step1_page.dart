@@ -4,6 +4,7 @@ import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../shared/components/floating_bottom_button.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 enum RelationshipStatus { single, dating, breakup, crush }
 
@@ -335,7 +336,7 @@ class _LoveInputStep1PageState extends State<LoveInputStep1Page> {
           children: [
             Text(
               _getRelationshipStatusEmoji(status),
-              style: const TextStyle(fontSize: 24),
+              style: TypographyUnified.displaySmall,
             ),
             const SizedBox(width: 12),
             Expanded(

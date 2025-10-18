@@ -128,7 +128,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
               Icon(Icons.camera_alt, color: TossDesignSystem.purple),
               SizedBox(width: 8),
@@ -206,7 +206,7 @@ class _PalmistryFortunePageState extends ConsumerState<PalmistryFortunePage> {
               color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Row(
+            child: Row(
               children: [
                 Icon(Icons.info_outline, size: 16, color: TossDesignSystem.tossBlue),
                 SizedBox(width: 8),
