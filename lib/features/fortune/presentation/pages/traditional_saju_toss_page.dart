@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../providers/saju_provider.dart';
@@ -174,12 +174,12 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
             ],
           ),
         ),
-        FloatingBottomButton(
+        TossFloatingProgressButtonPositioned(
           text: _isFortuneLoading ? '운세를 보고 있어요...' : '📿 하늘이 정한 나의 운명',
           onPressed: hasQuestion && !_isFortuneLoading ? _onFortuneButtonPressed : null,
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
-          hideWhenDisabled: true,
+          isEnabled: hasQuestion && !_isFortuneLoading,
+          showProgress: false,
+          isVisible: hasQuestion,
         ),
       ],
     );
@@ -201,7 +201,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
             ],
           ),
         ),
-        FloatingBottomButton(
+        TossFloatingProgressButtonPositioned(
           text: '다른 운세 보기',
           onPressed: () {
             setState(() {
@@ -210,8 +210,9 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
               _customQuestionController.clear();
             });
           },
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
+          isEnabled: true,
+          showProgress: false,
+          isVisible: true,
         ),
       ],
     );

@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/image_upload_selector.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../services/ad_service.dart';
@@ -249,8 +249,11 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         ),
 
         // Floating Bottom Button
-        FloatingBottomButton(
+        TossFloatingProgressButtonPositioned(
           text: _isAnalyzing ? 'AI가 분석 중...' : 'AI 관상 분석 시작',
+          isEnabled: !_isAnalyzing,
+          showProgress: false,
+          isVisible: true,
           onPressed: _isAnalyzing ? null : () async {
             await AdService.instance.showInterstitialAdWithCallback(
               onAdCompleted: () async {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 
 /// 표준 운세 페이지 레이아웃
 ///
@@ -64,12 +65,13 @@ class StandardFortunePageLayout extends StatelessWidget {
         ),
 
         // 하단 고정 버튼
-        FloatingBottomButton(
+        TossFloatingProgressButtonPositioned(
           text: buttonText,
           onPressed: onButtonPressed,
+          isEnabled: onButtonPressed != null && !isLoading,
+          showProgress: false,
+          isVisible: true,
           isLoading: isLoading,
-          style: buttonStyle,
-          size: buttonSize,
           icon: buttonIcon,
         ),
       ],

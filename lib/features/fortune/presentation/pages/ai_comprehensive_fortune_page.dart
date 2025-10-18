@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -217,8 +218,11 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
         ),
 
         // Floating 버튼
-        FloatingBottomButton(
+        TossFloatingProgressButtonPositioned(
           text: 'AI 분석 시작',
+          isEnabled: true,
+          showProgress: false,
+          isVisible: true,
           onPressed: () async {
             await AdService.instance.showInterstitialAdWithCallback(
               onAdCompleted: () async {
@@ -229,9 +233,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               },
             );
           },
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
-          icon: Icon(Icons.auto_awesome),
+          icon: const Icon(Icons.auto_awesome, color: Colors.white),
         ),
       ],
     );
@@ -483,12 +485,13 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
         ),
 
         // Floating 버튼
-        FloatingBottomButton(
+        TossFloatingProgressButtonPositioned(
           text: '다시 시도',
           onPressed: _reset,
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
-          icon: Icon(Icons.refresh),
+          isEnabled: true,
+          showProgress: false,
+          isVisible: true,
+          icon: const Icon(Icons.refresh, color: Colors.white),
         ),
       ],
     );

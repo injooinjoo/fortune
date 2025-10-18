@@ -6,6 +6,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/career_coaching_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -189,11 +190,12 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
           ),
 
           // Floating bottom button
-          FloatingBottomButton(
+          TossFloatingProgressButtonPositioned(
             text: _currentStep == 1 ? '분석 시작' : '다음',
             onPressed: _nextStep,
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
+            isEnabled: true,
+            showProgress: false,
+            isVisible: true,
           ),
         ],
       ),

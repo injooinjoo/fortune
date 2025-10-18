@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -203,14 +203,15 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   ),
                 ),
               ),
-              FloatingBottomButton(
+              TossFloatingProgressButtonPositioned(
                 text: '새로운 리딩 시작하기',
                 onPressed: () {
                   context.goNamed('interactive-tarot');
                 },
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
-                icon: Icon(Icons.refresh),
+                isEnabled: true,
+                showProgress: false,
+                isVisible: true,
+                icon: const Icon(Icons.refresh, color: Colors.white),
               ),
             ],
           ),

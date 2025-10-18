@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
@@ -189,8 +189,11 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                         ? buildFortuneResult()
                         : buildInputForm(),
             if (fortune == null && !isLoading && error == null)
-              FloatingBottomButton(
+              TossFloatingProgressButtonPositioned(
                 text: '운세 보기',
+                isEnabled: true,
+                showProgress: false,
+                isVisible: true,
                 onPressed: () async {
                   await AdService.instance.showInterstitialAdWithCallback(
                     onAdCompleted: () async {

@@ -22,6 +22,7 @@ import '../../../../shared/components/soul_earn_animation.dart';
 import '../../../../shared/components/soul_consume_animation.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
@@ -971,8 +972,12 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                         ? buildFortuneResult()
                         : _buildInitialState(),
             if (_fortune == null && !_isLoading && _error == null)
-              FloatingBottomButton(
+              TossFloatingProgressButtonPositioned(
                 text: '운세 보기',
+                isEnabled: true,
+                showProgress: false,
+                isVisible: true,
+                icon: const Icon(Icons.auto_awesome_rounded, color: Colors.white),
                 onPressed: () async {
                   Logger.info('🖱️ [BaseFortunePage] User clicked generate fortune button', {
                     'fortuneType': widget.fortuneType,
@@ -990,9 +995,6 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                     },
                   );
                 },
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
-                icon: Icon(Icons.auto_awesome_rounded),
               ),
           ],
         ),

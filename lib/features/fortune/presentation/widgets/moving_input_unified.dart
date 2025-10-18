@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
@@ -189,12 +190,12 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
               ],
             ),
           ),
-          FloatingBottomButton(
+          TossFloatingProgressButtonPositioned(
             text: _isLoading ? '이사운 분석중...' : '이사운 보기',
             onPressed: _canContinue() ? _handleComplete : null,
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
-            hideWhenDisabled: true,
+            isEnabled: _canContinue(),
+            showProgress: false,
+            isVisible: true,
           ),
         ],
       ),

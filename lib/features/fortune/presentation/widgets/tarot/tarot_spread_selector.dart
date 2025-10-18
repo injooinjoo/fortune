@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../shared/components/floating_bottom_button.dart';
+import '../../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
 
@@ -150,14 +151,14 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
             ),
 
             // FloatingBottomButton
-            FloatingBottomButton(
+            TossFloatingProgressButtonPositioned(
               text: '카드 뽑기',
               onPressed: _selectedSpread != null
                   ? () => widget.onSpreadSelected(_selectedSpread!)
                   : null,
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
-              hideWhenDisabled: true,
+              isEnabled: _selectedSpread != null,
+              showProgress: false,
+              isVisible: true,
             ),
           ],
         ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
@@ -68,12 +68,13 @@ class _LuckyStockInputForm extends StatelessWidget {
         ),
         
         // Floating 버튼
-        FloatingBottomButton(
+        TossFloatingProgressButtonPositioned(
           text: '투자 운세 확인하기',
           onPressed: () => onSubmit({}),
-          style: TossButtonStyle.primary,
-          size: TossButtonSize.large,
-          icon: Icon(Icons.trending_up),
+          isEnabled: true,
+          showProgress: false,
+          isVisible: true,
+          icon: const Icon(Icons.trending_up, color: Colors.white),
         ),
       ],
     );

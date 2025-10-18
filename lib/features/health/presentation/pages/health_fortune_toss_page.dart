@@ -13,6 +13,7 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../presentation/providers/providers.dart';
@@ -916,22 +917,25 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
 
     // Step 0: 컨디션 선택 페이지
     if (_currentStep == 0) {
-      return FloatingBottomButton(
+      return TossFloatingProgressButtonPositioned(
         text: _currentCondition != null ? '다음 단계로' : '건너뛰기',
         onPressed: _goToNextStep,
-        style: _currentCondition != null
-            ? TossButtonStyle.primary
-            : TossButtonStyle.secondary,
+        isEnabled: true,
+        showProgress: false,
+        isVisible: true,
       );
     }
 
     // Step 1: 신체 부위 선택 페이지
     if (_currentStep == 1) {
-      return FloatingBottomButton(
+      return TossFloatingProgressButtonPositioned(
         text: '건강 분석하기',
         onPressed: _generateHealthFortune,
+        isEnabled: !_isLoading,
+        showProgress: false,
+        isVisible: true,
         isLoading: _isLoading,
-        icon: _isLoading ? null : const Icon(Icons.auto_awesome_rounded, size: 20),
+        icon: _isLoading ? null : const Icon(Icons.auto_awesome_rounded, size: 20, color: Colors.white),
       );
     }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../shared/components/app_header.dart';
@@ -233,12 +233,13 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
                             ),
                           ),
             if (_fortuneResult != null && widget.showShareButton)
-              FloatingBottomButton(
+              TossFloatingProgressButtonPositioned(
                 text: '공유하기',
                 onPressed: _handleShare,
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
-                icon: const Icon(Icons.share),
+                isEnabled: true,
+                showProgress: false,
+                isVisible: true,
+                icon: const Icon(Icons.share, color: Colors.white),
               ),
           ],
         ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -240,8 +240,11 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
         ),
         
         // Floating 버튼
-        FloatingBottomButton(
+        TossFloatingProgressButtonPositioned(
           text: '천직 찾기',
+          isEnabled: _canSubmit(),
+          showProgress: false,
+          isVisible: true,
           onPressed: _canSubmit()
               ? () async {
                   await AdService.instance.showInterstitialAdWithCallback(

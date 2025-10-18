@@ -3,7 +3,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -331,8 +331,11 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
         ),
         
         // Floating 버튼
-        FloatingBottomButton(
+        TossFloatingProgressButtonPositioned(
           text: '인맥 리포트 확인하기',
+          isEnabled: true,
+          showProgress: false,
+          isVisible: true,
           onPressed: () {
             if (_nameController.text.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(

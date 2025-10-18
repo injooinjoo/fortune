@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/components/toss_card.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -177,13 +177,16 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
           ),
 
           // Floating 버튼
-          FloatingBottomButton(
+          TossFloatingProgressButtonPositioned(
             text: _currentStep == 2 ? '분석 시작' : '다음',
+            isEnabled: _currentStep == 0
+                ? (_environment.isNotEmpty && _importantSchedule.isNotEmpty)
+                : true,
+            showProgress: false,
+            isVisible: true,
             onPressed: _currentStep == 0
                 ? (_environment.isNotEmpty && _importantSchedule.isNotEmpty ? _nextStep : null)
                 : _nextStep,
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
           ),
         ],
       ),

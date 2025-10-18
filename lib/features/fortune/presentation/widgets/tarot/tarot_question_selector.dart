@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../shared/components/toss_button.dart';
 import '../../../../../shared/components/floating_bottom_button.dart';
+import '../../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
 
@@ -253,12 +254,12 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
             ),
 
             // FloatingBottomButton
-            FloatingBottomButton(
+            TossFloatingProgressButtonPositioned(
               text: '운세 보기',
               onPressed: hasSelection ? widget.onStartReading : null,
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
-              hideWhenDisabled: true,
+              isEnabled: hasSelection,
+              showProgress: false,
+              isVisible: true,
             ),
           ],
         ),
