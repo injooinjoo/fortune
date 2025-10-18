@@ -20,6 +20,7 @@ import '../widgets/event_detail_input_form.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../domain/models/conditions/daily_fortune_conditions.dart';
 
 class DailyCalendarFortunePage extends BaseFortunePage {
   const DailyCalendarFortunePage({
@@ -114,6 +115,16 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
     // UnifiedFortuneService 사용
     final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
+    // 🔮 최적화 시스템: 조건 객체 생성
+    final conditions = DailyFortuneConditions(
+      period: FortunePeriod.daily,
+      category: _selectedCategory,
+      emotion: _selectedEmotion,
+      question: _questionController.text.trim().isNotEmpty
+          ? _questionController.text.trim()
+          : null,
+    );
+
     // input_conditions 정규화
     final inputConditions = {
       'date': _selectedDate.toIso8601String(),
@@ -121,12 +132,21 @@ class _DailyCalendarFortunePageState extends BaseFortunePageState<DailyCalendarF
       'is_holiday': _isHoliday,
       'holiday_name': _holidayName,
       'special_name': _specialName,
+      // 이벤트 정보
+      'category': _selectedCategory?.label,
+      'categoryType': _selectedCategory?.name,
+      'question': _questionController.text.trim().isNotEmpty
+          ? _questionController.text.trim()
+          : null,
+      'emotion': _selectedEmotion?.label,
+      'emotionType': _selectedEmotion?.name,
     };
 
     final fortuneResult = await fortuneService.getFortune(
       fortuneType: 'daily_calendar',
       dataSource: FortuneDataSource.api,
       inputConditions: inputConditions,
+      conditions: conditions, // ✅ 최적화 활성화!
     );
 
     // FortuneResult → Fortune 엔티티 변환

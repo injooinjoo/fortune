@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../utils/logger.dart';
 import '../models/fortune_result.dart';
+import '../models/cached_fortune_result.dart';
 import 'fortune_generators/tarot_generator.dart';
 import 'fortune_generators/moving_generator.dart';
 import 'fortune_generators/time_based_generator.dart';
@@ -13,43 +14,113 @@ import 'fortune_generators/career_generator.dart';
 import 'fortune_generators/exam_generator.dart';
 import 'fortune_generators/health_generator.dart';
 import 'fortune_generators/fortune_cookie_generator.dart';
+import 'fortune_optimization_service.dart';
+import '../../features/fortune/domain/models/fortune_conditions.dart';
 
-/// 통합 운세 서비스
+/// 통합 운세 서비스 (최적화 시스템 통합)
 ///
-/// 모든 운세를 표준화된 프로세스로 관리:
-/// 1. 중복 체크: 오늘 + 유저 + 운세타입 + 조건 일치 시 기존 결과 반환
-/// 2. 운세 생성: API 또는 로컬 데이터 소스에서 생성
-/// 3. DB 저장: fortune_history 테이블에 영구 저장
-/// 4. 결과 반환: FortuneResult 객체로 반환
+/// 표준 프로세스 (API 비용 72% 절감):
+/// 1. 최적화 시스템 (FortuneOptimizationService):
+///    - 개인 캐시 확인 (20% 절감)
+///    - DB 풀 랜덤 선택 (50% 절감)
+///    - 30% 확률 랜덤 선택 (30% 절감)
+/// 2. API 호출 (28%만 실행)
+/// 3. DB 저장 (fortune_history + fortune_results)
+/// 4. 결과 반환
 class UnifiedFortuneService {
   final SupabaseClient _supabase;
+  late final FortuneOptimizationService _optimizationService;
 
-  UnifiedFortuneService(this._supabase);
+  // 최적화 시스템 활성화 플래그 (기본값: true)
+  final bool enableOptimization;
+
+  UnifiedFortuneService(
+    this._supabase, {
+    this.enableOptimization = true, // 최적화 기본 활성화
+  }) {
+    _optimizationService = FortuneOptimizationService(supabase: _supabase);
+  }
 
   /// ==================== 메인 엔트리포인트 ====================
 
-  /// 운세 조회 (통합 플로우)
+  /// 운세 조회 (통합 플로우 + 최적화)
   ///
-  /// 표준 프로세스:
-  /// 1. 기존 결과 확인 (중복 방지)
-  /// 2. 없으면 새로 생성 (API 또는 로컬)
-  /// 3. DB에 저장
+  /// 최적화 프로세스 (enableOptimization = true):
+  /// 1. FortuneOptimizationService 사용 (6단계 프로세스)
+  ///    - 개인 캐시 확인 (20% 절감)
+  ///    - DB 풀 랜덤 선택 (50% 절감)
+  ///    - 30% 확률 랜덤 (30% 절감)
+  ///    - API 호출 (28%만 실행)
+  /// 2. fortune_results + fortune_history 양쪽 저장
+  /// 3. 결과 반환
+  ///
+  /// 레거시 프로세스 (enableOptimization = false):
+  /// 1. checkExistingFortune (기존 방식)
+  /// 2. API 호출 (100%)
+  /// 3. fortune_history 저장
   /// 4. 결과 반환
   Future<FortuneResult> getFortune({
     required String fortuneType,
     required FortuneDataSource dataSource,
     required Map<String, dynamic> inputConditions,
+    FortuneConditions? conditions, // 최적화용 조건 객체 (선택)
   }) async {
     try {
       final userId = _supabase.auth.currentUser?.id ?? 'unknown';
       final today = DateTime.now().toIso8601String().split('T')[0];
 
       // 🎯 운세 요청 시작
-      Logger.info('[$fortuneType] 🎯 운세 요청 시작');
+      Logger.info('[$fortuneType] 🎯 운세 요청 시작 (최적화: $enableOptimization)');
       Logger.info('[$fortuneType] 📅 날짜: $today');
       Logger.info('[$fortuneType] 👤 사용자: $userId');
       Logger.info('[$fortuneType] 📋 입력 조건: ${jsonEncode(inputConditions)}');
       Logger.info('[$fortuneType] 📡 데이터 소스: $dataSource');
+
+      // ===== 최적화 시스템 사용 (조건 객체가 있고 활성화된 경우) =====
+      if (enableOptimization && conditions != null && dataSource == FortuneDataSource.api) {
+        Logger.info('[$fortuneType] 🚀 최적화 시스템 사용');
+
+        try {
+          final cachedResult = await _optimizationService.getFortune(
+            userId: userId,
+            fortuneType: fortuneType,
+            conditions: conditions,
+            onShowAd: () async {
+              // TODO: 광고 표시 로직 (나중에 구현)
+              Logger.info('[$fortuneType] 📺 광고 표시 (TODO)');
+            },
+            onAPICall: (payload) async {
+              // API 호출
+              Logger.info('[$fortuneType] 🔄 API 호출');
+              final result = await _generateFromAPI(fortuneType, inputConditions);
+              return result.data;
+            },
+          );
+
+          Logger.info('[$fortuneType] ✅ 최적화 시스템 완료 (소스: ${cachedResult.source})');
+
+          // CachedFortuneResult → FortuneResult 변환
+          final fortuneResult = _convertCachedToFortuneResult(cachedResult);
+
+          // fortune_history에도 저장 (기존 시스템과 호환성)
+          if (cachedResult.apiCall) {
+            // API 호출한 경우만 fortune_history에 저장
+            await saveFortune(
+              result: fortuneResult,
+              fortuneType: fortuneType,
+              inputConditions: inputConditions,
+            );
+          }
+
+          return fortuneResult;
+        } catch (e) {
+          Logger.warning('[$fortuneType] ⚠️ 최적화 시스템 실패, 레거시 방식으로 폴백: $e');
+          // 폴백: 레거시 방식으로 진행
+        }
+      }
+
+      // ===== 레거시 방식 (기존 로직) =====
+      Logger.info('[$fortuneType] 📦 레거시 방식 사용');
 
       // Step 1: 기존 결과 확인 (중복 방지)
       Logger.info('[$fortuneType] 🔍 DB 기존 결과 확인 중...');
@@ -96,6 +167,19 @@ class UnifiedFortuneService {
       Logger.error('[$fortuneType] ❌ 운세 조회 실패', error, stackTrace);
       rethrow;
     }
+  }
+
+  /// CachedFortuneResult → FortuneResult 변환
+  FortuneResult _convertCachedToFortuneResult(CachedFortuneResult cached) {
+    return FortuneResult.fromJson({
+      'id': cached.id,
+      'type': cached.fortuneType,
+      'data': cached.resultData,
+      'score': cached.resultData['score'],
+      'title': cached.resultData['title'],
+      'summary': cached.resultData['summary'],
+      'created_at': cached.createdAt.toIso8601String(),
+    });
   }
 
   /// ==================== Step 1: 중복 체크 ====================

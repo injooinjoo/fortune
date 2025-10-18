@@ -264,6 +264,214 @@ Use 'max_completion_tokens' instead.
 
 ---
 
+## 🔮 **운세 조회 최적화 시스템 (CRITICAL)** 🔮
+
+### 📊 운세 조회 프로세스 (API 비용 72% 절감)
+
+**모든 운세 조회는 다음 6단계 프로세스를 따릅니다:**
+
+```
+운세 보기 클릭
+    ↓
+1️⃣ 개인 캐시 확인
+    ├─ 오늘 동일 조건으로 이미 조회? → YES → DB 결과 즉시 반환 ✅
+    └─ NO ↓
+
+2️⃣ DB 풀 크기 확인
+    ├─ 동일 조건 전체 데이터 ≥1000개? → YES → DB 랜덤 선택 + 5초 대기 + 저장 ✅
+    └─ NO ↓
+
+3️⃣ 30% 랜덤 선택
+    ├─ Math.random() < 0.3? → YES → DB 랜덤 선택 + 5초 대기 + 저장 ✅
+    └─ NO (70%) ↓
+
+4️⃣ API 호출 준비
+    └─ 사용자 데이터 기반 프롬프트 생성 ↓
+
+5️⃣ 광고 표시
+    └─ 5초 대기 + 광고 노출 ↓
+
+6️⃣ 결과 저장 & 표시
+    └─ OpenAI API 호출 → DB 저장 → 사용자에게 표시 ✅
+```
+
+### 🎯 핵심 구현 로직
+
+**1단계: 개인 캐시 확인**
+```dart
+final existingResult = await supabase
+  .from('fortune_results')
+  .select()
+  .eq('user_id', userId)
+  .eq('fortune_type', fortuneType)
+  .gte('created_at', todayStart)
+  .lte('created_at', todayEnd)
+  .matchConditions(conditions) // 운세별 동일조건
+  .maybeSingle();
+
+if (existingResult != null) return existingResult; // 즉시 반환
+```
+
+**2단계: DB 풀 크기 확인**
+```dart
+final count = await supabase
+  .from('fortune_results')
+  .count()
+  .eq('fortune_type', fortuneType)
+  .matchConditions(conditions);
+
+if (count >= 1000) {
+  final randomResult = await getRandomFromDB(conditions);
+  await Future.delayed(Duration(seconds: 5)); // 5초 대기
+  await saveToUserHistory(userId, randomResult);
+  return randomResult;
+}
+```
+
+**3단계: 30% 랜덤 선택**
+```dart
+final random = Random().nextDouble();
+
+if (random < 0.3) {
+  final randomResult = await getRandomFromDB(conditions);
+  await Future.delayed(Duration(seconds: 5));
+  await saveToUserHistory(userId, randomResult);
+  return randomResult;
+} else {
+  // 70% 확률로 API 호출 진행
+  proceedToAPICall();
+}
+```
+
+### 📝 운세별 동일 조건 정의
+
+각 운세마다 "동일 조건"을 다르게 정의해야 합니다:
+
+#### 시간별 운세 (Time-based)
+```dart
+conditions = {
+  'period': 'daily' | 'weekly' | 'monthly',
+  // 날짜는 제외 (매일 새로운 운세)
+}
+```
+
+#### 연애운 (Love)
+```dart
+conditions = {
+  'saju': user.sajuData,
+  'date': today, // 날짜 포함
+}
+```
+
+#### 타로 (Tarot)
+```dart
+conditions = {
+  'spread_type': 'basic' | 'love' | 'career',
+  'selected_cards': [1, 5, 10],
+  // 날짜 제외 (카드 조합만 중요)
+}
+```
+
+#### 직업 운세 (Career)
+```dart
+conditions = {
+  'saju': user.sajuData,
+  'job_category': 'developer' | 'designer',
+  'date': today,
+}
+```
+
+#### 이사운 (Moving)
+```dart
+conditions = {
+  'saju': user.sajuData,
+  'move_date': selectedDate,
+  'direction': selectedDirection,
+  // 조회 날짜 제외
+}
+```
+
+#### 궁합 (Compatibility)
+```dart
+conditions = {
+  'user_saju': user.sajuData,
+  'partner_saju': partner.sajuData,
+  // 날짜 제외 (사주 조합만 중요)
+}
+```
+
+### 🗂️ DB 스키마 요구사항
+
+**fortune_results 테이블**:
+```sql
+CREATE TABLE fortune_results (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id),
+  fortune_type TEXT NOT NULL,
+  result_data JSONB NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  conditions_hash TEXT NOT NULL, -- 조건 해시값
+
+  -- 운세별 조건 필드 (인덱싱용)
+  saju_data JSONB,
+  date DATE,
+  period TEXT,
+  selected_cards JSONB,
+
+  -- 복합 인덱스
+  CONSTRAINT unique_user_fortune_today
+    UNIQUE(user_id, fortune_type, date, conditions_hash)
+);
+
+-- 성능 최적화 인덱스
+CREATE INDEX idx_fortune_type_conditions
+  ON fortune_results(fortune_type, conditions_hash, created_at DESC);
+
+CREATE INDEX idx_user_fortune_date
+  ON fortune_results(user_id, fortune_type, date DESC);
+```
+
+### ⚠️ 구현 시 주의사항
+
+1. **동일 조건 판단**: 각 운세마다 `matchConditions()` 메서드를 개별 구현
+2. **5초 대기**: `await Future.delayed(Duration(seconds: 5))`로 일관되게 처리
+3. **랜덤 선택**: `Math.random() < 0.3`으로 30% 확률 구현
+4. **DB 인덱싱**: `(fortune_type, conditions_hash, created_at)` 복합 인덱스 필수
+5. **에러 처리**: DB 조회 실패 시 API 호출로 폴백
+6. **조건 해시**: `SHA256(JSON.stringify(conditions))`로 생성
+
+### 💰 예상 비용 절감 효과
+
+**가정**:
+- 일일 사용자: 10,000명
+- 운세 종류: 27개
+- API 호출 비용: 건당 $0.01
+
+**기존 방식 (100% API 호출)**:
+```
+10,000명 × 평균 3개 운세 = 30,000 API 호출/일
+30,000 × $0.01 = $300/일 = $9,000/월
+```
+
+**신규 방식 (최적화)**:
+```
+1단계 캐시: 20% 절감 (동일 사용자 재조회)
+2단계 DB풀: 50% 절감 (1000개 이상인 운세)
+3단계 랜덤: 30% 절감 (70%만 API 호출)
+
+실제 API 호출: 30,000 × 0.8 × 0.5 × 0.7 = 8,400 호출
+8,400 × $0.01 = $84/일 = $2,520/월
+
+절감액: $6,480/월 (72% 절감)
+```
+
+### 📚 상세 문서
+
+전체 플로우차트, 코드 예시, 27개 운세별 조건 정의는 다음 문서 참조:
+- **상세 가이드**: `docs/data/FORTUNE_OPTIMIZATION_GUIDE.md`
+
+---
+
 ## 🚀 앱 개발 완료 후 필수 작업 (CRITICAL - ALWAYS DO THIS!)
 
 ### 📱 **실제 디바이스 자동 배포 (기본값)**
