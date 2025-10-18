@@ -110,30 +110,59 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
       zodiacAnimal: _selectedAnimal!,
     );
 
-    // Edge Function 응답 구조에 맞게 데이터 추출
-    final loveStyle = data['loveStyle'] as Map<String, dynamic>? ?? {};
-    final workStyle = data['workStyle'] as Map<String, dynamic>? ?? {};
-    final dailyMatching = data['dailyMatching'] as Map<String, dynamic>? ?? {};
-    final compatibility = data['compatibility'] as Map<String, dynamic>? ?? {};
-    final funStats = data['funStats'] as Map<String, dynamic>? ?? {};
+    // Edge Function 응답 구조에 맞게 데이터 추출 및 모델 객체 생성
+    final loveStyleMap = data['loveStyle'] as Map<String, dynamic>?;
+    final workStyleMap = data['workStyle'] as Map<String, dynamic>?;
+    final dailyMatchingMap = data['dailyMatching'] as Map<String, dynamic>?;
+    final compatibilityMap = data['compatibility'] as Map<String, dynamic>?;
+    final funStatsMap = data['funStats'] as Map<String, dynamic>? ?? {};
+
+    // 모델 객체로 변환
+    LoveStyle? loveStyle;
+    if (loveStyleMap != null) {
+      loveStyle = LoveStyle.fromJson(loveStyleMap);
+    }
+
+    WorkStyle? workStyle;
+    if (workStyleMap != null) {
+      workStyle = WorkStyle.fromJson(workStyleMap);
+    }
+
+    DailyMatching? dailyMatching;
+    if (dailyMatchingMap != null) {
+      dailyMatching = DailyMatching.fromJson(dailyMatchingMap);
+    }
+
+    Compatibility? compatibility;
+    if (compatibilityMap != null) {
+      compatibility = Compatibility.fromJson(compatibilityMap);
+    }
+
+    Celebrity? celebrity;
+    if (funStatsMap['celebrity_match'] != null) {
+      celebrity = Celebrity(
+        name: funStatsMap['celebrity_match'] as String,
+        reason: '비슷한 성격 유형',
+      );
+    }
 
     // 상세 설명 생성
     final detailedDescription = '''
 ${data['todayHighlight'] ?? '당신의 성격 DNA를 분석했습니다.'}
 
-💕 연애 스타일: ${loveStyle['title'] ?? ''}
-${loveStyle['description'] ?? ''}
+💕 연애 스타일: ${loveStyle?.title ?? ''}
+${loveStyle?.description ?? ''}
 
-👔 직장 생활: ${workStyle['title'] ?? ''}
-${workStyle['as_boss'] ?? ''}
+👔 직장 생활: ${workStyle?.title ?? ''}
+${workStyle?.asBoss ?? ''}
 
 🎯 오늘의 조언
 ${data['todayAdvice'] ?? '평소와 다른 작은 도전을 해보세요.'}
 
 ✨ 재미있는 통계
-• 희귀도: ${funStats['rarity_rank'] ?? ''}
-• 유명인 매칭: ${funStats['celebrity_match'] ?? ''}
-• 한국 내 비율: ${funStats['percentage_in_korea'] ?? ''}%
+• 희귀도: ${funStatsMap['rarity_rank'] ?? ''}
+• 유명인 매칭: ${funStatsMap['celebrity_match'] ?? ''}
+• 한국 내 비율: ${funStatsMap['percentage_in_korea'] ?? ''}%
     '''.trim();
 
     _currentDNA = PersonalityDNA(
@@ -151,6 +180,14 @@ ${data['todayAdvice'] ?? '평소와 다른 작은 도전을 해보세요.'}
         'socialRanking': (data['socialRanking'] as num?)?.toInt() ?? 50,
       },
       todaysFortune: data['todayAdvice'] as String? ?? '평소와 다른 작은 도전을 해보세요.',
+      // Edge Function 데이터를 모델 객체로 전달
+      todayHighlight: data['todayHighlight'] as String?,
+      loveStyle: loveStyle,
+      workStyle: workStyle,
+      dailyMatching: dailyMatching,
+      compatibility: compatibility,
+      celebrity: celebrity,
+      funnyFact: '${funStatsMap['rarity_rank']} • 한국 내 ${funStatsMap['percentage_in_korea']}%',
       popularityRank: (data['socialRanking'] as num?)?.toInt() ?? 50,
     );
 
@@ -170,11 +207,11 @@ ${data['todayAdvice'] ?? '평소와 다른 작은 도전을 해보세요.'}
         'zodiac': _selectedZodiac,
         'animal': _selectedAnimal,
         'dna_code': dnaCode,
-        'love_style': loveStyle,
-        'work_style': workStyle,
-        'daily_matching': dailyMatching,
-        'compatibility': compatibility,
-        'fun_stats': funStats,
+        'love_style': loveStyle?.toJson(),
+        'work_style': workStyle?.toJson(),
+        'daily_matching': dailyMatching?.toJson(),
+        'compatibility': compatibility?.toJson(),
+        'fun_stats': funStatsMap,
         'rarity_level': data['rarityLevel'],
         'social_ranking': data['socialRanking'],
       },
