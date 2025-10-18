@@ -144,11 +144,10 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
                 },
                 child: Text(
                   '건너뛰기',
-                  style: TextStyle(
+                  style: context.bodyMedium.copyWith(
                     color: isDark
                       ? TossDesignSystem.white.withValues(alpha: 0.5)
                       : TossDesignSystem.black.withValues(alpha: 0.5),
-                    
                   ),
                 ),
               ),
@@ -269,15 +268,15 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
                 // 메인 텍스트
                 Text(
                   segment.text,
-                  style: TextStyle(
+                  style: context.displaySmall.copyWith(
                     color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
-                    fontSize: segment.fontSize ?? 32,
-                    fontWeight: segment.isBold 
-                        ? FontWeight.w600 
+                    fontSize: segment.fontSize,  // segment.fontSize가 있으면 사용, 없으면 displaySmall 기본값 사용
+                    fontWeight: segment.isBold
+                        ? FontWeight.w600
                         : (segment.fontWeight ?? FontWeight.w300),
                     height: 1.8,
                     letterSpacing: 0.5,
-                    shadows: isDark 
+                    shadows: isDark
                       ? [
                           Shadow(
                             offset: Offset(0, 2),

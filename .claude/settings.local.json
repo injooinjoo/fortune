@@ -34,7 +34,9 @@
       "Bash(git commit:*)",
       "Bash(supabase db:*)",
       "Bash(ls:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(do echo \"=== $page ===\" grep -n \"FortuneDataSource\\|UnifiedFortuneService\\|getFortune\" \"/Users/jacobmac/Desktop/Dev/fortune/lib/features/fortune/presentation/pages/$page.dart\")",
+      "Bash(do echo \"=== $page ===\")"
     ],
     "deny": [],
     "ask": [],
