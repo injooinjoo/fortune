@@ -165,7 +165,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify(response), {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })
@@ -182,7 +182,7 @@ serve(async (req) => {
     return new Response(JSON.stringify(errorResponse), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })

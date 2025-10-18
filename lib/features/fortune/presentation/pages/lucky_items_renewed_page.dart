@@ -136,7 +136,9 @@ class _LuckyItemsRenewedPageState extends ConsumerState<LuckyItemsRenewedPage> {
   @override
   void dispose() {
     _pageController.dispose();
-    ref.read(luckyItemsStepProvider.notifier).reset();
+    if (mounted) {
+      ref.read(luckyItemsStepProvider.notifier).reset();
+    }
     super.dispose();
   }
 
