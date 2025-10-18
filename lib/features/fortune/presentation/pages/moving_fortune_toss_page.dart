@@ -42,7 +42,7 @@ class _MovingFortuneTossPageState extends BaseFortunePageState<MovingFortuneToss
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final user = ref.read(userProvider).value;
+    final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
       throw Exception('로그인이 필요합니다');
     }
