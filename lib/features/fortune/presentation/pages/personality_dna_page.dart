@@ -180,8 +180,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
         const SizedBox(height: 8),
         Text(
           'MBTI, 혈액형, 별자리, 띠를 조합하여\n특별한 성격 분석 결과를 확인하세요',
-          style: TextStyle(
-            fontSize: 15,
+          style: TypographyUnified.bodySmall.copyWith(
             color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
             height: 1.4,
           ),
@@ -447,13 +446,12 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
             ),
             const SizedBox(height: 16),
           ],
-          Text(_currentDNA!.emoji, style: const TextStyle(fontSize: 56)),
+          Text(_currentDNA!.emoji, style: TypographyUnified.displayLarge),
           const SizedBox(height: 16),
           Text(
             _currentDNA!.title,
-            style: TextStyle(
+            style: TypographyUnified.heading3.copyWith(
               color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
-              fontSize: 22,
               fontWeight: FontWeight.w700,
               height: 1.3,
             ),

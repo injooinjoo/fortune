@@ -304,8 +304,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
         const SizedBox(height: 8),
         Text(
           '16가지 성격 유형 중 나와 맞는 유형을 선택하세요',
-          style: TextStyle(
-            fontSize: 15,
+          style: TypographyUnified.bodySmall.copyWith(
             color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
             height: 1.4,
           ),
@@ -675,8 +674,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           const SizedBox(height: 16),
           Text(
             fortune.description ?? '오늘은 특별한 하루가 될 것입니다.',
-            style: TextStyle(
-              fontSize: 15,
+            style: TypographyUnified.bodySmall.copyWith(
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               height: 1.6,
             ),

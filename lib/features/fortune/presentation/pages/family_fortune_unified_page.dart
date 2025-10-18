@@ -262,8 +262,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               Expanded(
                 child: Text(
                   '${_selectedConcern!.label}에서\n궁금한 점을 선택해주세요',
-                  style: TextStyle(
-                    fontSize: 22,
+                  style: TypographyUnified.heading3.copyWith(
                     fontWeight: FontWeight.w700,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                   ),
@@ -545,9 +544,8 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               maxLines: 6,
               decoration: InputDecoration(
                 hintText: '예: 올해 가족 여행 가기 좋은 시기는 언제인가요?\n예: 아이 학원을 바꾸려고 하는데 괜찮을까요?',
-                hintStyle: TextStyle(
+                hintStyle: TypographyUnified.bodySmall.copyWith(
                   color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
-                  fontSize: 15,
                 ),
                 border: InputBorder.none,
               ),
@@ -727,8 +725,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                     children: [
                       Text(
                         _selectedConcern!.label,
-                        style: const TextStyle(
-                          fontSize: 22,
+                        style: TypographyUnified.heading3.copyWith(
                           fontWeight: FontWeight.w700,
                           color: TossDesignSystem.white,
                         ),
