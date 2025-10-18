@@ -149,6 +149,99 @@ Claude Code 동작:
 
 ---
 
+## 🤖 **OpenAI API 호출 필수 규칙 (CRITICAL)** 🤖
+
+### 📋 **gpt-5-nano-2025-08-07 모델 필수 파라미터**
+
+**모든 Supabase Edge Function에서 OpenAI API 호출 시 반드시 준수:**
+
+```typescript
+// ✅ 올바른 OpenAI API 호출 (gpt-5-nano-2025-08-07)
+const completion = await openai.chat.completions.create({
+  model: 'gpt-5-nano-2025-08-07',
+  messages: [
+    {
+      role: 'system',
+      content: '시스템 메시지...'
+    },
+    {
+      role: 'user',
+      content: '사용자 질문을 JSON 형식으로 답변해주세요...'  // ✅ 'JSON' 키워드 필수!
+    }
+  ],
+  response_format: { type: 'json_object' },  // ✅ JSON 응답 강제
+  temperature: 1,                             // ✅ 1.0 사용 (0.7 안됨)
+  max_completion_tokens: 2000,                // ✅ max_completion_tokens (max_tokens 안됨)
+})
+```
+
+### 🚨 **절대 규칙 (반드시 지켜야 함)**
+
+#### 1️⃣ **프롬프트에 'JSON' 키워드 필수**
+```typescript
+// ❌ WRONG - response_format 사용 시 에러 발생
+content: '상세한 답변을 제공해주세요.'
+
+// ✅ CORRECT - 반드시 'JSON' 또는 'json' 포함
+content: '상세한 답변을 JSON 형식으로 제공해주세요.'
+```
+
+**에러 메시지**:
+```
+400 'messages' must contain the word 'json' in some form,
+to use 'response_format' of type 'json_object'.
+```
+
+#### 2️⃣ **temperature는 1.0 사용**
+```typescript
+// ❌ WRONG - gpt-5-nano는 0.7 지원 안함
+temperature: 0.7
+
+// ✅ CORRECT
+temperature: 1
+```
+
+#### 3️⃣ **max_completion_tokens 사용**
+```typescript
+// ❌ WRONG - gpt-5-nano는 max_tokens 지원 안함
+max_tokens: 2000
+
+// ✅ CORRECT - 신규 API 표준
+max_completion_tokens: 2000
+```
+
+**에러 메시지**:
+```
+400 Unsupported parameter: 'max_tokens' is not supported with this model.
+Use 'max_completion_tokens' instead.
+```
+
+### 📝 **Edge Function 작성 시 체크리스트**
+
+새로운 운세 Edge Function 작성 시 **반드시 확인**:
+
+- [ ] ✅ 프롬프트에 "JSON 형식으로" 또는 "JSON format" 포함됨
+- [ ] ✅ `temperature: 1` 설정됨
+- [ ] ✅ `max_completion_tokens` 사용 (max_tokens 아님)
+- [ ] ✅ `response_format: { type: 'json_object' }` 설정됨
+- [ ] ✅ UTF-8 인코딩 처리 (btoa 대신 SHA-256 해시 사용)
+
+### 🔍 **디버깅 가이드**
+
+**400 에러 발생 시 체크 순서:**
+
+1. **프롬프트에 'JSON' 키워드 있는지 확인**
+2. **temperature가 1인지 확인**
+3. **max_completion_tokens 사용하는지 확인**
+4. **Response 헤더에 `charset=utf-8` 있는지 확인**
+
+### 📚 **참고 파일**
+
+- ✅ **정상 작동 예시**: `supabase/functions/fortune-moving/index.ts`
+- ✅ **btoa 대신 SHA-256**: `createHash()` 함수 참고
+
+---
+
 ## 🚀 앱 개발 완료 후 필수 작업 (CRITICAL - ALWAYS DO THIS!)
 
 ### 📱 **실제 디바이스 자동 배포 (기본값)**
