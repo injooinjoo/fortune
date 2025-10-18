@@ -329,6 +329,21 @@ class UnifiedFortuneService {
             throw Exception('MBTI API 응답 형식 오류');
           }
 
+        case 'personality_dna':
+        case 'personality-dna':
+          // Personality DNA Edge Function 직접 호출
+          final response = await _supabase.functions.invoke(
+            'personality-dna',
+            body: inputConditions,
+          );
+
+          if (response.data == null) {
+            throw Exception('Personality DNA API 응답 데이터 없음');
+          }
+
+          Logger.info('[UnifiedFortune] ✅ Personality DNA API 호출 성공');
+          return FortuneResult.fromJson(response.data as Map<String, dynamic>);
+
         default:
           // 기본 Edge Function 호출 (레거시)
           final response = await _supabase.functions.invoke(
