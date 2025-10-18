@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -327,16 +328,14 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
             const SizedBox(height: 24),
             Text(
               '타로 카드가 당신에게 전하는 메시지',
-              style: TextStyle(
-                fontSize: 24 * fontScale,
+              style: context.heading2.copyWith(
                 fontWeight: FontWeight.bold,
                 color: TossDesignSystem.white),
               textAlign: TextAlign.center),
             const SizedBox(height: 16),
             Text(
               widget.question ?? '오늘의 운세를 알아보겠습니다',
-              style: TextStyle(
-                fontSize: 16 * fontScale,
+              style: context.buttonMedium.copyWith(
                 color: TossDesignSystem.white.withValues(alpha: 0.7),
                 fontStyle: FontStyle.italic),
               textAlign: TextAlign.center),
@@ -369,8 +368,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   const SizedBox(height: 12),
                   Text(
                     '${widget.selectedCards.length}장의 카드를 하나씩 공개하며\n각 카드가 전하는 메시지를 들려드리겠습니다.',
-                    style: TextStyle(
-                      fontSize: 14 * fontScale,
+                    style: context.bodySmall.copyWith(
                       color: TossDesignSystem.white,
                       height: 1.5,
                       letterSpacing: 0.5),
@@ -425,8 +423,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   child: Center(
                     child: Text(
                       '${_currentCardIndex + 1}',
-                      style: TextStyle(
-                        fontSize: 12 * fontScale,
+                      style: context.labelMedium.copyWith(
                         fontWeight: FontWeight.bold,
                         color: TossDesignSystem.white,
                       ),
@@ -436,8 +433,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                 const SizedBox(width: 12),
                 Text(
                   positionName,
-                  style: TextStyle(
-                    fontSize: 16 * fontScale,
+                  style: context.buttonMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     color: TossDesignSystem.white,
                     letterSpacing: 0.5,
@@ -523,13 +519,11 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                           children: [
                             Text(
                               '${i + 1}. $positionName',
-                              style: TextStyle(
-                                fontSize: 12 * fontScale,
+                              style: context.labelMedium.copyWith(
                                 color: TossDesignSystem.white.withValues(alpha: 0.7))),
                             Text(
                               cardInfo?.name ?? 'Unknown Card',
-                              style: TextStyle(
-                                fontSize: 14 * fontScale,
+                              style: context.bodySmall.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: TossDesignSystem.white)),
                           ],

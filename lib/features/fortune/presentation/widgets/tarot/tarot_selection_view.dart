@@ -7,6 +7,7 @@ import '../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../../presentation/providers/font_size_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/app_header.dart' show FontSize;
+import '../../../../../core/theme/typography_unified.dart';
 import 'tarot_deck_spread_widget.dart';
 
 /// Simplified tarot card selection view
@@ -132,17 +133,15 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
       children: [
         Text(
           '카드를 선택하세요',
-          style: theme.textTheme.headlineSmall?.copyWith(
+          style: context.heading2.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: 24 * fontScale,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           '${widget.requiredCards}장의 카드를 선택해주세요',
-          style: theme.textTheme.bodyLarge?.copyWith(
+          style: context.buttonMedium.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            fontSize: 16 * fontScale,
           ),
         ),
         if (widget.question != null && widget.question!.isNotEmpty) ...[
@@ -161,9 +160,8 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
                 Flexible(
                   child: Text(
                     widget.question!,
-                    style: theme.textTheme.bodyMedium?.copyWith(
+                    style: context.bodySmall.copyWith(
                       fontStyle: FontStyle.italic,
-                      fontSize: 14 * fontScale,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

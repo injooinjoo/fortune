@@ -7,6 +7,7 @@ import '../../../../../presentation/providers/font_size_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/loading_states.dart';
 import '../../../../../shared/components/app_header.dart' show FontSize;
+import '../../../../../core/theme/typography_unified.dart';
 import 'tarot_card_widget.dart';
 
 /// Simplified tarot reading result view
@@ -116,16 +117,14 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
       children: [
         Text(
           '타로 리딩 결과',
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 24 * fontScale)),
+          style: context.heading2.copyWith(
+            fontWeight: FontWeight.bold)),
         if (widget.question != null && widget.question!.isNotEmpty) ...[
           const SizedBox(height: 8),
           Text(
             widget.question!,
-            style: theme.textTheme.bodyLarge?.copyWith(
+            style: context.buttonMedium.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              fontSize: 16 * fontScale,
               fontStyle: FontStyle.italic),
             textAlign: TextAlign.center)]]);
   }
@@ -156,9 +155,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 const SizedBox(height: 8),
                 Text(
                   _getPositionLabel(index),
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: context.labelMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 12 * fontScale,
                   ),
                 ),
               ],
@@ -198,9 +196,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                     const SizedBox(width: 8),
                     Text(
                       '당신의 질문에 대한 답',
-                      style: theme.textTheme.titleLarge?.copyWith(
+                      style: context.heading4.copyWith(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18 * fontScale,
                       ),
                     ),
                   ],

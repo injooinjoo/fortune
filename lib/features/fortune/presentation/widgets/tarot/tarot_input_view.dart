@@ -5,6 +5,7 @@ import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/app_header.dart' show FontSize;
 import '../../../../../presentation/providers/font_size_provider.dart';
 import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/theme/typography_unified.dart';
 
 /// Simplified input view for tarot questions
 class TarotInputView extends ConsumerStatefulWidget {
@@ -54,18 +55,16 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
         // Title
         Text(
           '무엇이 궁금하신가요?',
-          style: theme.textTheme.headlineSmall?.copyWith(
+          style: context.heading2.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: 24 * fontScale,
             letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           '마음을 가라앉히고 질문에 집중해주세요',
-          style: theme.textTheme.bodyLarge?.copyWith(
+          style: context.buttonMedium.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            fontSize: 16 * fontScale,
           ),
         ),
         const SizedBox(height: 32),
@@ -86,9 +85,8 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
                   const SizedBox(width: 8),
                   Text(
                     '당신의 질문',
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    style: context.buttonMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16 * fontScale,
                     ),
                   ),
                 ],
@@ -96,7 +94,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
               const SizedBox(height: 12),
               TextField(
                 controller: _questionController,
-                style: TextStyle(fontSize: 16 * fontScale),
+                style: context.buttonMedium,
                 maxLines: 3,
                 decoration: InputDecoration(
                   hintText: '예: 나의 연애운은 어떨까요?\n예: 이직을 해야 할까요?\n예: 오늘 하루는 어떨까요?',
@@ -135,9 +133,8 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
               Expanded(
                 child: Text(
                   '질문이 없으시다면 오늘의 전반적인 운세를 봐드립니다',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: context.bodySmall.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                    fontSize: 14 * fontScale,
                   ),
                 ),
               ),

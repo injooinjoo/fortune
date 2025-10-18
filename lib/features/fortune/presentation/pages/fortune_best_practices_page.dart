@@ -330,16 +330,14 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
         children: [
           Text(
             item.title,
-            style: TextStyle(
-              fontSize: 15 * fontScale,
+            style: context.buttonSmall.copyWith(
               fontWeight: FontWeight.w600,
               color: TossDesignSystem.gray900),
           ),
           const SizedBox(height: 8),
           Text(
             item.content,
-            style: TextStyle(
-              fontSize: 14 * fontScale,
+            style: context.bodySmall.copyWith(
               color: TossDesignSystem.gray600,
               height: 1.5),
           ),
@@ -389,16 +387,14 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontSize: 16 * fontScale,
+                      style: context.buttonMedium.copyWith(
                         fontWeight: FontWeight.bold,
                         color: TossDesignSystem.gray900),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       content,
-                      style: TextStyle(
-                        fontSize: 13 * fontScale,
+                      style: context.labelLarge.copyWith(
                         color: TossDesignSystem.gray600),
                     ),
                   ],
@@ -425,8 +421,7 @@ class _FortuneBestPracticesPageState extends ConsumerState<FortuneBestPracticesP
                     Expanded(
                       child: Text(
                         tip,
-                        style: TextStyle(
-                          fontSize: 14 * fontScale,
+                        style: context.bodySmall.copyWith(
                           color: TossDesignSystem.gray900,
                           height: 1.5),
                       ),

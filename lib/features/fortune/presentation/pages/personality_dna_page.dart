@@ -6,12 +6,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/models/personality_dna_model.dart';
-import '../../../../core/services/personality_dna_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../shared/components/toss_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/conditions/personality_dna_fortune_conditions.dart';
@@ -103,44 +101,47 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
       conditions: conditions,
     );
 
-    // FortuneResult에서 PersonalityDNA 파싱
-    final metadata = fortuneResult.metadata ?? {};
-    _currentDNA = PersonalityDNA(
-      id: fortuneResult.id,
-      userId: user.id,
+    // FortuneResult의 data 필드에서 PersonalityDNA 정보 추출
+    final data = fortuneResult.data;
+    final dnaCode = PersonalityDNA.generateDNACode(
       mbti: _selectedMbti!,
       bloodType: _selectedBloodType!,
       zodiac: _selectedZodiac!,
       zodiacAnimal: _selectedAnimal!,
-      title: metadata['title'] as String? ?? '성격 DNA',
-      emoji: metadata['emoji'] as String? ?? '🧬',
-      description: fortuneResult.content,
-      popularity: metadata['popularity'] as String? ?? 'Unknown',
-      popularityRank: fortuneResult.overallScore ?? 50,
-      personalityTraits: (metadata['personality_traits'] as List?)?.cast<String>() ?? [],
-      relationshipStyle: metadata['relationship_style'] as String? ?? '',
-      careerPath: metadata['career_path'] as String? ?? '',
-      lifeMotto: metadata['life_motto'] as String? ?? '',
-      gradientColors: [],
-      createdAt: DateTime.now(),
+    );
+
+    _currentDNA = PersonalityDNA(
+      mbti: _selectedMbti!,
+      bloodType: _selectedBloodType!,
+      zodiac: _selectedZodiac!,
+      zodiacAnimal: _selectedAnimal!,
+      dnaCode: dnaCode,
+      title: data['title'] as String? ?? '성격 DNA',
+      emoji: data['emoji'] as String? ?? '🧬',
+      description: data['description'] as String? ?? fortuneResult.summary['message'] ?? '',
+      traits: (data['traits'] as List?)?.cast<String>() ?? [],
+      gradientColors: [], // 필요시 로컬에서 생성
+      scores: (data['scores'] as Map?)?.cast<String, int>() ?? {},
+      todaysFortune: data['todaysFortune'] as String? ?? fortuneResult.summary['message'] ?? '',
+      popularityRank: fortuneResult.score,
     );
 
     // Fortune 객체로 변환
     return Fortune(
-      id: fortuneResult.id,
+      id: 'personality_dna_${DateTime.now().millisecondsSinceEpoch}',
       userId: user.id,
       type: 'personality-dna',
-      content: fortuneResult.content,
-      createdAt: fortuneResult.createdAt,
+      content: _currentDNA!.description,
+      createdAt: DateTime.now(),
       category: 'personality-dna',
-      overallScore: fortuneResult.overallScore ?? 50,
-      description: fortuneResult.content,
+      overallScore: _currentDNA!.popularityRank ?? 50,
+      description: '${_currentDNA!.emoji} ${_currentDNA!.title}\n\n${_currentDNA!.description}',
       metadata: {
         'mbti': _selectedMbti,
         'blood_type': _selectedBloodType,
         'zodiac': _selectedZodiac,
         'animal': _selectedAnimal,
-        ...metadata,
+        'dna_code': dnaCode,
       },
     );
   }

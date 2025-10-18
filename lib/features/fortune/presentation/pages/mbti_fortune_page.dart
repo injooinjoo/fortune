@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../services/mbti_cognitive_functions_service.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_card.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../data/services/fortune_api_service.dart';
+import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../domain/models/conditions/mbti_fortune_conditions.dart';
 import 'dart:math' as math;
 
 class MbtiFortunePage extends BaseFortunePage {
@@ -162,29 +163,56 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       debugPrint('⚠️ [MbtiFortunePage] Failed to load user profile: $e, using defaults');
     }
 
-    // Try API call directly (without Notifier to avoid state conflicts)
+    // UnifiedFortuneService 사용
     try {
-      final apiService = ref.read(fortuneApiServiceProvider);
+      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
       final categories = _selectedCategories.isNotEmpty ? _selectedCategories : ['종합운'];
 
-      debugPrint('📡 [MbtiFortunePage] Calling API - type: $_selectedMbti, categories: $categories, name: $userName, birthDate: $userBirthDate');
+      debugPrint('📡 [MbtiFortunePage] Calling UnifiedFortuneService - type: $_selectedMbti, categories: $categories');
+
+      final inputConditions = {
+        'mbti_type': _selectedMbti,
+        'categories': categories,
+        'name': userName,
+        'birth_date': userBirthDate,
+      };
+
+      // Optimization conditions 생성
+      final conditions = MbtiFortuneConditions(
+        mbtiType: _selectedMbti!,
+        date: DateTime.now(),
+      );
 
       final apiStartTime = DateTime.now();
-      final fortune = await apiService.getMbtiFortune(
-        userId: user.id,
-        mbtiType: _selectedMbti!,
-        categories: categories,
-        name: userName,
-        birthDate: userBirthDate,
+      final fortuneResult = await fortuneService.getFortune(
+        fortuneType: 'mbti',
+        dataSource: FortuneDataSource.api,
+        inputConditions: inputConditions,
+        conditions: conditions,
       );
       final apiDuration = DateTime.now().difference(apiStartTime).inMilliseconds;
 
-      debugPrint('✅ [MbtiFortunePage] API fortune loaded successfully in ${apiDuration}ms');
-      debugPrint('📊 [MbtiFortunePage] Fortune details: id=${fortune.id}, type=${fortune.type}, score=${fortune.overallScore}');
-      debugPrint('📝 [MbtiFortunePage] Fortune description length: ${fortune.description?.length ?? 0} chars');
-      debugPrint('📝 [MbtiFortunePage] Fortune content: ${fortune.description?.substring(0, fortune.description!.length > 200 ? 200 : fortune.description!.length)}...');
-      debugPrint('📊 [MbtiFortunePage] Fortune metadata keys: ${fortune.metadata?.keys.toList()}');
-      debugPrint('🔄 [MbtiFortunePage] Returning fortune to BaseFortunePage...');
+      debugPrint('✅ [MbtiFortunePage] Fortune loaded successfully in ${apiDuration}ms');
+
+      // FortuneResult를 Fortune으로 변환
+      final fortune = Fortune(
+        id: 'mbti_${DateTime.now().millisecondsSinceEpoch}',
+        userId: user.id,
+        type: 'mbti',
+        content: fortuneResult.title,
+        createdAt: DateTime.now(),
+        category: 'mbti',
+        overallScore: fortuneResult.score ?? 75,
+        description: fortuneResult.summary['message'] as String?,
+        metadata: {
+          'mbti_type': _selectedMbti,
+          'categories': categories,
+          'cognitive_functions': _cognitiveFunctions,
+          'energy_level': _energyLevel,
+        },
+      );
+
+      debugPrint('🔄 [MbtiFortunePage] Returning fortune...');
       return fortune;
 
     } catch (e, stackTrace) {
