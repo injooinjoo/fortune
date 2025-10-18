@@ -11,6 +11,7 @@ import '../../../../core/models/fortune_result.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/services/unified_fortune_service.dart';
+import '../../domain/models/conditions/health_fortune_conditions.dart';
 
 class HealthFortunePage extends BaseFortunePage {
   const HealthFortunePage({super.key})
@@ -102,6 +103,18 @@ class _HealthFortunePageState extends BaseFortunePageState<HealthFortunePage> {
     try {
       final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
+      // 🔮 최적화 시스템: 조건 객체 생성
+      final conditions = HealthFortuneConditions(
+        healthConcern: params['healthConcern'] ?? '',
+        symptoms: List<String>.from(params['symptoms'] ?? []),
+        sleepQuality: params['sleepQuality'] ?? 3,
+        exerciseFrequency: params['exerciseFrequency'] ?? 3,
+        stressLevel: params['stressLevel'] ?? 3,
+        mealRegularity: params['mealRegularity'] ?? 3,
+        hasChronicCondition: params['hasChronicCondition'] ?? false,
+        chronicCondition: params['chronicCondition'] ?? '',
+      );
+
       final inputConditions = {
         'healthConcern': params['healthConcern'] ?? '',
         'symptoms': params['symptoms'] ?? [],
@@ -117,6 +130,7 @@ class _HealthFortunePageState extends BaseFortunePageState<HealthFortunePage> {
         fortuneType: widget.fortuneType,
         dataSource: FortuneDataSource.api,
         inputConditions: inputConditions,
+        conditions: conditions, // ✅ 최적화 활성화!
       );
 
       return _convertToFortune(result);

@@ -8,6 +8,7 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../widgets/moving_input_unified.dart';
 import 'base_fortune_page.dart';
+import '../../domain/models/conditions/moving_fortune_conditions.dart';
 
 /// 토스 스타일 이사운 페이지 (BaseFortunePage 패턴 사용)
 class MovingFortuneTossPage extends BaseFortunePage {
@@ -53,6 +54,14 @@ class _MovingFortuneTossPageState extends BaseFortunePageState<MovingFortuneToss
       // UnifiedFortuneService 사용
       final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
+      // 🔮 최적화 시스템: 조건 객체 생성
+      final conditions = MovingFortuneConditions(
+        currentArea: params['currentArea'] ?? '',
+        targetArea: params['targetArea'] ?? '',
+        movingPeriod: params['movingPeriod'] ?? '',
+        purpose: params['purpose'] ?? '',
+      );
+
       // input_conditions 정규화
       final inputConditions = {
         'current_area': params['currentArea'],
@@ -65,6 +74,7 @@ class _MovingFortuneTossPageState extends BaseFortunePageState<MovingFortuneToss
         fortuneType: 'moving',
         dataSource: FortuneDataSource.api,
         inputConditions: inputConditions,
+        conditions: conditions, // ✅ 최적화 활성화!
       );
 
       Logger.info('✅ [MovingFortune] UnifiedFortuneService 완료');
