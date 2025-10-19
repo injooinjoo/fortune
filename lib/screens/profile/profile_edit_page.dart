@@ -8,6 +8,8 @@ import '../../services/storage_service.dart';
 import '../../services/supabase_storage_service.dart';
 import '../../utils/date_utils.dart';
 import '../../shared/components/app_header.dart';
+import '../../shared/components/numeric_date_input.dart';
+import '../../shared/components/numeric_time_input.dart';
 import '../../presentation/widgets/profile_image_picker.dart';
 import '../onboarding/widgets/birth_date_preview.dart';
 import '../../core/utils/logger.dart';
@@ -60,15 +62,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   }
 
   // Form values
-  String _birthYear = '';
-  String _birthMonth = '';
-  String _birthDay = '';
-  String? _birthTimePeriod;
+  DateTime? _birthDate;
+  String? _birthTime;
   String? _mbti;
   Gender? _gender;
   String? _profileImageUrl;
   XFile? _pendingImageFile;
-  
+
   // Original values for comparison
   Map<String, dynamic>? _originalProfile;
 
@@ -113,23 +113,20 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         
         // Populate form fields
         _nameController.text = profile['name'] ?? '';
-        
+
         // Parse birth date
         if (profile['birth_date'] != null) {
           try {
-            final birthDate = DateTime.parse(profile['birth_date']);
-            _birthYear = birthDate.year.toString();
-            _birthMonth = birthDate.month.toString();
-            _birthDay = birthDate.day.toString();
+            _birthDate = DateTime.parse(profile['birth_date']);
           } catch (e) {
-            debugPrint('Error loading profile from Supabase: $e');
+            debugPrint('Error parsing birth date: $e');
           }
         }
-        
-        _birthTimePeriod = profile['birth_time'];
+
+        _birthTime = profile['birth_time'];
         _mbti = profile['mbti'];
         _profileImageUrl = profile['profile_image_url'];
-        
+
         // Parse gender
         if (profile['gender'] != null) {
           _gender = Gender.values.firstWhere(
@@ -202,30 +199,23 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     
     try {
       // Validate required fields
-      if (_nameController.text.isEmpty ||
-          _birthYear.isEmpty ||
-          _birthMonth.isEmpty ||
-          _birthDay.isEmpty) {
+      if (_nameController.text.isEmpty || _birthDate == null) {
         throw Exception('필수 정보를 모두 입력해주세요.');
       }
-      
+
       // Upload profile image if there's a pending one
       final uploadedImageUrl = await _uploadProfileImage();
-      
-      // Convert Korean date to ISO format
-      final isoDate = FortuneDateUtils.koreanToIsoDate(
-        _birthYear,
-        _birthMonth,
-        _birthDay,
-      );
-      
+
+      // ISO date from DateTime
+      final isoDate = _birthDate!.toIso8601String().split('T')[0];
+
       // Prepare profile data
       final profile = UserProfile(
         id: _currentUser?.id ?? '',
         name: _nameController.text,
         email: _currentUser?.email ?? _originalProfile?['email'] ?? '',
         birthDate: isoDate,
-        birthTime: _birthTimePeriod,
+        birthTime: _birthTime,
         mbti: _mbti,
         gender: _gender ?? Gender.other,
         zodiacSign: FortuneDateUtils.getZodiacSign(isoDate),
@@ -256,7 +246,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             'email': _currentUser!.email,
             'name': _nameController.text,
             'birth_date': isoDate,
-            'birth_time': _birthTimePeriod,
+            'birth_time': _birthTime,
             'mbti': _mbti,
             'gender': _gender?.value,
             'profile_image_url': uploadedImageUrl ?? _profileImageUrl,
@@ -388,150 +378,47 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       ),
                       const SizedBox(height: TossDesignSystem.spacingL),
 
-                      // Birth year
-                      DropdownButtonFormField<String>(
-                        value: _birthYear.isEmpty ? null : _birthYear,
-                        style: TossDesignSystem.body1.copyWith(
-                          color: _getTextColor(),
-                        ),
-                        dropdownColor: _getCardColor(),
-                        decoration: TossDesignSystem.inputDecoration(
-                          hintText: '년도 선택',
-                        ).copyWith(
-                          labelText: '생년',
-                          labelStyle: TossDesignSystem.body2.copyWith(
-                            color: _getSecondaryTextColor(),
-                          ),
-                        ),
-                        items: FortuneDateUtils.getYearOptions().map((year) => DropdownMenuItem(
-                          value: year.toString(),
-                          child: Text('$year년'),
-                        )).toList(),
-                        onChanged: (value) {
+                      // Birth date input (숫자패드)
+                      NumericDateInput(
+                        initialDate: _birthDate,
+                        label: '생년월일',
+                        hint: 'YYYY-MM-DD',
+                        onDateChanged: (date) {
                           setState(() {
-                            _birthYear = value ?? '';
-                            // Reset day if invalid for new year/month combination
-                            if (_birthDay.isNotEmpty) {
-                              final maxDays = FortuneDateUtils.getDayOptions(
-                                int.parse(value!),
-                                _birthMonth.isNotEmpty ? int.parse(_birthMonth) : null,
-                              ).length;
-                              if (int.parse(_birthDay) > maxDays) {
-                                _birthDay = '';
-                              }
-                            }
+                            _birthDate = date;
                           });
                         },
-                        hint: const Text('년도 선택'),
+                        firstDate: DateTime(1900, 1, 1),
+                        lastDate: DateTime.now(),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
 
-                      // Birth month
-                      DropdownButtonFormField<String>(
-                        value: _birthMonth.isEmpty ? null : _birthMonth,
-                        decoration: InputDecoration(
-                          labelText: '생월',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        items: FortuneDateUtils.getMonthOptions().map((month) => DropdownMenuItem(
-                          value: month.toString(),
-                          child: Text('$month월'),
-                        )).toList(),
-                        onChanged: (value) {
+                      // Birth time input (숫자패드)
+                      NumericTimeInput(
+                        initialTime: _birthTime != null
+                            ? TimeOfDay(
+                                hour: int.parse(_birthTime!.split(':')[0]),
+                                minute: int.parse(_birthTime!.split(':')[1]),
+                              )
+                            : null,
+                        label: '태어난 시간',
+                        hint: 'HH:MM',
+                        required: false,
+                        onTimeChanged: (time) {
                           setState(() {
-                            _birthMonth = value ?? '';
-                            // Reset day if invalid for new year/month combination
-                            if (_birthDay.isNotEmpty && _birthYear.isNotEmpty) {
-                              final maxDays = FortuneDateUtils.getDayOptions(
-                                int.parse(_birthYear),
-                                int.parse(value!),
-                              ).length;
-                              if (int.parse(_birthDay) > maxDays) {
-                                _birthDay = '';
-                              }
-                            }
+                            _birthTime = time;
                           });
                         },
-                        hint: const Text('월 선택'),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Birth day
-                      DropdownButtonFormField<String>(
-                        value: _birthDay.isEmpty ? null : _birthDay,
-                        decoration: InputDecoration(
-                          labelText: '생일',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        items: FortuneDateUtils.getDayOptions(
-                          _birthYear.isNotEmpty ? int.parse(_birthYear) : null,
-                          _birthMonth.isNotEmpty ? int.parse(_birthMonth) : null,
-                        ).map((day) => DropdownMenuItem(
-                          value: day.toString(),
-                          child: Text('$day일'),
-                        )).toList(),
-                        onChanged: (value) {
-                          setState(() => _birthDay = value ?? '');
-                        },
-                        hint: const Text('일 선택'),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Birth time period
-                      DropdownButtonFormField<String>(
-                        value: _birthTimePeriod,
-                        decoration: InputDecoration(
-                          labelText: '태어난 시진 (선택사항)',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        items: timePeriods.map((period) => DropdownMenuItem(
-                          value: period.value,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(period.label),
-                              Text(
-                                period.description,
-                                style: TossDesignSystem.caption.copyWith(
-                                  color: _getSecondaryTextColor(),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )).toList(),
-                        onChanged: (value) {
-                          setState(() => _birthTimePeriod = value);
-                        },
-                        hint: const Text('시진 선택'),
                       ),
                       const SizedBox(height: 20),
 
                       // Birth date preview
-                      if (_birthYear.isNotEmpty && _birthMonth.isNotEmpty && _birthDay.isNotEmpty)
+                      if (_birthDate != null)
                         BirthDatePreview(
-                          birthYear: _birthYear,
-                          birthMonth: _birthMonth,
-                          birthDay: _birthDay,
-                          birthTimePeriod: _birthTimePeriod,
+                          birthYear: _birthDate!.year.toString(),
+                          birthMonth: _birthDate!.month.toString(),
+                          birthDay: _birthDate!.day.toString(),
+                          birthTimePeriod: _birthTime,
                         ),
                       const SizedBox(height: 20),
 

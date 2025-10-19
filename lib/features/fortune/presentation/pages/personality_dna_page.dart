@@ -13,6 +13,7 @@ import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/conditions/personality_dna_fortune_conditions.dart';
+import '../../../../core/widgets/accordion_input_section.dart';
 
 class PersonalityDNAPage extends BaseFortunePage {
   const PersonalityDNAPage({
@@ -38,6 +39,9 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
 
   PersonalityDNA? _currentDNA;
 
+  // 아코디언 섹션
+  late List<AccordionInputSection> _accordionSections;
+
   // MBTI 옵션
   static const List<String> _mbtiOptions = [
     'INTJ', 'INTP', 'ENTJ', 'ENTP',
@@ -62,6 +66,41 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
     '용띠', '뱀띠', '말띠', '양띠',
     '원숭이띠', '닭띠', '개띠', '돼지띠',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeAccordionSections();
+  }
+
+  void _initializeAccordionSections() {
+    _accordionSections = [
+      AccordionInputSection(
+        id: 'mbti',
+        title: 'MBTI',
+        icon: Icons.psychology_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildMbtiInput(onComplete),
+      ),
+      AccordionInputSection(
+        id: 'blood_type',
+        title: '혈액형',
+        icon: Icons.bloodtype_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildBloodTypeInput(onComplete),
+      ),
+      AccordionInputSection(
+        id: 'zodiac',
+        title: '별자리',
+        icon: Icons.star_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildZodiacInput(onComplete),
+      ),
+      AccordionInputSection(
+        id: 'animal',
+        title: '띠',
+        icon: Icons.pets_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildAnimalInput(onComplete),
+      ),
+    ];
+  }
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
@@ -227,7 +266,7 @@ ${data['todayAdvice'] ?? '평소와 다른 작은 도전을 해보세요.'}
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Show selection UI
+    // Show selection UI with Accordion
     return Scaffold(
       backgroundColor: widget.backgroundColor ?? (isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white),
       appBar: StandardFortuneAppBar(
@@ -236,33 +275,20 @@ ${data['todayAdvice'] ?? '평소와 다른 작은 도전을 해보세요.'}
       body: SafeArea(
         child: Stack(
           children: [
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 20,
-                  bottom: 100,
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+                  child: _buildTitleSection(),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTitleSection(),
-                    const SizedBox(height: 32),
-                    _buildMbtiSection(),
-                    const SizedBox(height: 24),
-                    _buildBloodTypeSection(),
-                    const SizedBox(height: 24),
-                    _buildZodiacSection(),
-                    const SizedBox(height: 24),
-                    _buildAnimalSection(),
-                  ],
+                Expanded(
+                  child: AccordionInputForm(
+                    sections: _accordionSections,
+                    onAllCompleted: _handleGenerateFortune,
+                    completionButtonText: '🧬 나만의 성격 DNA 발견하기',
+                  ),
                 ),
-              ),
+              ],
             ),
             if (_canGenerate())
               TossFloatingProgressButtonPositioned(
@@ -306,128 +332,106 @@ ${data['todayAdvice'] ?? '평소와 다른 작은 도전을 해보세요.'}
     );
   }
 
-  Widget _buildMbtiSection() {
-    return _buildSelectionSection(
-      title: 'MBTI',
-      icon: Icons.psychology_rounded,
+  Widget _buildMbtiInput(Function(dynamic) onComplete) {
+    return _buildGridSelection(
       options: _mbtiOptions,
-      selected: _selectedMbti,
-      onSelect: (value) => setState(() => _selectedMbti = value),
       columns: 4,
+      onSelect: (value) {
+        setState(() => _selectedMbti = value);
+        onComplete(value);
+      },
     );
   }
 
-  Widget _buildBloodTypeSection() {
-    return _buildSelectionSection(
-      title: '혈액형',
-      icon: Icons.bloodtype_rounded,
+  Widget _buildBloodTypeInput(Function(dynamic) onComplete) {
+    return _buildGridSelection(
       options: _bloodTypeOptions,
-      selected: _selectedBloodType,
-      onSelect: (value) => setState(() => _selectedBloodType = value),
       columns: 4,
+      onSelect: (value) {
+        setState(() => _selectedBloodType = value);
+        onComplete(value);
+      },
     );
   }
 
-  Widget _buildZodiacSection() {
-    return _buildSelectionSection(
-      title: '별자리',
-      icon: Icons.star_rounded,
+  Widget _buildZodiacInput(Function(dynamic) onComplete) {
+    return _buildGridSelection(
       options: _zodiacOptions,
-      selected: _selectedZodiac,
-      onSelect: (value) => setState(() => _selectedZodiac = value),
       columns: 3,
+      onSelect: (value) {
+        setState(() => _selectedZodiac = value);
+        onComplete(value);
+      },
     );
   }
 
-  Widget _buildAnimalSection() {
-    return _buildSelectionSection(
-      title: '띠',
-      icon: Icons.pets_rounded,
+  Widget _buildAnimalInput(Function(dynamic) onComplete) {
+    return _buildGridSelection(
       options: _animalOptions,
-      selected: _selectedAnimal,
-      onSelect: (value) => setState(() => _selectedAnimal = value),
       columns: 3,
+      onSelect: (value) {
+        setState(() => _selectedAnimal = value);
+        onComplete(value);
+      },
     );
   }
 
-  Widget _buildSelectionSection({
-    required String title,
-    required IconData icon,
+  Widget _buildGridSelection({
     required List<String> options,
-    required String? selected,
-    required Function(String) onSelect,
     required int columns,
+    required Function(String) onSelect,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, size: 20, color: TossDesignSystem.tossBlue),
-            SizedBox(width: 8),
-            Text(
-              title,
-              style: TypographyUnified.heading4.copyWith(
-                fontWeight: FontWeight.w600,
-                color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: columns,
-          childAspectRatio: 2.0,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-          children: options.map((option) => _buildOptionChip(option, selected, onSelect)).toList(),
-        ),
-      ],
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: columns,
+      childAspectRatio: 2.2,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      children: options.map((option) {
+        return _buildOptionChip(option, onSelect);
+      }).toList(),
     );
   }
 
-  Widget _buildOptionChip(String option, String? selected, Function(String) onSelect) {
-    final isSelected = selected == option;
+  Widget _buildOptionChip(String option, Function(String) onSelect) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: () {
+        HapticFeedback.mediumImpact();
         onSelect(option);
-        HapticFeedback.lightImpact();
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+      child: Container(
         decoration: BoxDecoration(
-          color: isSelected
-              ? TossDesignSystem.tossBlue
-              : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50),
+          color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? TossDesignSystem.tossBlue
-                : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200),
-            width: isSelected ? 2 : 1,
+            color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200,
+            width: 1.5,
           ),
         ),
         child: Center(
           child: Text(
             option,
-            style: TypographyUnified.bodySmall.copyWith(
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              color: isSelected
-                  ? TossDesignSystem.white
-                  : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700),
+            style: TypographyUnified.bodyMedium.copyWith(
+              fontWeight: FontWeight.w600,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
           ),
         ),
-      ).animate(target: isSelected ? 1 : 0)
-        .scale(begin: const Offset(1, 1), end: const Offset(0.95, 0.95), duration: 100.ms)
+      ).animate()
+        .scale(
+          duration: 100.ms,
+          begin: const Offset(1, 1),
+          end: const Offset(0.95, 0.95),
+        )
         .then()
-        .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1), duration: 100.ms),
+        .scale(
+          duration: 100.ms,
+          begin: const Offset(0.95, 0.95),
+          end: const Offset(1, 1),
+        ),
     );
   }
 

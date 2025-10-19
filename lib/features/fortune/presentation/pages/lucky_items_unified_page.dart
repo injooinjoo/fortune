@@ -131,21 +131,19 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
   
   /// 실용적인 행운 가이드 데이터 생성
   Future<Fortune> _generateLuckyGuide(dynamic userProfile, DateTime date) async {
-    final birthDay = userProfile.birthDate?.day ?? 1;
-    final seedValue = date.day + date.month + (birthDay is int ? birthDay : birthDay.toInt());
-    final random = Random(seedValue.toInt());
-    
-    // 오늘의 운세에서 실제 점수 가져오기
-    int actualScore = 75; // 기본값
-    try {
-      final dailyFortuneState = ref.read(dailyFortuneProvider);
-      if (dailyFortuneState.fortune != null) {
-        actualScore = dailyFortuneState.fortune!.overallScore ?? 75;
-      }
-    } catch (e) {
-      // 에러 시 기본값 사용
-      debugPrint('Error getting daily fortune score: $e');
-    }
+    // 프로필 정보 추출
+    final birthDate = userProfile.birthdate ?? DateTime.now();
+    final birthTime = userProfile.birthTime;
+    final name = userProfile.name ?? '';
+    final gender = userProfile.gender;
+
+    // 생년월일 기반 시드값 생성
+    final birthDay = birthDate.day;
+    final seedValue = (date.day + date.month + birthDay).toInt();
+    final random = Random(seedValue);
+
+    // 오늘의 운세에서 실제 점수 가져오기 (임시로 75 사용)
+    int actualScore = 75;
     
     // 로또 번호 생성
     final lottoNumbers = _generateLottoNumbers(userProfile, date, random);
@@ -165,8 +163,26 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
     final dateString = '${now.year}년 ${now.month}월 ${now.day}일';
     final weekdays = ['일', '월', '화', '수', '목', '금', '토'];
     final weekday = weekdays[now.weekday % 7];
-    
-    final description = '''오늘은 $dateString ($weekday요일) 입니다.
+
+    // 프로필 정보 표시
+    final profileInfo = StringBuffer();
+    if (name.isNotEmpty) {
+      profileInfo.write('👤 $name님');
+      if (gender != null) {
+        profileInfo.write(' (${gender == 'male' ? '남' : '여'})');
+      }
+      profileInfo.write('\n');
+    }
+    if (birthDate != null) {
+      profileInfo.write('🎂 ${birthDate.year}.${birthDate.month.toString().padLeft(2, '0')}.${birthDate.day.toString().padLeft(2, '0')}');
+      if (birthTime != null) {
+        profileInfo.write(' $birthTime');
+      }
+      profileInfo.write(' 출생\n');
+    }
+
+    final description = '''$profileInfo
+오늘은 $dateString ($weekday요일) 입니다.
 
 🌟 오늘의 행운 가이드
 
@@ -202,7 +218,10 @@ ${topRecommendations.join('\n')}
       ],
       metadata: {
         'generated_date': date.toIso8601String(),
-        'user_birth_date': userProfile.birthDate?.toIso8601String(),
+        'user_name': name,
+        'user_birth_date': birthDate.toIso8601String(),
+        'user_birth_time': birthTime,
+        'user_gender': gender,
         'categories': _categories.length,
       },
     );
@@ -210,18 +229,30 @@ ${topRecommendations.join('\n')}
   
   /// 로또 번호 생성 (생년월일 + 오늘 날짜 기반)
   List<int> _generateLottoNumbers(dynamic userProfile, DateTime date, Random random) {
-    final birthDate = userProfile.birthDate ?? DateTime.now();
-    
+    final birthDate = userProfile.birthdate ?? DateTime.now();
+    final birthTime = userProfile.birthTime;
+
     // 개인 행운수 계산
     final personalLucky = (birthDate.day + birthDate.month + birthDate.year % 100) % 45 + 1;
-    
+
     // 오늘의 에너지
     final dailyLucky = (date.day + date.month + date.weekday) % 45 + 1;
-    
+
+    // 태어난 시간 기반 행운수 (있을 경우)
+    int timeLucky = 14; // 기본값
+    if (birthTime != null && birthTime.isNotEmpty) {
+      // "14:30" 형식에서 시간 추출
+      final parts = birthTime.split(':');
+      if (parts.isNotEmpty) {
+        final hour = int.tryParse(parts[0]) ?? 0;
+        timeLucky = (hour * 2 + 1) % 45 + 1;
+      }
+    }
+
     // MBTI 기반 라켤 번호
     int mbtiLucky = 7; // 기본값
-    if (userProfile.mbtiType != null) {
-      final mbtiHash = userProfile.mbtiType.hashCode;
+    if (userProfile.mbti != null) {
+      final mbtiHash = userProfile.mbti.hashCode;
       mbtiLucky = (mbtiHash.abs() % 45) + 1;
     }
 
@@ -236,7 +267,7 @@ ${topRecommendations.join('\n')}
       }
     }
 
-    Set<int> numbers = {personalLucky, dailyLucky, mbtiLucky, bloodLucky};
+    Set<int> numbers = {personalLucky, dailyLucky, timeLucky, mbtiLucky, bloodLucky};
     
     // 6개 번호가 될 때까지 추가
     while (numbers.length < 6) {
@@ -598,13 +629,26 @@ ${topRecommendations.join('\n')}
     final numbers = _generateLottoNumbers(userProfile, date, random);
     final stores = ['백수 민럽점', 'GS25 강남대로점', '세븐일레븐 역삼점', '로또리아 선릉점'];
     final times = ['오전 10:00-11:00', '오후 2:00-3:00', '오후 6:00-7:00', '오후 8:00-9:00'];
-    
+
+    // 프로필 정보 기반 팁 생성
+    final birthDate = userProfile.birthdate ?? DateTime.now();
+    final birthTime = userProfile.birthTime;
+    final name = userProfile.name ?? '';
+
+    String tip = '개인 행운수 ${numbers.first}번이 특히 강한 날입니다';
+    if (birthTime != null && birthTime.isNotEmpty) {
+      tip += '\n⏰ 태어난 시간($birthTime)을 활용한 번호가 포함되었습니다';
+    }
+
     return {
       'numbers': numbers,
       'store': stores[random.nextInt(stores.length)],
       'time': times[random.nextInt(times.length)],
       'confidence': 70 + random.nextInt(25),
-      'tip': '개인 행운수 ${numbers.first}번이 특히 강한 날입니다',
+      'tip': tip,
+      'user_name': name,
+      'birth_date': '${birthDate.year}.${birthDate.month.toString().padLeft(2, '0')}.${birthDate.day.toString().padLeft(2, '0')}',
+      'birth_time': birthTime,
     };
   }
   
@@ -682,9 +726,62 @@ ${topRecommendations.join('\n')}
   /// 로또 상세 카드
   Widget _buildLottoDetail(Map<String, dynamic> data, Map<String, dynamic> category) {
     final numbers = data['numbers'] as List<int>;
-    
+    final userName = data['user_name'] as String?;
+    final birthDate = data['birth_date'] as String?;
+    final birthTime = data['birth_time'] as String?;
+
     return Column(
       children: [
+        // 프로필 정보 카드
+        if (userName != null && birthDate != null)
+          Container(
+            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFF0F4FF), Color(0xFFFFF0F5)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE5E5FF)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.person, color: Color(0xFF1F4EF5), size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '$userName님의 행운 번호',
+                        style: TypographyUnified.buttonSmall.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF1F4EF5),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '생년월일: $birthDate${birthTime != null ? ' $birthTime' : ''}',
+                        style: TypographyUnified.labelSmall.copyWith(
+                          color: Color(0xFF666666),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
         // 로또 번호 카드
         Container(
           padding: const EdgeInsets.all(20),
