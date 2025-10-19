@@ -2,10 +2,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
 import '../../utils/logger.dart';
 
-/// 시간별 운세 Generator - API 기반 운세 생성
+/// 일일운세 Generator - API 기반 운세 생성
 /// 오늘/내일/주간/월간/연간 운세
 class TimeBasedGenerator {
-  /// 시간별 운세 생성 (Edge Function 호출)
+  /// 일일운세 생성 (Edge Function 호출)
   static Future<FortuneResult> generate(
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
@@ -73,7 +73,7 @@ class TimeBasedGenerator {
 
       return result;
     } catch (e, stackTrace) {
-      Logger.error('[TimeBasedGenerator] ❌ 시간별 운세 생성 실패', e, stackTrace);
+      Logger.error('[TimeBasedGenerator] ❌ 일일운세 생성 실패', e, stackTrace);
       rethrow;
     }
   }
@@ -85,7 +85,7 @@ class TimeBasedGenerator {
   ) {
     return FortuneResult(
       type: 'time_based',
-      title: apiData['title'] as String? ?? '시간별 운세',
+      title: apiData['title'] as String? ?? '일일운세',
       summary: apiData['summary'] as Map<String, dynamic>? ?? {},
       data: apiData['data'] as Map<String, dynamic>? ?? apiData,
       score: (apiData['score'] as num?)?.toInt() ??

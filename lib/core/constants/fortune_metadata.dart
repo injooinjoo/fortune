@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Fortune type definitions
 enum FortuneType {
-  // Daily/Time-based
+  // Daily Fortunes
   daily('daily', '오늘의 운세'),
   today('today', '오늘의 운세'),
   tomorrow('tomorrow', '내일의 운세'),
@@ -148,7 +148,7 @@ class FortuneMetadata {
 /// Fortune metadata repository
 class FortuneMetadataRepository {
   static final Map<FortuneType, FortuneMetadata> _metadata = {
-    // Daily/Time-based
+    // Daily Fortunes
     FortuneType.daily: FortuneMetadata(
       type: FortuneType.daily,
       title: '오늘의 운세',
@@ -310,7 +310,7 @@ class FortuneMetadataRepository {
 
 /// Fortune categories for grouping
 enum FortuneCategory {
-  daily('일일/시간별'),
+  daily('일일운세'),
   traditional('전통'),
   love('연애/관계'),
   career('직업/재물'),

@@ -40,7 +40,9 @@
       "Bash(if grep -q \"UnifiedFortuneService\" \"lib/features/fortune/presentation/pages/$page.dart\")",
       "Bash(do echo \"=== $file ===\")",
       "Bash(do echo \"Migrating $page_fortune_page...\")",
-      "Bash(do echo \"$page:\")"
+      "Bash(do echo \"$page:\")",
+      "Bash(do if grep -q \"extends BaseFortunePage\" \"$file\")",
+      "Bash(then echo \"$file\" fi done)"
     ],
     "deny": [],
     "ask": [],

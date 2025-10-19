@@ -329,7 +329,7 @@ serve(async (req) => {
         yearly: '올해 운세',
         hourly: '시간대별 운세'
       }
-      return titles[period] || '시간별 운세'
+      return titles[period] || '일일운세'
     }
 
     // 운세 데이터 구성

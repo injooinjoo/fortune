@@ -347,7 +347,7 @@ if (random < 0.3) {
 
 각 운세마다 "동일 조건"을 다르게 정의해야 합니다:
 
-#### 시간별 운세 (Time-based)
+#### 일일운세 (Daily)
 ```dart
 conditions = {
   'period': 'daily' | 'weekly' | 'monthly',

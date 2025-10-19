@@ -393,7 +393,7 @@ Future<FortuneResult> _callAPIAndSave({
 
 | # | 운세 이름 | fortune_type | 조건 필드 | 날짜 포함 | 해시 예시 |
 |---|----------|--------------|----------|----------|----------|
-| 1 | 시간별 운세 | `daily` | `period` | ❌ | `period:weekly` |
+| 1 | 일일운세 | `daily` | `period` | ❌ | `period:weekly` |
 | 2 | 전통 운세 | `traditional` | `saju`, `date` | ✅ | `saju:xxx_date:2025-01-10` |
 | 3 | 타로 카드 | `tarot` | `spread_type`, `cards` | ❌ | `spread:basic_cards:1,5,10` |
 | 4 | 꿈해몽 | `dream` | `dream_category` | ❌ | `category:animal` |
@@ -426,7 +426,7 @@ Future<FortuneResult> _callAPIAndSave({
 
 ### 📝 상세 조건 정의 (코드 예시)
 
-#### 1. 시간별 운세
+#### 1. 일일운세
 ```dart
 class DailyFortuneConditions extends FortuneConditions {
   final String period; // 'daily', 'weekly', 'monthly', 'yearly'
@@ -1052,7 +1052,7 @@ abstract class FortuneConditions {
   }
 }
 
-/// 시간별 운세 조건
+/// 일일운세 조건
 class DailyFortuneConditions extends FortuneConditions {
   final String period; // 'daily', 'weekly', 'monthly', 'yearly'
 

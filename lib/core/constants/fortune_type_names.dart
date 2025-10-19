@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 /// Maps fortune type identifiers to their Korean display names
 class FortuneTypeNames {
   static const Map<String, String> names = {
-    // Time-based Fortunes (시간별 운세)
+    // Daily Fortunes (일일운세)
     'daily': '일일 운세',
     'today': '오늘의 운세',
     'tomorrow': '내일의 운세',
@@ -127,7 +127,7 @@ class FortuneTypeNames {
   /// Get the category name for a fortune type
   static String getCategory(String fortuneType) {
     if (['daily', 'today', 'tomorrow', 'daily_calendar', 'weekly', 'monthly', 'yearly'].contains(fortuneType)) {
-      return '시간별 운세';
+      return '일일운세';
     } else if (['saju', 'traditional-saju', 'saju-psychology', 'tojeong', 'salpuli', 'palmistry', 'physiognomy', 'face-reading', 'five-blessings'].contains(fortuneType)) {
       return '전통 운세';
     } else if (['mbti', 'personality', 'blood-type', 'zodiac', 'zodiac-animal', 'birth-season', 'birthdate', 'birthstone', 'biorhythm'].contains(fortuneType)) {
@@ -158,7 +158,7 @@ class FortuneTypeNames {
     
     // Define icons and colors for each category
     switch (category) {
-      case '시간별 운세':
+      case '일일운세':
         return {
           'name': name,
           'icon': Icons.calendar_today,
