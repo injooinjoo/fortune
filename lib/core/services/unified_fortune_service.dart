@@ -472,6 +472,12 @@ class UnifiedFortuneService {
       Logger.info('[UnifiedFortune] ✅ DB 저장 완료: $fortuneType (User: $userId)');
 
     } catch (error, stackTrace) {
+      // 중복 키 에러는 정상 (FortuneOptimizationService가 이미 저장함)
+      if (error is PostgrestException && error.code == '23505') {
+        Logger.info('[UnifiedFortune] ✅ 이미 저장된 운세 (최적화 서비스에서 저장됨)');
+        return; // 중복 키 에러는 무시
+      }
+
       Logger.error('[UnifiedFortune] DB 저장 실패: $fortuneType', error, stackTrace);
       // 저장 실패해도 결과는 반환할 수 있도록 throw하지 않음
       // 대신 경고 로그만 남김

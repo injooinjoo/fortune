@@ -42,7 +42,8 @@
       "Bash(do echo \"Migrating $page_fortune_page...\")",
       "Bash(do echo \"$page:\")",
       "Bash(do if grep -q \"extends BaseFortunePage\" \"$file\")",
-      "Bash(then echo \"$file\" fi done)"
+      "Bash(then echo \"$file\" fi done)",
+      "Bash(wc:*)"
     ],
     "deny": [],
     "ask": [],

@@ -120,8 +120,13 @@ class _TossFloatingProgressButtonState extends State<TossFloatingProgressButton>
         ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
         : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300);
 
+    // 프로그레스가 텍스트 위치(중앙, 50%)를 넘었는지 여부에 따라 텍스트 색상 결정
+    final isProgressOverText = _progressPercentage >= 0.5;
+
     final textColor = effectiveEnabled
-        ? TossDesignSystem.white
+        ? (isProgressOverText
+            ? TossDesignSystem.white // 프로그레스가 텍스트를 덮었으면 흰색
+            : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight)) // 아니면 배경과 대조되는 색
         : (isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500);
 
     return SizedBox(
@@ -163,21 +168,22 @@ class _TossFloatingProgressButtonState extends State<TossFloatingProgressButton>
                             valueColor: AlwaysStoppedAnimation<Color>(textColor),
                           ),
                         )
-                      : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (widget.icon != null) ...[
-                              widget.icon!,
-                              const SizedBox(width: TossDesignSystem.spacingXS),
+                      : AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 200),
+                          style: TossDesignSystem.button.copyWith(
+                            color: textColor,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (widget.icon != null) ...[
+                                widget.icon!,
+                                const SizedBox(width: TossDesignSystem.spacingXS),
+                              ],
+                              Text(widget.text),
                             ],
-                            Text(
-                              widget.text,
-                              style: TossDesignSystem.button.copyWith(
-                                color: textColor,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                 ),
               ],

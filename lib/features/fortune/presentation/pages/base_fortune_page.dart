@@ -410,8 +410,10 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
           Logger.debug('💾 [BaseFortunePage] Fortune saved to recent history');
         }
 
-        // 영혼 시스템 처리
+        // 영혼 시스템 처리 (임시 비활성화 - Edge Functions 미구현)
         // 프리미엄 회원이 아닌 경우에만 영혼 처리
+        // TODO: soul-earn, soul-consume Edge Functions 구현 후 활성화
+        /*
         if (!isPremium) {
           Logger.debug('💫 [BaseFortunePage] Processing soul transaction');
           final result = await ref.read(tokenProvider.notifier).processSoulForFortune(
@@ -447,6 +449,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
             Logger.warning('⚠️ [BaseFortunePage] Soul transaction failed');
           }
         }
+        */
       }
 
       // ⚡ ASYNC PARALLEL OPTIMIZATION: Start API call BEFORE ad

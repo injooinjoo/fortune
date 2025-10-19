@@ -2529,7 +2529,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
 
         // 베스트/워스트 시간대 요약 (1줄로 축소)
         Container(
-          height: 64,
+          height: 68,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF2D2D2D).withValues(alpha: 0.5) : const Color(0xFFF8F9FA),
@@ -2545,20 +2545,23 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,  // Fix overflow
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         '베스트',
-                        style: TypographyUnified.labelMedium.copyWith(
+                        style: TypographyUnified.labelSmall.copyWith(  // labelMedium → labelSmall
                           color: const Color(0xFF10B981),
                           fontWeight: FontWeight.w600,
+                          height: 1.0,  // 줄 간격 최소화
                         ),
                       ),
+                      const SizedBox(height: 2),  // 고정 간격 추가
                       Text(
                         '$bestHour시',
-                        style: TypographyUnified.buttonMedium.copyWith(
+                        style: TypographyUnified.buttonSmall.copyWith(  // buttonMedium → buttonSmall
                           color: isDark ? Colors.white : Colors.black87,
                           fontWeight: FontWeight.w700,
+                          height: 1.0,  // 줄 간격 최소화
                         ),
                       ),
                     ],

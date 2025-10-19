@@ -335,8 +335,8 @@ class FortuneOptimizationService {
         'date': today,
         'created_at': now.toIso8601String(),
         'updated_at': now.toIso8601String(),
-        // 인덱싱용 필드 추가
-        ...conditions.toIndexableFields(),
+        // 인덱싱용 필드 추가 (DB 컬럼이 없으면 무시됨)
+        // ...conditions.toIndexableFields(), // ← 주석 처리 (DB에 해당 컬럼 없음)
       };
 
       final response = await _supabase
