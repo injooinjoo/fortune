@@ -21,6 +21,224 @@ flutter run -d [device-id]
 
 ---
 
+## 🔴 **에러 로그 근본 원인 분석 원칙 (CRITICAL - PRIORITY #1)** 🔴
+
+**에러 로그가 발생하면, 에러 로그를 숨기거나 제거하려는 것이 아니라, 에러가 발생하지 않도록 근본 원인을 해결합니다!**
+
+### 📋 **에러 발생 시 필수 분석 프로세스**
+
+#### 1️⃣ **왜 에러가 발생했는지 근본 원인 파악 (Root Cause Analysis)**
+```
+잘못된 접근 ❌:
+에러: "Null check operator used on a null value"
+→ try-catch로 에러 무시 (WRONG!)
+→ if (value != null) 조건만 추가 (WRONG!)
+
+올바른 접근 ✅:
+에러: "Null check operator used on a null value"
+→ 1️⃣ 왜 null이 들어왔는지 추적
+   - 데이터가 아직 로드되지 않았나?
+   - API 응답이 잘못되었나?
+   - 초기화가 제대로 안됐나?
+→ 2️⃣ 다른 곳에서도 동일한 패턴이 있는지 검색
+→ 3️⃣ 유사한 케이스는 어떻게 처리했는지 확인
+→ 4️⃣ 근본 원인 해결 (예: 데이터 로드 대기, 기본값 설정, 초기화 로직 수정)
+```
+
+#### 2️⃣ **다른 곳에서는 발생하지 않는지 전체 코드베이스 확인**
+```bash
+# 예시: FutureBuilder에서 null 에러 발생 시
+# 1. 전체 프로젝트에서 동일 패턴 검색
+grep -r "FutureBuilder" lib/
+
+# 2. 제대로 처리된 곳과 비교
+# 잘못된 곳:
+FutureBuilder(
+  future: fetchData(),
+  builder: (context, snapshot) {
+    return Text(snapshot.data!.name);  // ❌ null일 수 있음
+  }
+)
+
+# 올바른 곳:
+FutureBuilder(
+  future: fetchData(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();  // ✅ 로딩 처리
+    }
+    if (snapshot.hasError) {
+      return ErrorWidget(snapshot.error);  // ✅ 에러 처리
+    }
+    if (!snapshot.hasData) {
+      return EmptyStateWidget();  // ✅ 데이터 없음 처리
+    }
+    return Text(snapshot.data!.name);  // ✅ 안전하게 사용
+  }
+)
+```
+
+#### 3️⃣ **다른 곳에서는 어떻게 유사한 문제를 해결했는지 확인**
+```dart
+// 예시: 비동기 데이터 로딩 패턴
+// ❌ 잘못된 방식 - 에러만 숨김
+class MyWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    try {
+      return Text(Provider.of<UserData>(context).name);
+    } catch (e) {
+      return SizedBox.shrink();  // ❌ 에러 무시
+    }
+  }
+}
+
+// ✅ 올바른 방식 - 근본 원인 해결
+class MyWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // 1. Provider가 제공되었는지 확인
+    final userData = Provider.of<UserData?>(context, listen: false);
+
+    // 2. null인 이유 명확히 처리
+    if (userData == null) {
+      // 로그인 필요, 데이터 로딩 중 등 명확한 상태 표시
+      return LoginRequiredWidget();
+    }
+
+    // 3. 안전하게 사용
+    return Text(userData.name);
+  }
+}
+```
+
+#### 4️⃣ **근본 원인 해결 체크리스트**
+
+**에러 발생 시 반드시 확인할 것:**
+- [ ] ✅ 왜 에러가 발생했는지 로그 추적 완료
+- [ ] ✅ 동일한 패턴이 다른 곳에 있는지 검색 완료
+- [ ] ✅ 유사한 케이스를 올바르게 처리한 코드 찾음
+- [ ] ✅ 근본 원인을 해결하는 방향으로 수정 (에러 숨김 ❌)
+- [ ] ✅ 수정 후 동일 에러가 다른 곳에서도 발생하지 않는지 확인
+
+### 🚨 **절대 하지 말아야 할 것**
+
+#### ❌ 에러 로그만 제거하는 행위
+```dart
+// ❌ WRONG - 에러만 숨김
+try {
+  riskyOperation();
+} catch (e) {
+  // 아무것도 안함 - 에러 무시
+}
+
+// ❌ WRONG - 에러만 무시
+if (value != null) {  // null 체크만 추가
+  // 원래 코드
+}
+// 왜 null이 들어오는지는 분석 안함
+```
+
+#### ❌ 증상만 치료하는 행위
+```dart
+// ❌ WRONG - 증상만 치료
+setState(() {
+  _data = snapshot.data ?? [];  // 빈 배열로 기본값만 설정
+});
+// 왜 data가 null인지, API가 실패했는지, 네트워크 문제인지 분석 안함
+```
+
+#### ❌ 다른 곳 확인 없이 해당 파일만 수정
+```dart
+// ❌ WRONG - 한 곳만 수정
+// lib/features/home/home_page.dart 에서만 수정
+FutureBuilder(...)  // 수정됨
+
+// lib/features/profile/profile_page.dart 는 그대로 방치
+FutureBuilder(...)  // 동일한 에러 패턴 존재!
+```
+
+### ✅ **올바른 에러 해결 프로세스**
+
+```
+1️⃣ 에러 로그 발생
+   ↓
+2️⃣ 근본 원인 분석
+   - 왜 발생했는가?
+   - 어떤 조건에서 발생하는가?
+   - 데이터 흐름에서 어느 단계가 문제인가?
+   ↓
+3️⃣ 프로젝트 전체 검색
+   - 동일한 패턴이 있는 곳 찾기
+   - 올바르게 처리된 곳 찾기
+   - 비교하여 차이점 파악
+   ↓
+4️⃣ 근본 원인 해결
+   - 데이터 초기화 문제 → 초기화 로직 수정
+   - API 응답 문제 → API 호출 방식 수정
+   - 상태 관리 문제 → 상태 관리 개선
+   ↓
+5️⃣ 동일 패턴 모두 수정
+   - 한 곳만 고치지 말고 전체 수정
+   - 일관된 패턴 적용
+   ↓
+6️⃣ 검증
+   - 해당 에러가 더 이상 발생하지 않는지 확인
+   - 다른 곳에서도 동일 에러 없는지 확인
+```
+
+### 📊 **근본 원인 분석 예시**
+
+#### 예시 1: Null 에러
+```
+❌ 증상만 치료:
+if (data != null) { ... }
+
+✅ 근본 원인 해결:
+1. 왜 null인가? → API 호출 전에 접근
+2. 다른 곳은? → 모든 API 호출 부분 검색
+3. 올바른 패턴? → FutureBuilder로 로딩 상태 관리
+4. 해결: 모든 API 호출에 FutureBuilder 적용
+```
+
+#### 예시 2: setState 에러
+```
+❌ 증상만 치료:
+if (mounted) { setState(() {...}); }
+
+✅ 근본 원인 해결:
+1. 왜 dispose 후 호출? → 비동기 작업 완료 시점 문제
+2. 다른 곳은? → 모든 비동기 setState 검색
+3. 올바른 패턴? → CancelableOperation 또는 dispose에서 cancel
+4. 해결: 모든 비동기 작업에 취소 로직 추가
+```
+
+#### 예시 3: IndexOutOfRange 에러
+```
+❌ 증상만 치료:
+if (list.length > index) { ... }
+
+✅ 근본 원인 해결:
+1. 왜 인덱스 초과? → 리스트가 비어있거나 삭제됨
+2. 다른 곳은? → 모든 리스트 접근 검색
+3. 올바른 패턴? → isEmpty 체크 또는 try-get 패턴
+4. 해결: 리스트 상태 관리 개선
+```
+
+### 🎯 **핵심 원칙**
+
+**"에러 로그를 없애려는 것이 아니라, 에러가 발생하지 않도록 근본 원인을 해결한다"**
+
+1. **증상 치료 금지**: try-catch로 숨기거나 조건문으로만 우회하지 말 것
+2. **근본 원인 분석 필수**: 왜 에러가 발생했는지 반드시 파악
+3. **전체 검색 필수**: 동일한 패턴이 다른 곳에 없는지 확인
+4. **올바른 패턴 적용**: 이미 잘 처리된 곳의 패턴을 찾아 적용
+5. **일관성 유지**: 한 곳만 고치지 말고 전체를 일관되게 수정
+
+**이것이 모든 에러 처리의 최우선 원칙입니다!**
+
+---
+
 ## 🤖 **필수 자동화 워크플로우** - 절대 건너뛰지 말 것! 🤖
 
 ### 🔴 **JIRA 등록 최우선 원칙 (CRITICAL RULE)**
