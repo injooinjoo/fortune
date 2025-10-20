@@ -43,7 +43,8 @@
       "Bash(do echo \"$page:\")",
       "Bash(do if grep -q \"extends BaseFortunePage\" \"$file\")",
       "Bash(then echo \"$file\" fi done)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(supabase link:*)"
     ],
     "deny": [],
     "ask": [],
