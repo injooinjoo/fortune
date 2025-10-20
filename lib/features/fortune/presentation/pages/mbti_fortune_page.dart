@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
+import '../../../../core/models/fortune_result.dart';
 import '../../../../services/mbti_cognitive_functions_service.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/toss_card.dart';
@@ -15,6 +15,7 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/conditions/mbti_fortune_conditions.dart';
 import 'dart:math' as math;
+import 'base_fortune_page.dart';
 
 class MbtiFortunePage extends BaseFortunePage {
   const MbtiFortunePage({
@@ -43,6 +44,15 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
 
   // Energy level (0.0 to 1.0)
   double _energyLevel = 0.0;
+
+  // Accordion state - 초기에는 모두 펼쳐져 있음
+  bool _showAllGroups = true;
+
+  // ScrollController for auto-scroll
+  final ScrollController _scrollController = ScrollController();
+
+  // GlobalKey for selected MBTI info position
+  final GlobalKey _selectedInfoKey = GlobalKey();
 
   // MBTI Groups for better organization
   static const Map<String, List<String>> _mbtiGroups = {
@@ -109,8 +119,28 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
 
   @override
   void dispose() {
-    // No need to show navigation bar - Scaffold structure handles this automatically
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  // Auto-scroll to selected MBTI info
+  void _scrollToSelectedInfo() {
+    Future.delayed(const Duration(milliseconds: 350), () {
+      if (_selectedInfoKey.currentContext != null && mounted) {
+        final RenderBox? renderBox = _selectedInfoKey.currentContext!.findRenderObject() as RenderBox?;
+        if (renderBox != null) {
+          final position = renderBox.localToGlobal(Offset.zero).dy;
+          final screenHeight = MediaQuery.of(context).size.height;
+          final targetScroll = _scrollController.offset + position - (screenHeight * 0.25);
+
+          _scrollController.animateTo(
+            targetScroll.clamp(0.0, _scrollController.position.maxScrollExtent),
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeOutCubic,
+          );
+        }
+      }
+    });
   }
 
   Future<void> _handleGenerateFortune() async {
@@ -193,6 +223,12 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       final apiDuration = DateTime.now().difference(apiStartTime).inMilliseconds;
 
       debugPrint('✅ [MbtiFortunePage] Fortune loaded successfully in ${apiDuration}ms');
+      debugPrint('📊 [MbtiFortunePage] API Response data: ${fortuneResult.data}');
+
+      // API 응답에서 실제 운세 데이터 추출
+      final data = fortuneResult.data as Map<String, dynamic>? ?? {};
+      final todayFortune = data['today_fortune'] as String? ?? fortuneResult.summary['message'] as String? ?? '오늘은 특별한 하루가 될 것입니다.';
+      final luckyItems = data['lucky_items'] as Map<String, dynamic>?;
 
       // FortuneResult를 Fortune으로 변환
       final fortune = Fortune(
@@ -203,12 +239,17 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
         createdAt: DateTime.now(),
         category: 'mbti',
         overallScore: fortuneResult.score ?? 75,
-        description: fortuneResult.summary['message'] as String?,
+        description: todayFortune,
+        luckyItems: luckyItems,
         metadata: {
           'mbti_type': _selectedMbti,
           'categories': categories,
           'cognitive_functions': _cognitiveFunctions,
           'energy_level': _energyLevel,
+          'category_fortunes': data['category_fortunes'],
+          'advice': data['advice'],
+          'warnings': data['warnings'],
+          'api_data': data,
         },
       );
 
@@ -274,6 +315,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               right: 0,
               bottom: 0,
               child: SingleChildScrollView(
+                controller: _scrollController,
                 padding: const EdgeInsets.only(
                   left: 20,
                   right: 20,
@@ -293,7 +335,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                     // Selected MBTI Info
                     if (_selectedMbti != null) ...[
                       const SizedBox(height: 32),
-                      _buildSelectedMbtiInfo(),
+                      Container(
+                        key: _selectedInfoKey,
+                        child: _buildSelectedMbtiInfo(),
+                      ),
                       const SizedBox(height: 24),
                       _buildCategorySelection(),
                     ],
@@ -342,50 +387,118 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
   }
 
   Widget _buildMbtiGroupsSection() {
-    return Column(
-      children: _mbtiGroups.entries.map((entry) {
-        final groupName = entry.key;
-        final types = entry.value;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                children: [
-                  Container(
-                    width: 4,
-                    height: 20,
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: _getGroupColor(groupName),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  Text(
-                    groupName,
-                    style: TypographyUnified.buttonMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.gray800,
-                    ),
-                  ),
-                ],
+    return Column(
+      children: [
+        // Single accordion header
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _showAllGroups = !_showAllGroups;
+            });
+            HapticFeedback.lightImpact();
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: _showAllGroups
+                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
+                  : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: _showAllGroups
+                    ? TossDesignSystem.tossBlue.withValues(alpha: 0.3)
+                    : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200),
+                width: _showAllGroups ? 2 : 1,
               ),
             ),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 4,
-              childAspectRatio: 1.1,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              children: types.map((mbti) => _buildMbtiCard(mbti)).toList(),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.psychology_rounded,
+                  color: TossDesignSystem.tossBlue,
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    _selectedMbti == null ? 'MBTI 성격 유형 선택' : _selectedMbti!,
+                    style: TypographyUnified.buttonMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray800,
+                    ),
+                  ),
+                ),
+                Icon(
+                  _showAllGroups ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  color: TossDesignSystem.tossBlue,
+                  size: 20,
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-          ],
-        );
-      }).toList(),
+          ),
+        ),
+
+        // Expandable content - all 4 groups
+        AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          crossFadeState: _showAllGroups
+              ? CrossFadeState.showFirst
+              : CrossFadeState.showSecond,
+          firstChild: Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Column(
+              children: _mbtiGroups.entries.map((entry) {
+                final groupName = entry.key;
+                final types = entry.value;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12, left: 4),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 4,
+                            height: 20,
+                            margin: const EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                              color: _getGroupColor(groupName),
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          Text(
+                            groupName,
+                            style: TypographyUnified.buttonMedium.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? TossDesignSystem.white : TossDesignSystem.gray800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 4,
+                      childAspectRatio: 1.1,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      children: types.map((mbti) => _buildMbtiCard(mbti)).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+          secondChild: const SizedBox(width: double.infinity),
+        ),
+      ],
     );
   }
 
@@ -399,8 +512,15 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
         setState(() {
           _selectedMbti = isSelected ? null : mbti;
           _selectedCategories.clear(); // Clear categories when MBTI changes
+          // MBTI 선택 시 모든 그룹 축소
+          _showAllGroups = isSelected; // 선택 해제하면 다시 펼침
         });
-        HapticFeedback.lightImpact();
+        HapticFeedback.mediumImpact();
+
+        // MBTI 선택 시 아래 정보로 자동 스크롤
+        if (!isSelected) {
+          _scrollToSelectedInfo();
+        }
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -591,12 +711,6 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
           _buildMainFortuneCard(),
           const SizedBox(height: 16),
 
-          // Cognitive Functions
-          if (_cognitiveFunctions != null) ...[
-            _buildCognitiveFunctionsCard(),
-            const SizedBox(height: 16),
-          ],
-
           // Category Fortunes
           if (_selectedCategories.isNotEmpty) ...[
             _buildCategoryFortunesCard(),
@@ -678,6 +792,8 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     if (fortune == null) return const SizedBox();
 
     final colors = _mbtiColors[_selectedMbti!]!;
+    final advice = fortune.metadata?['advice'] as String?;
+    final warnings = fortune.metadata?['warnings'] as String?;
 
     return TossCard(
       padding: const EdgeInsets.all(20),
@@ -695,18 +811,115 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               style: const TextStyle(
                 color: TossDesignSystem.white,
                 fontWeight: FontWeight.w600,
-                
+
               ),
             ),
           ),
           const SizedBox(height: 16),
           Text(
             fortune.description ?? '오늘은 특별한 하루가 될 것입니다.',
-            style: TypographyUnified.bodySmall.copyWith(
+            style: TypographyUnified.bodyMedium.copyWith(
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               height: 1.6,
             ),
           ),
+
+          // Advice section
+          if (advice != null && advice.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.lightbulb_outline,
+                    color: TossDesignSystem.tossBlue,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '조언',
+                          style: TypographyUnified.labelMedium.copyWith(
+                            color: TossDesignSystem.tossBlue,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          advice,
+                          style: TypographyUnified.bodySmall.copyWith(
+                            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                            height: 1.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          // Warnings section
+          if (warnings != null && warnings.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: TossDesignSystem.warningOrange.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: TossDesignSystem.warningOrange,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '주의사항',
+                          style: TypographyUnified.labelMedium.copyWith(
+                            color: TossDesignSystem.warningOrange,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          warnings,
+                          style: TypographyUnified.bodySmall.copyWith(
+                            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                            height: 1.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
             const SizedBox(height: 20),
             const Divider(),
@@ -812,11 +1025,24 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     final fortune = this.fortune;
     if (fortune == null) return const SizedBox();
 
+    // API에서 받은 카테고리별 운세 데이터
+    final categoryFortunes = fortune.metadata?['category_fortunes'] as Map<String, dynamic>?;
+
     return Column(
       children: _selectedCategories.map((category) {
         final categoryInfo = _categories.firstWhere(
           (c) => c['label'] == category,
         );
+
+        // API 응답에서 해당 카테고리 운세 가져오기
+        String fortuneText = _getCategoryFortune(category);
+        if (categoryFortunes != null) {
+          // API 응답 구조: category_fortunes: { "연애운": { "fortune": "...", "score": 85 } }
+          final categoryData = categoryFortunes[category] as Map<String, dynamic>?;
+          if (categoryData != null && categoryData['fortune'] != null) {
+            fortuneText = categoryData['fortune'] as String;
+          }
+        }
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
@@ -840,11 +1066,31 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
                     ),
+                    // 점수 표시 (있는 경우)
+                    if (categoryFortunes != null &&
+                        categoryFortunes[category] != null &&
+                        categoryFortunes[category]['score'] != null) ...[
+                      Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: categoryInfo['color'].withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${categoryFortunes[category]['score']}점',
+                          style: TypographyUnified.labelSmall.copyWith(
+                            color: categoryInfo['color'],
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
                 SizedBox(height: 12),
                 Text(
-                  _getCategoryFortune(category),
+                  fortuneText,
                   style: TypographyUnified.bodySmall.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                     height: 1.5,

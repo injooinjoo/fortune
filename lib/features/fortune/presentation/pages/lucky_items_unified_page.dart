@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -11,6 +12,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import 'dart:math';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../domain/models/conditions/lucky_items_fortune_conditions.dart';
+import '../../../../core/widgets/accordion_input_section.dart';
 
 class LuckyItemsUnifiedPage extends BaseFortunePage {
   const LuckyItemsUnifiedPage({
@@ -28,7 +30,59 @@ class LuckyItemsUnifiedPage extends BaseFortunePage {
 class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnifiedPage> {
   Fortune? _fortuneResult;
   int _selectedCategoryIndex = 0;
-  
+
+  // Accordion input sections
+  List<AccordionInputSection> _accordionSections = [];
+
+  // User input data
+  DateTime? _selectedBirthDate;
+  String? _selectedBirthTime;
+  String? _selectedGender;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileAndInitialize();
+  }
+
+  Future<void> _loadProfileAndInitialize() async {
+    // 프로필 정보 불러오기
+    final profile = await ref.read(userProfileProvider.future);
+
+    setState(() {
+      _selectedBirthDate = profile?.birthDate;
+      _selectedBirthTime = profile?.birthTime;
+      _selectedGender = profile?.gender;
+
+      _accordionSections = [
+        AccordionInputSection(
+          id: 'birthDate',
+          title: '생년월일',
+          icon: Icons.cake_rounded,
+          inputWidgetBuilder: (context, onComplete) => _buildBirthDateInput(onComplete),
+          value: _selectedBirthDate,
+          isCompleted: _selectedBirthDate != null,
+        ),
+        AccordionInputSection(
+          id: 'birthTime',
+          title: '출생 시간',
+          icon: Icons.access_time_rounded,
+          inputWidgetBuilder: (context, onComplete) => _buildBirthTimeInput(onComplete),
+          value: _selectedBirthTime,
+          isCompleted: _selectedBirthTime != null,
+        ),
+        AccordionInputSection(
+          id: 'gender',
+          title: '성별',
+          icon: Icons.person_rounded,
+          inputWidgetBuilder: (context, onComplete) => _buildGenderInput(onComplete),
+          value: _selectedGender,
+          isCompleted: _selectedGender != null,
+        ),
+      ];
+    });
+  }
+
   // 8개 메인 카테고리 정의 (투자/학습 제거)
   final List<Map<String, dynamic>> _categories = [
     {
@@ -316,16 +370,374 @@ ${topRecommendations.join('\n')}
     ];
   }
 
+  // 생년월일 입력 위젯
+  Widget _buildBirthDateInput(Function(dynamic) onComplete) {
+    return _buildDatePickerWithNumpad(
+      initialDate: _selectedBirthDate,
+      onDateSelected: (date) {
+        setState(() {
+          _selectedBirthDate = date;
+        });
+        onComplete(date);
+      },
+    );
+  }
+
+  // 출생 시간 입력 위젯
+  Widget _buildBirthTimeInput(Function(dynamic) onComplete) {
+    return _buildTimePickerWithNumpad(
+      initialTime: _selectedBirthTime,
+      onTimeSelected: (time) {
+        setState(() {
+          _selectedBirthTime = time;
+        });
+        onComplete(time);
+      },
+    );
+  }
+
+  // 성별 입력 위젯
+  Widget _buildGenderInput(Function(dynamic) onComplete) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedGender = 'male';
+              });
+              HapticFeedback.mediumImpact();
+              onComplete('male');
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              decoration: BoxDecoration(
+                color: _selectedGender == 'male'
+                    ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
+                    : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: _selectedGender == 'male'
+                      ? TossDesignSystem.tossBlue
+                      : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200),
+                  width: _selectedGender == 'male' ? 2 : 1,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.male,
+                    size: 48,
+                    color: _selectedGender == 'male'
+                        ? TossDesignSystem.tossBlue
+                        : TossDesignSystem.gray400,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '남성',
+                    style: TypographyUnified.buttonMedium.copyWith(
+                      color: _selectedGender == 'male'
+                          ? TossDesignSystem.tossBlue
+                          : TossDesignSystem.gray600,
+                      fontWeight: _selectedGender == 'male'
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedGender = 'female';
+              });
+              HapticFeedback.mediumImpact();
+              onComplete('female');
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              decoration: BoxDecoration(
+                color: _selectedGender == 'female'
+                    ? const Color(0xFFEC407A).withValues(alpha: 0.1)
+                    : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: _selectedGender == 'female'
+                      ? const Color(0xFFEC407A)
+                      : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200),
+                  width: _selectedGender == 'female' ? 2 : 1,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.female,
+                    size: 48,
+                    color: _selectedGender == 'female'
+                        ? const Color(0xFFEC407A)
+                        : TossDesignSystem.gray400,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '여성',
+                    style: TypographyUnified.buttonMedium.copyWith(
+                      color: _selectedGender == 'female'
+                          ? const Color(0xFFEC407A)
+                          : TossDesignSystem.gray600,
+                      fontWeight: _selectedGender == 'female'
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // 숫자 패드로 날짜 입력 (YYYYMMDD)
+  Widget _buildDatePickerWithNumpad({
+    required DateTime? initialDate,
+    required Function(DateTime) onDateSelected,
+  }) {
+    final initialInput = initialDate != null
+        ? '${initialDate.year}${initialDate.month.toString().padLeft(2, '0')}${initialDate.day.toString().padLeft(2, '0')}'
+        : '';
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        String input = initialInput;
+
+        return Column(
+          children: [
+            // 입력 표시
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: TossDesignSystem.gray50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                input.isEmpty
+                    ? 'YYYYMMDD'
+                    : '${input.substring(0, 4)}.${input.substring(4, 6)}.${input.substring(6, 8)}',
+                style: TypographyUnified.heading2.copyWith(
+                  color: input.isEmpty ? TossDesignSystem.gray400 : TossDesignSystem.gray900,
+                  fontFamily: 'TossFace',
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildNumpad(
+              currentInput: input,
+              maxLength: 8,
+              onChanged: (value) {
+                setState(() {
+                  input = value;
+                });
+                if (value.length == 8) {
+                  try {
+                    final year = int.parse(value.substring(0, 4));
+                    final month = int.parse(value.substring(4, 6));
+                    final day = int.parse(value.substring(6, 8));
+                    final date = DateTime(year, month, day);
+                    onDateSelected(date);
+                  } catch (e) {
+                    // Invalid date
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // 숫자 패드로 시간 입력 (HHMM)
+  Widget _buildTimePickerWithNumpad({
+    required String? initialTime,
+    required Function(String) onTimeSelected,
+  }) {
+    final initialInput = initialTime?.replaceAll(':', '') ?? '';
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        String input = initialInput;
+
+        return Column(
+          children: [
+            // 입력 표시
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: TossDesignSystem.gray50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                input.isEmpty
+                    ? 'HH:MM'
+                    : '${input.substring(0, 2)}:${input.substring(2, 4)}',
+                style: TypographyUnified.heading2.copyWith(
+                  color: input.isEmpty ? TossDesignSystem.gray400 : TossDesignSystem.gray900,
+                  fontFamily: 'TossFace',
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildNumpad(
+              currentInput: input,
+              maxLength: 4,
+              onChanged: (value) {
+                setState(() {
+                  input = value;
+                });
+                if (value.length == 4) {
+                  final hour = int.tryParse(value.substring(0, 2));
+                  final minute = int.tryParse(value.substring(2, 4));
+                  if (hour != null && minute != null && hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
+                    onTimeSelected('${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}');
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // 숫자 패드 위젯
+  Widget _buildNumpad({
+    required String currentInput,
+    required int maxLength,
+    required Function(String) onChanged,
+  }) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Column(
+          children: [
+            // 숫자 패드 (3x3 + 0)
+            ...List.generate(3, (row) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: List.generate(3, (col) {
+                    final number = row * 3 + col + 1;
+                    return Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: _buildNumpadButton(
+                          number.toString(),
+                          () {
+                            if (currentInput.length < maxLength) {
+                              final newInput = currentInput + number.toString();
+                              setState(() {
+                                currentInput = newInput;
+                              });
+                              onChanged(newInput);
+                            }
+                          },
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              );
+            }),
+            // 0과 삭제 버튼
+            Row(
+              children: [
+                Expanded(child: Container()),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: _buildNumpadButton(
+                      '0',
+                      () {
+                        if (currentInput.length < maxLength) {
+                          final newInput = currentInput + '0';
+                          setState(() {
+                            currentInput = newInput;
+                          });
+                          onChanged(newInput);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: _buildNumpadButton(
+                      '←',
+                      () {
+                        if (currentInput.isNotEmpty) {
+                          final newInput = currentInput.substring(0, currentInput.length - 1);
+                          setState(() {
+                            currentInput = newInput;
+                          });
+                          onChanged(newInput);
+                        }
+                      },
+                      isDelete: true,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildNumpadButton(String text, VoidCallback onTap, {bool isDelete = false}) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      child: Container(
+        height: 60,
+        decoration: BoxDecoration(
+          color: isDelete ? TossDesignSystem.errorRed.withValues(alpha: 0.1) : TossDesignSystem.gray100,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: TypographyUnified.heading3.copyWith(
+              color: isDelete ? TossDesignSystem.errorRed : TossDesignSystem.gray900,
+              fontFamily: isDelete ? null : 'TossFace',
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buildContent(BuildContext context) {
     return Column(
       children: [
         // 카테고리 탭
         if (_fortuneResult != null)
           _buildCategoryTabs(),
-        
+
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -334,16 +746,24 @@ ${topRecommendations.join('\n')}
                     .animate()
                     .fadeIn(duration: 600.ms)
                     .slideY(begin: -0.1, end: 0),
-                const SizedBox(height: 24),
-                
+                const SizedBox(height: 32),
+
                 if (_fortuneResult == null) ...[
-                  // Generate Button
-                  _buildGenerateButton()
+                  // Accordion Input Sections
+                  if (_accordionSections.isNotEmpty)
+                    AccordionInputForm(
+                      sections: _accordionSections,
+                      onAllCompleted: () {
+                        // 모든 입력이 완료되면 운세 생성
+                        _onGenerateFortune();
+                      },
+                      completionButtonText: '🌟 행운 가이드 확인',
+                    ),
                 ] else ...[
                   // 선택된 카테고리 컨텐츠
                   _buildCategoryContent(),
                   const SizedBox(height: 24),
-                  
+
                   // Refresh Button
                   _buildRefreshButton(),
                 ],
@@ -483,73 +903,27 @@ ${topRecommendations.join('\n')}
   }
 
   Widget _buildHeaderCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF1F4EF5),
-            Color(0xFF8B5CF6),
-          ],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '나만의 행운을\n확인해보세요',
+          style: TypographyUnified.heading1.copyWith(
+            fontWeight: FontWeight.w700,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            height: 1.3,
+          ),
         ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF1F4EF5).withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+        const SizedBox(height: 8),
+        Text(
+          '생년월일과 출생 시간을 입력하면 오늘의 행운 가이드를 확인할 수 있어요',
+          style: TypographyUnified.bodySmall.copyWith(
+            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
+            height: 1.4,
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          const Icon(
-            Icons.auto_awesome_rounded,
-            size: 48,
-            color: TossDesignSystem.gray100,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            '오늘의 행운 가이드',
-            style: TypographyUnified.heading3.copyWith(
-              fontWeight: FontWeight.w700,
-              color: TossDesignSystem.gray100,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            '로또부터 투자까지, 실용적인 행운 정보를 얻어보세요',
-            style: TypographyUnified.bodySmall.copyWith(
-              color: TossDesignSystem.gray100.withValues(alpha: 0.7),
-              height: 1.4,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          
-          // 결과가 있을 때 TOP 5 미리보기
-          if (_fortuneResult != null) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: TossDesignSystem.gray100.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                '👇 아래 카테고리를 선택하여 상세 정보를 확인하세요',
-                style: TypographyUnified.labelMedium.copyWith(
-                  color: TossDesignSystem.gray100,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ],
-      ),
+        ),
+      ],
     );
   }
 

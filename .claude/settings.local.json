@@ -44,7 +44,13 @@
       "Bash(do if grep -q \"extends BaseFortunePage\" \"$file\")",
       "Bash(then echo \"$file\" fi done)",
       "Bash(wc:*)",
-      "Bash(supabase link:*)"
+      "Bash(supabase link:*)",
+      "Bash(awk:*)",
+      "Bash(flutter run:*)",
+      "Bash(pkill:*)",
+      "Bash(tee:*)",
+      "Read(///**)",
+      "Bash(lib/screens/home/fortune_completion_page_tinder.dart)"
     ],
     "deny": [],
     "ask": [],

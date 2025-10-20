@@ -1,972 +1,117 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:convert';
-import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-// import 'package:flutter_naver_login/flutter_naver_login.dart'; // Replaced with native implementation
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import '../core/utils/logger.dart';
-import '../core/config/environment.dart';
 import '../core/cache/profile_cache.dart';
+import 'social_auth/providers/google_auth_provider.dart';
+import 'social_auth/providers/apple_auth_provider.dart';
+import 'social_auth/providers/kakao_auth_provider.dart';
+import 'social_auth/providers/naver_auth_provider.dart';
+import 'social_auth/providers/facebook_auth_provider.dart';
 
 class SocialAuthService {
   final SupabaseClient _supabase;
   final _profileCache = ProfileCache();
-  
-  SocialAuthService(this._supabase);
 
-  // Google Sign In - Supabase 표준 OAuth 사용
-  Future<AuthResponse?> signInWithGoogle({BuildContext? context}) async {
-    try {
-      debugPrint('🟡 [SocialAuthService] signInWithGoogle() started with Supabase OAuth');
-      Logger.info('=== GOOGLE OAUTH SUPABASE PROCESS STARTED ===');
-      
-      // Debug: Log the Supabase URL being used
-      final supabaseUrl = Environment.supabaseUrl;
-      Logger.info('Using Supabase URL for OAuth: ${supabaseUrl.substring(0, 30)}...');
-      
-      // Verify the URL is correct
-      if (supabaseUrl.contains('your-project')) {
-        Logger.warning('[SocialAuthService] Supabase URL 설정 오류 (선택적 기능, 설정 확인 필요): Supabase URL이 제대로 설정되지 않음');
-        throw Exception('Supabase URL is not properly configured');
-      }
-      
-      debugPrint('🟡 [SocialAuthService] Starting Supabase OAuth for Google...');
-      Logger.info('Starting Supabase OAuth for Google');
-      
-      // Use Supabase standard OAuth
-      final response = await _supabase.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: kIsWeb
-          ? '${Uri.base.origin}/auth/callback'
-          : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.externalApplication,
-      );
-      
-      if (!response) {
-        Logger.warning('Google OAuth initiation failed');
-        throw Exception('Google OAuth sign in failed to start');
-      }
-      
-      Logger.info('Google OAuth initiated successfully - redirecting to browser');
-      debugPrint('🟡 [SocialAuthService] OAuth redirect initiated');
-      
-      Logger.securityCheckpoint('Google OAuth flow initiated');
-      
-      // OAuth는 브라우저에서 처리되며, 완료 후 앱으로 돌아올 때 
-      // Supabase가 자동으로 세션을 처리합니다.
-      // 따라서 여기서는 null을 반환하고, 
-      // 실제 인증 완료는 deep link 콜백에서 처리됩니다.
-      Logger.info('=== GOOGLE OAUTH SUPABASE INITIATED ===');
-      return null;
-      
-    } catch (error) {
-      Logger.warning('[SocialAuthService] Google OAuth 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
-      Logger.warning('[SocialAuthService] Google OAuth 에러 타입 (선택적 기능, 다른 로그인 방법 사용 권장): ${error.runtimeType}');
-      rethrow;
-    }
+  late final GoogleAuthProvider _googleProvider;
+  late final AppleAuthProvider _appleProvider;
+  late final KakaoAuthProvider _kakaoProvider;
+  late final NaverAuthProvider _naverProvider;
+  late final FacebookAuthProvider _facebookProvider;
+
+  SocialAuthService(this._supabase) {
+    _googleProvider = GoogleAuthProvider(_supabase, _profileCache);
+    _appleProvider = AppleAuthProvider(_supabase, _profileCache);
+    _kakaoProvider = KakaoAuthProvider(_supabase, _profileCache);
+    _naverProvider = NaverAuthProvider(_supabase, _profileCache);
+    _facebookProvider = FacebookAuthProvider(_supabase, _profileCache);
   }
-  
-  
-  
+
+  // Google Sign In
+  Future<AuthResponse?> signInWithGoogle({BuildContext? context}) async {
+    return await _googleProvider.signIn();
+  }
+
   // Apple Sign In
   Future<AuthResponse?> signInWithApple() async {
-    try {
-      Logger.info('Starting Apple Sign-In process');
-      
-      // Use native Sign in with Apple for iOS
-      if (!kIsWeb && Platform.isIOS) {
-        Logger.info('Using native Apple Sign-In for iOS');
-        return await _signInWithAppleNative();
-      } else {
-        // Use OAuth for web and other platforms
-        Logger.info('Using OAuth for Apple Sign-In (web/Android)');
-        return await _signInWithAppleOAuth();
-      }
-    } catch (error) {
-      Logger.warning('[SocialAuthService] Apple 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
-      rethrow;
-    }
+    return await _appleProvider.signIn();
   }
-  
-  // Native Apple Sign In for iOS/macOS
-  Future<AuthResponse?> _signInWithAppleNative() async {
-    try {
-      Logger.info('Starting native Apple Sign-In process...');
-      Logger.info('Platform: ${Platform.operatingSystem}');
-      Logger.info('Device info: ${Platform.localHostname}');
-      
-      // Generate raw nonce for Supabase
-      final rawNonce = _supabase.auth.generateRawNonce();
-      Logger.info('Generated raw nonce for Supabase');
-      
-      // Hash the nonce with SHA256 for Apple (iOS 18 requirement)
-      final bytes = utf8.encode(rawNonce);
-      final digest = sha256.convert(bytes);
-      final hashedNonce = digest.toString();
-      Logger.info('Generated SHA256 hashed nonce for Apple');
-      
-      // Apple Sign-In 요청 - 네이티브 시스템 UI가 표시됨
-      Logger.info('Requesting Apple ID credential with hashed nonce...');
-      final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-        nonce: hashedNonce,  // Use hashed nonce for Apple
-      );
-      
-      Logger.info('Apple credential received successfully');
-      
-      final String? idToken = credential.identityToken;
-      if (idToken == null) {
-        throw Exception('Failed to obtain Apple ID token');
-      }
-      
-      // Supabase에 Apple 토큰으로 로그인
-      // IMPORTANT: Use raw (unhashed) nonce for Supabase
-      final response = await _supabase.auth.signInWithIdToken(
-        provider: OAuthProvider.apple,
-        idToken: idToken,
-        nonce: rawNonce,  // Use original raw nonce for Supabase, not hashed
-      );
-      
-      Logger.securityCheckpoint('Apple: ${response.user?.id}');
-      
-      // 사용자 프로필 업데이트 (비동기로 처리,
-      if (response.user != null && credential.givenName != null) {
-        // Fire and forget - 프로필 업데이트는 백그라운드에서 처리
-        _updateUserProfile(
-          userId: response.user!.id,
-          email: credential.email,
-          name: '${credential.givenName ?? ''} ${credential.familyName ?? ''}',
-          provider: 'apple').catchError((error) {
-          Logger.warning('[SocialAuthService] 백그라운드 프로필 업데이트 실패 (선택적 기능, 나중에 재시도): $error');
-        });
-      }
-      
-      return response;
-    } on SignInWithAppleAuthorizationException catch (e) {
-      // Apple Sign-In specific errors
-      if (e.code == AuthorizationErrorCode.canceled) {
-        Logger.info('User canceled Apple Sign-In');
-        // Return null for user cancellation - don't throw error
-        return null;
-      } else if (e.code == AuthorizationErrorCode.failed) {
-        Logger.warning('[SocialAuthService] Apple 로그인 인증 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
-        throw Exception('Apple 로그인 인증에 실패했습니다. 다시 시도해주세요.');
-      } else if (e.code == AuthorizationErrorCode.invalidResponse) {
-        Logger.warning('[SocialAuthService] Apple 로그인 응답 오류 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
-        throw Exception('Apple 서버 응답 오류가 발생했습니다.');
-      } else if (e.code == AuthorizationErrorCode.notHandled) {
-        Logger.warning('[SocialAuthService] Apple 로그인 처리 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
-        throw Exception('Apple 로그인을 처리할 수 없습니다.');
-      } else if (e.code == AuthorizationErrorCode.unknown) {
-        // Add detailed logging for unknown errors
-        Logger.warning('[SocialAuthService] Apple 로그인 알 수 없는 오류 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.code}');
-        Logger.warning('[SocialAuthService] Apple 로그인 에러 메시지 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.message}');
-        Logger.warning('[SocialAuthService] Apple 로그인 전체 오류 세부사항 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.toString()}');
-        
-        // Check for specific error code 1000
-        if (e.message.contains('1000') ?? false || e.toString().contains('1000')) {
-          Logger.warning('[SocialAuthService] Apple 로그인 오류 1000 발생 (선택적 기능, 설정 확인 필요): 설정 문제 감지됨');
-          Logger.warning('[SocialAuthService] Apple 로그인 설정 문제 (선택적 기능, 앱 ID 설정 확인 필요): 앱 ID 구성이 올바르지 않을 가능성');
-          throw Exception('Apple ID 설정을 확인해주세요');
-        }
-        
-        // Provide more specific error message if possible
-        if (e.message.isNotEmpty) {
-          throw Exception('Apple 로그인 오류: ${e.message}');
-        }
-        throw Exception('알 수 없는 오류가 발생했습니다. (${e.code})');
-      } else {
-        Logger.warning('[SocialAuthService] Apple 로그인 오류 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
-        throw Exception('Apple 로그인 중 오류가 발생했습니다.');
-      }
-    } catch (error) {
-      Logger.warning('[SocialAuthService] 네이티브 Apple 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
-      // Check if it's a simulator-specific error
-      if (error.toString().contains('not available') || 
-          error.toString().contains('simulator')) {
-        throw Exception('Apple 로그인은 실제 기기에서만 사용 가능합니다.');
-      }
-      rethrow;
-    }
-  }
-  
-  // OAuth Apple Sign In for web and Android
-  Future<AuthResponse?> _signInWithAppleOAuth() async {
-    try {
-      Logger.info('Using Apple OAuth sign in');
-      
-      final response = await _supabase.auth.signInWithOAuth(
-        OAuthProvider.apple,
-        redirectTo: kIsWeb 
-          ? '${Uri.base.origin}/auth/callback'
-          : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.platformDefault);
-      
-      if (!response) {
-        throw Exception('Apple OAuth sign in failed');
-      }
-      
-      Logger.securityCheckpoint('Apple OAuth sign in initiated');
-      return null; // OAuth flow will handle the callback
-    } catch (error) {
-      Logger.warning('[SocialAuthService] Apple OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
-      rethrow;
-    }
-  }
-  
-  // 사용자 프로필 업데이트 (최적화됨,
-  Future<void> _updateUserProfile({
-    required String userId,
-    String? email,
-    String? name,
-    String? photoUrl,
-    required String provider}) async {
-    try {
-      // 프로필 데이터 준비
-      final now = DateTime.now().toIso8601String();
-      
-      // Upsert 사용으로 단일 쿼리로 처리
-      final profileData = {
-        'id': userId,
-        'email': email,
-        'updated_at': null};
-      
-      // 조건부 필드 추가
-      if (name != null && name.isNotEmpty) profileData['name'] = name;
-      if (photoUrl != null && photoUrl.isNotEmpty) {
-        profileData['profile_image_url'] = photoUrl;
-      }
-      
-      // 캐시에서 먼저 확인
-      var existingProfile = _profileCache.get(userId);
-      
-      // 캐시에 없으면 DB에서 조회
-      if (existingProfile == null) {
-        existingProfile = await _supabase
-            .from('user_profiles')
-            .select('linked_providers, primary_provider, name, profile_image_url')
-            .eq('id', userId)
-            .maybeSingle();
-            
-        // 조회 결과를 캐시에 저장
-        if (existingProfile != null) {
-          _profileCache.set(userId, existingProfile);
-        }
-      }
-      
-      if (existingProfile == null) {
-        // 새 프로필 생성
-        Logger.info('Supabase initialized successfully');
-        
-        try {
-          // First try with social auth columns
-          profileData.addAll({
-            'primary_provider': provider,
-            'linked_providers': jsonEncode([provider]),
-            'created_at': null});
-          
-          await _supabase.from('user_profiles').insert(profileData);
-          Logger.info('Profile created successfully with social auth columns');
-        } catch (insertError) {
-          Logger.warning('[SocialAuthService] 소셜 인증으로 프로필 생성 실패 (선택적 기능, 기본 프로필로 계속): $insertError');
-          
-          // Handle various schema issues
-          if (insertError.toString().contains('linked_providers') || 
-              insertError.toString().contains('primary_provider') ||
-              insertError.toString().contains('profile_image_url') ||
-              insertError.toString().contains('avatar_url')) {
-            Logger.warning('Schema mismatch detected, creating profile with minimal fields');
-            
-            // Create minimal profile with only essential fields
-            final minimalProfile = {
-              'id': userId,
-              'email': email,
-              'name': name ?? '사용자',
-              'created_at': now,
-              'updated_at': null};
-            
-            try {
-              await _supabase.from('user_profiles').insert(minimalProfile);
-              Logger.info('Minimal profile created successfully');
-              
-              // Try to update with additional fields separately
-              final updates = <String, dynamic>{};
-              if (photoUrl != null && provider == 'google') {
-                // Try both column names
-                try {
-                  await _supabase.from('user_profiles')
-                    .update({'profile_image_url': photoUrl})
-                    .eq('id', userId);
-                } catch (e) {
-                  Logger.warning('[SocialAuthService] 프로필 이미지 업데이트 실패 (선택적 기능, 기본 이미지 사용): 프로필 이미지 업데이트 실패');
-                }
-              }
-            } catch (fallbackError) {
-              Logger.warning('[SocialAuthService] 최소 프로필 생성 실패 (선택적 기능, 로그인은 계속): $fallbackError');
-              // Don't throw - allow login to continue
-            }
-          } else {
-            rethrow;
-          }
-        }
-      } else {
-        // 기존 프로필 업데이트
-        final updates = <String, dynamic>{
-          'updated_at': null};
-        
-        // Update name if not set or if it's a kakao placeholder
-        if (name != null && name.isNotEmpty) {
-          final currentName = existingProfile['name'] as String?;
-          Logger.info('🟡 [Profile Update] Current name: $currentName, New name: $name');
-          if (currentName == null || currentName == '사용자' || currentName.startsWith('kakao_')) {
-            Logger.info('🟡 [Profile Update] Updating name from "$currentName" to "$name"');
-            updates['name'] = name;
-          } else {
-            Logger.info('🟡 [Profile Update] Keeping existing name: $currentName');
-          }
-        } else {
-          Logger.warning('🟡 [Profile Update] Name is null or empty, skipping update');
-        }
-        
-        // Handle profile image update
-        if (photoUrl != null) {
-          // For Google, always update; for others, only if not set
-          final shouldUpdate = provider == 'google' || 
-            existingProfile['profile_image_url'] == null;
-          
-          if (shouldUpdate) {
-            updates['profile_image_url'] = photoUrl;
-          }
-        }
-        
-        // Update linked providers
-        final linkedProviders = existingProfile['linked_providers'] != null
-            ? List<String>.from(existingProfile['linked_providers'])
-            : <String>[];
-        
-        if (!linkedProviders.contains(provider)) {
-          linkedProviders.add(provider);
-          updates['linked_providers'] = linkedProviders;
-        }
-        
-        // Set primary provider if not set
-        if (existingProfile['primary_provider'] == null) {
-          updates['primary_provider'] = provider;
-        }
-        
-        if (updates.length > 1) {
-          await _supabase
-              .from('user_profiles')
-              .update(updates)
-              .eq('id', userId);
-              
-          // 캐시 업데이트
-          _profileCache.updateFields(userId, updates);
-        }
-      }
-    } catch (error) {
-      Logger.warning('[SocialAuthService] 사용자 프로필 업데이트 실패 (선택적 기능, 로그인은 계속): $error');
-      // 프로필 업데이트 실패는 로그인을 막지 않음
-    }
-  }
-  
-  // Facebook Sign In
-  Future<AuthResponse?> signInWithFacebook() async {
-    try {
-      Logger.info('Starting Facebook Sign-In process with Supabase OAuth');
-      
-      // Supabase OAuth를 사용한 Facebook 로그인
-      final response = await _supabase.auth.signInWithOAuth(
-        OAuthProvider.facebook,
-        redirectTo: kIsWeb 
-          ? '${Uri.base.origin}/auth/callback'
-          : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.platformDefault);
-      
-      if (!response) {
-        throw Exception('Facebook OAuth sign in failed');
-      }
-      
-      Logger.securityCheckpoint('Facebook OAuth sign in initiated');
-      
-      // OAuth 로그인은 웹브라우저를 통해 진행되며,
-      // 완료 후 앱으로 돌아올 때 Supabase가 자동으로 세션을 처리합니다.
-      return null;
-    } catch (error) {
-      Logger.warning('[SocialAuthService] Facebook 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
-      rethrow;
-    }
-  }
-  
+
   // Kakao Sign In
   Future<AuthResponse?> signInWithKakao() async {
-    try {
-      Logger.info('=== KAKAO SIGN-IN STARTED ===');
-      Logger.info('Platform: ${kIsWeb ? 'Web' : (Platform.isIOS ? 'iOS' : 'Android')}');
-      
-      // iOS/Android에서는 네이티브 카카오 SDK 사용, 웹에서는 OAuth 사용
-      if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
-        Logger.info('Using native Kakao SDK for mobile platform');
-        final result = await _signInWithKakaoNative();
-        Logger.info('Native Kakao result: ${result != null ? 'Success' : 'Null/OAuth flow'}');
-        return result;
-      } else {
-        Logger.info('Using Kakao OAuth for web platform');
-        final result = await _signInWithKakaoOAuth();
-        Logger.info('OAuth Kakao result: ${result != null ? 'Success' : 'Null/OAuth flow'}');
-        return result;
-      }
-    } catch (error) {
-      Logger.warning('[SocialAuthService] Kakao 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
-      Logger.warning('[SocialAuthService] Kakao 로그인 에러 타입 (선택적 기능, 다른 로그인 방법 사용 권장): ${error.runtimeType}');
-      Logger.warning('[SocialAuthService] Kakao 로그인 에러 메시지 (선택적 기능, 다른 로그인 방법 사용 권장): ${error.toString()}');
-      rethrow;
-    }
+    return await _kakaoProvider.signIn();
   }
-  
-  // 네이티브 카카오 로그인 (iOS/Android) - OAuth 방식으로 변경
-  Future<AuthResponse?> _signInWithKakaoNative() async {
-    try {
-      Logger.info('Using native Kakao Sign-In with OAuth');
-      
-      // 카카오톡 설치 여부 확인 후 로그인
-      bool isKakaoTalkInstalled = await kakao.isKakaoTalkInstalled();
-      
-      kakao.OAuthToken token;
-      if (isKakaoTalkInstalled) {
-        Logger.info('Kakao login via KakaoTalk app');
-        token = await kakao.UserApi.instance.loginWithKakaoTalk();
-      } else {
-        Logger.info('Kakao login via web account');
-        token = await kakao.UserApi.instance.loginWithKakaoAccount();
-      }
-      
-      Logger.info('Kakao OAuth token obtained successfully');
-      
-      // 사용자 정보 가져오기
-      final kakaoUser = await kakao.UserApi.instance.me();
-      Logger.info('Kakao user info retrieved: ${kakaoUser.id}');
-      
-      // Kakao 계정에 이메일이 없는 경우 대체 이메일 생성
-      final String email = kakaoUser.kakaoAccount?.email ?? 
-                          'kakao_${kakaoUser.id}@kakao.local';
-      
-      // 카카오 닉네임 가져오기 (없으면 기본값 사용)
-      final String nickname = kakaoUser.kakaoAccount?.profile?.nickname ??
-                            (kakaoUser.kakaoAccount?.name ?? '사용자');
 
-      Logger.info('🟡 [Kakao] Processing Kakao login:');
-      Logger.info('🟡 [Kakao] - Email: $email');
-      Logger.info('🟡 [Kakao] - Nickname: $nickname');
-      Logger.info('🟡 [Kakao] - Profile nickname: ${kakaoUser.kakaoAccount?.profile?.nickname}');
-      Logger.info('🟡 [Kakao] - Account name: ${kakaoUser.kakaoAccount?.name}');
-      
-      // Supabase Edge Function을 사용해 OAuth 처리
-      try {
-        final response = await _supabase.functions.invoke(
-          'kakao-oauth',
-          body: {
-            'access_token': token.accessToken,
-            'refresh_token': token.refreshToken,
-            'user_info': {
-              'id': kakaoUser.id.toString(),
-              'email': email,
-              'nickname': nickname,  // 위에서 계산한 닉네임 사용
-              'profile_image_url': kakaoUser.kakaoAccount?.profile?.profileImageUrl,
-            }
-          }
-        );
-        
-        if (response.status != 200) {
-          Logger.warning('[SocialAuthService] Kakao OAuth Edge Function 실패 (선택적 기능, 대체 인증 방법 사용): ${response.status}');
-          throw Exception('Kakao OAuth failed: ${response.data}');
-        }
-        
-        final data = response.data as Map<String, dynamic>;
-        
-        Logger.info('Edge Function response data: ${data.keys.join(', ')}');
-        
-        if (!data['success']) {
-          throw Exception(data['error'] ?? 'Kakao OAuth failed');
-        }
-        
-        // Edge Function이 needsManualAuth를 반환하면 수동 인증 필요
-        if (data['needsManualAuth'] == true) {
-          Logger.info('Edge Function requires manual auth, falling back...');
-          throw Exception('Manual auth required');
-        }
-        
-        final sessionData = data['session'] as Map<String, dynamic>?;
-        Session? currentSession;
-        
-        if (sessionData != null && sessionData['access_token'] != null) {
-          Logger.info('Got session from Edge Function, processing...');
-          
-          // Set the session using both access and refresh tokens
-          final accessToken = sessionData['access_token'] as String;
-          final refreshToken = sessionData['refresh_token'] as String?;
-          
-          if (refreshToken != null) {
-            // Use refreshSession if we have a refresh token
-            await _supabase.auth.setSession(refreshToken);
-            currentSession = _supabase.auth.currentSession;
-          } else {
-            // Try with access token only
-            await _supabase.auth.setSession(accessToken);
-            currentSession = _supabase.auth.currentSession;
-          }
-          
-          if (currentSession == null) {
-            Logger.warning('Failed to set session from Edge Function, falling back...');
-            throw Exception('Failed to set session from Kakao OAuth');
-          }
-        } else {
-          // 세션이 없으면 수동 인증으로 폴백
-          Logger.info('No session from Edge Function, falling back to manual auth...');
-          throw Exception('No session returned from Kakao OAuth');
-        }
-        
-        Logger.securityCheckpoint('Kakao OAuth: ${currentSession.user.id}');
-        
-        // Return the auth response
-        return AuthResponse(
-          session: currentSession,
-          user: currentSession.user
-        );
-        
-      } catch (edgeFunctionError) {
-        Logger.warning('[SocialAuthService] Kakao Edge Function 실패, 수동 사용자 생성으로 대체 (선택적 기능, 대체 인증 방법 사용): $edgeFunctionError');
-        
-        // Fallback: 직접 사용자 생성 후 OAuth 세션 처리
-        try {
-          // Create or get existing user by email
-          final existingUser = await _findUserByEmail(email);
-          
-          if (existingUser != null) {
-            // 기존 사용자 - 카카오 정보 업데이트
-            await _updateUserProfile(
-              userId: existingUser.id,
-              email: email,
-              name: nickname,  // 위에서 계산한 닉네임 사용
-              photoUrl: kakaoUser.kakaoAccount?.profile?.profileImageUrl,
-              provider: 'kakao'
-            );
-            
-            // Create a session for existing user
-            // Pass the Kakao ID to ensure correct password generation
-            final sessionResponse = await _createManualSession(existingUser, kakaoId: kakaoUser.id.toString());
-            return sessionResponse;
-            
-          } else {
-            // 새 사용자 생성
-            // Use consistent password pattern that can be regenerated for existing users
-            final password = 'kakao_oauth_${kakaoUser.id}_secure2024';
-            final signUpResponse = await _supabase.auth.signUp(
-              email: email,
-              password: password,
-              data: {
-                'provider': 'kakao',
-                'kakao_id': kakaoUser.id.toString(),
-                'name': nickname,  // 위에서 계산한 닉네임 사용
-                'profile_image': kakaoUser.kakaoAccount?.profile?.profileImageUrl,
-                'email_confirmed_at': DateTime.now().toIso8601String(), // Mark email as confirmed
-              },
-              emailRedirectTo: 'com.beyond.fortune://auth-callback', // Set redirect URL
-            );
-            
-            if (signUpResponse.user != null) {
-              Logger.securityCheckpoint('Kakao new user: ${signUpResponse.user?.id}');
-              
-              // 프로필 정보 업데이트
-              await _updateUserProfile(
-                userId: signUpResponse.user!.id,
-                email: email,
-                name: nickname,  // 위에서 계산한 닉네임 사용
-                photoUrl: kakaoUser.kakaoAccount?.profile?.profileImageUrl,
-                provider: 'kakao'
-              );
-              
-              // signUp response에 session이 있으면 사용하고, 없으면 OTP로 로그인 요청
-              if (signUpResponse.session != null) {
-                Logger.info('Kakao user signed up with session successfully');
-                return signUpResponse;
-              } else {
-                // session이 없으면 OTP로 로그인 처리
-                Logger.info('No session from signUp, requesting OTP sign-in');
-                try {
-                  // OTP 요청 - 이메일로 매직 링크 발송
-                  await _supabase.auth.signInWithOtp(
-                    email: email,
-                    shouldCreateUser: false, // 이미 사용자를 생성했으므로 false
-                  );
-                  
-                  Logger.info('OTP sent to Kakao user email (if real email)');
-                  // OTP를 보냈지만 Kakao 이메일은 가짜일 수 있으므로
-                  // 사용자가 생성되었다는 사실만 반환
-                } catch (otpError) {
-                  Logger.warning('OTP sign-in failed', otpError);
-                }
-              }
-            }
-            
-            // 사용자는 생성되었지만 세션이 없는 경우에도 성공으로 처리
-            // (Kakao 로그인은 이메일 확인이 불가능하므로)
-            if (signUpResponse.user != null) {
-              Logger.info('Kakao user created successfully, but session creation pending');
-              // 사용자 생성은 성공했으므로 성공 응답 반환
-              return AuthResponse(
-                session: null,
-                user: signUpResponse.user,
-              );
-            }
-            
-            return signUpResponse;
-          }
-        } catch (fallbackError) {
-          Logger.warning('[SocialAuthService] Kakao 대체 인증 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $fallbackError');
-          throw Exception('Kakao authentication failed: $fallbackError');
-        }
-      }
-    } catch (error) {
-      Logger.warning('[SocialAuthService] 네이티브 Kakao 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
-      rethrow;
-    }
-  }
-  
-  // Helper method to find user by email
-  Future<User?> _findUserByEmail(String email) async {
-    try {
-      final response = await _supabase
-          .from('auth.users')
-          .select('id')
-          .eq('email', email)
-          .maybeSingle();
-      
-      if (response != null) {
-        return User.fromJson(response);
-      }
-      return null;
-    } catch (e) {
-      Logger.warning('Failed to find user by email', e);
-      return null;
-    }
-  }
-  
-  // Helper method to create manual session
-  Future<AuthResponse?> _createManualSession(User user, {String? kakaoId}) async {
-    // Extract Kakao ID - use provided kakaoId first, then try metadata
-    final effectiveKakaoId = kakaoId ?? 
-                            user.userMetadata?['kakao_id'] ?? 
-                            user.appMetadata['provider_id'] ??
-                            user.id; // Fallback to user ID
-    
-    try {
-      Logger.info('Creating manual session for user: ${user.id}');
-      
-      // Generate consistent password for existing Kakao users
-      // This should match the password used during user creation
-      final password = 'kakao_oauth_${effectiveKakaoId}_secure2024';
-      
-      Logger.info('Attempting to sign in existing Kakao user with email: ${user.email}');
-      
-      // Sign in with password
-      final signInResponse = await _supabase.auth.signInWithPassword(
-        email: user.email!,
-        password: password,
-      );
-      
-      if (signInResponse.session != null) {
-        Logger.info('Successfully signed in existing Kakao user');
-        return signInResponse;
-      } else {
-        Logger.warning('Sign in succeeded but no session returned');
-        return null;
-      }
-    } catch (e) {
-      Logger.warning('[SocialAuthService] 수동 세션 생성 실패 (선택적 기능, 재시도 권장): $e');
-      // If password sign-in fails, try with a legacy password pattern
-      try {
-        // Try with the timestamp-based password that might have been used before
-        final legacyPassword = 'kakao_oauth_${effectiveKakaoId}_${user.createdAt.replaceAll(RegExp(r'[^0-9]'), '')}';
-        
-        Logger.info('Trying legacy password pattern for Kakao user');
-        final legacySignIn = await _supabase.auth.signInWithPassword(
-          email: user.email!,
-          password: legacyPassword,
-        );
-        
-        if (legacySignIn.session != null) {
-          Logger.info('Successfully signed in with legacy password');
-          return legacySignIn;
-        }
-      } catch (legacyError) {
-        Logger.warning('[SocialAuthService] 레거시 비밀번호 로그인도 실패 (선택적 기능, 새 인증 필요): $legacyError');
-      }
-      return null;
-    }
-  }
-  
-  // OAuth 카카오 로그인 (웹)
-  Future<AuthResponse?> _signInWithKakaoOAuth() async {
-    try {
-      Logger.info('Using Kakao OAuth sign in');
-      
-      final response = await _supabase.auth.signInWithOAuth(
-        OAuthProvider.kakao,
-        redirectTo: kIsWeb 
-          ? '${Uri.base.origin}/auth/callback'
-          : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.platformDefault);
-      
-      if (!response) {
-        throw Exception('Kakao OAuth sign in failed');
-      }
-      
-      Logger.securityCheckpoint('Kakao OAuth sign in initiated');
-      return null; // OAuth flow will handle the callback
-    } catch (error) {
-      Logger.warning('[SocialAuthService] Kakao OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
-      rethrow;
-    }
-  }
-  
-  // Native Naver platform channel
-  static const _naverChannel = MethodChannel('com.beyond.fortune/naver_auth');
-  
-  // Naver Sign In using native implementation
+  // Naver Sign In
   Future<AuthResponse?> signInWithNaver() async {
-    try {
-      Logger.info('Starting Naver Sign-In process (Native)');
-
-      // Initialize Naver SDK with timeout
-      final initResult = await _naverChannel
-          .invokeMethod('initializeNaver')
-          .timeout(
-            Duration(seconds: 10),
-            onTimeout: () {
-              Logger.warning('Naver SDK initialization timed out');
-              throw TimeoutException('Naver SDK initialization timed out');
-            },
-          );
-      Logger.info('Naver SDK initialization: $initResult');
-      
-      // Perform Naver login
-      final loginResult = await _naverChannel.invokeMethod('loginWithNaver');
-      Logger.info('Naver native login result: $loginResult');
-      
-      if (loginResult == null || loginResult['success'] != true) {
-        Logger.info('User cancelled Naver Sign-In or login failed');
-        return null;
-      }
-      
-      final accessToken = loginResult['accessToken'] as String?;
-      if (accessToken == null || accessToken.isEmpty) {
-        throw Exception('Failed to get Naver access token');
-      }
-      
-      Logger.info('Got Naver access token, calling Edge Function');
-      Logger.info('Access token (first 10 chars): ${accessToken.substring(0, 10 > accessToken.length ? accessToken.length : 10)}...');
-      
-      // Call our Edge Function to handle OAuth
-      final response = await _supabase.functions.invoke(
-        'naver-oauth',
-        body: {
-          'access_token': accessToken  // Edge Function expects 'access_token', not 'accessToken'
-        }
-      );
-      
-      Logger.info('Edge Function response status: ${response.status}');
-      Logger.info('Edge Function response data: ${response.data}');
-      
-      if (response.status != 200) {
-        Logger.warning('[SocialAuthService] Naver OAuth Edge Function 실패 (선택적 기능, 다른 로그인 방법 사용 권장): ${response.status}');
-        Logger.warning('[SocialAuthService] Naver OAuth 응답 데이터 (선택적 기능, 다른 로그인 방법 사용 권장): ${response.data}');
-
-        // Check for duplicate email error
-        final errorData = response.data as Map<String, dynamic>?;
-        final errorMessage = errorData?['error']?.toString() ?? '';
-        if (errorMessage.contains('already been registered')) {
-          throw AuthException(
-            '이미 다른 소셜 계정(Google, Kakao, Apple)으로 가입된 이메일입니다.\n'
-            '다른 로그인 방법을 시도해주세요.'
-          );
-        }
-
-        throw Exception('Naver OAuth failed: Status ${response.status}, Data: ${response.data}');
-      }
-      
-      final data = response.data as Map<String, dynamic>;
-      
-      if (data['success'] != true) {
-        Logger.warning('[SocialAuthService] Naver OAuth 실패 (선택적 기능, 다른 로그인 방법 사용 권장): ${data['error'] ?? 'Unknown error'}');
-        Logger.warning('[SocialAuthService] Naver OAuth 전체 응답 데이터 (선택적 기능, 다른 로그인 방법 사용 권장): $data');
-
-        // Check for duplicate email error in data['error']
-        final errorMessage = data['error']?.toString() ?? '';
-        if (errorMessage.contains('already been registered')) {
-          throw AuthException(
-            '이미 다른 소셜 계정(Google, Kakao, Apple)으로 가입된 이메일입니다.\n'
-            '다른 로그인 방법을 시도해주세요.'
-          );
-        }
-
-        throw Exception(data['error'] ?? 'Naver OAuth failed');
-      }
-      
-      // Check if we got session tokens directly (preferred)
-      final sessionData = data['session'] as Map<String, dynamic>?;
-      if (sessionData != null && sessionData['access_token'] != null) {
-        Logger.info('Got session tokens directly from Edge Function');
-
-        try {
-          // Set the session directly using the tokens
-          final refreshToken = sessionData['refresh_token'] as String?;
-          if (refreshToken != null) {
-            final authResponse = await _supabase.auth.setSession(refreshToken);
-
-            if (authResponse.session != null) {
-              Logger.securityCheckpoint('Naver: ${authResponse.session?.user.id}');
-              return authResponse;
-            }
-          }
-          Logger.warning('Failed to set session with tokens, falling back to magic link');
-        } catch (e) {
-          Logger.warning('Session setting failed: $e, falling back to magic link');
-        }
-      }
-
-      // Fallback to magic link approach - this is now the primary method
-      final sessionUrl = data['session_url'] as String?;
-      if (sessionUrl == null) {
-        // If no session URL, but user was created successfully, return partial success
-        final userData = data['user'] as Map<String, dynamic>?;
-        if (userData != null && userData['id'] != null) {
-          Logger.info('User created successfully but session pending');
-          // Return success with user info but no session
-          // The app should handle this by asking user to check email or retry
-          return AuthResponse(
-            session: null,
-            user: User(
-              id: userData['id'] as String,
-              email: userData['email'] as String?,
-              appMetadata: {'provider': 'naver'},
-              userMetadata: {
-                'name': userData['name'],
-                'profile_image': userData['profile_image']
-              },
-              aud: '',
-              createdAt: DateTime.now().toIso8601String()
-            )
-          );
-        }
-        throw Exception('No session URL returned from Naver OAuth');
-      }
-      
-      Logger.info('Got session URL from Edge Function, processing via getSessionFromUrl...');
-
-      // Let Supabase parse and set session directly from the callback URL
-      final uri = Uri.parse(sessionUrl);
-      final sessionResponse = await _supabase.auth.getSessionFromUrl(uri);
-      
-      Logger.securityCheckpoint('Naver: ${sessionResponse.session.user.id}');
-      
-      // Return the auth response
-      return AuthResponse(
-        session: sessionResponse.session,
-        user: sessionResponse.session.user
-      );
-      
-    } catch (error) {
-      Logger.warning('[SocialAuthService] Naver 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
-      rethrow;
-    }
+    return await _naverProvider.signIn();
   }
-  
-  // 로그아웃
+
+  // Facebook Sign In
+  Future<AuthResponse?> signInWithFacebook() async {
+    return await _facebookProvider.signIn();
+  }
+
+  // Sign Out
   Future<void> signOut() async {
     try {
-      // 현재 provider 확인
       final provider = await getCurrentProvider();
-      
-      // Google Sign-Out은 Supabase signOut이 자동으로 처리함
-      // Supabase OAuth를 사용하므로 별도의 Google Sign-Out 불필요
-      
-      // Kakao 로그아웃
+
+      // Kakao logout
       try {
         await kakao.UserApi.instance.logout();
       } catch (e) {
-        // 카카오 로그아웃 실패 무시
+        // Ignore Kakao logout failure
       }
-      
-      // Naver 로그아웃 (native channel)
+
+      // Naver logout
       try {
-        await _naverChannel.invokeMethod('logoutNaver');
+        await _naverProvider.disconnect();
       } catch (e) {
-        // 네이버 로그아웃 실패 무시
+        // Ignore Naver logout failure
       }
-      
-      // Supabase 로그아웃
+
+      // Supabase logout
       await _supabase.auth.signOut();
-      
-      // 프로필 캐시 클리어
+
+      // Clear profile cache
       _profileCache.clearAll();
-      
+
       Logger.securityCheckpoint('User signed out');
     } catch (error) {
       Logger.warning('[SocialAuthService] 로그아웃 실패 (선택적 기능, 수동 로그아웃 가능): $error');
       rethrow;
     }
   }
-  
-  // 현재 로그인된 소셜 계정 정보
+
+  // Get current provider
   Future<String?> getCurrentProvider() async {
     final user = _supabase.auth.currentUser;
     if (user == null) return null;
-    
-    // user.app_metadata에서 provider 정보 확인
+
     final provider = user.appMetadata['provider'] as String?;
     return provider;
   }
-  
-  // Google 계정 연결 해제
+
+  // Disconnect provider-specific accounts
   Future<void> disconnectGoogle() async {
-    // Supabase OAuth를 사용하므로 별도의 Google disconnect 불필요
-    // 계정 삭제 시 Supabase가 자동으로 OAuth 연결 해제
     Logger.info('Google disconnect handled by Supabase');
   }
-  
-  // Kakao 계정 연결 해제
+
   Future<void> disconnectKakao() async {
-    try {
-      await kakao.UserApi.instance.unlink();
-    } catch (e) {
-      Logger.warning('[SocialAuthService] Kakao 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): $e');
-    }
+    await _kakaoProvider.disconnect();
   }
-  
-  // Naver 계정 연결 해제
+
   Future<void> disconnectNaver() async {
-    try {
-      await _naverChannel.invokeMethod('logoutNaver');
-    } catch (e) {
-      Logger.warning('[SocialAuthService] Naver 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): $e');
-    }
+    await _naverProvider.disconnect();
   }
-  
+
   // Link additional social account
   Future<bool> linkSocialAccount(String provider) async {
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) return false;
-      
+
       switch (provider) {
         case 'google':
           final result = await signInWithGoogle();
@@ -975,11 +120,9 @@ class SocialAuthService {
           final result = await signInWithApple();
           return result != null;
         case 'facebook':
-          // Facebook uses OAuth flow
           await signInWithFacebook();
           return true;
         case 'kakao':
-          // Kakao uses OAuth flow
           await signInWithKakao();
           return true;
         case 'naver':
@@ -993,30 +136,30 @@ class SocialAuthService {
       return false;
     }
   }
-  
+
   // Get all linked providers for current user
   Future<List<String>> getLinkedProviders() async {
     try {
       final currentUser = _supabase.auth.currentUser;
       if (currentUser == null) return [];
-      
+
       final profile = await _supabase
           .from('user_profiles')
           .select('linked_providers')
           .eq('id', currentUser.id)
           .maybeSingle();
-      
+
       if (profile != null && profile['linked_providers'] != null) {
         return List<String>.from(profile['linked_providers']);
       }
-      
+
       return [];
     } catch (e) {
       Logger.warning('[SocialAuthService] 연결된 계정 조회 실패 (선택적 기능, 비어 있는 목록 반환): $e');
       return [];
     }
   }
-  
+
   // Unlink a provider from current account
   Future<void> unlinkProvider(String provider) async {
     try {
@@ -1024,62 +167,53 @@ class SocialAuthService {
       if (user == null) {
         throw Exception('User not authenticated');
       }
-      
-      // Get all user identities
+
       final identities = user.identities ?? [];
-      
-      // Check if user has more than one identity
+
       if (identities.length <= 1) {
         throw Exception('연동된 계정이 하나뿐이라 해제할 수 없습니다');
       }
-      
-      // Find the identity to unlink
+
       final identityToUnlink = identities.firstWhere(
         (identity) => identity.provider == provider,
-        orElse: () => throw Exception('해당 계정이 연동되어 있지 않습니다'));
-      
-      // Use Supabase's unlinkIdentity method
+        orElse: () => throw Exception('해당 계정이 연동되어 있지 않습니다'),
+      );
+
       await _supabase.auth.unlinkIdentity(identityToUnlink);
-      
-      // Update linked providers in user profile
+
       await _updateLinkedProviders(user.id, provider, false);
-      
-      Logger.securityCheckpoint('Fortune cached');
+
+      Logger.securityCheckpoint('Provider unlinked: $provider');
     } catch (e) {
-      Logger.warning('[SocialAuthService] 계정 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): 계정 연결 해제 실패');
+      Logger.warning('[SocialAuthService] 계정 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): $e');
       rethrow;
     }
   }
-  
+
   Future<void> _updateLinkedProviders(String userId, String provider, bool isAdding) async {
     try {
-      // Get current profile
       final profile = await _supabase
           .from('user_profiles')
           .select('linked_providers')
           .eq('id', userId)
           .maybeSingle();
-      
+
       List<dynamic> linkedProviders = profile?['linked_providers'] ?? [];
-      
+
       if (isAdding) {
-        // Add provider if not already in list
         if (!linkedProviders.contains(provider)) {
           linkedProviders.add(provider);
         }
       } else {
-        // Remove provider
         linkedProviders.remove(provider);
       }
-      
-      // Update profile
+
       await _supabase.from('user_profiles').update({
         'linked_providers': linkedProviders,
-        'updated_at': null}).eq('id', userId);
-      
+        'updated_at': null,
+      }).eq('id', userId);
     } catch (e) {
-      Logger.warning('[SocialAuthService] 계정 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): 계정 연결 해제 실패');
-      // Non-critical error, don't rethrow
+      Logger.warning('[SocialAuthService] 연결된 제공자 업데이트 실패 (선택적 기능, 수동 업데이트 가능): $e');
     }
   }
 }

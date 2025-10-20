@@ -1,5 +1,64 @@
 # Fortune Flutter App - Claude Code 개발 규칙
 
+## 🏗️ **선행 개발 조건 (PREREQUISITE - 반드시 먼저 완료할 것!)** 🏗️
+
+**현재 진행 중인 작업**: BaseFortunePage → UnifiedFortuneService 전환 (Silicon Valley Architecture)
+
+### 📐 목표: Clean Architecture + Feature Slice Design
+
+**아키텍처 참고**:
+- Airbnb's Component Library (Atoms → Molecules → Organisms)
+- Stripe's Feature-First 구조 (Vertical Slicing)
+- Notion's Clean Architecture (Domain → Data → Presentation)
+- Uber's DDD (Domain-Driven Design)
+
+### ✅ Phase 1: Foundation Layer (진행 중)
+
+#### 완료된 항목:
+1. ✅ **UnifiedFortuneBaseWidget** (`lib/core/widgets/unified_fortune_base_widget.dart`)
+   - 표준 운세 컨테이너
+   - 로딩/에러/결과 상태 자동 관리
+   - UnifiedFortuneService 자동 호출
+
+2. ✅ **FortuneInputWidgets** (`lib/core/widgets/fortune_input_widgets.dart`)
+   - 날짜 선택기 (`buildDatePicker`)
+   - 시간 선택기 (`buildTimePicker`)
+   - 단일 선택 (`buildSingleSelect`)
+   - 텍스트 입력 (`buildTextField`)
+   - 제출 버튼 (`buildSubmitButton`)
+
+#### 🔄 다음 작업 (Phase 1 완료):
+3. ⏳ **FortuneResultWidgets** (`lib/core/widgets/fortune_result_widgets.dart`)
+   - 공통 결과 표시 위젯 라이브러리
+   - 운세 카드 레이아웃
+   - 점수 표시 (별점, 퍼센트)
+   - 공유 버튼
+
+4. ⏳ **Clean Architecture 구조 생성**
+   - `domain/use_cases/get_fortune_use_case.dart` (비즈니스 로직)
+   - `data/repositories/fortune_repository_impl.dart` (구현체)
+   - `data/sources/fortune_remote_source.dart` (API 호출)
+
+5. ⏳ **Dependency Injection 설정**
+   - `core/di/injection_container.dart` (GetIt + Riverpod)
+   - Provider 생성
+
+### ✅ Phase 2: Feature Slice Migration (대기 중)
+- BaseFortunePage 제거
+- 19개 페이지 → UnifiedFortuneService 전환
+- Feature별 독립 구조 (fortune_mbti, fortune_tarot, ...)
+
+### ✅ Phase 3: Cleanup (대기 중)
+- **이 섹션 전체를 CLAUDE.md에서 제거**
+- BaseFortunePage 파일 삭제
+- 문서화 완료
+
+---
+
+**⚠️ 중요**: 위 선행 조건이 완료되기 전까지는 BaseFortunePage를 사용하는 신규 페이지를 생성하지 말 것!
+
+---
+
 ## 🚫 **FLUTTER 실행 금지 규칙 (CRITICAL)** 🚫
 
 **Claude는 절대로 Flutter를 직접 실행하지 않습니다!**
