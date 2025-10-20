@@ -80,9 +80,15 @@ class _AccordionInputFormState extends State<AccordionInputForm> {
     // 다음 섹션으로 이동
     if (index < widget.sections.length - 1) {
       _moveToSection(index + 1);
-    } else if (_allCompleted && widget.onAllCompleted != null) {
-      // 모든 섹션 완료
-      widget.onAllCompleted!();
+    } else {
+      // 마지막 섹션 완료 시 모두 축소
+      setState(() {
+        _activeIndex = -1;
+      });
+
+      if (_allCompleted && widget.onAllCompleted != null) {
+        widget.onAllCompleted!();
+      }
     }
   }
 
