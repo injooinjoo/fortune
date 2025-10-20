@@ -142,6 +142,7 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
 
     // FortuneResult의 data 필드에서 PersonalityDNA 정보 추출
     final data = fortuneResult.data;
+
     final dnaCode = data['dnaCode'] as String? ?? PersonalityDNA.generateDNACode(
       mbti: _selectedMbti!,
       bloodType: _selectedBloodType!,
@@ -149,12 +150,26 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
       zodiacAnimal: _selectedAnimal!,
     );
 
-    // Edge Function 응답 구조에 맞게 데이터 추출 및 모델 객체 생성
-    final loveStyleMap = data['loveStyle'] as Map<String, dynamic>?;
-    final workStyleMap = data['workStyle'] as Map<String, dynamic>?;
-    final dailyMatchingMap = data['dailyMatching'] as Map<String, dynamic>?;
-    final compatibilityMap = data['compatibility'] as Map<String, dynamic>?;
-    final funStatsMap = data['funStats'] as Map<String, dynamic>? ?? {};
+    // Edge Function 응답 구조 확인 - 두 가지 버전 지원
+    final bool isNewFormat = data.containsKey('loveStyle');
+
+    Map<String, dynamic>? loveStyleMap;
+    Map<String, dynamic>? workStyleMap;
+    Map<String, dynamic>? dailyMatchingMap;
+    Map<String, dynamic>? compatibilityMap;
+    Map<String, dynamic> funStatsMap = {};
+
+    if (isNewFormat) {
+      // 새로운 형식 (loveStyle, workStyle 등)
+      loveStyleMap = data['loveStyle'] as Map<String, dynamic>?;
+      workStyleMap = data['workStyle'] as Map<String, dynamic>?;
+      dailyMatchingMap = data['dailyMatching'] as Map<String, dynamic>?;
+      compatibilityMap = data['compatibility'] as Map<String, dynamic>?;
+      funStatsMap = data['funStats'] as Map<String, dynamic>? ?? {};
+    } else {
+      // 구 형식 (title이 "undefined DNA"로 나오는 경우) - 기본값 사용
+      print('⚠️ [WARNING] Old format detected, using fallback data');
+    }
 
     // 모델 객체로 변환
     LoveStyle? loveStyle;
@@ -204,13 +219,20 @@ ${data['todayAdvice'] ?? '평소와 다른 작은 도전을 해보세요.'}
 • 한국 내 비율: ${funStatsMap['percentage_in_korea'] ?? ''}%
     '''.trim();
 
+    // title 처리 - "undefined DNA" 방지
+    String finalTitle = data['title'] as String? ?? '성격 DNA';
+    if (finalTitle.contains('undefined')) {
+      finalTitle = '${_selectedMbti} 성격 DNA';
+      print('⚠️ [WARNING] Fixed undefined title to: $finalTitle');
+    }
+
     _currentDNA = PersonalityDNA(
       mbti: _selectedMbti!,
       bloodType: _selectedBloodType!,
       zodiac: _selectedZodiac!,
       zodiacAnimal: _selectedAnimal!,
       dnaCode: dnaCode,
-      title: data['title'] as String? ?? '성격 DNA',
+      title: finalTitle,
       emoji: data['emoji'] as String? ?? '🧬',
       description: detailedDescription,
       traits: [], // Edge Function에서 traits 대신 loveStyle, workStyle 사용
