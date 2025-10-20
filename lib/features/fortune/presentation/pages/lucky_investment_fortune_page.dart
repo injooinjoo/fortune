@@ -6,7 +6,6 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 class LuckyInvestmentFortunePage extends ConsumerWidget {
   const LuckyInvestmentFortunePage({super.key});

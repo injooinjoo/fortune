@@ -1,117 +1,100 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/utils/logger.dart';
-import '../../../../presentation/providers/providers.dart';
-import '../../../../domain/entities/fortune.dart';
+import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../../../../core/models/fortune_result.dart';
 import '../widgets/moving_input_unified.dart';
-import 'base_fortune_page.dart';
 import '../../domain/models/conditions/moving_fortune_conditions.dart';
+import '../../../../core/widgets/fortune_result_widgets.dart';
+import '../../../../core/theme/toss_design_system.dart';
+import '../../../../shared/glassmorphism/glass_container.dart';
 
-/// 토스 스타일 이사운 페이지 (BaseFortunePage 패턴 사용)
-class MovingFortuneTossPage extends BaseFortunePage {
-  const MovingFortuneTossPage({super.key})
-      : super(
-          title: '이사운',
-          description: '새로운 보금자리로의 이동 운세를 분석해드립니다',
-          fortuneType: 'moving',
-          requiresUserInfo: true,
-        );
+/// 토스 스타일 이사운 페이지 (UnifiedFortuneBaseWidget 사용)
+class MovingFortuneTossPage extends ConsumerStatefulWidget {
+  const MovingFortuneTossPage({super.key});
 
   @override
   ConsumerState<MovingFortuneTossPage> createState() => _MovingFortuneTossPageState();
 }
 
-class _MovingFortuneTossPageState extends BaseFortunePageState<MovingFortuneTossPage> {
-  /// MovingInputUnified 위젯의 완료 콜백
-  void _onInputComplete(String currentArea, String targetArea, String period, String purpose) async {
-    final params = {
-      'currentArea': currentArea,
-      'targetArea': targetArea,
-      'movingPeriod': period,
-      'purpose': purpose,
-    };
-
-    Logger.info('🏠 [MovingFortune] Input complete', {'params': params});
-
-    // BaseFortunePage의 generateFortuneAction 호출
-    // This handles: Ad → API call → DB save → Show result
-    await generateFortuneAction(params: params);
-  }
-
-  @override
-  Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user == null) {
-      throw Exception('로그인이 필요합니다');
-    }
-
-    Logger.info('🔮 [MovingFortune] UnifiedFortuneService 호출', {'params': params});
-
-    try {
-      // UnifiedFortuneService 사용
-      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
-
-      // 🔮 최적화 시스템: 조건 객체 생성
-      final conditions = MovingFortuneConditions(
-        currentArea: params['currentArea'] ?? '',
-        targetArea: params['targetArea'] ?? '',
-        movingPeriod: params['movingPeriod'] ?? '',
-        purpose: params['purpose'] ?? '',
-      );
-
-      // input_conditions 정규화
-      final inputConditions = {
-        'current_area': params['currentArea'],
-        'target_area': params['targetArea'],
-        'moving_period': params['movingPeriod'],
-        'purpose': params['purpose'],
-      };
-
-      final fortuneResult = await fortuneService.getFortune(
-        fortuneType: 'moving',
-        dataSource: FortuneDataSource.api,
-        inputConditions: inputConditions,
-        conditions: conditions, // ✅ 최적화 활성화!
-      );
-
-      Logger.info('✅ [MovingFortune] UnifiedFortuneService 완료');
-
-      // FortuneResult → Fortune 엔티티 변환
-      return _convertToFortune(fortuneResult);
-
-    } catch (e, stackTrace) {
-      Logger.error('❌ [MovingFortune] UnifiedFortuneService 실패', e, stackTrace);
-      rethrow;
-    }
-  }
-
-  /// FortuneResult를 Fortune 엔티티로 변환
-  Fortune _convertToFortune(FortuneResult result) {
-    return Fortune(
-      id: result.id ?? '',
-      userId: ref.read(userProvider).value?.id ?? '',
-      type: result.type,
-      content: result.data['content'] as String? ?? result.summary.toString(),
-      createdAt: DateTime.now(),
-      overallScore: result.score,
-      summary: result.summary['message'] as String?,
-      metadata: result.data,
-    );
-  }
+class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
+  String? _currentArea;
+  String? _targetArea;
+  String? _period;
+  String? _purpose;
 
   @override
   Widget build(BuildContext context) {
-    // If fortune exists, BaseFortunePage automatically shows result
-    if (fortune != null || isLoading || error != null) {
-      return super.build(context);
-    }
+    return UnifiedFortuneBaseWidget(
+      fortuneType: 'moving',
+      title: '이사운',
+      description: '새로운 보금자리로의 이동 운세를 분석해드립니다',
+      dataSource: FortuneDataSource.api,
+      // 입력 UI
+      inputBuilder: (context, onComplete) {
+        return MovingInputUnified(
+          onComplete: (currentArea, targetArea, period, purpose) {
+            setState(() {
+              _currentArea = currentArea;
+              _targetArea = targetArea;
+              _period = period;
+              _purpose = purpose;
+            });
+            onComplete();
+          },
+        );
+      },
 
-    // Show custom input UI from MovingInputUnified widget
-    return MovingInputUnified(
-      onComplete: _onInputComplete,
+      // 조건 객체 생성
+      conditionsBuilder: () async {
+        return MovingFortuneConditions(
+          currentArea: _currentArea ?? '',
+          targetArea: _targetArea ?? '',
+          movingPeriod: _period ?? '',
+          purpose: _purpose ?? '',
+        );
+      },
+
+      // 결과 표시 UI
+      resultBuilder: (context, result) {
+        final theme = Theme.of(context);
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: GlassCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '이사운 분석 결과',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.textPrimaryDark
+                        : TossDesignSystem.textPrimaryLight,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  result.data['content'] as String? ?? result.summary.toString(),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.textPrimaryDark
+                        : TossDesignSystem.textPrimaryLight,
+                  ),
+                ),
+                if (result.score != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    '운세 점수: ${result.score}/100',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: TossDesignSystem.tossBlue,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

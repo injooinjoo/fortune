@@ -14,6 +14,7 @@ import 'fortune_generators/career_generator.dart';
 import 'fortune_generators/exam_generator.dart';
 import 'fortune_generators/health_generator.dart';
 import 'fortune_generators/fortune_cookie_generator.dart';
+import 'fortune_generators/wish_generator.dart';
 import 'fortune_optimization_service.dart';
 import '../../features/fortune/domain/models/fortune_conditions.dart';
 
@@ -307,6 +308,9 @@ class UnifiedFortuneService {
 
         case 'health':
           return await HealthGenerator.generate(inputConditions, _supabase);
+
+        case 'wish':
+          return await WishGenerator.generate(inputConditions, _supabase);
 
         case 'mbti':
           // MBTI Edge Function 직접 호출 (FortuneApiService 패턴 사용)

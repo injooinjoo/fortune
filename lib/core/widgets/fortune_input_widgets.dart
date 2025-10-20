@@ -67,7 +67,7 @@ class FortuneInputWidgets {
                 return Theme(
                   data: Theme.of(context).copyWith(
                     colorScheme: ColorScheme.light(
-                      primary: TossDesignSystem.primaryColor,
+                      primary: TossDesignSystem.tossBlue,
                     ),
                   ),
                   child: child!,
@@ -83,8 +83,8 @@ class FortuneInputWidgets {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isDark
-                  ? TossDesignSystem.surfaceDark
-                  : TossDesignSystem.surfaceLight,
+                  ? TossDesignSystem.grayDark800
+                  : TossDesignSystem.gray50,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isDark
@@ -159,8 +159,8 @@ class FortuneInputWidgets {
                 height: 300,
                 decoration: BoxDecoration(
                   color: isDark
-                      ? TossDesignSystem.surfaceDark
-                      : TossDesignSystem.surfaceLight,
+                      ? TossDesignSystem.grayDark800
+                      : TossDesignSystem.gray50,
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(20),
                   ),
@@ -190,7 +190,7 @@ class FortuneInputWidgets {
                             child: Text(
                               '완료',
                               style: context.bodyMedium.copyWith(
-                                color: TossDesignSystem.primaryColor,
+                                color: TossDesignSystem.tossBlue,
                               ),
                             ),
                           ),
@@ -224,8 +224,8 @@ class FortuneInputWidgets {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isDark
-                  ? TossDesignSystem.surfaceDark
-                  : TossDesignSystem.surfaceLight,
+                  ? TossDesignSystem.grayDark800
+                  : TossDesignSystem.gray50,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isDark
@@ -311,14 +311,14 @@ class FortuneInputWidgets {
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.primaryColor
+                      ? TossDesignSystem.tossBlue
                       : (isDark
-                          ? TossDesignSystem.surfaceDark
-                          : TossDesignSystem.surfaceLight),
+                          ? TossDesignSystem.grayDark800
+                          : TossDesignSystem.gray50),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
-                        ? TossDesignSystem.primaryColor
+                        ? TossDesignSystem.tossBlue
                         : (isDark
                             ? TossDesignSystem.borderDark
                             : TossDesignSystem.borderLight),
@@ -388,8 +388,8 @@ class FortuneInputWidgets {
             ),
             filled: true,
             fillColor: isDark
-                ? TossDesignSystem.surfaceDark
-                : TossDesignSystem.surfaceLight,
+                ? TossDesignSystem.grayDark800
+                : TossDesignSystem.gray50,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
@@ -409,7 +409,7 @@ class FortuneInputWidgets {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: TossDesignSystem.primaryColor,
+                color: TossDesignSystem.tossBlue,
                 width: 2,
               ),
             ),
@@ -439,7 +439,7 @@ class FortuneInputWidgets {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: TossDesignSystem.primaryColor,
+          backgroundColor: TossDesignSystem.tossBlue,
           disabledBackgroundColor: TossDesignSystem.textSecondaryLight,
           foregroundColor: Colors.white,
           elevation: 0,

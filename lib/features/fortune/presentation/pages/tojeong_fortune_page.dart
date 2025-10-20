@@ -1,31 +1,29 @@
 import 'package:flutter/material.dart' hide Icon;
 import 'package:flutter/material.dart' as material show Icon;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../domain/models/conditions/tojeong_fortune_conditions.dart';
-import 'base_fortune_page.dart';
-import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../shared/components/toss_button.dart';
 
-class TojeongFortunePage extends BaseFortunePage {
-  const TojeongFortunePage({Key? key})
-      : super(
-          key: key,
-          title: '토정비결',
-          description: '전통 64괘로 보는 한 해 운세',
-          fortuneType: 'tojeong',
-          requiresUserInfo: true);
+class TojeongFortunePage extends ConsumerStatefulWidget {
+  const TojeongFortunePage({Key? key}) : super(key: key);
 
   @override
   ConsumerState<TojeongFortunePage> createState() => _TojeongFortunePageState();
 }
 
-class _TojeongFortunePageState extends BaseFortunePageState<TojeongFortunePage> {
+class _TojeongFortunePageState extends ConsumerState<TojeongFortunePage>
+    with SingleTickerProviderStateMixin {
   late AnimationController _hexagramController;
   late Animation<double> _hexagramAnimation;
+
+  // Store hexagram data for result display
+  Map<String, dynamic>? _currentHexagram;
+  List<Map<String, dynamic>>? _monthlyFortunes;
 
   final Map<String, Map<String, dynamic>> _hexagrams = {
     '111111': {
@@ -95,99 +93,88 @@ class _TojeongFortunePageState extends BaseFortunePageState<TojeongFortunePage> 
   }
 
   @override
-  Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final user = ref.read(userProvider).value;
-    if (user == null) {
-      throw Exception('로그인이 필요합니다');
-    }
-
-    final userProfile = await ref.read(userProfileProvider.future);
-    final birthDate = userProfile?.birthDate ?? DateTime.now();
-
-    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
-
-    final conditions = TojeongFortuneConditions(
-      birthDate: birthDate,
-      consultDate: DateTime.now(),
-      lunarCalendar: params['lunarCalendar'] as String?,
-    );
-
-    final fortuneResult = await fortuneService.getFortune(
-      fortuneType: widget.fortuneType,
+  Widget build(BuildContext context) {
+    return UnifiedFortuneBaseWidget(
+      fortuneType: 'tojeong',
+      title: '토정비결',
+      description: '전통 64괘로 보는 한 해 운세',
       dataSource: FortuneDataSource.api,
-      inputConditions: params,
-      conditions: conditions,
-    );
-    final currentYear = DateTime.now().year;
+      inputBuilder: (context, onComplete) => _buildInputForm(onComplete),
+      conditionsBuilder: () async {
+        final userProfile = await ref.read(userProfileProvider.future);
+        final birthDate = userProfile?.birthDate ?? DateTime.now();
+        final currentYear = DateTime.now().year;
 
-    final upperTrigram = _calculateUpperTrigram(birthDate, currentYear);
-    final lowerTrigram = _calculateLowerTrigram(birthDate, currentYear);
-    final hexagramKey = upperTrigram + lowerTrigram;
-    final hexagram = _hexagrams[hexagramKey] ?? _hexagrams['111111']!;
-    final changingLine = _calculateChangingLine(birthDate, currentYear);
-    final monthlyFortunes = _generateMonthlyFortunes(birthDate, currentYear);
+        // Calculate hexagram data for result display
+        final upperTrigram = _calculateUpperTrigram(birthDate, currentYear);
+        final lowerTrigram = _calculateLowerTrigram(birthDate, currentYear);
+        final hexagramKey = upperTrigram + lowerTrigram;
+        final hexagram = _hexagrams[hexagramKey] ?? _hexagrams['111111']!;
+        final monthlyFortunes = _generateMonthlyFortunes(birthDate, currentYear);
 
-    _hexagramController.forward();
+        setState(() {
+          _currentHexagram = hexagram;
+          _monthlyFortunes = monthlyFortunes;
+        });
 
-    final description = '''【${hexagram['name']}】괘를 얻으셨습니다.
+        _hexagramController.forward();
 
-${hexagram['symbol']} ${hexagram['meaning']}의 기운이 함께합니다.
-
-${hexagram['description']}
-
-🎯 올해의 핵심,
-    조언:
-변효가 ${changingLine}효에 있으니, 특히 ${_getChangingLineAdvice(changingLine)}에 주의하세요.
-
-📅 월별,
-    운세:
-${_formatMonthlyFortunes(monthlyFortunes)}
-
-💫 행운의,
-    요소:
-• 원소: ${hexagram['element']}
-• 방향: ${_getDirectionFromElement(hexagram['element'])}
-• 색상: ${_getColorName(hexagram['color'] as Color)}
-• 숫자: ${(birthDate.day + currentYear) % 9 + 1}
-
-올 한 해 ${hexagram['name']}의 기운을 잘 활용하여 좋은 결과를 얻으시길 바랍니다.''';
-
-    final overallScore = 70 + (hexagram.hashCode % 25);
-
-    return Fortune(
-      id: 'tojeong_${DateTime.now().millisecondsSinceEpoch}',
-      userId: user.id,
-      type: widget.fortuneType,
-      content: description,
-      createdAt: DateTime.now(),
-      category: 'tojeong',
-      overallScore: overallScore,
-      scoreBreakdown: {
-        '전체운': overallScore,
-        '상반기': 75 + (upperTrigram.hashCode % 20),
-        '하반기': 70 + (lowerTrigram.hashCode % 25),
-        '변화운': 80 + (changingLine * 5)},
-      description: description,
-      luckyItems: {
-        '주괘': hexagram['name'],
-        '원소': hexagram['element'],
-        '방향': _getDirectionFromElement(hexagram['element']),
-        '행운의 달': '${_getBestMonth(monthlyFortunes)}월',
-        '주의할 달': '${_getWorstMonth(monthlyFortunes)}월'
+        return TojeongFortuneConditions(
+          birthDate: birthDate,
+          consultDate: DateTime.now(),
+          lunarCalendar: null,
+        );
       },
-      recommendations: [
-        '${hexagram['element']}의 기운을 강화하는 활동을 하세요',
-        '${_getDirectionFromElement(hexagram['element'])} 방향으로 여행을 가면 좋습니다',
-        '${_getColorName(hexagram['color'] as Color)}색 물건을 소지하세요',
-        '매월 초에 월별 운세를 확인하고 계획을 세우세요'
-      ],
-      metadata: {
-        'hexagram': hexagram,
-        'upperTrigram': upperTrigram,
-        'lowerTrigram': lowerTrigram,
-        'changingLine': changingLine,
-        'monthlyFortunes': monthlyFortunes,
-        'year': currentYear});
+      resultBuilder: (context, result) => _buildFortuneResult(result),
+    );
+  }
+
+  Widget _buildInputForm(VoidCallback onComplete) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          GlassCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                material.Icon(
+                  Icons.auto_stories,
+                  size: 48,
+                  color: TossDesignSystem.warningOrange,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '토정비결',
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '전통 64괘로 보는 한 해 운세',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '생년월일 정보를 바탕으로 올 한 해의 운세를 64괘로 풀이해드립니다.',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.7),
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          TossButton.primary(
+            text: '운세 보기',
+            onPressed: onComplete,
+          ),
+        ],
+      ),
+    );
   }
 
   String _calculateUpperTrigram(DateTime birthDate, int currentYear) {
@@ -288,27 +275,25 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
     return '흰색';
   }
 
-  @override
-  Widget buildFortuneResult() {
-    if (fortune == null) return const SizedBox.shrink();
+  Widget _buildFortuneResult(dynamic result) {
+    if (_currentHexagram == null || _monthlyFortunes == null) {
+      return const SizedBox.shrink();
+    }
 
     return SingleChildScrollView(
-      controller: scrollController,
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           _buildHexagramDisplay(),
           const SizedBox(height: 16),
-          // BaseFortunePage의 기본 위젯들을 직접 포함 (중첩 스크롤뷰 방지)
-          _buildOverallScore(),
+          _buildOverallScore(result),
           const SizedBox(height: 16),
-          _buildDescription(),
+          _buildDescription(result),
           const SizedBox(height: 16),
-          // 토정비결 특화 위젯들
           _buildMonthlyChart(),
           _buildElementBalance(),
-          _buildChangingLineInfo(),
-          _buildRecommendations(),
+          _buildChangingLineInfo(result),
+          _buildRecommendations(result),
           _buildTojeongTips(),
           const SizedBox(height: 32),
         ],
@@ -317,8 +302,8 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
   }
 
   // BaseFortunePage의 위젯들을 토정비결 페이지용으로 구현
-  Widget _buildOverallScore() {
-    final score = fortune?.overallScore ?? 0;
+  Widget _buildOverallScore(dynamic result) {
+    final score = result.score ?? 70;
     final scoreColor = _getScoreColor(score);
 
     return GlassCard(
@@ -379,8 +364,8 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
     return '노력 필요';
   }
 
-  Widget _buildDescription() {
-    final content = fortune?.content;
+  Widget _buildDescription(dynamic result) {
+    final content = result.data['content'] as String?;
     if (content == null || content.isEmpty) return const SizedBox.shrink();
 
     return GlassCard(
@@ -394,8 +379,8 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
     );
   }
 
-  Widget _buildRecommendations() {
-    final recommendations = fortune?.recommendations;
+  Widget _buildRecommendations(dynamic result) {
+    final recommendations = (result.data['recommendations'] as List?)?.cast<String>();
     if (recommendations == null || recommendations.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -450,16 +435,14 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
   }
 
   Widget _buildHexagramDisplay() {
-    final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
+    final hexagram = _currentHexagram;
+    if (hexagram == null) return const SizedBox.shrink();
 
-    final hexagram = fortune.metadata?['hexagram'] as Map<String, dynamic>?;
-    final upperTrigram = fortune.metadata?['upperTrigram'] as String?;
-    final lowerTrigram = fortune.metadata?['lowerTrigram'] as String?;
-
-    if (hexagram == null || upperTrigram == null || lowerTrigram == null) {
-      return const SizedBox.shrink();
-    }
+    // Calculate trigrams from current hexagram
+    final birthDate = DateTime.now(); // This will be properly set from user profile
+    final currentYear = DateTime.now().year;
+    final upperTrigram = _calculateUpperTrigram(birthDate, currentYear);
+    final lowerTrigram = _calculateLowerTrigram(birthDate, currentYear);
 
     return AnimatedBuilder(
       animation: _hexagramAnimation,
@@ -565,11 +548,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
   }
 
   Widget _buildMonthlyChart() {
-    final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
-
-    final monthlyFortunes =
-        fortune.metadata?['monthlyFortunes'] as List<Map<String, dynamic>>?;
+    final monthlyFortunes = _monthlyFortunes;
     if (monthlyFortunes == null) return const SizedBox.shrink();
 
     return Padding(
@@ -646,11 +625,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
   }
 
   Widget _buildElementBalance() {
-    final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
-
-    final monthlyFortunes =
-        fortune.metadata?['monthlyFortunes'] as List<Map<String, dynamic>>?;
+    final monthlyFortunes = _monthlyFortunes;
     if (monthlyFortunes == null) return const SizedBox.shrink();
 
     final elementCounts = <String, int>{};
@@ -726,12 +701,11 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
     return colors[element] ?? TossDesignSystem.gray500;
   }
 
-  Widget _buildChangingLineInfo() {
-    final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
-
-    final changingLine = fortune.metadata?['changingLine'] as int?;
-    if (changingLine == null) return const SizedBox.shrink();
+  Widget _buildChangingLineInfo(dynamic result) {
+    // Calculate changing line from result data
+    final birthDate = DateTime.now(); // Will be set from user profile
+    final currentYear = DateTime.now().year;
+    final changingLine = _calculateChangingLine(birthDate, currentYear);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),

@@ -155,6 +155,7 @@ class NotificationService {
           _nextInstanceOfTime(scheduledTime),
           details,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
           matchDateTimeComponents: DateTimeComponents.time,
           payload: payload,
         );
@@ -166,6 +167,7 @@ class NotificationService {
           tz.TZDateTime.from(scheduledTime, tz.local),
           details,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
           payload: payload,
         );
       }

@@ -4,10 +4,14 @@ import '../fortune_conditions.dart';
 class MbtiFortuneConditions extends FortuneConditions {
   final String mbtiType;
   final DateTime date;
+  final String name;
+  final String birthDate;
 
   MbtiFortuneConditions({
     required this.mbtiType,
     required this.date,
+    required this.name,
+    required this.birthDate,
   });
 
   @override
@@ -20,6 +24,8 @@ class MbtiFortuneConditions extends FortuneConditions {
     return {
       'mbti_type': mbtiType,
       'date': date.toIso8601String(),
+      'name': name,
+      'birth_date': birthDate,
     };
   }
 
@@ -34,8 +40,9 @@ class MbtiFortuneConditions extends FortuneConditions {
   @override
   Map<String, dynamic> buildAPIPayload() {
     return {
-      'mbti_type': mbtiType,
-      'date': date.toIso8601String(),
+      'mbti': mbtiType,
+      'name': name,
+      'birthDate': birthDate,
     };
   }
 

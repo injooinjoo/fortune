@@ -10,14 +10,13 @@ final personalityRoutes = [
     path: '/celebrity-saju',
     name: 'fortune-celebrity-saju',
     builder: (context, state) => const CelebrityFortunePageV2()),
-  
+
   // Same Birthday Celebrity
   GoRoute(
     path: '/same-birthday-celebrity',
     name: 'fortune-same-birthday-celebrity',
     builder: (context, state) => const SameBirthdayCelebrityFortunePage()),
-  
-  
+
   // Personality DNA
   GoRoute(
     path: '/personality-dna',

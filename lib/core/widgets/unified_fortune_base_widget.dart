@@ -5,9 +5,14 @@ import '../../features/fortune/domain/models/fortune_conditions.dart';
 import '../models/fortune_result.dart';
 import '../services/unified_fortune_service.dart';
 import '../utils/logger.dart';
-import '../../shared/components/loading_states.dart';
 import '../../shared/components/toast.dart';
 import '../theme/toss_design_system.dart';
+import '../../services/ad_service.dart';
+import '../theme/typography_unified.dart';
+import '../utils/haptic_utils.dart';
+import '../constants/soul_rates.dart';
+import '../../presentation/providers/providers.dart';
+import '../../shared/components/token_insufficient_modal.dart';
 
 /// UnifiedFortuneService를 사용하는 표준 운세 위젯
 ///
@@ -159,13 +164,97 @@ class _UnifiedFortuneBaseWidgetState
 
   /// 운세 생성 실행
   Future<void> _handleSubmit() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    Logger.info('[UnifiedFortuneBaseWidget] 운세 생성 시작: ${widget.fortuneType}');
 
+    // 1. 프리미엄/영혼 체크
+    final tokenState = ref.read(tokenProvider);
+    final tokenNotifier = ref.read(tokenProvider.notifier);
+    final isPremium = tokenState.hasUnlimitedAccess;
+
+    // 프리미엄 운세인 경우 영혼 확인
+    if (!isPremium && SoulRates.isPremiumFortune(widget.fortuneType)) {
+      final canAccess = tokenNotifier.canAccessFortune(widget.fortuneType);
+      final requiredSouls = -SoulRates.getSoulAmount(widget.fortuneType);
+
+      Logger.debug('[UnifiedFortuneBaseWidget] 영혼 체크', {
+        'fortuneType': widget.fortuneType,
+        'requiredSouls': requiredSouls,
+        'canAccess': canAccess,
+      });
+
+      if (!canAccess) {
+        Logger.warning('[UnifiedFortuneBaseWidget] 영혼 부족');
+        HapticUtils.warning();
+        await TokenInsufficientModal.show(
+          context: context,
+          requiredTokens: requiredSouls,
+          fortuneType: widget.fortuneType,
+        );
+        return;
+      }
+    }
+
+    // 2. 로딩 다이얼로그 표시
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => PopScope(
+          canPop: false,
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? TossDesignSystem.cardBackgroundDark
+                    : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(
+                    color: TossDesignSystem.tossBlue,
+                    strokeWidth: 3,
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    '운세를 생성하는 중...',
+                    style: TypographyUnified.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? TossDesignSystem.textPrimaryDark
+                          : TossDesignSystem.textPrimaryLight,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 3. 광고 표시
     try {
-      Logger.info('[UnifiedFortuneBaseWidget] 운세 생성 시작: ${widget.fortuneType}');
+      await AdService.instance.showInterstitialAdWithCallback(
+        onAdCompleted: () async {
+          await _generateFortune();
+        },
+        onAdFailed: () async {
+          await _generateFortune();
+        },
+      );
+    } catch (e) {
+      Logger.error('[UnifiedFortuneBaseWidget] 광고 표시 실패', e);
+      await _generateFortune();
+    }
+  }
+
+  /// 실제 운세 생성 로직
+  Future<void> _generateFortune() async {
+    try {
+      Logger.info('[UnifiedFortuneBaseWidget] API 호출 시작');
 
       // 1. FortuneConditions 생성
       final conditions = await widget.conditionsBuilder();
@@ -174,17 +263,24 @@ class _UnifiedFortuneBaseWidgetState
       final result = await _fortuneService.getFortune(
         fortuneType: widget.fortuneType,
         dataSource: widget.dataSource,
-        inputConditions: conditions.toMap(),
+        inputConditions: conditions.toJson(),
         conditions: conditions,
       );
 
       Logger.info('[UnifiedFortuneBaseWidget] 운세 생성 완료: ${result.id}');
+
+      if (!mounted) return;
+
+      // 로딩 다이얼로그 닫기
+      Navigator.of(context).pop();
 
       setState(() {
         _fortuneResult = result;
         _showResult = true;
         _isLoading = false;
       });
+
+      HapticUtils.success();
     } catch (error, stackTrace) {
       Logger.error(
         '[UnifiedFortuneBaseWidget] 운세 생성 실패: ${widget.fortuneType}',
@@ -192,15 +288,18 @@ class _UnifiedFortuneBaseWidgetState
         stackTrace,
       );
 
-      setState(() {
-        _errorMessage = error.toString();
-        _isLoading = false;
-      });
-
       if (mounted) {
+        Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
+
+        setState(() {
+          _errorMessage = error.toString();
+          _isLoading = false;
+        });
+
+        HapticUtils.error();
         Toast.show(
           context,
-          message: '운세 생성 중 오류가 발생했습니다: $error',
+          message: '운세 생성 중 오류가 발생했습니다',
           type: ToastType.error,
         );
       }
@@ -257,7 +356,7 @@ class _UnifiedFortuneBaseWidgetState
           : null,
       body: _isLoading
           ? const Center(
-              child: LoadingStates.tossStyle(),
+              child: CircularProgressIndicator(),
             )
           : _showResult && _fortuneResult != null
               ? widget.resultBuilder(context, _fortuneResult!)

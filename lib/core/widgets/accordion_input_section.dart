@@ -12,6 +12,7 @@ class AccordionInputSection {
   final Widget Function(BuildContext, Function(dynamic)) inputWidgetBuilder;
   bool isCompleted;
   dynamic value;
+  String? displayValue;
 
   AccordionInputSection({
     required this.id,
@@ -20,9 +21,11 @@ class AccordionInputSection {
     required this.inputWidgetBuilder,
     this.isCompleted = false,
     this.value,
+    this.displayValue,
   });
 
-  String get displayValue {
+  String get displayText {
+    if (displayValue != null) return displayValue!;
     if (value == null) return title;
     return '$title: $value';
   }
@@ -104,14 +107,14 @@ class _AccordionInputFormState extends State<AccordionInputForm> {
       _activeIndex = targetIndex;
     });
 
-    // 섹션으로 스크롤
+    // 섹션으로 스크롤 (아코디언 제목이 화면 최상단에 오도록)
     Future.delayed(const Duration(milliseconds: 200), () {
       if (!mounted) return;
 
       final RenderBox? renderBox = _sectionKeys[targetIndex].currentContext?.findRenderObject() as RenderBox?;
       if (renderBox != null) {
         final position = renderBox.localToGlobal(Offset.zero);
-        final offset = _scrollController.offset + position.dy - 120; // AppBar 높이 고려
+        final offset = _scrollController.offset + position.dy - 20; // 20px 여유 공간
 
         _scrollController.animateTo(
           offset.clamp(0.0, _scrollController.position.maxScrollExtent),
@@ -223,7 +226,7 @@ class AnimatedAccordionSection extends StatelessWidget {
             Expanded(
               child: Text(
                 section.isCompleted
-                  ? section.displayValue
+                  ? section.displayText
                   : section.title,
                 style: context.bodyMedium.copyWith(
                   color: section.isCompleted
@@ -312,5 +315,148 @@ class AnimatedAccordionSection extends StatelessWidget {
       .fadeIn(duration: 300.ms)
       .slideY(begin: -0.1, end: 0, duration: 300.ms, curve: Curves.easeOut)
       .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1), duration: 300.ms);
+  }
+}
+
+/// 헤더가 포함된 아코디언 입력 폼 위젯
+class AccordionInputFormWithHeader extends StatefulWidget {
+  final Widget header;
+  final List<AccordionInputSection> sections;
+  final VoidCallback? onAllCompleted;
+  final String? completionButtonText;
+
+  const AccordionInputFormWithHeader({
+    super.key,
+    required this.header,
+    required this.sections,
+    this.onAllCompleted,
+    this.completionButtonText,
+  });
+
+  @override
+  State<AccordionInputFormWithHeader> createState() => _AccordionInputFormWithHeaderState();
+}
+
+class _AccordionInputFormWithHeaderState extends State<AccordionInputFormWithHeader> {
+  final ScrollController _scrollController = ScrollController();
+  int _activeIndex = 0;
+  final List<GlobalKey> _sectionKeys = [];
+  final GlobalKey _headerKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    // 섹션별 GlobalKey 생성
+    for (int i = 0; i < widget.sections.length; i++) {
+      _sectionKeys.add(GlobalKey());
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  bool get _allCompleted {
+    return widget.sections.every((section) => section.isCompleted);
+  }
+
+  void _onSectionComplete(int index, dynamic value) {
+    HapticFeedback.mediumImpact();
+
+    setState(() {
+      widget.sections[index].value = value;
+      widget.sections[index].isCompleted = true;
+    });
+
+    // 다음 섹션으로 이동
+    if (index < widget.sections.length - 1) {
+      _moveToSection(index + 1);
+    } else {
+      // 마지막 섹션 완료 시 모두 축소
+      setState(() {
+        _activeIndex = -1;
+      });
+
+      if (_allCompleted && widget.onAllCompleted != null) {
+        widget.onAllCompleted!();
+      }
+    }
+  }
+
+  void _onSectionTap(int index) {
+    if (_activeIndex != index) {
+      HapticFeedback.lightImpact();
+      _moveToSection(index);
+    }
+  }
+
+  void _moveToSection(int targetIndex) {
+    setState(() {
+      _activeIndex = targetIndex;
+    });
+
+    // 섹션으로 스크롤 (아코디언 제목이 화면 최상단에 오도록)
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (!mounted) return;
+
+      final RenderBox? renderBox = _sectionKeys[targetIndex].currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox != null) {
+        final position = renderBox.localToGlobal(Offset.zero);
+
+        // 현재 스크롤 위치 + 섹션의 화면상 위치 = 절대 위치
+        // 여기서 SafeArea top padding을 빼서 섹션이 최상단에 오도록 함
+        final offset = _scrollController.offset + position.dy - 20; // 20px 여유 공간
+
+        _scrollController.animateTo(
+          offset.clamp(0.0, _scrollController.position.maxScrollExtent),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: [
+        // 헤더 영역 (스크롤 가능)
+        SliverToBoxAdapter(
+          child: Padding(
+            key: _headerKey,
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+            child: widget.header,
+          ),
+        ),
+
+        // Accordion 섹션들
+        SliverPadding(
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 120),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final section = widget.sections[index];
+                final isActive = _activeIndex == index;
+
+                return Padding(
+                  key: _sectionKeys[index],
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: AnimatedAccordionSection(
+                    section: section,
+                    isActive: isActive,
+                    onTap: () => _onSectionTap(index),
+                    onComplete: (value) => _onSectionComplete(index, value),
+                  ),
+                );
+              },
+              childCount: widget.sections.length,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

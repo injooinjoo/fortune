@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import '../../../features/fortune/presentation/pages/tojeong_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/palmistry_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/salpuli_fortune_page.dart';
+// import '../../../features/fortune/presentation/pages/salpuli_fortune_page.dart'; // Removed - unused
 // import '../../../features/fortune/presentation/pages/saju_psychology_fortune_page.dart'; // File removed
 import '../../../features/fortune/presentation/pages/traditional_fortune_unified_page.dart';
 import '../../../features/fortune/presentation/pages/face_reading_fortune_page.dart';
@@ -30,11 +30,11 @@ final traditionalFortuneRoutes = [
   
   // Physiognomy Fortune - moved to route_config.dart (outside shell)
   
-  // Salpuli
-  GoRoute(
-    path: '/salpuli',
-    name: 'fortune-salpuli',
-    builder: (context, state) => const SalpuliFortunePage()),
+  // Salpuli - Removed (page deleted)
+  // GoRoute(
+  //   path: '/salpuli',
+  //   name: 'fortune-salpuli',
+  //   builder: (context, state) => const SalpuliFortunePage()),
   
   // Saju Psychology - Page removed
   // GoRoute(

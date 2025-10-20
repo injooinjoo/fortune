@@ -5,7 +5,7 @@ import '../../../features/fortune/presentation/pages/dream_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/fortune_best_practices_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_job_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_sidejob_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/esports_fortune_page.dart';
+// import '../../../features/fortune/presentation/pages/esports_fortune_page.dart'; // Removed - unused
 import '../../../features/fortune/presentation/pages/influencer_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/politician_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/ai_comprehensive_fortune_page.dart';
@@ -60,11 +60,11 @@ final specialFortuneRoutes = [
     name: 'fortune-lucky-sidejob',
     builder: (context, state) => const LuckySideJobFortunePage()),
   
-  // E-Sports
-  GoRoute(
-    path: '/esports',
-    name: 'fortune-esports',
-    builder: (context, state) => const EsportsFortunePage()),
+  // E-Sports - Removed (page deleted)
+  // GoRoute(
+  //   path: '/esports',
+  //   name: 'fortune-esports',
+  //   builder: (context, state) => const EsportsFortunePage()),
   
   // Influencer
   GoRoute(

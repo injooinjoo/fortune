@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 관상 타입 정보를 담는 클래스
 class FaceTypeInfo {

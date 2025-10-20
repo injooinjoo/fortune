@@ -1,8 +1,7 @@
-/// 재능 발견 운세 입력 페이지 (3단계)
+/// 재능 발견 운세 입력 페이지 (Accordion 형태)
 ///
-/// Phase 1: 사주 정보 (변하지 않는 것)
-/// Phase 2: 현재 상태 (환경으로 만들어진 것)
-/// Phase 3: 성향 선택 (선호하는 것)
+/// 프로필 정보는 자동으로 채워지고 접혀있음
+/// 선택이 필요한 항목만 열려있음
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,11 +10,12 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../core/components/toss_card.dart';
 import '../../domain/models/talent_input_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/widgets/accordion_input_section.dart';
+import '../../../../presentation/providers/auth_provider.dart';
 
 /// Provider for talent input data
 final talentInputDataProvider = StateProvider<TalentInputData>((ref) => const TalentInputData());
@@ -28,27 +28,27 @@ class TalentFortuneInputPage extends ConsumerStatefulWidget {
 }
 
 class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage> {
-  final PageController _pageController = PageController();
-  int _currentStep = 0;
-
-  // Phase 1
+  // Phase 1: 프로필 정보 (자동 채워짐)
   DateTime? _birthDate;
   TimeOfDay? _birthTime;
   String? _gender;
   final TextEditingController _birthCityController = TextEditingController();
 
-  // Phase 2
+  // Phase 2: 현재 상태 (선택 필요)
   final TextEditingController _occupationController = TextEditingController();
   final Set<String> _selectedConcerns = {};
   final Set<String> _selectedInterests = {};
   final TextEditingController _strengthsController = TextEditingController();
   final TextEditingController _weaknessesController = TextEditingController();
 
-  // Phase 3
+  // Phase 3: 성향 (선택 필요)
   String? _workStyle;
   String? _energySource;
   String? _problemSolving;
   String? _preferredRole;
+
+  // Accordion sections
+  List<AccordionInputSection> _accordionSections = [];
 
   @override
   void initState() {
@@ -58,7 +58,6 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
 
   @override
   void dispose() {
-    _pageController.dispose();
     _birthCityController.dispose();
     _occupationController.dispose();
     _strengthsController.dispose();
@@ -67,121 +66,229 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
   }
 
   Future<void> _loadProfileData() async {
+    // 이미 로드된 프로필 정보 사용 (앱 시작 시 로드됨)
+    final profileAsync = ref.read(userProfileProvider);
+    final profile = profileAsync.value;
+
+    if (profile != null && mounted) {
+      setState(() {
+        _birthDate = profile.birthDate;
+        _birthTime = profile.birthTime != null
+            ? _parseTimeOfDay(profile.birthTime!)
+            : null;
+        _gender = profile.gender;
+
+        // Accordion 섹션 초기화
+        _initializeAccordionSections();
+      });
+    } else {
+      // 프로필이 없으면 빈 상태로 초기화
+      _initializeAccordionSections();
+    }
+  }
+
+  TimeOfDay? _parseTimeOfDay(String timeString) {
     try {
-      final userId = Supabase.instance.client.auth.currentUser?.id;
-      if (userId == null) return;
-
-      final response = await Supabase.instance.client
-          .from('profiles')
-          .select('birth_date, birth_time, gender')
-          .eq('id', userId)
-          .single();
-
-      if (response != null && mounted) {
-        setState(() {
-          // Parse birth date
-          if (response['birth_date'] != null) {
-            _birthDate = DateTime.tryParse(response['birth_date']);
-          }
-
-          // Parse birth time
-          if (response['birth_time'] != null) {
-            final timeStr = response['birth_time'] as String;
-            final parts = timeStr.split(':');
-            if (parts.length >= 2) {
-              _birthTime = TimeOfDay(
-                hour: int.tryParse(parts[0]) ?? 0,
-                minute: int.tryParse(parts[1]) ?? 0,
-              );
-            }
-          }
-
-          _gender = response['gender'];
-        });
+      final parts = timeString.split(':');
+      if (parts.length == 2) {
+        final hour = int.parse(parts[0]);
+        final minute = int.parse(parts[1]);
+        return TimeOfDay(hour: hour, minute: minute);
       }
     } catch (e) {
-      print('프로필 로드 실패: $e');
+      // 파싱 실패
     }
+    return null;
   }
 
-  void _nextStep() {
-    if (_currentStep == 0) {
-      if (!_canProceedPhase1()) {
-        _showMessage('필수 정보를 모두 입력해주세요');
-        return;
-      }
-      setState(() {
-        _currentStep = 1;
-      });
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else if (_currentStep == 1) {
-      if (!_canProceedPhase2()) {
-        _showMessage('고민 분야나 관심 분야를 최소 1개 이상 선택해주세요');
-        return;
-      }
-      setState(() {
-        _currentStep = 2;
-      });
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else if (_currentStep == 2) {
-      if (!_canProceedPhase3()) {
-        _showMessage('모든 성향을 선택해주세요');
-        return;
-      }
-      _analyzeAndShowResult();
-    }
-  }
-
-  void _previousStep() {
-    if (_currentStep > 0) {
-      setState(() {
-        _currentStep--;
-      });
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      context.pop();
-    }
-  }
-
-  bool _canProceedPhase1() {
-    return _birthDate != null && _birthTime != null && _gender != null;
-  }
-
-  bool _canProceedPhase2() {
-    return _selectedConcerns.isNotEmpty || _selectedInterests.isNotEmpty;
-  }
-
-  bool _canProceedPhase3() {
-    return _workStyle != null &&
-           _energySource != null &&
-           _problemSolving != null &&
-           _preferredRole != null;
-  }
-
-  void _showMessage(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: TossDesignSystem.warningOrange,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+  void _initializeAccordionSections() {
+    _accordionSections = [
+      // 1. 생년월일 (프로필에서 자동 채워짐)
+      AccordionInputSection(
+        id: 'birthDate',
+        title: '생년월일',
+        icon: Icons.cake_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildBirthDateInput(onComplete),
+        value: _birthDate,
+        isCompleted: _birthDate != null,
+        displayValue: _birthDate != null
+            ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
+            : null,
       ),
-    );
+
+      // 2. 출생 시간 (프로필에서 자동 채워짐)
+      AccordionInputSection(
+        id: 'birthTime',
+        title: '출생 시간',
+        icon: Icons.access_time_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildBirthTimeInput(onComplete),
+        value: _birthTime,
+        isCompleted: _birthTime != null,
+        displayValue: _birthTime != null
+            ? '${_birthTime!.hour.toString().padLeft(2, '0')}:${_birthTime!.minute.toString().padLeft(2, '0')}'
+            : null,
+      ),
+
+      // 3. 성별 (프로필에서 자동 채워짐)
+      AccordionInputSection(
+        id: 'gender',
+        title: '성별',
+        icon: Icons.person_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildGenderInput(onComplete),
+        value: _gender,
+        isCompleted: _gender != null,
+        displayValue: _gender != null
+            ? (_gender == 'male' ? '남성' : '여성')
+            : null,
+      ),
+
+      // 4. 태어난 도시 (선택사항)
+      AccordionInputSection(
+        id: 'birthCity',
+        title: '태어난 도시 (선택)',
+        icon: Icons.location_city_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildBirthCityInput(onComplete),
+        value: _birthCityController.text.isNotEmpty ? _birthCityController.text : null,
+        isCompleted: false, // 선택사항이므로 완료 체크 안함
+        displayValue: _birthCityController.text.isNotEmpty ? _birthCityController.text : null,
+      ),
+
+      // 5. 현재 직업/전공 (선택사항)
+      AccordionInputSection(
+        id: 'occupation',
+        title: '현재 직업/전공 (선택)',
+        icon: Icons.work_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildOccupationInput(onComplete),
+        value: _occupationController.text.isNotEmpty ? _occupationController.text : null,
+        isCompleted: false, // 선택사항
+        displayValue: _occupationController.text.isNotEmpty ? _occupationController.text : null,
+      ),
+
+      // 6. 고민 분야 (선택 필요 - 열려있음)
+      AccordionInputSection(
+        id: 'concerns',
+        title: '고민 분야',
+        icon: Icons.psychology_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildConcernsInput(onComplete),
+        value: _selectedConcerns.toList(),
+        isCompleted: _selectedConcerns.isNotEmpty,
+        displayValue: _selectedConcerns.isNotEmpty
+            ? _selectedConcerns.join(', ')
+            : null,
+      ),
+
+      // 7. 관심 분야 (선택 필요 - 열려있음)
+      AccordionInputSection(
+        id: 'interests',
+        title: '관심 분야',
+        icon: Icons.favorite_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildInterestsInput(onComplete),
+        value: _selectedInterests.toList(),
+        isCompleted: _selectedInterests.isNotEmpty,
+        displayValue: _selectedInterests.isNotEmpty
+            ? _selectedInterests.join(', ')
+            : null,
+      ),
+
+      // 8. 자기평가 (선택사항)
+      AccordionInputSection(
+        id: 'selfEvaluation',
+        title: '자기평가 (선택)',
+        icon: Icons.rate_review_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildSelfEvaluationInput(onComplete),
+        value: _strengthsController.text.isNotEmpty || _weaknessesController.text.isNotEmpty,
+        isCompleted: false, // 선택사항
+        displayValue: _strengthsController.text.isNotEmpty
+            ? '강점: ${_strengthsController.text}'
+            : null,
+      ),
+
+      // 9. 업무 스타일 (선택 필요 - 열려있음)
+      AccordionInputSection(
+        id: 'workStyle',
+        title: '업무 스타일',
+        icon: Icons.business_center_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildWorkStyleInput(onComplete),
+        value: _workStyle,
+        isCompleted: _workStyle != null,
+        displayValue: _workStyle,
+      ),
+
+      // 10. 에너지 충전 방식 (선택 필요 - 열려있음)
+      AccordionInputSection(
+        id: 'energySource',
+        title: '에너지 충전 방식',
+        icon: Icons.battery_charging_full_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildEnergySourceInput(onComplete),
+        value: _energySource,
+        isCompleted: _energySource != null,
+        displayValue: _energySource,
+      ),
+
+      // 11. 문제 해결 방식 (선택 필요 - 열려있음)
+      AccordionInputSection(
+        id: 'problemSolving',
+        title: '문제 해결 방식',
+        icon: Icons.lightbulb_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildProblemSolvingInput(onComplete),
+        value: _problemSolving,
+        isCompleted: _problemSolving != null,
+        displayValue: _problemSolving,
+      ),
+
+      // 12. 선호하는 역할 (선택 필요 - 열려있음)
+      AccordionInputSection(
+        id: 'preferredRole',
+        title: '선호하는 역할',
+        icon: Icons.groups_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildPreferredRoleInput(onComplete),
+        value: _preferredRole,
+        isCompleted: _preferredRole != null,
+        displayValue: _preferredRole,
+      ),
+    ];
+  }
+
+  void _updateAccordionSection(String id, dynamic value, String? displayValue) {
+    final index = _accordionSections.indexWhere((section) => section.id == id);
+    if (index != -1) {
+      setState(() {
+        _accordionSections[index] = AccordionInputSection(
+          id: _accordionSections[index].id,
+          title: _accordionSections[index].title,
+          icon: _accordionSections[index].icon,
+          inputWidgetBuilder: _accordionSections[index].inputWidgetBuilder,
+          value: value,
+          isCompleted: value != null && (value is! String || value.isNotEmpty),
+          displayValue: displayValue,
+        );
+      });
+    }
+  }
+
+  bool _canGenerate() {
+    // 필수: 생년월일, 출생시간, 성별, 고민/관심 중 1개, 성향 4개
+    return _birthDate != null &&
+        _birthTime != null &&
+        _gender != null &&
+        (_selectedConcerns.isNotEmpty || _selectedInterests.isNotEmpty) &&
+        _workStyle != null &&
+        _energySource != null &&
+        _problemSolving != null &&
+        _preferredRole != null;
   }
 
   Future<void> _analyzeAndShowResult() async {
+    if (!_canGenerate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('필수 정보를 모두 입력해주세요'),
+          backgroundColor: TossDesignSystem.warningOrange,
+        ),
+      );
+      return;
+    }
+
     final inputData = TalentInputData(
       birthDate: _birthDate!,
       birthTime: _birthTime!,
@@ -218,7 +325,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
               const SizedBox(height: 16),
               Text(
                 '사주팔자 분석 중...',
-                style: TossDesignSystem.body2,
+                style: TypographyUnified.bodyMedium,
               ),
             ],
           ),
@@ -254,327 +361,176 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
       appBar: StandardFortuneAppBar(
         title: '재능 발견',
-        onBackPressed: _previousStep,
       ),
-      body: Stack(
-        children: [
-          PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              _buildPhase1(isDark),
-              _buildPhase2(isDark),
-              _buildPhase3(isDark),
-            ],
-          ),
-
-          // Floating Progress Button
-          TossFloatingProgressButtonPositioned(
-            text: _currentStep == 2 ? '분석 시작' : '다음',
-            currentStep: _currentStep + 1,
-            totalSteps: 3,
-            onPressed: _nextStep,
-            isEnabled: _currentStep == 0
-                ? _canProceedPhase1()
-                : _currentStep == 1
-                    ? _canProceedPhase2()
-                    : _canProceedPhase3(),
-          ),
-        ],
+      body: SafeArea(
+        child: Stack(
+          children: [
+            _accordionSections.isEmpty
+                ? Center(child: CircularProgressIndicator())
+                : AccordionInputFormWithHeader(
+                    header: _buildTitleSection(isDark),
+                    sections: _accordionSections,
+                    onAllCompleted: null,
+                    completionButtonText: '🔮 재능 분석 시작하기',
+                  ),
+            if (_canGenerate())
+              TossFloatingProgressButtonPositioned(
+                text: '🔮 재능 분석 시작하기',
+                onPressed: _canGenerate() ? () => _analyzeAndShowResult() : null,
+                isEnabled: _canGenerate(),
+                showProgress: false,
+                isVisible: _canGenerate(),
+              ),
+          ],
+        ),
       ),
     );
   }
 
-  /// Phase 1: 사주 정보 (변하지 않는 것 - The Unchangeable)
-  Widget _buildPhase1(bool isDark) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24).copyWith(bottom: 120),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '1단계',
-            style: TypographyUnified.bodySmall.copyWith(
-              fontWeight: FontWeight.w600,
-              color: TossDesignSystem.tossBlue,
-            ),
+  Widget _buildTitleSection(bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '당신의 숨은 재능을\n찾아드릴게요',
+          style: TypographyUnified.heading1.copyWith(
+            fontWeight: FontWeight.w700,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            height: 1.3,
           ),
-          SizedBox(height: 8),
-          Text(
-            '변하지 않는 것',
-            style: TypographyUnified.displaySmall.copyWith(
-              fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '사주팔자와 성향을 분석해서\n맞춤 재능 가이드를 제공해드려요',
+          style: TypographyUnified.bodySmall.copyWith(
+            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
+            height: 1.4,
           ),
-          SizedBox(height: 8),
-          Text(
-            '타고난 기질을 파악하기 위한 정보입니다',
-            style: TypographyUnified.bodySmall.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-            ),
-          ),
-          const SizedBox(height: 32),
-
-          // 생년월일
-          TossCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '생년월일',
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      '*',
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.warningOrange,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                InkWell(
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: _birthDate ?? DateTime(2000, 1, 1),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime.now(),
-                    );
-                    if (date != null && mounted) {
-                      setState(() {
-                        _birthDate = date;
-                      });
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.calendar_today,
-                          size: 20,
-                          color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          _birthDate != null
-                              ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
-                              : '날짜를 선택해주세요',
-                          style: TypographyUnified.buttonMedium.copyWith(
-                            color: _birthDate != null
-                                ? (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight)
-                                : (isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // 태어난 시간
-          TossCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '태어난 시간',
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      '*',
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.warningOrange,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '가장 중요!',
-                      style: TypographyUnified.labelMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.tossBlue,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '모르면 출생 증명서나 가족에게 물어보세요',
-                  style: TypographyUnified.labelMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                InkWell(
-                  onTap: () async {
-                    final time = await showTimePicker(
-                      context: context,
-                      initialTime: _birthTime ?? const TimeOfDay(hour: 12, minute: 0),
-                    );
-                    if (time != null && mounted) {
-                      setState(() {
-                        _birthTime = time;
-                      });
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.access_time,
-                          size: 20,
-                          color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          _birthTime != null
-                              ? '${_birthTime!.hour.toString().padLeft(2, '0')}:${_birthTime!.minute.toString().padLeft(2, '0')}'
-                              : '시간을 선택해주세요',
-                          style: TypographyUnified.buttonMedium.copyWith(
-                            color: _birthTime != null
-                                ? (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight)
-                                : (isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // 성별
-          TossCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '성별',
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      '*',
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.warningOrange,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildGenderButton(isDark, '남성', 'male'),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildGenderButton(isDark, '여성', 'female'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // 태어난 도시 (선택)
-          TossCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '태어난 도시 (선택)',
-                  style: TypographyUnified.buttonMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '균시차 보정을 위해 사용됩니다',
-                  style: TypographyUnified.labelMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _birthCityController,
-                  decoration: InputDecoration(
-                    hintText: '예: 서울, 부산, 대구...',
-                    filled: true,
-                    fillColor: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.all(16),
-                  ),
-                  style: TypographyUnified.buttonMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ).animate().fadeIn(duration: 300.ms),
+        ),
+      ],
     );
   }
 
-  Widget _buildGenderButton(bool isDark, String label, String value) {
+  // ===== 입력 위젯들 =====
+
+  Widget _buildBirthDateInput(Function(dynamic) onComplete) {
+    return InkWell(
+      onTap: () async {
+        final date = await showDatePicker(
+          context: context,
+          initialDate: _birthDate ?? DateTime(2000, 1, 1),
+          firstDate: DateTime(1900),
+          lastDate: DateTime.now(),
+        );
+        if (date != null && mounted) {
+          setState(() {
+            _birthDate = date;
+            _updateAccordionSection(
+              'birthDate',
+              date,
+              '${date.year}년 ${date.month}월 ${date.day}일',
+            );
+          });
+          onComplete(date);
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: TossDesignSystem.gray100,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.calendar_today, size: 20),
+            const SizedBox(width: 12),
+            Text(
+              _birthDate != null
+                  ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
+                  : '날짜를 선택해주세요',
+              style: TypographyUnified.buttonMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBirthTimeInput(Function(dynamic) onComplete) {
+    return InkWell(
+      onTap: () async {
+        final time = await showTimePicker(
+          context: context,
+          initialTime: _birthTime ?? const TimeOfDay(hour: 12, minute: 0),
+        );
+        if (time != null && mounted) {
+          setState(() {
+            _birthTime = time;
+            _updateAccordionSection(
+              'birthTime',
+              time,
+              '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
+            );
+          });
+          onComplete(time);
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: TossDesignSystem.gray100,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.access_time, size: 20),
+            const SizedBox(width: 12),
+            Text(
+              _birthTime != null
+                  ? '${_birthTime!.hour.toString().padLeft(2, '0')}:${_birthTime!.minute.toString().padLeft(2, '0')}'
+                  : '시간을 선택해주세요',
+              style: TypographyUnified.buttonMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGenderInput(Function(dynamic) onComplete) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildGenderButton('남성', 'male', onComplete),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildGenderButton('여성', 'female', onComplete),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGenderButton(String label, String value, Function(dynamic) onComplete) {
     final isSelected = _gender == value;
     return InkWell(
       onTap: () {
         setState(() {
           _gender = value;
+          _updateAccordionSection('gender', value, label);
         });
         TossDesignSystem.hapticLight();
+        onComplete(value);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: isSelected
               ? TossDesignSystem.tossBlue.withOpacity(0.1)
-              : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
+              : TossDesignSystem.gray100,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
@@ -586,9 +542,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
             label,
             style: TypographyUnified.buttonMedium.copyWith(
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              color: isSelected
-                  ? TossDesignSystem.tossBlue
-                  : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
+              color: isSelected ? TossDesignSystem.tossBlue : null,
             ),
           ),
         ),
@@ -596,475 +550,323 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
     );
   }
 
-  /// Phase 2: 현재 상태 (환경으로 만들어진 것 - The Nurture)
-  Widget _buildPhase2(bool isDark) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24).copyWith(bottom: 120),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '2단계',
-            style: TypographyUnified.bodySmall.copyWith(
-              fontWeight: FontWeight.w600,
-              color: TossDesignSystem.tossBlue,
+  Widget _buildBirthCityInput(Function(dynamic) onComplete) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '균시차 보정을 위해 사용됩니다',
+          style: TypographyUnified.labelMedium.copyWith(
+            color: TossDesignSystem.gray600,
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _birthCityController,
+          decoration: InputDecoration(
+            hintText: '예: 서울, 부산, 대구...',
+            filled: true,
+            fillColor: TossDesignSystem.gray100,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
           ),
-          SizedBox(height: 8),
-          Text(
-            '환경으로 만들어진 것',
-            style: TypographyUnified.displaySmall.copyWith(
-              fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            '현재 당신의 상태를 알려주세요',
-            style: TypographyUnified.bodySmall.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-            ),
-          ),
-          const SizedBox(height: 32),
-
-          // 현재 직업/전공 (선택)
-          TossCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '현재 직업/전공 (선택)',
-                  style: TypographyUnified.buttonMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _occupationController,
-                  decoration: InputDecoration(
-                    hintText: '예: 대학생(컴퓨터공학), 마케터, 구직 중...',
-                    filled: true,
-                    fillColor: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.all(16),
-                  ),
-                  style: TypographyUnified.buttonMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // 고민 분야
-          TossCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '고민 분야',
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      '*',
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.warningOrange,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '복수 선택',
-                      style: TypographyUnified.labelMedium.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: ConcernAreaOptions.options.map((concern) {
-                    final isSelected = _selectedConcerns.contains(concern);
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          if (isSelected) {
-                            _selectedConcerns.remove(concern);
-                          } else {
-                            _selectedConcerns.add(concern);
-                          }
-                        });
-                        TossDesignSystem.hapticLight();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? TossDesignSystem.tossBlue.withOpacity(0.1)
-                              : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Text(
-                          concern,
-                          style: TypographyUnified.bodySmall.copyWith(
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                            color: isSelected
-                                ? TossDesignSystem.tossBlue
-                                : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // 관심 분야
-          TossCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '관심 분야',
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      '*',
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.warningOrange,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '복수 선택',
-                      style: TypographyUnified.labelMedium.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: InterestAreaOptions.options.map((interest) {
-                    final isSelected = _selectedInterests.contains(interest);
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          if (isSelected) {
-                            _selectedInterests.remove(interest);
-                          } else {
-                            _selectedInterests.add(interest);
-                          }
-                        });
-                        TossDesignSystem.hapticLight();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? TossDesignSystem.tossBlue.withOpacity(0.1)
-                              : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Text(
-                          interest,
-                          style: TypographyUnified.bodySmall.copyWith(
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                            color: isSelected
-                                ? TossDesignSystem.tossBlue
-                                : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // 자기평가 (선택)
-          TossCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '자기평가 (선택)',
-                  style: TypographyUnified.buttonMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '스스로 생각하는 강점과 약점을 자유롭게 적어주세요',
-                  style: TypographyUnified.labelMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _strengthsController,
-                  decoration: InputDecoration(
-                    labelText: '강점',
-                    hintText: '예: 책임감, 빠른 실행력, 창의적 사고...',
-                    filled: true,
-                    fillColor: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.all(16),
-                  ),
-                  style: TypographyUnified.buttonMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                  ),
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _weaknessesController,
-                  decoration: InputDecoration(
-                    labelText: '약점',
-                    hintText: '예: 우유부단함, 쉽게 포기함, 조급함...',
-                    filled: true,
-                    fillColor: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.all(16),
-                  ),
-                  style: TypographyUnified.buttonMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                  ),
-                  maxLines: 2,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ).animate().fadeIn(duration: 300.ms),
+          onChanged: (value) {
+            _updateAccordionSection('birthCity', value.isNotEmpty ? value : null, value);
+          },
+        ),
+      ],
     );
   }
 
-  /// Phase 3: 성향 선택 (선호하는 것 - The Preference)
-  Widget _buildPhase3(bool isDark) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24).copyWith(bottom: 120),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '3단계',
-            style: TypographyUnified.bodySmall.copyWith(
-              fontWeight: FontWeight.w600,
-              color: TossDesignSystem.tossBlue,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            '선호하는 것',
-            style: TypographyUnified.displaySmall.copyWith(
-              fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            '당신의 성향을 알려주세요',
-            style: TypographyUnified.bodySmall.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-            ),
-          ),
-          const SizedBox(height: 32),
-
-          // 업무 스타일
-          _buildPreferenceCard(
-            isDark: isDark,
-            title: '업무 스타일',
-            question: '일할 때 당신은?',
-            options: WorkStyleOptions.options,
-            selectedValue: _workStyle,
-            onSelect: (value) {
-              setState(() {
-                _workStyle = value;
-              });
-            },
-          ),
-          const SizedBox(height: 16),
-
-          // 에너지 충전 방식
-          _buildPreferenceCard(
-            isDark: isDark,
-            title: '에너지 충전 방식',
-            question: '힘들 때 에너지를 채우려면?',
-            options: EnergySourceOptions.options,
-            selectedValue: _energySource,
-            onSelect: (value) {
-              setState(() {
-                _energySource = value;
-              });
-            },
-          ),
-          const SizedBox(height: 16),
-
-          // 문제 해결 방식
-          _buildPreferenceCard(
-            isDark: isDark,
-            title: '문제 해결 방식',
-            question: '어려운 문제를 만나면?',
-            options: ProblemSolvingOptions.options,
-            selectedValue: _problemSolving,
-            onSelect: (value) {
-              setState(() {
-                _problemSolving = value;
-              });
-            },
-          ),
-          const SizedBox(height: 16),
-
-          // 선호하는 역할
-          _buildPreferenceCard(
-            isDark: isDark,
-            title: '선호하는 역할',
-            question: '조직에서 당신이 맡고 싶은 역할은?',
-            options: PreferredRoleOptions.options,
-            selectedValue: _preferredRole,
-            onSelect: (value) {
-              setState(() {
-                _preferredRole = value;
-              });
-            },
-          ),
-        ],
-      ).animate().fadeIn(duration: 300.ms),
+  Widget _buildOccupationInput(Function(dynamic) onComplete) {
+    return TextField(
+      controller: _occupationController,
+      decoration: InputDecoration(
+        hintText: '예: 대학생(컴퓨터공학), 마케터, 구직 중...',
+        filled: true,
+        fillColor: TossDesignSystem.gray100,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+      ),
+      onChanged: (value) {
+        _updateAccordionSection('occupation', value.isNotEmpty ? value : null, value);
+      },
     );
   }
 
-  Widget _buildPreferenceCard({
-    required bool isDark,
-    required String title,
-    required String question,
+  Widget _buildConcernsInput(Function(dynamic) onComplete) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '복수 선택 가능',
+          style: TypographyUnified.labelMedium.copyWith(
+            color: TossDesignSystem.gray600,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: ConcernAreaOptions.options.map((concern) {
+            final isSelected = _selectedConcerns.contains(concern);
+            return InkWell(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    _selectedConcerns.remove(concern);
+                  } else {
+                    _selectedConcerns.add(concern);
+                  }
+                  _updateAccordionSection(
+                    'concerns',
+                    _selectedConcerns.toList(),
+                    _selectedConcerns.join(', '),
+                  );
+                });
+                TossDesignSystem.hapticLight();
+                onComplete(_selectedConcerns.toList());
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                      : TossDesignSystem.gray100,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
+                    width: 1.5,
+                  ),
+                ),
+                child: Text(
+                  concern,
+                  style: TypographyUnified.bodySmall.copyWith(
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: isSelected ? TossDesignSystem.tossBlue : null,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInterestsInput(Function(dynamic) onComplete) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '복수 선택 가능',
+          style: TypographyUnified.labelMedium.copyWith(
+            color: TossDesignSystem.gray600,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: InterestAreaOptions.options.map((interest) {
+            final isSelected = _selectedInterests.contains(interest);
+            return InkWell(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    _selectedInterests.remove(interest);
+                  } else {
+                    _selectedInterests.add(interest);
+                  }
+                  _updateAccordionSection(
+                    'interests',
+                    _selectedInterests.toList(),
+                    _selectedInterests.join(', '),
+                  );
+                });
+                TossDesignSystem.hapticLight();
+                onComplete(_selectedInterests.toList());
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                      : TossDesignSystem.gray100,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
+                    width: 1.5,
+                  ),
+                ),
+                child: Text(
+                  interest,
+                  style: TypographyUnified.bodySmall.copyWith(
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: isSelected ? TossDesignSystem.tossBlue : null,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSelfEvaluationInput(Function(dynamic) onComplete) {
+    return Column(
+      children: [
+        TextField(
+          controller: _strengthsController,
+          decoration: InputDecoration(
+            labelText: '강점',
+            hintText: '예: 책임감, 빠른 실행력, 창의적 사고...',
+            filled: true,
+            fillColor: TossDesignSystem.gray100,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          maxLines: 2,
+          onChanged: (value) {
+            _updateAccordionSection(
+              'selfEvaluation',
+              value.isNotEmpty || _weaknessesController.text.isNotEmpty,
+              value.isNotEmpty ? '강점: $value' : null,
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _weaknessesController,
+          decoration: InputDecoration(
+            labelText: '약점',
+            hintText: '예: 우유부단함, 쉽게 포기함, 조급함...',
+            filled: true,
+            fillColor: TossDesignSystem.gray100,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          maxLines: 2,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWorkStyleInput(Function(dynamic) onComplete) {
+    return _buildPreferenceOptions(
+      options: WorkStyleOptions.options,
+      selectedValue: _workStyle,
+      onSelect: (value) {
+        setState(() {
+          _workStyle = value;
+          _updateAccordionSection('workStyle', value, value);
+        });
+        onComplete(value);
+      },
+    );
+  }
+
+  Widget _buildEnergySourceInput(Function(dynamic) onComplete) {
+    return _buildPreferenceOptions(
+      options: EnergySourceOptions.options,
+      selectedValue: _energySource,
+      onSelect: (value) {
+        setState(() {
+          _energySource = value;
+          _updateAccordionSection('energySource', value, value);
+        });
+        onComplete(value);
+      },
+    );
+  }
+
+  Widget _buildProblemSolvingInput(Function(dynamic) onComplete) {
+    return _buildPreferenceOptions(
+      options: ProblemSolvingOptions.options,
+      selectedValue: _problemSolving,
+      onSelect: (value) {
+        setState(() {
+          _problemSolving = value;
+          _updateAccordionSection('problemSolving', value, value);
+        });
+        onComplete(value);
+      },
+    );
+  }
+
+  Widget _buildPreferredRoleInput(Function(dynamic) onComplete) {
+    return _buildPreferenceOptions(
+      options: PreferredRoleOptions.options,
+      selectedValue: _preferredRole,
+      onSelect: (value) {
+        setState(() {
+          _preferredRole = value;
+          _updateAccordionSection('preferredRole', value, value);
+        });
+        onComplete(value);
+      },
+    );
+  }
+
+  Widget _buildPreferenceOptions({
     required List<String> options,
     required String? selectedValue,
     required Function(String) onSelect,
   }) {
-    return TossCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: TypographyUnified.buttonMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+    return Column(
+      children: options.map((option) {
+        final isSelected = selectedValue == option;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: InkWell(
+            onTap: () {
+              onSelect(option);
+              TossDesignSystem.hapticLight();
+            },
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                    : TossDesignSystem.gray100,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
+                  width: 2,
                 ),
               ),
-              SizedBox(width: 4),
-              Text(
-                '*',
-                style: TypographyUnified.buttonMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: TossDesignSystem.warningOrange,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
-          Text(
-            question,
-            style: TypographyUnified.bodySmall.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Column(
-            children: options.map((option) {
-              final isSelected = selectedValue == option;
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: InkWell(
-                  onTap: () {
-                    onSelect(option);
-                    TossDesignSystem.hapticLight();
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? TossDesignSystem.tossBlue.withOpacity(0.1)
-                          : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
-                        width: 2,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      option,
+                      style: TypographyUnified.buttonMedium.copyWith(
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        color: isSelected ? TossDesignSystem.tossBlue : null,
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            option,
-                            style: TypographyUnified.buttonMedium.copyWith(
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                              color: isSelected
-                                  ? TossDesignSystem.tossBlue
-                                  : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
-                            ),
-                          ),
-                        ),
-                        if (isSelected)
-                          Icon(
-                            Icons.check_circle,
-                            color: TossDesignSystem.tossBlue,
-                            size: 24,
-                          ),
-                      ],
-                    ),
                   ),
-                ),
-              );
-            }).toList(),
+                  if (isSelected)
+                    Icon(
+                      Icons.check_circle,
+                      color: TossDesignSystem.tossBlue,
+                      size: 24,
+                    ),
+                ],
+              ),
+            ),
           ),
-        ],
-      ),
+        );
+      }).toList(),
     );
   }
 }

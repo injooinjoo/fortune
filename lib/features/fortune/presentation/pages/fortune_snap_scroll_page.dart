@@ -1,32 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../shared/components/fortune_snap_scroll.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/constants/fortune_card_images.dart';
-import '../../../../domain/entities/fortune.dart';
-import 'base_fortune_page.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 /// Fortune page that displays multiple fortune results with snap scrolling
 /// Each fortune card snaps to the top of the viewport when scrolling
-class FortuneSnapScrollPage extends BaseFortunePage {
+class FortuneSnapScrollPage extends ConsumerStatefulWidget {
+  final String title;
+  final String description;
   final List<String> fortuneTypes;
-  
+
   const FortuneSnapScrollPage({
     super.key,
-    required super.title,
-    required super.description,
+    required this.title,
+    required this.description,
     required this.fortuneTypes,
-  }) : super(
-    fortuneType: 'multi',
-    requiresUserInfo: true
-  );
+  });
 
   @override
   ConsumerState<FortuneSnapScrollPage> createState() => _FortuneSnapScrollPageState();
 }
 
-class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScrollPage> {
+class _FortuneSnapScrollPageState extends ConsumerState<FortuneSnapScrollPage> {
   final List<FortuneData> _fortunes = [];
   bool _isLoadingAll = false;
 
@@ -37,15 +35,67 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
   }
 
   @override
-  Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    // This page doesn't generate a single fortune, it loads multiple fortunes
-    // Return a dummy fortune as this method is required by the base class
-    return Fortune(
-      id: 'multi',
-      type: 'multi',
-      userId: '',
-      content: '',
-      createdAt: DateTime.now(),
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark
+          ? TossDesignSystem.backgroundDark
+          : TossDesignSystem.backgroundLight,
+      appBar: AppBar(
+        backgroundColor: isDark
+            ? TossDesignSystem.backgroundDark
+            : TossDesignSystem.backgroundLight,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: isDark
+                ? TossDesignSystem.textPrimaryDark
+                : TossDesignSystem.textPrimaryLight,
+          ),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+            color: isDark
+                ? TossDesignSystem.textPrimaryDark
+                : TossDesignSystem.textPrimaryLight,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: _buildContent(context),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    if (_isLoadingAll) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    // Create snap cards from fortunes
+    final snapCards = _fortunes.map((fortune) {
+      return FortuneSnapCard(
+        imagePath: FortuneCardImages.getImagePath(fortune.type),
+        title: fortune.title,
+        description: widget.title,
+        content: _buildFortuneContent(context, fortune),
+        imageHeight: 400,
+      );
+    }).toList();
+
+    return FortuneSnapScrollView(
+      cards: snapCards,
+      imageHeight: 400,
+      snapDistance: 100,
+      velocityThreshold: 150,
     );
   }
 
@@ -84,31 +134,6 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
     }
   }
 
-  Widget buildContent(BuildContext context) {
-    if (_isLoadingAll) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
-    // Create snap cards from fortunes
-    final snapCards = _fortunes.map((fortune) {
-      return FortuneSnapCard(
-        imagePath: FortuneCardImages.getImagePath(fortune.type),
-        title: fortune.title,
-        description: widget.title,
-        content: _buildFortuneContent(context, fortune),
-        imageHeight: 400,
-      );
-    }).toList();
-
-    return FortuneSnapScrollView(
-      cards: snapCards,
-      imageHeight: 400,
-      snapDistance: 100,
-      velocityThreshold: 150,
-    );
-  }
 
   Widget _buildFortuneContent(BuildContext context, FortuneData fortune) {
     final theme = Theme.of(context);
@@ -393,18 +418,9 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
     return '조심이 필요한 날입니다';
   }
 
-  @override
-  Widget buildInputForm() {
-    // No input form needed for snap scroll page
-    return const SizedBox.shrink();
-  }
-
-  @override
-  Widget buildFortuneResult() {
-    // Not used - we override buildContent instead
-    return const SizedBox.shrink();
-  }
 }
+
+
 class FortuneData {
   final String type;
   final String title;

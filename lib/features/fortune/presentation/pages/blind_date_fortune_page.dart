@@ -6,9 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'base_fortune_page.dart';
-import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -23,20 +21,18 @@ import '../../../../core/models/fortune_result.dart';
 import 'dart:convert';
 import '../../../../core/theme/typography_unified.dart';
 
-class BlindDateFortunePage extends BaseFortunePage {
-  const BlindDateFortunePage({super.key})
-      : super(
-          title: '소개팅 운세',
-          description: '성공적인 만남을 위한 운세',
-          fortuneType: 'blind-date',
-          requiresUserInfo: true
-        );
+class BlindDateFortunePage extends ConsumerStatefulWidget {
+  const BlindDateFortunePage({super.key});
 
   @override
   ConsumerState<BlindDateFortunePage> createState() => _BlindDateFortunePageState();
 }
 
-class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePage> {
+class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
+  // Loading and error state
+  bool _isLoading = false;
+  String? _errorMessage;
+  FortuneResult? _fortuneResult;
   // Meeting Info
   DateTime? _meetingDate;
   String? _meetingTime;
@@ -144,13 +140,19 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     debugPrint('🎯 [BlindDateFortunePage] Manual tab system initialized with 3 tabs: 기본 정보, 사진 분석, 대화 분석');
 
     // Pre-fill user data with profile if available
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (userProfile != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final userProfileAsync = ref.read(userProfileProvider);
+      final userProfile = userProfileAsync.maybeWhen(
+        data: (profile) => profile,
+        orElse: () => null,
+      );
+
+      if (userProfile != null && mounted) {
         setState(() {
-          _nameController.text = userProfile!.name ?? '';
-          _birthDate = userProfile!.birthDate;
-          _gender = userProfile!.gender;
-          _mbti = userProfile!.mbtiType;
+          _nameController.text = userProfile.name ?? '';
+          _birthDate = userProfile.birthDate;
+          _gender = userProfile.gender;
+          _mbti = userProfile.mbtiType;
         });
       }
     });
@@ -167,10 +169,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: widget.backgroundColor ?? (isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight),
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: StandardFortuneAppBar(
-        title: widget.title,
-        onBackPressed: fortune != null
+        title: '소개팅 운세',
+        onBackPressed: _fortuneResult != null
             ? () {
                 GoRouter.of(context).go('/fortune');
               }
@@ -179,16 +181,16 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
       body: SafeArea(
         child: Stack(
           children: [
-            isLoading
+            _isLoading
                 ? FortuneResultSkeleton(
                     isDark: Theme.of(context).brightness == Brightness.dark,
                   )
-                : error != null
+                : _errorMessage != null
                     ? _buildErrorState()
-                    : fortune != null
+                    : _fortuneResult != null
                         ? buildFortuneResult()
                         : buildInputForm(),
-            if (fortune == null && !isLoading && error == null)
+            if (_fortuneResult == null && !_isLoading && _errorMessage == null)
               TossFloatingProgressButtonPositioned(
                 text: '운세 보기',
                 isEnabled: true,
@@ -197,10 +199,10 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
                 onPressed: () async {
                   await AdService.instance.showInterstitialAdWithCallback(
                     onAdCompleted: () async {
-                      await generateFortuneAction();
+                      await _generateFortune();
                     },
                     onAdFailed: () async {
-                      await generateFortuneAction();
+                      await _generateFortune();
                     },
                   );
                 },
@@ -241,14 +243,14 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             ),
             const SizedBox(height: 8),
             Text(
-              error ?? '알 수 없는 오류',
+              _errorMessage ?? '알 수 없는 오류',
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
             TossButton(
               text: '다시 시도',
-              onPressed: generateFortuneAction,
+              onPressed: _generateFortune,
               style: TossButtonStyle.primary,
               size: TossButtonSize.medium,
             ),
@@ -258,9 +260,28 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     );
   }
 
-  @override
-  Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+  Future<void> _generateFortune() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Get user info
+      final userInfo = await getUserInfo();
+      if (userInfo == null) {
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      // Get fortune params
+      final params = await getFortuneParams();
+      if (params == null) {
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
     // Base64 인코딩된 사진 데이터 준비
     List<String>? myEncodedPhotos;
@@ -312,8 +333,18 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
       inputConditions: inputConditions,
     );
 
-    return _convertToFortune(fortuneResult);
+    setState(() {
+      _fortuneResult = fortuneResult;
+      _isLoading = false;
+    });
+  } catch (e, stackTrace) {
+    Logger.error('[BlindDateFortunePage] 운세 생성 실패', e, stackTrace);
+    setState(() {
+      _errorMessage = '운세를 생성하는 중 오류가 발생했습니다. 다시 시도해주세요.';
+      _isLoading = false;
+    });
   }
+}
 
   Future<Map<String, dynamic>?> getUserInfo() async {
     if (_nameController.text.isEmpty || _birthDate == null || _gender == null) {
@@ -458,7 +489,6 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     );
   }
 
-  @override
   Future<Map<String, dynamic>?> getFortuneParams() async {
     final userInfo = await getUserInfo();
     if (userInfo == null) return null;
@@ -468,11 +498,13 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
       await _analyzePhotos();
     }
 
-    if (_meetingDate == null || _meetingTime == null || 
+    if (_meetingDate == null || _meetingTime == null ||
         _meetingType == null || _introducer == null ||
         _importantQualities.isEmpty || _agePreference == null ||
         _idealFirstDate == null || _confidence == null) {
-      Toast.warning(context, '모든 필수 정보를 입력해주세요.');
+      if (mounted) {
+        Toast.warning(context, '모든 필수 정보를 입력해주세요.');
+      }
       return null;
     }
 
@@ -516,13 +548,16 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
       );
     } catch (e) {
       Logger.error('Photo analysis failed', e);
-      Toast.error(context, '사진 분석에 실패했습니다');
+      if (mounted) {
+        Toast.error(context, '사진 분석에 실패했습니다');
+      }
     } finally {
-      setState(() => _isAnalyzingPhotos = false);
+      if (mounted) {
+        setState(() => _isAnalyzingPhotos = false);
+      }
     }
   }
 
-  @override
   Widget buildInputForm() {
     final theme = Theme.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -1058,20 +1093,90 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     );
   }
 
-  @override
   Widget buildFortuneResult() {
-    return Column(
-      children: [
-        super.buildFortuneResult(),
-        if (_photoAnalysis != null) _buildPhotoAnalysisResult(),
-        _buildSuccessPrediction(),
-        _buildFirstImpressionGuide(),
-        _buildConversationTopics(),
-        _buildOutfitRecommendation(),
-        _buildDateLocationAdvice(),
-        _buildDosDonts(),
-      ],
+    if (_fortuneResult == null) {
+      return const SizedBox.shrink();
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          _buildMainFortuneContent(),
+          const SizedBox(height: 16),
+          if (_photoAnalysis != null) _buildPhotoAnalysisResult(),
+          _buildSuccessPrediction(),
+          _buildFirstImpressionGuide(),
+          _buildConversationTopics(),
+          _buildOutfitRecommendation(),
+          _buildDateLocationAdvice(),
+          _buildDosDonts(),
+        ],
+      ),
     );
+  }
+
+  Widget _buildMainFortuneContent() {
+    final theme = Theme.of(context);
+    final fortuneData = _fortuneResult!.data;
+    final content = fortuneData['content'] as String? ?? '';
+    final score = _fortuneResult!.score;
+
+    return GlassCard(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '소개팅 운세 결과',
+            style: theme.textTheme.headlineMedium?.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossDesignSystem.textPrimaryLight,
+            ),
+          ),
+          if (score != null) ...[
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '$score',
+                  style: theme.textTheme.displayLarge?.copyWith(
+                    color: _getScoreColor(score),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '/100',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TossDesignSystem.textSecondaryDark
+                        : TossDesignSystem.textSecondaryLight,
+                  ),
+                ),
+              ],
+            ),
+          ],
+          const SizedBox(height: 16),
+          Text(
+            content,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossDesignSystem.textPrimaryLight,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getScoreColor(int score) {
+    if (score >= 80) return TossDesignSystem.successGreen;
+    if (score >= 60) return TossDesignSystem.tossBlue;
+    if (score >= 40) return TossDesignSystem.warningOrange;
+    return TossDesignSystem.errorRed;
   }
 
   /// 사진 분석 섹션 빌드
@@ -2346,20 +2451,6 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           ),
         );
       }).toList(),
-    );
-  }
-
-  /// FortuneResult를 Fortune 엔티티로 변환
-  Fortune _convertToFortune(FortuneResult fortuneResult) {
-    return Fortune(
-      id: fortuneResult.id ?? '',
-      userId: ref.read(userProvider).value?.id ?? '',
-      type: fortuneResult.type,
-      content: fortuneResult.data['content'] as String? ?? '',
-      createdAt: fortuneResult.createdAt ?? DateTime.now(),
-      overallScore: fortuneResult.score,
-      summary: fortuneResult.summary['message'] as String?,
-      metadata: fortuneResult.data,
     );
   }
 }

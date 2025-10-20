@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../shared/components/toss_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../../shared/components/floating_bottom_button.dart';

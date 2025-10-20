@@ -33,9 +33,32 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
     if (inputData == null) return;
 
     final birthDate = inputData!['birthDate'] as DateTime?;
-    final birthTime = inputData!['birthTime'] as TimeOfDay?;
+    final birthTimeString = inputData!['birthTime'] as String?;
     final gender = inputData!['gender'] as String?;
-    final interests = inputData!['interests'] as List<String>?;
+
+    // List<dynamic>을 List<String>으로 안전하게 변환
+    final interestsRaw = inputData!['interests'];
+    final interests = interestsRaw != null
+        ? (interestsRaw as List).cast<String>()
+        : <String>[];
+
+    // String을 TimeOfDay로 파싱
+    TimeOfDay? birthTime;
+    if (birthTimeString != null && birthTimeString.contains(':')) {
+      try {
+        final parts = birthTimeString.split(':');
+        if (parts.length == 2) {
+          final hour = int.parse(parts[0]);
+          final minute = int.parse(parts[1]);
+          if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
+            birthTime = TimeOfDay(hour: hour, minute: minute);
+          }
+        }
+      } catch (e) {
+        // 파싱 실패 시 null
+        birthTime = null;
+      }
+    }
 
     // 오행 계산 (간단한 버전)
     final element = _calculateElement(birthDate);
@@ -215,9 +238,29 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
-      appBar: StandardFortuneAppBar(
-        title: '오늘의 행운 아이템',
-        onBackPressed: () => context.pop(),
+      appBar: AppBar(
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        automaticallyImplyLeading: false, // 기본 뒤로가기 버튼 숨김
+        title: Text(
+          '오늘의 행운 아이템',
+          style: TextStyle(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.close,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            ),
+            onPressed: () => context.go('/fortune'), // 운세 페이지로 이동
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),

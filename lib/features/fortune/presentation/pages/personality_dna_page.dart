@@ -2,35 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'base_fortune_page.dart';
-import '../../../../domain/entities/fortune.dart';
 import '../../../../core/models/personality_dna_model.dart';
+import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/conditions/personality_dna_fortune_conditions.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
+import '../../../../shared/glassmorphism/glass_container.dart';
 
-class PersonalityDNAPage extends BaseFortunePage {
+class PersonalityDNAPage extends ConsumerStatefulWidget {
+  final Map<String, dynamic>? initialParams;
+
   const PersonalityDNAPage({
     super.key,
-    super.initialParams,
-  }) : super(
-          title: '성격 DNA',
-          description: 'MBTI, 혈액형, 별자리, 띠를 조합한 특별한 성격 분석',
-          fortuneType: 'personality-dna',
-          requiresUserInfo: false,
-        );
+    this.initialParams,
+  });
 
   @override
   ConsumerState<PersonalityDNAPage> createState() => _PersonalityDNAPageState();
 }
 
-class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> {
+class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
   // 선택된 값들
   String? _selectedMbti;
   String? _selectedBloodType;
@@ -103,231 +99,54 @@ class _PersonalityDNAPageState extends BaseFortunePageState<PersonalityDNAPage> 
   }
 
   @override
-  Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final user = ref.read(userProvider).value;
-    if (user == null) {
-      throw Exception('사용자 정보를 찾을 수 없습니다.');
-    }
-
-    final userProfile = await ref.read(userProfileProvider.future);
-    final userName = userProfile?.name ?? 'Unknown';
-
-    // UnifiedFortuneService 사용
-    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
-
-    final inputConditions = {
-      'userId': user.id,
-      'name': userName,
-      'mbti': _selectedMbti,
-      'bloodType': _selectedBloodType,
-      'zodiac': _selectedZodiac,
-      'zodiacAnimal': _selectedAnimal,
-    };
-
-    // Optimization conditions 생성
-    final conditions = PersonalityDnaFortuneConditions(
-      mbti: _selectedMbti,
-      bloodType: _selectedBloodType,
-      zodiac: _selectedZodiac,
-      animal: _selectedAnimal,
-      date: DateTime.now(),
-    );
-
-    final fortuneResult = await fortuneService.getFortune(
+  Widget build(BuildContext context) {
+    return UnifiedFortuneBaseWidget(
       fortuneType: 'personality-dna',
+      title: '성격 DNA',
+      description: 'MBTI, 혈액형, 별자리, 띠를 조합한 특별한 성격 분석',
       dataSource: FortuneDataSource.api,
-      inputConditions: inputConditions,
-      conditions: conditions,
-    );
-
-    // FortuneResult의 data 필드에서 PersonalityDNA 정보 추출
-    final data = fortuneResult.data;
-
-    final dnaCode = data['dnaCode'] as String? ?? PersonalityDNA.generateDNACode(
-      mbti: _selectedMbti!,
-      bloodType: _selectedBloodType!,
-      zodiac: _selectedZodiac!,
-      zodiacAnimal: _selectedAnimal!,
-    );
-
-    // Edge Function 응답 구조 확인 - 두 가지 버전 지원
-    final bool isNewFormat = data.containsKey('loveStyle');
-
-    Map<String, dynamic>? loveStyleMap;
-    Map<String, dynamic>? workStyleMap;
-    Map<String, dynamic>? dailyMatchingMap;
-    Map<String, dynamic>? compatibilityMap;
-    Map<String, dynamic> funStatsMap = {};
-
-    if (isNewFormat) {
-      // 새로운 형식 (loveStyle, workStyle 등)
-      loveStyleMap = data['loveStyle'] as Map<String, dynamic>?;
-      workStyleMap = data['workStyle'] as Map<String, dynamic>?;
-      dailyMatchingMap = data['dailyMatching'] as Map<String, dynamic>?;
-      compatibilityMap = data['compatibility'] as Map<String, dynamic>?;
-      funStatsMap = data['funStats'] as Map<String, dynamic>? ?? {};
-    } else {
-      // 구 형식 (title이 "undefined DNA"로 나오는 경우) - 기본값 사용
-      print('⚠️ [WARNING] Old format detected, using fallback data');
-    }
-
-    // 모델 객체로 변환
-    LoveStyle? loveStyle;
-    if (loveStyleMap != null) {
-      loveStyle = LoveStyle.fromJson(loveStyleMap);
-    }
-
-    WorkStyle? workStyle;
-    if (workStyleMap != null) {
-      workStyle = WorkStyle.fromJson(workStyleMap);
-    }
-
-    DailyMatching? dailyMatching;
-    if (dailyMatchingMap != null) {
-      dailyMatching = DailyMatching.fromJson(dailyMatchingMap);
-    }
-
-    Compatibility? compatibility;
-    if (compatibilityMap != null) {
-      compatibility = Compatibility.fromJson(compatibilityMap);
-    }
-
-    Celebrity? celebrity;
-    if (funStatsMap['celebrity_match'] != null) {
-      celebrity = Celebrity(
-        name: funStatsMap['celebrity_match'] as String,
-        reason: '비슷한 성격 유형',
-      );
-    }
-
-    // 상세 설명 생성
-    final detailedDescription = '''
-${data['todayHighlight'] ?? '당신의 성격 DNA를 분석했습니다.'}
-
-💕 연애 스타일: ${loveStyle?.title ?? ''}
-${loveStyle?.description ?? ''}
-
-👔 직장 생활: ${workStyle?.title ?? ''}
-${workStyle?.asBoss ?? ''}
-
-🎯 오늘의 조언
-${data['todayAdvice'] ?? '평소와 다른 작은 도전을 해보세요.'}
-
-✨ 재미있는 통계
-• 희귀도: ${funStatsMap['rarity_rank'] ?? ''}
-• 유명인 매칭: ${funStatsMap['celebrity_match'] ?? ''}
-• 한국 내 비율: ${funStatsMap['percentage_in_korea'] ?? ''}%
-    '''.trim();
-
-    // title 처리 - "undefined DNA" 방지
-    String finalTitle = data['title'] as String? ?? '성격 DNA';
-    if (finalTitle.contains('undefined')) {
-      finalTitle = '${_selectedMbti} 성격 DNA';
-      print('⚠️ [WARNING] Fixed undefined title to: $finalTitle');
-    }
-
-    _currentDNA = PersonalityDNA(
-      mbti: _selectedMbti!,
-      bloodType: _selectedBloodType!,
-      zodiac: _selectedZodiac!,
-      zodiacAnimal: _selectedAnimal!,
-      dnaCode: dnaCode,
-      title: finalTitle,
-      emoji: data['emoji'] as String? ?? '🧬',
-      description: detailedDescription,
-      traits: [], // Edge Function에서 traits 대신 loveStyle, workStyle 사용
-      gradientColors: [], // 로컬에서 생성
-      scores: {
-        'socialRanking': (data['socialRanking'] as num?)?.toInt() ?? 50,
+      inputBuilder: (context, onComplete) => _buildInputForm(onComplete),
+      conditionsBuilder: () async {
+        return PersonalityDnaFortuneConditions(
+          mbti: _selectedMbti,
+          bloodType: _selectedBloodType,
+          zodiac: _selectedZodiac,
+          animal: _selectedAnimal,
+          date: DateTime.now(),
+        );
       },
-      todaysFortune: data['todayAdvice'] as String? ?? '평소와 다른 작은 도전을 해보세요.',
-      // Edge Function 데이터를 모델 객체로 전달
-      todayHighlight: data['todayHighlight'] as String?,
-      loveStyle: loveStyle,
-      workStyle: workStyle,
-      dailyMatching: dailyMatching,
-      compatibility: compatibility,
-      celebrity: celebrity,
-      funnyFact: '${funStatsMap['rarity_rank']} • 한국 내 ${funStatsMap['percentage_in_korea']}%',
-      popularityRank: (data['socialRanking'] as num?)?.toInt() ?? 50,
-    );
-
-    // Fortune 객체로 변환
-    return Fortune(
-      id: 'personality_dna_${DateTime.now().millisecondsSinceEpoch}',
-      userId: user.id,
-      type: 'personality-dna',
-      content: detailedDescription,
-      createdAt: DateTime.now(),
-      category: 'personality-dna',
-      overallScore: _currentDNA!.popularityRank ?? 50,
-      description: '${_currentDNA!.emoji} ${_currentDNA!.title}\n\n$detailedDescription',
-      metadata: {
-        'mbti': _selectedMbti,
-        'blood_type': _selectedBloodType,
-        'zodiac': _selectedZodiac,
-        'animal': _selectedAnimal,
-        'dna_code': dnaCode,
-        'love_style': loveStyle?.toJson(),
-        'work_style': workStyle?.toJson(),
-        'daily_matching': dailyMatching?.toJson(),
-        'compatibility': compatibility?.toJson(),
-        'fun_stats': funStatsMap,
-        'rarity_level': data['rarityLevel'],
-        'social_ranking': data['socialRanking'],
-      },
+      resultBuilder: (context, result) => _buildResultView(result),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // If fortune exists, show result
-    if (fortune != null || isLoading || error != null) {
-      return super.build(context);
-    }
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // Show selection UI with Accordion
-    return Scaffold(
-      backgroundColor: widget.backgroundColor ?? (isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white),
-      appBar: StandardFortuneAppBar(
-        title: widget.title,
-      ),
-      body: SafeArea(
-        child: Stack(
+  Widget _buildInputForm(VoidCallback onComplete) {
+    return Stack(
+      children: [
+        Column(
           children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-                  child: _buildTitleSection(),
-                ),
-                Expanded(
-                  child: AccordionInputForm(
-                    sections: _accordionSections,
-                    onAllCompleted: null, // floating button으로 운세 생성
-                    completionButtonText: '🧬 나만의 성격 DNA 발견하기',
-                  ),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+              child: _buildTitleSection(),
             ),
-            if (_canGenerate())
-              TossFloatingProgressButtonPositioned(
-                text: '🧬 나만의 성격 DNA 발견하기',
-                onPressed: canGenerateFortune ? () => _handleGenerateFortune() : null,
-                isEnabled: canGenerateFortune,
-                showProgress: false,
-                isVisible: canGenerateFortune,
+            Expanded(
+              child: AccordionInputForm(
+                sections: _accordionSections,
+                onAllCompleted: null,
+                completionButtonText: '🧬 나만의 성격 DNA 발견하기',
               ),
+            ),
           ],
         ),
-      ),
+        if (_canGenerate())
+          TossFloatingProgressButtonPositioned(
+            text: '🧬 나만의 성격 DNA 발견하기',
+            onPressed: _canGenerate() ? onComplete : null,
+            isEnabled: _canGenerate(),
+            showProgress: false,
+            isVisible: _canGenerate(),
+          ),
+      ],
     );
-  }
-
-  Future<void> _handleGenerateFortune() async {
-    await generateFortuneAction();
   }
 
   Widget _buildTitleSection() {
@@ -466,12 +285,42 @@ ${data['todayAdvice'] ?? '평소와 다른 작은 도전을 해보세요.'}
 
   bool get canGenerateFortune => _canGenerate();
 
-  @override
+  Widget _buildResultView(FortuneResult result) {
+    // FortuneResult에서 PersonalityDNA 정보 추출
+    final data = result.data;
+    final dnaCode = data['dnaCode'] as String? ?? PersonalityDNA.generateDNACode(
+      mbti: _selectedMbti!,
+      bloodType: _selectedBloodType!,
+      zodiac: _selectedZodiac!,
+      zodiacAnimal: _selectedAnimal!,
+    );
+
+    setState(() {
+      _currentDNA = PersonalityDNA(
+        mbti: _selectedMbti!,
+        bloodType: _selectedBloodType!,
+        zodiac: _selectedZodiac!,
+        zodiacAnimal: _selectedAnimal!,
+        dnaCode: dnaCode,
+        title: data['title'] as String? ?? '성격 DNA',
+        emoji: data['emoji'] as String? ?? '🧬',
+        description: data['description'] as String? ?? '',
+        traits: [],
+        gradientColors: [],
+        scores: {'socialRanking': (data['socialRanking'] as num?)?.toInt() ?? 50},
+        todaysFortune: data['todayAdvice'] as String? ?? '',
+        todayHighlight: data['todayHighlight'] as String?,
+        popularityRank: (data['socialRanking'] as num?)?.toInt() ?? 50,
+      );
+    });
+
+    return buildFortuneResult();
+  }
+
   Widget buildFortuneResult() {
     if (_currentDNA == null) return const SizedBox.shrink();
 
     return SingleChildScrollView(
-      controller: scrollController,
       child: Column(
         children: [
           _buildDNAHeader(),

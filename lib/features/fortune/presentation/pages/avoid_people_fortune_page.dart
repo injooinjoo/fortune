@@ -1,48 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../core/components/toss_card.dart';
-import 'base_fortune_page.dart';
-import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../presentation/providers/providers.dart';
-import '../../../../core/utils/logger.dart';
+import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../../../../core/models/fortune_result.dart';
 import '../../domain/models/conditions/avoid_people_fortune_conditions.dart';
+import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/components/toss_card.dart';
+import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/glassmorphism/glass_container.dart';
 
-class AvoidPeopleFortunePage extends BaseFortunePage {
-  const AvoidPeopleFortunePage({super.key})
-      : super(
-          title: '피해야 할 사람',
-          description: '오늘 주의해야 할 사람 유형을 분석해드립니다',
-          fortuneType: 'avoid-people',
-          requiresUserInfo: false,
-        );
+class AvoidPeopleFortunePage extends ConsumerStatefulWidget {
+  const AvoidPeopleFortunePage({super.key});
 
   @override
   ConsumerState<AvoidPeopleFortunePage> createState() => _AvoidPeopleFortunePageState();
 }
 
-class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortunePage> {
+class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
 
-  // Step 1: 상황 및 환경
+  // Step 1
   String _environment = '';
   String _importantSchedule = '';
 
-  // Step 2: 감정 상태
+  // Step 2
   int _moodLevel = 3;
   int _stressLevel = 3;
   int _socialFatigue = 3;
 
-  // Step 3: 주의할 상황
+  // Step 3
   bool _hasImportantDecision = false;
   bool _hasSensitiveConversation = false;
   bool _hasTeamProject = false;
@@ -53,191 +39,124 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
     super.dispose();
   }
 
-  void _nextStep() {
+  void _nextStep(VoidCallback onComplete) {
     if (_currentStep < 2) {
-      setState(() {
-        _currentStep++;
-      });
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      setState(() => _currentStep++);
+      _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     } else {
-      // 마지막 단계에서 운세 생성
-      _generateFortune();
+      onComplete();
     }
   }
 
-  Future<void> _generateFortune() async {
-    final params = {
-      'environment': _environment,
-      'importantSchedule': _importantSchedule,
-      'moodLevel': _moodLevel,
-      'stressLevel': _stressLevel,
-      'socialFatigue': _socialFatigue,
-      'hasImportantDecision': _hasImportantDecision,
-      'hasSensitiveConversation': _hasSensitiveConversation,
-      'hasTeamProject': _hasTeamProject,
-    };
-
-    // BaseFortunePage의 generateFortuneAction 호출
-    await generateFortuneAction(params: params);
-  }
-
-  @override
-  Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final user = ref.read(userProvider).value;
-    if (user == null) {
-      throw Exception('로그인이 필요합니다');
-    }
-
-    Logger.info('🔮 [AvoidPeopleFortune] UnifiedFortuneService 호출', {'params': params});
-
-    try {
-      // UnifiedFortuneService 사용
-      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
-
-      // 🔮 최적화 시스템: 조건 객체 생성
-      final conditions = AvoidPeopleFortuneConditions(
-        environment: params['environment'] ?? '',
-        importantSchedule: params['importantSchedule'] ?? '',
-        moodLevel: params['moodLevel'] ?? 3,
-        stressLevel: params['stressLevel'] ?? 3,
-        socialFatigue: params['socialFatigue'] ?? 3,
-        hasImportantDecision: params['hasImportantDecision'] ?? false,
-        hasSensitiveConversation: params['hasSensitiveConversation'] ?? false,
-        hasTeamProject: params['hasTeamProject'] ?? false,
-      );
-
-      // input_conditions 정규화
-      final inputConditions = {
-        'environment': params['environment'],
-        'important_schedule': params['importantSchedule'],
-        'mood_level': params['moodLevel'],
-        'stress_level': params['stressLevel'],
-        'social_fatigue': params['socialFatigue'],
-        'has_important_decision': params['hasImportantDecision'],
-        'has_sensitive_conversation': params['hasSensitiveConversation'],
-        'has_team_project': params['hasTeamProject'],
-      };
-
-      final fortuneResult = await fortuneService.getFortune(
-        fortuneType: 'avoid_people',
-        dataSource: FortuneDataSource.api,
-        inputConditions: inputConditions,
-        conditions: conditions, // ✅ 최적화 활성화!
-      );
-
-      Logger.info('✅ [AvoidPeopleFortune] UnifiedFortuneService 완료');
-
-      // FortuneResult → Fortune 엔티티 변환
-      final fortune = _convertToFortune(fortuneResult);
-
-      Logger.info('✅ [AvoidPeopleFortune] API fortune loaded successfully');
-      return fortune;
-
-    } catch (e, stackTrace) {
-      Logger.error('❌ [AvoidPeopleFortune] API failed', e, stackTrace);
-      rethrow;
-    }
+  bool _canProceed(int step) {
+    if (step == 0) return _environment.isNotEmpty && _importantSchedule.isNotEmpty;
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    // 운세 결과가 있으면 BaseFortunePage가 결과 표시
-    if (fortune != null || isLoading || error != null) {
-      return super.build(context);
-    }
+    return UnifiedFortuneBaseWidget(
+      fortuneType: 'avoid-people',
+      title: '피해야 할 사람',
+      description: '오늘 주의해야 할 사람 유형을 분석해드립니다',
+      dataSource: FortuneDataSource.api,
+      inputBuilder: (context, onComplete) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // Input UI 표시
-    return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
-      appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
-        elevation: 0,
-        iconTheme: IconThemeData(
-          color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-        ),
-        title: Text(
-          widget.title,
-          style: TossDesignSystem.heading3.copyWith(
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              // Progress Indicator
-              _buildProgressIndicator(isDark),
-
-              // Page Content
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _buildStep1(isDark),
-                    _buildStep2(isDark),
-                    _buildStep3(isDark),
-                  ],
-                ),
+        return Column(
+          children: [
+            // Progress indicator
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: List.generate(3, (index) {
+                  return Expanded(
+                    child: Container(
+                      height: 4,
+                      margin: EdgeInsets.only(right: index < 2 ? 8 : 0),
+                      decoration: BoxDecoration(
+                        color: index <= _currentStep
+                            ? TossDesignSystem.tossBlue
+                            : TossDesignSystem.gray300,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  );
+                }),
               ),
-            ],
-          ),
+            ),
 
-          // Floating 버튼
-          TossFloatingProgressButtonPositioned(
-            text: _currentStep == 2 ? '분석 시작' : '다음',
-            isEnabled: _currentStep == 0
-                ? (_environment.isNotEmpty && _importantSchedule.isNotEmpty)
-                : true,
-            showProgress: false,
-            isVisible: true,
-            onPressed: _currentStep == 0
-                ? (_environment.isNotEmpty && _importantSchedule.isNotEmpty ? _nextStep : null)
-                : _nextStep,
-          ),
-        ],
-      ),
-    );
-  }
+            // PageView
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _buildStep1(isDark),
+                  _buildStep2(isDark),
+                  _buildStep3(isDark),
+                ],
+              ),
+            ),
 
-  Widget _buildProgressIndicator(bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Column(
-        children: [
-          Row(
-            children: List.generate(3, (index) {
-              return Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(right: index < 2 ? 8 : 0),
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: index <= _currentStep
-                        ? TossDesignSystem.errorRed
-                        : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray200),
-                    borderRadius: BorderRadius.circular(2),
+            // Next/Submit button
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: TossButton.primary(
+                text: _currentStep == 2 ? '분석 시작' : '다음',
+                isEnabled: _canProceed(_currentStep),
+                onPressed: () => _nextStep(onComplete),
+              ),
+            ),
+          ],
+        );
+      },
+
+      conditionsBuilder: () async {
+        return AvoidPeopleFortuneConditions(
+          environment: _environment,
+          importantSchedule: _importantSchedule,
+          moodLevel: _moodLevel,
+          stressLevel: _stressLevel,
+          socialFatigue: _socialFatigue,
+          hasImportantDecision: _hasImportantDecision,
+          hasSensitiveConversation: _hasSensitiveConversation,
+          hasTeamProject: _hasTeamProject,
+        );
+      },
+
+      resultBuilder: (context, result) {
+        final theme = Theme.of(context);
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: GlassCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '피해야 할 사람 분석 결과',
+                  style: theme.textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  result.data['content'] as String? ?? '',
+                  style: theme.textTheme.bodyMedium,
+                ),
+                if (result.score != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    '주의 지수: ${result.score}/100',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: TossDesignSystem.warningOrange,
+                    ),
                   ),
-                ).animate(target: index <= _currentStep ? 1 : 0)
-                  .scaleX(begin: 0, end: 1, duration: 300.ms),
-              );
-            }),
-          ),
-          SizedBox(height: 8),
-          Text(
-            '${_currentStep + 1} / 3',
-            style: TossDesignSystem.caption.copyWith(
-              color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                ],
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -257,84 +176,50 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
                   height: 64,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [TossDesignSystem.errorRed, TossDesignSystem.errorRed.withValues(alpha:0.8)],
+                      colors: [TossDesignSystem.errorRed, TossDesignSystem.errorRed.withValues(alpha: 0.8)],
                     ),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.location_on_rounded,
-                    color: TossDesignSystem.white,
-                    size: 32,
-                  ),
+                  child: const Icon(Icons.location_on_rounded, color: TossDesignSystem.white, size: 32),
                 ),
-                SizedBox(height: 16),
-                Text(
-                  '현재 상황 분석',
-                  style: TossDesignSystem.heading3.copyWith(
-                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '오늘 주로 있을 환경과 일정을 알려주세요',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                const SizedBox(height: 16),
+                Text('현재 상황 분석', style: TossDesignSystem.heading3.copyWith(
+                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                )),
+                const SizedBox(height: 8),
+                Text('오늘 주로 있을 환경과 일정을 알려주세요', style: TossDesignSystem.body2.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                ), textAlign: TextAlign.center),
               ],
             ),
           ),
-
-          SizedBox(height: 32),
-
-          Text(
-            '오늘의 주요 환경',
-            style: TossDesignSystem.body1.copyWith(
-              color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          const SizedBox(height: 32),
+          Text('오늘의 주요 환경', style: TossDesignSystem.body1.copyWith(
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            fontWeight: FontWeight.w600,
+          )),
           const SizedBox(height: 12),
-
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: [
-              '직장', '학교', '모임', '가족', '데이트', '집'
-            ].map((env) => _buildChip(
-              env,
-              _environment == env,
-              () => setState(() => _environment = env),
-              isDark,
-            )).toList(),
+            children: ['직장', '학교', '모임', '가족', '데이트', '집'].map((env) =>
+              _buildChip(env, _environment == env, () => setState(() => _environment = env), isDark),
+            ).toList(),
           ),
-
-          SizedBox(height: 32),
-
-          Text(
-            '중요한 일정',
-            style: TossDesignSystem.body1.copyWith(
-              color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          const SizedBox(height: 32),
+          Text('중요한 일정', style: TossDesignSystem.body1.copyWith(
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            fontWeight: FontWeight.w600,
+          )),
           const SizedBox(height: 12),
-
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: [
-              '면접', '프레젠테이션', '미팅', '시험', '데이트', '가족모임', '없음'
-            ].map((schedule) => _buildChip(
-              schedule,
-              _importantSchedule == schedule,
-              () => setState(() => _importantSchedule = schedule),
-              isDark,
-            )).toList(),
+            children: ['면접', '프레젠테이션', '미팅', '시험', '데이트', '가족모임', '없음'].map((schedule) =>
+              _buildChip(schedule, _importantSchedule == schedule, () => setState(() => _importantSchedule = schedule), isDark),
+            ).toList(),
           ),
-
-          const SizedBox(height: 80), // Floating 버튼 공간
+          const SizedBox(height: 80),
         ],
       ),
     );
@@ -356,66 +241,30 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
                   height: 64,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [TossDesignSystem.warningOrange, TossDesignSystem.warningOrange.withValues(alpha:0.8)],
+                      colors: [TossDesignSystem.warningOrange, TossDesignSystem.warningOrange.withValues(alpha: 0.8)],
                     ),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.mood_rounded,
-                    color: TossDesignSystem.white,
-                    size: 32,
-                  ),
+                  child: const Icon(Icons.mood_rounded, color: TossDesignSystem.white, size: 32),
                 ),
-                SizedBox(height: 16),
-                Text(
-                  '감정 상태 체크',
-                  style: TossDesignSystem.heading3.copyWith(
-                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '현재 당신의 감정 상태를 평가해주세요',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                const SizedBox(height: 16),
+                Text('감정 상태 체크', style: TossDesignSystem.heading3.copyWith(
+                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                )),
+                const SizedBox(height: 8),
+                Text('현재 당신의 감정 상태를 평가해주세요', style: TossDesignSystem.body2.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                ), textAlign: TextAlign.center),
               ],
             ),
           ),
-
           const SizedBox(height: 32),
-
-          _buildSliderSection(
-            '현재 기분',
-            _moodLevel,
-            (value) => setState(() => _moodLevel = value.round()),
-            ['😔', '😐', '😊', '😄', '🤩'],
-            isDark,
-          ),
-
+          _buildSlider('기분 상태', _moodLevel, (v) => setState(() => _moodLevel = v), isDark),
           const SizedBox(height: 24),
-
-          _buildSliderSection(
-            '스트레스 레벨',
-            _stressLevel,
-            (value) => setState(() => _stressLevel = value.round()),
-            ['😌', '🙂', '😰', '😣', '🤯'],
-            isDark,
-          ),
-
+          _buildSlider('스트레스 정도', _stressLevel, (v) => setState(() => _stressLevel = v), isDark),
           const SizedBox(height: 24),
-
-          _buildSliderSection(
-            '대인관계 피로도',
-            _socialFatigue,
-            (value) => setState(() => _socialFatigue = value.round()),
-            ['💪', '👍', '😑', '😩', '🥱'],
-            isDark,
-          ),
-
-          const SizedBox(height: 80), // Floating 버튼 공간
+          _buildSlider('사람 만나기 피로도', _socialFatigue, (v) => setState(() => _socialFatigue = v), isDark),
+          const SizedBox(height: 80),
         ],
       ),
     );
@@ -437,242 +286,94 @@ class _AvoidPeopleFortunePageState extends BaseFortunePageState<AvoidPeopleFortu
                   height: 64,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [TossDesignSystem.purple, TossDesignSystem.purple.withValues(alpha:0.8)],
+                      colors: [TossDesignSystem.tossBlue, TossDesignSystem.tossBlue.withValues(alpha: 0.8)],
                     ),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.warning_amber_rounded,
-                    color: TossDesignSystem.white,
-                    size: 32,
-                  ),
+                  child: const Icon(Icons.warning_rounded, color: TossDesignSystem.white, size: 32),
                 ),
-                SizedBox(height: 16),
-                Text(
-                  '주의할 상황',
-                  style: TossDesignSystem.heading3.copyWith(
-                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '오늘 예정된 중요한 활동을 선택해주세요',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                const SizedBox(height: 16),
+                Text('주의할 상황', style: TossDesignSystem.heading3.copyWith(
+                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                )),
+                const SizedBox(height: 8),
+                Text('오늘 있을 주요 상황을 선택해주세요', style: TossDesignSystem.body2.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                ), textAlign: TextAlign.center),
               ],
             ),
           ),
-
           const SizedBox(height: 32),
-
-          _buildCheckboxItem(
-            '중요한 의사결정이 있다',
-            _hasImportantDecision,
-            (value) => setState(() => _hasImportantDecision = value ?? false),
-            Icons.gavel_rounded,
-            isDark,
-          ),
-
-          const SizedBox(height: 16),
-
-          _buildCheckboxItem(
-            '민감한 대화가 예정되어 있다',
-            _hasSensitiveConversation,
-            (value) => setState(() => _hasSensitiveConversation = value ?? false),
-            Icons.chat_bubble_rounded,
-            isDark,
-          ),
-
-          const SizedBox(height: 16),
-
-          _buildCheckboxItem(
-            '팀 프로젝트나 협업이 있다',
-            _hasTeamProject,
-            (value) => setState(() => _hasTeamProject = value ?? false),
-            Icons.groups_rounded,
-            isDark,
-          ),
-
-          SizedBox(height: 16),
-
-          Text(
-            '분석 결과는 참고용으로만 활용해주세요',
-            style: TossDesignSystem.caption.copyWith(
-              color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-
-          const SizedBox(height: 80), // Floating 버튼 공간
+          _buildCheckbox('중요한 결정을 해야 함', _hasImportantDecision, (v) => setState(() => _hasImportantDecision = v!), isDark),
+          _buildCheckbox('민감한 대화가 예상됨', _hasSensitiveConversation, (v) => setState(() => _hasSensitiveConversation = v!), isDark),
+          _buildCheckbox('팀 프로젝트가 있음', _hasTeamProject, (v) => setState(() => _hasTeamProject = v!), isDark),
+          const SizedBox(height: 80),
         ],
       ),
     );
   }
 
   Widget _buildChip(String label, bool isSelected, VoidCallback onTap, bool isDark) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected
-              ? TossDesignSystem.errorRed.withValues(alpha:0.1)
-              : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: isSelected
-                ? TossDesignSystem.errorRed
-                : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200),
-            width: isSelected ? 1.5 : 1,
-          ),
+          color: isSelected ? TossDesignSystem.tossBlue.withValues(alpha: 0.1) : Colors.transparent,
+          border: Border.all(color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray300),
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(
-          label,
-          style: TossDesignSystem.body2.copyWith(
-            color: isSelected
-                ? TossDesignSystem.errorRed
-                : (isDark ? TossDesignSystem.white : TossDesignSystem.gray900),
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-          ),
+        child: Text(label, style: TextStyle(
+          color: isSelected ? TossDesignSystem.tossBlue : (isDark ? TossDesignSystem.white : TossDesignSystem.gray900),
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+        )),
+      ),
+    );
+  }
+
+  Widget _buildSlider(String label, int value, Function(int) onChanged, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TossDesignSystem.body1.copyWith(
+          color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+          fontWeight: FontWeight.w600,
+        )),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: Slider(
+                value: value.toDouble(),
+                min: 1,
+                max: 5,
+                divisions: 4,
+                label: value.toString(),
+                onChanged: (v) => onChanged(v.round()),
+              ),
+            ),
+            Container(
+              width: 40,
+              alignment: Alignment.center,
+              child: Text(value.toString(), style: TossDesignSystem.heading2.copyWith(
+                color: TossDesignSystem.tossBlue,
+              )),
+            ),
+          ],
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildSliderSection(
-    String title,
-    int value,
-    ValueChanged<double> onChanged,
-    List<String> emojis,
-    bool isDark,
-  ) {
-    return TossCard(
-      style: TossCardStyle.filled,
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: TossDesignSystem.body1.copyWith(
-                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                emojis[value - 1],
-                style: TypographyUnified.displaySmall,
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: TossDesignSystem.errorRed,
-              inactiveTrackColor: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray200,
-              thumbColor: TossDesignSystem.errorRed,
-              overlayColor: TossDesignSystem.errorRed.withValues(alpha:0.1),
-            ),
-            child: Slider(
-              value: value.toDouble(),
-              min: 1,
-              max: 5,
-              divisions: 4,
-              onChanged: onChanged,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '낮음',
-                style: TossDesignSystem.caption.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                ),
-              ),
-              Text(
-                '높음',
-                style: TossDesignSystem.caption.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCheckboxItem(
-    String title,
-    bool value,
-    ValueChanged<bool?> onChanged,
-    IconData icon,
-    bool isDark,
-  ) {
-    return TossCard(
-      style: TossCardStyle.filled,
-      padding: const EdgeInsets.all(16),
-      onTap: () => onChanged(!value),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: value
-                  ? TossDesignSystem.errorRed.withValues(alpha:0.1)
-                  : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              icon,
-              color: value
-                  ? TossDesignSystem.errorRed
-                  : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
-              size: 20,
-            ),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              title,
-              style: TossDesignSystem.body2.copyWith(
-                color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-              ),
-            ),
-          ),
-          Checkbox(
-            value: value,
-            onChanged: onChanged,
-            activeColor: TossDesignSystem.errorRed,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// FortuneResult를 Fortune 엔티티로 변환
-  Fortune _convertToFortune(FortuneResult result) {
-    return Fortune(
-      id: result.id ?? '',
-      userId: ref.read(userProvider).value?.id ?? '',
-      type: result.type,
-      content: result.data['content'] as String? ?? result.summary.toString(),
-      createdAt: DateTime.now(),
-      overallScore: result.score,
-      summary: result.summary['message'] as String?,
-      metadata: result.data,
+  Widget _buildCheckbox(String label, bool value, Function(bool?) onChanged, bool isDark) {
+    return CheckboxListTile(
+      title: Text(label, style: TossDesignSystem.body1.copyWith(
+        color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+      )),
+      value: value,
+      onChanged: onChanged,
+      contentPadding: EdgeInsets.zero,
     );
   }
 }

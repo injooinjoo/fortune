@@ -11,7 +11,6 @@ import 'dart:math' as math;
 import '../../../../services/ad_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/conditions/lucky_exam_fortune_conditions.dart';
 
 class LuckyExamFortunePage extends ConsumerStatefulWidget {

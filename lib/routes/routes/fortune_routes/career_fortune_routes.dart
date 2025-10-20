@@ -16,7 +16,7 @@ import '../../../features/fortune/presentation/pages/lucky_stock_fortune_page.da
 import '../../../features/fortune/presentation/pages/career_change_fortune_page.dart';
 // import '../../../features/fortune/presentation/pages/career_crisis_fortune_page.dart'; // Removed - unused
 import '../../../features/fortune/presentation/pages/career_future_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/freelance_fortune_page.dart';
+// import '../../../features/fortune/presentation/pages/freelance_fortune_page.dart'; // Removed - unused
 import '../../../features/fortune/presentation/pages/startup_career_fortune_page.dart';
 
 final careerFortuneRoutes = [
@@ -110,11 +110,11 @@ final careerFortuneRoutes = [
     name: 'fortune-career-future',
     builder: (context, state) => const CareerFutureFortunePage()),
   
-  // Freelance
-  GoRoute(
-    path: '/freelance',
-    name: 'fortune-freelance',
-    builder: (context, state) => const FreelanceFortunePage()),
+  // Freelance - Removed (page deleted)
+  // GoRoute(
+  //   path: '/freelance',
+  //   name: 'fortune-freelance',
+  //   builder: (context, state) => const FreelanceFortunePage()),
   
   // Startup Career
   GoRoute(

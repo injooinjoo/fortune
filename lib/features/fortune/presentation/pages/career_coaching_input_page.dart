@@ -8,7 +8,6 @@ import '../../domain/models/career_coaching_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
-import '../../../../shared/components/toss_button.dart';
 import '../../../../core/theme/typography_unified.dart';
 
 class CareerCoachingInputPage extends ConsumerStatefulWidget {

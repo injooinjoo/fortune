@@ -7,7 +7,6 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';

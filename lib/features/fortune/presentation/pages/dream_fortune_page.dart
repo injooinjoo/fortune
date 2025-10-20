@@ -1,51 +1,40 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/components/toss_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'base_fortune_page.dart';
 import '../widgets/dream_elements_chart.dart';
 import '../widgets/dream_psychology_chart.dart';
 import '../widgets/dream_timeline_widget.dart';
-import '../widgets/fortune_display.dart';
-import '../../../../domain/entities/fortune.dart';
 import '../../../../services/dream_elements_analysis_service.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../services/speech_recognition_service.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../../../../core/models/fortune_result.dart';
 import '../../domain/models/conditions/dream_fortune_conditions.dart';
 
-class DreamFortunePage extends BaseFortunePage {
-  const DreamFortunePage({super.key})
-      : super(
-          title: '꿈 해몽',
-          description: '어젯밤 꿈은 어떤 의미일까요? AI가 해석해드립니다',
-          fortuneType: 'dream',
-          requiresUserInfo: false);
+class DreamFortunePage extends ConsumerStatefulWidget {
+  const DreamFortunePage({super.key});
 
   @override
   ConsumerState<DreamFortunePage> createState() => _DreamFortunePageState();
 }
 
-class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
+class _DreamFortunePageState extends ConsumerState<DreamFortunePage> {
   final _dreamController = TextEditingController();
   final _speechService = SpeechRecognitionService();
   bool _isRecording = false;
   String _inputType = 'text'; // 'text' or 'voice'
   final _focusNode = FocusNode();
-  
-  // Dream analysis data
+
+  // Dream analysis data stored for result display
   Map<String, List<String>>? _dreamElements;
   Map<String, double>? _elementWeights;
   Map<String, double>? _psychologicalState;
   List<double>? _emotionalFlow;
   List<String>? _dreamScenes;
-  Fortune? _fortune;
 
   // 자주 나오는 꿈 카테고리
   final List<Map<String, dynamic>> _dreamCategories = [
@@ -76,115 +65,87 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
   }
 
   @override
-  Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    final user = ref.read(userProvider).value;
-    if (user == null) {
-      throw Exception('로그인이 필요합니다');
-    }
-
-    final dreamContent = params['dream'] ?? '';
-    if (dreamContent.isEmpty) {
-      throw Exception('꿈 내용을 입력해주세요');
-    }
-
-    // 꿈 요소 분석
-    _dreamElements = DreamElementsAnalysisService.extractDreamElements(dreamContent);
-    _elementWeights = DreamElementsAnalysisService.calculateElementWeights(_dreamElements!);
-    _psychologicalState = DreamElementsAnalysisService.analyzePsychologicalState(_dreamElements!);
-    _emotionalFlow = DreamElementsAnalysisService.analyzeEmotionalFlow(dreamContent);
-
-    // 꿈 장면 추출 (간단한 문장 분리)
-    _dreamScenes = dreamContent.split('.').where((s) => s.trim().isNotEmpty).toList();
-    if (_dreamScenes!.isEmpty) {
-      _dreamScenes = [dreamContent];
-    }
-
-    final fortuneService = UnifiedFortuneService(Supabase.instance.client);
-
-    final conditions = DreamFortuneConditions(
-      dreamContent: dreamContent,
-      dreamDate: DateTime.now(),
-      dreamEmotion: null, // Could extract from emotional flow if needed
-    );
-
-    final inputConditions = {
-      'dream': dreamContent,
-      'inputType': params['inputType'],
-      'date': params['date'],
-    };
-
-    final fortuneResult = await fortuneService.getFortune(
-      fortuneType: widget.fortuneType,
+  Widget build(BuildContext context) {
+    return UnifiedFortuneBaseWidget(
+      fortuneType: 'dream',
+      title: '꿈 해몽',
+      description: '어젯밤 꿈은 어떤 의미일까요? AI가 해석해드립니다',
       dataSource: FortuneDataSource.api,
-      inputConditions: inputConditions,
-      conditions: conditions,
+      inputBuilder: (context, onComplete) => _buildInputForm(onComplete),
+      conditionsBuilder: () async {
+        final dreamContent = _dreamController.text.trim();
+
+        // 꿈 요소 분석 (결과 표시용)
+        setState(() {
+          _dreamElements = DreamElementsAnalysisService.extractDreamElements(dreamContent);
+          _elementWeights = DreamElementsAnalysisService.calculateElementWeights(_dreamElements!);
+          _psychologicalState = DreamElementsAnalysisService.analyzePsychologicalState(_dreamElements!);
+          _emotionalFlow = DreamElementsAnalysisService.analyzeEmotionalFlow(dreamContent);
+          _dreamScenes = dreamContent.split('.').where((s) => s.trim().isNotEmpty).toList();
+          if (_dreamScenes!.isEmpty) {
+            _dreamScenes = [dreamContent];
+          }
+        });
+
+        return DreamFortuneConditions(
+          dreamContent: dreamContent,
+          dreamDate: DateTime.now(),
+          dreamEmotion: null,
+        );
+      },
+      resultBuilder: (context, result) => _buildFortuneResult(result),
     );
-
-    _fortune = _convertToFortune(fortuneResult);
-
-    return _fortune!;
   }
 
-  /// FortuneResult를 Fortune 엔티티로 변환
-  Fortune _convertToFortune(FortuneResult fortuneResult) {
-    return Fortune(
-      id: fortuneResult.id ?? '',
-      userId: ref.read(userProvider).value?.id ?? '',
-      type: fortuneResult.type,
-      content: fortuneResult.data['content'] as String? ?? '',
-      createdAt: fortuneResult.createdAt ?? DateTime.now(),
-      overallScore: fortuneResult.score,
-      summary: fortuneResult.summary['message'] as String?,
-      metadata: fortuneResult.data,
-    );
-  }
-
-  @override
-  Future<Map<String, dynamic>?> getFortuneParams() async {
-    if (_dreamController.text.trim().isEmpty) {
-      Toast.show(context, message: '꿈 내용을 입력해주세요', type: ToastType.warning);
-      return null;
-    }
-
-    return {
-      'dream': _dreamController.text.trim(),
-      'inputType': _inputType,
-      'date': DateTime.now().toIso8601String()
-    };
-  }
-
-  @override
-  Widget buildInputForm() {
+  Widget _buildInputForm(VoidCallback onComplete) {
     final theme = Theme.of(context);
 
-    return GlassCard(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '꿈 내용 입력',
-                style: theme.textTheme.headlineSmall),
-              _buildInputTypeToggle(theme)
-            ]
-          ),
-          const SizedBox(height: 16),
-          if (_inputType == 'text')
-            _buildTextInput(theme)
-          else
-            _buildVoiceInput(theme),
-          const SizedBox(height: 16),
-          _buildDreamCategories(theme),
-          SizedBox(height: 8),
-          Text(
-            '꿈의 세부 내용을 자세히 입력할수록 정확한 해몽이 가능합니다',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)
+          GlassCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('꿈 내용 입력', style: theme.textTheme.headlineSmall),
+                    _buildInputTypeToggle(theme)
+                  ]
+                ),
+                const SizedBox(height: 16),
+                if (_inputType == 'text')
+                  _buildTextInput(theme)
+                else
+                  _buildVoiceInput(theme),
+                const SizedBox(height: 16),
+                _buildDreamCategories(theme),
+                SizedBox(height: 8),
+                Text(
+                  '꿈의 세부 내용을 자세히 입력할수록 정확한 해몽이 가능합니다',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)
+                  )
+                )
+              ]
             )
-          )
+          ),
+          const SizedBox(height: 20),
+          TossButton.primary(
+            text: '해몽 시작',
+            isEnabled: _dreamController.text.trim().isNotEmpty,
+            onPressed: () {
+              if (_dreamController.text.trim().isEmpty) {
+                Toast.show(context, message: '꿈 내용을 입력해주세요', type: ToastType.warning);
+                return;
+              }
+              onComplete();
+            },
+          ),
         ]
       )
     );
@@ -476,22 +437,38 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> {
     );
   }
 
-  @override
-  Widget buildFortuneResult() {
+  Widget _buildFortuneResult(dynamic result) {
+    final theme = Theme.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-
         children: [
           // Show the base fortune result
-          FortuneDisplay(
-            title: _fortune!.summary ?? '꿈 해몽',
-            description: _fortune!.description ?? _fortune!.content,
-            overallScore: _fortune!.score,
-            luckyItems: _fortune!.luckyItems,
-            advice: _fortune!.recommendations?.join('\n') ?? '',
-            detailedFortune: {'content': _fortune!.content},
-            warningMessage: _fortune!.warnings?.join('\n')
+          GlassCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '꿈 해몽 결과',
+                  style: theme.textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  result.data['content'] as String? ?? '',
+                  style: theme.textTheme.bodyMedium,
+                ),
+                if (result.score != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    '행운 지수: ${result.score}/100',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: TossDesignSystem.tossBlue,
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
           const SizedBox(height: 24),
           // Dream specific analysis

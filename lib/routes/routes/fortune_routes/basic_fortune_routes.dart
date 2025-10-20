@@ -18,10 +18,7 @@ final basicFortuneRoutes = [
   GoRoute(
     path: '/mbti',
     name: 'fortune-mbti',
-    builder: (context, state) {
-      final extra = state.extra as Map<String, dynamic>?;
-      return MbtiFortunePage(initialParams: extra);
-    }),
+    builder: (context, state) => const MbtiFortunePage()),
 
   // Destiny
   GoRoute(
