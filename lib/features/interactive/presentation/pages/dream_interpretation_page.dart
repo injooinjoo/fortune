@@ -5,104 +5,17 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/korean_date_picker.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../core/constants/api_endpoints.dart';
-import '../../../../presentation/providers/providers.dart';
+import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../services/speech_recognition_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/typography_unified.dart';
 
-final dreamAnalysisProvider = StateNotifierProvider.family<DreamAnalysisNotifier, AsyncValue<DreamAnalysisResult?>, DreamInput>(
-  (ref, input) => DreamAnalysisNotifier(ref, input));
+// Import domain models
+import '../../domain/models/dream_models.dart';
 
-class DreamInput {
-  final String name;
-  final DateTime birthDate;
-  final String dreamContent;
-
-  DreamInput({
-    required this.name,
-    required this.birthDate,
-    required this.dreamContent,
-  });
-}
-
-class DreamAnalysisResult {
-  final int overallLuck;
-  final String dreamSummary;
-  final String dreamInterpretation;
-  final List<String> luckyElements;
-  final String advice;
-
-  DreamAnalysisResult({
-    required this.overallLuck,
-    required this.dreamSummary,
-    required this.dreamInterpretation,
-    required this.luckyElements,
-    required this.advice,
-  });
-
-  factory DreamAnalysisResult.fromJson(Map<String, dynamic> json) {
-    final data = json['data'] ?? {};
-    return DreamAnalysisResult(
-      overallLuck: data['overall_luck'] ?? 70,
-      dreamSummary: data['dream_summary'] ?? '',
-      dreamInterpretation: data['dream_interpretation'] ?? '',
-      luckyElements: List<String>.from(data['lucky_elements'] ?? []),
-      advice: data['advice'] ?? '',
-    );
-  }
-}
-
-class DreamAnalysisNotifier extends StateNotifier<AsyncValue<DreamAnalysisResult?>> {
-  final Ref ref;
-  final DreamInput input;
-
-  DreamAnalysisNotifier(this.ref, this.input) : super(const AsyncValue.loading()) {
-    _analyzeDream();
-  }
-
-  Future<void> _analyzeDream() async {
-    try {
-      final tokenService = ref.read(tokenProvider.notifier);
-      
-      // Check token balance
-      final hasEnoughTokens = await tokenService.consumeTokens(
-        fortuneType: 'dream',
-        amount: 2,
-      );
-      
-      if (!hasEnoughTokens) {
-        state = AsyncValue.error(
-          Exception('토큰이 부족합니다'),
-          StackTrace.current,
-        );
-        return;
-      }
-
-      final apiClient = ref.read(apiClientProvider);
-      final response = await apiClient.post(
-        ApiEndpoints.generate,
-        data: {
-          'type': 'dream-interpretation',
-          'userInfo': {
-            'name': input.name,
-            'birth_date': input.birthDate.toIso8601String(),
-            'dream_content': input.dreamContent,
-          },
-        },
-      );
-
-      if (response.data['success'] == true) {
-        state = AsyncValue.data(DreamAnalysisResult.fromJson(response.data));
-      } else {
-        throw Exception(response.data['error'] ?? '꿈 해몽 분석에 실패했습니다');
-      }
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-    }
-  }
-}
+// Import providers
+import '../providers/dream_providers.dart';
 
 class DreamInterpretationPage extends ConsumerStatefulWidget {
   const DreamInterpretationPage({super.key});
@@ -600,7 +513,7 @@ class _DreamResultView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final analysisAsync = ref.watch(dreamAnalysisProvider(input));
+    final analysisAsync = ref.watch(dreamInterpretationProvider(input));
 
     return analysisAsync.when(
       loading: () => Center(

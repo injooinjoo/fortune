@@ -4,6 +4,12 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/dream_models.dart';
+import '../../../../core/constants/api_endpoints.dart';
+import '../../../../presentation/providers/providers.dart';
+
+// ============================================================================
+// Dream Entry Providers (꿈 일기 - DreamPage)
+// ============================================================================
 
 // Provider for dream entries
 final dreamEntriesProvider = StateNotifierProvider<DreamEntriesNotifier, List<DreamEntry>>(
@@ -14,6 +20,13 @@ final dreamEntriesProvider = StateNotifierProvider<DreamEntriesNotifier, List<Dr
 final dreamAnalysisProvider = StateNotifierProvider.family<DreamAnalysisNotifier, AsyncValue<DreamAnalysis?>, String>(
   (ref, dreamId) => DreamAnalysisNotifier(ref, dreamId),
 );
+
+// ============================================================================
+// Dream Interpretation Providers (꿈 해몽 - DreamInterpretationPage)
+// ============================================================================
+
+final dreamInterpretationProvider = StateNotifierProvider.family<DreamInterpretationNotifier, AsyncValue<DreamAnalysisResult?>, DreamInput>(
+  (ref, input) => DreamInterpretationNotifier(ref, input));
 
 class DreamEntriesNotifier extends StateNotifier<List<DreamEntry>> {
   DreamEntriesNotifier() : super([]) {
@@ -73,6 +86,56 @@ class DreamAnalysisNotifier extends StateNotifier<AsyncValue<DreamAnalysis?>> {
           interpretation: '하늘을 나는 꿈은 자유와 성취를 상징합니다. 현재 당신이 추구하는 목표에 대한 강한 의지와 가능성을 나타냅니다.',
           symbols: ['하늘', '비행', '자유', '성취'],
           advice: '이 시기에 새로운 도전을 시작하면 좋은 결과를 얻을 수 있습니다.'));
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+}
+
+class DreamInterpretationNotifier extends StateNotifier<AsyncValue<DreamAnalysisResult?>> {
+  final Ref ref;
+  final DreamInput input;
+
+  DreamInterpretationNotifier(this.ref, this.input) : super(const AsyncValue.loading()) {
+    _analyzeDream();
+  }
+
+  Future<void> _analyzeDream() async {
+    try {
+      final tokenService = ref.read(tokenProvider.notifier);
+
+      // Check token balance
+      final hasEnoughTokens = await tokenService.consumeTokens(
+        fortuneType: 'dream',
+        amount: 2,
+      );
+
+      if (!hasEnoughTokens) {
+        state = AsyncValue.error(
+          Exception('토큰이 부족합니다'),
+          StackTrace.current,
+        );
+        return;
+      }
+
+      final apiClient = ref.read(apiClientProvider);
+      final response = await apiClient.post(
+        ApiEndpoints.generate,
+        data: {
+          'type': 'dream-interpretation',
+          'userInfo': {
+            'name': input.name,
+            'birth_date': input.birthDate.toIso8601String(),
+            'dream_content': input.dreamContent,
+          },
+        },
+      );
+
+      if (response.data['success'] == true) {
+        state = AsyncValue.data(DreamAnalysisResult.fromJson(response.data));
+      } else {
+        throw Exception(response.data['error'] ?? '꿈 해몽 분석에 실패했습니다');
+      }
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
