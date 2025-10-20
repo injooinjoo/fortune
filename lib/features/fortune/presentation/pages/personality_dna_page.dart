@@ -284,7 +284,7 @@ ${data['todayAdvice'] ?? '평소와 다른 작은 도전을 해보세요.'}
                 Expanded(
                   child: AccordionInputForm(
                     sections: _accordionSections,
-                    onAllCompleted: _handleGenerateFortune,
+                    onAllCompleted: null, // floating button으로 운세 생성
                     completionButtonText: '🧬 나만의 성격 DNA 발견하기',
                   ),
                 ),
