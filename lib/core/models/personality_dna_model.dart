@@ -12,8 +12,8 @@ class CompatibilityType {
 
   factory CompatibilityType.fromJson(Map<String, dynamic> json) {
     return CompatibilityType(
-      mbti: json['mbti'] as String,
-      description: json['description'] as String,
+      mbti: json['mbti'] as String? ?? '',
+      description: json['description'] as String? ?? '',
     );
   }
 
@@ -39,9 +39,9 @@ class Compatibility {
 
   factory Compatibility.fromJson(Map<String, dynamic> json) {
     return Compatibility(
-      friend: CompatibilityType.fromJson(json['friend']),
-      lover: CompatibilityType.fromJson(json['lover']),
-      colleague: CompatibilityType.fromJson(json['colleague']),
+      friend: CompatibilityType.fromJson(json['friend'] as Map<String, dynamic>? ?? {}),
+      lover: CompatibilityType.fromJson(json['lover'] as Map<String, dynamic>? ?? {}),
+      colleague: CompatibilityType.fromJson(json['colleague'] as Map<String, dynamic>? ?? {}),
     );
   }
 
@@ -70,10 +70,10 @@ class LoveStyle {
 
   factory LoveStyle.fromJson(Map<String, dynamic> json) {
     return LoveStyle(
-      title: json['title'] as String,
-      description: json['description'] as String,
-      whenDating: json['when_dating'] as String,
-      afterBreakup: json['after_breakup'] as String,
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      whenDating: json['when_dating'] as String? ?? '',
+      afterBreakup: json['after_breakup'] as String? ?? '',
     );
   }
 
@@ -103,10 +103,10 @@ class WorkStyle {
 
   factory WorkStyle.fromJson(Map<String, dynamic> json) {
     return WorkStyle(
-      title: json['title'] as String,
-      asBoss: json['as_boss'] as String,
-      atCompanyDinner: json['at_company_dinner'] as String,
-      workHabit: json['work_habit'] as String,
+      title: json['title'] as String? ?? '',
+      asBoss: json['as_boss'] as String? ?? '',
+      atCompanyDinner: json['at_company_dinner'] as String? ?? '',
+      workHabit: json['work_habit'] as String? ?? '',
     );
   }
 
@@ -134,9 +134,9 @@ class DailyMatching {
 
   factory DailyMatching.fromJson(Map<String, dynamic> json) {
     return DailyMatching(
-      cafeMenu: json['cafe_menu'] as String,
-      netflixGenre: json['netflix_genre'] as String,
-      weekendActivity: json['weekend_activity'] as String,
+      cafeMenu: json['cafe_menu'] as String? ?? '',
+      netflixGenre: json['netflix_genre'] as String? ?? '',
+      weekendActivity: json['weekend_activity'] as String? ?? '',
     );
   }
 
