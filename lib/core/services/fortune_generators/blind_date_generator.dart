@@ -46,12 +46,24 @@ class BlindDateGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
-    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+    // userId와 name 가져오기
+    final user = supabase.auth.currentUser;
+    final userProfile = user != null
+        ? await supabase
+            .from('profiles')
+            .select('name')
+            .eq('id', user.id)
+            .maybeSingle()
+        : null;
+
+    final userId = user?.id ?? 'anonymous';
+    final userName = userProfile?['name'] as String? ?? user?.userMetadata?['name'] as String? ?? inputConditions['name'] as String? ?? 'Guest';
 
     // 📤 API 요청 준비
     Logger.info('[BlindDateGenerator] 📤 API 요청 준비');
     Logger.info('[BlindDateGenerator]   🌐 Edge Function: fortune-blind-date');
     Logger.info('[BlindDateGenerator]   👤 user_id: $userId');
+    Logger.info('[BlindDateGenerator]   👤 name: $userName');
     Logger.info('[BlindDateGenerator]   📅 meeting_date: ${inputConditions['meeting_date']}');
     Logger.info('[BlindDateGenerator]   ⏰ meeting_time: ${inputConditions['meeting_time']}');
     Logger.info('[BlindDateGenerator]   📍 meeting_type: ${inputConditions['meeting_type']}');
@@ -60,6 +72,7 @@ class BlindDateGenerator {
     try {
       final requestBody = {
         'fortune_type': 'blind_date',
+        'name': userName,
         'meeting_date': inputConditions['meeting_date'],
         'meeting_time': inputConditions['meeting_time'],
         'meeting_type': inputConditions['meeting_type'],

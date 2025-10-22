@@ -9,12 +9,24 @@ class AvoidPeopleGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
-    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+    // userId와 name 가져오기
+    final user = supabase.auth.currentUser;
+    final userProfile = user != null
+        ? await supabase
+            .from('profiles')
+            .select('name')
+            .eq('id', user.id)
+            .maybeSingle()
+        : null;
+
+    final userId = user?.id ?? 'anonymous';
+    final userName = userProfile?['name'] as String? ?? user?.userMetadata?['name'] as String? ?? 'Guest';
 
     // 📤 API 요청 준비
     Logger.info('[AvoidPeopleGenerator] 📤 API 요청 준비');
     Logger.info('[AvoidPeopleGenerator]   🌐 Edge Function: fortune-avoid-people');
     Logger.info('[AvoidPeopleGenerator]   👤 user_id: $userId');
+    Logger.info('[AvoidPeopleGenerator]   👤 name: $userName');
     Logger.info('[AvoidPeopleGenerator]   🏢 environment: ${inputConditions['environment']}');
     Logger.info('[AvoidPeopleGenerator]   📅 important_schedule: ${inputConditions['important_schedule']}');
     Logger.info('[AvoidPeopleGenerator]   😊 mood_level: ${inputConditions['mood_level']}');
@@ -22,6 +34,8 @@ class AvoidPeopleGenerator {
 
     try {
       final requestBody = {
+        'userId': userId,
+        'name': userName,
         'environment': inputConditions['environment'],
         'important_schedule': inputConditions['important_schedule'],
         'mood_level': inputConditions['mood_level'],

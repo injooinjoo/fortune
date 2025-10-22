@@ -194,48 +194,7 @@ class _UnifiedFortuneBaseWidgetState
       }
     }
 
-    // 2. 로딩 다이얼로그 표시
-    if (mounted) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => PopScope(
-          canPop: false,
-          child: Center(
-            child: Container(
-              padding: const EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.cardBackgroundDark
-                    : Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(
-                    color: TossDesignSystem.tossBlue,
-                    strokeWidth: 3,
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    '운세를 생성하는 중...',
-                    style: TypographyUnified.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? TossDesignSystem.textPrimaryDark
-                          : TossDesignSystem.textPrimaryLight,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    // 3. 광고 표시
+    // 2. 광고 표시 (로딩은 버튼 내부에서 처리)
     try {
       await AdService.instance.showInterstitialAdWithCallback(
         onAdCompleted: () async {
@@ -271,9 +230,6 @@ class _UnifiedFortuneBaseWidgetState
 
       if (!mounted) return;
 
-      // 로딩 다이얼로그 닫기
-      Navigator.of(context).pop();
-
       setState(() {
         _fortuneResult = result;
         _showResult = true;
@@ -289,8 +245,6 @@ class _UnifiedFortuneBaseWidgetState
       );
 
       if (mounted) {
-        Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-
         setState(() {
           _errorMessage = error.toString();
           _isLoading = false;

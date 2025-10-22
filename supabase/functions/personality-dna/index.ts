@@ -415,8 +415,22 @@ serve(async (req) => {
   }
 
   try {
-    const requestData: PersonalityDNARequest = await req.json()
-    const { userId, name, mbti, bloodType, zodiac, zodiacAnimal } = requestData
+    const requestData: any = await req.json()
+    const {
+      userId = 'anonymous',
+      name = 'Guest',
+      mbti,
+      zodiac,
+    } = requestData
+
+    // 필드명 변환 지원 (snake_case, camelCase 모두 지원)
+    const bloodType = requestData.bloodType || requestData.blood_type
+    let zodiacAnimal = requestData.zodiacAnimal || requestData.animal
+
+    // "양띠" → "양" 변환 (띠 제거)
+    if (zodiacAnimal && zodiacAnimal.endsWith('띠')) {
+      zodiacAnimal = zodiacAnimal.slice(0, -1)
+    }
 
     // DNA 코드 생성
     const dnaCode = `${mbti.slice(0, 2)}-${bloodType}${zodiacAnimal.slice(0, 1)}-${Date.now().toString().slice(-4)}`

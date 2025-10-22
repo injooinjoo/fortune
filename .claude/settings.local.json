@@ -71,7 +71,11 @@
       "Read(//dev/**)",
       "Bash(git mv:*)",
       "Bash(git rm:*)",
-      "Bash(do sed -i '' \"/import ''''.*toss_button.dart'''';/d\" \"$file\" done)"
+      "Bash(do sed -i '' \"/import ''''.*toss_button.dart'''';/d\" \"$file\" done)",
+      "Bash(git pull:*)",
+      "Bash(flutter build:*)",
+      "Bash(do echo \"=== $gen_generator.dart ===\")",
+      "Bash(do echo \"=== $func ===\")"
     ],
     "deny": [],
     "ask": [],

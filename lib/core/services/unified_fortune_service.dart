@@ -315,12 +315,22 @@ class UnifiedFortuneService {
         case 'mbti':
           // MBTI Edge Function 직접 호출 (FortuneApiService 패턴 사용)
           // Edge Function이 기대하는 필드명으로 변환: mbti_type → mbti, birth_date → birthDate
+          // userId와 name 추가
+          final mbtiUser = _supabase.auth.currentUser;
+          final mbtiUserProfile = mbtiUser != null
+              ? await _supabase
+                  .from('profiles')
+                  .select('name')
+                  .eq('id', mbtiUser.id)
+                  .maybeSingle()
+              : null;
+
           final mbtiPayload = {
             'mbti': inputConditions['mbti_type'] ?? inputConditions['mbti'],
-            'name': inputConditions['name'],
+            'name': mbtiUserProfile?['name'] as String? ?? mbtiUser?.userMetadata?['name'] as String? ?? inputConditions['name'] ?? 'Guest',
             'birthDate': inputConditions['birth_date'] ?? inputConditions['birthDate'],
             if (inputConditions['categories'] != null) 'categories': inputConditions['categories'],
-            if (inputConditions['userId'] != null) 'userId': inputConditions['userId'],
+            'userId': mbtiUser?.id ?? inputConditions['userId'] ?? 'anonymous',
           };
 
           final response = await _supabase.functions.invoke(
@@ -354,9 +364,25 @@ class UnifiedFortuneService {
         case 'personality_dna':
         case 'personality-dna':
           // Personality DNA Edge Function 직접 호출
+          // userId와 name 추가
+          final user = _supabase.auth.currentUser;
+          final userProfile = user != null
+              ? await _supabase
+                  .from('profiles')
+                  .select('name')
+                  .eq('id', user.id)
+                  .maybeSingle()
+              : null;
+
+          final payload = {
+            ...inputConditions,
+            'userId': user?.id ?? 'anonymous',
+            'name': userProfile?['name'] as String? ?? user?.userMetadata?['name'] as String? ?? 'Guest',
+          };
+
           final response = await _supabase.functions.invoke(
             'personality-dna',
-            body: inputConditions,
+            body: payload,
           );
 
           if (response.data == null) {

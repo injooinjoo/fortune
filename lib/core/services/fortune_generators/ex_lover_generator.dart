@@ -10,20 +10,31 @@ class ExLoverGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
-    final userId = supabase.auth.currentUser?.id ?? 'unknown';
+    // userId와 name 가져오기
+    final user = supabase.auth.currentUser;
+    final userProfile = user != null
+        ? await supabase
+            .from('profiles')
+            .select('name')
+            .eq('id', user.id)
+            .maybeSingle()
+        : null;
+
+    final userId = user?.id ?? 'anonymous';
+    final userName = userProfile?['name'] as String? ?? user?.userMetadata?['name'] as String? ?? inputConditions['name'] as String? ?? 'Guest';
 
     // 📤 API 요청 준비
     Logger.info('[ExLoverGenerator] 📤 API 요청 준비');
     Logger.info('[ExLoverGenerator]   🌐 Edge Function: fortune-ex-lover');
     Logger.info('[ExLoverGenerator]   👤 user_id: $userId');
-    Logger.info('[ExLoverGenerator]   💔 name: ${inputConditions['name']}');
+    Logger.info('[ExLoverGenerator]   💔 name: $userName');
     Logger.info('[ExLoverGenerator]   📅 relationship_duration: ${inputConditions['relationship_duration']}');
     Logger.info('[ExLoverGenerator]   💭 breakup_reason: ${inputConditions['breakup_reason']}');
 
     try {
       final requestBody = {
         'fortune_type': 'ex_lover',
-        'name': inputConditions['name'],
+        'name': userName,
         'birth_date': inputConditions['birth_date'],
         'gender': inputConditions['gender'],
         'mbti': inputConditions['mbti'],

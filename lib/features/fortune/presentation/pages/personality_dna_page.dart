@@ -8,11 +8,9 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/conditions/personality_dna_fortune_conditions.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
 
 class PersonalityDNAPage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -34,6 +32,9 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
   String? _selectedAnimal;
 
   PersonalityDNA? _currentDNA;
+
+  // 운세 생성 중 플래그
+  bool _isGenerating = false;
 
   // 아코디언 섹션
   late List<AccordionInputSection> _accordionSections;
@@ -105,7 +106,16 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
       title: '성격 DNA',
       description: 'MBTI, 혈액형, 별자리, 띠를 조합한 특별한 성격 분석',
       dataSource: FortuneDataSource.api,
-      inputBuilder: (context, onComplete) => _buildInputForm(onComplete),
+      inputBuilder: (context, onComplete) => _buildInputForm(() {
+        setState(() => _isGenerating = true);
+        onComplete();
+        // 5초 후 로딩 해제 (광고 표시 시간 고려)
+        Future.delayed(const Duration(seconds: 5), () {
+          if (mounted) {
+            setState(() => _isGenerating = false);
+          }
+        });
+      }),
       conditionsBuilder: () async {
         return PersonalityDnaFortuneConditions(
           mbti: _selectedMbti,
@@ -140,9 +150,9 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
         if (_canGenerate())
           TossFloatingProgressButtonPositioned(
             text: '🧬 나만의 성격 DNA 발견하기',
-            onPressed: _canGenerate() ? onComplete : null,
-            isEnabled: _canGenerate(),
-            showProgress: false,
+            onPressed: _canGenerate() && !_isGenerating ? onComplete : null,
+            isEnabled: _canGenerate() && !_isGenerating,
+            showProgress: _isGenerating,
             isVisible: _canGenerate(),
           ),
       ],
@@ -295,24 +305,81 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
       zodiacAnimal: _selectedAnimal!,
     );
 
-    setState(() {
-      _currentDNA = PersonalityDNA(
-        mbti: _selectedMbti!,
-        bloodType: _selectedBloodType!,
-        zodiac: _selectedZodiac!,
-        zodiacAnimal: _selectedAnimal!,
-        dnaCode: dnaCode,
-        title: data['title'] as String? ?? '성격 DNA',
-        emoji: data['emoji'] as String? ?? '🧬',
-        description: data['description'] as String? ?? '',
-        traits: [],
-        gradientColors: [],
-        scores: {'socialRanking': (data['socialRanking'] as num?)?.toInt() ?? 50},
-        todaysFortune: data['todayAdvice'] as String? ?? '',
-        todayHighlight: data['todayHighlight'] as String?,
-        popularityRank: (data['socialRanking'] as num?)?.toInt() ?? 50,
-      );
+    // Edge Function 응답에서 상세 데이터 파싱
+    final loveStyleData = data['loveStyle'] as Map<String, dynamic>?;
+    final workStyleData = data['workStyle'] as Map<String, dynamic>?;
+    final dailyMatchingData = data['dailyMatching'] as Map<String, dynamic>?;
+    final compatibilityData = data['compatibility'] as Map<String, dynamic>?;
+    final funStatsData = data['funStats'] as Map<String, dynamic>?;
+
+    // PersonalityDNA 객체 생성
+    final dnaObject = PersonalityDNA(
+      mbti: _selectedMbti!,
+      bloodType: _selectedBloodType!,
+      zodiac: _selectedZodiac!,
+      zodiacAnimal: _selectedAnimal!,
+      dnaCode: dnaCode,
+      title: data['title'] as String? ?? '성격 DNA',
+      emoji: data['emoji'] as String? ?? '🧬',
+      description: '',
+      traits: [],
+      gradientColors: [],
+      scores: {'socialRanking': (data['socialRanking'] as num?)?.toInt() ?? 50},
+      todaysFortune: data['todayAdvice'] as String? ?? '',
+      todayHighlight: data['todayHighlight'] as String?,
+      popularityRank: (data['socialRanking'] as num?)?.toInt() ?? 50,
+      // ✅ Edge Function 데이터를 PersonalityDNA 모델로 변환
+      loveStyle: loveStyleData != null ? LoveStyle(
+        title: loveStyleData['title'] as String? ?? '',
+        description: loveStyleData['description'] as String? ?? '',
+        whenDating: loveStyleData['when_dating'] as String? ?? '',
+        afterBreakup: loveStyleData['after_breakup'] as String? ?? '',
+      ) : null,
+      workStyle: workStyleData != null ? WorkStyle(
+        title: workStyleData['title'] as String? ?? '',
+        asBoss: workStyleData['as_boss'] as String? ?? '',
+        atCompanyDinner: workStyleData['at_company_dinner'] as String? ?? '',
+        workHabit: workStyleData['work_habit'] as String? ?? '',
+      ) : null,
+      dailyMatching: dailyMatchingData != null ? DailyMatching(
+        cafeMenu: dailyMatchingData['cafe_menu'] as String? ?? '',
+        netflixGenre: dailyMatchingData['netflix_genre'] as String? ?? '',
+        weekendActivity: dailyMatchingData['weekend_activity'] as String? ?? '',
+      ) : null,
+      compatibility: compatibilityData != null ? Compatibility(
+        friend: CompatibilityType(
+          mbti: (compatibilityData['friend'] as Map<String, dynamic>?)?['mbti'] as String? ?? '',
+          description: (compatibilityData['friend'] as Map<String, dynamic>?)?['description'] as String? ?? '',
+        ),
+        lover: CompatibilityType(
+          mbti: (compatibilityData['lover'] as Map<String, dynamic>?)?['mbti'] as String? ?? '',
+          description: (compatibilityData['lover'] as Map<String, dynamic>?)?['description'] as String? ?? '',
+        ),
+        colleague: CompatibilityType(
+          mbti: (compatibilityData['colleague'] as Map<String, dynamic>?)?['mbti'] as String? ?? '',
+          description: (compatibilityData['colleague'] as Map<String, dynamic>?)?['description'] as String? ?? '',
+        ),
+      ) : null,
+      celebrity: funStatsData != null ? Celebrity(
+        name: funStatsData['celebrity_match'] as String? ?? '',
+        reason: '${_selectedMbti} 유형의 대표적인 인물',
+      ) : null,
+      funnyFact: funStatsData != null
+        ? '전국 상위 ${funStatsData['rarity_rank']}! 한국 인구의 ${funStatsData['percentage_in_korea']}를 차지합니다.'
+        : null,
+    );
+
+    // ⚠️ build 중에 setState 호출 금지 - WidgetsBinding.instance.addPostFrameCallback 사용
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _currentDNA = dnaObject;
+        });
+      }
     });
+
+    // 첫 렌더링 시에는 _currentDNA가 null일 수 있으므로 임시 데이터로 빌드
+    _currentDNA ??= dnaObject;
 
     return buildFortuneResult();
   }
