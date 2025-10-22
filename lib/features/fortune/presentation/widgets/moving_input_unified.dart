@@ -7,7 +7,6 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../services/region_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import 'standard_fortune_app_bar.dart';
 import '../../../../core/theme/typography_unified.dart';
 
 /// 이사운 통합 입력 페이지 - 토스 스타일
@@ -147,59 +146,56 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
-      appBar: const StandardFortuneAppBar(
-        title: '이사운',
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 제목
-                Text(
-                  '이사 정보 입력',
-                  style: TossTheme.heading1.copyWith(
-                    
-                    fontWeight: FontWeight.w700,
-                    height: 1.2,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                  ),
+    // UnifiedFortuneBaseWidget이 이미 Scaffold와 AppBar를 제공하므로
+    // 여기서는 body 내용만 반환
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: TossTheme.spacingL),
+
+              // 제목
+              Text(
+                '이사 정보 입력',
+                style: TossTheme.heading1.copyWith(
+                  fontWeight: FontWeight.w700,
+                  height: 1.2,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
+              ),
 
-                const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: TossTheme.spacingL),
 
-                // 지역 선택
-                _buildLocationSection(),
+              // 지역 선택
+              _buildLocationSection(),
 
-                const SizedBox(height: TossTheme.spacingXL),
+              const SizedBox(height: TossTheme.spacingXL),
 
-                // 시기 선택
-                _buildPeriodSection(),
+              // 시기 선택
+              _buildPeriodSection(),
 
-                const SizedBox(height: TossTheme.spacingXL),
+              const SizedBox(height: TossTheme.spacingXL),
 
-                // 목적 선택
-                _buildPurposeSection(),
+              // 목적 선택
+              _buildPurposeSection(),
 
-                const SizedBox(height: TossTheme.spacingXXL),
+              const SizedBox(height: TossTheme.spacingXXL),
 
-                const BottomButtonSpacing(),
-              ],
-            ),
+              const BottomButtonSpacing(),
+            ],
           ),
-          TossFloatingProgressButtonPositioned(
-            text: _isLoading ? '이사운 분석중...' : '이사운 보기',
-            onPressed: _canContinue() ? _handleComplete : null,
-            isEnabled: _canContinue(),
-            showProgress: false,
-            isVisible: true,
-          ),
-        ],
-      ),
+        ),
+        TossFloatingProgressButtonPositioned(
+          text: _isLoading ? '이사운 분석중...' : '이사운 보기',
+          onPressed: _canContinue() ? _handleComplete : null,
+          isEnabled: _canContinue(),
+          showProgress: false,
+          isVisible: true,
+        ),
+      ],
     );
   }
 
