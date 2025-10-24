@@ -109,7 +109,9 @@
       "Bash(lib/features/fortune/presentation/pages/same_birthday_celebrity_fortune_page.dart )",
       "Bash(lib/features/fortune/presentation/pages/startup_career_fortune_page.dart )",
       "Bash(lib/features/fortune/presentation/pages/tojeong_fortune_page.dart )",
-      "Bash(lib/features/fortune/presentation/pages/traditional_saju_toss_page.dart)"
+      "Bash(lib/features/fortune/presentation/pages/traditional_saju_toss_page.dart)",
+      "Bash(flutter clean:*)",
+      "Bash(flutter pub:*)"
     ],
     "deny": [],
     "ask": [],
