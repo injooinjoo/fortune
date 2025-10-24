@@ -1,69 +1,16 @@
 import 'package:go_router/go_router.dart';
-// import '../../../features/fortune/presentation/pages/lucky_color_fortune_page.dart'; // Removed - unused
-// import '../../../features/fortune/presentation/pages/lucky_number_fortune_page.dart'; // Removed - unused
-// import '../../../features/fortune/presentation/pages/lucky_food_fortune_page.dart'; // Removed - unused
-// import '../../../features/fortune/presentation/pages/lucky_place_fortune_page.dart'; // Removed - unused
 import '../../../features/fortune/presentation/pages/lucky_items_page_unified.dart';
-import '../../../features/fortune/presentation/pages/lucky_outfit_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/lucky_series_fortune_page.dart';
-// import '../../../features/fortune/presentation/pages/birthstone_fortune_page.dart'; // Removed - unused
-import '../../../features/fortune/presentation/pages/five_blessings_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/lucky_items_results_page.dart';
+// Removed merged pages: lucky_outfit, lucky_series, five_blessings
+// All merged into /lucky-items in FortuneListPage
 
 final luckyItemRoutes = [
-  // Lucky Items (Unified)
+  // Lucky Items (Unified) - 색깔/숫자/음식/아이템 통합
   GoRoute(
     path: '/lucky-items',
     name: 'fortune-lucky-items',
     builder: (context, state) => const LuckyItemsPageUnified()),
-  
-  // Lucky Color - Removed (page deleted)
-  // GoRoute(
-  //   path: '/lucky-color',
-  //   name: 'fortune-lucky-color',
-  //   builder: (context, state) => const LuckyColorFortunePage()),
-  
-  // Lucky Number - Removed (page deleted)
-  // GoRoute(
-  //   path: '/lucky-number',
-  //   name: 'fortune-lucky-number',
-  //   builder: (context, state) => const LuckyNumberFortunePage()),
-  
-  // Lucky Food - Removed (page deleted)
-  // GoRoute(
-  //   path: '/lucky-food',
-  //   name: 'fortune-lucky-food',
-  //   builder: (context, state) => const LuckyFoodFortunePage()),
-  
-  // Lucky Place - Removed (page deleted)
-  // GoRoute(
-  //   path: '/lucky-place',
-  //   name: 'fortune-lucky-place',
-  //   builder: (context, state) => const LuckyPlaceFortunePage()),
-  
-  // Lucky Outfit
-  GoRoute(
-    path: '/lucky-outfit',
-    name: 'fortune-lucky-outfit',
-    builder: (context, state) => const LuckyOutfitFortunePage()),
-  
-  // Lucky Series
-  GoRoute(
-    path: '/lucky-series',
-    name: 'fortune-lucky-series',
-    builder: (context, state) => const LuckySeriesFortunePage()),
-  
-  // Birthstone - Removed (page deleted)
-  // GoRoute(
-  //   path: '/birthstone',
-  //   name: 'fortune-birthstone',
-  //   builder: (context, state) => const BirthstoneFortunePage()),
-  
-  // Talisman (Lucky Item) - moved to route_config.dart (outside shell)
-  
-  // Five Blessings
-  GoRoute(
-    path: '/five-blessings',
-    name: 'fortune-five-blessings',
-    builder: (context, state) => const FiveBlessingsFortunePage()),
+
+  // Lucky Items Results Page
+  // (결과 페이지는 메인에서 호출되므로 유지)
 ];

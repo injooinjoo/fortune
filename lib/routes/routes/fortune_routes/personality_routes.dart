@@ -1,23 +1,10 @@
 import 'package:go_router/go_router.dart';
-import '../../../features/fortune/presentation/pages/celebrity_fortune_page_v2.dart';
-import '../../../features/fortune/presentation/pages/same_birthday_celebrity_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/personality_dna_page.dart';
+// Removed merged pages: celebrity_fortune_page_v2, same_birthday_celebrity
+// All merged into /celebrity in route_config.dart (FortuneListPage)
 
 final personalityRoutes = [
-
-  // Celebrity Fortune (New Saju-based)
-  GoRoute(
-    path: '/celebrity-saju',
-    name: 'fortune-celebrity-saju',
-    builder: (context, state) => const CelebrityFortunePageV2()),
-
-  // Same Birthday Celebrity
-  GoRoute(
-    path: '/same-birthday-celebrity',
-    name: 'fortune-same-birthday-celebrity',
-    builder: (context, state) => const SameBirthdayCelebrityFortunePage()),
-
-  // Personality DNA
+  // Personality DNA (성격 DNA)
   GoRoute(
     path: '/personality-dna',
     name: 'fortune-personality-dna',
