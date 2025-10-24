@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -480,19 +481,10 @@ serve(async (req) => {
       - 원소: ${card.element}`
     }).join('\n\n')
 
-    // OpenAI API 호출
-    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-5-nano-2025-08-07',
-        messages: [
-          {
-            role: 'system',
-            content: `당신은 전문적인 타로 리더입니다. 타로 카드의 상징과 의미를 깊이 이해하고 있으며, 한국어로 정확하고 직관적인 해석을 제공합니다.
+    // ✅ LLM 모듈 사용 (Provider 자동 선택)
+    const llm = LLMFactory.createFromConfig('tarot')
+
+    const systemPrompt = `당신은 전문적인 타로 리더입니다. 타로 카드의 상징과 의미를 깊이 이해하고 있으며, 한국어로 정확하고 직관적인 해석을 제공합니다.
 
 다음 JSON 형식으로 응답해주세요:
 {
@@ -507,31 +499,37 @@ serve(async (req) => {
 }
 
 모든 해석은 희망적이고 건설적이며 실용적인 조언을 포함해야 합니다.`
-          },
-          {
-            role: 'user',
-            content: `질문: ${question}
+
+    const userPrompt = `질문: ${question}
 스프레드: ${spreadConfig.name} (${spreadConfig.description})
 날짜: ${new Date().toLocaleDateString('ko-KR')}
 
 뽑힌 카드들:
 ${cardDescriptions}
 
-이 타로 카드들을 바탕으로 질문자에게 깊이 있는 해석과 조언을 해주세요.`
-          }
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.8,
-        max_tokens: 1500
-      }),
+이 타로 카드들을 바탕으로 질문자에게 깊이 있는 해석과 조언을 JSON 형식으로 해주세요.`
+
+    const response = await llm.generate([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
+    ], {
+      temperature: 1,
+      maxTokens: 8192,
+      jsonMode: true
     })
 
-    if (!openaiResponse.ok) {
-      throw new Error(`OpenAI API 오류: ${openaiResponse.status}`)
+    console.log(`✅ LLM 호출 완료:`)
+    console.log(`  Provider: ${response.provider}`)
+    console.log(`  Model: ${response.model}`)
+    console.log(`  Latency: ${response.latency}ms`)
+    console.log(`  Tokens: ${response.usage.totalTokens}`)
+
+    // 응답 파싱
+    if (!response.content) {
+      throw new Error(`LLM API 오류: 응답 없음`)
     }
 
-    const openaiResult = await openaiResponse.json()
-    const fortuneData = JSON.parse(openaiResult.choices[0].message.content)
+    const fortuneData = JSON.parse(response.content)
 
     const result: TarotFortuneResponse['data'] = {
       question,

@@ -34,6 +34,13 @@ class FortuneResult {
   /// 조회수
   final int? viewCount;
 
+  /// 블러 상태 (광고 시청 전 일부 내용 숨김)
+  final bool isBlurred;
+
+  /// 블러 처리할 섹션 키 목록
+  /// 예: ['advice', 'luckItems', 'warnings', 'detailedAnalysis']
+  final List<String> blurredSections;
+
   FortuneResult({
     this.id,
     required this.type,
@@ -44,6 +51,8 @@ class FortuneResult {
     this.createdAt,
     this.lastViewedAt,
     this.viewCount,
+    this.isBlurred = false,
+    this.blurredSections = const [],
   });
 
   /// JSON으로부터 FortuneResult 생성
@@ -62,6 +71,10 @@ class FortuneResult {
           ? DateTime.parse(json['last_viewed_at'] as String)
           : null,
       viewCount: json['view_count'] as int?,
+      isBlurred: json['is_blurred'] as bool? ?? false,
+      blurredSections: json['blurred_sections'] != null
+          ? List<String>.from(json['blurred_sections'] as List)
+          : [],
     );
   }
 
@@ -79,6 +92,8 @@ class FortuneResult {
       if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
       if (lastViewedAt != null) 'last_viewed_at': lastViewedAt!.toIso8601String(),
       if (viewCount != null) 'view_count': viewCount,
+      'is_blurred': isBlurred,
+      'blurred_sections': blurredSections,
     };
   }
 
@@ -93,6 +108,8 @@ class FortuneResult {
     DateTime? createdAt,
     DateTime? lastViewedAt,
     int? viewCount,
+    bool? isBlurred,
+    List<String>? blurredSections,
   }) {
     return FortuneResult(
       id: id ?? this.id,
@@ -104,6 +121,8 @@ class FortuneResult {
       createdAt: createdAt ?? this.createdAt,
       lastViewedAt: lastViewedAt ?? this.lastViewedAt,
       viewCount: viewCount ?? this.viewCount,
+      isBlurred: isBlurred ?? this.isBlurred,
+      blurredSections: blurredSections ?? this.blurredSections,
     );
   }
 

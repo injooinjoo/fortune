@@ -1,14 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// OpenAI API 설정
-const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
+// ✅ LLM 모듈 사용 (OpenAI API 설정 제거)
 
 // 소원 분석 응답 스키마 정의 (공감/희망/조언/응원 중심)
 interface WishAnalysisResponse {
@@ -70,40 +69,32 @@ ${user_profile ? `사용자 정보: 생년월일 ${user_profile.birth_date}, 띠
 4. ${category} 카테고리에 맞는 구체적이고 실행 가능한 조언 포함
 5. 긴급도 ${urgency}/5에 비례하여 격려의 강도를 조절`
 
-    const aiResponse = await fetch(OPENAI_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
+    // ✅ LLM 모듈 사용
+    const llm = LLMFactory.createFromConfig('wish')
+
+    const response = await llm.generate([
+      {
+        role: 'system',
+        content: '당신은 따뜻한 마음을 가진 상담가이자 예언자입니다. F(Feeling) 유형처럼 감정에 공감하고, "당신은 할 수 있어요" 메시지로 희망과 용기를 줍니다. 점수/확률/통계 등 숫자는 절대 사용하지 않으며, 오직 공감과 격려에 집중합니다.'
       },
-      body: JSON.stringify({
-        model: 'gpt-5-nano',
-        messages: [
-          {
-            role: 'system',
-            content: '당신은 따뜻한 마음을 가진 상담가이자 예언자입니다. F(Feeling) 유형처럼 감정에 공감하고, "당신은 할 수 있어요" 메시지로 희망과 용기를 줍니다. 점수/확률/통계 등 숫자는 절대 사용하지 않으며, 오직 공감과 격려에 집중합니다.'
-          },
-          {
-            role: 'user',
-            content: aiPrompt
-          }
-        ],
-        response_format: { type: "json_object" }
-      }),
+      {
+        role: 'user',
+        content: aiPrompt
+      }
+    ], {
+      temperature: 1,
+      maxTokens: 8192,
+      jsonMode: true
     })
 
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text()
-      console.error('❌ OpenAI API 오류:', errorText)
-      throw new Error(`OpenAI API 오류: ${aiResponse.status} ${errorText}`)
+    console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+    console.log('✅ AI 응답 원본:', response.content)
+
+    if (!response.content) {
+      throw new Error('LLM API 응답 없음')
     }
 
-    const aiData = await aiResponse.json()
-    const content = aiData.choices[0].message.content
-
-    console.log('✅ AI 응답 원본:', content)
-
-    const analysisResult: WishAnalysisResponse = JSON.parse(content)
+    const analysisResult: WishAnalysisResponse = JSON.parse(response.content)
 
     console.log('✅ 파싱된 분석 결과:', analysisResult)
 

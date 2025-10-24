@@ -8,6 +8,7 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../services/region_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/widgets/accordion_input_section.dart';
 
 /// 이사운 통합 입력 페이지 - 토스 스타일
 class MovingInputUnified extends StatefulWidget {
@@ -34,9 +35,13 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
   List<Region> _popularRegions = [];
   List<Region> _searchResults = [];
   bool _isSearching = false;
+  bool _isLoadingPopularRegions = true; // 인기 지역 로딩 상태
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
   final RegionService _regionService = RegionService();
+
+  // 아코디언 섹션
+  late List<AccordionInputSection> _accordionSections;
 
   final List<Map<String, String>> _periods = [
     {'title': '1개월 이내', 'subtitle': '급하게'},
@@ -61,6 +66,40 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
       vsync: this,
     );
     _loadPopularRegions();
+    _initializeAccordionSections();
+  }
+
+  void _initializeAccordionSections() {
+    _accordionSections = [
+      AccordionInputSection(
+        id: 'current_area',
+        title: '현재 지역',
+        displayValue: _currentArea,
+        icon: Icons.home_outlined,
+        inputWidgetBuilder: (context, onComplete) => _buildAreaSelector(true, onComplete),
+      ),
+      AccordionInputSection(
+        id: 'target_area',
+        title: '이사갈 곳',
+        displayValue: _targetArea,
+        icon: Icons.location_on_outlined,
+        inputWidgetBuilder: (context, onComplete) => _buildAreaSelector(false, onComplete),
+      ),
+      AccordionInputSection(
+        id: 'period',
+        title: '언제',
+        displayValue: _movingPeriod,
+        icon: Icons.calendar_today,
+        inputWidgetBuilder: (context, onComplete) => _buildPeriodSelector(onComplete),
+      ),
+      AccordionInputSection(
+        id: 'purpose',
+        title: '왜',
+        displayValue: _purpose,
+        icon: Icons.question_mark_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildPurposeSelector(onComplete),
+      ),
+    ];
   }
 
   @override
@@ -71,15 +110,25 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
   }
   
   Future<void> _loadPopularRegions() async {
+    setState(() {
+      _isLoadingPopularRegions = true;
+    });
+
     try {
       final regions = await _regionService.getPopularRegions();
       if (mounted) {
         setState(() {
           _popularRegions = regions;
+          _isLoadingPopularRegions = false;
         });
       }
     } catch (e) {
-      // 에러 처리
+      // 에러 발생 시에도 로딩 종료
+      if (mounted) {
+        setState(() {
+          _isLoadingPopularRegions = false;
+        });
+      }
     }
   }
   
@@ -145,627 +194,325 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    // UnifiedFortuneBaseWidget이 이미 Scaffold와 AppBar를 제공하므로
-    // 여기서는 body 내용만 반환
     return Stack(
       children: [
-        SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: TossTheme.spacingL),
-
-              // 제목
-              Text(
-                '이사 정보 입력',
-                style: TossTheme.heading1.copyWith(
-                  fontWeight: FontWeight.w700,
-                  height: 1.2,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                ),
-              ),
-
-              const SizedBox(height: TossTheme.spacingL),
-
-              // 지역 선택
-              _buildLocationSection(),
-
-              const SizedBox(height: TossTheme.spacingXL),
-
-              // 시기 선택
-              _buildPeriodSection(),
-
-              const SizedBox(height: TossTheme.spacingXL),
-
-              // 목적 선택
-              _buildPurposeSection(),
-
-              const SizedBox(height: TossTheme.spacingXXL),
-
-              const BottomButtonSpacing(),
-            ],
+        AccordionInputForm(
+          header: _buildTitleSection(),
+          sections: _accordionSections,
+          onAllCompleted: null,
+          completionButtonText: '🏠 이사운 보기',
+        ),
+        if (_canContinue())
+          TossFloatingProgressButtonPositioned(
+            text: _isLoading ? '이사운 분석중...' : '🏠 이사운 보기',
+            onPressed: _canContinue() && !_isLoading ? _handleComplete : null,
+            isEnabled: _canContinue() && !_isLoading,
+            showProgress: _isLoading,
+            isVisible: _canContinue(),
           ),
-        ),
-        TossFloatingProgressButtonPositioned(
-          text: _isLoading ? '이사운 분석중...' : '이사운 보기',
-          onPressed: _canContinue() ? _handleComplete : null,
-          isEnabled: _canContinue(),
-          showProgress: false,
-          isVisible: true,
-        ),
       ],
     );
   }
 
-  Widget _buildLocationSection() {
-    return Builder(
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '지역',
-              style: TossTheme.body1.copyWith(
-                fontWeight: FontWeight.w700,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-              ),
-            ),
-        const SizedBox(height: TossTheme.spacingM),
-        
-        // 현재 지역
-        TossCard(
-          onTap: () => _showAreaSelector(true),
-          padding: const EdgeInsets.all(TossTheme.spacingM),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.home_outlined,
-                  color: TossTheme.primaryBlue,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: TossTheme.spacingM),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '현재',
-                      style: TossTheme.caption.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                      ),
-                    ),
-                    Text(
-                      _currentArea ?? '현재 거주지를 선택하세요',
-                      style: TossTheme.body2.copyWith(
-                        color: _currentArea != null
-                            ? (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight)
-                            : (isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-              ),
-            ],
-          ),
-        ),
-        
-            const SizedBox(height: TossTheme.spacingS),
-
-            // 화살표
-            Center(
-              child: Icon(
-                Icons.arrow_downward,
-                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-                size: 20,
-              ),
-            ),
-
-            const SizedBox(height: TossTheme.spacingS),
-        
-        // 목표 지역
-        TossCard(
-          onTap: () => _showAreaSelector(false),
-          padding: const EdgeInsets.all(TossTheme.spacingM),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.location_on_outlined,
-                  color: TossDesignSystem.warningOrange,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: TossTheme.spacingM),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '이사할 곳',
-                      style: TossTheme.caption.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                      ),
-                    ),
-                    Text(
-                      _targetArea ?? '이사할 곳을 선택하세요',
-                      style: TossTheme.body2.copyWith(
-                        color: _targetArea != null
-                            ? (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight)
-                            : (isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-              ),
-            ],
-          ),
-        ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildPeriodSection() {
-    return Builder(
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '언제',
-              style: TossTheme.body1.copyWith(
-                fontWeight: FontWeight.w700,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-              ),
-            ),
-        const SizedBox(height: TossTheme.spacingM),
-        
-        Row(
-          children: _periods.map((period) {
-            final isSelected = _movingPeriod == period['title'];
-            return Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  right: period == _periods.last ? 0 : TossTheme.spacingS,
-                ),
-                child: TossCard(
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    setState(() {
-                      _movingPeriod = period['title']!;
-                    });
-                  },
-                  padding: const EdgeInsets.symmetric(
-                    vertical: TossTheme.spacingM,
-                    horizontal: TossTheme.spacingS,
-                  ),
-                  child: Container(
-                    decoration: isSelected 
-                        ? BoxDecoration(
-                            color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(TossTheme.radiusS),
-                          )
-                        : null,
-                    padding: const EdgeInsets.all(TossTheme.spacingS),
-                    child: Column(
-                      children: [
-                        Text(
-                          period['title']!,
-                          style: TossTheme.body3.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: isSelected
-                                ? TossTheme.primaryBlue
-                                : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 2),
-                        Text(
-                          period['subtitle']!,
-                          style: TossTheme.caption.copyWith(
-                            color: isSelected
-                                ? TossTheme.primaryBlue
-                                : (isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildPurposeSection() {
-    return Builder(
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '왜',
-              style: TossTheme.body1.copyWith(
-                fontWeight: FontWeight.w700,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-              ),
-            ),
-        const SizedBox(height: TossTheme.spacingM),
-        
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            childAspectRatio: 1.1,
-            crossAxisSpacing: TossTheme.spacingS,
-            mainAxisSpacing: TossTheme.spacingS,
-          ),
-          itemCount: _purposes.length,
-          itemBuilder: (context, index) {
-            final purpose = _purposes[index];
-            final isSelected = _purpose == purpose['title'];
-            
-            return TossCard(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                setState(() {
-                  _purpose = purpose['title']!;
-                });
-              },
-              padding: const EdgeInsets.all(TossTheme.spacingS),
-              child: Container(
-                decoration: isSelected 
-                    ? BoxDecoration(
-                        color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(TossTheme.radiusS),
-                        border: Border.all(
-                          color: TossTheme.primaryBlue,
-                          width: 1,
-                        ),
-                      )
-                    : null,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      purpose['icon']!,
-                      style: TypographyUnified.displaySmall,
-                    ),
-                    SizedBox(height: TossTheme.spacingXS),
-                    Text(
-                      purpose['title']!,
-                      style: TossTheme.caption.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: isSelected
-                            ? TossTheme.primaryBlue
-                            : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showAreaSelector(bool isCurrentArea) {
-    // 검색 초기화
-    _searchController.clear();
-    _searchResults.clear();
-    _isSearching = false;
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) {
-          final isDark = Theme.of(context).brightness == Brightness.dark;
-          return DraggableScrollableSheet(
-            initialChildSize: 0.8,
-            maxChildSize: 0.9,
-            minChildSize: 0.6,
-            builder: (context, scrollController) => Column(
-              children: [
-                // Handle
-                Container(
-                  margin: const EdgeInsets.only(top: 12),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-
-                // Header
-                Padding(
-                  padding: const EdgeInsets.all(TossTheme.spacingL),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        isCurrentArea ? '현재 거주지 선택' : '이사할 곳 선택',
-                        style: TossTheme.heading3.copyWith(
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                        ),
-                      ),
-                      const SizedBox(height: TossTheme.spacingM),
-
-                      // 검색 바
-                      TextField(
-                      controller: _searchController,
-                      style: TextStyle(
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: '지역명을 검색하세요 (예: 강남, 성남)',
-                        hintStyle: TossTheme.caption.copyWith(
-                          color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-                        ),
-                        suffixIcon: _searchController.text.isNotEmpty
-                            ? IconButton(
-                                icon: Icon(
-                                  Icons.clear,
-                                  color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-                                ),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  setModalState(() {
-                                    _searchResults.clear();
-                                  });
-                                },
-                              )
-                            : null,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                          borderSide: BorderSide(
-                            color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                          borderSide: BorderSide(
-                            color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                          borderSide: BorderSide(color: TossTheme.primaryBlue),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: TossTheme.spacingM,
-                          vertical: TossTheme.spacingM,
-                        ),
-                      ),
-                      onChanged: (value) {
-                        setModalState(() {});
-                        _searchRegions(value).then((_) {
-                          if (mounted) setModalState(() {});
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              
-              // 리스트
-              Expanded(
-                child: _searchController.text.trim().isNotEmpty
-                    ? _buildSearchResults(setModalState, scrollController, isCurrentArea, isDark)
-                    : _buildPopularRegions(setModalState, scrollController, isCurrentArea, isDark),
-              ),
-            ],
-          ),
-        );
-      },
-      ),
-    );
-  }
-  
-  Widget _buildPopularRegions(StateSetter setModalState, ScrollController scrollController, bool isCurrentArea, bool isDark) {
-    if (_popularRegions.isEmpty) {
-      return Center(
-        child: CircularProgressIndicator(color: TossTheme.primaryBlue),
-      );
-    }
-
-    // featured 지역과 일반 지역 분리
-    final featured = _popularRegions.where((r) => r.isFeatured).toList();
-    final others = _popularRegions.where((r) => !r.isFeatured).toList();
-
-    return ListView(
-      controller: scrollController,
+  Widget _buildTitleSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (featured.isNotEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
-            child: Row(
-              children: [
-                Text('🔥', style: TypographyUnified.buttonMedium),
-                SizedBox(width: TossTheme.spacingXS),
-                Text('인기 지역', style: TossTheme.body3.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                )),
-              ],
-            ),
+        Text(
+          '새로운 보금자리의\n운을 확인해보세요',
+          style: TypographyUnified.heading1.copyWith(
+            fontWeight: FontWeight.w700,
+            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            height: 1.3,
           ),
-          const SizedBox(height: TossTheme.spacingS),
-
-          ...featured.map((region) => _buildRegionTile(region, setModalState, isCurrentArea, isDark)),
-
-          const SizedBox(height: TossTheme.spacingL),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
-            child: Text('전체 지역', style: TossTheme.body3.copyWith(
-              fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-            )),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '이사할 지역과 시기를 입력하면\n방위와 타이밍을 고려한 운세를 알려드려요',
+          style: TypographyUnified.bodySmall.copyWith(
+            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
+            height: 1.4,
           ),
-          const SizedBox(height: TossTheme.spacingS),
-        ],
-
-        ...others.map((region) => _buildRegionTile(region, setModalState, isCurrentArea, isDark)),
+        ),
       ],
     );
   }
-  
-  Widget _buildSearchResults(StateSetter setModalState, ScrollController scrollController, bool isCurrentArea, bool isDark) {
+
+  // 아코디언용 지역 선택 빌더
+  Widget _buildAreaSelector(bool isCurrentArea, Function(dynamic) onComplete) {
+    return SizedBox(
+      height: 400, // 고정 높이 지정
+      child: Column(
+        children: [
+          // 검색창
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: '지역 검색 (예: 서울 강남구)',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onChanged: _searchRegions,
+            ),
+          ),
+          // 검색 결과 또는 인기 지역
+          Expanded(
+            child: _isSearching || _searchResults.isNotEmpty
+                ? _buildSearchResults(isCurrentArea, onComplete)
+                : _buildPopularRegionsForAccordion(isCurrentArea, onComplete),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchResults(bool isCurrentArea, Function(dynamic) onComplete) {
     if (_isSearching) {
-      return Center(
-        child: CircularProgressIndicator(color: TossTheme.primaryBlue),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_searchResults.isEmpty) {
       return Center(
+        child: Text(
+          '검색 결과가 없습니다',
+          style: TypographyUnified.bodyMedium.copyWith(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.textSecondaryDark
+                : TossDesignSystem.textSecondaryLight,
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: _searchResults.length,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemBuilder: (context, index) {
+        final region = _searchResults[index];
+        return ListTile(
+          title: Text(region.displayName),
+          onTap: () {
+            setState(() {
+              if (isCurrentArea) {
+                _currentArea = region.displayName;
+                // 아코디언 displayValue 업데이트
+                _accordionSections[0] = AccordionInputSection(
+                  id: 'current_area',
+                  title: '현재 지역',
+                  displayValue: _currentArea,
+                  icon: Icons.home_outlined,
+                  inputWidgetBuilder: (context, onComplete) => _buildAreaSelector(true, onComplete),
+                );
+              } else {
+                _targetArea = region.displayName;
+                // 아코디언 displayValue 업데이트
+                _accordionSections[1] = AccordionInputSection(
+                  id: 'target_area',
+                  title: '이사갈 곳',
+                  displayValue: _targetArea,
+                  icon: Icons.location_on_outlined,
+                  inputWidgetBuilder: (context, onComplete) => _buildAreaSelector(false, onComplete),
+                );
+              }
+              _searchController.clear();
+              _searchResults.clear();
+            });
+            HapticFeedback.lightImpact();
+            onComplete(region.displayName);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildPopularRegionsForAccordion(bool isCurrentArea, Function(dynamic) onComplete) {
+    if (_isLoadingPopularRegions) {
+      return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.search_off,
-              size: 48,
-              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-            ),
-            SizedBox(height: TossTheme.spacingM),
-            Text('검색 결과가 없어요', style: TossTheme.body2.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-            )),
-            SizedBox(height: TossTheme.spacingXS),
-            Text('다른 키워드로 다시 검색해보세요', style: TossTheme.caption.copyWith(
-              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-            )),
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('인기 지역 불러오는 중...'),
           ],
         ),
       );
     }
 
-    return ListView(
-      controller: scrollController,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
-          child: Text('검색 결과 ${_searchResults.length}개', style: TossTheme.body3.copyWith(
-            fontWeight: FontWeight.w600,
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-          )),
+    if (_popularRegions.isEmpty) {
+      return Center(
+        child: Text(
+          '인기 지역을 불러올 수 없습니다',
+          style: TypographyUnified.bodyMedium.copyWith(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? TossDesignSystem.textSecondaryDark
+                : TossDesignSystem.textSecondaryLight,
+          ),
         ),
-        const SizedBox(height: TossTheme.spacingS),
+      );
+    }
 
-        ..._searchResults.map((region) => _buildRegionTile(region, setModalState, isCurrentArea, isDark)),
-      ],
+    return ListView.builder(
+      itemCount: _popularRegions.length,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemBuilder: (context, index) {
+        final region = _popularRegions[index];
+        return ListTile(
+          leading: const Icon(Icons.star, color: TossTheme.primaryBlue),
+          title: Text(region.displayName),
+          onTap: () {
+            setState(() {
+              if (isCurrentArea) {
+                _currentArea = region.displayName;
+                _accordionSections[0] = AccordionInputSection(
+                  id: 'current_area',
+                  title: '현재 지역',
+                  displayValue: _currentArea,
+                  icon: Icons.home_outlined,
+                  inputWidgetBuilder: (context, onComplete) => _buildAreaSelector(true, onComplete),
+                );
+              } else {
+                _targetArea = region.displayName;
+                _accordionSections[1] = AccordionInputSection(
+                  id: 'target_area',
+                  title: '이사갈 곳',
+                  displayValue: _targetArea,
+                  icon: Icons.location_on_outlined,
+                  inputWidgetBuilder: (context, onComplete) => _buildAreaSelector(false, onComplete),
+                );
+              }
+            });
+            HapticFeedback.lightImpact();
+            onComplete(region.displayName);
+          },
+        );
+      },
     );
   }
-  
-  Widget _buildRegionTile(Region region, StateSetter setModalState, bool isCurrentArea, bool isDark) {
-    return ListTile(
-      leading: region.isFeatured
-          ? Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+
+  // 아코디언용 시기 선택 빌더
+  Widget _buildPeriodSelector(Function(dynamic) onComplete) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: _periods.map((period) {
+          final isSelected = _movingPeriod == period['title'];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: TossCard(
+              onTap: () {
+                setState(() {
+                  _movingPeriod = period['title']!;
+                  _accordionSections[2] = AccordionInputSection(
+                    id: 'period',
+                    title: '언제',
+                    displayValue: _movingPeriod,
+                    icon: Icons.calendar_today,
+                    inputWidgetBuilder: (context, onComplete) => _buildPeriodSelector(onComplete),
+                  );
+                });
+                HapticFeedback.lightImpact();
+                onComplete(period['title']!);
+              },
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Icon(
+                    isSelected ? Icons.check_circle : Icons.circle_outlined,
+                    color: isSelected ? TossTheme.primaryBlue : TossDesignSystem.gray400,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          period['title']!,
+                          style: TypographyUnified.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: isSelected ? TossTheme.primaryBlue : null,
+                          ),
+                        ),
+                        Text(
+                          period['subtitle']!,
+                          style: TypographyUnified.bodySmall.copyWith(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? TossDesignSystem.textSecondaryDark
+                                : TossDesignSystem.textSecondaryLight,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              child: Icon(
-                Icons.star,
-                color: TossTheme.primaryBlue,
-                size: 16,
-              ),
-            )
-          : null,
-      title: Text(
-        region.displayName,
-        style: TossTheme.body2.copyWith(
-          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  // 아코디언용 목적 선택 빌더
+  Widget _buildPurposeSelector(Function(dynamic) onComplete) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            childAspectRatio: 0.9, // 높이를 조금 더 늘림
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+          ),
+          itemCount: _purposes.length,
+        itemBuilder: (context, index) {
+          final purpose = _purposes[index];
+          final isSelected = _purpose == purpose['title'];
+          return TossCard(
+            onTap: () {
+              setState(() {
+                _purpose = purpose['title']!;
+                _accordionSections[3] = AccordionInputSection(
+                  id: 'purpose',
+                  title: '왜',
+                  displayValue: _purpose,
+                  icon: Icons.question_mark_rounded,
+                  inputWidgetBuilder: (context, onComplete) => _buildPurposeSelector(onComplete),
+                );
+              });
+              HapticFeedback.lightImpact();
+              onComplete(purpose['title']!);
+            },
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  purpose['icon']!,
+                  style: const TextStyle(fontSize: 32),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  purpose['title']!,
+                  style: TypographyUnified.bodySmall.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: isSelected ? TossTheme.primaryBlue : null,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
+        },
         ),
       ),
-      trailing: region.isFeatured
-          ? Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: TossTheme.spacingXS,
-                vertical: 2,
-              ),
-              decoration: BoxDecoration(
-                color: TossTheme.primaryBlue,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                '인기',
-                style: TossTheme.caption.copyWith(
-                  color: TossDesignSystem.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            )
-          : Icon(
-              Icons.chevron_right,
-              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-            ),
-      onTap: () {
-        // 사용 횟수 증가
-        _regionService.incrementUsageCount(region.displayName);
-        
-        setState(() {
-          if (isCurrentArea) {
-            _currentArea = region.displayName;
-          } else {
-            _targetArea = region.displayName;
-          }
-        });
-        Navigator.pop(context);
-      },
     );
   }
 }

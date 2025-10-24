@@ -1,19 +1,13 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import OpenAI from 'https://esm.sh/openai@4.28.0'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
-const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!
 
 // Supabase 클라이언트 생성
 const supabase = createClient(supabaseUrl, supabaseKey)
-
-// OpenAI 클라이언트 생성
-const openai = new OpenAI({
-  apiKey: openaiApiKey,
-})
 
 // 꿈 분석 데이터 인터페이스
 interface DreamSymbol {
@@ -354,34 +348,34 @@ serve(async (req) => {
 
 전문적이고 희망적이면서도 현실적인 조언을 제공해주세요. 미신적이거나 근거 없는 예언은 피하고, 심리학적 통찰과 실용적 지침에 중점을 둬주세요.`
 
-      // OpenAI API 호출
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-5-nano-2025-08-07',
-        messages: [
-          {
-            role: 'system',
-            content: '당신은 한국의 전문 꿈 해몽가이며, 심리학과 전통 해몽학을 바탕으로 따뜻하고 지혜로운 조언을 제공합니다. 항상 한국어로 응답하며, 희망적이고 건설적인 관점을 유지합니다.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.7,
-        max_tokens: 2000,
+      // ✅ LLM 모듈 사용
+      const llm = LLMFactory.createFromConfig('dream')
+
+      const response = await llm.generate([
+        {
+          role: 'system',
+          content: '당신은 한국의 전문 꿈 해몽가이며, 심리학과 전통 해몽학을 바탕으로 따뜻하고 지혜로운 조언을 제공합니다. 항상 한국어로 응답하며, 희망적이고 건설적인 관점을 유지합니다.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ], {
+        temperature: 1,
+        maxTokens: 8192,
+        jsonMode: true
       })
 
-      const responseContent = completion.choices[0]?.message?.content
+      console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
 
-      if (!responseContent) {
-        throw new Error('OpenAI API 응답을 받을 수 없습니다.')
+      if (!response.content) {
+        throw new Error('LLM API 응답을 받을 수 없습니다.')
       }
 
       // JSON 파싱
       let parsedResponse: any
       try {
-        parsedResponse = JSON.parse(responseContent)
+        parsedResponse = JSON.parse(response.content)
       } catch (error) {
         console.error('JSON parsing error:', error)
         throw new Error('API 응답 형식이 올바르지 않습니다.')

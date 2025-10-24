@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -100,26 +101,21 @@ JSON 형식으로 응답:
 
   messages.push({ role: "user", content: userContent });
 
-  const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'gpt-5-nano-2025-08-07',
-      messages,
-      response_format: { type: "json_object" },
-      max_tokens: 800
-    })
-  });
+  // ✅ LLM 모듈 사용
+  const llm = LLMFactory.createFromConfig('blind-date')
+  const response = await llm.generate(messages, {
+    temperature: 1,
+    maxTokens: 8192,
+    jsonMode: true
+  })
 
-  if (!openaiResponse.ok) {
-    throw new Error(`GPT-4 Vision API error: ${openaiResponse.status}`);
+  console.log(`✅ LLM (analyzeProfilePhoto): ${response.provider}/${response.model} - ${response.latency}ms`)
+
+  if (!response.content) {
+    throw new Error('LLM API 응답 없음');
   }
 
-  const result = await openaiResponse.json();
-  return JSON.parse(result.choices[0].message.content);
+  return JSON.parse(response.content);
 }
 
 // GPT-4로 대화 분석
@@ -133,20 +129,14 @@ async function analyzeChatConversation(
   nextTopicSuggestions: string[];
   redFlags?: string[];
 }> {
-  const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'gpt-5-nano-2025-08-07',
-      messages: [{
-        role: "system",
-        content: "당신은 연애 대화 분석 전문가입니다. 소개팅 대화를 분석하여 상대방의 관심도와 개선점을 찾아냅니다."
-      }, {
-        role: "user",
-        content: `다음은 ${chatPlatform}에서 나눈 대화입니다:
+  // ✅ LLM 모듈 사용
+  const llm = LLMFactory.createFromConfig('blind-date')
+  const response = await llm.generate([{
+    role: "system",
+    content: "당신은 연애 대화 분석 전문가입니다. 소개팅 대화를 분석하여 상대방의 관심도와 개선점을 찾아냅니다."
+  }, {
+    role: "user",
+    content: `다음은 ${chatPlatform}에서 나눈 대화입니다:
 
 ${chatContent}
 
@@ -158,19 +148,19 @@ JSON 형식으로 분석:
   "nextTopicSuggestions": ["다음 주제1", "다음 주제2", "다음 주제3"],
   "redFlags": ["경고 신호1", "경고 신호2"] (있을 경우만)
 }`
-      }],
-      response_format: { type: "json_object" },
-      temperature: 0.7,
-      max_tokens: 600
-    })
-  });
+  }], {
+    temperature: 1,
+    maxTokens: 8192,
+    jsonMode: true
+  })
 
-  if (!openaiResponse.ok) {
-    throw new Error(`GPT-4 Chat Analysis error: ${openaiResponse.status}`);
+  console.log(`✅ LLM (analyzeChatConversation): ${response.provider}/${response.model} - ${response.latency}ms`)
+
+  if (!response.content) {
+    throw new Error('LLM API 응답 없음');
   }
 
-  const result = await openaiResponse.json();
-  return JSON.parse(result.choices[0].message.content);
+  return JSON.parse(response.content);
 }
 
 serve(async (req) => {

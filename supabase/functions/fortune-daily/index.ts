@@ -1,13 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
-
-// OpenAI API 설정
-const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
 
 // 완전한 일일 운세 응답 스키마 정의
 interface DailyFortuneResponse {
@@ -495,35 +492,27 @@ ${idiom}의 의미를 자연스럽게 녹여내면서 오늘 하루를 어떻게
 점수에 맞는 적절한 톤으로 ${categoryName}에 대한 오늘의 조언을 작성해주세요.`;
         }
 
-        const response = await fetch(OPENAI_API_URL, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${OPENAI_API_KEY}`,
-            'Content-Type': 'application/json',
+        // ✅ LLM 모듈 사용
+        const llm = LLMFactory.createFromConfig('daily')
+
+        const response = await llm.generate([
+          {
+            role: 'system',
+            content: '당신은 따뜻하고 지혜로운 운세 상담가입니다. 사용자에게 긍정적인 에너지와 실용적인 조언을 제공합니다.'
           },
-          body: JSON.stringify({
-            model: 'gpt-5-nano-2025-08-07',
-            messages: [
-              {
-                role: 'system',
-                content: '당신은 따뜻하고 지혜로운 운세 상담가입니다. 사용자에게 긍정적인 에너지와 실용적인 조언을 제공합니다.'
-              },
-              {
-                role: 'user',
-                content: prompt
-              }
-            ],
-            max_tokens: 800,
-            temperature: 0.8,
-          }),
-        });
+          {
+            role: 'user',
+            content: prompt
+          }
+        ], {
+          temperature: 1,
+          maxTokens: 8192,
+          jsonMode: false
+        })
 
-        if (!response.ok) {
-          throw new Error(`OpenAI API error: ${response.status}`);
-        }
+        console.log(`✅ LLM 호출 완료 (${category}): ${response.provider}/${response.model} - ${response.latency}ms`)
 
-        const data = await response.json();
-        return data.choices[0].message.content.trim();
+        return response.content.trim()
       } catch (error) {
         console.error(`GPT API 호출 실패 (${category}):`, error);
         // Fallback: 기본 조언 반환

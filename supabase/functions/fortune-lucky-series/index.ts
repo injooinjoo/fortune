@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -216,19 +217,13 @@ serve(async (req) => {
     const preferredGenre = genre || '전체'
     const preferredPlatform = platform || '전체'
 
-    // OpenAI API 호출
-    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-5-nano-2025-08-07',
-        messages: [
-          {
-            role: 'system',
-            content: `당신은 전문적인 콘텐츠 큐레이터이자 운세 전문가입니다. 사용자의 개인정보와 취향을 바탕으로 오늘 특별히 행운을 가져다줄 시리즈나 콘텐츠를 추천합니다.
+    // ✅ LLM 모듈 사용
+    const llm = LLMFactory.createFromConfig('lucky-series')
+
+    const response = await llm.generate([
+      {
+        role: 'system',
+        content: `당신은 전문적인 콘텐츠 큐레이터이자 운세 전문가입니다. 사용자의 개인정보와 취향을 바탕으로 오늘 특별히 행운을 가져다줄 시리즈나 콘텐츠를 추천합니다.
 
 다음 JSON 형식으로 응답해주세요:
 {
@@ -265,10 +260,10 @@ serve(async (req) => {
 }
 
 모든 추천은 실제 존재하는 콘텐츠 또는 현실적인 콘텐츠 유형을 기반으로 해야 하며, 긍정적이고 희망적인 메시지를 담아야 합니다.`
-          },
-          {
-            role: 'user',
-            content: `이름: ${name}
+      },
+      {
+        role: 'user',
+        content: `이름: ${name}
 생년월일: ${birthDate} (별자리: ${zodiacSign})
 선호 장르: ${preferredGenre}
 선호 플랫폼: ${preferredPlatform}
@@ -276,20 +271,20 @@ serve(async (req) => {
 날짜: ${new Date().toLocaleDateString('ko-KR')}
 
 이 정보를 바탕으로 ${name}님에게 오늘 특별한 행운과 긍정적인 에너지를 가져다줄 시리즈나 콘텐츠를 추천해주세요. 개인의 특성과 오늘의 에너지를 고려하여 가장 적합한 콘텐츠를 골라주세요.`
-          }
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.8,
-        max_tokens: 2000
-      }),
+      }
+    ], {
+      temperature: 1,
+      maxTokens: 8192,
+      jsonMode: true
     })
 
-    if (!openaiResponse.ok) {
-      throw new Error(`OpenAI API 오류: ${openaiResponse.status}`)
+    console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+    if (!response.content) {
+      throw new Error('LLM API 응답 없음')
     }
 
-    const openaiResult = await openaiResponse.json()
-    const fortuneData = JSON.parse(openaiResult.choices[0].message.content)
+    const fortuneData = JSON.parse(response.content)
 
     const result: LuckySeriesFortuneResponse['data'] = {
       name,

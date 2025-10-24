@@ -15,6 +15,7 @@ import 'fortune_generators/exam_generator.dart';
 import 'fortune_generators/health_generator.dart';
 import 'fortune_generators/fortune_cookie_generator.dart';
 import 'fortune_generators/wish_generator.dart';
+import 'fortune_generators/lucky_items_generator.dart';
 import 'fortune_optimization_service.dart';
 import '../../features/fortune/domain/models/fortune_conditions.dart';
 
@@ -44,7 +45,7 @@ class UnifiedFortuneService {
 
   /// ==================== 메인 엔트리포인트 ====================
 
-  /// 운세 조회 (통합 플로우 + 최적화)
+  /// 운세 조회 (통합 플로우 + 최적화 + 블러 처리)
   ///
   /// 최적화 프로세스 (enableOptimization = true):
   /// 1. FortuneOptimizationService 사용 (6단계 프로세스)
@@ -52,8 +53,9 @@ class UnifiedFortuneService {
   ///    - DB 풀 랜덤 선택 (50% 절감)
   ///    - 30% 확률 랜덤 (30% 절감)
   ///    - API 호출 (28%만 실행)
-  /// 2. fortune_results + fortune_history 양쪽 저장
-  /// 3. 결과 반환
+  /// 2. 블러 상태로 즉시 반환 (광고 전)
+  /// 3. onAdComplete 콜백으로 블러 해제
+  /// 4. fortune_results + fortune_history 양쪽 저장
   ///
   /// 레거시 프로세스 (enableOptimization = false):
   /// 1. checkExistingFortune (기존 방식)
@@ -65,6 +67,8 @@ class UnifiedFortuneService {
     required FortuneDataSource dataSource,
     required Map<String, dynamic> inputConditions,
     FortuneConditions? conditions, // 최적화용 조건 객체 (선택)
+    Function(FortuneResult)? onBlurredResult, // 블러 상태 결과 즉시 콜백
+    bool isPremium = false, // Premium 사용자는 블러 없이 표시
   }) async {
     try {
       final userId = _supabase.auth.currentUser?.id ?? 'unknown';
@@ -87,13 +91,13 @@ class UnifiedFortuneService {
             fortuneType: fortuneType,
             conditions: conditions,
             onShowAd: () async {
-              // TODO: 광고 표시 로직 (나중에 구현)
-              Logger.info('[$fortuneType] 📺 광고 표시 (TODO)');
+              // 광고 표시는 UI에서 처리 (onBlurredResult 콜백 이후)
+              Logger.info('[$fortuneType] 📺 광고 표시 대기 (UI에서 처리)');
             },
             onAPICall: (payload) async {
-              // API 호출
+              // API 호출 (buildAPIPayload()로 생성된 payload 사용)
               Logger.info('[$fortuneType] 🔄 API 호출');
-              final result = await _generateFromAPI(fortuneType, inputConditions);
+              final result = await _generateFromAPI(fortuneType, payload);
               return result.data;
             },
           );
@@ -101,18 +105,39 @@ class UnifiedFortuneService {
           Logger.info('[$fortuneType] ✅ 최적화 시스템 완료 (소스: ${cachedResult.source})');
 
           // CachedFortuneResult → FortuneResult 변환
-          final fortuneResult = _convertCachedToFortuneResult(cachedResult);
+          var fortuneResult = _convertCachedToFortuneResult(cachedResult);
+
+          // Premium이 아니면 블러 처리
+          if (!isPremium) {
+            final blurredSections = _getBlurredSectionsForType(fortuneType);
+            fortuneResult = fortuneResult.copyWith(
+              isBlurred: true,
+              blurredSections: blurredSections,
+            );
+
+            // 블러 상태 결과를 UI에 즉시 전달
+            if (onBlurredResult != null) {
+              Logger.info('[$fortuneType] 🔒 블러 상태 결과 전달 (광고 전)');
+              onBlurredResult(fortuneResult);
+            }
+
+            // TODO: 광고 표시 대기 (UI에서 처리)
+            // 광고 시청 후 블러 해제된 결과를 반환하려면
+            // UI 계층에서 이 메서드를 다시 호출하거나
+            // copyWith(isBlurred: false)를 사용
+          }
 
           // fortune_history에도 저장 (기존 시스템과 호환성)
           if (cachedResult.apiCall) {
             // API 호출한 경우만 fortune_history에 저장
             await saveFortune(
-              result: fortuneResult,
+              result: fortuneResult.copyWith(isBlurred: false), // 저장 시 블러 해제
               fortuneType: fortuneType,
               inputConditions: inputConditions,
             );
           }
 
+          // 최종 반환 (블러 상태 또는 블러 해제 상태)
           return fortuneResult;
         } catch (e, stackTrace) {
           // ⚠️ 레거시 폴백 제거: 에러 발생 시 즉시 throw
@@ -312,6 +337,10 @@ class UnifiedFortuneService {
         case 'wish':
           return await WishGenerator.generate(inputConditions, _supabase);
 
+        case 'lucky_items':
+        case 'lucky-items':
+          return await LuckyItemsGenerator.generate(inputConditions, _supabase);
+
         case 'mbti':
           // MBTI Edge Function 직접 호출 (FortuneApiService 패턴 사용)
           // Edge Function이 기대하는 필드명으로 변환: mbti_type → mbti, birth_date → birthDate
@@ -319,7 +348,7 @@ class UnifiedFortuneService {
           final mbtiUser = _supabase.auth.currentUser;
           final mbtiUserProfile = mbtiUser != null
               ? await _supabase
-                  .from('profiles')
+                  .from('user_profiles')
                   .select('name')
                   .eq('id', mbtiUser.id)
                   .maybeSingle()
@@ -368,7 +397,7 @@ class UnifiedFortuneService {
           final user = _supabase.auth.currentUser;
           final userProfile = user != null
               ? await _supabase
-                  .from('profiles')
+                  .from('user_profiles')
                   .select('name')
                   .eq('id', user.id)
                   .maybeSingle()
@@ -516,6 +545,40 @@ class UnifiedFortuneService {
   }
 
   /// ==================== 유틸리티 메서드 ====================
+
+  /// 운세 타입별 블러 처리할 섹션 정의
+  ///
+  /// Premium이 아닌 사용자에게 광고 시청 전 숨길 중요 정보
+  List<String> _getBlurredSectionsForType(String fortuneType) {
+    switch (fortuneType.toLowerCase()) {
+      case 'tarot':
+        return ['interpretation', 'advice', 'future_outlook'];
+      case 'daily':
+      case 'daily_calendar':
+      case 'time_based':
+        return ['today_advice', 'luck_items', 'warnings'];
+      case 'mbti':
+        return ['personality_insights', 'today_advice', 'lucky_color'];
+      case 'compatibility':
+        return ['compatibility_score', 'relationship_advice', 'future_prediction'];
+      case 'moving':
+        return ['direction_analysis', 'moving_advice', 'auspicious_dates'];
+      case 'career':
+      case 'career_future':
+      case 'career_seeker':
+      case 'career_change':
+      case 'startup_career':
+        return ['career_path', 'success_factors', 'growth_advice'];
+      case 'health':
+        return ['health_advice', 'precautions', 'wellness_tips'];
+      case 'exam':
+      case 'lucky_exam':
+        return ['study_tips', 'success_probability', 'recommended_subjects'];
+      default:
+        // 기본적으로 'advice', 'details', 'recommendations' 블러 처리
+        return ['advice', 'details', 'recommendations'];
+    }
+  }
 
   /// JSONB 정규화 (키 정렬)
   ///

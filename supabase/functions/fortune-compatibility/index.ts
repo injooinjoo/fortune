@@ -1,19 +1,13 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import OpenAI from 'https://esm.sh/openai@4.28.0'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
-const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!
 
 // Supabase 클라이언트 생성
 const supabase = createClient(supabaseUrl, supabaseKey)
-
-// OpenAI 클라이언트 생성
-const openai = new OpenAI({
-  apiKey: openaiApiKey,
-})
 
 // 요청 인터페이스
 interface CompatibilityFortuneRequest {
@@ -92,34 +86,38 @@ serve(async (req) => {
 
 긍정적이면서도 현실적인 관점으로 조언해주세요.`
 
-      // OpenAI API 호출
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-5-nano-2025-08-07',
-        messages: [
-          {
-            role: 'system',
-            content: '당신은 한국의 전문 궁합 전문가입니다. 항상 한국어로 응답하며, 실용적이고 긍정적인 조언을 제공합니다.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.7,
-        max_tokens: 2000,
+      // ✅ LLM 모듈 사용 (Provider 자동 선택)
+      const llm = LLMFactory.createFromConfig('compatibility')
+
+      const response = await llm.generate([
+        {
+          role: 'system',
+          content: '당신은 한국의 전문 궁합 전문가입니다. 항상 한국어로 응답하며, 실용적이고 긍정적인 조언을 제공합니다.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ], {
+        temperature: 1,
+        maxTokens: 8192,
+        jsonMode: true
       })
 
-      const responseContent = completion.choices[0]?.message?.content
+      console.log(`✅ LLM 호출 완료:`)
+      console.log(`  Provider: ${response.provider}`)
+      console.log(`  Model: ${response.model}`)
+      console.log(`  Latency: ${response.latency}ms`)
+      console.log(`  Tokens: ${response.usage.totalTokens}`)
 
-      if (!responseContent) {
-        throw new Error('OpenAI API 응답을 받을 수 없습니다.')
+      if (!response.content) {
+        throw new Error('LLM API 응답을 받을 수 없습니다.')
       }
 
       // JSON 파싱
       let parsedResponse: any
       try {
-        parsedResponse = JSON.parse(responseContent)
+        parsedResponse = JSON.parse(response.content)
       } catch (error) {
         console.error('JSON parsing error:', error)
         throw new Error('API 응답 형식이 올바르지 않습니다.')

@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 // TypeScript 인터페이스 정의
 interface LoveFortuneRequest {
@@ -86,13 +87,8 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 )
 
-// OpenAI API 호출 함수
+// LLM API 호출 함수
 async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
-  const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
-  if (!openAIApiKey) {
-    throw new Error('OpenAI API key not found')
-  }
-
   // 연애 상태별 맞춤 프롬프트 생성
   const relationshipContexts = {
     single: '새로운 만남을 원하는 싱글',
@@ -101,7 +97,9 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
     crush: '짝사랑 중인'
   };
 
-  const prompt = `당신은 30년 경력의 전문 연애 상담사이자 심리학자입니다. 다음 정보를 바탕으로 전문적이고 구체적인 연애운세를 제공해주세요.
+  const systemPrompt = '당신은 전문 연애 상담사이자 심리학자입니다. 한국의 연애 문화를 깊이 이해하고 있으며, 과학적이면서도 따뜻한 조언을 제공합니다. 응답은 반드시 유효한 JSON 형식이어야 합니다.'
+
+  const userPrompt = `당신은 30년 경력의 전문 연애 상담사이자 심리학자입니다. 다음 정보를 바탕으로 전문적이고 구체적인 연애운세를 JSON 형식으로 제공해주세요.
 
 **상담자 정보:**
 - 나이: ${params.age}세
@@ -124,40 +122,29 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
 
 **응답 형식:**
 반드시 JSON 형태로 응답하되, 한국의 연애 문화와 현대적 감성을 반영하여 작성해주세요.
-전문적이면서도 따뜻하고 실용적인 조언을 제공하되, 과도한 낙관론이나 부정적인 표현은 피해주세요.`;
+전문적이면서도 따뜻하고 실용적인 조언을 제공하되, 과도한 낙관론이나 부정적인 표현은 피해주세요.`
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${openAIApiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'gpt-5-nano-2025-08-07',
-      messages: [
-        {
-          role: 'system',
-          content: '당신은 전문 연애 상담사이자 심리학자입니다. 한국의 연애 문화를 깊이 이해하고 있으며, 과학적이면서도 따뜻한 조언을 제공합니다. 응답은 반드시 유효한 JSON 형식이어야 합니다.'
-        },
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      max_tokens: 3000,
-      temperature: 0.7,
-      response_format: { type: "json_object" }
-    }),
+  // ✅ LLM 모듈 사용 (Provider 자동 선택)
+  const llm = LLMFactory.createFromConfig('love')
+
+  // ✅ LLM 호출 (Provider 무관)
+  const response = await llm.generate([
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: userPrompt }
+  ], {
+    temperature: 1,
+    maxTokens: 8192,
+    jsonMode: true
   })
 
-  if (!response.ok) {
-    const errorText = await response.text()
-    console.error('OpenAI API 오류:', errorText)
-    throw new Error(`OpenAI API 호출 실패: ${response.status}`)
-  }
+  console.log(`✅ LLM 호출 완료:`)
+  console.log(`  Provider: ${response.provider}`)
+  console.log(`  Model: ${response.model}`)
+  console.log(`  Latency: ${response.latency}ms`)
+  console.log(`  Tokens: ${response.usage.totalTokens}`)
 
-  const data = await response.json()
-  return JSON.parse(data.choices[0].message.content)
+  // JSON 파싱
+  return JSON.parse(response.content)
 }
 
 // 캐시 조회 함수

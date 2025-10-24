@@ -339,19 +339,42 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                   aspectRatio: 0.65, // 타로 카드 비율
                   child: Transform.rotate(
                     angle: card.isReversed ? 3.14159 : 0, // 180도 회전 (π 라디안)
-                    child: Image.asset(
-                      card.imagePath,
-                      fit: BoxFit.contain, // cover → contain으로 변경
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: const Color(0xFFF5F5F5),
-                          child: Center(
-                            child: Icon(
-                              Icons.image_not_supported,
-                              color: Color(0xFF8B95A1),
-                              size: 30,
-                            ),
-                          ),
+                    child: Builder(
+                      builder: (context) {
+                        print('[Tarot] 이미지 경로: ${card.imagePath}');
+                        print('[Tarot] 카드 이름: ${card.cardNameKr}');
+                        print('[Tarot] 덱 타입: ${card.deckType}');
+                        return Image.asset(
+                          card.imagePath,
+                          fit: BoxFit.contain, // cover → contain으로 변경
+                          errorBuilder: (context, error, stackTrace) {
+                            print('[Tarot] ❌ 이미지 로드 실패: ${card.imagePath}');
+                            print('[Tarot] ❌ 에러: $error');
+                            return Container(
+                              color: const Color(0xFFF5F5F5),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.image_not_supported,
+                                      color: Color(0xFF8B95A1),
+                                      size: 30,
+                                    ),
+                                    SizedBox(height: 8),
+                                    Text(
+                                      card.cardNameKr,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFF8B95A1),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),

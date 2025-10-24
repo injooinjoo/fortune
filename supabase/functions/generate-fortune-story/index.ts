@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -288,42 +289,28 @@ ${sajuAnalysis ? `- 천간: ${sajuAnalysis.천간}
 반드시 segments 키 안에 10개의 페이지 배열을 포함하세요.
 그리고 sajuAnalysis 객체도 함께 반함하세요.`
 
-    console.log('🤖 Calling OpenAI API...')
-    const startTime = Date.now()
-    
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-5-nano',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.8,
-        max_tokens: 2000,
-        response_format: { type: "json_object" }
-      }),
+    console.log('🤖 Calling LLM API...')
+
+    // ✅ LLM 모듈 사용
+    const llm = LLMFactory.createFromConfig('fortune-story')
+
+    const response = await llm.generate([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
+    ], {
+      temperature: 1,
+      maxTokens: 8192,
+      jsonMode: true
     })
-    
-    const responseTime = Date.now() - startTime
-    console.log(`⏱️ OpenAI API response time: ${responseTime}ms`)
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('❌ OpenAI API error:', response.status, errorText)
-      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`)
+    console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+    console.log(`📝 Token 사용량: prompt=${response.usage.promptTokens}, completion=${response.usage.completionTokens}, total=${response.usage.totalTokens}`)
+
+    if (!response.content) {
+      throw new Error('LLM API 응답 없음')
     }
-    
-    console.log('✅ OpenAI API call successful')
 
-    const data = await response.json()
-    console.log('📝 OpenAI response tokens used:', data.usage)
-    
-    const storyContent = JSON.parse(data.choices[0].message.content)
+    const storyContent = JSON.parse(response.content)
     console.log('📦 Story content type:', typeof storyContent)
     console.log('📦 Story content keys:', Object.keys(storyContent))
 

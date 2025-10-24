@@ -10,6 +10,8 @@ import 'package:share_plus/share_plus.dart';
 import '../../presentation/providers/auth_provider.dart';
 import '../../data/models/user_profile.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
+import '../../core/services/debug_premium_service.dart';
+import '../../presentation/providers/token_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -455,63 +457,74 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 builder: (context, snapshot) {
                   final profile = snapshot.data;
                   if (profile != null && profile.isTestAccount) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSectionHeader('테스트 계정'),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
-                          decoration: BoxDecoration(
-                            color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: TossDesignSystem.black.withValues(alpha: 0.04),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              _buildListItem(
-                                icon: Icons.bug_report_outlined,
-                                title: '무제한 토큰',
-                                trailing: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(12),
+                    return FutureBuilder<bool?>(
+                      future: DebugPremiumService.getOverrideValue(),
+                      builder: (context, overrideSnapshot) {
+                        final tokenState = ref.watch(tokenProvider);
+                        final premiumOverride = overrideSnapshot.data;
+                        final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildSectionHeader('테스트 계정'),
+                            Container(
+                              margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                              decoration: BoxDecoration(
+                                color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: TossDesignSystem.black.withValues(alpha: 0.04),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 2),
                                   ),
-                                  child: Text(
-                                    '활성화',
-                                    style: TossDesignSystem.caption.copyWith(
-                                      color: TossDesignSystem.successGreen,
-                                      fontWeight: FontWeight.w600,
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  _buildListItem(
+                                    icon: Icons.bug_report_outlined,
+                                    title: '무제한 토큰',
+                                    trailing: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        '활성화',
+                                        style: TossDesignSystem.caption.copyWith(
+                                          color: TossDesignSystem.successGreen,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  _buildListItem(
+                                    icon: Icons.star_outline,
+                                    title: '프리미엄 기능',
+                                    trailing: Switch(
+                                      value: isPremium,
+                                      onChanged: (value) async {
+                                        // 디버그 프리미엄 토글
+                                        await DebugPremiumService.togglePremium();
+                                        setState(() {});
+                                      },
+                                      activeColor: TossDesignSystem.tossBlue,
+                                    ),
+                                    isLast: true,
+                                  ),
+                                ],
                               ),
-                              _buildListItem(
-                                icon: Icons.star_outline,
-                                title: '프리미엄 기능',
-                                trailing: Switch(
-                                  value: profile.isTestAccount,
-                                  onChanged: (value) async {
-                                    setState(() {});
-                                  },
-                                  activeColor: TossDesignSystem.tossBlue,
-                                ),
-                                isLast: true,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                            ),
+                          ],
+                        );
+                      },
                     );
                   }
                   return const SizedBox.shrink();

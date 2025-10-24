@@ -32,6 +32,8 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
   DateTime? _birthDate;
   TimeOfDay? _birthTime;
   String? _gender;
+  final TextEditingController _birthDateController = TextEditingController();
+  final TextEditingController _birthTimeController = TextEditingController();
   final TextEditingController _birthCityController = TextEditingController();
 
   // Phase 2: 현재 상태 (선택 필요)
@@ -58,6 +60,8 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
 
   @override
   void dispose() {
+    _birthDateController.dispose();
+    _birthTimeController.dispose();
     _birthCityController.dispose();
     _occupationController.dispose();
     _strengthsController.dispose();
@@ -77,6 +81,14 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
             ? _parseTimeOfDay(profile.birthTime!)
             : null;
         _gender = profile.gender;
+
+        // TextEditingController 초기값 설정
+        if (_birthDate != null) {
+          _birthDateController.text = '${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.day.toString().padLeft(2, '0')}';
+        }
+        if (_birthTime != null) {
+          _birthTimeController.text = '${_birthTime!.hour.toString().padLeft(2, '0')}:${_birthTime!.minute.toString().padLeft(2, '0')}';
+        }
 
         // Accordion 섹션 초기화
         _initializeAccordionSections();
@@ -417,86 +429,118 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
   // ===== 입력 위젯들 =====
 
   Widget _buildBirthDateInput(Function(dynamic) onComplete) {
-    return InkWell(
-      onTap: () async {
-        final date = await showDatePicker(
-          context: context,
-          initialDate: _birthDate ?? DateTime(2000, 1, 1),
-          firstDate: DateTime(1900),
-          lastDate: DateTime.now(),
-        );
-        if (date != null && mounted) {
-          setState(() {
-            _birthDate = date;
-            _updateAccordionSection(
-              'birthDate',
-              date,
-              '${date.year}년 ${date.month}월 ${date.day}일',
-            );
-          });
-          onComplete(date);
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: TossDesignSystem.gray100,
-          borderRadius: BorderRadius.circular(12),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'YYYY-MM-DD 형식으로 입력해주세요 (예: 1990-05-15)',
+          style: TypographyUnified.labelSmall.copyWith(
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+          ),
         ),
-        child: Row(
-          children: [
-            Icon(Icons.calendar_today, size: 20),
-            const SizedBox(width: 12),
-            Text(
-              _birthDate != null
-                  ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
-                  : '날짜를 선택해주세요',
-              style: TypographyUnified.buttonMedium,
+        const SizedBox(height: 12),
+        TextField(
+          controller: _birthDateController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            hintText: 'YYYY-MM-DD',
+            prefixIcon: Icon(Icons.calendar_today),
+            filled: true,
+            fillColor: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray100,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
-          ],
+          ),
+          onChanged: (value) {
+            // YYYY-MM-DD 형식 파싱
+            if (value.length == 10) {
+              try {
+                final parts = value.split('-');
+                if (parts.length == 3) {
+                  final year = int.parse(parts[0]);
+                  final month = int.parse(parts[1]);
+                  final day = int.parse(parts[2]);
+                  final date = DateTime(year, month, day);
+
+                  setState(() {
+                    _birthDate = date;
+                    _updateAccordionSection(
+                      'birthDate',
+                      date,
+                      '${date.year}년 ${date.month}월 ${date.day}일',
+                    );
+                  });
+                  onComplete(date);
+                }
+              } catch (e) {
+                // 파싱 실패 - 아무것도 안함
+              }
+            }
+          },
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildBirthTimeInput(Function(dynamic) onComplete) {
-    return InkWell(
-      onTap: () async {
-        final time = await showTimePicker(
-          context: context,
-          initialTime: _birthTime ?? const TimeOfDay(hour: 12, minute: 0),
-        );
-        if (time != null && mounted) {
-          setState(() {
-            _birthTime = time;
-            _updateAccordionSection(
-              'birthTime',
-              time,
-              '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
-            );
-          });
-          onComplete(time);
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: TossDesignSystem.gray100,
-          borderRadius: BorderRadius.circular(12),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'HH:MM 형식으로 입력해주세요 (예: 14:30)',
+          style: TypographyUnified.labelSmall.copyWith(
+            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+          ),
         ),
-        child: Row(
-          children: [
-            Icon(Icons.access_time, size: 20),
-            const SizedBox(width: 12),
-            Text(
-              _birthTime != null
-                  ? '${_birthTime!.hour.toString().padLeft(2, '0')}:${_birthTime!.minute.toString().padLeft(2, '0')}'
-                  : '시간을 선택해주세요',
-              style: TypographyUnified.buttonMedium,
+        const SizedBox(height: 12),
+        TextField(
+          controller: _birthTimeController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            hintText: 'HH:MM',
+            prefixIcon: Icon(Icons.access_time),
+            filled: true,
+            fillColor: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray100,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
-          ],
+          ),
+          onChanged: (value) {
+            // HH:MM 형식 파싱
+            if (value.length == 5 && value.contains(':')) {
+              try {
+                final parts = value.split(':');
+                if (parts.length == 2) {
+                  final hour = int.parse(parts[0]);
+                  final minute = int.parse(parts[1]);
+
+                  if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
+                    final time = TimeOfDay(hour: hour, minute: minute);
+
+                    setState(() {
+                      _birthTime = time;
+                      _updateAccordionSection(
+                        'birthTime',
+                        time,
+                        '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
+                      );
+                    });
+                    onComplete(time);
+                  }
+                }
+              } catch (e) {
+                // 파싱 실패 - 아무것도 안함
+              }
+            }
+          },
         ),
-      ),
+      ],
     );
   }
 

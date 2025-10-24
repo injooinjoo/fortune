@@ -55,44 +55,40 @@ class RegionService extends ResilientService {
   final Map<String, dynamic> _cache = {};
   final Map<String, DateTime> _cacheTimestamps = {};
 
-  // Cache durations
-  static const Duration _popularRegionsCacheDuration = Duration(hours: 6);
-  static const Duration _searchCacheDuration = Duration(minutes: 30);
+  // Cache durations (카카오 API 호출 최소화)
+  static const Duration _popularRegionsCacheDuration = Duration(days: 1);
+  static const Duration _searchCacheDuration = Duration(hours: 1);
 
-  /// 강화된 인기 지역 목록 가져오기 (ResilientService 패턴 적용)
+  /// 강화된 인기 지역 목록 가져오기 (카카오 API 기반)
   Future<List<Region>> getPopularRegions() async {
     const cacheKey = 'popular_regions';
 
-    return await safeExecuteWithFallbackFunction(
-      () async {
-        // Check cache first
-        if (_isCacheValid(cacheKey, _popularRegionsCacheDuration)) {
-          return _cache[cacheKey] as List<Region>;
-        }
+    return await safeExecuteWithRetry<List<Region>>(
+      [
+        // 1차: 캐시 확인 (24시간)
+        () async {
+          if (_isCacheValid(cacheKey, _popularRegionsCacheDuration)) {
+            Logger.info('인기 지역 캐시 사용 (${(_cache[cacheKey] as List<Region>).length}개)');
+            return _cache[cacheKey] as List<Region>;
+          }
+          throw Exception('캐시 없음');
+        },
 
-        final response = await _supabase
-            .from('popular_regions')
-            .select()
-            .neq('display_name', '기타 지역')
-            .order('is_featured', ascending: false)
-            .order('order_priority', ascending: true);
+        // 2차: 카카오 API 조회
+        () async {
+          Logger.info('카카오 API로 인기 지역 조회 중...');
+          return await _getPopularRegionsFromKakao();
+        },
 
-        final regions = (response as List)
-            .map((json) => Region.fromJson(json))
-            .toList();
-
-        // Update cache
-        _updateCache(cacheKey, regions);
-
-        Logger.info('인기 지역 ${regions.length}개 조회 완료');
-        return regions;
-      },
-      () async {
-        // Fallback: use local fallback data
-        return _getFallbackRegions();
-      },
-      '인기 지역 목록 조회',
-      'Supabase 연결 실패, 기본 지역 목록 제공'
+        // 3차: Fallback (조용히 실행)
+        () async {
+          Logger.info('기본 지역 목록 사용');
+          return _getFallbackRegions();
+        },
+      ],
+      _getFallbackRegions(), // fallbackValue
+      '인기 지역 조회',
+      '', // WARNING 로그 제거 (빈 문자열)
     );
   }
 
@@ -296,6 +292,54 @@ class RegionService extends ResilientService {
   }
 
   // 폴백 데이터 (네트워크 실패 시)
+  /// 카카오 API로 인기 지역 조회 (병렬 처리)
+  Future<List<Region>> _getPopularRegionsFromKakao() async {
+    // 인기 지역 리스트 (실거주 인구 및 이사 수요 기준)
+    final popularDistricts = [
+      '서울 강남구', '서울 서초구', '서울 송파구',
+      '서울 강서구', '서울 마포구', '서울 영등포구',
+      '경기 성남시', '경기 수원시', '인천 연수구', '부산 해운대구',
+    ];
+
+    Logger.info('카카오 API 병렬 조회 시작 (${popularDistricts.length}개 지역)');
+
+    // 병렬 처리: 모든 지역을 동시에 조회
+    final futures = popularDistricts.map((district) async {
+      try {
+        final results = await _searchPublicApi(district);
+        if (results.isNotEmpty) {
+          final region = results.first;
+          return Region(
+            displayName: region.displayName,
+            sido: region.sido,
+            sigungu: region.sigungu,
+            isFeatured: true,
+            usageCount: 0,
+          );
+        }
+      } catch (e) {
+        Logger.warning('카카오 API 조회 실패 ($district): $e');
+      }
+      return null;
+    }).toList();
+
+    // 모든 API 호출이 완료될 때까지 대기
+    final results = await Future.wait(futures);
+
+    // null이 아닌 결과만 필터링
+    final regions = results.whereType<Region>().toList();
+
+    if (regions.isEmpty) {
+      throw Exception('모든 지역 조회 실패');
+    }
+
+    // 캐시 저장
+    _updateCache('popular_regions', regions);
+
+    Logger.info('카카오 API 병렬 조회 완료 (${regions.length}개 성공, ${popularDistricts.length - regions.length}개 실패)');
+    return regions;
+  }
+
   List<Region> _getFallbackRegions() {
     return [
       Region(displayName: '서울시 강남구', sido: '서울특별시', sigungu: '강남구', isFeatured: true),

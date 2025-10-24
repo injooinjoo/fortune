@@ -354,7 +354,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
     if (quickResponses.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
-      height: 36,
+      height: 40,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 4),

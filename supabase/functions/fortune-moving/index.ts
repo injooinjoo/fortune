@@ -1,27 +1,24 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import OpenAI from 'https://esm.sh/openai@4.28.0'
 import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
-const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!
 
 // Supabase 클라이언트 생성
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-// OpenAI 클라이언트 생성
-const openai = new OpenAI({
-  apiKey: openaiApiKey,
-})
-
 // 요청 인터페이스
 interface MovingFortuneRequest {
   fortune_type?: string
-  current_area: string
-  target_area: string
-  moving_period: string
+  current_area?: string  // snake_case (호환성)
+  target_area?: string   // snake_case (호환성)
+  currentArea?: string   // camelCase (Flutter)
+  targetArea?: string    // camelCase (Flutter)
+  moving_period?: string // snake_case (호환성)
+  movingPeriod?: string  // camelCase (Flutter)
   purpose: string
 }
 
@@ -50,12 +47,12 @@ serve(async (req) => {
   try {
     // 요청 데이터 파싱
     const requestData: MovingFortuneRequest = await req.json()
-    const {
-      current_area = '',
-      target_area = '',
-      moving_period = '',
-      purpose = ''
-    } = requestData
+
+    // camelCase 또는 snake_case 모두 지원
+    const current_area = requestData.current_area || requestData.currentArea || ''
+    const target_area = requestData.target_area || requestData.targetArea || ''
+    const moving_period = requestData.moving_period || requestData.movingPeriod || ''
+    const purpose = requestData.purpose || ''
 
     if (!current_area || !target_area) {
       throw new Error('현재 지역과 이사갈 지역을 입력해주세요.')
@@ -79,13 +76,18 @@ serve(async (req) => {
     let fortuneData: any
 
     if (cachedResult?.result) {
-      console.log('Cache hit for moving fortune')
+      console.log('✅ Cache hit for moving fortune')
       fortuneData = cachedResult.result
     } else {
-      console.log('Cache miss, calling OpenAI API')
+      console.log('🔄 Cache miss, calling LLM API')
 
-      // OpenAI API 호출을 위한 프롬프트 생성
-      const prompt = `당신은 한국의 전문 이사운세 전문가입니다. 다음 정보를 바탕으로 구체적이고 실용적인 이사 조언을 제공해주세요.
+      // ✅ LLM 모듈 사용 (Provider 자동 선택)
+      const llm = LLMFactory.createFromConfig('moving')
+
+      // 프롬프트 생성
+      const systemPrompt = '당신은 한국의 전문 이사운세 전문가입니다. 항상 한국어로 JSON 형식으로 응답하며, 실용적이고 긍정적인 조언을 제공합니다.'
+
+      const userPrompt = `당신은 한국의 전문 이사운세 전문가입니다. 다음 정보를 바탕으로 구체적이고 실용적인 이사 조언을 JSON 형식으로 제공해주세요.
 
 현재 거주지: "${current_area}"
 이사 예정지: "${target_area}"
@@ -104,52 +106,28 @@ serve(async (req) => {
 
 긍정적이면서도 현실적인 관점으로 조언해주세요.`
 
-      // OpenAI API 호출 (gpt-5-nano: reasoning 모델)
-      console.log('Calling OpenAI API with model: gpt-5-nano-2025-08-07')
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-5-nano-2025-08-07',  // reasoning 모델 (높은 품질)
-        messages: [
-          {
-            role: 'system',
-            content: '당신은 한국의 전문 이사운세 전문가입니다. 항상 한국어로 응답하며, 실용적이고 긍정적인 조언을 제공합니다.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        response_format: { type: 'json_object' },
+      // ✅ LLM 호출 (Provider 무관)
+      const response = await llm.generate([
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ], {
         temperature: 1,
-        max_completion_tokens: 16000,  // reasoning_tokens (4000) + content (충분한 공간)
+        maxTokens: 8192,
+        jsonMode: true
       })
 
-      console.log('OpenAI response received:', {
-        id: completion.id,
-        model: completion.model,
-        choices: completion.choices?.length,
-        firstChoice: completion.choices[0] ? {
-          finishReason: completion.choices[0].finish_reason,
-          hasMessage: !!completion.choices[0].message,
-          hasContent: !!completion.choices[0].message?.content,
-          contentLength: completion.choices[0].message?.content?.length
-        } : null
-      })
-
-      const responseContent = completion.choices[0]?.message?.content
-
-      if (!responseContent) {
-        console.error('OpenAI response is empty:', JSON.stringify(completion, null, 2))
-        throw new Error('OpenAI API 응답을 받을 수 없습니다.')
-      }
-
-      console.log('Response content length:', responseContent.length)
+      console.log(`✅ LLM 호출 완료:`)
+      console.log(`  Provider: ${response.provider}`)
+      console.log(`  Model: ${response.model}`)
+      console.log(`  Latency: ${response.latency}ms`)
+      console.log(`  Tokens: ${response.usage.totalTokens}`)
 
       // JSON 파싱
       let parsedResponse: any
       try {
-        parsedResponse = JSON.parse(responseContent)
+        parsedResponse = JSON.parse(response.content)
       } catch (error) {
-        console.error('JSON parsing error:', error)
+        console.error('❌ JSON parsing error:', error)
         throw new Error('API 응답 형식이 올바르지 않습니다.')
       }
 
@@ -169,7 +147,11 @@ serve(async (req) => {
         lucky_dates: parsedResponse.행운의날 || parsedResponse.lucky_dates || ['주말', '오전 시간대'],
         summary_keyword: parsedResponse.정리키워드 || parsedResponse.summary_keyword || '길한 이사',
         score: Math.floor(Math.random() * 30) + 70, // 70-100
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        // 메타데이터 추가
+        llm_provider: response.provider,
+        llm_model: response.model,
+        llm_latency: response.latency
       }
 
       // 결과 캐싱
@@ -184,33 +166,32 @@ serve(async (req) => {
     }
 
     // 성공 응답
-    const response = {
+    const responseData = {
       success: true,
       data: fortuneData
     }
 
-    return new Response(JSON.stringify(response), {
+    return new Response(JSON.stringify(responseData), {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })
-
   } catch (error) {
-    console.error('Moving Fortune Error:', error)
+    console.error('❌ Error in fortune-moving function:', error)
 
-    const errorResponse = {
-      success: false,
-      data: {},
-      error: error instanceof Error ? error.message : '이사운 생성 중 오류가 발생했습니다.'
-    }
-
-    return new Response(JSON.stringify(errorResponse), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-      },
-    })
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error.message || '운세 생성 중 오류가 발생했습니다.',
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+      }
+    )
   }
 })

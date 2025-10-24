@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -304,34 +305,26 @@ serve(async (req) => {
 
 위 사주 정보를 바탕으로 상세한 분석을 제공해주세요.`
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-5-nano',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.7,
-        max_tokens: 1500,
-        response_format: { type: "json_object" }
-      }),
+    // ✅ LLM 모듈 사용
+    const llm = LLMFactory.createFromConfig('saju')
+
+    const response = await llm.generate([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
+    ], {
+      temperature: 1,
+      maxTokens: 8192,
+      jsonMode: true
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('❌ OpenAI API error:', response.status, errorText)
-      throw new Error(`OpenAI API 오류: ${response.status}`)
+    console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+    if (!response.content) {
+      throw new Error('LLM API 응답 없음')
     }
 
-    const gptData = await response.json()
-    const analysis = JSON.parse(gptData.choices[0].message.content)
-    
-    console.log('✅ GPT analysis completed')
+    const analysis = JSON.parse(response.content)
+    console.log('✅ 사주 분석 완료')
 
     // 전체 사주 데이터 구성
     const completeSajuData = {

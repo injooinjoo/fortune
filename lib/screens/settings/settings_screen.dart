@@ -7,6 +7,8 @@ import '../../core/theme/toss_design_system.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../core/theme/typography_unified.dart';
+import '../../core/services/debug_premium_service.dart';
+import '../../shared/components/toast.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -17,6 +19,45 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final supabase = Supabase.instance.client;
+  bool _premiumOverride = false;
+  bool _overrideEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPremiumOverride();
+  }
+
+  Future<void> _loadPremiumOverride() async {
+    final override = await DebugPremiumService.getOverrideValue();
+    final enabled = await DebugPremiumService.isOverrideEnabled();
+    setState(() {
+      _premiumOverride = override ?? false;
+      _overrideEnabled = enabled;
+    });
+  }
+
+  Future<void> _togglePremiumOverride() async {
+    final newValue = await DebugPremiumService.togglePremium();
+    final enabled = await DebugPremiumService.isOverrideEnabled();
+
+    if (!mounted) return;
+
+    setState(() {
+      _premiumOverride = newValue;
+      _overrideEnabled = enabled;
+    });
+
+    // 토스트 메시지
+    if (!enabled) {
+      Toast.show(context, message: '프리미엄 오버라이드 해제');
+    } else {
+      Toast.show(
+        context,
+        message: newValue ? '디버그: 프리미엄 활성화' : '디버그: 일반 사용자 모드',
+      );
+    }
+  }
 
   // TOSS Design System Helper Methods (프로필 페이지와 동일)
   bool _isDarkMode(BuildContext context) {
@@ -298,6 +339,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         icon: Icons.cloud_download_outlined,
                         title: '유명인 정보 크롤링',
                         onTap: () => context.push('/admin/celebrity-crawling'),
+                      ),
+                      _buildListItem(
+                        icon: _overrideEnabled
+                            ? (_premiumOverride
+                                ? Icons.workspace_premium
+                                : Icons.person_outline)
+                            : Icons.toggle_off_outlined,
+                        title: '프리미엄 상태 토글',
+                        subtitle: _overrideEnabled
+                            ? (_premiumOverride ? '강제 프리미엄' : '강제 일반 사용자')
+                            : '오버라이드 해제됨',
+                        onTap: _togglePremiumOverride,
                         isLast: true,
                       ),
                     ],

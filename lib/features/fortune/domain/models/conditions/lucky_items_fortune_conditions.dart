@@ -2,19 +2,25 @@ import '../fortune_conditions.dart';
 
 /// 행운 아이템 운세 조건
 class LuckyItemsFortuneConditions extends FortuneConditions {
-  final DateTime date;
-  final String? category; // optional category filter
+  final DateTime birthDate;
+  final String? birthTime; // "HH:MM"
+  final String? gender; // "male" | "female"
+  final List<String>? interests;
 
   LuckyItemsFortuneConditions({
-    required this.date,
-    this.category,
+    required this.birthDate,
+    this.birthTime,
+    this.gender,
+    this.interests,
   });
 
   @override
   String generateHash() {
     final parts = <String>[
-      'date:${_formatDate(date)}',
-      if (category != null) 'category:${category!.hashCode}',
+      'birthDate:${_formatDate(birthDate)}',
+      if (birthTime != null) 'birthTime:$birthTime',
+      if (gender != null) 'gender:$gender',
+      if (interests != null && interests!.isNotEmpty) 'interests:${interests!.join(",")}',
     ];
     return parts.join('|');
   }
@@ -22,24 +28,29 @@ class LuckyItemsFortuneConditions extends FortuneConditions {
   @override
   Map<String, dynamic> toJson() {
     return {
-      'date': date.toIso8601String(),
-      if (category != null) 'category': category,
+      'birthDate': birthDate.toIso8601String(),
+      if (birthTime != null) 'birthTime': birthTime,
+      if (gender != null) 'gender': gender,
+      if (interests != null) 'interests': interests,
     };
   }
 
   @override
   Map<String, dynamic> toIndexableFields() {
     return {
-      'date': _formatDate(date),
-      'category': category,
+      'birth_date': _formatDate(birthDate),
+      'birth_time': birthTime,
+      'gender': gender,
     };
   }
 
   @override
   Map<String, dynamic> buildAPIPayload() {
     return {
-      'date': date.toIso8601String(),
-      if (category != null) 'category': category,
+      'birthDate': birthDate.toIso8601String(),
+      if (birthTime != null) 'birthTime': birthTime,
+      if (gender != null) 'gender': gender,
+      if (interests != null && interests!.isNotEmpty) 'interests': interests,
     };
   }
 
@@ -52,9 +63,10 @@ class LuckyItemsFortuneConditions extends FortuneConditions {
       identical(this, other) ||
       other is LuckyItemsFortuneConditions &&
           runtimeType == other.runtimeType &&
-          date == other.date &&
-          category == other.category;
+          birthDate == other.birthDate &&
+          birthTime == other.birthTime &&
+          gender == other.gender;
 
   @override
-  int get hashCode => date.hashCode ^ category.hashCode;
+  int get hashCode => birthDate.hashCode ^ birthTime.hashCode ^ gender.hashCode;
 }

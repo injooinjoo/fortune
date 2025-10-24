@@ -345,8 +345,26 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                 text: '확인',
                 onPressed: _instagramController.text.trim().isNotEmpty
                     ? () {
-                        final username = _instagramController.text.trim();
-                        final fullUrl = 'https://instagram.com/$username';
+                        final input = _instagramController.text.trim();
+
+                        // URL 유효성 검증
+                        String? errorMessage = _validateInstagramInput(input);
+
+                        if (errorMessage != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(errorMessage),
+                              backgroundColor: TossDesignSystem.errorRed,
+                              behavior: SnackBarBehavior.floating,
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Username 또는 URL을 표준 형식으로 변환
+                        final fullUrl = _normalizeInstagramUrl(input);
+
                         widget.onImageSelected(ImageUploadResult(
                           type: ImageUploadType.instagram,
                           instagramUrl: fullUrl,
@@ -763,5 +781,52 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
         );
       },
     );
+  }
+
+  /// Instagram URL 또는 username 유효성 검증
+  String? _validateInstagramInput(String input) {
+    // 빈 값 체크
+    if (input.isEmpty) {
+      return '인스타그램 사용자명 또는 URL을 입력해주세요.';
+    }
+
+    // 게시물 URL 제외
+    if (input.contains('/p/') || input.contains('/reel/') || input.contains('/tv/')) {
+      return '프로필 URL을 입력해주세요. 게시물 URL은 사용할 수 없습니다.';
+    }
+
+    // Username 패턴 검증 (instagram.com이 포함된 경우)
+    if (input.contains('instagram.com/')) {
+      // URL 형식인 경우 프로필 URL 패턴 확인
+      final urlPattern = RegExp(r'instagram\.com\/([a-zA-Z0-9._]+)\/?$');
+      if (!urlPattern.hasMatch(input)) {
+        return '올바른 인스타그램 프로필 URL을 입력해주세요.\n예: instagram.com/username';
+      }
+    } else {
+      // Username만 입력된 경우 패턴 확인
+      final usernamePattern = RegExp(r'^[a-zA-Z0-9._]+$');
+      if (!usernamePattern.hasMatch(input.replaceAll('@', ''))) {
+        return '올바른 인스타그램 사용자명을 입력해주세요.\n영문, 숫자, 마침표(.), 밑줄(_)만 사용 가능합니다.';
+      }
+    }
+
+    return null; // 유효함
+  }
+
+  /// Instagram URL 정규화 (표준 형식으로 변환)
+  String _normalizeInstagramUrl(String input) {
+    // 이미 전체 URL인 경우
+    if (input.startsWith('http://') || input.startsWith('https://')) {
+      return input;
+    }
+
+    // instagram.com/username 형식인 경우
+    if (input.contains('instagram.com/')) {
+      return 'https://$input';
+    }
+
+    // Username만 입력된 경우 (@ 제거 후)
+    final username = input.replaceAll('@', '');
+    return 'https://instagram.com/$username';
   }
 }

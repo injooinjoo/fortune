@@ -6,6 +6,7 @@ import '../widgets/moving_input_unified.dart';
 import '../../domain/models/conditions/moving_fortune_conditions.dart';
 import '../../../../core/widgets/fortune_result_widgets.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 
 /// 토스 스타일 이사운 페이지 (UnifiedFortuneBaseWidget 사용)
@@ -56,45 +57,373 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
 
       // 결과 표시 UI
       resultBuilder: (context, result) {
-        final theme = Theme.of(context);
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final data = result.data;
+
+        // API에서 받은 데이터 추출
+        final title = data['title'] as String? ?? '이사운';
+        final overallFortune = data['overall_fortune'] as String? ?? '';
+        final directionAnalysis = data['direction_analysis'] as String? ?? '';
+        final timingAnalysis = data['timing_analysis'] as String? ?? '';
+        final cautions = (data['cautions'] as List<dynamic>?)?.cast<String>() ?? [];
+        final recommendations = (data['recommendations'] as List<dynamic>?)?.cast<String>() ?? [];
+        final luckyDates = (data['lucky_dates'] as List<dynamic>?)?.cast<String>() ?? [];
+        final summaryKeyword = data['summary_keyword'] as String? ?? '';
+        final score = result.score ?? 50;
+
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: GlassCard(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '이사운 분석 결과',
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
-                  ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 제목
+              Text(
+                title,
+                style: TypographyUnified.heading2.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  result.data['content'] as String? ?? result.summary.toString(),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
-                  ),
+              ),
+              const SizedBox(height: 24),
+
+              // 운세 점수 카드
+              _buildScoreCard(score, summaryKeyword, isDark),
+              const SizedBox(height: 20),
+
+              // 전반적인 운세
+              if (overallFortune.isNotEmpty)
+                _buildSectionCard(
+                  title: '전반적인 운세',
+                  icon: Icons.brightness_5,
+                  content: overallFortune,
+                  isDark: isDark,
                 ),
-                if (result.score != null) ...[
-                  const SizedBox(height: 16),
-                  Text(
-                    '운세 점수: ${result.score}/100',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: TossDesignSystem.tossBlue,
-                    ),
-                  ),
-                ],
-              ],
-            ),
+              const SizedBox(height: 16),
+
+              // 방위 분석
+              if (directionAnalysis.isNotEmpty)
+                _buildSectionCard(
+                  title: '방위 분석',
+                  icon: Icons.explore,
+                  content: directionAnalysis,
+                  isDark: isDark,
+                ),
+              const SizedBox(height: 16),
+
+              // 시기 분석
+              if (timingAnalysis.isNotEmpty)
+                _buildSectionCard(
+                  title: '시기 분석',
+                  icon: Icons.calendar_today,
+                  content: timingAnalysis,
+                  isDark: isDark,
+                ),
+              const SizedBox(height: 16),
+
+              // 주의사항
+              if (cautions.isNotEmpty)
+                _buildListCard(
+                  title: '주의사항',
+                  icon: Icons.warning_amber_rounded,
+                  items: cautions,
+                  color: TossDesignSystem.warningYellow,
+                  isDark: isDark,
+                ),
+              const SizedBox(height: 16),
+
+              // 추천사항
+              if (recommendations.isNotEmpty)
+                _buildListCard(
+                  title: '추천사항',
+                  icon: Icons.star_rounded,
+                  items: recommendations,
+                  color: TossDesignSystem.tossBlue,
+                  isDark: isDark,
+                ),
+              const SizedBox(height: 16),
+
+              // 행운의 날
+              if (luckyDates.isNotEmpty)
+                _buildLuckyDatesCard(luckyDates, isDark),
+              const SizedBox(height: 32),
+            ],
           ),
         );
       },
+    );
+  }
+
+  /// 운세 점수 카드
+  Widget _buildScoreCard(int score, String keyword, bool isDark) {
+    // 점수에 따른 색상 결정
+    Color scoreColor;
+    String scoreText;
+    if (score >= 80) {
+      scoreColor = TossDesignSystem.successGreen;
+      scoreText = '매우 좋음';
+    } else if (score >= 60) {
+      scoreColor = TossDesignSystem.tossBlue;
+      scoreText = '좋음';
+    } else if (score >= 40) {
+      scoreColor = TossDesignSystem.warningYellow;
+      scoreText = '보통';
+    } else {
+      scoreColor = TossDesignSystem.errorRed;
+      scoreText = '주의 필요';
+    }
+
+    return GlassCard(
+      padding: const EdgeInsets.all(24),
+      gradient: LinearGradient(
+        colors: [
+          scoreColor.withOpacity(0.1),
+          scoreColor.withOpacity(0.05),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      child: Column(
+        children: [
+          // 점수
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '$score',
+                style: TypographyUnified.displayLarge.copyWith(
+                  color: scoreColor,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 56,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12, left: 4),
+                child: Text(
+                  '/100',
+                  style: TypographyUnified.heading3.copyWith(
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // 점수 텍스트
+          Text(
+            scoreText,
+            style: TypographyUnified.bodyLarge.copyWith(
+              color: scoreColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          if (keyword.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: scoreColor.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                keyword,
+                style: TypographyUnified.bodyMedium.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 섹션 카드 (전반적인 운세, 방위 분석, 시기 분석)
+  Widget _buildSectionCard({
+    required String title,
+    required IconData icon,
+    required String content,
+    required bool isDark,
+  }) {
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  color: TossDesignSystem.tossBlue,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: TypographyUnified.heading4.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            content,
+            style: TypographyUnified.bodyMedium.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 리스트 카드 (주의사항, 추천사항)
+  Widget _buildListCard({
+    required String title,
+    required IconData icon,
+    required List<String> items,
+    required Color color,
+    required bool isDark,
+  }) {
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: TypographyUnified.heading4.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...items.asMap().entries.map((entry) {
+            final index = entry.key;
+            final item = entry.value;
+            return Padding(
+              padding: EdgeInsets.only(bottom: index < items.length - 1 ? 12 : 0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 6),
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: TossDesignSystem.body2.copyWith(
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        height: 1.6,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
+
+  /// 행운의 날 카드
+  Widget _buildLuckyDatesCard(List<String> dates, bool isDark) {
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      gradient: LinearGradient(
+        colors: [
+          TossDesignSystem.tossBlue.withOpacity(0.1),
+          TossDesignSystem.tossBlue.withOpacity(0.05),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.tossBlue.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.event_available,
+                  color: TossDesignSystem.tossBlue,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '행운의 날',
+                style: TypographyUnified.heading4.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: dates.map((date) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.tossBlue.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: TossDesignSystem.tossBlue.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  date,
+                  style: TossDesignSystem.body2.copyWith(
+                    color: TossDesignSystem.tossBlue,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 }

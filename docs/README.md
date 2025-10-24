@@ -43,6 +43,11 @@ docs/
 ## 💾 데이터 & API (data/)
 
 - [데이터베이스 가이드](data/DATABASE_GUIDE.md) ⭐️ - 통합 DB 문서 (스키마, RLS, Celebrity DB, 마이그레이션)
+- [운세 프리미엄 & 광고 시스템](data/FORTUNE_PREMIUM_AD_SYSTEM.md) ⭐️ - 프리미엄/일반 사용자 분기 및 광고 후불제
+- [운세 조회 최적화 가이드](data/FORTUNE_OPTIMIZATION_GUIDE.md) - 3단계 캐싱으로 API 비용 72% 절감
+- [LLM 모듈 가이드](data/LLM_MODULE_GUIDE.md) ⭐️ - LLM Provider 추상화 (Gemini/OpenAI/Claude)
+- [LLM Provider 마이그레이션](data/LLM_PROVIDER_MIGRATION.md) - GPT-5-nano → Gemini 전환 가이드
+- [프롬프트 엔지니어링](data/PROMPT_ENGINEERING_GUIDE.md) - 프롬프트 템플릿 관리
 - [API 사용법](data/API_USAGE.md) - Supabase API 사용 패턴
 
 ---

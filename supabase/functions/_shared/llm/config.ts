@@ -1,0 +1,41 @@
+// LLM 설정 관리
+
+// 환경변수에서 Provider 결정 (단일 선택)
+export const LLM_GLOBAL_CONFIG = {
+  provider: (Deno.env.get('LLM_PROVIDER') || 'gemini') as 'openai' | 'gemini' | 'anthropic',
+  defaultModel: Deno.env.get('LLM_DEFAULT_MODEL') || 'gemini-2.0-flash-lite',
+  defaultTemperature: 1,
+  defaultMaxTokens: 8192,
+} as const
+
+// 운세별 커스텀 모델 (선택사항)
+export const FORTUNE_SPECIFIC_MODELS: Record<string, string | undefined> = {
+  'moving': 'gemini-2.0-flash-lite',
+  'tarot': 'gemini-2.0-flash-lite',
+  'love': 'gemini-2.0-flash-lite',
+  'daily': 'gemini-2.0-flash-lite',
+  'career': 'gemini-2.0-flash-lite',
+  'health': 'gemini-2.0-flash-lite',
+  'mbti': 'gemini-2.0-flash-lite',
+  'compatibility': 'gemini-2.0-flash-lite',
+  'exam': 'gemini-2.0-flash-lite',
+  'investment': 'gemini-2.0-flash-lite',
+  'talent': 'gemini-2.0-flash-lite',
+  'face-reading': 'gemini-2.0-flash-lite',
+  'dream': 'gemini-2.0-flash-lite',
+  'avoid-people': 'gemini-2.0-flash-lite',
+  'blind-date': 'gemini-2.0-flash-lite',
+  'ex-lover': 'gemini-2.0-flash-lite',
+  'lucky-series': 'gemini-2.0-flash-lite',
+  // 특정 운세만 다른 모델 사용하고 싶을 때
+  // 'personality-dna': 'gpt-4o-mini',
+}
+
+export function getModelConfig(fortuneType: string) {
+  return {
+    provider: LLM_GLOBAL_CONFIG.provider,
+    model: FORTUNE_SPECIFIC_MODELS[fortuneType] || LLM_GLOBAL_CONFIG.defaultModel,
+    temperature: LLM_GLOBAL_CONFIG.defaultTemperature,
+    maxTokens: LLM_GLOBAL_CONFIG.defaultMaxTokens,
+  }
+}

@@ -426,118 +426,107 @@ Claude Code 동작:
 
 ---
 
-## 🤖 **OpenAI API 호출 필수 규칙 (CRITICAL)** 🤖
+## 🤖 **LLM 모듈 사용 규칙 (CRITICAL)** 🤖
 
-### 📋 **gpt-5-nano-2025-08-07 모델 필수 파라미터**
+### 📋 **LLM Provider 추상화 모듈 사용**
 
-**모든 Supabase Edge Function에서 OpenAI API 호출 시 반드시 준수:**
+**모든 Supabase Edge Function에서 LLM 호출 시 반드시 `_shared/llm` 모듈을 사용합니다:**
 
 ```typescript
-// ✅ 올바른 OpenAI API 호출 (gpt-5-nano-2025-08-07)
-const completion = await openai.chat.completions.create({
-  model: 'gpt-5-nano-2025-08-07',
-  messages: [
-    {
-      role: 'system',
-      content: '시스템 메시지...'
-    },
-    {
-      role: 'user',
-      content: '사용자 질문을 JSON 형식으로 답변해주세요...'  // ✅ 'JSON' 키워드 필수!
-    }
-  ],
-  response_format: { type: 'json_object' },  // ✅ JSON 응답 강제
-  temperature: 1,                             // ✅ 1.0 사용 (0.7 안됨)
-  max_completion_tokens: 16000,               // ✅ max_completion_tokens (max_tokens 안됨)
-                                              // ⚠️ gpt-5-nano는 reasoning 모델!
-                                              // reasoning_tokens (내부 사고) + content (최종 답변) 합산
-                                              // 한글은 토큰 많이 사용하므로 충분히 크게 설정
+// ✅ 올바른 방법: LLM 모듈 사용
+import { LLMFactory } from '../_shared/llm/factory.ts'
+import { PromptManager } from '../_shared/prompts/manager.ts'
+
+// 1. 설정 기반 LLM Client 생성 (Provider 자동 선택)
+const llm = LLMFactory.createFromConfig('fortune-type')
+
+// 2. 프롬프트 템플릿 사용
+const promptManager = new PromptManager()
+const systemPrompt = promptManager.getSystemPrompt('fortune-type')
+const userPrompt = promptManager.getUserPrompt('fortune-type', params)
+
+// 3. LLM 호출 (Provider 무관)
+const response = await llm.generate([
+  { role: 'system', content: systemPrompt },
+  { role: 'user', content: userPrompt }
+], {
+  temperature: 1,
+  maxTokens: 8192,
+  jsonMode: true
 })
+
+console.log(`✅ ${response.provider}/${response.model} - ${response.latency}ms`)
 ```
 
-### 🚨 **절대 규칙 (반드시 지켜야 함)**
+### 🚫 **절대 하지 말아야 할 것**
 
-#### 1️⃣ **프롬프트에 'JSON' 키워드 필수**
 ```typescript
-// ❌ WRONG - response_format 사용 시 에러 발생
-content: '상세한 답변을 제공해주세요.'
+// ❌ WRONG - OpenAI/Gemini API 직접 호출 금지
+const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    model: 'gpt-5-nano-2025-08-07',  // ❌ 하드코딩!
+    // ...
+  })
+})
 
-// ✅ CORRECT - 반드시 'JSON' 또는 'json' 포함
-content: '상세한 답변을 JSON 형식으로 제공해주세요.'
+// ❌ WRONG - 프롬프트 하드코딩 금지
+const prompt = '당신은 운세 전문가입니다...'  // ❌ 템플릿 사용!
 ```
 
-**에러 메시지**:
+### ✅ **Provider 전환 방법**
+
+코드 수정 없이 환경변수만 변경:
+
+```bash
+# Gemini로 전환
+supabase secrets set LLM_PROVIDER=gemini
+supabase secrets set LLM_DEFAULT_MODEL=gemini-2.0-flash-exp
+
+# OpenAI로 전환
+supabase secrets set LLM_PROVIDER=openai
+supabase secrets set LLM_DEFAULT_MODEL=gpt-4o-mini
+
+# 재배포
+supabase functions deploy fortune-{type}
 ```
-400 'messages' must contain the word 'json' in some form,
-to use 'response_format' of type 'json_object'.
-```
-
-#### 2️⃣ **temperature는 1.0 사용**
-```typescript
-// ❌ WRONG - gpt-5-nano는 0.7 지원 안함
-temperature: 0.7
-
-// ✅ CORRECT
-temperature: 1
-```
-
-#### 3️⃣ **max_completion_tokens 사용 (16000 권장)**
-```typescript
-// ❌ WRONG - gpt-5-nano는 max_tokens 지원 안함
-max_tokens: 2000
-
-// ⚠️ TOO SMALL - gpt-5-nano는 reasoning 모델로 reasoning_tokens를 많이 사용
-max_completion_tokens: 2000  // reasoning에 토큰 전부 소진되어 content가 비어있음
-
-// ✅ CORRECT - reasoning_tokens + content 충분히 확보
-max_completion_tokens: 16000  // 4000 (reasoning) + 12000 (content)
-```
-
-**에러 메시지**:
-```
-400 Unsupported parameter: 'max_tokens' is not supported with this model.
-Use 'max_completion_tokens' instead.
-```
-
-**⚠️ CRITICAL: gpt-5-nano-2025-08-07은 Reasoning 모델입니다!**
-
-```json
-// finishReason: "length"이고 content가 비어있는 경우:
-{
-  "finish_reason": "length",
-  "message": { "content": "" },
-  "completion_tokens": 4000,
-  "completion_tokens_details": {
-    "reasoning_tokens": 4000  // ← 모든 토큰이 reasoning에 소진!
-  }
-}
-```
-
-**해결 방법**: `max_completion_tokens`를 16000 이상으로 설정하여 reasoning + content 공간 확보
 
 ### 📝 **Edge Function 작성 시 체크리스트**
 
 새로운 운세 Edge Function 작성 시 **반드시 확인**:
 
-- [ ] ✅ 프롬프트에 "JSON 형식으로" 또는 "JSON format" 포함됨
-- [ ] ✅ `temperature: 1` 설정됨
-- [ ] ✅ `max_completion_tokens` 사용 (max_tokens 아님)
-- [ ] ✅ `response_format: { type: 'json_object' }` 설정됨
-- [ ] ✅ UTF-8 인코딩 처리 (btoa 대신 SHA-256 해시 사용)
+- [ ] ✅ `LLMFactory.createFromConfig()` 사용
+- [ ] ✅ `PromptManager` 사용 (프롬프트 템플릿화)
+- [ ] ✅ `llm.generate()` 호출 (Provider 무관)
+- [ ] ✅ `jsonMode: true` 옵션 설정
+- [ ] ✅ 성능 모니터링 로그 추가 (`response.latency`, `response.usage`)
 
 ### 🔍 **디버깅 가이드**
 
-**400 에러 발생 시 체크 순서:**
+**LLM 호출 실패 시 체크 순서:**
 
-1. **프롬프트에 'JSON' 키워드 있는지 확인**
-2. **temperature가 1인지 확인**
-3. **max_completion_tokens 사용하는지 확인**
-4. **Response 헤더에 `charset=utf-8` 있는지 확인**
+1. **환경변수 확인**: `supabase secrets list | grep LLM_PROVIDER`
+2. **API Key 확인**: `supabase secrets list | grep GEMINI_API_KEY` (또는 `OPENAI_API_KEY`)
+3. **로그 확인**: `supabase functions logs fortune-{type} --limit 10`
+4. **JSON 응답 확인**: `jsonMode: true` 설정 및 프롬프트에 "JSON" 키워드 포함
 
-### 📚 **참고 파일**
+### 📚 **상세 가이드**
 
-- ✅ **정상 작동 예시**: `supabase/functions/fortune-moving/index.ts`
-- ✅ **btoa 대신 SHA-256**: `createHash()` 함수 참고
+- **메인 가이드**: [docs/data/LLM_MODULE_GUIDE.md](docs/data/LLM_MODULE_GUIDE.md)
+- **Provider 전환**: [docs/data/LLM_PROVIDER_MIGRATION.md](docs/data/LLM_PROVIDER_MIGRATION.md)
+- **프롬프트 작성**: [docs/data/PROMPT_ENGINEERING_GUIDE.md](docs/data/PROMPT_ENGINEERING_GUIDE.md)
+
+### 💡 **장점**
+
+- ✅ **유연성**: Provider 전환이 환경변수 변경만으로 가능
+- ✅ **비용 절감**: Gemini 전환 시 ~70% 비용 절감
+- ✅ **속도 향상**: Reasoning 모델 대신 일반 모델 사용 가능
+- ✅ **유지보수**: 프롬프트 중앙 관리
+- ✅ **확장성**: 새 Provider 추가 용이
 
 ---
 
@@ -555,21 +544,28 @@ Use 'max_completion_tokens' instead.
     └─ NO ↓
 
 2️⃣ DB 풀 크기 확인
-    ├─ 동일 조건 전체 데이터 ≥1000개? → YES → DB 랜덤 선택 + 5초 대기 + 저장 ✅
+    ├─ 동일 조건 전체 데이터 ≥1000개? → YES → DB 랜덤 선택 + 저장 ✅
     └─ NO ↓
 
 3️⃣ 30% 랜덤 선택
-    ├─ Math.random() < 0.3? → YES → DB 랜덤 선택 + 5초 대기 + 저장 ✅
+    ├─ Math.random() < 0.3? → YES → DB 랜덤 선택 + 저장 ✅
     └─ NO (70%) ↓
 
-4️⃣ API 호출 준비
-    └─ 사용자 데이터 기반 프롬프트 생성 ↓
+4️⃣ 프리미엄 확인 & API 호출
+    └─ Gemini 2.0 Flash Lite 호출 → DB 저장 ↓
 
-5️⃣ 광고 표시
-    └─ 5초 대기 + 광고 노출 ↓
+5️⃣ 결과 페이지 표시 (분기)
+    ├─ 프리미엄 사용자? → YES → 전체 결과 즉시 표시 ✅
+    └─ 일반 사용자? → NO ↓
 
-6️⃣ 결과 저장 & 표시
-    └─ OpenAI API 호출 → DB 저장 → 사용자에게 표시 ✅
+6️⃣ 블러 처리 결과 표시
+    └─ 4개 섹션 블러 (조언, 미래전망, 행운아이템, 주의사항) ↓
+
+7️⃣ "광고 보고 잠금 해제" 버튼 클릭
+    └─ 5초 광고 시청 ↓
+
+8️⃣ 블러 해제 & 전체 내용 공개 ✅
+    └─ fadeIn + scale 애니메이션 (500ms)
 ```
 
 ### 🎯 핵심 구현 로직
@@ -746,6 +742,165 @@ CREATE INDEX idx_user_fortune_date
 
 전체 플로우차트, 코드 예시, 27개 운세별 조건 정의는 다음 문서 참조:
 - **상세 가이드**: `docs/data/FORTUNE_OPTIMIZATION_GUIDE.md`
+
+---
+
+## 🎯 **운세 프리미엄 & 광고 시스템 (CRITICAL)** 🎯
+
+### 📊 시스템 개요
+
+**LLM 모델**: Gemini 2.0 Flash Lite (비용 절감)
+**광고 방식**: 후불제 (결과 페이지에서 블러 해제 시)
+**프리미엄 우대**: 블러 없이 즉시 전체 결과 표시
+
+### 🔑 프리미엄 vs 일반 사용자
+
+| 구분 | 프리미엄 사용자 | 일반 사용자 |
+|------|----------------|-------------|
+| 결과 표시 | 즉시 전체 공개 | 블러 처리 (4개 섹션) |
+| 광고 시청 | 불필요 | 필수 (5초) |
+| 블러 섹션 | 없음 | advice, future_outlook, luck_items, warnings |
+
+### 📱 프리미엄 확인 방법
+
+```dart
+// 1. 프리미엄 상태 확인
+final tokenState = ref.read(tokenProvider);
+final premiumOverride = await DebugPremiumService.getOverrideValue();
+final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
+
+// 2. UnifiedFortuneService 호출 시 전달
+final fortuneResult = await fortuneService.getFortune(
+  fortuneType: 'daily_calendar',
+  inputConditions: inputConditions,
+  conditions: conditions,
+  isPremium: isPremium, // ✅ 프리미엄 여부 전달
+);
+```
+
+### 🔒 블러 처리 시스템
+
+**일반 사용자에게만 적용**:
+```dart
+// FortuneResult에 블러 적용
+if (!isPremium) {
+  fortuneResult.applyBlur([
+    'advice',           // 조언
+    'future_outlook',   // 미래 전망
+    'luck_items',       // 행운 아이템
+    'warnings',         // 주의사항
+  ]);
+}
+```
+
+**블러 위젯 사용**:
+```dart
+return BlurredFortuneContent(
+  fortuneResult: fortuneResult,
+  onUnlockTap: _showAdAndUnblur, // 광고 버튼 콜백
+  child: FortuneResultWidget(fortuneResult),
+);
+```
+
+### 📺 광고 시청 & 블러 해제
+
+**광고 시청 프로세스**:
+```dart
+Future<void> _showAdAndUnblur() async {
+  // 1. 광고 다이얼로그 표시
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => AdLoadingDialog(
+      duration: Duration(seconds: 5),
+    ),
+  );
+
+  // 2. 5초 대기
+  await Future.delayed(Duration(seconds: 5));
+
+  // 3. 다이얼로그 닫기
+  Navigator.of(context).pop();
+
+  // 4. 블러 해제
+  setState(() {
+    _fortuneResult.removeBlur();
+  });
+}
+```
+
+### 🎨 UI 상태별 화면
+
+**프리미엄 사용자**:
+```
+┌─────────────────────────┐
+│   시간별 운세            │
+├─────────────────────────┤
+│  📊 종합 운세: 85점     │
+│  💡 조언 (보임)         │
+│  🔮 미래 전망 (보임)    │
+│  🍀 행운 아이템 (보임)  │
+│  ⚠️ 주의사항 (보임)     │
+└─────────────────────────┘
+✅ 블러 없음
+```
+
+**일반 사용자 (블러 상태)**:
+```
+┌─────────────────────────┐
+│   시간별 운세            │
+├─────────────────────────┤
+│  📊 종합 운세: 85점     │
+│  ╔═══════════════════╗  │
+│  ║  🔒 잠긴 정보:     ║  │
+│  ║  • 조언            ║  │
+│  ║  • 미래 전망       ║  │
+│  ║  • 행운 아이템     ║  │
+│  ║  • 주의사항        ║  │
+│  ║                    ║  │
+│  ║  [광고보고잠금해제] ║  │
+│  ╚═══════════════════╝  │
+└─────────────────────────┘
+```
+
+**일반 사용자 (광고 후)**:
+```
+┌─────────────────────────┐
+│   시간별 운세            │
+├─────────────────────────┤
+│  📊 종합 운세: 85점     │
+│  💡 조언 (공개!)        │
+│  🔮 미래 전망 (공개!)   │
+│  🍀 행운 아이템 (공개!) │
+│  ⚠️ 주의사항 (공개!)    │
+└─────────────────────────┘
+✅ 블러 해제 완료
+```
+
+### 📚 관련 파일
+
+| 기능 | 파일 경로 |
+|------|----------|
+| 프리미엄 확인 | `lib/core/services/debug_premium_service.dart` |
+| 블러 위젯 | `lib/core/widgets/blurred_fortune_content.dart` |
+| FortuneResult | `lib/core/models/fortune_result.dart` |
+| UnifiedFortuneService | `lib/core/services/unified_fortune_service.dart` |
+| LLM Config | `supabase/functions/_shared/llm/config.ts` |
+
+### 💡 구현 체크리스트
+
+- [ ] UnifiedFortuneService에 `isPremium` 파라미터 추가
+- [ ] FortuneResult에 블러 적용 메서드 구현
+- [ ] 각 운세 페이지에서 프리미엄 확인 로직 추가
+- [ ] 블러 해제 버튼 클릭 시 광고 표시 구현
+- [ ] DB 저장 시 `isBlurred`, `blurredSections` 필드 추가
+- [ ] BlurredFortuneContent 위젯 통합
+
+### 📖 상세 가이드
+
+전체 프로세스 플로우, UI/UX 가이드, 테스트 시나리오:
+- **상세 문서**: [docs/data/FORTUNE_PREMIUM_AD_SYSTEM.md](docs/data/FORTUNE_PREMIUM_AD_SYSTEM.md)
+- **최적화 가이드**: [docs/data/FORTUNE_OPTIMIZATION_GUIDE.md](docs/data/FORTUNE_OPTIMIZATION_GUIDE.md)
 
 ---
 

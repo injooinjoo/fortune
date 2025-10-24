@@ -1,19 +1,13 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import OpenAI from 'https://esm.sh/openai@4.28.0'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
-const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!
 
 // Supabase 클라이언트 생성
 const supabase = createClient(supabaseUrl, supabaseKey)
-
-// OpenAI 클라이언트 생성
-const openai = new OpenAI({
-  apiKey: openaiApiKey,
-})
 
 // 커리어 분야 매핑
 const careerFieldsMap = {
@@ -308,34 +302,34 @@ serve(async (req) => {
 
 전문적이고 실행 가능한 조언을 제공하되, 희망적이면서도 현실적인 관점을 유지해주세요. 구체적인 수치나 확률보다는 질적 분석에 중점을 둬주세요.`
 
-      // OpenAI API 호출
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-5-nano-2025-08-07',
-        messages: [
-          {
-            role: 'system',
-            content: '당신은 한국의 전문 커리어 컨설턴트이며, 10년 이상의 경험을 가진 커리어 코칭 전문가입니다. 항상 한국어로 응답하며, 실용적이고 실현 가능한 조언을 제공합니다.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.7,
-        max_tokens: 2500,
+      // ✅ LLM 모듈 사용 (Provider 자동 선택)
+      const llm = LLMFactory.createFromConfig('career')
+
+      const response = await llm.generate([
+        {
+          role: 'system',
+          content: '당신은 한국의 전문 커리어 컨설턴트이며, 10년 이상의 경험을 가진 커리어 코칭 전문가입니다. 항상 한국어로 응답하며, 실용적이고 실현 가능한 조언을 제공합니다.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ], {
+        temperature: 1,
+        maxTokens: 8192,
+        jsonMode: true
       })
 
-      const responseContent = completion.choices[0]?.message?.content
-
-      if (!responseContent) {
-        throw new Error('OpenAI API 응답을 받을 수 없습니다.')
-      }
+      console.log(`✅ LLM 호출 완료:`)
+      console.log(`  Provider: ${response.provider}`)
+      console.log(`  Model: ${response.model}`)
+      console.log(`  Latency: ${response.latency}ms`)
+      console.log(`  Tokens: ${response.usage.totalTokens}`)
 
       // JSON 파싱
       let parsedResponse: any
       try {
-        parsedResponse = JSON.parse(responseContent)
+        parsedResponse = JSON.parse(response.content)
       } catch (error) {
         console.error('JSON parsing error:', error)
         throw new Error('API 응답 형식이 올바르지 않습니다.')

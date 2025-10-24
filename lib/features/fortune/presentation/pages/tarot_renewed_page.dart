@@ -121,6 +121,15 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       elevation: 0,
       scrolledUnderElevation: 0,
+      leading: _currentState == TarotFlowState.result
+          ? IconButton(
+              icon: Icon(
+                Icons.close,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              ),
+              onPressed: () => context.go('/fortune'),
+            )
+          : null,
       iconTheme: IconThemeData(
         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
       ),
@@ -128,7 +137,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
         '타로 카드',
         style: TextStyle(
           color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-          
+
           fontWeight: FontWeight.w600,
         ),
       ),

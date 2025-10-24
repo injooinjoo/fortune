@@ -30,6 +30,7 @@ class MovingGenerator {
       };
 
       Logger.info('[MovingGenerator] 📡 API 호출 중...');
+      Logger.debug('[MovingGenerator] Request body: $requestBody');
 
       // Edge Function 호출
       final response = await supabase.functions.invoke(

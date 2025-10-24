@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -54,23 +55,10 @@ serve(async (req) => {
     }
 
     // OpenAI API 호출
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 30000)
+    // ✅ LLM 모듈 사용
+    const llm = LLMFactory.createFromConfig('investment')
 
-    let openaiResponse
-    try {
-      openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-5-nano-2025-08-07',
-          messages: [
-            {
-              role: 'system',
-              content: `당신은 투자 운세 전문가입니다. 사용자의 투자 계획을 분석하여 운세와 실용적인 조언을 제공합니다.
+    const systemPrompt = `당신은 투자 운세 전문가입니다. 사용자의 투자 계획을 분석하여 운세와 실용적인 조언을 제공합니다.
 
 다음 JSON 형식으로 응답해주세요:
 {
@@ -99,10 +87,8 @@ serve(async (req) => {
   ],
   "advice": "종합 투자 조언 (200자 내외)"
 }`
-            },
-            {
-              role: 'user',
-              content: `투자 유형: ${investmentType}
+
+    const userPrompt = `투자 유형: ${investmentType}
 대상: ${targetName}
 투자 금액: ${amount.toLocaleString()}원
 투자 기간: ${timeframe}
@@ -111,31 +97,24 @@ serve(async (req) => {
 경험 수준: ${experience}
 오늘 날짜: ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
 
-위 정보를 바탕으로 투자 운세를 분석해주세요. 긍정적이면서도 현실적인 조언을 제공하고, 구체적인 실행 가이드를 포함해주세요.`
-            }
-          ],
-          response_format: { type: "json_object" },
-          temperature: 0.7,
-          max_tokens: 2000
-        }),
-        signal: controller.signal
-      })
-    } catch (fetchError) {
-      clearTimeout(timeoutId)
-      console.error('OpenAI API fetch error:', fetchError)
-      throw new Error(`OpenAI API 연결 실패: ${fetchError.message}`)
-    } finally {
-      clearTimeout(timeoutId)
+위 정보를 바탕으로 투자 운세를 JSON 형식으로 분석해주세요. 긍정적이면서도 현실적인 조언을 제공하고, 구체적인 실행 가이드를 포함해주세요.`
+
+    const response = await llm.generate([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
+    ], {
+      temperature: 1,
+      maxTokens: 8192,
+      jsonMode: true
+    })
+
+    console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+    if (!response.content) {
+      throw new Error('LLM API 응답 없음')
     }
 
-    if (!openaiResponse.ok) {
-      const errorText = await openaiResponse.text()
-      console.error('OpenAI API error response:', errorText)
-      throw new Error(`OpenAI API 오류 (${openaiResponse.status}): ${errorText}`)
-    }
-
-    const openaiResult = await openaiResponse.json()
-    const fortuneData = JSON.parse(openaiResult.choices[0].message.content)
+    const fortuneData = JSON.parse(response.content)
 
     const result = {
       id: `investment-${Date.now()}`,

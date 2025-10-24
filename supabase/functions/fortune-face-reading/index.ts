@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
-import OpenAI from 'https://esm.sh/openai@4.20.1'
+import { LLMFactory } from '../_shared/llm/factory.ts'
+import { extractUsername, fetchInstagramProfileImage, downloadAndEncodeImage } from '../_shared/instagram/scraper.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -33,10 +34,8 @@ serve(async (req) => {
       userId
     })
 
-    // Initialize OpenAI
-    const openai = new OpenAI({
-      apiKey: Deno.env.get('OPENAI_API_KEY')!,
-    })
+    // ✅ LLM 모듈 사용
+    const llm = LLMFactory.createFromConfig('face-reading')
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -47,11 +46,27 @@ serve(async (req) => {
 
     // Handle different image sources
     if (analysis_source === 'instagram' && instagram_url) {
-      // For Instagram URLs, we might need to fetch the image
-      // This is a placeholder - actual implementation would need Instagram API
-      throw new Error('Instagram URL analysis not yet implemented')
+      console.log(`🔗 [FaceReading] Processing Instagram URL: ${instagram_url}`)
+
+      try {
+        // 1. Instagram URL에서 username 추출
+        const username = extractUsername(instagram_url)
+        console.log(`👤 [FaceReading] Extracted username: ${username}`)
+
+        // 2. RapidAPI로 프로필 이미지 URL 가져오기
+        const profileImageUrl = await fetchInstagramProfileImage(username)
+        console.log(`✅ [FaceReading] Profile image URL: ${profileImageUrl}`)
+
+        // 3. 이미지 다운로드 및 Base64 인코딩
+        imageData = await downloadAndEncodeImage(profileImageUrl)
+        console.log(`✅ [FaceReading] Image downloaded and encoded (${imageData.length} chars)`)
+      } catch (error) {
+        console.error(`❌ [FaceReading] Instagram processing error:`, error)
+        throw new Error(`Instagram 프로필 이미지를 가져오는데 실패했습니다: ${error.message}`)
+      }
     } else if (image) {
       imageData = image
+      console.log(`✅ [FaceReading] Using directly uploaded image (${imageData.length} chars)`)
     }
 
     if (!imageData) {
@@ -109,29 +124,30 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
 모든 분석은 긍정적이고 희망적인 톤으로 작성하되, 구체적이고 개인화된 내용을 제공하세요.
 전통 관상학의 지혜를 바탕으로 하되, 현대적인 해석을 가미하여 실용적인 조언을 제공하세요.`
 
-    // Call OpenAI Vision API
-    const completion = await openai.chat.completions.create({
-      model: "gpt-5-nano-2025-08-07",
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: faceReadingPrompt },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${imageData}`,
-                detail: "high"
-              }
+    // ✅ LLM API 호출
+    const response = await llm.generate([
+      {
+        role: "user",
+        content: [
+          { type: "text", text: faceReadingPrompt },
+          {
+            type: "image_url",
+            image_url: {
+              url: `data:image/jpeg;base64,${imageData}`,
+              detail: "high"
             }
-          ]
-        }
-      ],
-      max_tokens: 2000,
-      temperature: 0.8,
+          }
+        ]
+      }
+    ], {
+      temperature: 1,
+      maxTokens: 8192,
+      jsonMode: false
     })
 
-    const analysisResult = completion.choices[0].message.content
+    console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+    const analysisResult = response.content
 
     if (!analysisResult) {
       throw new Error('Failed to generate face reading analysis')

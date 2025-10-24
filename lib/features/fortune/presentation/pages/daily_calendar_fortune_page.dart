@@ -618,19 +618,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         appBar: AppBar(
           backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
           elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            ),
-            onPressed: () {
-              setState(() {
-                _fortuneResult = null;
-                _currentStep = 0;
-              });
-              _pageController.jumpToPage(0);
-            },
-          ),
+          automaticallyImplyLeading: false,
           title: Text(
             '시간별 운세',
             style: context.heading4.copyWith(
@@ -639,56 +627,102 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
             ),
           ),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.close,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              ),
+              onPressed: () => context.go('/fortune'),
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 점수
-              if (_fortuneResult!.score != null) ...[
-                Center(
-                  child: Column(
+              // fortune 데이터 추출
+              Builder(
+                builder: (context) {
+                  final fortuneData = _fortuneResult!.data['fortune'] as Map<String, dynamic>? ?? {};
+                  final score = fortuneData['total']?['score'] as int?;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '${_fortuneResult!.score}점',
-                        style: context.displayLarge.copyWith(
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.bold,
+                      // 점수
+                      if (score != null) ...[
+                        Center(
+                          child: Column(
+                            children: [
+                              Text(
+                                '${score}점',
+                                style: context.displayLarge.copyWith(
+                                  color: AppTheme.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                fortuneData['total']?['title'] as String? ?? '전체 운세',
+                                style: context.heading3,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _fortuneResult!.summary['title'] as String? ?? '',
-                        style: context.heading3,
-                      ),
+                        const SizedBox(height: 32),
+                      ],
+
+                      // AI 인사이트
+                      if (fortuneData['ai_insight'] != null) ...[
+                        _buildSectionCard(
+                          icon: Icons.lightbulb_outline,
+                          title: 'AI 인사이트',
+                          content: fortuneData['ai_insight'] as String,
+                          isDark: isDark,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
+                      // 카테고리별 운세
+                      if (fortuneData['categories'] != null) ...[
+                        _buildCategoriesSection(fortuneData['categories'] as Map<String, dynamic>, isDark),
+                        const SizedBox(height: 16),
+                      ],
+
+                      // 조언
+                      if (fortuneData['advice'] != null) ...[
+                        _buildSectionCard(
+                          icon: Icons.tips_and_updates,
+                          title: '조언',
+                          content: fortuneData['advice'] as String,
+                          isDark: isDark,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
+                      // AI 팁
+                      if (fortuneData['ai_tips'] != null) ...[
+                        _buildAITipsList(fortuneData['ai_tips'] as List, isDark),
+                        const SizedBox(height: 16),
+                      ],
+
+                      // 주의사항
+                      if (fortuneData['caution'] != null) ...[
+                        _buildSectionCard(
+                          icon: Icons.warning_amber_rounded,
+                          title: '주의사항',
+                          content: fortuneData['caution'] as String,
+                          isDark: isDark,
+                          isWarning: true,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                     ],
-                  ),
-                ),
-                const SizedBox(height: 32),
-              ],
-
-              // 내용
-              Text(
-                _fortuneResult!.summary['message'] as String? ?? '',
-                style: context.bodyLarge,
+                  );
+                },
               ),
-
-              // 세부 데이터
-              if (_fortuneResult!.data.isNotEmpty) ...[
-                const SizedBox(height: 24),
-                Text(
-                  'JSON 데이터:',
-                  style: context.heading4,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _fortuneResult!.data.toString(),
-                  style: context.bodySmall.copyWith(
-                    fontFamily: 'monospace',
-                  ),
-                ),
-              ],
             ],
           ),
         ),
@@ -804,6 +838,296 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
           // Floating Progress Button
           _buildFloatingButton(),
+        ],
+      ),
+    );
+  }
+
+  // 섹션 카드 빌더
+  Widget _buildSectionCard({
+    required IconData icon,
+    required String title,
+    required String content,
+    required bool isDark,
+    bool isWarning = false,
+  }) {
+    return TossCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: isWarning
+                  ? TossDesignSystem.errorRed
+                  : AppTheme.primaryColor,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: context.heading4.copyWith(
+                  color: isWarning
+                    ? TossDesignSystem.errorRed
+                    : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            content,
+            style: context.bodyMedium.copyWith(
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 카테고리별 운세 섹션
+  Widget _buildCategoriesSection(Map<String, dynamic> categories, bool isDark) {
+    final categoryData = [
+      {'key': 'love', 'title': '애정 운세', 'icon': Icons.favorite_outline, 'color': Colors.pink},
+      {'key': 'work', 'title': '직장 운세', 'icon': Icons.work_outline, 'color': Colors.blue},
+      {'key': 'money', 'title': '금전 운세', 'icon': Icons.attach_money, 'color': Colors.green},
+      {'key': 'study', 'title': '학업 운세', 'icon': Icons.school_outlined, 'color': Colors.orange},
+      {'key': 'health', 'title': '건강 운세', 'icon': Icons.favorite_border, 'color': Colors.red},
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Text(
+            '카테고리별 운세',
+            style: context.heading4.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            ),
+          ),
+        ),
+        ...categoryData.map((cat) {
+          final categoryInfo = categories[cat['key']];
+          if (categoryInfo == null) return const SizedBox.shrink();
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: TossCard(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        cat['icon'] as IconData,
+                        color: cat['color'] as Color,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        cat['title'] as String,
+                        style: context.labelLarge.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: (cat['color'] as Color).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${categoryInfo['score']}점',
+                          style: context.labelMedium.copyWith(
+                            color: cat['color'] as Color,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    categoryInfo['title'] as String,
+                    style: context.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    categoryInfo['advice'] as String,
+                    style: context.bodySmall.copyWith(
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+
+        // 전체 운세
+        if (categories['total'] != null) ...[
+          const SizedBox(height: 4),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppTheme.primaryColor.withOpacity(0.1),
+                  AppTheme.primaryColor.withOpacity(0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: TossCard(
+              padding: const EdgeInsets.all(20),
+              style: TossCardStyle.transparent,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.auto_awesome,
+                        color: AppTheme.primaryColor,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '전체 운세',
+                        style: context.heading4.copyWith(
+                          color: AppTheme.primaryColor,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          '${categories['total']['score']}점',
+                          style: context.labelLarge.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  if (categories['total']['advice'] is Map) ...[
+                    // advice가 Map 구조인 경우 (idiom + description)
+                    Text(
+                      (categories['total']['advice'] as Map)['idiom'] as String? ?? '',
+                      style: context.bodyLarge.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      (categories['total']['advice'] as Map)['description'] as String? ?? '',
+                      style: context.bodyMedium.copyWith(
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                        height: 1.6,
+                      ),
+                    ),
+                  ] else ...[
+                    // advice가 String인 경우 (하위 호환)
+                    Text(
+                      categories['total']['advice'] as String? ?? '',
+                      style: context.bodyMedium.copyWith(
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                        height: 1.6,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  // AI 팁 리스트
+  Widget _buildAITipsList(List tips, bool isDark) {
+    return TossCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                color: AppTheme.primaryColor,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'AI 팁',
+                style: context.heading4.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...tips.asMap().entries.map((entry) {
+            final index = entry.key;
+            final tip = entry.value as String;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${index + 1}',
+                        style: context.labelSmall.copyWith(
+                          color: AppTheme.primaryColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      tip,
+                      style: context.bodyMedium.copyWith(
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
         ],
       ),
     );

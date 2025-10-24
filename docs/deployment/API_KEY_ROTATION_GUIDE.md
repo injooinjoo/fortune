@@ -9,18 +9,38 @@
 
 다음 API 키들이 `.env` 파일에 노출되어 있어 즉시 재발급이 필요합니다:
 
-### 1. OpenAI API Key 🔴 HIGH PRIORITY
+### 1. LLM Provider API Keys 🔴 HIGH PRIORITY
 
-**현재 노출된 키**: `sk-proj-cR68...`
+**현재 사용 중인 Provider**: Gemini (또는 OpenAI)
+
+#### 1-A. Gemini API Key (권장)
+
+**재발급 절차**:
+1. https://aistudio.google.com/app/apikey 접속
+2. 기존 키 삭제 (Delete)
+3. "Create API key" 클릭
+4. 새 키를 안전하게 저장 (1Password, Secrets Manager)
+5. Supabase Secrets 업데이트:
+   ```bash
+   supabase secrets set GEMINI_API_KEY=새로_발급받은_키
+   ```
+
+**검증**:
+```bash
+# 테스트 API 호출
+curl "https://generativelanguage.googleapis.com/v1beta/models?key=$GEMINI_API_KEY"
+```
+
+#### 1-B. OpenAI API Key (선택사항)
 
 **재발급 절차**:
 1. https://platform.openai.com/api-keys 접속
 2. 노출된 키 삭제 (Revoke)
 3. "Create new secret key" 클릭
 4. 새 키를 안전하게 저장 (1Password, Secrets Manager)
-5. `.env` 파일 업데이트:
-   ```env
-   OPENAI_API_KEY=새로_발급받은_키
+5. Supabase Secrets 업데이트:
+   ```bash
+   supabase secrets set OPENAI_API_KEY=새로_발급받은_키
    ```
 
 **검증**:
@@ -29,6 +49,10 @@
 curl https://api.openai.com/v1/models \
   -H "Authorization: Bearer $OPENAI_API_KEY"
 ```
+
+**참고**:
+- [LLM_MODULE_GUIDE.md](../data/LLM_MODULE_GUIDE.md) - LLM Provider 전환 가이드
+- [LLM_PROVIDER_MIGRATION.md](../data/LLM_PROVIDER_MIGRATION.md) - Gemini 마이그레이션
 
 ---
 

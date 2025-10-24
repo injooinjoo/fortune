@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -54,24 +55,10 @@ serve(async (req) => {
       )
     }
 
-    // OpenAI API 호출
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 30000)
+    // ✅ LLM 모듈 사용
+    const llm = LLMFactory.createFromConfig('avoid-people')
 
-    let openaiResponse
-    try {
-      openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-5-nano-2025-08-07',
-          messages: [
-            {
-              role: 'system',
-              content: `당신은 심리학과 대인관계 전문가입니다. 사용자의 현재 상태와 일정을 분석하여 오늘 주의해야 할 사람 유형을 3-5가지 제시하고, 각 유형별로 구체적인 대처 방법을 알려주세요.
+    const systemPrompt = `당신은 심리학과 대인관계 전문가입니다. 사용자의 현재 상태와 일정을 분석하여 오늘 주의해야 할 사람 유형을 3-5가지 제시하고, 각 유형별로 구체적인 대처 방법을 알려주세요.
 
 다음 JSON 형식으로 응답해주세요:
 {
@@ -88,10 +75,8 @@ serve(async (req) => {
   "safeTypes": ["오늘 도움이 될 사람 유형 3가지"],
   "advice": "종합 조언 (150자 내외)"
 }`
-            },
-            {
-              role: 'user',
-              content: `환경: ${environment}
+
+    const userPrompt = `환경: ${environment}
 중요 일정: ${importantSchedule}
 기분 상태: ${moodLevel}/5
 스트레스 레벨: ${stressLevel}/5
@@ -101,31 +86,24 @@ serve(async (req) => {
 팀 프로젝트: ${hasTeamProject ? '있음' : '없음'}
 날짜: ${new Date().toLocaleDateString('ko-KR')}
 
-위 정보를 바탕으로 오늘 주의해야 할 사람 유형을 분석해주세요.`
-            }
-          ],
-          response_format: { type: "json_object" },
-          temperature: 0.7,
-          max_tokens: 1500
-        }),
-        signal: controller.signal
-      })
-    } catch (fetchError) {
-      clearTimeout(timeoutId)
-      console.error('OpenAI API fetch error:', fetchError)
-      throw new Error(`OpenAI API 연결 실패: ${fetchError.message}`)
-    } finally {
-      clearTimeout(timeoutId)
+위 정보를 바탕으로 오늘 주의해야 할 사람 유형을 JSON 형식으로 분석해주세요.`
+
+    const response = await llm.generate([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
+    ], {
+      temperature: 1,
+      maxTokens: 8192,
+      jsonMode: true
+    })
+
+    console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+    if (!response.content) {
+      throw new Error('LLM API 응답 없음')
     }
 
-    if (!openaiResponse.ok) {
-      const errorText = await openaiResponse.text()
-      console.error('OpenAI API error response:', errorText)
-      throw new Error(`OpenAI API 오류 (${openaiResponse.status}): ${errorText}`)
-    }
-
-    const openaiResult = await openaiResponse.json()
-    const fortuneData = JSON.parse(openaiResult.choices[0].message.content)
+    const fortuneData = JSON.parse(response.content)
 
     const result = {
       ...fortuneData,

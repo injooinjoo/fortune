@@ -36,12 +36,14 @@ class AccordionInputForm extends StatefulWidget {
   final List<AccordionInputSection> sections;
   final VoidCallback? onAllCompleted;
   final String? completionButtonText;
+  final Widget? header;
 
   const AccordionInputForm({
     super.key,
     required this.sections,
     this.onAllCompleted,
     this.completionButtonText,
+    this.header,
   });
 
   @override
@@ -60,6 +62,17 @@ class _AccordionInputFormState extends State<AccordionInputForm> {
     for (int i = 0; i < widget.sections.length; i++) {
       _sectionKeys.add(GlobalKey());
     }
+    // 첫 미완료 섹션 찾기
+    _activeIndex = _findFirstIncompleteSection();
+  }
+
+  int _findFirstIncompleteSection() {
+    for (int i = 0; i < widget.sections.length; i++) {
+      if (!widget.sections[i].isCompleted) {
+        return i;
+      }
+    }
+    return -1; // 모두 완료됨
   }
 
   @override
@@ -107,14 +120,15 @@ class _AccordionInputFormState extends State<AccordionInputForm> {
       _activeIndex = targetIndex;
     });
 
-    // 섹션으로 스크롤 (아코디언 제목이 화면 최상단에 오도록)
+    // 섹션으로 스크롤 (아코디언 제목이 AppBar 아래에 오도록)
     Future.delayed(const Duration(milliseconds: 200), () {
       if (!mounted) return;
 
       final RenderBox? renderBox = _sectionKeys[targetIndex].currentContext?.findRenderObject() as RenderBox?;
       if (renderBox != null) {
         final position = renderBox.localToGlobal(Offset.zero);
-        final offset = _scrollController.offset + position.dy - 20; // 20px 여유 공간
+        // AppBar 높이(약 56px) + SafeArea(약 44px) + 여유 공간(20px) = 약 120px
+        final offset = _scrollController.offset + position.dy - 120;
 
         _scrollController.animateTo(
           offset.clamp(0.0, _scrollController.position.maxScrollExtent),
@@ -130,8 +144,17 @@ class _AccordionInputFormState extends State<AccordionInputForm> {
     return CustomScrollView(
       controller: _scrollController,
       slivers: [
+        // 헤더 (있는 경우)
+        if (widget.header != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+              child: widget.header!,
+            ),
+          ),
+        // 아코디언 섹션들
         SliverPadding(
-          padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 120),
+          padding: EdgeInsets.only(left: 20, right: 20, top: widget.header != null ? 0 : 20, bottom: 120),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
@@ -350,6 +373,17 @@ class _AccordionInputFormWithHeaderState extends State<AccordionInputFormWithHea
     for (int i = 0; i < widget.sections.length; i++) {
       _sectionKeys.add(GlobalKey());
     }
+    // 첫 미완료 섹션 찾기
+    _activeIndex = _findFirstIncompleteSection();
+  }
+
+  int _findFirstIncompleteSection() {
+    for (int i = 0; i < widget.sections.length; i++) {
+      if (!widget.sections[i].isCompleted) {
+        return i;
+      }
+    }
+    return -1; // 모두 완료됨
   }
 
   @override
@@ -397,7 +431,7 @@ class _AccordionInputFormWithHeaderState extends State<AccordionInputFormWithHea
       _activeIndex = targetIndex;
     });
 
-    // 섹션으로 스크롤 (아코디언 제목이 화면 최상단에 오도록)
+    // 섹션으로 스크롤 (헤더를 고려하여 충분한 여유 공간 확보)
     Future.delayed(const Duration(milliseconds: 200), () {
       if (!mounted) return;
 
@@ -405,9 +439,9 @@ class _AccordionInputFormWithHeaderState extends State<AccordionInputFormWithHea
       if (renderBox != null) {
         final position = renderBox.localToGlobal(Offset.zero);
 
-        // 현재 스크롤 위치 + 섹션의 화면상 위치 = 절대 위치
-        // 여기서 SafeArea top padding을 빼서 섹션이 최상단에 오도록 함
-        final offset = _scrollController.offset + position.dy - 20; // 20px 여유 공간
+        // 헤더 높이(약 80-120px) + SafeArea(약 44px) + 여유 공간(40px) = 약 164px
+        // 헤더가 잘리지 않도록 충분한 오프셋 확보
+        final offset = _scrollController.offset + position.dy - 180;
 
         _scrollController.animateTo(
           offset.clamp(0.0, _scrollController.position.maxScrollExtent),

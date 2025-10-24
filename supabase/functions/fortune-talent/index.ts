@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -56,20 +57,13 @@ serve(async (req) => {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 30000)
 
-    let openaiResponse
-    try {
-      openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-5-nano-2025-08-07',
-          messages: [
-            {
-              role: 'system',
-              content: `당신은 재능 발견 및 개발 전문가입니다. 사용자의 현재 상태와 목표를 분석하여 재능 개발 운세와 구체적인 실행 계획을 제공합니다.
+    // ✅ LLM 모듈 사용
+    const llm = LLMFactory.createFromConfig('talent')
+
+    const response = await llm.generate([
+      {
+        role: 'system',
+        content: `당신은 재능 발견 및 개발 전문가입니다. 사용자의 현재 상태와 목표를 분석하여 재능 개발 운세와 구체적인 실행 계획을 제공합니다.
 
 다음 JSON 형식으로 응답해주세요:
 {
@@ -114,10 +108,10 @@ serve(async (req) => {
   ],
   "advice": "종합 조언 (200자 내외, 동기부여와 실용적 팁)"
 }`
-            },
-            {
-              role: 'user',
-              content: `재능 분야: ${talentArea}
+      },
+      {
+        role: 'user',
+        content: `재능 분야: ${talentArea}
 현재 스킬: ${currentSkills.join(', ')}
 목표: ${goals}
 경험 수준: ${experience}
@@ -125,31 +119,21 @@ serve(async (req) => {
 어려움: ${challenges.join(', ')}
 오늘 날짜: ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
 
-위 정보를 바탕으로 재능 개발 운세를 분석하고, 구체적인 주간 실행 계획을 제공해주세요. 현실적이면서도 동기부여가 되는 조언을 부탁드립니다.`
-            }
-          ],
-          response_format: { type: "json_object" },
-          temperature: 0.8,
-          max_tokens: 2500
-        }),
-        signal: controller.signal
-      })
-    } catch (fetchError) {
-      clearTimeout(timeoutId)
-      console.error('OpenAI API fetch error:', fetchError)
-      throw new Error(`OpenAI API 연결 실패: ${fetchError.message}`)
-    } finally {
-      clearTimeout(timeoutId)
+위 정보를 바탕으로 재능 개발 운세를 JSON 형식으로 분석하고, 구체적인 주간 실행 계획을 제공해주세요. 현실적이면서도 동기부여가 되는 조언을 부탁드립니다.`
+      }
+    ], {
+      temperature: 1,
+      maxTokens: 8192,
+      jsonMode: true
+    })
+
+    console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+    if (!response.content) {
+      throw new Error('LLM API 응답 없음')
     }
 
-    if (!openaiResponse.ok) {
-      const errorText = await openaiResponse.text()
-      console.error('OpenAI API error response:', errorText)
-      throw new Error(`OpenAI API 오류 (${openaiResponse.status}): ${errorText}`)
-    }
-
-    const openaiResult = await openaiResponse.json()
-    const fortuneData = JSON.parse(openaiResult.choices[0].message.content)
+    const fortuneData = JSON.parse(response.content)
 
     const result = {
       id: `talent-${Date.now()}`,

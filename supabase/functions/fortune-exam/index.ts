@@ -1,13 +1,11 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import OpenAI from 'https://esm.sh/openai@4.28.0'
+import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
-const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!
 
 const supabase = createClient(supabaseUrl, supabaseKey)
-const openai = new OpenAI({ apiKey: openaiApiKey })
 
 interface ExamFortuneRequest {
   fortune_type?: string
@@ -81,27 +79,29 @@ serve(async (req) => {
 
 긍정적이면서도 현실적인 관점으로 조언해주세요.`
 
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-5-nano-2025-08-07',
-        messages: [
-          {
-            role: 'system',
-            content: '당신은 한국의 전문 시험운세 전문가입니다. 항상 한국어로 응답하며, 실용적이고 동기부여가 되는 조언을 제공합니다.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.7,
-        max_tokens: 2000,
+      // ✅ LLM 모듈 사용
+      const llm = LLMFactory.createFromConfig('exam')
+
+      const response = await llm.generate([
+        {
+          role: 'system',
+          content: '당신은 한국의 전문 시험운세 전문가입니다. 항상 한국어로 응답하며, 실용적이고 동기부여가 되는 조언을 제공합니다.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ], {
+        temperature: 1,
+        maxTokens: 8192,
+        jsonMode: true
       })
 
-      const responseContent = completion.choices[0]?.message?.content
-      if (!responseContent) throw new Error('OpenAI API 응답을 받을 수 없습니다.')
+      console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
 
-      const parsedResponse = JSON.parse(responseContent)
+      if (!response.content) throw new Error('LLM API 응답을 받을 수 없습니다.')
+
+      const parsedResponse = JSON.parse(response.content)
 
       fortuneData = {
         title: `${exam_type} 시험운`,

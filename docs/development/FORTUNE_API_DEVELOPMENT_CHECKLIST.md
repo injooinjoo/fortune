@@ -162,61 +162,52 @@ if (cachedResult) {
 - [ ] fortune_cache 조회 로직 완료
 - [ ] 캐시 히트 시 즉시 반환 완료
 
-#### 6. OpenAI API 호출 (필수)
+#### 6. LLM 호출 (필수 - _shared/llm 모듈 사용)
 ```typescript
-const controller = new AbortController()
-const timeoutId = setTimeout(() => controller.abort(), 30000)
+import { LLMFactory } from '../_shared/llm/factory.ts'
+import { PromptManager } from '../_shared/prompts/manager.ts'
 
 try {
-  const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        {
-          role: 'system',
-          content: `당신은 {운세 전문가} 입니다.
+  // 1. LLM Client 생성 (설정 기반)
+  const llm = LLMFactory.createFromConfig('{fortune-type}')
 
-다음 JSON 형식으로 응답해주세요:
-{
-  "overallScore": 0-100 사이의 점수,
-  "content": "전체 분석 (200자 내외)",
-  "추가필드": "..."
-}`
-        },
-        {
-          role: 'user',
-          content: `입력: ${param1}\n날짜: ${new Date().toLocaleDateString('ko-KR')}`
-        }
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.7,
-      max_tokens: 1500
-    }),
-    signal: controller.signal
+  // 2. 프롬프트 템플릿 사용
+  const promptManager = new PromptManager()
+  const systemPrompt = promptManager.getSystemPrompt('{fortune-type}')
+  const userPrompt = promptManager.getUserPrompt('{fortune-type}', {
+    param1,
+    param2,
+    date: new Date().toLocaleDateString('ko-KR')
   })
 
-  if (!openaiResponse.ok) {
-    throw new Error(`OpenAI API error: ${openaiResponse.status}`)
-  }
+  // 3. LLM 호출 (Provider 무관)
+  const response = await llm.generate([
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: userPrompt }
+  ], {
+    temperature: 1,
+    maxTokens: 8192,
+    jsonMode: true
+  })
 
-  const openaiResult = await openaiResponse.json()
-  const fortuneData = JSON.parse(openaiResult.choices[0].message.content)
-} finally {
-  clearTimeout(timeoutId)
+  console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+  const fortuneData = JSON.parse(response.content)
+} catch (error) {
+  console.error('❌ LLM 호출 실패:', error)
+  throw error
 }
 ```
-- [ ] AbortController 타임아웃 설정 완료
-- [ ] System Prompt 작성 완료 (역할, JSON 형식 명시)
-- [ ] User Prompt 작성 완료 (입력 파라미터 포맷팅)
-- [ ] temperature: 0.7-0.8 설정 완료
-- [ ] max_tokens: 1500 설정 완료
-- [ ] response_format: json_object 설정 완료
-- [ ] 타임아웃 정리 (finally 블록) 완료
+- [ ] `LLMFactory.createFromConfig()` 사용 완료
+- [ ] `PromptManager` 사용 완료 (프롬프트 템플릿화)
+- [ ] `llm.generate()` 호출 완료
+- [ ] `jsonMode: true` 설정 완료
+- [ ] 성능 모니터링 로그 추가 완료
+- [ ] 에러 처리 완료
+
+**참고**:
+- [LLM_MODULE_GUIDE.md](../data/LLM_MODULE_GUIDE.md) - LLM 모듈 사용법
+- [PROMPT_ENGINEERING_GUIDE.md](../data/PROMPT_ENGINEERING_GUIDE.md) - 프롬프트 작성법
 
 #### 7. fortune_cache에 결과 저장 (필수)
 ```typescript
