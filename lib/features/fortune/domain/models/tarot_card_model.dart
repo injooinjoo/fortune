@@ -229,6 +229,8 @@ class TarotSpreadResult {
   final DateTime timestamp;
   final String overallInterpretation;
   final Map<String, String> positionInterpretations;
+  final bool isBlurred;  // ✅ 블러 상태
+  final List<String> blurredSections;  // ✅ 블러 처리된 섹션 목록
 
   TarotSpreadResult({
     required this.spreadType,
@@ -237,7 +239,32 @@ class TarotSpreadResult {
     required this.timestamp,
     required this.overallInterpretation,
     required this.positionInterpretations,
+    this.isBlurred = false,  // ✅ 기본값: false
+    this.blurredSections = const [],  // ✅ 기본값: 빈 배열
   });
+
+  /// copyWith 메서드 (블러 해제용)
+  TarotSpreadResult copyWith({
+    TarotSpreadType? spreadType,
+    List<TarotCard>? cards,
+    String? question,
+    DateTime? timestamp,
+    String? overallInterpretation,
+    Map<String, String>? positionInterpretations,
+    bool? isBlurred,
+    List<String>? blurredSections,
+  }) {
+    return TarotSpreadResult(
+      spreadType: spreadType ?? this.spreadType,
+      cards: cards ?? this.cards,
+      question: question ?? this.question,
+      timestamp: timestamp ?? this.timestamp,
+      overallInterpretation: overallInterpretation ?? this.overallInterpretation,
+      positionInterpretations: positionInterpretations ?? this.positionInterpretations,
+      isBlurred: isBlurred ?? this.isBlurred,
+      blurredSections: blurredSections ?? this.blurredSections,
+    );
+  }
 
   /// JSON 변환
   Map<String, dynamic> toJson() => {
@@ -247,6 +274,8 @@ class TarotSpreadResult {
     'timestamp': timestamp.toIso8601String(),
     'overallInterpretation': overallInterpretation,
     'positionInterpretations': positionInterpretations,
+    'isBlurred': isBlurred,  // ✅ 블러 상태
+    'blurredSections': blurredSections,  // ✅ 블러 섹션
   };
 
   factory TarotSpreadResult.fromJson(Map<String, dynamic> json) {
@@ -264,6 +293,8 @@ class TarotSpreadResult {
       positionInterpretations: Map<String, String>.from(
         json['positionInterpretations'] as Map,
       ),
+      isBlurred: json['isBlurred'] as bool? ?? false,  // ✅ 블러 상태
+      blurredSections: (json['blurredSections'] as List?)?.cast<String>() ?? [],  // ✅ 블러 섹션
     );
   }
 }

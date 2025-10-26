@@ -6,6 +6,7 @@
 /// - Part 3: 커리어 로드맵
 /// - Part 4: 평생 성장 가이드
 
+import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -20,6 +21,10 @@ import '../widgets/career_roadmap_widget.dart';
 import '../widgets/growth_timeline_widget.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
+import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
+import '../../../../shared/components/floating_bottom_button.dart'; // ✅ FloatingBottomButton용
+import '../../../../core/utils/logger.dart'; // ✅ 로그용
 
 class TalentFortuneResultsPage extends ConsumerStatefulWidget {
   final TalentInputData inputData;
@@ -39,6 +44,10 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
   late List<SipseongTalent> _top3Talents;
   late List<Map<String, dynamic>> _daeunList;
   late int _currentAge;
+
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
 
   @override
   void initState() {
@@ -75,6 +84,117 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
 
     // 대운 계산
     _daeunList = SajuCalculator.calculateDaeun(birthDate, gender, _currentAge);
+
+    // ✅ Premium 체크 & Blur 로직
+    final tokenState = ref.read(tokenProvider);
+    final isPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
+    debugPrint('💎 [TalentFortune] Premium 상태: $isPremium');
+
+    _isBlurred = !isPremium;
+    _blurredSections = _isBlurred
+        ? ['top3_talents', 'career_roadmap', 'growth_timeline']
+        : [];
+
+    debugPrint('🔒 [TalentFortune] isBlurred: $_isBlurred, blurredSections: $_blurredSections');
+  }
+
+  // ✅ Phase 5: 광고 시청 후 블러 해제
+  Future<void> _showAdAndUnblur() async {
+    debugPrint('[TalentFortune] 광고 시청 후 블러 해제 시작');
+
+    try {
+      final adService = AdService.instance;
+
+      // 광고가 준비 안됐으면 로드
+      if (!adService.isRewardedAdReady) {
+        debugPrint('[TalentFortune] ⏳ RewardedAd 로드 중...');
+        await adService.loadRewardedAd();
+
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          debugPrint('[TalentFortune] ❌ RewardedAd 로드 타임아웃');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: TossDesignSystem.errorRed,
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('[TalentFortune] ✅ 광고 시청 완료, 블러 해제');
+          if (mounted) {
+            setState(() {
+              _isBlurred = false;
+              _blurredSections = [];
+            });
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[TalentFortune] 광고 표시 실패', e, stackTrace);
+
+      // UX 개선: 에러 발생해도 블러 해제
+      if (mounted) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+            backgroundColor: TossDesignSystem.warningOrange,
+          ),
+        );
+      }
+    }
+  }
+
+  // ✅ Phase 6: Blur wrapper helper
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -85,50 +205,72 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
       appBar: StandardFortuneAppBar(
         title: '재능 발견 결과',
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Part 1: 종합 브리핑
-            _buildOverviewSection(isDark)
-                .animate()
-                .fadeIn(duration: 400.ms),
+      body: Stack(
+        children: [
+          // 메인 콘텐츠
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                // Part 1: 종합 브리핑
+                _buildOverviewSection(isDark)
+                    .animate()
+                    .fadeIn(duration: 400.ms),
 
-            const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-            // Part 2: TOP 3 재능
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: TalentTop3Widget(
-                top3Talents: _top3Talents,
-              ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+                // Part 2: TOP 3 재능 (Premium)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: _buildBlurWrapper(
+                    sectionKey: 'top3_talents',
+                    child: TalentTop3Widget(
+                      top3Talents: _top3Talents,
+                    ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Part 3: 커리어 로드맵 (Premium)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: _buildBlurWrapper(
+                    sectionKey: 'career_roadmap',
+                    child: CareerRoadmapWidget(
+                      primaryTalent: _top3Talents.first,
+                      allTalents: _top3Talents,
+                    ).animate().fadeIn(delay: 400.ms, duration: 400.ms),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Part 4: 평생 성장 가이드 (Premium)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: _buildBlurWrapper(
+                    sectionKey: 'growth_timeline',
+                    child: GrowthTimelineWidget(
+                      primaryTalent: _top3Talents.first,
+                      daeunList: _daeunList,
+                      currentAge: _currentAge,
+                    ).animate().fadeIn(delay: 600.ms, duration: 400.ms),
+                  ),
+                ),
+
+                const SizedBox(height: 100), // 버튼 공간 확보
+              ],
             ),
+          ),
 
-            const SizedBox(height: 24),
-
-            // Part 3: 커리어 로드맵
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: CareerRoadmapWidget(
-                primaryTalent: _top3Talents.first,
-                allTalents: _top3Talents,
-              ).animate().fadeIn(delay: 400.ms, duration: 400.ms),
+          // ✅ FloatingBottomButton (블러 상태일 때만 표시)
+          if (_isBlurred)
+            FloatingBottomButton(
+              text: '광고 보고 전체 내용 확인하기',
+              onPressed: _showAdAndUnblur,
+              isEnabled: true,
             ),
-
-            const SizedBox(height: 24),
-
-            // Part 4: 평생 성장 가이드
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: GrowthTimelineWidget(
-                primaryTalent: _top3Talents.first,
-                daeunList: _daeunList,
-                currentAge: _currentAge,
-              ).animate().fadeIn(delay: 600.ms, duration: 400.ms),
-            ),
-
-            const SizedBox(height: 40),
-          ],
-        ),
+        ],
       ),
     );
   }

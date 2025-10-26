@@ -13,7 +13,7 @@ serve(async (req) => {
 
   try {
     const requestData = await req.json()
-    const { 
+    const {
       userId,
       name,
       pet_name,
@@ -25,8 +25,11 @@ serve(async (req) => {
       mbtiType,
       bloodType,
       zodiacSign,
-      zodiacAnimal
+      zodiacAnimal,
+      isPremium = false // ✅ 프리미엄 사용자 여부
     } = requestData
+
+    console.log('💎 [PetCompatibility] Premium 상태:', isPremium)
 
     // 반려동물 궁합 점수 계산 (강화된 버전)
     const calculateCompatibilityScore = (petSpecies: string, petAge: number, userMbti: string, userZodiac: string) => {
@@ -397,7 +400,13 @@ serve(async (req) => {
     }
 
     const carePoints = generateCarePoints(pet_species, pet_age)
-    
+
+    // ✅ Blur 로직 적용
+    const isBlurred = !isPremium
+    const blurredSections = isBlurred
+      ? ['health_fortune', 'activity_fortune', 'emotional_state', 'special_events', 'care_points', 'recommendations', 'warnings', 'special_tip']
+      : []
+
     // 운세 데이터 구성 (강화된 버전)
     const fortune = {
       id: `pet-${Date.now()}`,
@@ -420,7 +429,7 @@ serve(async (req) => {
                pet_species === '햄스터' ? '🐹' : '🐾'
       },
       
-      // 궁합 결과
+      // 궁합 결과 (✅ 무료: 공개)
       compatibility_result: {
         score: compatibilityScore,
         level: compatibilityResult.level,
@@ -428,9 +437,17 @@ serve(async (req) => {
         detailed_analysis: `${pet_name}는 ${petCharacteristics.traits} ${compatibilityResult.message}`,
         advice: compatibilityResult.advice
       },
-      
-      // 건강 운세 (신규)
-      health_fortune: {
+
+      // 건강 운세 (🔒 유료)
+      health_fortune: isBlurred ? {
+        scores: { energy: 0, appetite: 0, mood: 0, activity: 0 },
+        mainAdvice: '🔒 프리미엄 결제 후 확인 가능합니다',
+        checkPoints: ['🔒 프리미엄 결제 후 확인 가능합니다'],
+        energy: 0,
+        appetite: 0,
+        mood: 0,
+        activity: 0
+      } : {
         scores: healthFortune.scores,
         mainAdvice: healthFortune.mainAdvice,
         checkPoints: healthFortune.checkPoints,
@@ -439,29 +456,43 @@ serve(async (req) => {
         mood: healthFortune.scores.mood,
         activity: healthFortune.scores.activity
       },
-      
-      // 활동 운세 (신규)
-      activity_fortune: {
+
+      // 활동 운세 (🔒 유료)
+      activity_fortune: isBlurred ? {
+        recommended: '🔒 프리미엄 결제 후 확인 가능합니다',
+        special: '🔒 프리미엄 결제 후 확인 가능합니다',
+        bestTime: '🔒',
+        energy: 0
+      } : {
         recommended: activityFortune.recommended,
         special: activityFortune.special,
         bestTime: activityFortune.bestTime,
         energy: activityFortune.energy
       },
-      
-      // 감정 상태 (신규)
-      emotional_state: {
+
+      // 감정 상태 (🔒 유료)
+      emotional_state: isBlurred ? {
+        primary: '🔒',
+        score: 0,
+        advice: '🔒 프리미엄 결제 후 확인 가능합니다'
+      } : {
         primary: emotionalState.primary,
         score: emotionalState.score,
         advice: emotionalState.advice
       },
-      
-      // 특별 이벤트 적합도 (신규)
-      special_events: specialEvents,
-      
-      // 오늘의 케어 포인트 (신규)
-      care_points: carePoints,
-      
-      // 행운 아이템 (강화)
+
+      // 특별 이벤트 적합도 (🔒 유료)
+      special_events: isBlurred ? {
+        grooming: { score: 0, advice: '🔒 프리미엄 결제 후 확인 가능합니다' },
+        vetVisit: { score: 0, advice: '🔒 프리미엄 결제 후 확인 가능합니다' },
+        training: { score: 0, advice: '🔒 프리미엄 결제 후 확인 가능합니다' },
+        socializing: { score: 0, advice: '🔒 프리미엄 결제 후 확인 가능합니다' }
+      } : specialEvents,
+
+      // 오늘의 케어 포인트 (🔒 유료)
+      care_points: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : carePoints,
+
+      // 행운 아이템 (✅ 무료: 공개)
       lucky_items: {
         color: luckyItems.color,
         item: luckyItems.item,
@@ -471,20 +502,20 @@ serve(async (req) => {
         spot: luckyItems.spot,
         time: luckyItems.time
       },
-      
-      // 추천사항과 주의사항
-      recommendations: [
+
+      // 추천사항과 주의사항 (🔒 유료)
+      recommendations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : [
         activityFortune.recommended,
         healthFortune.mainAdvice,
         emotionalState.advice
       ],
-      
-      warnings: [
+
+      warnings: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : [
         `${pet_name}의 ${petCharacteristics.personality.join(', ')} 성격을 고려하여 접근해주세요`,
         ...healthFortune.checkPoints.slice(0, 2)
       ],
-      
-      special_tip: petCharacteristics.compatibility_tips,
+
+      special_tip: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : petCharacteristics.compatibility_tips,
       
       // 카테고리별 점수 (UI용)
       categories: {
@@ -515,8 +546,10 @@ serve(async (req) => {
         '교감': Math.max(60, compatibilityScore - 10),
         '성장': Math.max(60, compatibilityScore - 12)
       },
-      
-      createdAt: new Date().toISOString()
+
+      createdAt: new Date().toISOString(),
+      isBlurred, // ✅ 블러 상태
+      blurredSections // ✅ 블러된 섹션 목록
     }
 
     // Edge Function 응답 형식에 맞춰 반환
@@ -526,7 +559,7 @@ serve(async (req) => {
         tokensUsed: 0
       }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 200 
       }
     )
@@ -540,7 +573,7 @@ serve(async (req) => {
         message: error.message 
       }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 500 
       }
     )

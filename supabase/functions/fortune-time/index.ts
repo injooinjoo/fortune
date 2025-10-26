@@ -383,7 +383,7 @@ serve(async (req) => {
         tokensUsed: 0
       }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 200 
       }
     )
@@ -397,7 +397,7 @@ serve(async (req) => {
         message: error.message 
       }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 500 
       }
     )

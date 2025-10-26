@@ -1,3 +1,4 @@
+import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/unified_fortune_base_widget.dart';
@@ -6,7 +7,10 @@ import '../../domain/models/conditions/avoid_people_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart'; // ✅ FloatingBottomButton용
 import '../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
+import '../../../../core/utils/logger.dart'; // ✅ 로그용
 
 class AvoidPeopleFortunePage extends ConsumerStatefulWidget {
   const AvoidPeopleFortunePage({super.key});
@@ -18,6 +22,10 @@ class AvoidPeopleFortunePage extends ConsumerStatefulWidget {
 class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
+
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
 
   // Step 1
   String _environment = '';
@@ -126,35 +134,165 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
       },
 
       resultBuilder: (context, result) {
+        // ✅ Blur 상태 동기화
+        if (_isBlurred != result.isBlurred) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _isBlurred = result.isBlurred;
+                _blurredSections = result.isBlurred
+                    ? ['people_types', 'situation_tips', 'advice']
+                    : [];
+              });
+            }
+          });
+        }
+
         final theme = Theme.of(context);
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: GlassCard(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '피해야 할 사람 분석 결과',
-                  style: theme.textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  result.data['content'] as String? ?? '',
-                  style: theme.textTheme.bodyMedium,
-                ),
-                if (result.score != null) ...[
-                  const SizedBox(height: 16),
-                  Text(
-                    '주의 지수: ${result.score}/100',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: TossDesignSystem.warningOrange,
+        final content = result.data['content'] as String? ?? '';
+
+        return Stack(
+          children: [
+            // 메인 콘텐츠
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // 섹션 1: 주의 지수 + 종합 요약 (무료)
+                  GlassCard(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '피해야 할 사람 분석 결과',
+                          style: theme.textTheme.headlineMedium,
+                        ),
+                        if (result.score != null) ...[
+                          const SizedBox(height: 16),
+                          Text(
+                            '주의 지수: ${result.score}/100',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: TossDesignSystem.warningOrange,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 16),
+                        Text(
+                          content.split('\n\n').first,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ],
                     ),
                   ),
+                  const SizedBox(height: 16),
+
+                  // 섹션 2: 피해야 할 사람 유형 (Premium)
+                  _buildBlurWrapper(
+                    sectionKey: 'people_types',
+                    child: GlassCard(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.person_off, color: TossDesignSystem.errorRed),
+                              const SizedBox(width: 8),
+                              Text(
+                                '피해야 할 사람 유형',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            result.data['people_types'] as String? ?? '오늘 특별히 주의해야 할 사람 유형 정보',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 섹션 3: 상황별 대처 방법 (Premium)
+                  _buildBlurWrapper(
+                    sectionKey: 'situation_tips',
+                    child: GlassCard(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.lightbulb, color: TossDesignSystem.tossBlue),
+                              const SizedBox(width: 8),
+                              Text(
+                                '상황별 대처 방법',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            result.data['situation_tips'] as String? ?? '상황별 대처 방법 정보',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 섹션 4: 오늘의 조언 (Premium)
+                  _buildBlurWrapper(
+                    sectionKey: 'advice',
+                    child: GlassCard(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.tips_and_updates, color: TossDesignSystem.successGreen),
+                              const SizedBox(width: 8),
+                              Text(
+                                '오늘의 조언',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            result.data['advice'] as String? ?? '오늘의 조언 정보',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 100), // 버튼 공간
                 ],
-              ],
+              ),
             ),
-          ),
+
+            // ✅ FloatingBottomButton (블러 상태일 때만 표시)
+            if (_isBlurred)
+              FloatingBottomButton(
+                text: '광고 보고 전체 내용 확인하기',
+                onPressed: _showAdAndUnblur,
+                isEnabled: true,
+              ),
+          ],
         );
       },
     );
@@ -374,6 +512,105 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
       value: value,
       onChanged: onChanged,
       contentPadding: EdgeInsets.zero,
+    );
+  }
+
+  // ===== 광고 & 블러 해제 =====
+
+  // ✅ RewardedAd 패턴
+  Future<void> _showAdAndUnblur() async {
+    debugPrint('[피해야 할 사람] 광고 시청 후 블러 해제 시작');
+
+    try {
+      final adService = AdService.instance;
+
+      if (!adService.isRewardedAdReady) {
+        debugPrint('[피해야 할 사람] ⏳ RewardedAd 로드 중...');
+        await adService.loadRewardedAd();
+
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          debugPrint('[피해야 할 사람] ❌ RewardedAd 로드 타임아웃');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: TossDesignSystem.errorRed,
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('[피해야 할 사람] ✅ 광고 시청 완료, 블러 해제');
+          if (mounted) {
+            setState(() {
+              _isBlurred = false;
+              _blurredSections = [];
+            });
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[피해야 할 사람] 광고 표시 실패', e, stackTrace);
+
+      if (mounted) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+            backgroundColor: TossDesignSystem.warningOrange,
+          ),
+        );
+      }
+    }
+  }
+
+  // ✅ Blur wrapper helper
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

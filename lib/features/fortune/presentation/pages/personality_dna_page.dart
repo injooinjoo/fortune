@@ -1,3 +1,5 @@
+import 'dart:ui'; // ✅ ImageFilter.blur용
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +13,10 @@ import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/conditions/personality_dna_fortune_conditions.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
+import '../../../../shared/components/floating_bottom_button.dart'; // ✅ FloatingBottomButton용
+import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
+import '../../../../core/utils/logger.dart'; // ✅ 로그용
+import '../../../../presentation/providers/auth_provider.dart'; // ✅ 사용자 프로필용
 
 class PersonalityDNAPage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -36,8 +42,18 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
   // 운세 생성 중 플래그
   bool _isGenerating = false;
 
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
+  String? _unlockedConditionsHash; // ✅ 광고로 블러 해제한 조건의 해시값
+
   // 아코디언 섹션
   late List<AccordionInputSection> _accordionSections;
+
+  // ✅ 현재 조건의 해시값 생성
+  String _getCurrentConditionsHash() {
+    return 'mbti:${_selectedMbti}|blood:${_selectedBloodType}|zodiac:${_selectedZodiac}|animal:${_selectedAnimal}';
+  }
 
   // MBTI 옵션
   static const List<String> _mbtiOptions = [
@@ -67,8 +83,36 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
   @override
   void initState() {
     super.initState();
+
+    // ✅ 프로필 먼저 확인 (동기 방식)
+    final userProfileAsync = ref.read(userProfileProvider);
+    final userProfile = userProfileAsync.value;
+
+    // 프로필 정보로 초기값 설정
+    if (userProfile != null) {
+      if (userProfile.mbtiType != null && _mbtiOptions.contains(userProfile.mbtiType)) {
+        _selectedMbti = userProfile.mbtiType;
+      }
+      if (userProfile.bloodType != null && _bloodTypeOptions.contains(userProfile.bloodType)) {
+        _selectedBloodType = userProfile.bloodType;
+      }
+      if (userProfile.zodiacSign != null && _zodiacOptions.contains(userProfile.zodiacSign)) {
+        _selectedZodiac = userProfile.zodiacSign;
+      }
+      if (userProfile.chineseZodiac != null) {
+        final animalWithSuffix = userProfile.chineseZodiac!.endsWith('띠')
+            ? userProfile.chineseZodiac!
+            : '${userProfile.chineseZodiac}띠';
+        if (_animalOptions.contains(animalWithSuffix)) {
+          _selectedAnimal = animalWithSuffix;
+        }
+      }
+    }
+
+    // 아코디언 섹션 초기화 (이미 선택된 값들로)
     _initializeAccordionSections();
   }
+
 
   void _initializeAccordionSections() {
     _accordionSections = [
@@ -77,24 +121,37 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
         title: 'MBTI',
         icon: Icons.psychology_rounded,
         inputWidgetBuilder: (context, onComplete) => _buildMbtiInput(onComplete),
+        // ✅ 프로필에서 로드된 값이 있으면 완료 상태로 시작
+        isCompleted: _selectedMbti != null,
+        value: _selectedMbti,
+        displayValue: _selectedMbti != null ? 'MBTI: $_selectedMbti' : null,
       ),
       AccordionInputSection(
         id: 'blood_type',
         title: '혈액형',
         icon: Icons.bloodtype_rounded,
         inputWidgetBuilder: (context, onComplete) => _buildBloodTypeInput(onComplete),
+        isCompleted: _selectedBloodType != null,
+        value: _selectedBloodType,
+        displayValue: _selectedBloodType != null ? '혈액형: $_selectedBloodType형' : null,
       ),
       AccordionInputSection(
         id: 'zodiac',
         title: '별자리',
         icon: Icons.star_rounded,
         inputWidgetBuilder: (context, onComplete) => _buildZodiacInput(onComplete),
+        isCompleted: _selectedZodiac != null,
+        value: _selectedZodiac,
+        displayValue: _selectedZodiac != null ? '별자리: $_selectedZodiac' : null,
       ),
       AccordionInputSection(
         id: 'animal',
         title: '띠',
         icon: Icons.pets_rounded,
         inputWidgetBuilder: (context, onComplete) => _buildAnimalInput(onComplete),
+        isCompleted: _selectedAnimal != null,
+        value: _selectedAnimal,
+        displayValue: _selectedAnimal != null ? '띠: $_selectedAnimal' : null,
       ),
     ];
   }
@@ -107,11 +164,24 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
       description: 'MBTI, 혈액형, 별자리, 띠를 조합한 특별한 성격 분석',
       dataSource: FortuneDataSource.api,
       inputBuilder: (context, onComplete) => _buildInputForm(() {
-        setState(() => _isGenerating = true);
-        onComplete();
-        // 5초 후 로딩 해제 (광고 표시 시간 고려)
-        Future.delayed(const Duration(seconds: 5), () {
+        debugPrint('🔵 [버튼클릭] _isGenerating = true 설정 시작');
+        // 1️⃣ 로딩 애니메이션 시작
+        setState(() {
+          _isGenerating = true;
+          debugPrint('🔵 [setState] _isGenerating = $_isGenerating');
+        });
+
+        debugPrint('🔵 [버튼클릭] onComplete() 호출 (0.1초 후)');
+        // 2️⃣ 0.1초 후 운세 생성 시작
+        Future.delayed(const Duration(milliseconds: 100), () {
+          debugPrint('🔵 [딜레이완료] onComplete() 실행');
+          onComplete();
+        });
+
+        // 3️⃣ 3초 후 로딩 해제
+        Future.delayed(const Duration(seconds: 3), () {
           if (mounted) {
+            debugPrint('🔵 [3초후] _isGenerating = false 설정');
             setState(() => _isGenerating = false);
           }
         });
@@ -130,6 +200,8 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
   }
 
   Widget _buildInputForm(VoidCallback onComplete) {
+    debugPrint('🟢 [build] _buildInputForm - _isGenerating: $_isGenerating, _canGenerate: ${_canGenerate()}');
+
     return Stack(
       children: [
         Column(
@@ -148,12 +220,18 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
           ],
         ),
         if (_canGenerate())
-          TossFloatingProgressButtonPositioned(
-            text: '🧬 나만의 성격 DNA 발견하기',
-            onPressed: _canGenerate() && !_isGenerating ? onComplete : null,
-            isEnabled: _canGenerate() && !_isGenerating,
-            showProgress: _isGenerating,
-            isVisible: _canGenerate(),
+          Builder(
+            builder: (context) {
+              debugPrint('🟡 [TossButton] showProgress: $_isGenerating, isLoading: $_isGenerating, isEnabled: ${_canGenerate() && !_isGenerating}');
+              return TossFloatingProgressButtonPositioned(
+                text: '🧬 나만의 성격 DNA 발견하기',
+                onPressed: _canGenerate() && !_isGenerating ? onComplete : null,
+                isEnabled: _canGenerate() && !_isGenerating,
+                showProgress: _isGenerating,
+                isLoading: _isGenerating, // ✅ 점 3개 애니메이션 표시!
+                isVisible: _canGenerate(),
+              );
+            },
           ),
       ],
     );
@@ -187,8 +265,17 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
     return _buildGridSelection(
       options: _mbtiOptions,
       columns: 4,
+      selectedValue: _selectedMbti, // ✅ 초기값 전달
       onSelect: (value) {
-        setState(() => _selectedMbti = value);
+        setState(() {
+          _selectedMbti = value;
+          // ✅ 아코디언 섹션 업데이트
+          _accordionSections[0] = _accordionSections[0].copyWith(
+            isCompleted: true,
+            value: value,
+            displayValue: 'MBTI: $value',
+          );
+        });
         onComplete(value);
       },
     );
@@ -198,8 +285,17 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
     return _buildGridSelection(
       options: _bloodTypeOptions,
       columns: 4,
+      selectedValue: _selectedBloodType, // ✅ 초기값 전달
       onSelect: (value) {
-        setState(() => _selectedBloodType = value);
+        setState(() {
+          _selectedBloodType = value;
+          // ✅ 아코디언 섹션 업데이트
+          _accordionSections[1] = _accordionSections[1].copyWith(
+            isCompleted: true,
+            value: value,
+            displayValue: '혈액형: $value',
+          );
+        });
         onComplete(value);
       },
     );
@@ -209,8 +305,17 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
     return _buildGridSelection(
       options: _zodiacOptions,
       columns: 3,
+      selectedValue: _selectedZodiac, // ✅ 초기값 전달
       onSelect: (value) {
-        setState(() => _selectedZodiac = value);
+        setState(() {
+          _selectedZodiac = value;
+          // ✅ 아코디언 섹션 업데이트
+          _accordionSections[2] = _accordionSections[2].copyWith(
+            isCompleted: true,
+            value: value,
+            displayValue: '별자리: $value',
+          );
+        });
         onComplete(value);
       },
     );
@@ -220,8 +325,17 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
     return _buildGridSelection(
       options: _animalOptions,
       columns: 3,
+      selectedValue: _selectedAnimal, // ✅ 초기값 전달
       onSelect: (value) {
-        setState(() => _selectedAnimal = value);
+        setState(() {
+          _selectedAnimal = value;
+          // ✅ 아코디언 섹션 업데이트
+          _accordionSections[3] = _accordionSections[3].copyWith(
+            isCompleted: true,
+            value: value,
+            displayValue: '띠: $value',
+          );
+        });
         onComplete(value);
       },
     );
@@ -231,6 +345,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
     required List<String> options,
     required int columns,
     required Function(String) onSelect,
+    String? selectedValue, // ✅ 선택된 값 추가
   }) {
     return GridView.count(
       shrinkWrap: true,
@@ -240,12 +355,13 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
       mainAxisSpacing: 10,
       crossAxisSpacing: 10,
       children: options.map((option) {
-        return _buildOptionChip(option, onSelect);
+        final isSelected = option == selectedValue; // ✅ 선택 여부 확인
+        return _buildOptionChip(option, onSelect, isSelected);
       }).toList(),
     );
   }
 
-  Widget _buildOptionChip(String option, Function(String) onSelect) {
+  Widget _buildOptionChip(String option, Function(String) onSelect, bool isSelected) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
@@ -255,10 +371,16 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50,
+          // ✅ 선택된 경우 파란색 배경
+          color: isSelected
+              ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
+              : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200,
+            // ✅ 선택된 경우 파란색 테두리
+            color: isSelected
+                ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
+                : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200),
             width: 1.5,
           ),
         ),
@@ -267,7 +389,10 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
             option,
             style: TypographyUnified.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              // ✅ 선택된 경우 흰색 텍스트
+              color: isSelected
+                  ? TossDesignSystem.white
+                  : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
             ),
           ),
         ),
@@ -362,24 +487,26 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
       ) : null,
       celebrity: funStatsData != null ? Celebrity(
         name: funStatsData['celebrity_match'] as String? ?? '',
-        reason: '${_selectedMbti} 유형의 대표적인 인물',
+        reason: '$_selectedMbti 유형의 대표적인 인물',
       ) : null,
       funnyFact: funStatsData != null
         ? '전국 상위 ${funStatsData['rarity_rank']}! 한국 인구의 ${funStatsData['percentage_in_korea']}를 차지합니다.'
         : null,
     );
 
-    // ⚠️ build 중에 setState 호출 금지 - WidgetsBinding.instance.addPostFrameCallback 사용
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        setState(() {
-          _currentDNA = dnaObject;
-        });
-      }
-    });
+    // ✅ 즉시 동기화 (postFrameCallback 제거)
+    _currentDNA = dnaObject;
 
-    // 첫 렌더링 시에는 _currentDNA가 null일 수 있으므로 임시 데이터로 빌드
-    _currentDNA ??= dnaObject;
+    // ✅ 현재 조건의 해시값
+    final currentHash = _getCurrentConditionsHash();
+
+    // ✅ 광고로 블러 해제한 조건과 다른 경우에만 result의 블러 상태 반영
+    if (_unlockedConditionsHash != currentHash) {
+      _isBlurred = result.isBlurred;
+      _blurredSections = List<String>.from(result.blurredSections);
+    }
+
+    debugPrint('🔒 [성격DNA] isBlurred: $_isBlurred, blurredSections: $_blurredSections, currentHash: $currentHash, unlockedHash: $_unlockedConditionsHash');
 
     return buildFortuneResult();
   }
@@ -387,9 +514,15 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
   Widget buildFortuneResult() {
     if (_currentDNA == null) return const SizedBox.shrink();
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
+    debugPrint('🎨 [buildResult] _isBlurred: $_isBlurred, FloatingButton 표시: ${_isBlurred ? "YES" : "NO"}');
+
+    // ✅ Phase 8: Stack으로 변경하여 FloatingBottomButton 추가
+    return Stack(
+      children: [
+        // 기존 콘텐츠 (SingleChildScrollView)
+        SingleChildScrollView(
+          child: Column(
+            children: [
           _buildDNAHeader(),
           const SizedBox(height: 8),
           if (_currentDNA!.todayHighlight != null) ...[
@@ -397,32 +530,67 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
             const SizedBox(height: 8),
           ],
           if (_currentDNA!.loveStyle != null) ...[
-            _buildLoveStyleSection(),
+            // ✅ Premium 섹션 1: 연애 스타일
+            _buildBlurWrapper(
+              sectionKey: 'loveStyle',
+              child: _buildLoveStyleSection(),
+            ),
             const SizedBox(height: 8),
           ],
           if (_currentDNA!.workStyle != null) ...[
-            _buildWorkStyleSection(),
+            // ✅ Premium 섹션 2: 직장 스타일
+            _buildBlurWrapper(
+              sectionKey: 'workStyle',
+              child: _buildWorkStyleSection(),
+            ),
             const SizedBox(height: 8),
           ],
           if (_currentDNA!.dailyMatching != null) ...[
-            _buildDailyMatchingSection(),
+            // ✅ Premium 섹션 3: 데일리 매칭
+            _buildBlurWrapper(
+              sectionKey: 'dailyMatching',
+              child: _buildDailyMatchingSection(),
+            ),
             const SizedBox(height: 8),
           ],
           if (_currentDNA!.compatibility != null) ...[
-            _buildCompatibilitySection(),
+            // ✅ Premium 섹션 4: 궁합
+            _buildBlurWrapper(
+              sectionKey: 'compatibility',
+              child: _buildCompatibilitySection(),
+            ),
             const SizedBox(height: 8),
           ],
           if (_currentDNA!.celebrity != null) ...[
-            _buildCelebritySection(),
+            // ✅ Premium 섹션 5-1: 닮은 유명인
+            _buildBlurWrapper(
+              sectionKey: 'celebrity',
+              child: _buildCelebritySection(),
+            ),
             const SizedBox(height: 8),
           ],
           if (_currentDNA!.funnyFact != null) ...[
-            _buildFunnyFactSection(),
+            // ✅ Premium 섹션 5-2: 재미있는 사실
+            _buildBlurWrapper(
+              sectionKey: 'funnyFact',
+              child: _buildFunnyFactSection(),
+            ),
             const SizedBox(height: 8),
           ],
-          const SizedBox(height: 32),
-        ],
-      ),
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+
+        // ✅ FloatingBottomButton (블러 상태일 때만 표시)
+        if (_isBlurred)
+          FloatingBottomButton(
+            text: '광고 보고 전체 내용 확인하기',
+            onPressed: _showAdAndUnblur,
+            isEnabled: true,
+            bottom: 20, // ✅ 하단에서 20px 위에 배치 (Safe Area 고려)
+          ),
+      ],
     );
   }
 
@@ -865,6 +1033,131 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
           height: 1.5,
         ),
       ),
+    );
+  }
+
+  // ✅ Phase 5: RewardedAd 패턴 - 광고 시청 후 블러 해제
+  Future<void> _showAdAndUnblur() async {
+    debugPrint('[성격DNA] 광고 시청 후 블러 해제 시작');
+
+    try {
+      final adService = AdService.instance;
+
+      // 광고가 준비 안됐으면 로드
+      if (!adService.isRewardedAdReady) {
+        debugPrint('[성격DNA] ⏳ RewardedAd 로드 중...');
+        await adService.loadRewardedAd();
+
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          debugPrint('[성격DNA] ❌ RewardedAd 로드 타임아웃');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: TossDesignSystem.errorRed,
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('[성격DNA] ✅ 광고 시청 완료, 블러 해제');
+          if (mounted) {
+            setState(() {
+              _isBlurred = false;
+              _blurredSections = [];
+              _unlockedConditionsHash = _getCurrentConditionsHash(); // ✅ 현재 조건의 해시 저장
+              debugPrint('[성격DNA] 블러 해제된 조건: $_unlockedConditionsHash');
+            });
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[성격DNA] 광고 표시 실패', e, stackTrace);
+
+      // UX 개선: 에러 발생해도 블러 해제
+      if (mounted) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+          _unlockedConditionsHash = _getCurrentConditionsHash(); // ✅ 현재 조건의 해시 저장
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+            backgroundColor: TossDesignSystem.warningOrange,
+          ),
+        );
+      }
+    }
+  }
+
+  // ✅ Phase 6: Blur wrapper helper - ImageFilter.blur 적용
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    debugPrint('🔐 [BlurWrapper] sectionKey: $sectionKey, _isBlurred: $_isBlurred, contains: ${_blurredSections.contains(sectionKey)}');
+
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      debugPrint('   ✅ 블러 안함 - 일반 표시');
+      return child;
+    }
+
+    debugPrint('   🔒 블러 적용');
+
+    // ✅ Stack의 크기를 child 크기로 제한하기 위해 LayoutBuilder 사용
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // 1. 블러된 child
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: ImageFiltered(
+                imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: child,
+              ),
+            ),
+            // 2. 어두운 오버레이 (child와 동일한 위젯을 사용하여 크기 맞춤)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                color: Colors.black.withValues(alpha: 0.3),
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: 0, // child를 투명하게 만들어 크기만 차지
+                    child: child,
+                  ),
+                ),
+              ),
+            ),
+            // 3. 자물쇠 아이콘 (child 위에 배치, 중앙 정렬을 위해 child 복제)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Center(
+                  child: Icon(
+                    Icons.lock_outline,
+                    size: 48,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

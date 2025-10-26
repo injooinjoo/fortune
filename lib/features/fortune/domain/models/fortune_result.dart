@@ -15,6 +15,8 @@ class FortuneResult {
   final Map<String, dynamic>? luckyItems;
   final List<String>? recommendations;
   final Map<String, dynamic>? additionalInfo;
+  final bool isBlurred;  // ✅ 블러 상태
+  final List<String> blurredSections;  // ✅ 블러 처리된 섹션 키
 
   FortuneResult({
     this.id,
@@ -31,16 +33,60 @@ class FortuneResult {
     this.scoreBreakdown,
     this.luckyItems,
     this.recommendations,
-    this.additionalInfo});
+    this.additionalInfo,
+    this.isBlurred = false,  // ✅ Default
+    this.blurredSections = const [],  // ✅ Default
+  });
 
   // Getter for fortune object - returns self for compatibility
   FortuneResult get fortune => this;
-  
+
   // Getter for fortune content text
   String get content => mainFortune ?? summary ?? '';
-  
+
   // Getter for metadata - returns additionalInfo or details
   Map<String, dynamic>? get metadata => additionalInfo ?? details;
+
+  // ✅ copyWith 메서드 추가
+  FortuneResult copyWith({
+    String? id,
+    String? type,
+    String? fortuneType,
+    String? date,
+    String? createdAt,
+    String? mainFortune,
+    String? summary,
+    Map<String, dynamic>? details,
+    Map<String, dynamic>? result,
+    Map<String, String>? sections,
+    int? overallScore,
+    Map<String, int>? scoreBreakdown,
+    Map<String, dynamic>? luckyItems,
+    List<String>? recommendations,
+    Map<String, dynamic>? additionalInfo,
+    bool? isBlurred,
+    List<String>? blurredSections,
+  }) {
+    return FortuneResult(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      fortuneType: fortuneType ?? this.fortuneType,
+      date: date ?? this.date,
+      createdAt: createdAt ?? this.createdAt,
+      mainFortune: mainFortune ?? this.mainFortune,
+      summary: summary ?? this.summary,
+      details: details ?? this.details,
+      result: result ?? this.result,
+      sections: sections ?? this.sections,
+      overallScore: overallScore ?? this.overallScore,
+      scoreBreakdown: scoreBreakdown ?? this.scoreBreakdown,
+      luckyItems: luckyItems ?? this.luckyItems,
+      recommendations: recommendations ?? this.recommendations,
+      additionalInfo: additionalInfo ?? this.additionalInfo,
+      isBlurred: isBlurred ?? this.isBlurred,
+      blurredSections: blurredSections ?? this.blurredSections,
+    );
+  }
 
   factory FortuneResult.fromMap(Map<String, dynamic> map) {
     return FortuneResult(
@@ -61,12 +107,17 @@ class FortuneResult {
       luckyItems: map['luckyItems'] != null 
           ? Map<String, dynamic>.from(map['luckyItems']) 
           : null,
-      recommendations: map['recommendations'] != null 
-          ? List<String>.from(map['recommendations']) 
+      recommendations: map['recommendations'] != null
+          ? List<String>.from(map['recommendations'])
           : null,
-      additionalInfo: map['additionalInfo'] != null 
-          ? Map<String, dynamic>.from(map['additionalInfo']) 
-          : null);
+      additionalInfo: map['additionalInfo'] != null
+          ? Map<String, dynamic>.from(map['additionalInfo'])
+          : null,
+      isBlurred: map['isBlurred'] ?? false,  // ✅ Default false
+      blurredSections: map['blurredSections'] != null
+          ? List<String>.from(map['blurredSections'])
+          : [],  // ✅ Default []
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -85,6 +136,9 @@ class FortuneResult {
       'scoreBreakdown': scoreBreakdown,
       'luckyItems': luckyItems,
       'recommendations': recommendations,
-      'additionalInfo': null};
+      'additionalInfo': null,
+      'isBlurred': isBlurred,  // ✅ Added
+      'blurredSections': blurredSections,  // ✅ Added
+    };
   }
 }

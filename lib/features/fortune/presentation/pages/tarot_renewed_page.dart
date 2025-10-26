@@ -1,19 +1,24 @@
+import 'dart:ui'; // ✅ Phase 17-1: ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:math' as dart_math;
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../widgets/tarot/tarot_question_selector.dart';
 import '../widgets/tarot/tarot_spread_selector.dart';
 import '../widgets/tarot/tarot_multi_card_result.dart';
 import '../../domain/models/tarot_card_model.dart';
-import '../../../../services/ad_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../services/ad_service.dart';
+import '../../../../presentation/providers/ad_provider.dart'; // ✅ Phase 17-2
+import '../../../../shared/components/floating_bottom_button.dart';
 
 enum TarotFlowState {
   initial,      // 초기 화면
@@ -38,7 +43,11 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   TarotSpreadType? _selectedSpread;
   TarotSpreadResult? _tarotResult;
   final TarotDeckType _selectedDeck = TarotDeckType.riderWaite; // 기본 덱
-  
+
+  // ✅ Phase 17-3: Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
+
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   
@@ -105,11 +114,25 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: _buildAppBar(),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 400),
-        switchInCurve: Curves.easeInOut,
-        switchOutCurve: Curves.easeInOut,
-        child: _buildCurrentStateWidget(),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              switchInCurve: Curves.easeInOut,
+              switchOutCurve: Curves.easeInOut,
+              child: _buildCurrentStateWidget(),
+            ),
+            // ✅ FloatingBottomButton - 타로 결과 화면에서 블러 상태일 때만 표시
+            if (_currentState == TarotFlowState.result && _tarotResult != null && _tarotResult!.isBlurred)
+              FloatingBottomButton(
+                text: '남은 운세 모두 보기',
+                onPressed: _showAdAndUnblur,
+                isLoading: false,
+                isEnabled: true,
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -121,13 +144,13 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       elevation: 0,
       scrolledUnderElevation: 0,
-      leading: _currentState == TarotFlowState.result
+      leading: _currentState != TarotFlowState.result
           ? IconButton(
               icon: Icon(
-                Icons.close,
+                Icons.arrow_back_ios,
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
-              onPressed: () => context.go('/fortune'),
+              onPressed: () => context.pop(),
             )
           : null,
       iconTheme: IconThemeData(
@@ -137,11 +160,22 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
         '타로 카드',
         style: TextStyle(
           color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-
           fontWeight: FontWeight.w600,
         ),
       ),
       centerTitle: true,
+      // ✅ X버튼을 오른쪽(actions)으로 이동
+      actions: _currentState == TarotFlowState.result
+          ? [
+              IconButton(
+                icon: Icon(
+                  Icons.close,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+                onPressed: () => context.go('/fortune'),
+              ),
+            ]
+          : null,
     );
   }
 
@@ -282,20 +316,11 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
               // 시작하기 버튼
               TossButton(
                 text: '🔮 카드가 전하는 메시지',
-                onPressed: () async {
-                  await AdService.instance.showInterstitialAdWithCallback(
-                    onAdCompleted: () async {
-                      setState(() {
-                        _currentState = TarotFlowState.questioning;
-                      });
-                    },
-                    onAdFailed: () async {
-                      // Still allow tarot reading even if ad fails
-                      setState(() {
-                        _currentState = TarotFlowState.questioning;
-                      });
-                    },
-                  );
+                onPressed: () {
+                  // ✅ InterstitialAd 제거: 바로 질문 화면으로 이동
+                  setState(() {
+                    _currentState = TarotFlowState.questioning;
+                  });
                 },
                 style: TossButtonStyle.primary,
                 size: TossButtonSize.large,
@@ -352,56 +377,27 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
           _selectedSpread = spread;
         });
 
-        // 광고 시작과 동시에 API 호출 시작
-        final apiCallFuture = _generateTarotResultAsync();
+        // ✅ InterstitialAd 제거: 바로 타로 운세 생성
+        final result = await _generateTarotResultAsync();
+        if (!mounted) return;
 
-        await AdService.instance.showInterstitialAdWithCallback(
-          onAdCompleted: () async {
-            // 광고 끝났을 때 API 결과 대기
-            final result = await apiCallFuture;
-            if (!mounted) return;
-
-            if (result != null) {
-              setState(() {
-                _tarotResult = result;
-                _currentState = TarotFlowState.result;
-              });
-            } else {
-              // API 실패 시 에러 처리
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('타로 운세를 생성하는 데 실패했습니다. 다시 시도해주세요.'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              setState(() {
-                _currentState = TarotFlowState.spreadSelection;
-              });
-            }
-          },
-          onAdFailed: () async {
-            // 광고 실패해도 API 결과는 대기
-            final result = await apiCallFuture;
-            if (!mounted) return;
-
-            if (result != null) {
-              setState(() {
-                _tarotResult = result;
-                _currentState = TarotFlowState.result;
-              });
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('타로 운세를 생성하는 데 실패했습니다. 다시 시도해주세요.'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              setState(() {
-                _currentState = TarotFlowState.spreadSelection;
-              });
-            }
-          },
-        );
+        if (result != null) {
+          setState(() {
+            _tarotResult = result;
+            _currentState = TarotFlowState.result;
+          });
+        } else {
+          // API 실패 시 에러 처리
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('타로 운세를 생성하는 데 실패했습니다. 다시 시도해주세요.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          setState(() {
+            _currentState = TarotFlowState.spreadSelection;
+          });
+        }
       },
     );
   }
@@ -478,12 +474,26 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
 
       Logger.info('[TarotPage] 타로 운세 생성 시작: $inputConditions');
 
+      // ✅ Premium 상태 확인
+      // ⚠️ 타로 테스트용: Debug Premium 무시, 실제 토큰만 체크
+      final tokenState = ref.read(tokenProvider);
+      final realPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
+      final isPremium = realPremium;  // Debug Premium 무시
+
+      Logger.info('[TarotPage] Premium 상태: $isPremium (real: $realPremium)');
+
+      // ✅ inputConditions에 isPremium 추가
+      final inputConditionsWithPremium = {
+        ...inputConditions,
+        'isPremium': isPremium,
+      };
+
       // UnifiedFortuneService 호출
       final fortuneService = UnifiedFortuneService(Supabase.instance.client);
       final fortuneResult = await fortuneService.getFortune(
         fortuneType: 'tarot',
         dataSource: FortuneDataSource.local,
-        inputConditions: inputConditions,
+        inputConditions: inputConditionsWithPremium,
       );
 
       Logger.info('[TarotPage] 타로 운세 생성 완료: ${fortuneResult.score}점');
@@ -513,6 +523,14 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
         Logger.info('  ${i+1}. ${card.cardNameKr} ($direction)');
       }
 
+      // ✅ 블러 처리 로직
+      final isBlurred = !isPremium;
+      final blurredSections = isBlurred
+          ? ['card_2', 'card_3', 'overall_interpretation']  // 2번째, 3번째 카드 + 전체 해석
+          : <String>[];
+
+      Logger.info('[TarotPage] isBlurred: $isBlurred, blurredSections: $blurredSections');
+
       // TarotSpreadResult 재구성
       return TarotSpreadResult(
         spreadType: _selectedSpread!,
@@ -523,10 +541,100 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
         positionInterpretations: Map<String, String>.from(
           tarotData['position_interpretations'] as Map,
         ),
+        isBlurred: isBlurred,  // ✅ 블러 상태
+        blurredSections: blurredSections,  // ✅ 블러 섹션
       );
     } catch (error, stackTrace) {
       Logger.error('[TarotPage] 타로 운세 생성 실패', error, stackTrace);
       return null;
+    }
+  }
+
+  // ✅ 광고 시청 후 블러 해제 메서드
+  Future<void> _showAdAndUnblur() async {
+    if (_tarotResult == null) return;
+
+    Logger.info('[TarotPage] 광고 시청 후 블러 해제 시작');
+
+    try {
+      final adService = AdService();
+
+      // 광고가 준비 안됐으면 로드 (두 번 클릭 방지)
+      if (!adService.isRewardedAdReady) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 준비하는 중입니다...'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+
+        // 광고 로드 시작
+        await adService.loadRewardedAd();
+
+        // 로딩 완료 대기 (최대 5초)
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        // 타임아웃 처리
+        if (!adService.isRewardedAdReady) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고 로드에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      // 2. 광고 표시
+      Logger.info('[TarotPage] 광고 표시 시작');
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          Logger.info('[TarotPage] 광고 보상 획득, 블러 해제');
+
+          // ✅ 블러 해제 - copyWith로 isBlurred를 false로 변경
+          if (mounted) {
+            setState(() {
+              _tarotResult = _tarotResult!.copyWith(
+                isBlurred: false,
+                blurredSections: [],
+              );
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('타로 운세가 잠금 해제되었습니다!'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[TarotPage] 광고 표시 실패', e, stackTrace);
+
+      // 에러 발생 시에도 블러 해제 (사용자 경험 우선)
+      if (_tarotResult != null && mounted) {
+        setState(() {
+          _tarotResult = _tarotResult!.copyWith(
+            isBlurred: false,
+            blurredSections: [],
+          );
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시에 실패했지만 운세를 확인할 수 있습니다.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 

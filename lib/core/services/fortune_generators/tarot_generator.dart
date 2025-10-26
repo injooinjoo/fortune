@@ -1,3 +1,4 @@
+import 'dart:convert';
 import '../../models/fortune_result.dart';
 import '../../../features/fortune/domain/models/tarot_card_model.dart';
 import '../../../features/fortune/services/tarot_service.dart';

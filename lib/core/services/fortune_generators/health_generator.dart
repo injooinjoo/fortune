@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
 import '../../utils/logger.dart';
@@ -44,7 +45,10 @@ class HealthGenerator {
       // Edge Function 호출
       final response = await supabase.functions.invoke(
         'fortune-health',
-        body: requestBody,
+        body: utf8.encode(jsonEncode(requestBody)),
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
       );
 
       // 📥 응답 수신

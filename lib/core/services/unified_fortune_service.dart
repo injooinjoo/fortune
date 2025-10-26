@@ -16,8 +16,10 @@ import 'fortune_generators/health_generator.dart';
 import 'fortune_generators/fortune_cookie_generator.dart';
 import 'fortune_generators/wish_generator.dart';
 import 'fortune_generators/lucky_items_generator.dart';
+import 'fortune_generators/love_generator.dart'; // ✅ 추가
 import 'fortune_optimization_service.dart';
 import '../../features/fortune/domain/models/fortune_conditions.dart';
+import '../../features/fortune/domain/models/conditions/love_fortune_conditions.dart'; // ✅ 추가
 
 /// 통합 운세 서비스 (최적화 시스템 통합)
 ///
@@ -95,9 +97,21 @@ class UnifiedFortuneService {
               Logger.info('[$fortuneType] 📺 광고 표시 대기 (UI에서 처리)');
             },
             onAPICall: (payload) async {
-              // API 호출 (buildAPIPayload()로 생성된 payload 사용)
+              // ✅ payload와 inputConditions 머지 (이미지 데이터 등 포함)
               Logger.info('[$fortuneType] 🔄 API 호출');
-              final result = await _generateFromAPI(fortuneType, payload);
+
+              // buildAPIPayload()에 없는 inputConditions 데이터를 병합
+              final mergedPayload = {
+                ...payload,  // conditions.buildAPIPayload() 결과
+                ...inputConditions,  // 이미지 데이터 등 추가 조건
+              };
+
+              final result = await _generateFromAPI(fortuneType, mergedPayload);
+
+              // ✅ DB 저장용 conditions에서 대용량 필드 제거 (image는 API 호출에만 필요)
+              final conditionsForDB = Map<String, dynamic>.from(inputConditions);
+              conditionsForDB.remove('image');  // 214KB base64 제거
+
               return result.data;
             },
           );
@@ -303,6 +317,14 @@ class UnifiedFortuneService {
         case 'compatibility':
           return await CompatibilityGenerator.generate(inputConditions, _supabase);
 
+        case 'love':
+          final isPremium = inputConditions['isPremium'] as bool? ?? false;
+          return await LoveGenerator.generate(
+            conditions: LoveFortuneConditions.fromInputData(inputConditions),
+            supabase: _supabase,
+            isPremium: isPremium,
+          );
+
         case 'avoid_people':
         case 'avoid-people':
           return await AvoidPeopleGenerator.generate(inputConditions, _supabase);
@@ -431,6 +453,55 @@ class UnifiedFortuneService {
             createdAt: DateTime.now(),
           );
 
+        case 'compatibility':
+          // Compatibility Edge Function 직접 호출
+          Logger.info('[UnifiedFortune] 🔄 Compatibility API 호출 시작');
+
+          final compatibilityResponse = await _supabase.functions.invoke(
+            'fortune-compatibility',
+            body: inputConditions,
+          );
+
+          if (compatibilityResponse.data == null) {
+            throw Exception('Compatibility API 응답 데이터 없음');
+          }
+
+          Logger.info('[UnifiedFortune] ✅ Compatibility API 호출 성공');
+
+          final compatibilityData = compatibilityResponse.data as Map<String, dynamic>;
+          return FortuneResult(
+            type: 'compatibility',
+            title: compatibilityData['title'] as String? ?? '궁합 분석',
+            summary: compatibilityData['summary'] as Map<String, dynamic>? ?? {'message': '분석 완료'},
+            data: compatibilityData,
+            score: (compatibilityData['score'] as num?)?.toInt(),
+            createdAt: DateTime.now(),
+          );
+
+        case 'face-reading':
+          // Face Reading Edge Function 직접 호출
+          Logger.info('[UnifiedFortune] 🔄 Face Reading API 호출 시작');
+
+          final faceResponse = await _supabase.functions.invoke(
+            'fortune-face-reading',
+            body: inputConditions,
+          );
+
+          if (faceResponse.data == null) {
+            throw Exception('Face Reading API 응답 데이터 없음');
+          }
+
+          Logger.info('[UnifiedFortune] ✅ Face Reading API 호출 성공');
+
+          final faceData = faceResponse.data as Map<String, dynamic>;
+          return FortuneResult(
+            type: 'face-reading',
+            title: faceData['title'] as String? ?? '관상 분석',
+            summary: faceData['summary'] as Map<String, dynamic>? ?? {'message': '분석 완료'},
+            data: faceData,
+            createdAt: DateTime.now(),
+          );
+
         default:
           // 기본 Edge Function 호출 (레거시)
           final response = await _supabase.functions.invoke(
@@ -507,10 +578,14 @@ class UnifiedFortuneService {
       final now = DateTime.now();
       final today = now.toIso8601String().split('T')[0]; // YYYY-MM-DD
 
-      // JSONB 조건을 정규화 (키 정렬)
-      final normalizedConditions = _normalizeJsonb(inputConditions);
+      // ✅ DB 저장용 조건 생성 (대용량 필드 제거)
+      final conditionsForDB = Map<String, dynamic>.from(inputConditions);
+      conditionsForDB.remove('image');  // 214KB base64 제거 - DB 인덱스 크기 제한 (8KB)
 
-      Logger.debug('[UnifiedFortune] Saving conditions: ${jsonEncode(normalizedConditions)}');
+      // JSONB 조건을 정규화 (키 정렬)
+      final normalizedConditions = _normalizeJsonb(conditionsForDB);
+
+      Logger.debug('[UnifiedFortune] Saving conditions (${normalizedConditions.length} fields, image excluded)');
 
       final data = {
         'user_id': userId,
@@ -556,11 +631,13 @@ class UnifiedFortuneService {
       case 'daily':
       case 'daily_calendar':
       case 'time_based':
-        return ['today_advice', 'luck_items', 'warnings'];
+        return ['advice', 'ai_tips', 'caution'];
       case 'mbti':
         return ['personality_insights', 'today_advice', 'lucky_color'];
       case 'compatibility':
         return ['compatibility_score', 'relationship_advice', 'future_prediction'];
+      case 'love':
+        return ['compatibilityInsights', 'predictions', 'actionPlan', 'warningArea'];
       case 'moving':
         return ['direction_analysis', 'moving_advice', 'auspicious_dates'];
       case 'career':
@@ -574,6 +651,10 @@ class UnifiedFortuneService {
       case 'exam':
       case 'lucky_exam':
         return ['study_tips', 'success_probability', 'recommended_subjects'];
+      case 'personality_dna':
+      case 'personality-dna':
+        // ✅ Personality DNA 블러 섹션: 연애/직장/매칭/궁합 스타일
+        return ['loveStyle', 'workStyle', 'dailyMatching', 'compatibility'];
       default:
         // 기본적으로 'advice', 'details', 'recommendations' 블러 처리
         return ['advice', 'details', 'recommendations'];

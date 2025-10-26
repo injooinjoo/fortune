@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'dart:ui';  // ✅ ImageFilter.blur 사용
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -8,9 +9,12 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../data/models/pet_profile.dart';
 import '../../../../providers/pet_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../presentation/providers/token_provider.dart';  // ✅ Premium 체크용
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../services/ad_service.dart';  // ✅ RewardedAd용
+import '../../../../shared/components/floating_bottom_button.dart';  // ✅ FloatingBottomButton용
 import '../constants/fortune_button_spacing.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/standard_fortune_page_layout.dart';
@@ -110,9 +114,38 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           const SizedBox(width: 16),
         ],
       ),
-      body: _fortune != null
-          ? _buildFortuneResult()
-          : _buildPetSelection(petState),
+      // ✅ Phase 5-1: Scaffold body를 Stack으로 감쌈
+      body: Stack(
+        children: [
+          // 기존 body 컨텐츠
+          _fortune != null
+              ? _buildFortuneResult()
+              : _buildPetSelection(petState),
+
+          // ✅ Phase 5-2: FloatingBottomButton 추가 (블러 상태일 때만 표시)
+          if (_fortune != null && _fortune!.isBlurred)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                padding: EdgeInsets.fromLTRB(
+                  20,
+                  0,
+                  20,
+                  16 + MediaQuery.of(context).padding.bottom,
+                ),
+                child: FloatingBottomButton(
+                  text: '광고 보고 전체 내용 확인하기',
+                  onPressed: _showAdAndUnblur,
+                  style: TossButtonStyle.primary,
+                  size: TossButtonSize.large,
+                  icon: Icon(Icons.play_arrow, color: TossDesignSystem.white),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -643,6 +676,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       final user = ref.read(userProvider).value;
       if (user == null) return;
 
+      // ✅ Premium 체크
+      final tokenState = ref.read(tokenProvider);
+      final isPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
+      debugPrint('💎 [PetCompatibilityPage] Premium 상태: $isPremium');
+
       final params = {
         'pet_name': pet.name,
         'pet_species': pet.species,
@@ -656,8 +694,19 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         params: params,
       );
 
+      // ✅ 블러 로직 추가
+      final isBlurred = !isPremium;
+      final blurredSections = isBlurred ? ['detailed_content'] : <String>[];
+
+      debugPrint('🔒 [PetCompatibilityPage] isBlurred: $isBlurred, blurredSections: $blurredSections');
+
+      final fortuneWithBlur = fortune.copyWith(
+        isBlurred: isBlurred,
+        blurredSections: blurredSections,
+      );
+
       if (mounted) {
-        setState(() => _fortune = fortune);
+        setState(() => _fortune = fortuneWithBlur);
       }
     } catch (e) {
       Logger.error('Failed to generate pet fortune', e);
@@ -670,6 +719,111 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         );
       }
     }
+  }
+
+  // ✅ Phase 3-1: RewardedAd 시청 후 블러 해제
+  Future<void> _showAdAndUnblur() async {
+    if (_fortune == null) return;
+
+    debugPrint('[PetCompatibilityPage] 광고 시청 후 블러 해제 시작');
+
+    try {
+      final adService = AdService.instance;
+
+      // 광고가 준비 안됐으면 로드
+      if (!adService.isRewardedAdReady) {
+        debugPrint('[PetCompatibilityPage] ⏳ RewardedAd 로드 중...');
+        await adService.loadRewardedAd();
+
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          debugPrint('[PetCompatibilityPage] ❌ RewardedAd 로드 타임아웃');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: TossDesignSystem.errorRed,
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('[PetCompatibilityPage] ✅ 광고 시청 완료, 블러 해제');
+          if (mounted) {
+            setState(() {
+              _fortune = _fortune!.copyWith(
+                isBlurred: false,
+                blurredSections: [],
+              );
+            });
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[PetCompatibilityPage] 광고 표시 실패', e, stackTrace);
+
+      // UX 개선: 에러 발생해도 블러 해제해서 콘텐츠 볼 수 있게 함
+      if (mounted) {
+        setState(() {
+          _fortune = _fortune!.copyWith(
+            isBlurred: false,
+            blurredSections: [],
+          );
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+            backgroundColor: TossDesignSystem.warningOrange,
+          ),
+        );
+      }
+    }
+  }
+
+  // ✅ Phase 3-2: 블러 래퍼 헬퍼
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (_fortune == null || !_fortune!.isBlurred || !_fortune!.blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildFortuneResult() {
@@ -747,48 +901,74 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           ),
           const SizedBox(height: 24),
 
-          // Fortune card
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: TossDesignSystem.black.withValues(alpha: 0.06),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.auto_awesome,
-                      color: TossTheme.primaryBlue,
-                      size: 24,
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      '궁합 운세',
-                      style: TypographyUnified.heading3.copyWith(
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Text(
-                  _fortune!.content,
-                  style: TypographyUnified.bodyLarge.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                    height: 1.6,
+          // ✅ Phase 4-1 & 4-2: Fortune card (블러 + 프리미엄 배지)
+          _buildBlurWrapper(
+            sectionKey: 'detailed_content',
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: TossDesignSystem.black.withValues(alpha: 0.06),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
                   ),
-                ),
-              ],
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.auto_awesome,
+                        color: TossTheme.primaryBlue,
+                        size: 24,
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        '궁합 운세',
+                        style: TypographyUnified.heading3.copyWith(
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                        ),
+                      ),
+                      const Spacer(),
+                      // ✅ 프리미엄 배지
+                      if (_fortune!.isBlurred && _fortune!.blurredSections.contains('detailed_content'))
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.lock, size: 12, color: TossTheme.primaryBlue),
+                              const SizedBox(width: 4),
+                              Text(
+                                '프리미엄',
+                                style: TypographyUnified.labelSmall.copyWith(
+                                  color: TossTheme.primaryBlue,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    _fortune!.content,
+                    style: TypographyUnified.bodyLarge.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                      height: 1.6,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: FortuneButtonSpacing.buttonTopSpacing),

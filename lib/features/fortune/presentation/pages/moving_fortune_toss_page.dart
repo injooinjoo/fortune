@@ -1,13 +1,15 @@
+import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../widgets/moving_input_unified.dart';
 import '../../domain/models/conditions/moving_fortune_conditions.dart';
-import '../../../../core/widgets/fortune_result_widgets.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../presentation/providers/ad_provider.dart';
 
 /// 토스 스타일 이사운 페이지 (UnifiedFortuneBaseWidget 사용)
 class MovingFortuneTossPage extends ConsumerStatefulWidget {
@@ -22,6 +24,10 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
   String? _targetArea;
   String? _period;
   String? _purpose;
+
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +63,18 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
 
       // 결과 표시 UI
       resultBuilder: (context, result) {
+        // ✅ result.isBlurred 동기화
+        if (_isBlurred != result.isBlurred || _blurredSections.length != result.blurredSections.length) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _isBlurred = result.isBlurred;
+                _blurredSections = List<String>.from(result.blurredSections);
+              });
+            }
+          });
+        }
+
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final data = result.data;
 
@@ -71,11 +89,13 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
         final summaryKeyword = data['summary_keyword'] as String? ?? '';
         final score = result.score ?? 50;
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        return Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               // 제목
               Text(
                 title,
@@ -101,32 +121,41 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
 
               // 방위 분석
               if (directionAnalysis.isNotEmpty)
-                _buildSectionCard(
-                  title: '방위 분석',
-                  icon: Icons.explore,
-                  content: directionAnalysis,
-                  isDark: isDark,
+                _buildBlurWrapper(
+                  sectionKey: 'direction_analysis',
+                  child: _buildSectionCard(
+                    title: '방위 분석',
+                    icon: Icons.explore,
+                    content: directionAnalysis,
+                    isDark: isDark,
+                  ),
                 ),
               const SizedBox(height: 16),
 
               // 시기 분석
               if (timingAnalysis.isNotEmpty)
-                _buildSectionCard(
-                  title: '시기 분석',
-                  icon: Icons.calendar_today,
-                  content: timingAnalysis,
-                  isDark: isDark,
+                _buildBlurWrapper(
+                  sectionKey: 'timing_analysis',
+                  child: _buildSectionCard(
+                    title: '시기 분석',
+                    icon: Icons.calendar_today,
+                    content: timingAnalysis,
+                    isDark: isDark,
+                  ),
                 ),
               const SizedBox(height: 16),
 
               // 주의사항
               if (cautions.isNotEmpty)
-                _buildListCard(
-                  title: '주의사항',
-                  icon: Icons.warning_amber_rounded,
-                  items: cautions,
-                  color: TossDesignSystem.warningYellow,
-                  isDark: isDark,
+                _buildBlurWrapper(
+                  sectionKey: 'cautions',
+                  child: _buildListCard(
+                    title: '주의사항',
+                    icon: Icons.warning_amber_rounded,
+                    items: cautions,
+                    color: TossDesignSystem.warningYellow,
+                    isDark: isDark,
+                  ),
                 ),
               const SizedBox(height: 16),
 
@@ -145,10 +174,71 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
               if (luckyDates.isNotEmpty)
                 _buildLuckyDatesCard(luckyDates, isDark),
               const SizedBox(height: 32),
-            ],
-          ),
+                ],
+              ),
+            ),
+
+            // ✅ FloatingBottomButton
+            if (_isBlurred)
+              FloatingBottomButton(
+                text: '광고 보고 전체 내용 확인하기',
+                onPressed: _showAdAndUnblur,
+                isEnabled: true,
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 116), // bottom: 100 효과
+              ),
+          ],
         );
       },
+    );
+  }
+
+  /// 광고 보고 블러 제거
+  Future<void> _showAdAndUnblur() async {
+    final adService = ref.read(adServiceProvider);
+
+    await adService.showRewardedAd(
+      onUserEarnedReward: (ad, rewardItem) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+      },
+    );
+  }
+
+  /// 블러 wrapper
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

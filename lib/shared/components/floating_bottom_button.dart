@@ -14,6 +14,8 @@ class FloatingBottomButton extends StatelessWidget {
   final Color? backgroundColor;
   final EdgeInsetsGeometry? padding;
   final bool hideWhenDisabled;
+  final double height;
+  final double bottom; // ✅ bottom 위치 커스터마이징
 
   const FloatingBottomButton({
     super.key,
@@ -28,6 +30,8 @@ class FloatingBottomButton extends StatelessWidget {
     this.backgroundColor,
     this.padding,
     this.hideWhenDisabled = false,
+    this.height = 58.0, // TossFloatingProgressButton과 동일한 높이
+    this.bottom = 0.0, // ✅ 기본값 0 (화면 하단)
   });
 
   @override
@@ -42,7 +46,7 @@ class FloatingBottomButton extends StatelessWidget {
     return Positioned(
       left: 0,
       right: 0,
-      bottom: 0,
+      bottom: bottom, // ✅ 커스터마이징 가능한 bottom 위치
       child: Container(
         color: Colors.transparent, // 완전히 투명한 배경
         padding: padding ?? EdgeInsets.fromLTRB(
@@ -51,15 +55,18 @@ class FloatingBottomButton extends StatelessWidget {
           20,
           16 + bottomPadding,
         ),
-        child: TossButton(
-          text: text,
-          onPressed: onPressed,
-          style: style,
-          size: size,
-          isLoading: isLoading,
-          isEnabled: isEnabled,
-          icon: icon,
-          width: double.infinity,
+        child: SizedBox(
+          height: height,
+          child: TossButton(
+            text: text,
+            onPressed: onPressed,
+            style: style,
+            size: size,
+            isLoading: isLoading,
+            isEnabled: isEnabled,
+            icon: icon,
+            width: double.infinity,
+          ),
         ),
       ),
     );
@@ -78,9 +85,9 @@ class BottomButtonSpacing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
-    // 버튼 높이(56) + 하단 패딩(16) + bottom safe area + 추가 여백
+    // 버튼 높이(58) + 하단 패딩(16) + bottom safe area + 추가 여백
     return SizedBox(
-      height: 56 + 16 + bottomPadding + additionalSpacing,
+      height: 58 + 16 + bottomPadding + additionalSpacing,
     );
   }
 }

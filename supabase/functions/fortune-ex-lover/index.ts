@@ -19,6 +19,7 @@ interface ExLoverFortuneRequest {
   current_feeling?: string
   still_in_contact?: boolean
   has_unresolved_feelings?: boolean
+  isPremium?: boolean // ✅ 프리미엄 사용자 여부
 }
 
 serve(async (req) => {
@@ -40,8 +41,11 @@ serve(async (req) => {
       breakup_reason = '',
       time_since_breakup = '',
       current_feeling = '',
-      still_in_contact = false
+      still_in_contact = false,
+      isPremium = false // ✅ 프리미엄 사용자 여부
     } = requestData
+
+    console.log('💎 [ExLover] Premium 상태:', isPremium)
 
     if (!name || !breakup_reason) {
       throw new Error('이름과 이별 이유를 입력해주세요.')
@@ -109,21 +113,29 @@ serve(async (req) => {
 
       const parsedResponse = JSON.parse(response.content)
 
+      // ✅ Blur 로직 적용
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['reunion_possibility', 'emotion_healing', 'cautions', 'recommendations', 'new_beginning', 'fortune_keyword']
+        : []
+
       fortuneData = {
         title: `${name}과의 인연`,
         fortune_type: 'ex_lover',
         name,
         relationship_duration,
         breakup_reason,
-        overall_fortune: parsedResponse.전반적인운세 || parsedResponse.overall_fortune || '시간이 해결해줄 것입니다.',
-        reunion_possibility: parsedResponse.재회가능성 || parsedResponse.reunion_possibility || '시간을 가지세요.',
-        emotion_healing: parsedResponse.감정정리 || parsedResponse.emotion_healing || '천천히 치유하세요.',
-        cautions: parsedResponse.주의사항 || parsedResponse.cautions || ['급하게 연락 금지', '감정 정리 우선', '새로운 시작 준비'],
-        recommendations: parsedResponse.추천사항 || parsedResponse.recommendations || ['자기 계발', '새로운 취미', '친구 만남'],
-        new_beginning: parsedResponse.새로운시작 || parsedResponse.new_beginning || '새로운 만남이 기다립니다.',
-        fortune_keyword: parsedResponse.운세키워드 || parsedResponse.fortune_keyword || '치유',
-        score: Math.floor(Math.random() * 30) + 70,
-        timestamp: new Date().toISOString()
+        score: Math.floor(Math.random() * 30) + 70, // ✅ 무료: 공개
+        overall_fortune: parsedResponse.전반적인운세 || parsedResponse.overall_fortune || '시간이 해결해줄 것입니다.', // ✅ 무료: 공개
+        reunion_possibility: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.재회가능성 || parsedResponse.reunion_possibility || '시간을 가지세요.'), // 🔒 유료
+        emotion_healing: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.감정정리 || parsedResponse.emotion_healing || '천천히 치유하세요.'), // 🔒 유료
+        cautions: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.주의사항 || parsedResponse.cautions || ['급하게 연락 금지', '감정 정리 우선', '새로운 시작 준비']), // 🔒 유료
+        recommendations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.추천사항 || parsedResponse.recommendations || ['자기 계발', '새로운 취미', '친구 만남']), // 🔒 유료
+        new_beginning: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.새로운시작 || parsedResponse.new_beginning || '새로운 만남이 기다립니다.'), // 🔒 유료
+        fortune_keyword: isBlurred ? '🔒' : (parsedResponse.운세키워드 || parsedResponse.fortune_keyword || '치유'), // 🔒 유료
+        timestamp: new Date().toISOString(),
+        isBlurred, // ✅ 블러 상태
+        blurredSections // ✅ 블러된 섹션 목록
       }
 
       await supabase.from('fortune_cache').insert({
@@ -136,7 +148,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ success: true, data: fortuneData }), {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })
@@ -150,7 +162,7 @@ serve(async (req) => {
     }), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })

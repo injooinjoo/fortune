@@ -70,7 +70,34 @@ export class GeminiProvider implements ILLMProvider {
     const userMessages = messages.filter((m) => m.role === 'user')
 
     if (systemMessage && userMessages.length > 0) {
-      const combinedContent = `${systemMessage.content}\n\n${userMessages[0].content}`
+      const firstUserContent = userMessages[0].content
+
+      // ✅ content가 배열인 경우 (Vision API)
+      if (Array.isArray(firstUserContent)) {
+        const parts = firstUserContent.map((item: any) => {
+          if (item.type === 'text') {
+            return { text: `${systemMessage.content}\n\n${item.text}` }
+          } else if (item.type === 'image_url') {
+            // Gemini Vision API 형식: inline_data 사용
+            const base64Data = item.image_url.url.replace(/^data:image\/\w+;base64,/, '')
+            return {
+              inline_data: {
+                mime_type: 'image/jpeg',
+                data: base64Data
+              }
+            }
+          }
+          return item
+        })
+
+        return [{
+          role: 'user',
+          parts: parts
+        }]
+      }
+
+      // ✅ content가 문자열인 경우 (일반 텍스트)
+      const combinedContent = `${systemMessage.content}\n\n${firstUserContent}`
       return [
         {
           role: 'user',
@@ -81,10 +108,38 @@ export class GeminiProvider implements ILLMProvider {
 
     return messages
       .filter((m) => m.role !== 'system')
-      .map((msg) => ({
-        role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.content }],
-      }))
+      .map((msg) => {
+        const content = msg.content
+
+        // ✅ content가 배열인 경우 (Vision API)
+        if (Array.isArray(content)) {
+          const parts = content.map((item: any) => {
+            if (item.type === 'text') {
+              return { text: item.text }
+            } else if (item.type === 'image_url') {
+              const base64Data = item.image_url.url.replace(/^data:image\/\w+;base64,/, '')
+              return {
+                inline_data: {
+                  mime_type: 'image/jpeg',
+                  data: base64Data
+                }
+              }
+            }
+            return item
+          })
+
+          return {
+            role: msg.role === 'assistant' ? 'model' : 'user',
+            parts: parts
+          }
+        }
+
+        // ✅ content가 문자열인 경우 (일반 텍스트)
+        return {
+          role: msg.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: content }],
+        }
+      })
   }
 
   private mapFinishReason(reason?: string): 'stop' | 'length' | 'error' {

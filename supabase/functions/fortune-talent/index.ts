@@ -15,6 +15,7 @@ interface TalentRequest {
   timeAvailable: string; // 투자 가능한 시간
   challenges: string[]; // 현재 직면한 어려움
   userId?: string;
+  isPremium?: boolean; // ✅ 프리미엄 사용자 여부
 }
 
 serve(async (req) => {
@@ -29,7 +30,18 @@ serve(async (req) => {
     )
 
     const requestData: TalentRequest = await req.json()
-    const { talentArea, currentSkills, goals, experience, timeAvailable, challenges, userId } = requestData
+    const {
+      talentArea,
+      currentSkills,
+      goals,
+      experience,
+      timeAvailable,
+      challenges,
+      userId,
+      isPremium = false // ✅ 프리미엄 사용자 여부
+    } = requestData
+
+    console.log('💎 [Talent] Premium 상태:', isPremium)
 
     // 캐시 확인
     const today = new Date().toISOString().split('T')[0]
@@ -49,7 +61,7 @@ serve(async (req) => {
           cached: true,
           tokensUsed: 0
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
 
@@ -135,22 +147,56 @@ serve(async (req) => {
 
     const fortuneData = JSON.parse(response.content)
 
+    // ✅ Blur 로직 적용
+    const isBlurred = !isPremium
+    const blurredSections = isBlurred
+      ? ['description', 'hexagonScores', 'talentInsights', 'weeklyPlan', 'recommendations', 'warnings', 'advice']
+      : []
+
     const result = {
       id: `talent-${Date.now()}`,
       type: 'talent',
       userId: userId,
       talentArea: talentArea,
       goals: goals,
-      ...fortuneData,
-      overall_score: fortuneData.overallScore,
-      lucky_items: fortuneData.luckyItems,
+      overallScore: fortuneData.overallScore, // ✅ 무료: 공개
+      overall_score: fortuneData.overallScore, // ✅ 무료: 공개
+      content: fortuneData.content, // ✅ 무료: 공개 (재능 분석)
+      description: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : fortuneData.description, // 🔒 유료
+      luckyItems: fortuneData.luckyItems, // ✅ 무료: 공개
+      lucky_items: fortuneData.luckyItems, // ✅ 무료: 공개
+      hexagonScores: isBlurred ? {
+        creativity: 0,
+        technique: 0,
+        passion: 0,
+        discipline: 0,
+        uniqueness: 0,
+        marketValue: 0
+      } : fortuneData.hexagonScores, // 🔒 유료
+      talentInsights: isBlurred ? [{
+        talent: '🔒 프리미엄 전용',
+        potential: 0,
+        description: '🔒 프리미엄 결제 후 확인 가능합니다',
+        developmentPath: '🔒 프리미엄 결제 후 확인 가능합니다'
+      }] : fortuneData.talentInsights, // 🔒 유료
+      weeklyPlan: isBlurred ? [{
+        day: '🔒',
+        focus: '🔒 프리미엄 전용',
+        activities: ['🔒 프리미엄 결제 후 확인 가능합니다'],
+        timeNeeded: '🔒'
+      }] : fortuneData.weeklyPlan, // 🔒 유료
+      recommendations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.recommendations, // 🔒 유료
+      warnings: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.warnings, // 🔒 유료
+      advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : fortuneData.advice, // 🔒 유료
       created_at: new Date().toISOString(),
       metadata: {
         currentSkills,
         experience,
         timeAvailable,
         challenges
-      }
+      },
+      isBlurred, // ✅ 블러 상태
+      blurredSections // ✅ 블러된 섹션 목록
     }
 
     // 결과 캐싱
@@ -170,7 +216,7 @@ serve(async (req) => {
         cached: false,
         tokensUsed: openaiResult.usage?.total_tokens || 0
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
   } catch (error) {
@@ -182,7 +228,7 @@ serve(async (req) => {
         details: error.toString()
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 500
       }
     )

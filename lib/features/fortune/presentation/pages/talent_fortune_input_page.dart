@@ -176,7 +176,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         displayValue: _occupationController.text.isNotEmpty ? _occupationController.text : null,
       ),
 
-      // 6. 고민 분야 (선택 필요 - 열려있음)
+      // 6. 고민 분야 (선택 필요 - 열려있음, 다중 선택)
       AccordionInputSection(
         id: 'concerns',
         title: '고민 분야',
@@ -187,9 +187,10 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         displayValue: _selectedConcerns.isNotEmpty
             ? _selectedConcerns.join(', ')
             : null,
+        isMultiSelect: true, // 다중 선택 가능 - 선택 후에도 닫히지 않음
       ),
 
-      // 7. 관심 분야 (선택 필요 - 열려있음)
+      // 7. 관심 분야 (선택 필요 - 열려있음, 다중 선택)
       AccordionInputSection(
         id: 'interests',
         title: '관심 분야',
@@ -200,6 +201,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         displayValue: _selectedInterests.isNotEmpty
             ? _selectedInterests.join(', ')
             : null,
+        isMultiSelect: true, // 다중 선택 가능 - 선택 후에도 닫히지 않음
       ),
 
       // 8. 자기평가 (선택사항)
@@ -273,6 +275,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
           value: value,
           isCompleted: value != null && (value is! String || value.isNotEmpty),
           displayValue: displayValue,
+          isMultiSelect: _accordionSections[index].isMultiSelect, // 기존 isMultiSelect 값 유지
         );
       });
     }

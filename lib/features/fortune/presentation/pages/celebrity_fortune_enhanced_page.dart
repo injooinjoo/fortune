@@ -1,3 +1,4 @@
+import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -6,6 +7,8 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/celebrity_provider.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../data/models/celebrity_simple.dart';
@@ -34,6 +37,10 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   bool _isLoading = false;
   Fortune? _fortune;
   late PageController _pageController;
+
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
   
   // Search related
   final _searchController = TextEditingController();
@@ -702,9 +709,71 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
     }
   }
 
+  /// 광고 보고 블러 제거
+  Future<void> _showAdAndUnblur() async {
+    final adService = ref.read(adServiceProvider);
+
+    await adService.showRewardedAd(
+      onUserEarnedReward: (ad, reward) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+      },
+    );
+  }
+
+  /// 블러 wrapper
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildResultScreen() {
     if (_fortune == null) return const SizedBox();
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // ✅ result.isBlurred 동기화
+    if (_isBlurred != _fortune!.isBlurred || _blurredSections.length != _fortune!.blurredSections.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _isBlurred = _fortune!.isBlurred;
+            _blurredSections = List<String>.from(_fortune!.blurredSections);
+          });
+        }
+      });
+    }
 
     return Stack(
       children: [
@@ -786,44 +855,10 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           const SizedBox(height: 20),
 
           // Main fortune message
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: TossDesignSystem.black.withValues(alpha: 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.auto_awesome,
-                  color: Color(0xFFFF6B6B),
-                  size: 32,
-                ),
-                SizedBox(height: 16),
-                Text(
-                  _fortune!.message,
-                  style: TypographyUnified.buttonMedium.copyWith(
-                    height: 1.6,
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          
-          // Recommendations
-          if (_fortune!.recommendations?.isNotEmpty ?? false) ...[
-            Container(
-              padding: const EdgeInsets.all(20),
+          _buildBlurWrapper(
+            sectionKey: 'fortune_message',
+            child: Container(
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
                 borderRadius: BorderRadius.circular(16),
@@ -836,50 +871,90 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                 ],
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.lightbulb_outline, color: TossTheme.primaryBlue, size: 24),
-                      SizedBox(width: 8),
-                      Text(
-                        '추천 조언',
-                        style: TypographyUnified.heading4.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                        ),
-                      ),
-                    ],
+                  Icon(
+                    Icons.auto_awesome,
+                    color: Color(0xFFFF6B6B),
+                    size: 32,
                   ),
-                  const SizedBox(height: 16),
-                  ...(_fortune!.recommendations ?? []).map((advice) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  SizedBox(height: 16),
+                  Text(
+                    _fortune!.message,
+                    style: TypographyUnified.buttonMedium.copyWith(
+                      height: 1.6,
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          
+          // Recommendations
+          if (_fortune!.recommendations?.isNotEmpty ?? false) ...[
+            _buildBlurWrapper(
+              sectionKey: 'recommendations',
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: TossDesignSystem.black.withValues(alpha: 0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          margin: const EdgeInsets.only(top: 8),
-                          decoration: BoxDecoration(
-                            color: TossTheme.primaryBlue,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            advice,
-                            style: TypographyUnified.bodySmall.copyWith(
-                              height: 1.5,
-                              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-                            ),
+                        Icon(Icons.lightbulb_outline, color: TossTheme.primaryBlue, size: 24),
+                        SizedBox(width: 8),
+                        Text(
+                          '추천 조언',
+                          style: TypographyUnified.heading4.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                           ),
                         ),
                       ],
                     ),
-                  )),
-                ],
+                    const SizedBox(height: 16),
+                    ...(_fortune!.recommendations ?? []).map((advice) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            margin: const EdgeInsets.only(top: 8),
+                            decoration: BoxDecoration(
+                              color: TossTheme.primaryBlue,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              advice,
+                              style: TypographyUnified.bodySmall.copyWith(
+                                height: 1.5,
+                                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -889,48 +964,58 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
           ),
         ),
 
+        // ✅ FloatingBottomButton
+        if (_isBlurred)
+          FloatingBottomButton(
+            text: '광고 보고 전체 내용 확인하기',
+            onPressed: _showAdAndUnblur,
+            isEnabled: true,
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 116), // bottom: 100 효과
+          ),
+
         // Floating 버튼
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: Container(
-            color: Colors.transparent,
-            padding: EdgeInsets.fromLTRB(
-              20,
-              0,
-              20,
-              16 + MediaQuery.of(context).padding.bottom,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TossButton(
-                    text: '다시 해보기',
-                    style: TossButtonStyle.secondary,
-                    onPressed: () => setState(() {
-                      _fortune = null;
-                      _currentStep = 0;
-                      _selectedCelebrity = null;
-                    }),
+        if (!_isBlurred)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              color: Colors.transparent,
+              padding: EdgeInsets.fromLTRB(
+                20,
+                0,
+                20,
+                16 + MediaQuery.of(context).padding.bottom,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TossButton(
+                      text: '다시 해보기',
+                      style: TossButtonStyle.secondary,
+                      onPressed: () => setState(() {
+                        _fortune = null;
+                        _currentStep = 0;
+                        _selectedCelebrity = null;
+                      }),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TossButton(
-                    text: '공유하기',
-                    onPressed: () {
-                      // TODO: 공유 기능 구현
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('공유 기능이 곧 추가될 예정입니다')),
-                      );
-                    },
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TossButton(
+                      text: '공유하기',
+                      onPressed: () {
+                        // TODO: 공유 기능 구현
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('공유 기능이 곧 추가될 예정입니다')),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
       ],
     ).animate().fadeIn(duration: 600.ms);
   }

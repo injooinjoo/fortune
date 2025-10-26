@@ -7,8 +7,8 @@ import '../../../../core/components/toss_card.dart';
 import '../../domain/models/career_coaching_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/widgets/accordion_input_section.dart';
 
 class CareerCoachingInputPage extends ConsumerStatefulWidget {
   const CareerCoachingInputPage({super.key});
@@ -18,85 +18,136 @@ class CareerCoachingInputPage extends ConsumerStatefulWidget {
 }
 
 class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPage> {
-  final PageController _pageController = PageController();
-  int _currentStep = 0;
-  
-  // Step 1: 현재 상황
+  // 현재 상황
   String? _currentRole;
   String? _experienceLevel;
   String? _primaryConcern;
   String? _industry;
-  
-  // Step 2: 목표와 가치
+
+  // 목표와 가치
   String? _shortTermGoal;
   String? _coreValue;
-  final List<String> _skillsToImprove = [];
-  
+  final Set<String> _skillsToImprove = {};
+
+  // Accordion sections
+  List<AccordionInputSection> _accordionSections = [];
+
   bool _isAnalyzing = false;
 
   @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _initializeAccordionSections();
   }
 
-  void _nextStep() {
-    if (_currentStep == 0 && _validateStep1()) {
-      setState(() {
-        _currentStep = 1;
-      });
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else if (_currentStep == 1 && _validateStep2()) {
-      _analyzeAndShowResult();
-    }
-  }
-
-
-  bool _validateStep1() {
-    if (_currentRole == null) {
-      _showMessage('현재 역할을 선택해주세요');
-      return false;
-    }
-    if (_primaryConcern == null) {
-      _showMessage('핵심 고민을 선택해주세요');
-      return false;
-    }
-    return true;
-  }
-
-  bool _validateStep2() {
-    if (_shortTermGoal == null) {
-      _showMessage('단기 목표를 선택해주세요');
-      return false;
-    }
-    if (_coreValue == null) {
-      _showMessage('중요한 가치를 선택해주세요');
-      return false;
-    }
-    if (_skillsToImprove.isEmpty) {
-      _showMessage('개선하고 싶은 스킬을 최소 1개 선택해주세요');
-      return false;
-    }
-    return true;
-  }
-
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: TossDesignSystem.warningOrange,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+  void _initializeAccordionSections() {
+    _accordionSections = [
+      // 1. 현재 포지션
+      AccordionInputSection(
+        id: 'currentRole',
+        title: '현재 포지션',
+        icon: Icons.work_outline,
+        inputWidgetBuilder: (context, onComplete) => _buildCurrentRoleInput(onComplete),
+        value: _currentRole,
+        isCompleted: _currentRole != null,
+        displayValue: _currentRole != null
+            ? roleOptions.firstWhere((role) => role.id == _currentRole).title
+            : null,
       ),
-    );
+
+      // 2. 핵심 고민
+      AccordionInputSection(
+        id: 'primaryConcern',
+        title: '핵심 고민',
+        icon: Icons.psychology_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildPrimaryConcernInput(onComplete),
+        value: _primaryConcern,
+        isCompleted: _primaryConcern != null,
+        displayValue: _primaryConcern != null
+            ? concernCards.firstWhere((concern) => concern.id == _primaryConcern).title
+            : null,
+      ),
+
+      // 3. 단기 목표 (3-6개월)
+      AccordionInputSection(
+        id: 'shortTermGoal',
+        title: '단기 목표 (3-6개월)',
+        icon: Icons.rocket_launch,
+        inputWidgetBuilder: (context, onComplete) => _buildShortTermGoalInput(onComplete),
+        value: _shortTermGoal,
+        isCompleted: _shortTermGoal != null,
+        displayValue: _shortTermGoal != null
+            ? goalOptions.firstWhere((goal) => goal.id == _shortTermGoal).title
+            : null,
+      ),
+
+      // 4. 핵심 가치
+      AccordionInputSection(
+        id: 'coreValue',
+        title: '핵심 가치',
+        icon: Icons.favorite_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildCoreValueInput(onComplete),
+        value: _coreValue,
+        isCompleted: _coreValue != null,
+        displayValue: _coreValue != null
+            ? valueOptions.firstWhere((value) => value.id == _coreValue).title
+            : null,
+      ),
+
+      // 5. 개선하고 싶은 스킬 (다중 선택)
+      AccordionInputSection(
+        id: 'skillsToImprove',
+        title: '개선하고 싶은 스킬',
+        icon: Icons.trending_up_rounded,
+        inputWidgetBuilder: (context, onComplete) => _buildSkillsToImproveInput(onComplete),
+        value: _skillsToImprove.toList(),
+        isCompleted: _skillsToImprove.isNotEmpty,
+        displayValue: _skillsToImprove.isNotEmpty
+            ? _skillsToImprove.join(', ')
+            : null,
+        isMultiSelect: true, // 다중 선택 - 선택 후에도 닫히지 않음
+      ),
+    ];
+  }
+
+  void _updateAccordionSection(String id, dynamic value, String? displayValue) {
+    final index = _accordionSections.indexWhere((section) => section.id == id);
+    if (index != -1) {
+      setState(() {
+        _accordionSections[index] = AccordionInputSection(
+          id: _accordionSections[index].id,
+          title: _accordionSections[index].title,
+          icon: _accordionSections[index].icon,
+          inputWidgetBuilder: _accordionSections[index].inputWidgetBuilder,
+          value: value,
+          isCompleted: value != null && (value is! String || value.isNotEmpty) && (value is! List || value.isNotEmpty),
+          displayValue: displayValue,
+          isMultiSelect: _accordionSections[index].isMultiSelect,
+        );
+      });
+    }
+  }
+
+  bool _canGenerate() {
+    // 필수: 현재 포지션, 핵심 고민, 단기 목표, 핵심 가치, 개선 스킬 1개 이상
+    return _currentRole != null &&
+        _primaryConcern != null &&
+        _shortTermGoal != null &&
+        _coreValue != null &&
+        _skillsToImprove.isNotEmpty;
   }
 
   Future<void> _analyzeAndShowResult() async {
+    if (!_canGenerate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('필수 정보를 모두 입력해주세요'),
+          backgroundColor: TossDesignSystem.warningOrange,
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _isAnalyzing = true;
     });
@@ -111,7 +162,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
       industry: _industry,
       shortTermGoal: _shortTermGoal!,
       coreValue: _coreValue!,
-      skillsToImprove: _skillsToImprove,
+      skillsToImprove: _skillsToImprove.toList(),
     );
 
     if (mounted) {
@@ -125,520 +176,348 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     if (_isAnalyzing) {
       return _buildAnalyzingView(isDark);
     }
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.gray50,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
       appBar: const StandardFortuneAppBar(
         title: '직업 운세',
       ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              // Progress indicator
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 3,
-                        decoration: BoxDecoration(
-                          color: _currentStep >= 0
-                            ? TossDesignSystem.tossBlue
-                            : TossDesignSystem.gray200,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Container(
-                        height: 3,
-                        decoration: BoxDecoration(
-                          color: _currentStep >= 1
-                            ? TossDesignSystem.tossBlue
-                            : TossDesignSystem.gray200,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ).animate().fadeIn(duration: 300.ms),
-
-              // Content
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _buildStep1(isDark),
-                    _buildStep2(isDark),
-                  ],
-                ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            _accordionSections.isEmpty
+                ? Center(child: CircularProgressIndicator())
+                : AccordionInputFormWithHeader(
+                    header: _buildTitleSection(isDark),
+                    sections: _accordionSections,
+                    onAllCompleted: null,
+                    completionButtonText: '분석 시작',
+                  ),
+            if (_canGenerate())
+              TossFloatingProgressButtonPositioned(
+                text: '🚀 분석 시작하기',
+                onPressed: _canGenerate() ? () => _analyzeAndShowResult() : null,
+                isEnabled: _canGenerate(),
+                showProgress: false,
+                isVisible: _canGenerate(),
               ),
-
-              // Bottom spacing for floating button
-              const BottomButtonSpacing(),
-            ],
-          ),
-
-          // Floating bottom button
-          TossFloatingProgressButtonPositioned(
-            text: _currentStep == 1 ? '분석 시작' : '다음',
-            onPressed: _nextStep,
-            isEnabled: true,
-            showProgress: false,
-            isVisible: true,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildStep1(bool isDark) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-          
-          // Header
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                  TossDesignSystem.tossBlue.withValues(alpha: 0.05),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.work_outline,
-                    color: TossDesignSystem.white,
-                    size: 28,
-                  ),
-                ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '현재 상황을 알려주세요',
-                        style: TossDesignSystem.heading3.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? TossDesignSystem.textPrimaryDark : null,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        '맞춤형 직업 전략을 제공해드려요',
-                        style: TossDesignSystem.caption.copyWith(
-                          color: TossDesignSystem.gray600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2),
-          
-          SizedBox(height: 32),
-          
-          // 현재 역할
-          Text(
-            '현재 포지션',
-            style: TossDesignSystem.body1.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
+  Widget _buildTitleSection(bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '맞춤 직업 전략을\n제공해드릴게요',
+          style: TypographyUnified.heading1.copyWith(
+            fontWeight: FontWeight.w700,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            height: 1.3,
           ),
-          const SizedBox(height: 12),
-          
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            childAspectRatio: 2.5,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            children: roleOptions.map((role) => 
-              GestureDetector(
-                onTap: () => setState(() => _currentRole = role.id),
-                child: TossCard(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  style: _currentRole == role.id ? TossCardStyle.filled : TossCardStyle.outlined,
-                  child: Row(
-                    children: [
-                      Text(role.emoji, style: TypographyUnified.heading3),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              role.title,
-                              style: TossDesignSystem.body2.copyWith(
-                                fontWeight: _currentRole == role.id 
-                                  ? FontWeight.bold 
-                                  : FontWeight.normal,
-                                color: _currentRole == role.id 
-                                  ? TossDesignSystem.tossBlue 
-                                  : null,
-                              ),
-                            ),
-                            Text(
-                              role.description,
-                              style: TossDesignSystem.caption.copyWith(
-                                color: TossDesignSystem.gray600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ).animate(delay: Duration(milliseconds: 50 * roleOptions.indexOf(role)))
-                .fadeIn(duration: 300.ms)
-                .slideX(begin: 0.1),
-            ).toList(),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '현재 상황과 목표를 분석해서\n최적의 성장 로드맵을 제시해드려요',
+          style: TypographyUnified.bodySmall.copyWith(
+            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
+            height: 1.4,
           ),
-          
-          SizedBox(height: 32),
-          
-          // 핵심 고민
-          Text(
-            '가장 큰 고민은?',
-            style: TossDesignSystem.body1.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
-          ),
-          const SizedBox(height: 12),
-          
-          ...concernCards.map((concern) => 
-            GestureDetector(
-              onTap: () => setState(() => _primaryConcern = concern.id),
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: TossCard(
-                  padding: const EdgeInsets.all(16),
-                  style: _primaryConcern == concern.id ? TossCardStyle.filled : TossCardStyle.outlined,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: _primaryConcern == concern.id
-                            ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                            : TossDesignSystem.gray100,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text(concern.emoji, style: TypographyUnified.displaySmall),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              concern.title,
-                              style: TossDesignSystem.body1.copyWith(
-                                fontWeight: _primaryConcern == concern.id 
-                                  ? FontWeight.bold 
-                                  : FontWeight.normal,
-                                color: _primaryConcern == concern.id 
-                                  ? TossDesignSystem.tossBlue 
-                                  : null,
-                              ),
-                            ),
-                            SizedBox(height: 2),
-                            Text(
-                              concern.description,
-                              style: TossDesignSystem.caption.copyWith(
-                                color: TossDesignSystem.gray600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (_primaryConcern == concern.id)
-                        Icon(
-                          Icons.check_circle,
-                          color: TossDesignSystem.tossBlue,
-                          size: 24,
-                        ),
-                    ],
-                  ),
-                ),
-              ).animate(delay: Duration(milliseconds: 50 * concernCards.indexOf(concern)))
-                .fadeIn(duration: 300.ms)
-                .slideY(begin: 0.1),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildStep2(bool isDark) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-          
-          // Header
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  TossDesignSystem.successGreen.withValues(alpha: 0.1),
-                  TossDesignSystem.successGreen.withValues(alpha: 0.05),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
+  // ===== 입력 위젯들 =====
+
+  Widget _buildCurrentRoleInput(Function(dynamic) onComplete) {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      childAspectRatio: 2.2,
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 12,
+      children: roleOptions.map((role) =>
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _currentRole = role.id;
+              _updateAccordionSection('currentRole', role.id, role.title);
+            });
+            TossDesignSystem.hapticLight();
+            onComplete(role.id);
+          },
+          child: TossCard(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            style: _currentRole == role.id ? TossCardStyle.filled : TossCardStyle.outlined,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: TossDesignSystem.successGreen,
-                    borderRadius: BorderRadius.circular(12),
+                Text(role.emoji, style: TypographyUnified.heading3),
+                const SizedBox(height: 4),
+                Text(
+                  role.title,
+                  style: TypographyUnified.labelMedium.copyWith(
+                    fontWeight: _currentRole == role.id
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                    color: _currentRole == role.id
+                      ? TossDesignSystem.tossBlue
+                      : null,
                   ),
-                  child: const Icon(
-                    Icons.rocket_launch,
-                    color: TossDesignSystem.white,
-                    size: 28,
-                  ),
-                ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '목표와 가치를 들려주세요',
-                        style: TossDesignSystem.heading3.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? TossDesignSystem.textPrimaryDark : null,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        '성장 로드맵을 설계해드려요',
-                        style: TossDesignSystem.caption.copyWith(
-                          color: TossDesignSystem.gray600,
-                        ),
-                      ),
-                    ],
-                  ),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
-          ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2),
-          
-          SizedBox(height: 32),
-          
-          // 단기 목표
-          Text(
-            '3-6개월 내 목표',
-            style: TossDesignSystem.body1.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
           ),
-          const SizedBox(height: 12),
-          
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: goalOptions.map((goal) =>
-              GestureDetector(
-                onTap: () => setState(() => _shortTermGoal = goal.id),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: _shortTermGoal == goal.id
-                      ? TossDesignSystem.tossBlue
-                      : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(goal.emoji, style: TypographyUnified.buttonMedium),
-                      SizedBox(width: 6),
-                      Text(
-                        goal.title,
-                        style: TossDesignSystem.body2.copyWith(
-                          color: _shortTermGoal == goal.id
-                            ? TossDesignSystem.white
-                            : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray800),
-                          fontWeight: _shortTermGoal == goal.id
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ).animate(delay: Duration(milliseconds: 50 * goalOptions.indexOf(goal)))
-                .fadeIn(duration: 300.ms)
-                .scale(begin: const Offset(0.9, 0.9)),
-            ).toList(),
-          ),
-          
-          SizedBox(height: 32),
-          
-          // 핵심 가치
-          Text(
-            '가장 중요한 가치',
-            style: TossDesignSystem.body1.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
-          ),
-          const SizedBox(height: 12),
-          
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: valueOptions.map((value) =>
-              GestureDetector(
-                onTap: () => setState(() => _coreValue = value.id),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: _coreValue == value.id
-                      ? TossDesignSystem.tossBlue
-                      : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    value.title,
-                    style: TossDesignSystem.body2.copyWith(
-                      color: _coreValue == value.id
-                        ? TossDesignSystem.white
-                        : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray800),
-                      fontWeight: _coreValue == value.id
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    ),
-                  ),
-                ),
-              ).animate(delay: Duration(milliseconds: 50 * valueOptions.indexOf(value)))
-                .fadeIn(duration: 300.ms)
-                .scale(begin: const Offset(0.9, 0.9)),
-            ).toList(),
-          ),
-          
-          SizedBox(height: 32),
-          
-          // 개선하고 싶은 스킬
-          Text(
-            '개선하고 싶은 스킬 (복수 선택)',
-            style: TossDesignSystem.body1.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
-          ),
-          const SizedBox(height: 12),
-          
-          ...skillCategories.entries.map((category) => 
-            Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+      ).toList(),
+    );
+  }
+
+  Widget _buildPrimaryConcernInput(Function(dynamic) onComplete) {
+    return Column(
+      children: concernCards.map((concern) =>
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _primaryConcern = concern.id;
+              _updateAccordionSection('primaryConcern', concern.id, concern.title);
+            });
+            TossDesignSystem.hapticLight();
+            onComplete(concern.id);
+          },
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: TossCard(
+              padding: const EdgeInsets.all(16),
+              style: _primaryConcern == concern.id ? TossCardStyle.filled : TossCardStyle.outlined,
+              child: Row(
                 children: [
-                  Text(
-                    category.key,
-                    style: TossDesignSystem.caption.copyWith(
-                      color: TossDesignSystem.gray600,
-                      fontWeight: FontWeight.bold,
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: _primaryConcern == concern.id
+                        ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
+                        : TossDesignSystem.gray100,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Text(concern.emoji, style: TypographyUnified.heading3),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: category.value.map((skill) => 
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (_skillsToImprove.contains(skill)) {
-                              _skillsToImprove.remove(skill);
-                            } else {
-                              _skillsToImprove.add(skill);
-                            }
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: _skillsToImprove.contains(skill)
-                              ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100),
-                            borderRadius: BorderRadius.circular(16),
-                            border: _skillsToImprove.contains(skill)
-                              ? Border.all(color: TossDesignSystem.tossBlue, width: 1.5)
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          concern.title,
+                          style: TypographyUnified.bodyMedium.copyWith(
+                            fontWeight: _primaryConcern == concern.id
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                            color: _primaryConcern == concern.id
+                              ? TossDesignSystem.tossBlue
                               : null,
                           ),
-                          child: Text(
-                            skill,
-                            style: TossDesignSystem.caption.copyWith(
-                              color: _skillsToImprove.contains(skill)
-                                ? TossDesignSystem.tossBlue
-                                : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray800),
-                              fontWeight: _skillsToImprove.contains(skill)
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          concern.description,
+                          style: TypographyUnified.labelSmall.copyWith(
+                            color: TossDesignSystem.gray600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_primaryConcern == concern.id)
+                    Icon(
+                      Icons.check_circle,
+                      color: TossDesignSystem.tossBlue,
+                      size: 24,
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ).toList(),
+    );
+  }
+
+  Widget _buildShortTermGoalInput(Function(dynamic) onComplete) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: goalOptions.map((goal) =>
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _shortTermGoal = goal.id;
+              _updateAccordionSection('shortTermGoal', goal.id, goal.title);
+            });
+            TossDesignSystem.hapticLight();
+            onComplete(goal.id);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: _shortTermGoal == goal.id
+                ? TossDesignSystem.tossBlue
+                : TossDesignSystem.gray100,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(goal.emoji, style: TypographyUnified.buttonSmall),
+                SizedBox(width: 6),
+                Text(
+                  goal.title,
+                  style: TypographyUnified.bodySmall.copyWith(
+                    color: _shortTermGoal == goal.id
+                      ? TossDesignSystem.white
+                      : TossDesignSystem.gray800,
+                    fontWeight: _shortTermGoal == goal.id
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ).toList(),
+    );
+  }
+
+  Widget _buildCoreValueInput(Function(dynamic) onComplete) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: valueOptions.map((value) =>
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _coreValue = value.id;
+              _updateAccordionSection('coreValue', value.id, value.title);
+            });
+            TossDesignSystem.hapticLight();
+            onComplete(value.id);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: _coreValue == value.id
+                ? TossDesignSystem.tossBlue
+                : TossDesignSystem.gray100,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              value.title,
+              style: TypographyUnified.bodySmall.copyWith(
+                color: _coreValue == value.id
+                  ? TossDesignSystem.white
+                  : TossDesignSystem.gray800,
+                fontWeight: _coreValue == value.id
+                  ? FontWeight.bold
+                  : FontWeight.normal,
+              ),
+            ),
+          ),
+        ),
+      ).toList(),
+    );
+  }
+
+  Widget _buildSkillsToImproveInput(Function(dynamic) onComplete) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '복수 선택 가능',
+          style: TypographyUnified.labelMedium.copyWith(
+            color: TossDesignSystem.gray600,
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...skillCategories.entries.map((category) =>
+          Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  category.key,
+                  style: TypographyUnified.labelMedium.copyWith(
+                    color: TossDesignSystem.gray600,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: category.value.map((skill) =>
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (_skillsToImprove.contains(skill)) {
+                            _skillsToImprove.remove(skill);
+                          } else {
+                            _skillsToImprove.add(skill);
+                          }
+                          _updateAccordionSection(
+                            'skillsToImprove',
+                            _skillsToImprove.toList(),
+                            _skillsToImprove.join(', '),
+                          );
+                        });
+                        TossDesignSystem.hapticLight();
+                        onComplete(_skillsToImprove.toList());
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: _skillsToImprove.contains(skill)
+                            ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
+                            : TossDesignSystem.gray100,
+                          borderRadius: BorderRadius.circular(16),
+                          border: _skillsToImprove.contains(skill)
+                            ? Border.all(color: TossDesignSystem.tossBlue, width: 1.5)
+                            : null,
+                        ),
+                        child: Text(
+                          skill,
+                          style: TypographyUnified.labelSmall.copyWith(
+                            color: _skillsToImprove.contains(skill)
+                              ? TossDesignSystem.tossBlue
+                              : TossDesignSystem.gray800,
+                            fontWeight: _skillsToImprove.contains(skill)
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                           ),
                         ),
                       ),
-                    ).toList(),
-                  ),
-                ],
-              ),
-            ).animate(delay: Duration(milliseconds: 100 * skillCategories.keys.toList().indexOf(category.key)))
-              .fadeIn(duration: 300.ms)
-              .slideY(begin: 0.1),
+                    ),
+                  ).toList(),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -671,32 +550,32 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             ).animate(onPlay: (controller) => controller.repeat())
               .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withValues(alpha: 0.3))
               .rotate(duration: 3000.ms),
-            
+
             SizedBox(height: 32),
-            
+
             Text(
               '직업 전략 분석 중...',
-              style: TossDesignSystem.heading3.copyWith(
+              style: TypographyUnified.heading3.copyWith(
                 fontWeight: FontWeight.bold,
                 color: isDark ? TossDesignSystem.textPrimaryDark : null,
               ),
             ).animate()
               .fadeIn(duration: 500.ms)
               .slideY(begin: 0.2),
-            
+
             SizedBox(height: 12),
-            
+
             Text(
               '맞춤형 성장 로드맵을 준비하고 있어요',
-              style: TossDesignSystem.body2.copyWith(
+              style: TypographyUnified.bodyMedium.copyWith(
                 color: TossDesignSystem.gray600,
               ),
             ).animate(delay: 200.ms)
               .fadeIn(duration: 500.ms)
               .slideY(begin: 0.2),
-            
+
             const SizedBox(height: 40),
-            
+
             SizedBox(
               width: 200,
               child: LinearProgressIndicator(

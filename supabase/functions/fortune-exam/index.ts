@@ -14,6 +14,7 @@ interface ExamFortuneRequest {
   study_period: string
   confidence: string
   difficulty?: string
+  isPremium?: boolean // ✅ 프리미엄 사용자 여부
 }
 
 serve(async (req) => {
@@ -34,13 +35,15 @@ serve(async (req) => {
       exam_date = '',
       study_period = '',
       confidence = '',
-      difficulty = ''
+      difficulty = '',
+      isPremium = false // ✅ 프리미엄 사용자 여부
     } = requestData
 
     if (!exam_type || !exam_date) {
       throw new Error('시험 종류와 시험 날짜를 입력해주세요.')
     }
 
+    console.log('💎 [Exam] Premium 상태:', isPremium)
     console.log('Exam fortune request:', { exam_type, exam_date })
 
     const cacheKey = `exam_fortune_${btoa(`${exam_type}_${exam_date}_${study_period}_${confidence}`).slice(0, 50)}`
@@ -103,6 +106,12 @@ serve(async (req) => {
 
       const parsedResponse = JSON.parse(response.content)
 
+      // ✅ Blur 로직 적용
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['pass_possibility', 'focus_subject', 'cautions', 'study_methods', 'dday_advice', 'lucky_hours', 'exam_keyword']
+        : []
+
       fortuneData = {
         title: `${exam_type} 시험운`,
         fortune_type: 'exam',
@@ -110,16 +119,18 @@ serve(async (req) => {
         exam_date,
         study_period,
         confidence,
-        overall_fortune: parsedResponse.전반적인시험운 || parsedResponse.overall_fortune || '좋은 결과가 예상됩니다.',
-        pass_possibility: parsedResponse.합격가능성 || parsedResponse.pass_possibility || '충분히 합격 가능합니다.',
-        focus_subject: parsedResponse.집중과목 || parsedResponse.focus_subject || '취약 부분에 집중하세요.',
-        cautions: parsedResponse.주의사항 || parsedResponse.cautions || ['컨디션 관리', '시간 배분', '실수 방지'],
-        study_methods: parsedResponse.추천학습법 || parsedResponse.study_methods || ['반복 학습', '문제 풀이', '요약 정리'],
-        dday_advice: parsedResponse.디데이조언 || parsedResponse.dday_advice || '충분한 휴식을 취하세요.',
-        lucky_hours: parsedResponse.행운의시간 || parsedResponse.lucky_hours || '오전 시간대',
-        exam_keyword: parsedResponse.시험운키워드 || parsedResponse.exam_keyword || '합격',
-        score: Math.floor(Math.random() * 30) + 70,
-        timestamp: new Date().toISOString()
+        score: Math.floor(Math.random() * 30) + 70, // ✅ 무료: 공개
+        overall_fortune: parsedResponse.전반적인시험운 || parsedResponse.overall_fortune || '좋은 결과가 예상됩니다.', // ✅ 무료: 공개
+        pass_possibility: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.합격가능성 || parsedResponse.pass_possibility || '충분히 합격 가능합니다.'), // 🔒 유료
+        focus_subject: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.집중과목 || parsedResponse.focus_subject || '취약 부분에 집중하세요.'), // 🔒 유료
+        cautions: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.주의사항 || parsedResponse.cautions || ['컨디션 관리', '시간 배분', '실수 방지']), // 🔒 유료
+        study_methods: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.추천학습법 || parsedResponse.study_methods || ['반복 학습', '문제 풀이', '요약 정리']), // 🔒 유료
+        dday_advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.디데이조언 || parsedResponse.dday_advice || '충분한 휴식을 취하세요.'), // 🔒 유료
+        lucky_hours: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.행운의시간 || parsedResponse.lucky_hours || '오전 시간대'), // 🔒 유료
+        exam_keyword: isBlurred ? '🔒' : (parsedResponse.시험운키워드 || parsedResponse.exam_keyword || '합격'), // 🔒 유료
+        timestamp: new Date().toISOString(),
+        isBlurred, // ✅ 블러 상태
+        blurredSections // ✅ 블러된 섹션 목록
       }
 
       await supabase.from('fortune_cache').insert({
@@ -132,7 +143,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ success: true, data: fortuneData }), {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })
@@ -146,7 +157,7 @@ serve(async (req) => {
     }), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })

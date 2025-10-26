@@ -1,9 +1,8 @@
+import 'dart:ui'; // ✅ Phase 16-1: ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/widgets/unified_fortune_base_widget.dart';
-import '../../../../core/widgets/fortune_result_widgets.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../domain/models/conditions/mbti_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -14,7 +13,10 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../presentation/providers/ad_provider.dart'; // ✅ Phase 16-2
 import '../../../../presentation/providers/user_profile_notifier.dart';
+import '../../../../presentation/providers/token_provider.dart';
+import '../../../../core/widgets/blurred_fortune_content.dart';
 
 /// MBTI 운세 페이지 (UnifiedFortuneService 버전)
 ///
@@ -46,6 +48,10 @@ class _MbtiFortunePageState
   bool _showResult = false;
   double _energyLevel = 0.75;
   Map<String, dynamic>? _cognitiveFunctions;
+
+  // ✅ Phase 16-3: Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
 
   // ==================== MBTI Data ====================
 
@@ -134,20 +140,28 @@ class _MbtiFortunePageState
             Column(
               children: [
                 Expanded(
-                  child: _isLoading
-                      ? _buildLoadingState()
-                      : _showResult && _fortuneResult != null
-                          ? _buildResultView(_fortuneResult!)
-                          : _buildInputForm(),
+                  child: _showResult && _fortuneResult != null
+                      ? _buildResultView(_fortuneResult!)
+                      : _buildInputForm(),
                 ),
               ],
             ),
 
-            // 버튼은 입력 상태에서만 표시
-            if (!_isLoading && !_showResult && _selectedMbti != null)
+            // 버튼 (입력 폼일 때: 운세 생성, 결과 화면일 때: 전체보기)
+            if (!_showResult && _selectedMbti != null)
               FloatingBottomButton(
                 text: '🧠 내 성격이 말하는 오늘',
-                onPressed: _handleSubmit,
+                onPressed: _isLoading ? null : _handleSubmit,
+                isLoading: _isLoading,
+                isEnabled: !_isLoading,
+              ),
+
+            // 전체보기 버튼 (블러 상태일 때만 표시)
+            if (_showResult && _fortuneResult != null && _fortuneResult!.isBlurred)
+              FloatingBottomButton(
+                text: '남은 운세 모두 보기',
+                onPressed: _showAdAndUnblur,
+                isLoading: false,
                 isEnabled: true,
               ),
           ],
@@ -156,71 +170,36 @@ class _MbtiFortunePageState
     );
   }
 
-  Widget _buildLoadingState() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(
-            color: TossDesignSystem.tossBlue,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            '당신의 MBTI 운세를 분석중이에요...',
-            style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.grayDark100
-                  : TossDesignSystem.gray600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Future<void> _handleSubmit() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      Logger.info('[MbtiFortunePage] 운세 생성 시작: mbti');
-
-      // 광고 표시
-      await AdService.instance.showInterstitialAdWithCallback(
-        onAdCompleted: () async {
-          await _generateFortune();
-        },
-        onAdFailed: () async {
-          await _generateFortune();
-        },
-      );
-    } catch (error, stackTrace) {
-      Logger.error('[MbtiFortunePage] 운세 생성 실패', error, stackTrace);
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-
-        Toast.show(
-          context,
-          message: '운세 생성 중 오류가 발생했습니다: $error',
-          type: ToastType.error,
-        );
-      }
-    }
+    // ✅ InterstitialAd 제거: 버튼 클릭 시 바로 운세 생성
+    await _generateFortune();
   }
 
   Future<void> _generateFortune() async {
+    // ✅ 1단계: 즉시 로딩 상태 표시 (버튼 애니메이션 시작)
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
     try {
-      // 1. 사용자 프로필 가져오기 (앱 시작 시 이미 로드됨)
+      // ✅ 타이머 시작 (최소 1초 대기)
+      final loadingTimer = Stopwatch()..start();
+
+      // 1. 사용자 프로필 가져오기
       final userProfile = ref.read(userProfileProvider).value;
       final userName = userProfile?.name ?? 'Unknown';
       final birthDateStr = (userProfile?.birthDate as String?) ?? DateTime.now().toIso8601String().split('T')[0];
 
-      // 2. FortuneConditions 생성
+      // 2. Premium 상태 확인
+      final tokenState = ref.read(tokenProvider);
+      final isPremium = tokenState.hasUnlimitedAccess;
+
+      Logger.info('[MbtiFortunePage] Premium 상태: $isPremium');
+
+      // 3. FortuneConditions 생성
       final conditions = MbtiFortuneConditions(
         mbtiType: _selectedMbti!,
         date: DateTime.now(),
@@ -228,7 +207,7 @@ class _MbtiFortunePageState
         birthDate: birthDateStr,
       );
 
-      // 3. UnifiedFortuneService 호출
+      // 4. UnifiedFortuneService 호출
       final fortuneService = UnifiedFortuneService(
         Supabase.instance.client,
         enableOptimization: true,
@@ -239,6 +218,7 @@ class _MbtiFortunePageState
         dataSource: FortuneDataSource.api,
         inputConditions: conditions.toJson(),
         conditions: conditions,
+        isPremium: isPremium, // ✅ Premium 상태 전달
       );
 
       Logger.info('[MbtiFortunePage] 운세 생성 완료: ${result.id}');
@@ -246,6 +226,13 @@ class _MbtiFortunePageState
       // API 응답에서 energyLevel 추출
       final data = result.data as Map<String, dynamic>? ?? {};
       final energyLevelValue = data['energyLevel'] as num? ?? 75;
+
+      // ✅ 최소 1초 대기 (로딩 애니메이션 보여주기 위함)
+      loadingTimer.stop();
+      final elapsedMs = loadingTimer.elapsedMilliseconds;
+      if (elapsedMs < 1000) {
+        await Future.delayed(Duration(milliseconds: 1000 - elapsedMs));
+      }
 
       if (mounted) {
         setState(() {
@@ -267,6 +254,82 @@ class _MbtiFortunePageState
           context,
           message: '운세 생성 중 오류가 발생했습니다',
           type: ToastType.error,
+        );
+      }
+    }
+  }
+
+  // ==================== Ad & Blur ====================
+
+  Future<void> _showAdAndUnblur() async {
+    if (_fortuneResult == null) return;
+
+    try {
+      final adService = AdService();
+
+      // 광고가 준비 안됐으면 로드 (두 번 클릭 방지)
+      if (!adService.isRewardedAdReady) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 준비하는 중입니다...'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+
+        // 광고 로드 시작
+        await adService.loadRewardedAd();
+
+        // 로딩 완료 대기 (최대 5초)
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        // 타임아웃 처리
+        if (!adService.isRewardedAdReady) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고 로딩에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      // 리워드 광고 표시
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          Logger.info('[MbtiFortunePage] Rewarded ad watched, removing blur');
+          if (mounted) {
+            setState(() {
+              _fortuneResult = _fortuneResult!.copyWith(
+                isBlurred: false,
+                blurredSections: [],
+              );
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('운세가 잠금 해제되었습니다!'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[MbtiFortunePage] Failed to show ad', e, stackTrace);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했습니다.'),
+            duration: Duration(seconds: 2),
+          ),
         );
       }
     }
@@ -652,14 +715,20 @@ class _MbtiFortunePageState
             const SizedBox(height: 16),
           ],
 
-          // Category Fortunes
+          // Category Fortunes (블러 대상)
           if (_selectedCategories.isNotEmpty) ...[
-            _buildCategoryFortunesCard(),
+            BlurredFortuneContent(
+              fortuneResult: result,
+              child: _buildCategoryFortunesCard(),
+            ),
             const SizedBox(height: 16),
           ],
 
-          // Compatibility
-          _buildCompatibilityCard(),
+          // Compatibility (블러 대상)
+          BlurredFortuneContent(
+            fortuneResult: result,
+            child: _buildCompatibilityCard(),
+          ),
 
           // Bottom spacing for navigation
           const SizedBox(height: 100),

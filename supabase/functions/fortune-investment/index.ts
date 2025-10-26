@@ -16,6 +16,7 @@ interface InvestmentRequest {
   purpose: string; // '수익 창출', '자산 증식', '노후 대비' 등
   experience: 'beginner' | 'intermediate' | 'expert';
   userId?: string;
+  isPremium?: boolean; // ✅ 프리미엄 사용자 여부
 }
 
 serve(async (req) => {
@@ -30,7 +31,19 @@ serve(async (req) => {
     )
 
     const requestData: InvestmentRequest = await req.json()
-    const { investmentType, targetName, amount, timeframe, riskTolerance, purpose, experience, userId } = requestData
+    const {
+      investmentType,
+      targetName,
+      amount,
+      timeframe,
+      riskTolerance,
+      purpose,
+      experience,
+      userId,
+      isPremium = false // ✅ 프리미엄 사용자 여부
+    } = requestData
+
+    console.log('💎 [Investment] Premium 상태:', isPremium)
 
     // 캐시 확인
     const today = new Date().toISOString().split('T')[0]
@@ -50,7 +63,7 @@ serve(async (req) => {
           cached: true,
           tokensUsed: 0
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
 
@@ -116,6 +129,12 @@ serve(async (req) => {
 
     const fortuneData = JSON.parse(response.content)
 
+    // ✅ Blur 로직 적용
+    const isBlurred = !isPremium
+    const blurredSections = isBlurred
+      ? ['description', 'hexagonScores', 'recommendations', 'warnings', 'advice']
+      : []
+
     const result = {
       id: `investment-${Date.now()}`,
       type: 'investment',
@@ -123,16 +142,32 @@ serve(async (req) => {
       targetName: targetName,
       investmentType: investmentType,
       amount: amount,
-      ...fortuneData,
-      overall_score: fortuneData.overallScore,
-      lucky_items: fortuneData.luckyItems,
+      overallScore: fortuneData.overallScore, // ✅ 무료: 공개
+      overall_score: fortuneData.overallScore, // ✅ 무료: 공개
+      content: fortuneData.content, // ✅ 무료: 공개 (종합 분석)
+      description: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : fortuneData.description, // 🔒 유료
+      luckyItems: fortuneData.luckyItems, // ✅ 무료: 공개
+      lucky_items: fortuneData.luckyItems, // ✅ 무료: 공개
+      hexagonScores: isBlurred ? {
+        timing: 0,
+        value: 0,
+        risk: 0,
+        trend: 0,
+        emotion: 0,
+        knowledge: 0
+      } : fortuneData.hexagonScores, // 🔒 유료
+      recommendations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.recommendations, // 🔒 유료
+      warnings: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.warnings, // 🔒 유료
+      advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : fortuneData.advice, // 🔒 유료
       created_at: new Date().toISOString(),
       metadata: {
         timeframe,
         riskTolerance,
         purpose,
         experience
-      }
+      },
+      isBlurred, // ✅ 블러 상태
+      blurredSections // ✅ 블러된 섹션 목록
     }
 
     // 결과 캐싱
@@ -152,7 +187,7 @@ serve(async (req) => {
         cached: false,
         tokensUsed: openaiResult.usage?.total_tokens || 0
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
   } catch (error) {
@@ -164,7 +199,7 @@ serve(async (req) => {
         details: error.toString()
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 500
       }
     )

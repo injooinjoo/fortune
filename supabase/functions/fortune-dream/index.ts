@@ -40,6 +40,7 @@ interface DreamFortuneRequest {
   dream: string
   inputType?: 'text' | 'voice'
   date?: string
+  isPremium?: boolean // ✅ 프리미엄 사용자 여부
 }
 
 // 응답 인터페이스
@@ -302,13 +303,13 @@ serve(async (req) => {
   try {
     // 요청 데이터 파싱
     const requestData: DreamFortuneRequest = await req.json()
-    const { dream, inputType = 'text', date } = requestData
+    const { dream, inputType = 'text', date, isPremium = false } = requestData
 
     if (!dream || dream.trim().length === 0) {
       throw new Error('꿈 내용을 입력해주세요.')
     }
 
-    console.log('Dream fortune request:', { dream: dream.substring(0, 100) + '...', inputType })
+    console.log('Dream fortune request:', { dream: dream.substring(0, 100) + '...', inputType, isPremium })
 
     // 기본 꿈 분석 수행
     const analysis = analyzeDreamContent(dream)
@@ -382,23 +383,39 @@ serve(async (req) => {
       }
 
       // 응답 데이터 구조화
+      // ✅ Blur 로직 적용
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['analysis', 'psychologicalState', 'emotionalBalance', 'luckyKeywords', 'avoidKeywords', 'significanceLevel', 'actionAdvice', 'affirmations', 'relatedSymbols', 'todayGuidance']
+        : []
+
       fortuneData = {
         dream,
         inputType,
         date: date || new Date().toISOString(),
-        analysis,
-        interpretation: parsedResponse.종합해석 || parsedResponse.interpretation || '꿈의 메시지를 해석하였습니다.',
-        todayGuidance: parsedResponse.오늘의지침 || parsedResponse.todayGuidance || '오늘 하루를 긍정적으로 보내세요.',
-        psychologicalState: parsedResponse.심리적상태 || parsedResponse.psychologicalState || analysis.psychologicalInsight,
-        emotionalBalance: Math.round((analysis.scenes.reduce((sum, scene) => sum + scene.emotionLevel, 0) / Math.max(analysis.scenes.length, 1))),
-        luckyKeywords: analysis.luckyElements.slice(0, 5),
-        avoidKeywords: analysis.warningElements.slice(0, 3),
         dreamType,
-        significanceLevel: Math.min(10, Math.max(1, analysis.symbolAnalysis.length + (analysis.luckyElements.length * 2))),
-        actionAdvice: parsedResponse.행동조언 || parsedResponse.actionAdvice || ['오늘은 긍정적인 마음가짐을 유지하세요', '직감을 믿고 중요한 결정을 내려보세요', '주변 사람들과 좋은 관계를 유지하세요'],
-        affirmations: parsedResponse.긍정확언 || parsedResponse.affirmations || ['나는 항상 올바른 선택을 할 수 있다', '내 직감은 나를 올바른 길로 안내한다', '나는 내면의 지혜를 믿는다'],
-        relatedSymbols: analysis.symbolAnalysis.slice(0, 7).map(s => s.symbol),
-        timestamp: new Date().toISOString()
+        interpretation: parsedResponse.종합해석 || parsedResponse.interpretation || '꿈의 메시지를 해석하였습니다.', // ✅ 무료: 공개
+        analysis: isBlurred ? {
+          mainTheme: '🔒 프리미엄 전용',
+          psychologicalInsight: '🔒 프리미엄 결제 후 확인 가능합니다',
+          emotionalPattern: '🔒 프리미엄 전용',
+          symbolAnalysis: [{ symbol: '🔒', category: '프리미엄', meaning: '프리미엄 결제 후 확인 가능', psychologicalSignificance: '🔒', emotionalImpact: 0 }],
+          scenes: [{ sequence: 1, description: '🔒 프리미엄 결제 후 확인 가능합니다', emotionLevel: 0, symbols: ['🔒'] }],
+          luckyElements: ['🔒 프리미엄 전용'],
+          warningElements: ['🔒 프리미엄 전용']
+        } : analysis, // 🔒 유료
+        todayGuidance: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.오늘의지침 || parsedResponse.todayGuidance || '오늘 하루를 긍정적으로 보내세요.'), // 🔒 유료
+        psychologicalState: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.심리적상태 || parsedResponse.psychologicalState || analysis.psychologicalInsight), // 🔒 유료
+        emotionalBalance: isBlurred ? 0 : Math.round((analysis.scenes.reduce((sum, scene) => sum + scene.emotionLevel, 0) / Math.max(analysis.scenes.length, 1))), // 🔒 유료
+        luckyKeywords: isBlurred ? ['🔒 프리미엄 전용'] : analysis.luckyElements.slice(0, 5), // 🔒 유료
+        avoidKeywords: isBlurred ? ['🔒 프리미엄 전용'] : analysis.warningElements.slice(0, 3), // 🔒 유료
+        significanceLevel: isBlurred ? 0 : Math.min(10, Math.max(1, analysis.symbolAnalysis.length + (analysis.luckyElements.length * 2))), // 🔒 유료
+        actionAdvice: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.행동조언 || parsedResponse.actionAdvice || ['오늘은 긍정적인 마음가짐을 유지하세요', '직감을 믿고 중요한 결정을 내려보세요', '주변 사람들과 좋은 관계를 유지하세요']), // 🔒 유료
+        affirmations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.긍정확언 || parsedResponse.affirmations || ['나는 항상 올바른 선택을 할 수 있다', '내 직감은 나를 올바른 길로 안내한다', '나는 내면의 지혜를 믿는다']), // 🔒 유료
+        relatedSymbols: isBlurred ? ['🔒'] : analysis.symbolAnalysis.slice(0, 7).map(s => s.symbol), // 🔒 유료
+        timestamp: new Date().toISOString(),
+        isBlurred, // ✅ 블러 상태
+        blurredSections // ✅ 블러된 섹션 목록
       }
 
       // 결과 캐싱
@@ -420,7 +437,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify(response), {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })
@@ -437,7 +454,7 @@ serve(async (req) => {
     return new Response(JSON.stringify(errorResponse), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })

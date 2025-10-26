@@ -1,7 +1,9 @@
+import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart'; // ✅ FloatingBottomButton용
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +22,8 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import 'dart:convert';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/services/debug_premium_service.dart';
+import '../../../../presentation/providers/token_provider.dart';
 
 class BlindDateFortunePage extends ConsumerStatefulWidget {
   const BlindDateFortunePage({super.key});
@@ -33,6 +37,10 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   bool _isLoading = false;
   String? _errorMessage;
   FortuneResult? _fortuneResult;
+
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
   // Meeting Info
   DateTime? _meetingDate;
   String? _meetingTime;
@@ -303,6 +311,14 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       }
     }
 
+    // ✅ Premium 상태 확인
+    final debugPremium = await DebugPremiumService.isOverrideEnabled();
+    final tokenState = ref.read(tokenProvider);
+    final realPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
+    final isPremium = debugPremium || realPremium;
+
+    Logger.info('[BlindDatePage] Premium 상태: $isPremium (debug: $debugPremium, real: $realPremium)');
+
     // UnifiedFortuneService용 input_conditions 구성 (snake_case)
     final inputConditions = {
       'name': params['name'],
@@ -325,6 +341,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       'chat_content': _chatContentController.text.isEmpty ? null : _chatContentController.text,
       'chat_platform': _chatPlatform,
       if (params['photoAnalysis'] != null) 'photo_analysis': params['photoAnalysis'],
+      'isPremium': isPremium, // ✅ isPremium 추가
     };
 
     final fortuneResult = await fortuneService.getFortune(
@@ -332,6 +349,14 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       dataSource: FortuneDataSource.api,
       inputConditions: inputConditions,
     );
+
+    // ✅ Blur 상태 설정
+    _isBlurred = !isPremium;
+    _blurredSections = _isBlurred
+        ? ['success_prediction', 'first_impression', 'conversation_topics', 'outfit', 'location', 'dos_donts']
+        : [];
+
+    debugPrint('🔒 [소개팅운세] isBlurred: $_isBlurred, blurredSections: $_blurredSections');
 
     setState(() {
       _fortuneResult = fortuneResult;
@@ -1098,21 +1123,69 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       return const SizedBox.shrink();
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _buildMainFortuneContent(),
-          const SizedBox(height: 16),
-          if (_photoAnalysis != null) _buildPhotoAnalysisResult(),
-          _buildSuccessPrediction(),
-          _buildFirstImpressionGuide(),
-          _buildConversationTopics(),
-          _buildOutfitRecommendation(),
-          _buildDateLocationAdvice(),
-          _buildDosDonts(),
-        ],
-      ),
+    return Stack(
+      children: [
+        // 메인 콘텐츠
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // 무료 섹션 1: 메인 운세 콘텐츠
+              _buildMainFortuneContent(),
+              const SizedBox(height: 16),
+
+              // 무료 섹션 2: 사진 분석 결과 (선택사항)
+              if (_photoAnalysis != null) _buildPhotoAnalysisResult(),
+
+              // Premium 섹션 3: 성공 예측 (블러)
+              _buildBlurWrapper(
+                sectionKey: 'success_prediction',
+                child: _buildSuccessPrediction(),
+              ),
+
+              // Premium 섹션 4: 첫인상 가이드 (블러)
+              _buildBlurWrapper(
+                sectionKey: 'first_impression',
+                child: _buildFirstImpressionGuide(),
+              ),
+
+              // Premium 섹션 5: 대화 주제 (블러)
+              _buildBlurWrapper(
+                sectionKey: 'conversation_topics',
+                child: _buildConversationTopics(),
+              ),
+
+              // Premium 섹션 6: 복장 추천 (블러)
+              _buildBlurWrapper(
+                sectionKey: 'outfit',
+                child: _buildOutfitRecommendation(),
+              ),
+
+              // Premium 섹션 7: 데이트 장소 조언 (블러)
+              _buildBlurWrapper(
+                sectionKey: 'location',
+                child: _buildDateLocationAdvice(),
+              ),
+
+              // Premium 섹션 8: 주의사항 (블러)
+              _buildBlurWrapper(
+                sectionKey: 'dos_donts',
+                child: _buildDosDonts(),
+              ),
+
+              const SizedBox(height: 100), // 버튼 공간 확보
+            ],
+          ),
+        ),
+
+        // ✅ FloatingBottomButton (블러 상태일 때만 표시)
+        if (_isBlurred)
+          FloatingBottomButton(
+            text: '광고 보고 전체 내용 확인하기',
+            onPressed: _showAdAndUnblur,
+            isEnabled: true,
+          ),
+      ],
     );
   }
 
@@ -2451,6 +2524,107 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
           ),
         );
       }).toList(),
+    );
+  }
+
+  // ===== 광고 & 블러 해제 =====
+
+  // ✅ RewardedAd 패턴
+  Future<void> _showAdAndUnblur() async {
+    debugPrint('[소개팅운세] 광고 시청 후 블러 해제 시작');
+
+    try {
+      final adService = AdService.instance;
+
+      // 광고가 준비 안됐으면 로드
+      if (!adService.isRewardedAdReady) {
+        debugPrint('[소개팅운세] ⏳ RewardedAd 로드 중...');
+        await adService.loadRewardedAd();
+
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          debugPrint('[소개팅운세] ❌ RewardedAd 로드 타임아웃');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: TossDesignSystem.errorRed,
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('[소개팅운세] ✅ 광고 시청 완료, 블러 해제');
+          if (mounted) {
+            setState(() {
+              _isBlurred = false;
+              _blurredSections = [];
+            });
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[소개팅운세] 광고 표시 실패', e, stackTrace);
+
+      // UX 개선: 에러 발생해도 블러 해제
+      if (mounted) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+            backgroundColor: TossDesignSystem.warningOrange,
+          ),
+        );
+      }
+    }
+  }
+
+  // ✅ Blur wrapper helper
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

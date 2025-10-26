@@ -1,3 +1,4 @@
+import 'dart:ui'; // ✅ Phase 18-1: ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,8 @@ import '../../domain/models/conditions/mbti_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart'; // ✅ Phase 18-2
+import '../../../../presentation/providers/ad_provider.dart'; // ✅ Phase 18-2
 import '../../../../presentation/providers/user_profile_notifier.dart';
 
 /// MBTI 운세 페이지 (UnifiedFortuneService 버전)
@@ -33,6 +36,10 @@ class _MbtiFortunePageUnifiedState
   final List<String> _selectedCategories = [];
   bool _showAllGroups = true;
   final ScrollController _scrollController = ScrollController();
+
+  // ✅ Phase 18-3: Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
 
   // ==================== MBTI Data ====================
 
@@ -474,19 +481,85 @@ class _MbtiFortunePageUnifiedState
     );
   }
 
+  // ==================== Blur Methods ====================
+
+  // ✅ Phase 18-5: 광고 보고 블러 제거 로직
+  Future<void> _showAdAndUnblur() async {
+    final adService = ref.read(adServiceProvider);
+
+    await adService.showRewardedAd(
+      onUserEarnedReward: (ad, reward) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+      },
+    );
+  }
+
+  // ✅ Phase 18-5: 블러 처리 헬퍼
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   // ==================== Result View ====================
 
   Widget _buildResultView(FortuneResult result) {
+    // ✅ Phase 18-4: result.isBlurred 동기화
+    if (_isBlurred != result.isBlurred || _blurredSections.length != result.blurredSections.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _isBlurred = result.isBlurred;
+            _blurredSections = List<String>.from(result.blurredSections);
+          });
+        }
+      });
+    }
+
     final data = result.data as Map<String, dynamic>? ?? {};
     final scoreBreakdown = data['score_breakdown'] as Map<String, dynamic>? ?? {};
     final luckyItems = data['lucky_items'] as Map<String, dynamic>? ?? {};
     final description = data['today_fortune'] as String? ?? result.summary['message'] as String? ?? '';
     final recommendations = (data['recommendations'] as List?)?.cast<String>() ?? [];
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
           // ✅ 점수 카드 (FortuneResultWidgets 재사용!)
           FortuneResultWidgets.buildScoreCard(
             context: context,
@@ -499,40 +572,63 @@ class _MbtiFortunePageUnifiedState
 
           // ✅ 세부 점수 (FortuneResultWidgets 재사용!)
           if (scoreBreakdown.isNotEmpty)
-            FortuneResultWidgets.buildScoreBreakdown(
-              context: context,
-              scoreBreakdown: scoreBreakdown,
+            _buildBlurWrapper(
+              sectionKey: 'score_breakdown',
+              child: FortuneResultWidgets.buildScoreBreakdown(
+                context: context,
+                scoreBreakdown: scoreBreakdown,
+              ),
             ),
           const SizedBox(height: 16),
 
           // ✅ 행운 아이템 (FortuneResultWidgets 재사용!)
           if (luckyItems.isNotEmpty)
-            FortuneResultWidgets.buildLuckyItems(
-              context: context,
-              luckyItems: luckyItems,
+            _buildBlurWrapper(
+              sectionKey: 'lucky_items',
+              child: FortuneResultWidgets.buildLuckyItems(
+                context: context,
+                luckyItems: luckyItems,
+              ),
             ),
           const SizedBox(height: 16),
 
           // ✅ 본문 (FortuneResultWidgets 재사용!)
           if (description.isNotEmpty)
-            FortuneResultWidgets.buildDescription(
-              context: context,
-              ref: ref,
-              description: description,
-              fortuneType: 'mbti',
-              fortuneData: data,
+            _buildBlurWrapper(
+              sectionKey: 'description',
+              child: FortuneResultWidgets.buildDescription(
+                context: context,
+                ref: ref,
+                description: description,
+                fortuneType: 'mbti',
+                fortuneData: data,
+              ),
             ),
           const SizedBox(height: 16),
 
           // ✅ 추천 사항 (FortuneResultWidgets 재사용!)
           if (recommendations.isNotEmpty)
-            FortuneResultWidgets.buildRecommendations(
-              context: context,
-              recommendations: recommendations,
+            _buildBlurWrapper(
+              sectionKey: 'recommendations',
+              child: FortuneResultWidgets.buildRecommendations(
+                context: context,
+                recommendations: recommendations,
+              ),
             ),
           const SizedBox(height: 32),
-        ],
-      ),
+            ],
+          ),
+        ),
+
+        // ✅ Phase 18-7: 광고 보고 전체보기 버튼
+        if (_isBlurred)
+          FloatingBottomButton(
+            text: '광고 보고 전체 내용 확인하기',
+            onPressed: _showAdAndUnblur,
+            isEnabled: true,
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 116), // bottom: 100 효과
+          ),
+      ],
     );
   }
 

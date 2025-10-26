@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';  // ✅ ImageFilter.blur 사용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -14,6 +15,9 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart' as core_models;
 import '../../domain/models/conditions/face_reading_fortune_conditions.dart';
 import 'package:crypto/crypto.dart';
+import '../../../../presentation/providers/token_provider.dart';
+import '../../../../shared/components/floating_bottom_button.dart';  // ✅ FloatingBottomButton 추가
+import '../../../../shared/components/toss_button.dart';  // ✅ TossButton 추가
 
 class FaceReadingFortunePage extends ConsumerStatefulWidget {
   const FaceReadingFortunePage({super.key});
@@ -43,12 +47,26 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
       appBar: const StandardFortuneAppBar(
         title: '관상',
       ),
-      body: _fortuneResult != null
-          ? SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: _buildTossStyleResult(context, _fortuneResult!, isDark),
-            )
-          : _buildTossStyleInputSection(context, isDark),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            _fortuneResult != null
+                ? SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: _buildTossStyleResult(context, _fortuneResult!, isDark),
+                  )
+                : _buildTossStyleInputSection(context, isDark),
+            // ✅ FloatingBottomButton - 결과 화면에서 블러 상태일 때만 표시
+            if (_fortuneResult != null && _fortuneResult!.isBlurred)
+              FloatingBottomButton(
+                text: '남은 운세 모두 보기',
+                onPressed: _showAdAndUnblur,
+                isLoading: false,
+                isEnabled: true,
+              ),
+          ],
+        ),
+      ),
     );
   }
   
@@ -256,19 +274,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           showProgress: false,
           isVisible: true,
           onPressed: _isAnalyzing ? null : () async {
-            // 광고 시작과 동시에 API 호출 시작 (async parallel pattern)
-            final apiCallFuture = _startAnalysis();
-
-            await AdService.instance.showInterstitialAdWithCallback(
-              onAdCompleted: () async {
-                // 광고 완료 후 API 결과 대기
-                await apiCallFuture;
-              },
-              onAdFailed: () async {
-                // 광고 실패해도 API 결과 대기
-                await apiCallFuture;
-              },
-            );
+            // ✅ InterstitialAd 제거: 바로 분석 시작
+            await _startAnalysis();
           },
           isLoading: _isAnalyzing,
           icon: _isAnalyzing ? null : const Icon(Icons.psychology, size: 20, color: TossDesignSystem.white),
@@ -313,10 +320,19 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     });
 
     try {
+      // ✅ Premium 상태 확인
+      // ⚠️ 관상 테스트용: Debug Premium 무시, 실제 토큰만 체크
+      final tokenState = ref.read(tokenProvider);
+      final realPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
+      final isPremium = realPremium;  // Debug Premium 무시
+
+      debugPrint('💎 [FaceReadingFortunePage] Premium 상태: $isPremium (real: $realPremium)');
+
       Map<String, dynamic> inputConditions = {
         'analysis_type': 'comprehensive',
         'include_character': true,
         'include_fortune': true,
+        'isPremium': isPremium, // ✅ isPremium 추가
       };
 
       debugPrint('📸 [FaceReadingFortunePage] Upload result type: ${_uploadResult?.type}');
@@ -368,7 +384,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
 
       if (mounted) {
         setState(() {
-          _fortuneResult = _convertToFortuneResult(result);
+          _fortuneResult = _convertToFortuneResult(result, isPremium);
           _isAnalyzing = false;
         });
       }
@@ -388,127 +404,714 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     }
   }
 
-  FortuneResult _convertToFortuneResult(core_models.FortuneResult coreResult) {
-    final sectionsData = coreResult.data['sections'] as Map<String, dynamic>?;
-    final Map<String, String>? sections = sectionsData?.map((key, value) => MapEntry(key, value.toString()));
+  FortuneResult _convertToFortuneResult(core_models.FortuneResult coreResult, bool isPremium) {
+    // ✅ Edge Function 응답 구조에 맞게 수정
+    final detailsData = coreResult.data['details'] as Map<String, dynamic>?;
+
+    // details를 sections 형식으로 변환 (UI 호환성)
+    final Map<String, String>? sections = detailsData?.map(
+      (key, value) => MapEntry(key, value?.toString() ?? '')
+    );
+
+    // ✅ 블러 처리 로직
+    final isBlurred = !isPremium;
+    final blurredSections = isBlurred
+        ? [
+            'personality',        // 성격과 기질
+            'wealth_fortune',     // 재물운
+            'love_fortune',       // 애정운
+            'health_fortune',     // 건강운
+            'career_fortune',     // 직업운
+            'special_features',   // 특별한 관상 특징
+            'advice',             // 조언과 개운법
+            'full_analysis',      // 전체 분석
+          ]
+        : <String>[];
+
+    debugPrint('🔒 [FaceReadingFortunePage] isBlurred: $isBlurred, blurredSections: $blurredSections');
 
     return FortuneResult(
-      mainFortune: coreResult.summary['message'] as String?,
-      sections: sections,
+      mainFortune: coreResult.data['mainFortune'] as String?,  // ✅ 무료: 전체적인 인상
+      sections: sections,  // 🔒 프리미엄: 상세 분석
+      overallScore: coreResult.data['luckScore'] as int?,  // ✅ 무료: 운세 점수
       recommendations: (coreResult.data['recommendations'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
       details: coreResult.data,
+      isBlurred: isBlurred,  // ✅ 블러 상태
+      blurredSections: blurredSections,  // ✅ 블러 섹션
     );
   }
-  
+
+  // ✅ 광고 시청 후 블러 해제 메서드
+  Future<void> _showAdAndUnblur() async {
+    if (_fortuneResult == null) return;
+
+    debugPrint('[FaceReadingFortunePage] 광고 시청 후 블러 해제 시작');
+
+    try {
+      final adService = AdService();
+
+      // 광고가 준비 안됐으면 로드 (두 번 클릭 방지)
+      if (!adService.isRewardedAdReady) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 준비하는 중입니다...'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+
+        // 광고 로드 시작
+        await adService.loadRewardedAd();
+
+        // 로딩 완료 대기 (최대 5초)
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        // 타임아웃 처리
+        if (!adService.isRewardedAdReady) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고 로드에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      // 2. 광고 표시
+      debugPrint('[FaceReadingFortunePage] 광고 표시 시작');
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('[FaceReadingFortunePage] 광고 보상 획득, 블러 해제');
+
+          // ✅ 블러 해제 - copyWith로 isBlurred를 false로 변경
+          if (mounted) {
+            setState(() {
+              _fortuneResult = _fortuneResult!.copyWith(
+                isBlurred: false,
+                blurredSections: [],
+              );
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('관상 운세가 잠금 해제되었습니다!'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      debugPrint('[FaceReadingFortunePage] 광고 표시 실패: $e\n$stackTrace');
+
+      // 에러 발생 시에도 블러 해제 (사용자 경험 우선)
+      if (_fortuneResult != null && mounted) {
+        setState(() {
+          _fortuneResult = _fortuneResult!.copyWith(
+            isBlurred: false,
+            blurredSections: [],
+          );
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시에 실패했지만 운세를 확인할 수 있습니다.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
+  // 🌟 운세 섹션 빌더 (점수바 + 블러 지원)
+  Widget _buildFortuneSection({
+    required IconData icon,
+    required String title,
+    required String content,
+    required int score,
+    required Color color,
+    required bool isDark,
+    required FortuneResult result,
+    required String sectionKey,
+    required int delay,
+  }) {
+    final isBlurred = result.isBlurred && result.blurredSections.contains(sectionKey);
+
+    Widget cardContent = TossCard(
+      style: TossCardStyle.outlined,
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TossDesignSystem.heading4.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // 점수 바
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: LinearProgressIndicator(
+                              value: score / 100,
+                              minHeight: 6,
+                              backgroundColor: isDark
+                                  ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
+                                  : TossDesignSystem.gray300.withValues(alpha: 0.3),
+                              valueColor: AlwaysStoppedAnimation(color),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '$score점',
+                          style: TossDesignSystem.body2.copyWith(
+                            color: color,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            content,
+            style: TossDesignSystem.body1.copyWith(
+              color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // 블러 처리
+    if (isBlurred) {
+      return Stack(
+        children: [
+          ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: cardContent,
+          ),
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.lock_outline,
+                    size: 32,
+                    color: Colors.white.withValues(alpha: 0.9),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '프리미엄 전용',
+                    style: TossDesignSystem.body1.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TossButton(
+                    text: '광고 보고 잠금 해제',
+                    size: TossButtonSize.small,
+                    onPressed: _showAdAndUnblur,
+                    style: TossButtonStyle.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ).animate().fadeIn(duration: 500.ms, delay: delay.ms);
+    }
+
+    return cardContent.animate().fadeIn(duration: 500.ms, delay: delay.ms).slideY(begin: 0.1);
+  }
+
+  // ✅ 블러 래퍼 헬퍼 메서드
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required FortuneResult result,
+    required String sectionKey,
+  }) {
+    // 블러가 필요 없거나, 해당 섹션이 블러 대상이 아니면 그대로 반환
+    if (!result.isBlurred || !result.blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    // 블러 효과 적용
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildTossStyleResult(BuildContext context, FortuneResult result, bool isDark) {
     final data = result.details ?? {};
-    
+    final luckScore = (result.overallScore ?? 75).toInt();  // 0-100 점수
+
     return Column(
       children: [
-        // Face Analysis Summary
+        // 🎯 관상 점수 게이지
         Container(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                TossDesignSystem.purple.withValues(alpha:0.1),
-                TossDesignSystem.tossBlue.withValues(alpha:0.1),
+                TossDesignSystem.purple.withValues(alpha:0.15),
+                TossDesignSystem.tossBlue.withValues(alpha:0.15),
               ],
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: TossDesignSystem.purple.withValues(alpha: 0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             children: [
-              Icon(
-                Icons.face,
-                size: 64,
-                color: TossDesignSystem.purple,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                data['face_type'] ?? '관상 분석 완료',
-                style: TossDesignSystem.heading3.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              // 얼굴 아이콘
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [TossDesignSystem.purple, TossDesignSystem.tossBlue],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: TossDesignSystem.purple.withValues(alpha: 0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.face,
+                  size: 48,
+                  color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 20),
+              // 관상 타입
+              Text(
+                data['face_type'] ?? '관상 분석 완료',
+                style: TossDesignSystem.heading2.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 12),
+              // 점수 표시
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    '$luckScore',
+                    style: TextStyle(
+                      fontSize: 56,
+                      fontWeight: FontWeight.w800,
+                      foreground: Paint()
+                        ..shader = LinearGradient(
+                          colors: [TossDesignSystem.purple, TossDesignSystem.tossBlue],
+                        ).createShader(const Rect.fromLTWH(0, 0, 200, 70)),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '점',
+                    style: TossDesignSystem.heading4.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // 점수 게이지 바
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: LinearProgressIndicator(
+                  value: luckScore / 100,
+                  minHeight: 12,
+                  backgroundColor: isDark
+                    ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
+                    : TossDesignSystem.gray300.withValues(alpha: 0.3),
+                  valueColor: AlwaysStoppedAnimation(
+                    luckScore >= 80 ? TossDesignSystem.purple : TossDesignSystem.tossBlue,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // 전체적인 인상
               if (data['overall_fortune'] != null)
                 Text(
                   data['overall_fortune'],
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                  style: TossDesignSystem.body1.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                    height: 1.6,
                   ),
                   textAlign: TextAlign.center,
                 ),
             ],
           ),
-        ).animate().fadeIn(duration: 500.ms).scale(begin: const Offset(0.95, 0.95)),
-        
-        const SizedBox(height: 20),
-        // Main Fortune
-        if (result.mainFortune != null) ...[
-          TossCard(
-            style: TossCardStyle.filled,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.auto_awesome, color: TossDesignSystem.purple),
-                    const SizedBox(width: 8),
-                    Text(
-                      '종합 관상 분석',
-                      style: TossDesignSystem.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+        ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.9, 0.9)),
+
+        const SizedBox(height: 24),
+
+        // 🌟 4대 운세 (재물, 애정, 건강, 직업)
+        _buildFortuneSection(
+          icon: Icons.monetization_on,
+          title: '재물운',
+          content: data['wealth_fortune']?.toString() ?? '재물운이 상승하는 시기입니다.',
+          score: 85,
+          color: Colors.amber,
+          isDark: isDark,
+          result: result,
+          sectionKey: 'wealth_fortune',
+          delay: 100,
+        ),
+        const SizedBox(height: 16),
+
+        _buildFortuneSection(
+          icon: Icons.favorite,
+          title: '애정운',
+          content: data['love_fortune']?.toString() ?? '인연이 다가오고 있습니다.',
+          score: 78,
+          color: Colors.pink,
+          isDark: isDark,
+          result: result,
+          sectionKey: 'love_fortune',
+          delay: 200,
+        ),
+        const SizedBox(height: 16),
+
+        _buildFortuneSection(
+          icon: Icons.health_and_safety,
+          title: '건강운',
+          content: data['health_fortune']?.toString() ?? '건강 관리에 신경쓰면 좋은 결과가 있을 것입니다.',
+          score: 72,
+          color: Colors.green,
+          isDark: isDark,
+          result: result,
+          sectionKey: 'health_fortune',
+          delay: 300,
+        ),
+        const SizedBox(height: 16),
+
+        _buildFortuneSection(
+          icon: Icons.work,
+          title: '직업운',
+          content: data['career_fortune']?.toString() ?? '새로운 기회가 찾아올 것입니다.',
+          score: 80,
+          color: TossDesignSystem.tossBlue,
+          isDark: isDark,
+          result: result,
+          sectionKey: 'career_fortune',
+          delay: 400,
+        ),
+        const SizedBox(height: 24),
+
+        // 🧠 성격과 기질 (🔒 프리미엄)
+        if (data['personality'] != null) ...[
+          _buildBlurWrapper(
+            result: result,
+            sectionKey: 'personality',
+            child: TossCard(
+              style: TossCardStyle.filled,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.psychology, color: TossDesignSystem.purple),
+                      const SizedBox(width: 8),
+                      Text(
+                        '성격과 기질',
+                        style: TossDesignSystem.heading4.copyWith(
+                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  result.mainFortune!,
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-                    height: 1.6,
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: TossDesignSystem.purple.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.lock, size: 12, color: TossDesignSystem.purple),
+                            const SizedBox(width: 4),
+                            Text(
+                              '프리미엄',
+                              style: TossDesignSystem.caption.copyWith(
+                                color: TossDesignSystem.purple,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ).animate().fadeIn(duration: 500.ms, delay: 100.ms),
-          const SizedBox(height: 20),
-        ],
-        
-        // Face Parts Analysis
-        if (result.sections != null && result.sections!.isNotEmpty) ...[
-          TossCard(
-            style: TossCardStyle.filled,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.face_retouching_natural, color: TossDesignSystem.tossBlue),
-                    const SizedBox(width: 8),
-                    Text(
-                      '부위별 분석',
-                      style: TossDesignSystem.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                      ),
+                  const SizedBox(height: 16),
+                  Text(
+                    data['personality'].toString(),
+                    style: TossDesignSystem.body1.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                      height: 1.7,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                ...result.sections!.entries.map((entry) => _buildFacePartAnalysis(
-                  _translateFacePart(entry.key),
-                  entry.value,
-                  _getFacePartIcon(entry.key),
-                  isDark
-                )),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ).animate().fadeIn(duration: 500.ms, delay: 200.ms),
+          ).animate().fadeIn(duration: 500.ms, delay: 500.ms),
+          const SizedBox(height: 16),
+        ],
+
+        // ✨ 특별한 관상 특징 (🔒 프리미엄)
+        if (data['special_features'] != null) ...[
+          _buildBlurWrapper(
+            result: result,
+            sectionKey: 'special_features',
+            child: TossCard(
+              style: TossCardStyle.filled,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.auto_awesome, color: TossDesignSystem.tossBlue),
+                      const SizedBox(width: 8),
+                      Text(
+                        '특별한 관상 특징',
+                        style: TossDesignSystem.heading4.copyWith(
+                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.lock, size: 12, color: TossDesignSystem.tossBlue),
+                            const SizedBox(width: 4),
+                            Text(
+                              '프리미엄',
+                              style: TossDesignSystem.caption.copyWith(
+                                color: TossDesignSystem.tossBlue,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    data['special_features'].toString(),
+                    style: TossDesignSystem.body1.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                      height: 1.7,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ).animate().fadeIn(duration: 500.ms, delay: 600.ms),
+          const SizedBox(height: 16),
+        ],
+
+        // 💡 조언과 개운법 (🔒 프리미엄)
+        if (data['advice'] != null) ...[
+          _buildBlurWrapper(
+            result: result,
+            sectionKey: 'advice',
+            child: TossCard(
+              style: TossCardStyle.filled,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.lightbulb, color: Colors.amber),
+                      const SizedBox(width: 8),
+                      Text(
+                        '조언과 개운법',
+                        style: TossDesignSystem.heading4.copyWith(
+                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.lock, size: 12, color: Colors.amber.shade700),
+                            const SizedBox(width: 4),
+                            Text(
+                              '프리미엄',
+                              style: TossDesignSystem.caption.copyWith(
+                                color: Colors.amber.shade700,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    data['advice'].toString(),
+                    style: TossDesignSystem.body1.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                      height: 1.7,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ).animate().fadeIn(duration: 500.ms, delay: 700.ms),
+          const SizedBox(height: 16),
+        ],
+
+        // 📖 전체 분석 (🔒 프리미엄)
+        if (data['full_analysis'] != null) ...[
+          _buildBlurWrapper(
+            result: result,
+            sectionKey: 'full_analysis',
+            child: TossCard(
+              style: TossCardStyle.filled,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.description, color: TossDesignSystem.gray700),
+                      const SizedBox(width: 8),
+                      Text(
+                        '전체 분석',
+                        style: TossDesignSystem.heading4.copyWith(
+                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: TossDesignSystem.gray700.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.lock, size: 12, color: TossDesignSystem.gray700),
+                            const SizedBox(width: 4),
+                            Text(
+                              '프리미엄',
+                              style: TossDesignSystem.caption.copyWith(
+                                color: TossDesignSystem.gray700,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    data['full_analysis'].toString(),
+                    style: TossDesignSystem.body1.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                      height: 1.7,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ).animate().fadeIn(duration: 500.ms, delay: 800.ms),
           const SizedBox(height: 20),
         ],
         

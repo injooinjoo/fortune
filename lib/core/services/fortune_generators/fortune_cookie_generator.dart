@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import '../../models/fortune_result.dart';
 import '../../utils/logger.dart';

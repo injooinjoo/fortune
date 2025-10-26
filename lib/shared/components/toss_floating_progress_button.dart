@@ -160,14 +160,7 @@ class _TossFloatingProgressButtonState extends State<TossFloatingProgressButton>
                 // 텍스트 및 아이콘 레이어
                 Center(
                   child: widget.isLoading
-                      ? SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(textColor),
-                          ),
-                        )
+                      ? _ThreeDotsLoadingIndicator(color: textColor)
                       : AnimatedDefaultTextStyle(
                           duration: const Duration(milliseconds: 200),
                           style: TossDesignSystem.button.copyWith(
@@ -215,6 +208,72 @@ class _TossFloatingProgressButtonState extends State<TossFloatingProgressButton>
 ///   ],
 /// )
 /// ```
+
+/// 점 3개 로딩 애니메이션
+class _ThreeDotsLoadingIndicator extends StatefulWidget {
+  final Color color;
+
+  const _ThreeDotsLoadingIndicator({required this.color});
+
+  @override
+  State<_ThreeDotsLoadingIndicator> createState() => _ThreeDotsLoadingIndicatorState();
+}
+
+class _ThreeDotsLoadingIndicatorState extends State<_ThreeDotsLoadingIndicator>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, (index) {
+        return AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            // 각 점마다 0.2초씩 딜레이
+            final delay = index * 0.2;
+            final value = (_controller.value - delay) % 1.0;
+
+            // 0.0 ~ 0.5: fade in (0.3 → 1.0)
+            // 0.5 ~ 1.0: fade out (1.0 → 0.3)
+            final opacity = value < 0.5
+                ? 0.3 + (value * 2) * 0.7  // 0.3 → 1.0
+                : 1.0 - ((value - 0.5) * 2) * 0.7;  // 1.0 → 0.3
+
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: index == 1 ? 4 : 2),
+              child: Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: widget.color.withOpacity(opacity.clamp(0.3, 1.0)),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
+}
+
 class TossFloatingProgressButtonPositioned extends StatelessWidget {
   /// 버튼 텍스트
   final String text;

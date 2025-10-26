@@ -16,6 +16,7 @@ interface CompatibilityFortuneRequest {
   person1_birth_date: string
   person2_name: string
   person2_birth_date: string
+  isPremium?: boolean // ✅ 프리미엄 사용자 여부
 }
 
 // 메인 핸들러
@@ -38,8 +39,11 @@ serve(async (req) => {
       person1_name = '',
       person1_birth_date = '',
       person2_name = '',
-      person2_birth_date = ''
+      person2_birth_date = '',
+      isPremium = false
     } = requestData
+
+    console.log(`[Compatibility] Request - Premium: ${isPremium}`)
 
     if (!person1_name || !person2_name) {
       throw new Error('두 사람의 이름을 모두 입력해주세요.')
@@ -123,24 +127,34 @@ serve(async (req) => {
         throw new Error('API 응답 형식이 올바르지 않습니다.')
       }
 
+      // ✅ Premium 여부에 따라 Blur 처리
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['personality_match', 'love_match', 'marriage_match', 'communication_match', 'strengths', 'cautions', 'advice']
+        : []
+
       // 응답 데이터 구조화
       fortuneData = {
         title: `${person1_name}♥${person2_name} 궁합`,
         fortune_type: 'compatibility',
         person1: { name: person1_name, birth_date: person1_birth_date },
         person2: { name: person2_name, birth_date: person2_birth_date },
-        overall_compatibility: parsedResponse.전반적인궁합 || parsedResponse.overall_compatibility || '좋은 궁합입니다.',
-        personality_match: parsedResponse.성격궁합 || parsedResponse.personality_match || '성격이 잘 맞습니다.',
-        love_match: parsedResponse.애정궁합 || parsedResponse.love_match || '애정이 깊습니다.',
-        marriage_match: parsedResponse.결혼궁합 || parsedResponse.marriage_match || '결혼에 적합합니다.',
-        communication_match: parsedResponse.소통궁합 || parsedResponse.communication_match || '소통이 원활합니다.',
-        strengths: parsedResponse.강점 || parsedResponse.strengths || ['서로 이해', '존중', '배려'],
-        cautions: parsedResponse.주의점 || parsedResponse.cautions || ['작은 갈등 주의', '대화 중요', '서로 존중'],
-        advice: parsedResponse.조언 || parsedResponse.advice || ['서로 배려', '대화 자주', '함께 시간'],
-        compatibility_keyword: parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '천생연분',
-        score: parsedResponse.궁합점수 || Math.floor(Math.random() * 30) + 70, // 70-100
-        timestamp: new Date().toISOString()
+        overall_compatibility: parsedResponse.전반적인궁합 || parsedResponse.overall_compatibility || '좋은 궁합입니다.', // ✅ 무료: 공개
+        personality_match: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.성격궁합 || parsedResponse.personality_match || '성격이 잘 맞습니다.'), // 🔒 유료
+        love_match: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.애정궁합 || parsedResponse.love_match || '애정이 깊습니다.'), // 🔒 유료
+        marriage_match: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.결혼궁합 || parsedResponse.marriage_match || '결혼에 적합합니다.'), // 🔒 유료
+        communication_match: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.소통궁합 || parsedResponse.communication_match || '소통이 원활합니다.'), // 🔒 유료
+        strengths: isBlurred ? ['🔒 프리미엄 전용'] : (parsedResponse.강점 || parsedResponse.strengths || ['서로 이해', '존중', '배려']), // 🔒 유료
+        cautions: isBlurred ? ['🔒 프리미엄 전용'] : (parsedResponse.주의점 || parsedResponse.cautions || ['작은 갈등 주의', '대화 중요', '서로 존중']), // 🔒 유료
+        advice: isBlurred ? ['🔒 프리미엄 전용'] : (parsedResponse.조언 || parsedResponse.advice || ['서로 배려', '대화 자주', '함께 시간']), // 🔒 유료
+        compatibility_keyword: parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '천생연분', // ✅ 무료: 공개
+        score: parsedResponse.궁합점수 || Math.floor(Math.random() * 30) + 70, // ✅ 무료: 공개 (70-100)
+        timestamp: new Date().toISOString(),
+        isBlurred, // ✅ Blur 상태
+        blurredSections, // ✅ Blur 처리된 섹션 목록
       }
+
+      console.log(`[Compatibility] Result generated - Blurred: ${isBlurred}, Sections: ${blurredSections.length}`)
 
       // 결과 캐싱
       await supabase
@@ -161,7 +175,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify(response), {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })
@@ -178,7 +192,7 @@ serve(async (req) => {
     return new Response(JSON.stringify(errorResponse), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })

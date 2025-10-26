@@ -181,15 +181,11 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │ 8️⃣ 블러 해제 & 전체 내용 공개 ✅                                       │
 │                                                                   │
-│    블러 해제 애니메이션:                                              │
-│    ┌───────────────────────────────────────────────────────┐    │
-│    │ UnblurAnimation                                        │    │
-│    │  - fadeIn (500ms)                                      │    │
-│    │  - scale (0.95 → 1.0, 500ms)                           │    │
-│    └───────────────────────────────────────────────────────┘    │
-│                                                                   │
-│    fortuneResult.isBlurred = false                                │
-│    → 모든 섹션 공개                                                │
+│    "남은 운세 모두 보기" FloatingActionButton 클릭                   │
+│    → fortuneResult.isBlurred = false                              │
+│    → fortuneResult.blurredSections = []                           │
+│    → 모든 블러 섹션 일괄 해제                                         │
+│    → Floating Button 자동 숨김                                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -333,11 +329,10 @@ showDialog(
 |------|----------|
 | 프리미엄 확인 | `lib/core/services/debug_premium_service.dart` |
 | 블러 위젯 | `lib/core/widgets/blurred_fortune_content.dart` |
-| 블러 해제 애니메이션 | `lib/core/widgets/blurred_fortune_content.dart` (UnblurAnimation) |
 | FortuneResult 모델 | `lib/core/models/fortune_result.dart` |
 | UnifiedFortuneService | `lib/core/services/unified_fortune_service.dart` |
 | LLM Config | `supabase/functions/_shared/llm/config.ts` |
-| 시간별운세 페이지 | `lib/features/fortune/presentation/pages/daily_calendar_fortune_page.dart` |
+| 시간별운세 페이지 (샘플) | `lib/features/fortune/presentation/pages/daily_calendar_fortune_page.dart` |
 
 ### 1️⃣ FortuneResult 모델 확장
 
@@ -467,30 +462,64 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     // 입력 화면...
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('시간별운세')),
+      body: _buildResultPage(),
+
+      // 🎯 Floating Button: 블러 상태일 때만 표시
+      floatingActionButton: _fortuneResult!.isBlurred
+          ? FloatingActionButton.extended(
+              onPressed: _showAdAndUnblur,
+              backgroundColor: TossDesignSystem.tossBlue,
+              icon: const Icon(Icons.play_arrow, color: Colors.white),
+              label: Text(
+                '남은 운세 모두 보기',
+                style: context.buttonMedium.copyWith(color: Colors.white),
+              ),
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
   Widget _buildResultPage() {
-    final isPremium = !_fortuneResult!.isBlurred;
+    // 각 블러 섹션을 BlurredFortuneContent로 감싸기
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // 조언 섹션 (블러 처리)
+          BlurredFortuneContent(
+            fortuneResult: _fortuneResult!,
+            child: _buildSectionCard('advice', fortuneData['advice']),
+          ),
 
-    // 프리미엄: 블러 없이 표시
-    if (isPremium) {
-      return FortuneResultWidget(_fortuneResult!);
-    }
+          // AI 팁 섹션 (블러 처리)
+          BlurredFortuneContent(
+            fortuneResult: _fortuneResult!,
+            child: _buildSectionCard('ai_tips', fortuneData['ai_tips']),
+          ),
 
-    // 일반: 블러 처리
-    return BlurredFortuneContent(
-      fortuneResult: _fortuneResult!,
-      onUnlockTap: _showAdAndUnblur,
-      child: FortuneResultWidget(_fortuneResult!),
+          // 주의사항 섹션 (블러 처리)
+          BlurredFortuneContent(
+            fortuneResult: _fortuneResult!,
+            child: _buildSectionCard('caution', fortuneData['caution']),
+          ),
+        ],
+      ),
     );
   }
 
   Future<void> _showAdAndUnblur() async {
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    debugPrint('📺 [광고] 광고 시청 & 블러 해제 프로세스 시작');
+
     // 광고 다이얼로그 표시
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AdLoadingDialog(
-        duration: Duration(seconds: 5),
-      ),
+      builder: (context) => AdLoadingDialog(duration: Duration(seconds: 5)),
     );
 
     // 5초 대기
@@ -499,12 +528,17 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     // 다이얼로그 닫기
     if (mounted) {
       Navigator.of(context).pop();
-    }
 
-    // 블러 해제
-    setState(() {
-      _fortuneResult!.removeBlur();
-    });
+      // 블러 일괄 해제
+      setState(() {
+        _fortuneResult = _fortuneResult!.copyWith(
+          isBlurred: false,
+          blurredSections: [],
+        );
+      });
+
+      debugPrint('✅ [광고] 블러 해제 완료 - Floating Button 자동 숨김');
+    }
   }
 }
 ```
@@ -597,33 +631,31 @@ CREATE INDEX idx_fortune_results_blurred
 │  ╔═══════════════════════════════╗ │
 │  ║                               ║ │
 │  ║       🔒 블러 처리             ║ │
-│  ║                               ║ │
-│  ║  운세의 중요한 내용이          ║ │
-│  ║  잠겨있어요                    ║ │
-│  ║                               ║ │
-│  ║  4개의 핵심 정보를 확인하려면 ║ │
-│  ║  5초만 기다려주세요            ║ │
-│  ║                               ║ │
-│  ║  ┌───────────────────────┐   ║ │
-│  ║  │ 🔒 잠긴 정보:          │   ║ │
-│  ║  │                        │   ║ │
-│  ║  │ 🔒 조언                │   ║ │
-│  ║  │ 🔒 미래 전망           │   ║ │
-│  ║  │ 🔒 행운 아이템         │   ║ │
-│  ║  │ 🔒 주의사항            │   ║ │
-│  ║  └───────────────────────┘   ║ │
-│  ║                               ║ │
-│  ║  ┌───────────────────────┐   ║ │
-│  ║  │  📺 광고 보고 잠금 해제  │   ║ │
-│  ║  └───────────────────────┘   ║ │
-│  ║      ▶️ 5초만 기다려주세요      ║ │
-│  ║                               ║ │
+│  ║       (잠금 아이콘만 표시)      ║ │
+│  ║  (블러 효과 적용)              ║ │
 │  ╚═══════════════════════════════╝ │
+│                                     │
+│  ╔═══════════════════════════════╗ │
+│  ║       🔒 블러 처리             ║ │
+│  ║       (잠금 아이콘만 표시)      ║ │
+│  ╚═══════════════════════════════╝ │
+│                                     │
+│  ╔═══════════════════════════════╗ │
+│  ║       🔒 블러 처리             ║ │
+│  ║       (잠금 아이콘만 표시)      ║ │
+│  ╚═══════════════════════════════╝ │
+│                                     │
+├─────────────────────────────────────┤
+│                                     │
+│  ┌─────────────────────────────┐  │
+│  │ ▶️  남은 운세 모두 보기       │  │
+│  └─────────────────────────────┘  │
+│   (Floating Button - 중앙 하단)    │
 │                                     │
 └─────────────────────────────────────┘
 
-🔒 4개 섹션 블러
-📺 광고 버튼 표시
+🔒 3개 섹션 블러 (advice, ai_tips, caution)
+🎯 Floating Button으로 일괄 해제
 ```
 
 ### ✅ 일반 사용자 화면 (광고 후)

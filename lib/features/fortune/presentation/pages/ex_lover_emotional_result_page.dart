@@ -1,24 +1,67 @@
+import 'dart:ui'; // ✅ ImageFilter.blur용
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
+import '../../../../shared/components/floating_bottom_button.dart'; // ✅ FloatingBottomButton용
+import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
+import '../../../../core/utils/logger.dart'; // ✅ 로그용
+import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
 
-class ExLoverEmotionalResultPage extends ConsumerWidget {
+class ExLoverEmotionalResultPage extends ConsumerStatefulWidget {
   final ExLoverSimpleInput input;
-  
+
   const ExLoverEmotionalResultPage({
     super.key,
     required this.input,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ExLoverEmotionalResultPage> createState() => _ExLoverEmotionalResultPageState();
+}
+
+class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalResultPage> {
+  ExLoverEmotionalResult? _result;
+
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _result = _generateResult(widget.input);
+
+    // ✅ Premium 체크 및 Blur 상태 설정
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final tokenState = ref.read(tokenProvider);
+      final isPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
+
+      setState(() {
+        _isBlurred = !isPremium;
+        _blurredSections = _isBlurred
+            ? ['emotional_prescription', 'relationship_insight', 'new_beginning']
+            : [];
+      });
+
+      debugPrint('🔒 [전애인운세] isPremium: $isPremium, isBlurred: $_isBlurred, blurredSections: $_blurredSections');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_result == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final result = _generateResult(input);
     
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
@@ -45,7 +88,7 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () => _shareResult(context, result),
+            onPressed: () => _shareResult(context, _result!),
             icon: Icon(
               Icons.share_rounded,
               color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
@@ -54,42 +97,64 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
+      body: Stack(
+        children: [
+          // 메인 콘텐츠
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
             // 메인 메시지
-            _buildMainMessage(result, isDark).animate()
+            _buildMainMessage(_result!, isDark).animate()
               .fadeIn(duration: 400.ms)
               .slideY(begin: 0.1, end: 0),
-            
+
             const SizedBox(height: 24),
-            
-            // 오늘의 감정 처방
-            _buildEmotionalPrescription(result.emotionalPrescription, isDark)
+
+            // Premium 섹션 2: 오늘의 감정 처방
+            _buildBlurWrapper(
+              sectionKey: 'emotional_prescription',
+              child: _buildEmotionalPrescription(_result!.emotionalPrescription, isDark),
+            )
               .animate(delay: 100.ms)
               .fadeIn(duration: 400.ms)
               .slideX(begin: -0.05, end: 0),
-            
+
             const SizedBox(height: 20),
-            
-            // 그 사람과의 인연
-            _buildRelationshipInsight(result.relationshipInsight, input, isDark)
+
+            // Premium 섹션 3: 그 사람과의 인연
+            _buildBlurWrapper(
+              sectionKey: 'relationship_insight',
+              child: _buildRelationshipInsight(_result!.relationshipInsight, widget.input, isDark),
+            )
               .animate(delay: 200.ms)
               .fadeIn(duration: 400.ms)
               .slideX(begin: 0.05, end: 0),
-            
+
             const SizedBox(height: 20),
-            
-            // 새로운 시작
-            _buildNewBeginning(result.newBeginning, isDark)
+
+            // Premium 섹션 4: 새로운 시작
+            _buildBlurWrapper(
+              sectionKey: 'new_beginning',
+              child: _buildNewBeginning(_result!.newBeginning, isDark),
+            )
               .animate(delay: 300.ms)
               .fadeIn(duration: 400.ms)
               .slideX(begin: -0.05, end: 0),
             
-            const SizedBox(height: 40),
-          ],
-        ),
+                const SizedBox(height: 100), // 버튼 공간 확보
+              ],
+            ),
+          ),
+
+          // ✅ FloatingBottomButton (블러 상태일 때만 표시)
+          if (_isBlurred)
+            FloatingBottomButton(
+              text: '광고 보고 전체 내용 확인하기',
+              onPressed: _showAdAndUnblur,
+              isEnabled: true,
+            ),
+        ],
       ),
     );
   }
@@ -1002,6 +1067,105 @@ class ExLoverEmotionalResultPage extends ConsumerWidget {
     } else {
       return '$base힘든 시기지만, 이것도 지나갈 거예요. 조금만 더 힘내세요.';
     }
+  }
+
+  // ✅ RewardedAd 패턴
+  Future<void> _showAdAndUnblur() async {
+    debugPrint('[전애인운세] 광고 시청 후 블러 해제 시작');
+
+    try {
+      final adService = AdService.instance;
+
+      // 광고가 준비 안됐으면 로드
+      if (!adService.isRewardedAdReady) {
+        debugPrint('[전애인운세] ⏳ RewardedAd 로드 중...');
+        await adService.loadRewardedAd();
+
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          debugPrint('[전애인운세] ❌ RewardedAd 로드 타임아웃');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: TossDesignSystem.errorRed,
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('[전애인운세] ✅ 광고 시청 완료, 블러 해제');
+          if (mounted) {
+            setState(() {
+              _isBlurred = false;
+              _blurredSections = [];
+            });
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[전애인운세] 광고 표시 실패', e, stackTrace);
+
+      // UX 개선: 에러 발생해도 블러 해제
+      if (mounted) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+            backgroundColor: TossDesignSystem.warningOrange,
+          ),
+        );
+      }
+    }
+  }
+
+  // ✅ Blur wrapper helper
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   void _shareResult(BuildContext context, ExLoverEmotionalResult result) {

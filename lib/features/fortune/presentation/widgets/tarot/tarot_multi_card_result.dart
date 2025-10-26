@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:ui';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../shared/components/toss_button.dart';
@@ -91,11 +92,9 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
 
                   // 개별 카드 해석
                   _buildIndividualInterpretations(isDark),
-                  const SizedBox(height: 40),
 
-                  // 액션 버튼들
-                  _buildActionButtons(),
-                  const SizedBox(height: 40),
+                  // ✅ 하단 버튼들 제거 (다시뽑기, 다른운세보기)
+                  const SizedBox(height: 100),  // FloatingBottomButton 공간 확보
                 ],
               ),
             ),
@@ -444,7 +443,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
   }
 
   Widget _buildOverallInterpretation(bool isDark) {
-    return Container(
+    final container = Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -491,6 +490,49 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
         ],
       ),
     );
+
+    // ✅ 블러 처리
+    return _buildBlurWrapper(
+      child: container,
+      sectionKey: 'overall_interpretation',
+    );
+  }
+
+  /// 블러 래퍼 (블러 상태일 때만 블러 효과 적용)
+  Widget _buildBlurWrapper({required Widget child, required String sectionKey}) {
+    if (!widget.result.isBlurred || !widget.result.blurredSections.contains(sectionKey)) {
+      return child;  // 블러 불필요
+    }
+
+    // ✅ 블러 처리된 콘텐츠
+    return Stack(
+      children: [
+        // 원본 콘텐츠 (블러 처리)
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        // 반투명 오버레이
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        // 중앙 잠금 아이콘
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildIndividualInterpretations(bool isDark) {
@@ -513,7 +555,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
           final index = widget.result.positionInterpretations.keys.toList().indexOf(entry.key);
           final card = widget.result.cards[index];
 
-          return Container(
+          final container = Container(
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -567,6 +609,12 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                 ),
               ],
             ),
+          );
+
+          // ✅ 2번째(card_2), 3번째(card_3) 카드는 블러 처리
+          return _buildBlurWrapper(
+            child: container,
+            sectionKey: 'card_${index + 1}',  // card_1, card_2, card_3, ...
           );
         }),
       ],

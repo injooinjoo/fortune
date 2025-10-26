@@ -11,6 +11,7 @@ interface HealthFortuneRequest {
   fortune_type?: string
   current_condition: string
   concerned_body_parts: string[]
+  isPremium?: boolean // ✅ 프리미엄 사용자 여부
 }
 
 serve(async (req) => {
@@ -26,12 +27,17 @@ serve(async (req) => {
 
   try {
     const requestData: HealthFortuneRequest = await req.json()
-    const { current_condition = '', concerned_body_parts = [] } = requestData
+    const {
+      current_condition = '',
+      concerned_body_parts = [],
+      isPremium = false // ✅ 프리미엄 사용자 여부
+    } = requestData
 
     if (!current_condition) {
       throw new Error('현재 건강 상태를 입력해주세요.')
     }
 
+    console.log('💎 [Health] Premium 상태:', isPremium)
     console.log('Health fortune request:', { current_condition, concerned_body_parts })
 
     const cacheKey = `health_fortune_${btoa(`${current_condition}_${concerned_body_parts.join(',')}`).slice(0, 50)}`
@@ -90,20 +96,28 @@ serve(async (req) => {
 
       const parsedResponse = JSON.parse(response.content)
 
+      // ✅ Blur 로직 적용
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['body_part_advice', 'cautions', 'recommended_activities', 'diet_advice', 'exercise_advice', 'health_keyword']
+        : []
+
       fortuneData = {
         title: '건강운',
         fortune_type: 'health',
         current_condition,
         concerned_body_parts,
-        overall_health: parsedResponse.전반적인건강운 || parsedResponse.overall_health || '건강하십니다.',
-        body_part_advice: parsedResponse.부위별건강 || parsedResponse.body_part_advice || '주의가 필요합니다.',
-        cautions: parsedResponse.주의사항 || parsedResponse.cautions || ['규칙적 생활', '충분한 휴식', '정기 검진'],
-        recommended_activities: parsedResponse.추천활동 || parsedResponse.recommended_activities || ['산책', '요가', '스트레칭'],
-        diet_advice: parsedResponse.식습관조언 || parsedResponse.diet_advice || '균형잡힌 식사를 하세요.',
-        exercise_advice: parsedResponse.운동조언 || parsedResponse.exercise_advice || '꾸준한 운동이 중요합니다.',
-        health_keyword: parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강',
-        score: Math.floor(Math.random() * 30) + 70,
-        timestamp: new Date().toISOString()
+        score: Math.floor(Math.random() * 30) + 70, // ✅ 무료: 공개
+        overall_health: parsedResponse.전반적인건강운 || parsedResponse.overall_health || '건강하십니다.', // ✅ 무료: 공개
+        body_part_advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.부위별건강 || parsedResponse.body_part_advice || '주의가 필요합니다.'), // 🔒 유료
+        cautions: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.주의사항 || parsedResponse.cautions || ['규칙적 생활', '충분한 휴식', '정기 검진']), // 🔒 유료
+        recommended_activities: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.추천활동 || parsedResponse.recommended_activities || ['산책', '요가', '스트레칭']), // 🔒 유료
+        diet_advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.식습관조언 || parsedResponse.diet_advice || '균형잡힌 식사를 하세요.'), // 🔒 유료
+        exercise_advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.운동조언 || parsedResponse.exercise_advice || '꾸준한 운동이 중요합니다.'), // 🔒 유료
+        health_keyword: isBlurred ? '🔒' : (parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강'), // 🔒 유료
+        timestamp: new Date().toISOString(),
+        isBlurred, // ✅ 블러 상태
+        blurredSections // ✅ 블러된 섹션 목록
       }
 
       await supabase.from('fortune_cache').insert({
@@ -116,7 +130,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ success: true, data: fortuneData }), {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })
@@ -130,7 +144,7 @@ serve(async (req) => {
     }), {
       status: 500,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': '*',
       },
     })

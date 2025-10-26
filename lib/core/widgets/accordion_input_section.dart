@@ -13,6 +13,8 @@ class AccordionInputSection {
   bool isCompleted;
   dynamic value;
   String? displayValue;
+  /// 다중 선택 섹션인 경우 true (선택 후에도 닫히지 않음)
+  final bool isMultiSelect;
 
   AccordionInputSection({
     required this.id,
@@ -22,12 +24,36 @@ class AccordionInputSection {
     this.isCompleted = false,
     this.value,
     this.displayValue,
+    this.isMultiSelect = false,
   });
 
   String get displayText {
     if (displayValue != null) return displayValue!;
     if (value == null) return title;
     return '$title: $value';
+  }
+
+  /// copyWith 메서드 추가
+  AccordionInputSection copyWith({
+    String? id,
+    String? title,
+    IconData? icon,
+    Widget Function(BuildContext, Function(dynamic))? inputWidgetBuilder,
+    bool? isCompleted,
+    dynamic value,
+    String? displayValue,
+    bool? isMultiSelect,
+  }) {
+    return AccordionInputSection(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      icon: icon ?? this.icon,
+      inputWidgetBuilder: inputWidgetBuilder ?? this.inputWidgetBuilder,
+      isCompleted: isCompleted ?? this.isCompleted,
+      value: value ?? this.value,
+      displayValue: displayValue ?? this.displayValue,
+      isMultiSelect: isMultiSelect ?? this.isMultiSelect,
+    );
   }
 }
 
@@ -93,7 +119,13 @@ class _AccordionInputFormState extends State<AccordionInputForm> {
       widget.sections[index].isCompleted = true;
     });
 
-    // 다음 섹션으로 이동
+    // 다중 선택 섹션은 닫지 않고 현재 섹션 유지
+    if (widget.sections[index].isMultiSelect) {
+      // 현재 섹션 열린 상태 유지
+      return;
+    }
+
+    // 단일 선택 섹션은 다음 섹션으로 이동
     if (index < widget.sections.length - 1) {
       _moveToSection(index + 1);
     } else {
@@ -120,20 +152,23 @@ class _AccordionInputFormState extends State<AccordionInputForm> {
       _activeIndex = targetIndex;
     });
 
-    // 섹션으로 스크롤 (아코디언 제목이 AppBar 아래에 오도록)
-    Future.delayed(const Duration(milliseconds: 200), () {
+    // 섹션으로 스크롤 (화면 중앙에 오도록)
+    Future.delayed(const Duration(milliseconds: 300), () {
       if (!mounted) return;
 
       final RenderBox? renderBox = _sectionKeys[targetIndex].currentContext?.findRenderObject() as RenderBox?;
       if (renderBox != null) {
         final position = renderBox.localToGlobal(Offset.zero);
-        // AppBar 높이(약 56px) + SafeArea(약 44px) + 여유 공간(20px) = 약 120px
-        final offset = _scrollController.offset + position.dy - 120;
+        final screenHeight = MediaQuery.of(context).size.height;
+
+        // 섹션을 화면 중앙에 위치시키기 위한 오프셋 계산
+        // 현재 스크롤 위치 + 섹션의 Y 좌표 - 화면 중앙 위치
+        final offset = _scrollController.offset + position.dy - (screenHeight / 2) + 100;
 
         _scrollController.animateTo(
           offset.clamp(0.0, _scrollController.position.maxScrollExtent),
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
         );
       }
     });
@@ -404,7 +439,13 @@ class _AccordionInputFormWithHeaderState extends State<AccordionInputFormWithHea
       widget.sections[index].isCompleted = true;
     });
 
-    // 다음 섹션으로 이동
+    // 다중 선택 섹션은 닫지 않고 현재 섹션 유지
+    if (widget.sections[index].isMultiSelect) {
+      // 현재 섹션 열린 상태 유지
+      return;
+    }
+
+    // 단일 선택 섹션은 다음 섹션으로 이동
     if (index < widget.sections.length - 1) {
       _moveToSection(index + 1);
     } else {

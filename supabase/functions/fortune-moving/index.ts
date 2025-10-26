@@ -20,6 +20,7 @@ interface MovingFortuneRequest {
   moving_period?: string // snake_case (호환성)
   movingPeriod?: string  // camelCase (Flutter)
   purpose: string
+  isPremium?: boolean    // ✅ 프리미엄 사용자 여부
 }
 
 // UTF-8 안전한 해시 생성 함수 (btoa는 Latin1만 지원하여 한글 불가)
@@ -53,11 +54,13 @@ serve(async (req) => {
     const target_area = requestData.target_area || requestData.targetArea || ''
     const moving_period = requestData.moving_period || requestData.movingPeriod || ''
     const purpose = requestData.purpose || ''
+    const isPremium = requestData.isPremium || false // ✅ 프리미엄 사용자 여부
 
     if (!current_area || !target_area) {
       throw new Error('현재 지역과 이사갈 지역을 입력해주세요.')
     }
 
+    console.log('💎 [Moving] Premium 상태:', isPremium)
     console.log('Moving fortune request:', {
       current_area: current_area.substring(0, 50),
       target_area: target_area.substring(0, 50),
@@ -131,6 +134,12 @@ serve(async (req) => {
         throw new Error('API 응답 형식이 올바르지 않습니다.')
       }
 
+      // ✅ Blur 로직 적용
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['direction_analysis', 'timing_analysis', 'cautions', 'recommendations', 'lucky_dates', 'summary_keyword']
+        : []
+
       // 응답 데이터 구조화
       fortuneData = {
         title: `${current_area} → ${target_area} 이사운`,
@@ -139,15 +148,17 @@ serve(async (req) => {
         target_area,
         moving_period,
         purpose,
-        overall_fortune: parsedResponse.전반적인운세 || parsedResponse.overall_fortune || '길한 이사입니다.',
-        direction_analysis: parsedResponse.방위분석 || parsedResponse.direction_analysis || '좋은 방향입니다.',
-        timing_analysis: parsedResponse.시기분석 || parsedResponse.timing_analysis || '적절한 시기입니다.',
-        cautions: parsedResponse.주의사항 || parsedResponse.cautions || ['이사 전 청소', '풍수 확인', '날짜 선택'],
-        recommendations: parsedResponse.추천사항 || parsedResponse.recommendations || ['긍정적 마음', '계획적 준비', '이웃 인사'],
-        lucky_dates: parsedResponse.행운의날 || parsedResponse.lucky_dates || ['주말', '오전 시간대'],
-        summary_keyword: parsedResponse.정리키워드 || parsedResponse.summary_keyword || '길한 이사',
-        score: Math.floor(Math.random() * 30) + 70, // 70-100
+        score: Math.floor(Math.random() * 30) + 70, // ✅ 무료: 공개
+        overall_fortune: parsedResponse.전반적인운세 || parsedResponse.overall_fortune || '길한 이사입니다.', // ✅ 무료: 공개
+        direction_analysis: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.방위분석 || parsedResponse.direction_analysis || '좋은 방향입니다.'), // 🔒 유료
+        timing_analysis: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.시기분석 || parsedResponse.timing_analysis || '적절한 시기입니다.'), // 🔒 유료
+        cautions: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.주의사항 || parsedResponse.cautions || ['이사 전 청소', '풍수 확인', '날짜 선택']), // 🔒 유료
+        recommendations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.추천사항 || parsedResponse.recommendations || ['긍정적 마음', '계획적 준비', '이웃 인사']), // 🔒 유료
+        lucky_dates: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.행운의날 || parsedResponse.lucky_dates || ['주말', '오전 시간대']), // 🔒 유료
+        summary_keyword: isBlurred ? '🔒' : (parsedResponse.정리키워드 || parsedResponse.summary_keyword || '길한 이사'), // 🔒 유료
         timestamp: new Date().toISOString(),
+        isBlurred, // ✅ 블러 상태
+        blurredSections, // ✅ 블러된 섹션 목록
         // 메타데이터 추가
         llm_provider: response.provider,
         llm_model: response.model,

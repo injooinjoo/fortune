@@ -43,6 +43,10 @@ class Fortune extends Equatable {
   final List<String>? uiBlocks; // UI block ordering
   final Map<String, dynamic>? explain; // debugging/explanation data
 
+  // ✅ 블러 시스템 필드
+  final bool isBlurred; // 블러 상태
+  final List<String> blurredSections; // 블러 처리된 섹션 키
+
   const Fortune({
     required this.id,
     required this.userId,
@@ -77,7 +81,10 @@ class Fortune extends Equatable {
     this.notification,
     this.shareCard,
     this.uiBlocks,
-    this.explain});
+    this.explain,
+    this.isBlurred = false,  // ✅ Default
+    this.blurredSections = const [],  // ✅ Default
+  });
 
   // Getter for backwards compatibility
   int get score => overallScore ?? 80;
@@ -94,6 +101,85 @@ class Fortune extends Equatable {
   String? get advice => metadata?['advice'] as String? ?? recommendations?.firstOrNull;
   String? get caution => metadata?['caution'] as String? ?? warnings?.firstOrNull;
 
+  // ✅ copyWith 메서드 (블러 해제용)
+  Fortune copyWith({
+    String? id,
+    String? userId,
+    String? type,
+    String? content,
+    DateTime? createdAt,
+    Map<String, dynamic>? metadata,
+    int? tokenCost,
+    String? category,
+    int? overallScore,
+    String? description,
+    Map<String, dynamic>? scoreBreakdown,
+    Map<String, dynamic>? luckyItems,
+    List<String>? recommendations,
+    List<String>? warnings,
+    String? summary,
+    Map<String, dynamic>? additionalInfo,
+    Map<String, List<DetailedLuckyItem>>? detailedLuckyItems,
+    String? greeting,
+    Map<String, int>? hexagonScores,
+    List<TimeSpecificFortune>? timeSpecificFortunes,
+    List<BirthYearFortune>? birthYearFortunes,
+    Map<String, dynamic>? fiveElements,
+    String? specialTip,
+    String? period,
+    Map<String, dynamic>? meta,
+    Map<String, dynamic>? weatherSummary,
+    Map<String, dynamic>? overall,
+    Map<String, dynamic>? categories,
+    Map<String, dynamic>? sajuInsight,
+    List<Map<String, dynamic>>? personalActions,
+    Map<String, dynamic>? notification,
+    Map<String, dynamic>? shareCard,
+    List<String>? uiBlocks,
+    Map<String, dynamic>? explain,
+    bool? isBlurred,  // ✅ 블러 해제용
+    List<String>? blurredSections,  // ✅ 블러 해제용
+  }) {
+    return Fortune(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      type: type ?? this.type,
+      content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
+      metadata: metadata ?? this.metadata,
+      tokenCost: tokenCost ?? this.tokenCost,
+      category: category ?? this.category,
+      overallScore: overallScore ?? this.overallScore,
+      description: description ?? this.description,
+      scoreBreakdown: scoreBreakdown ?? this.scoreBreakdown,
+      luckyItems: luckyItems ?? this.luckyItems,
+      recommendations: recommendations ?? this.recommendations,
+      warnings: warnings ?? this.warnings,
+      summary: summary ?? this.summary,
+      additionalInfo: additionalInfo ?? this.additionalInfo,
+      detailedLuckyItems: detailedLuckyItems ?? this.detailedLuckyItems,
+      greeting: greeting ?? this.greeting,
+      hexagonScores: hexagonScores ?? this.hexagonScores,
+      timeSpecificFortunes: timeSpecificFortunes ?? this.timeSpecificFortunes,
+      birthYearFortunes: birthYearFortunes ?? this.birthYearFortunes,
+      fiveElements: fiveElements ?? this.fiveElements,
+      specialTip: specialTip ?? this.specialTip,
+      period: period ?? this.period,
+      meta: meta ?? this.meta,
+      weatherSummary: weatherSummary ?? this.weatherSummary,
+      overall: overall ?? this.overall,
+      categories: categories ?? this.categories,
+      sajuInsight: sajuInsight ?? this.sajuInsight,
+      personalActions: personalActions ?? this.personalActions,
+      notification: notification ?? this.notification,
+      shareCard: shareCard ?? this.shareCard,
+      uiBlocks: uiBlocks ?? this.uiBlocks,
+      explain: explain ?? this.explain,
+      isBlurred: isBlurred ?? this.isBlurred,
+      blurredSections: blurredSections ?? this.blurredSections,
+    );
+  }
+
   @override
   List<Object?> get props => [
     id, userId, type, content, createdAt, metadata, tokenCost,
@@ -101,7 +187,8 @@ class Fortune extends Equatable {
     warnings, summary, additionalInfo, detailedLuckyItems, greeting, hexagonScores,
     timeSpecificFortunes, birthYearFortunes, fiveElements, specialTip, period,
     meta, weatherSummary, overall, categories, sajuInsight, personalActions,
-    notification, shareCard, uiBlocks, explain
+    notification, shareCard, uiBlocks, explain,
+    isBlurred, blurredSections,  // ✅ 블러 필드 추가
   ];
 
   Map<String, dynamic> toJson() {

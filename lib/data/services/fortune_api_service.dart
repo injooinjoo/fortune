@@ -942,7 +942,10 @@ class FortuneApiService {
 
     // 🚀 API 호출 (새로운 운세 생성)
     try {
-      final endpoint = '/api/fortune/$fortuneType';
+      // ✅ pet-compatibility는 fortune-pet-compatibility Edge Function 직접 호출
+      final endpoint = fortuneType == 'pet-compatibility'
+          ? '/fortune-pet-compatibility'
+          : '/api/fortune/$fortuneType';
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': endpoint,
         'method': params != null ? 'POST' : 'GET',

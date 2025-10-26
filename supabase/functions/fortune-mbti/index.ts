@@ -12,6 +12,7 @@ interface MbtiFortuneRequest {
   name: string;
   birthDate: string;
   userId?: string;
+  isPremium?: boolean; // ✅ 프리미엄 사용자 여부
 }
 
 interface MbtiFortuneResponse {
@@ -31,6 +32,8 @@ interface MbtiFortuneResponse {
     challenges: string[];
     mbtiDescription: string;
     timestamp: string;
+    isBlurred?: boolean; // ✅ 블러 상태
+    blurredSections?: string[]; // ✅ 블러 처리된 섹션 목록
   };
   error?: string;
 }
@@ -146,7 +149,9 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    const { mbti, name, birthDate, userId }: MbtiFortuneRequest = await req.json()
+    const { mbti, name, birthDate, userId, isPremium }: MbtiFortuneRequest = await req.json()
+
+    console.log(`[MBTI] Request - User: ${userId}, Premium: ${isPremium}, MBTI: ${mbti}`)
 
     // 입력 데이터 검증
     if (!mbti || !name || !birthDate) {
@@ -156,7 +161,7 @@ serve(async (req) => {
           error: 'MBTI, 이름, 생년월일이 모두 필요합니다.'
         }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
           status: 400
         }
       )
@@ -170,7 +175,7 @@ serve(async (req) => {
           error: '유효하지 않은 MBTI 타입입니다.'
         }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
           status: 400
         }
       )
@@ -193,7 +198,7 @@ serve(async (req) => {
           success: true,
           data: cachedResult.result
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
 
@@ -246,14 +251,34 @@ ${mbti} 유형의 특성을 고려하여 오늘의 운세를 JSON 형식으로 �
     // MBTI 특성 정보 추가
     const mbtiCharacteristics = MBTI_CHARACTERISTICS[mbti as keyof typeof MBTI_CHARACTERISTICS]
 
+    // ✅ RewardedAd 방식: Premium 여부에 따라 Blur 처리
+    const isBlurred = !isPremium
+    const blurredSections = isBlurred
+      ? ['loveFortune', 'careerFortune', 'moneyFortune', 'healthFortune', 'advice', 'compatibility', 'cognitiveStrengths', 'challenges']
+      : []
+
+    console.log(`[MBTI] isPremium: ${isPremium}, isBlurred: ${isBlurred}`)
+
     const result: MbtiFortuneResponse['data'] = {
-      ...fortuneData,
-      compatibility: mbtiCharacteristics.compatibility,
-      cognitiveStrengths: mbtiCharacteristics.cognitiveStrengths,
-      challenges: mbtiCharacteristics.challenges,
-      mbtiDescription: mbtiCharacteristics.description,
-      timestamp: new Date().toISOString()
+      todayFortune: fortuneData.todayFortune,  // ✅ 무료: 공개
+      loveFortune: fortuneData.loveFortune,    // 🔒 유료
+      careerFortune: fortuneData.careerFortune, // 🔒 유료
+      moneyFortune: fortuneData.moneyFortune,  // 🔒 유료
+      healthFortune: fortuneData.healthFortune, // 🔒 유료
+      luckyColor: fortuneData.luckyColor,      // ✅ 무료: 공개
+      luckyNumber: fortuneData.luckyNumber,    // ✅ 무료: 공개
+      advice: fortuneData.advice,              // 🔒 유료
+      compatibility: mbtiCharacteristics.compatibility, // 🔒 유료
+      energyLevel: fortuneData.energyLevel || 50, // ✅ 무료: 공개
+      cognitiveStrengths: mbtiCharacteristics.cognitiveStrengths, // 🔒 유료
+      challenges: mbtiCharacteristics.challenges, // 🔒 유료
+      mbtiDescription: mbtiCharacteristics.description, // ✅ 무료: 공개
+      timestamp: new Date().toISOString(),
+      isBlurred,           // ✅ 블러 상태
+      blurredSections,     // ✅ 블러 처리된 섹션 목록
     }
+
+    console.log(`[MBTI] Result generated for ${mbti}`)
 
     // 결과 캐싱
     await supabaseClient
@@ -271,7 +296,7 @@ ${mbti} 유형의 특성을 고려하여 오늘의 운세를 JSON 형식으로 �
         success: true,
         data: result
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
   } catch (error) {
@@ -294,7 +319,7 @@ ${mbti} 유형의 특성을 고려하여 오늘의 운세를 JSON 형식으로 �
         details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 500
       }
     )

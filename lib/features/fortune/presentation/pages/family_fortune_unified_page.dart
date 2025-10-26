@@ -1,3 +1,4 @@
+import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -6,6 +7,8 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
@@ -94,6 +97,10 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
   bool _isLoading = false;
   Fortune? _fortune;
+
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
 
   @override
   void dispose() {
@@ -675,16 +682,80 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
     }
   }
 
+  /// 광고 보고 블러 제거
+  Future<void> _showAdAndUnblur() async {
+    final adService = ref.read(adServiceProvider);
+
+    await adService.showRewardedAd(
+      onUserEarnedReward: (ad, reward) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+      },
+    );
+  }
+
+  /// 블러 wrapper
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildResultScreen() {
     if (_fortune == null || _selectedConcern == null) return const SizedBox.shrink();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final concernColor = _selectedConcern!.gradientColors[0];
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    // ✅ result.isBlurred 동기화
+    if (_isBlurred != _fortune!.isBlurred || _blurredSections.length != _fortune!.blurredSections.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _isBlurred = _fortune!.isBlurred;
+            _blurredSections = List<String>.from(_fortune!.blurredSections);
+          });
+        }
+      });
+    }
+
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           // Concern header
           Container(
             padding: const EdgeInsets.all(24),
@@ -746,33 +817,36 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           const SizedBox(height: 24),
 
           // Fortune content
-          TossCard(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.auto_awesome, color: concernColor, size: 24),
-                    SizedBox(width: 8),
-                    Text(
-                      '오늘의 운세',
-                      style: TypographyUnified.heading3.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+          _buildBlurWrapper(
+            sectionKey: 'fortune_content',
+            child: TossCard(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.auto_awesome, color: concernColor, size: 24),
+                      SizedBox(width: 8),
+                      Text(
+                        '오늘의 운세',
+                        style: TypographyUnified.heading3.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                Text(
-                  _fortune!.content,
-                  style: TypographyUnified.buttonMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                    height: 1.6,
+                    ],
                   ),
-                ),
-              ],
+                  SizedBox(height: 16),
+                  Text(
+                    _fortune!.content,
+                    style: TypographyUnified.buttonMedium.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                      height: 1.6,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 20),
@@ -809,8 +883,19 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               ),
             ],
           ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 600.ms);
+            ],
+          ),
+        ).animate().fadeIn(duration: 600.ms),
+
+        // ✅ FloatingBottomButton
+        if (_isBlurred)
+          FloatingBottomButton(
+            text: '광고 보고 전체 내용 확인하기',
+            onPressed: _showAdAndUnblur,
+            isEnabled: true,
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 116), // bottom: 100 효과
+          ),
+      ],
+    );
   }
 }

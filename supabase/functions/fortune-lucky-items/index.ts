@@ -14,6 +14,7 @@ interface LuckyItemsRequest {
   birthTime?: string; // "HH:MM"
   gender?: string; // "male" | "female"
   interests?: string[];
+  isPremium?: boolean; // ✅ 프리미엄 사용자 여부
 }
 
 interface LuckyItemsResponse {
@@ -35,6 +36,8 @@ interface LuckyItemsResponse {
     score: number;
     advice: string;
     timestamp: string;
+    isBlurred?: boolean; // ✅ 블러 상태
+    blurredSections?: string[]; // ✅ 블러된 섹션 목록
   };
   error?: string;
 }
@@ -56,8 +59,17 @@ serve(async (req) => {
       }
     )
 
-    const { userId, name, birthDate, birthTime, gender, interests }: LuckyItemsRequest = await req.json()
+    const {
+      userId,
+      name,
+      birthDate,
+      birthTime,
+      gender,
+      interests,
+      isPremium = false // ✅ 프리미엄 사용자 여부
+    }: LuckyItemsRequest = await req.json()
 
+    console.log('💎 [LuckyItems] Premium 상태:', isPremium)
     console.log(`[fortune-lucky-items] 🎯 Request received:`, { userId, name, birthDate })
 
     // LLM 호출
@@ -141,26 +153,34 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
       throw new Error('LLM 응답을 파싱할 수 없습니다')
     }
 
+    // ✅ Blur 로직 적용
+    const isBlurred = !isPremium
+    const blurredSections = isBlurred
+      ? ['fashion', 'food', 'jewelry', 'material', 'places', 'relationships', 'advice']
+      : []
+
     // 응답 데이터 구성
     const result: LuckyItemsResponse = {
       success: true,
       data: {
         title: fortuneData.title || `행운 아이템 - ${name}님`,
-        summary: fortuneData.summary || '',
-        keyword: fortuneData.keyword || '',
-        color: fortuneData.color || '',
-        fashion: fortuneData.fashion || [],
-        numbers: fortuneData.numbers || [3, 7, 21],
-        food: fortuneData.food || [],
-        jewelry: fortuneData.jewelry || [],
-        material: fortuneData.material || [],
-        direction: fortuneData.direction || '동쪽',
-        places: fortuneData.places || [],
-        relationships: fortuneData.relationships || [],
-        element: fortuneData.element || '금',
-        score: fortuneData.score || 75,
-        advice: fortuneData.advice || '',
+        summary: fortuneData.summary || '', // ✅ 무료: 공개
+        keyword: fortuneData.keyword || '', // ✅ 무료: 공개
+        color: fortuneData.color || '', // ✅ 무료: 공개
+        numbers: fortuneData.numbers || [3, 7, 21], // ✅ 무료: 공개
+        direction: fortuneData.direction || '동쪽', // ✅ 무료: 공개
+        element: fortuneData.element || '금', // ✅ 무료: 공개
+        score: fortuneData.score || 75, // ✅ 무료: 공개
+        fashion: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.fashion || []), // 🔒 유료
+        food: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.food || []), // 🔒 유료
+        jewelry: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.jewelry || []), // 🔒 유료
+        material: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.material || []), // 🔒 유료
+        places: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.places || []), // 🔒 유료
+        relationships: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.relationships || []), // 🔒 유료
+        advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (fortuneData.advice || ''), // 🔒 유료
         timestamp: new Date().toISOString(),
+        isBlurred, // ✅ 블러 상태
+        blurredSections, // ✅ 블러된 섹션 목록
       },
     }
 
@@ -171,7 +191,7 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
       {
         headers: {
           ...corsHeaders,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json; charset=utf-8'
         }
       }
     )
@@ -188,7 +208,7 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
         status: 500,
         headers: {
           ...corsHeaders,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json; charset=utf-8'
         }
       }
     )

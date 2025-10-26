@@ -17,6 +17,7 @@ interface AvoidPeopleRequest {
   hasSensitiveConversation: boolean;
   hasTeamProject: boolean;
   userId?: string;
+  isPremium?: boolean; // ✅ 프리미엄 사용자 여부
 }
 
 serve(async (req) => {
@@ -32,7 +33,9 @@ serve(async (req) => {
 
     const requestData: AvoidPeopleRequest = await req.json()
     const { environment, importantSchedule, moodLevel, stressLevel, socialFatigue,
-            hasImportantDecision, hasSensitiveConversation, hasTeamProject, userId } = requestData
+            hasImportantDecision, hasSensitiveConversation, hasTeamProject, userId, isPremium = false } = requestData
+
+    console.log('💎 [AvoidPeople] Premium 상태:', isPremium)
 
     // 캐시 확인
     const today = new Date().toISOString().split('T')[0]
@@ -51,7 +54,7 @@ serve(async (req) => {
           success: true,
           data: cachedResult.result
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
 
@@ -105,9 +108,21 @@ serve(async (req) => {
 
     const fortuneData = JSON.parse(response.content)
 
+    // ✅ Blur 로직 적용
+    const isBlurred = !isPremium
+    const blurredSections = isBlurred
+      ? ['avoidTypes', 'safeTypes', 'advice']
+      : []
+
     const result = {
-      ...fortuneData,
-      timestamp: new Date().toISOString()
+      overallScore: fortuneData.overallScore, // ✅ 무료: 공개
+      content: fortuneData.content, // ✅ 무료: 공개
+      avoidTypes: isBlurred ? [{ type: '🔒 프리미엄 전용', description: '🔒 프리미엄 결제 후 확인 가능합니다', coping: '🔒 프리미엄 전용', warningSign: '🔒 프리미엄 전용' }] : fortuneData.avoidTypes, // 🔒 유료
+      safeTypes: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.safeTypes, // 🔒 유료
+      advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : fortuneData.advice, // 🔒 유료
+      timestamp: new Date().toISOString(),
+      isBlurred, // ✅ 블러 상태
+      blurredSections // ✅ 블러된 섹션 목록
     }
 
     // 결과 캐싱
@@ -126,7 +141,7 @@ serve(async (req) => {
         success: true,
         data: result
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
   } catch (error) {
@@ -140,7 +155,7 @@ serve(async (req) => {
         details: errorMessage
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 500
       }
     )

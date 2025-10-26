@@ -1,3 +1,4 @@
+import 'dart:ui'; // ✅ Phase 19-1: ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/components/toss_card.dart';
@@ -11,6 +12,7 @@ import '../widgets/saju_element_chart.dart';
 import '../widgets/manseryeok_display.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../presentation/providers/ad_provider.dart'; // ✅ Phase 19-2
 
 /// 토스 스타일 전통 사주팔자 페이지
 class TraditionalSajuTossPage extends ConsumerStatefulWidget {
@@ -30,6 +32,10 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
   final TextEditingController _customQuestionController = TextEditingController();
   bool _isFortuneLoading = false;
   bool _showResults = false;
+
+  // ✅ Phase 19-3: Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
   
   @override
   void initState() {

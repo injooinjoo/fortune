@@ -8,6 +8,7 @@ interface LoveFortuneRequest {
   age: number;
   gender: string;
   relationshipStatus: 'single' | 'dating' | 'breakup' | 'crush';
+  // Step 2: 연애 스타일
   datingStyles: string[];
   valueImportance: {
     외모: number;
@@ -16,10 +17,20 @@ interface LoveFortuneRequest {
     가치관: number;
     유머감각: number;
   };
-  personalityTypes: string[];
-  loveGoals: string[];
-  communicationStyles: string[];
-  conflictStyles: string[];
+  // Step 3: 이상형
+  preferredAgeRange: {
+    min: number;
+    max: number;
+  };
+  preferredPersonality: string[];
+  preferredMeetingPlaces: string[];
+  relationshipGoal: string;
+  // Step 4: 나의 매력
+  appearanceConfidence: number;
+  charmPoints: string[];
+  lifestyle: string;
+  hobbies: string[];
+  isPremium?: boolean; // ✅ 프리미엄 사용자 여부
 }
 
 interface LoveFortuneResponse {
@@ -77,6 +88,8 @@ interface LoveFortuneResponse {
       shortTerm: string[];
       longTerm: string[];
     };
+    isBlurred?: boolean; // ✅ 블러 상태
+    blurredSections?: string[]; // ✅ 블러 처리된 섹션 목록
   };
   cachedAt?: string;
 }
@@ -101,16 +114,26 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
 
   const userPrompt = `당신은 30년 경력의 전문 연애 상담사이자 심리학자입니다. 다음 정보를 바탕으로 전문적이고 구체적인 연애운세를 JSON 형식으로 제공해주세요.
 
-**상담자 정보:**
+**상담자 기본 정보:**
 - 나이: ${params.age}세
 - 성별: ${params.gender}
-- 연애 상태: ${relationshipContexts[params.relationshipStatus]}
-- 연애 스타일: ${params.datingStyles.join(', ')}
-- 가치관 중요도: ${Object.entries(params.valueImportance).map(([key, value]) => `${key}(${value}/5점)`).join(', ')}
-- 성격 유형: ${params.personalityTypes?.join(', ') || '미지정'}
-- 연애 목표: ${params.loveGoals?.join(', ') || '미지정'}
-- 소통 스타일: ${params.communicationStyles?.join(', ') || '미지정'}
-- 갈등 해결 방식: ${params.conflictStyles?.join(', ') || '미지정'}
+- 연애 상태: ${relationshipContexts[params.relationshipStatus] || '일반'}
+
+**연애 스타일 (Step 2):**
+- 데이팅 스타일: ${params.datingStyles?.length > 0 ? params.datingStyles.join(', ') : '일반적인 스타일'}
+- 가치관 중요도: ${Object.keys(params.valueImportance || {}).length > 0 ? Object.entries(params.valueImportance).map(([key, value]) => `${key}(${value}/5점)`).join(', ') : '모든 가치를 균형있게 중시'}
+
+**이상형 (Step 3):**
+- 선호 나이대: ${params.preferredAgeRange?.min || 20}~${params.preferredAgeRange?.max || 30}세
+- 선호 성격: ${params.preferredPersonality?.length > 0 ? params.preferredPersonality.join(', ') : '미지정'}
+- 선호 만남 장소: ${params.preferredMeetingPlaces?.length > 0 ? params.preferredMeetingPlaces.join(', ') : '미지정'}
+- 원하는 관계: ${params.relationshipGoal || '미지정'}
+
+**나의 매력 (Step 4):**
+- 외모 자신감: ${params.appearanceConfidence || 5}/10점
+- 매력 포인트: ${params.charmPoints?.length > 0 ? params.charmPoints.join(', ') : '미지정'}
+- 라이프스타일: ${params.lifestyle || '미지정'}
+- 취미: ${params.hobbies?.length > 0 ? params.hobbies.join(', ') : '미지정'}
 
 **분석 요청 사항:**
 1. 전체적인 연애운 점수 (1-100점)와 핵심 메시지
@@ -234,7 +257,7 @@ serve(async (req) => {
         JSON.stringify({ success: false, error: 'POST 메소드만 허용됩니다' }),
         {
           status: 405,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }
         }
       )
     }
@@ -250,7 +273,7 @@ serve(async (req) => {
           JSON.stringify({ success: false, error: `필수 필드 누락: ${field}` }),
           {
             status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }
           }
         )
       }
@@ -269,7 +292,7 @@ serve(async (req) => {
         }),
         {
           status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }
         }
       )
     }
@@ -279,6 +302,7 @@ serve(async (req) => {
     const fortuneData = await generateLoveFortune(params)
 
     // 응답 데이터 구조화
+    const isPremium = params.isPremium ?? false;
     const response: LoveFortuneResponse = {
       success: true,
       data: {
@@ -333,9 +357,14 @@ serve(async (req) => {
           immediate: ['자신의 감정 정리하기', '상대방과의 소통 늘리기'],
           shortTerm: ['데이트 계획 세우기', '관계 발전 방향 논의하기'],
           longTerm: ['서로의 미래 계획 공유하기', '지속 가능한 관계 구축하기']
-        }
+        },
+        // 🔐 블러 처리 (일반 사용자)
+        isBlurred: !isPremium,
+        blurredSections: !isPremium ? ['compatibilityInsights', 'predictions', 'actionPlan', 'warningArea'] : []
       }
     }
+
+    console.log(`✅ [연애운] isPremium: ${isPremium}, isBlurred: ${!isPremium}`)
 
     // 캐시 저장
     await saveCachedFortune(params.userId, params, response.data)
@@ -345,7 +374,7 @@ serve(async (req) => {
       JSON.stringify(response),
       {
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }
       }
     )
 
@@ -359,7 +388,7 @@ serve(async (req) => {
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }
       }
     )
   }

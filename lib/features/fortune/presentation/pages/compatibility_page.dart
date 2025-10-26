@@ -1,3 +1,4 @@
+import 'dart:ui';  // ✅ ImageFilter.blur 사용
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,9 +9,11 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../shared/components/floating_bottom_button.dart';  // ✅ FloatingBottomButton
 import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/models/fortune_result.dart';
@@ -137,23 +140,19 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       _isLoading = true;
     });
 
-    // 광고 시작과 동시에 API 호출 시작 (async parallel pattern)
-    final apiCallFuture = _performCompatibilityAnalysis();
-
-    await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () async {
-        // 광고 완료 후 API 결과 대기
-        await apiCallFuture;
-      },
-      onAdFailed: () async {
-        // 광고 실패해도 API 결과 대기
-        await apiCallFuture;
-      },
-    );
+    // ✅ InterstitialAd 제거: 바로 API 호출
+    await _performCompatibilityAnalysis();
   }
 
   Future<void> _performCompatibilityAnalysis() async {
     try {
+      // ⚠️ 궁합 테스트용: Debug Premium 무시, 실제 토큰만 체크
+      final tokenState = ref.read(tokenProvider);
+      final realPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
+      final isPremium = realPremium;  // Debug Premium 무시
+
+      debugPrint('💎 [CompatibilityPage] Premium 상태: $isPremium (real: $realPremium)');
+
       // UnifiedFortuneService 사용
       final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
@@ -167,6 +166,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
           'name': _person2NameController.text,
           'birth_date': _person2BirthDate!.toIso8601String(),
         },
+        'isPremium': isPremium, // ✅ isPremium 추가
       };
 
       // Optimization conditions 생성
@@ -184,8 +184,8 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         conditions: conditions,
       );
 
-      // FortuneResult → Fortune 엔티티 변환
-      final fortune = _convertToFortune(fortuneResult);
+      // FortuneResult → Fortune 엔티티 변환 (블러 로직 포함)
+      final fortune = _convertToFortune(fortuneResult, isPremium);
 
       // Parse scores from fortune response
       Map<String, double> scores = {};
@@ -910,8 +910,16 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
     return '매우 나쁨';
   }
 
-  /// FortuneResult를 Fortune 엔티티로 변환
-  Fortune _convertToFortune(FortuneResult result) {
+  /// FortuneResult를 Fortune 엔티티로 변환 (블러 로직 포함)
+  Fortune _convertToFortune(FortuneResult result, bool isPremium) {
+    // ✅ 블러 처리 로직
+    final isBlurred = !isPremium;
+    final blurredSections = isBlurred
+        ? ['detailed_scores', 'analysis', 'advice']  // 세부 궁합, 분석 결과, 조언 블러
+        : <String>[];
+
+    debugPrint('🔒 [CompatibilityPage] isBlurred: $isBlurred, blurredSections: $blurredSections');
+
     return Fortune(
       id: result.id ?? '',
       userId: ref.read(userProvider).value?.id ?? '',
@@ -921,6 +929,141 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       overallScore: result.score,
       summary: result.summary['message'] as String?,
       metadata: result.data,
+      isBlurred: isBlurred,  // ✅ 블러 상태
+      blurredSections: blurredSections,  // ✅ 블러 섹션
+    );
+  }
+
+  /// 광고 시청 후 블러 해제
+  Future<void> _showAdAndUnblur() async {
+    final fortuneData = _compatibilityData;
+    if (fortuneData == null) return;
+
+    final fortune = fortuneData['fortune'] as Fortune;
+    debugPrint('[CompatibilityPage] 광고 시청 후 블러 해제 시작');
+
+    try {
+      final adService = AdService();
+
+      // 광고가 준비 안됐으면 로드
+      if (!adService.isRewardedAdReady) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 준비하는 중입니다...'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+
+        await adService.loadRewardedAd();
+
+        // 로딩 완료 대기 (최대 5초)
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고 로드에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      // 광고 표시
+      debugPrint('[CompatibilityPage] 광고 표시 시작');
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('[CompatibilityPage] 광고 보상 획득, 블러 해제');
+
+          // ✅ 블러 해제 - copyWith로 isBlurred를 false로 변경
+          if (mounted) {
+            setState(() {
+              _compatibilityData = {
+                'fortune': fortune.copyWith(
+                  isBlurred: false,
+                  blurredSections: [],
+                ),
+                'scores': fortuneData['scores'],
+              };
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('궁합 운세가 잠금 해제되었습니다!'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      debugPrint('[CompatibilityPage] 광고 표시 실패: $e\n$stackTrace');
+
+      // 에러 발생 시에도 블러 해제 (사용자 경험 우선)
+      if (mounted) {
+        setState(() {
+          _compatibilityData = {
+            'fortune': fortune.copyWith(
+              isBlurred: false,
+              blurredSections: [],
+            ),
+            'scores': fortuneData['scores'],
+          };
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시에 실패했지만 운세를 확인할 수 있습니다.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
+  /// 블러 래퍼 위젯
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required Fortune fortune,
+    required String sectionKey,
+  }) {
+    // 블러가 필요 없거나, 해당 섹션이 블러 대상이 아니면 그대로 반환
+    if (!fortune.isBlurred || !fortune.blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    // 블러 효과 적용
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

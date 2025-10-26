@@ -1,3 +1,4 @@
+import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/unified_fortune_base_widget.dart';
@@ -7,6 +8,8 @@ import '../../domain/models/conditions/lucky_items_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../presentation/providers/ad_provider.dart';
 import 'dart:math';
 
 /// 오늘의 행운 가이드 페이지
@@ -22,6 +25,10 @@ class LuckyItemsPageUnified extends ConsumerStatefulWidget {
 
 class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
   int _selectedCategoryIndex = 0;
+
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
 
   // 8개 메인 카테고리
   static const List<CategoryModel> _categories = [
@@ -183,25 +190,50 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
 
   /// 결과 화면 (블러 적용됨)
   Widget _buildResult(BuildContext context, FortuneResult result) {
+    // ✅ result.isBlurred 동기화
+    if (_isBlurred != result.isBlurred || _blurredSections.length != result.blurredSections.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _isBlurred = result.isBlurred;
+            _blurredSections = List<String>.from(result.blurredSections);
+          });
+        }
+      });
+    }
+
     final lottoNumbers = _generateLottoNumbers();
 
-    return Column(
+    return Stack(
       children: [
-        // 카테고리 탭
-        _CategoryTabs(
-          categories: _categories,
-          selectedIndex: _selectedCategoryIndex,
-          onSelect: (index) => setState(() => _selectedCategoryIndex = index),
-        ),
-        const SizedBox(height: 16),
+        Column(
+          children: [
+            // 카테고리 탭
+            _CategoryTabs(
+              categories: _categories,
+              selectedIndex: _selectedCategoryIndex,
+              onSelect: (index) => setState(() => _selectedCategoryIndex = index),
+            ),
+            const SizedBox(height: 16),
 
-        // 선택된 카테고리 컨텐츠
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildCategoryContent(_categories[_selectedCategoryIndex], lottoNumbers),
-          ),
+            // 선택된 카테고리 컨텐츠
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: _buildCategoryContent(_categories[_selectedCategoryIndex], lottoNumbers),
+              ),
+            ),
+          ],
         ),
+
+        // ✅ FloatingBottomButton
+        if (_isBlurred)
+          FloatingBottomButton(
+            text: '광고 보고 전체 내용 확인하기',
+            onPressed: _showAdAndUnblur,
+            isEnabled: true,
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 116), // bottom: 100 효과
+          ),
       ],
     );
   }
@@ -233,25 +265,99 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
     );
   }
 
+  /// 광고 보고 블러 제거
+  Future<void> _showAdAndUnblur() async {
+    final adService = ref.read(adServiceProvider);
+
+    await adService.showRewardedAd(
+      onUserEarnedReward: (ad, rewardItem) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+      },
+    );
+  }
+
+  /// 블러 wrapper
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   /// 카테고리별 상세 정보
   Widget _buildCategoryDetails(String categoryId, List<int> lottoNumbers) {
     switch (categoryId) {
       case 'lotto':
-        return _LottoContent(numbers: lottoNumbers);
+        return _buildBlurWrapper(
+          sectionKey: 'lotto',
+          child: _LottoContent(numbers: lottoNumbers),
+        );
       case 'shopping':
-        return const _ShoppingContent();
+        return _buildBlurWrapper(
+          sectionKey: 'shopping',
+          child: const _ShoppingContent(),
+        );
       case 'game':
-        return const _GameContent();
+        return _buildBlurWrapper(
+          sectionKey: 'game',
+          child: const _GameContent(),
+        );
       case 'food':
-        return const _FoodContent();
+        return _buildBlurWrapper(
+          sectionKey: 'food',
+          child: const _FoodContent(),
+        );
       case 'travel':
-        return const _TravelContent();
+        return _buildBlurWrapper(
+          sectionKey: 'travel',
+          child: const _TravelContent(),
+        );
       case 'health':
-        return const _HealthContent();
+        return _buildBlurWrapper(
+          sectionKey: 'health',
+          child: const _HealthContent(),
+        );
       case 'fashion':
-        return const _FashionContent();
+        return _buildBlurWrapper(
+          sectionKey: 'fashion',
+          child: const _FashionContent(),
+        );
       case 'lifestyle':
-        return const _LifestyleContent();
+        return _buildBlurWrapper(
+          sectionKey: 'lifestyle',
+          child: const _LifestyleContent(),
+        );
       default:
         return const SizedBox.shrink();
     }

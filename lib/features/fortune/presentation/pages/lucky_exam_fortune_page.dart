@@ -1,3 +1,4 @@
+import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -6,6 +7,8 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/standard_fortune_page_layout.dart';
 import '../../../../core/components/toss_card.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../domain/entities/fortune.dart';
 import 'dart:math' as math;
 import '../../../../services/ad_service.dart';
@@ -23,7 +26,11 @@ class LuckyExamFortunePage extends ConsumerStatefulWidget {
 class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
   Fortune? _fortuneResult;
   bool _isLoading = false;
-  
+
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
+
   String _examType = '';
   String _examDate = '';
   String _studyPeriod = '1개월';
@@ -458,15 +465,79 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     );
   }
 
+  // ✅ Phase 15-5: 광고 보고 블러 제거 로직
+  Future<void> _showAdAndUnblur() async {
+    final adService = ref.read(adServiceProvider);
+
+    await adService.showRewardedAd(
+      onUserEarnedReward: (ad, reward) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+      },
+    );
+  }
+
+  // ✅ Phase 15-5: 블러 처리 헬퍼
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildResultView(bool isDark) {
     if (_fortuneResult == null) return const SizedBox.shrink();
 
     final fortune = _fortuneResult!;
     final score = fortune.overallScore ?? 75;
 
+    // ✅ Phase 15-4: result.isBlurred 동기화
+    if (_isBlurred != fortune.isBlurred || _blurredSections.length != fortune.blurredSections.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _isBlurred = fortune.isBlurred;
+            _blurredSections = List<String>.from(fortune.blurredSections);
+          });
+        }
+      });
+    }
+
     return StandardFortuneResultLayout(
-      child: Column(
+      child: Stack(
         children: [
+          Column(
+            children: [
           // 메인 결과 카드
           TossCard(
             padding: const EdgeInsets.all(24),
@@ -546,9 +617,11 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           
           // 세부 점수
           if (fortune.scoreBreakdown != null) ...[
-            TossCard(
-              padding: const EdgeInsets.all(20),
-              child: Column(
+            _buildBlurWrapper(
+              sectionKey: 'score_breakdown',
+              child: TossCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -605,16 +678,19 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                   ),
                 ],
               ),
-            ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
-            
+            ),
+          ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.3),
+
             const SizedBox(height: 20),
           ],
-          
+
           // 추천 사항
           if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
-            TossCard(
-              padding: const EdgeInsets.all(20),
-              child: Column(
+            _buildBlurWrapper(
+              sectionKey: 'recommendations',
+              child: TossCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -661,16 +737,19 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                   ),
                 ],
               ),
-            ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
-            
+            ),
+          ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
+
             const SizedBox(height: 20),
           ],
-          
+
           // 행운 아이템
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
-            TossCard(
-              padding: const EdgeInsets.all(20),
-              child: Column(
+            _buildBlurWrapper(
+              sectionKey: 'lucky_items',
+              child: TossCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -746,11 +825,22 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                   ),
                 ],
               ),
-            ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.3),
+            ),
+          ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.3),
           ],
 
-
           const SizedBox(height: 40),
+            ],
+          ),
+
+          // ✅ Phase 15-7: 광고 보고 전체보기 버튼
+          if (_isBlurred)
+            FloatingBottomButton(
+              text: '광고 보고 전체 내용 확인하기',
+              onPressed: _showAdAndUnblur,
+              isEnabled: true,
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 116), // bottom: 100 효과
+            ),
         ],
       ),
     );

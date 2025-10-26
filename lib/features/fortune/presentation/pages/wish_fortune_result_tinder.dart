@@ -1,3 +1,5 @@
+import 'dart:ui'; // ✅ ImageFilter.blur용
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +8,10 @@ import 'package:go_router/go_router.dart';
 import '../../domain/models/wish_fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../shared/components/floating_bottom_button.dart'; // ✅ FloatingBottomButton용
+import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
+import '../../../../core/utils/logger.dart'; // ✅ 로그용
+import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
 
 /// 틴더 스타일 소원 빌기 결과 페이지 (공감/희망/조언/응원 중심)
 class WishFortuneResultTinder extends ConsumerStatefulWidget {
@@ -30,6 +36,10 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
   late PageController _pageController;
   int _currentPage = 0;
 
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +50,19 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         // Navigation bar is automatically hidden by Scaffold structure
+
+        // ✅ Premium 체크 및 Blur 상태 설정
+        final tokenState = ref.read(tokenProvider);
+        final isPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
+
+        setState(() {
+          _isBlurred = !isPremium;
+          _blurredSections = _isBlurred
+              ? ['advice', 'encouragement', 'specialWords']
+              : [];
+        });
+
+        debugPrint('🔒 [소원운세] isPremium: $isPremium, isBlurred: $_isBlurred, blurredSections: $_blurredSections');
       }
     });
   }
@@ -132,6 +155,19 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
             ),
           ),
 
+          // ✅ FloatingBottomButton (블러 상태일 때만 표시)
+          if (_isBlurred)
+            Positioned(
+              bottom: 100,
+              left: 0,
+              right: 0,
+              child: FloatingBottomButton(
+                text: '광고 보고 전체 내용 확인하기',
+                onPressed: _showAdAndUnblur,
+                isEnabled: true,
+              ),
+            ),
+
           // 페이지 인디케이터 (중앙 하단)
           Positioned(
             bottom: 40,
@@ -196,15 +232,29 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
   Widget _buildCardContent(BuildContext context, int index, bool isDark) {
     switch (index) {
       case 0:
+        // 무료 섹션 1: 공감 카드
         return _buildEmpathyCard(isDark);
       case 1:
+        // 무료 섹션 2: 희망 카드
         return _buildHopeCard(isDark);
       case 2:
-        return _buildAdviceCard(isDark);
+        // Premium 섹션 3: 조언 카드
+        return _buildBlurWrapper(
+          sectionKey: 'advice',
+          child: _buildAdviceCard(isDark),
+        );
       case 3:
-        return _buildEncouragementCard(isDark);
+        // Premium 섹션 4: 응원 카드
+        return _buildBlurWrapper(
+          sectionKey: 'encouragement',
+          child: _buildEncouragementCard(isDark),
+        );
       case 4:
-        return _buildSpecialWordsCard(isDark);
+        // Premium 섹션 5: 신의 한마디 카드
+        return _buildBlurWrapper(
+          sectionKey: 'specialWords',
+          child: _buildSpecialWordsCard(isDark),
+        );
       default:
         return const SizedBox.shrink();
     }
@@ -507,6 +557,105 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
           const SizedBox(height: 60),
         ],
       ),
+    );
+  }
+
+  // ✅ RewardedAd 패턴
+  Future<void> _showAdAndUnblur() async {
+    debugPrint('[소원운세] 광고 시청 후 블러 해제 시작');
+
+    try {
+      final adService = AdService.instance;
+
+      // 광고가 준비 안됐으면 로드
+      if (!adService.isRewardedAdReady) {
+        debugPrint('[소원운세] ⏳ RewardedAd 로드 중...');
+        await adService.loadRewardedAd();
+
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          debugPrint('[소원운세] ❌ RewardedAd 로드 타임아웃');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: TossDesignSystem.errorRed,
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('[소원운세] ✅ 광고 시청 완료, 블러 해제');
+          if (mounted) {
+            setState(() {
+              _isBlurred = false;
+              _blurredSections = [];
+            });
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[소원운세] 광고 표시 실패', e, stackTrace);
+
+      // UX 개선: 에러 발생해도 블러 해제
+      if (mounted) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+            backgroundColor: TossDesignSystem.warningOrange,
+          ),
+        );
+      }
+    }
+  }
+
+  // ✅ Blur wrapper helper
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(28),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

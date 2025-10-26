@@ -1,3 +1,5 @@
+import 'dart:ui'; // ✅ ImageFilter.blur용
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -5,9 +7,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/services/holiday_service.dart';
 import '../../../../core/models/holiday_models.dart';
@@ -21,6 +25,8 @@ import '../../domain/models/conditions/daily_fortune_conditions.dart';
 import '../../../../services/fortune_history_service.dart';
 import '../../../../services/storage_service.dart';
 import '../../../../services/user_statistics_service.dart';
+// ✅ Phase 10: BlurredFortuneContent 제거 - _buildBlurWrapper 사용
+import '../../../../services/ad_service.dart';
 
 class DailyCalendarFortunePage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -59,6 +65,10 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
   bool _isLoading = false;
   FortuneResult? _fortuneResult;
   String? _error;
+
+  // ✅ Blur 상태 관리
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
 
   @override
   void initState() {
@@ -128,12 +138,32 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
   }
 
   Future<void> _generateFortune() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    // ✅ 1단계: 즉시 로딩 상태 표시 (버튼 애니메이션 시작)
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+    }
 
     try {
+      debugPrint('');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      debugPrint('🔮 [시간별운세] 운세 생성 프로세스 시작');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+      // 1️⃣ 프리미엄 상태 확인
+      final tokenState = ref.read(tokenProvider);
+      final premiumOverride = await DebugPremiumService.getOverrideValue();
+      final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
+
+      debugPrint('');
+      debugPrint('1️⃣ 프리미엄 상태 확인');
+      debugPrint('   - tokenState.hasUnlimitedAccess: ${tokenState.hasUnlimitedAccess}');
+      debugPrint('   - premiumOverride: $premiumOverride');
+      debugPrint('   - 최종 isPremium: $isPremium');
+      debugPrint('   → ${isPremium ? "✅ 프리미엄 사용자 (블러 없음)" : "❌ 일반 사용자 (블러 적용)"}');
+
       // UnifiedFortuneService 사용
       final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
@@ -164,26 +194,93 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         'emotionType': _selectedEmotion?.name,
       };
 
+      debugPrint('');
+      debugPrint('2️⃣ 운세 조건 준비');
+      debugPrint('   - 선택 날짜: $_selectedDate');
+      debugPrint('   - 카테고리: ${_selectedCategory?.label ?? "없음"}');
+      debugPrint('   - 감정: ${_selectedEmotion?.label ?? "없음"}');
+      debugPrint('   - 질문: ${_questionController.text.trim().isNotEmpty ? "있음" : "없음"}');
+      debugPrint('   - 공휴일: ${_isHoliday ? "예 ($_holidayName)" : "아니오"}');
+
+      // 2️⃣ isPremium 파라미터와 함께 운세 생성
+      debugPrint('');
+      debugPrint('3️⃣ UnifiedFortuneService.getFortune() 호출');
+      debugPrint('   - fortuneType: daily_calendar');
+      debugPrint('   - dataSource: FortuneDataSource.api');
+      debugPrint('   - isPremium: $isPremium');
+      debugPrint('   → API 호출 시작...');
+
+      // ✅ 2단계: 타이머 시작 (최소 1초 보장)
+      final startTime = DateTime.now();
+
       final fortuneResult = await fortuneService.getFortune(
         fortuneType: 'daily_calendar',
         dataSource: FortuneDataSource.api,
         inputConditions: inputConditions,
         conditions: conditions, // ✅ 최적화 활성화!
+        isPremium: isPremium, // ✅ 프리미엄 상태 전달
       );
+
+      debugPrint('');
+      debugPrint('4️⃣ 운세 생성 완료');
+      debugPrint('   - fortuneResult.isBlurred: ${fortuneResult.isBlurred}');
+      debugPrint('   - fortuneResult.blurredSections: ${fortuneResult.blurredSections}');
+      debugPrint('   - 데이터 크기: ${fortuneResult.data.toString().length} bytes');
+
+      // ✅ 3단계: 무조건 최소 1초 대기 (API가 빨라도 버튼 애니메이션 보장)
+      final elapsed = DateTime.now().difference(startTime).inMilliseconds;
+      final remainingTime = 1000 - elapsed;
+
+      if (remainingTime > 0) {
+        debugPrint('');
+        debugPrint('⏳ 버튼 로딩 애니메이션 표시 중... (${remainingTime}ms 추가 대기)');
+        await Future.delayed(Duration(milliseconds: remainingTime));
+      } else {
+        debugPrint('');
+        debugPrint('✅ API 호출 완료 (${elapsed}ms) - 즉시 결과 표시');
+      }
 
       if (mounted) {
         setState(() {
-          _fortuneResult = fortuneResult;
+          _fortuneResult = fortuneResult; // 3️⃣ fortuneResult.isBlurred 속성 포함
           _isLoading = false;
+
+          // ✅ result.isBlurred 동기화
+          _isBlurred = fortuneResult.isBlurred;
+          _blurredSections = List<String>.from(fortuneResult.blurredSections);
         });
 
+        debugPrint('');
+        debugPrint('5️⃣ UI 상태 업데이트 완료');
+
         // 히스토리 저장
+        debugPrint('');
+        debugPrint('6️⃣ 히스토리 저장 시작...');
         await _saveToHistory(fortuneResult);
 
         // 통계 업데이트
+        debugPrint('');
+        debugPrint('7️⃣ 통계 업데이트 시작...');
         await _updateStatistics();
+
+        debugPrint('');
+        debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        debugPrint('✅ [시간별운세] 운세 생성 프로세스 완료!');
+        if (fortuneResult.isBlurred) {
+          debugPrint('   → 블러된 섹션: ${fortuneResult.blurredSections.join(", ")}');
+          debugPrint('   → 사용자는 "광고 보고 잠금 해제" 버튼을 눌러야 합니다');
+        } else {
+          debugPrint('   → 프리미엄 사용자: 전체 운세 즉시 표시');
+        }
+        debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        debugPrint('');
       }
     } catch (e) {
+      debugPrint('');
+      debugPrint('❌ [시간별운세] 운세 생성 실패!');
+      debugPrint('   에러: $e');
+      debugPrint('');
+
       if (mounted) {
         setState(() {
           _error = e.toString();
@@ -232,6 +329,127 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
       );
     } catch (e) {
       debugPrint('통계 업데이트 실패: $e');
+    }
+  }
+
+  // 4️⃣ 광고 시청 후 블러 해제
+  Future<void> _showAdAndUnblur() async {
+    if (_fortuneResult == null) {
+      debugPrint('');
+      debugPrint('⚠️ [광고] _fortuneResult가 null입니다. 블러 해제 취소.');
+      return;
+    }
+
+    try {
+      debugPrint('');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      debugPrint('📺 [광고] 광고 시청 & 블러 해제 프로세스 시작');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+      // 광고 서비스 초기화 및 로드
+      final adService = AdService();
+
+      debugPrint('');
+      debugPrint('1️⃣ 광고 준비 상태 확인');
+      debugPrint('   - adService.isRewardedAdReady: ${adService.isRewardedAdReady}');
+
+      // 광고가 아직 로드되지 않았으면 로드
+      if (!adService.isRewardedAdReady) {
+        debugPrint('   → 광고가 준비되지 않음. 로딩 시작...');
+
+        // 로딩 중 사용자에게 표시
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 준비하는 중...'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+
+        await adService.loadRewardedAd();
+
+        // 광고 로딩 완료 대기 (최대 5초)
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+          debugPrint('   ⏳ 광고 로딩 대기 중... (${waitCount * 500}ms)');
+        }
+
+        if (!adService.isRewardedAdReady) {
+          debugPrint('   ❌ 광고 로딩 실패 - 타임아웃');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 불러오지 못했습니다. 다시 시도해주세요.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+          return;
+        }
+
+        debugPrint('   ✅ 광고 로딩 완료');
+      } else {
+        debugPrint('   ✅ 광고가 이미 준비됨');
+      }
+
+      debugPrint('');
+      debugPrint('2️⃣ 리워드 광고 표시');
+      debugPrint('   - 현재 블러 상태: isBlurred=${_fortuneResult!.isBlurred}');
+      debugPrint('   - 블러된 섹션: ${_fortuneResult!.blurredSections}');
+      debugPrint('   - 광고 준비 상태: ${adService.isRewardedAdReady}');
+      debugPrint('   → 광고 표시 중...');
+
+      // 리워드 광고 표시 및 완료 대기
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('');
+          debugPrint('3️⃣ 광고 시청 완료!');
+          debugPrint('   - reward.type: ${reward.type}');
+          debugPrint('   - reward.amount: ${reward.amount}');
+
+          // ✅ 광고 시청 완료 시 블러만 해제 (로컬 상태 변경)
+          if (mounted) {
+            debugPrint('   → 블러 해제 중...');
+
+            setState(() {
+              _isBlurred = false;
+              _blurredSections = [];
+            });
+
+            debugPrint('   ✅ 블러 해제 완료!');
+            debugPrint('      - 새 상태: _isBlurred=false');
+            debugPrint('      - 새 상태: _blurredSections=[]');
+
+            // 성공 메시지 표시
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('운세가 잠금 해제되었습니다!')),
+            );
+
+            debugPrint('');
+            debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            debugPrint('✅ [광고] 블러 해제 프로세스 완료!');
+            debugPrint('   → 사용자는 이제 전체 운세 내용을 볼 수 있습니다');
+            debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            debugPrint('');
+          } else {
+            debugPrint('   ⚠️ Widget이 이미 dispose됨. 블러 해제 취소.');
+          }
+        },
+      );
+    } catch (e) {
+      debugPrint('');
+      debugPrint('❌ [광고] 광고 표시 실패!');
+      debugPrint('   에러: $e');
+      debugPrint('');
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.')),
+        );
+      }
     }
   }
 
@@ -346,6 +564,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
       isEnabled: canProceed,
       showProgress: true,
       isVisible: true,
+      isLoading: _isLoading, // ✅ 로딩 상태 연결!
     );
   }
 
@@ -611,8 +830,17 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // 운세 결과가 있으면 결과 화면 표시
-    if (_fortuneResult != null) {
+    // 🔍 디버그 로깅: build() 호출 시점과 상태 체크
+    debugPrint('');
+    debugPrint('🔍 [BUILD] daily_calendar_fortune_page.dart build() 호출됨');
+    debugPrint('   - _fortuneResult: ${_fortuneResult != null ? "있음" : "없음"}');
+    debugPrint('   - _isLoading: $_isLoading');
+    debugPrint('   - 표시할 화면: ${_fortuneResult != null && !_isLoading ? "결과 화면" : "입력 폼"}');
+    debugPrint('');
+
+    // ✅ 운세 결과가 있고 로딩 중이 아닐 때만 결과 화면 표시
+    if (_fortuneResult != null && !_isLoading) {
+      debugPrint('📄 [BUILD] → 결과 화면(Scaffold) 렌더링 시작');
       return Scaffold(
         backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
         appBar: AppBar(
@@ -637,7 +865,10 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
             ),
           ],
         ),
-        body: SingleChildScrollView(
+        // ✅ Phase 8-9: Stack + FloatingBottomButton
+        body: Stack(
+          children: [
+            SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -657,7 +888,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                           child: Column(
                             children: [
                               Text(
-                                '${score}점',
+                                '$score점',
                                 style: context.displayLarge.copyWith(
                                   color: AppTheme.primaryColor,
                                   fontWeight: FontWeight.bold,
@@ -691,31 +922,43 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                         const SizedBox(height: 16),
                       ],
 
-                      // 조언
+                      // 조언 (5️⃣ 블러 대상)
                       if (fortuneData['advice'] != null) ...[
-                        _buildSectionCard(
-                          icon: Icons.tips_and_updates,
-                          title: '조언',
-                          content: fortuneData['advice'] as String,
-                          isDark: isDark,
+                        // ✅ Phase 7: BlurredFortuneContent → _buildBlurWrapper
+                        _buildBlurWrapper(
+                          sectionKey: 'advice',
+                          child: _buildSectionCard(
+                            icon: Icons.tips_and_updates,
+                            title: '조언',
+                            content: fortuneData['advice'] as String,
+                            isDark: isDark,
+                          ),
                         ),
                         const SizedBox(height: 16),
                       ],
 
-                      // AI 팁
+                      // AI 팁 (5️⃣ 블러 대상)
                       if (fortuneData['ai_tips'] != null) ...[
-                        _buildAITipsList(fortuneData['ai_tips'] as List, isDark),
+                        // ✅ Phase 7: BlurredFortuneContent → _buildBlurWrapper
+                        _buildBlurWrapper(
+                          sectionKey: 'ai_tips',
+                          child: _buildAITipsList(fortuneData['ai_tips'] as List, isDark),
+                        ),
                         const SizedBox(height: 16),
                       ],
 
-                      // 주의사항
+                      // 주의사항 (5️⃣ 블러 대상)
                       if (fortuneData['caution'] != null) ...[
-                        _buildSectionCard(
-                          icon: Icons.warning_amber_rounded,
-                          title: '주의사항',
-                          content: fortuneData['caution'] as String,
-                          isDark: isDark,
-                          isWarning: true,
+                        // ✅ Phase 7: BlurredFortuneContent → _buildBlurWrapper
+                        _buildBlurWrapper(
+                          sectionKey: 'caution',
+                          child: _buildSectionCard(
+                            icon: Icons.warning_amber_rounded,
+                            title: '주의사항',
+                            content: fortuneData['caution'] as String,
+                            isDark: isDark,
+                            isWarning: true,
+                          ),
                         ),
                         const SizedBox(height: 16),
                       ],
@@ -726,20 +969,22 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
             ],
           ),
         ),
-      );
-    }
 
-    // 로딩 중
-    if (_isLoading) {
-      return Scaffold(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
-        body: Center(
-          child: CircularProgressIndicator(
-            color: AppTheme.primaryColor,
-          ),
+            // ✅ Phase 9: FloatingBottomButton (Positioned 제거 - 위젯 내부에 이미 있음)
+            if (_isBlurred)
+              FloatingBottomButton(
+                text: '광고 보고 전체 내용 확인하기',
+                onPressed: _showAdAndUnblur,
+                isEnabled: true,
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 116), // bottom: 100 효과
+              ),
+          ],
         ),
       );
     }
+
+    // ✅ 로딩 중일 때는 입력 폼을 계속 표시 (버튼에 로딩 애니메이션)
+    // 로딩 페이지 제거 - 버튼 자체에서 로딩 표시
 
     // 에러 발생
     if (_error != null) {
@@ -941,7 +1186,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
-                          color: (cat['color'] as Color).withOpacity(0.1),
+                          color: (cat['color'] as Color).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -955,26 +1200,28 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    categoryInfo['title'] as String,
-                    style: context.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  if (categoryInfo['title'] != null)
+                    Text(
+                      categoryInfo['title'] as String,
+                      style: context.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 4),
-                  Text(
-                    categoryInfo['advice'] as String,
-                    style: context.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                      height: 1.5,
+                  if (categoryInfo['advice'] != null)
+                    Text(
+                      categoryInfo['advice'] as String,
+                      style: context.bodySmall.copyWith(
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                        height: 1.5,
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
           );
-        }).toList(),
+        }),
 
         // 전체 운세
         if (categories['total'] != null) ...[
@@ -983,8 +1230,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppTheme.primaryColor.withOpacity(0.1),
-                  AppTheme.primaryColor.withOpacity(0.05),
+                  AppTheme.primaryColor.withValues(alpha: 0.1),
+                  AppTheme.primaryColor.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -1101,7 +1348,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                     width: 24,
                     height: 24,
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withOpacity(0.1),
+                      color: AppTheme.primaryColor.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -1127,9 +1374,45 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
+    );
+  }
+
+  // ✅ Phase 6: Blur wrapper helper - ImageFilter.blur 적용
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(28),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

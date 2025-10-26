@@ -13,6 +13,7 @@ interface LuckySeriesFortuneRequest {
   genre?: string;
   platform?: string;
   userId?: string;
+  isPremium?: boolean; // ✅ 프리미엄 사용자 여부
 }
 
 interface SeriesRecommendation {
@@ -45,6 +46,8 @@ interface LuckySeriesFortuneResponse {
     recommendations: string[];
     energyBooster: string;
     timestamp: string;
+    isBlurred?: boolean; // ✅ 블러 상태
+    blurredSections?: string[]; // ✅ 블러된 섹션 목록
   };
   error?: string;
 }
@@ -169,7 +172,16 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    const { name, birthDate, genre, platform, userId }: LuckySeriesFortuneRequest = await req.json()
+    const {
+      name,
+      birthDate,
+      genre,
+      platform,
+      userId,
+      isPremium = false // ✅ 프리미엄 사용자 여부
+    }: LuckySeriesFortuneRequest = await req.json()
+
+    console.log('💎 [LuckySeries] Premium 상태:', isPremium)
 
     // 입력 데이터 검증
     if (!name || !birthDate) {
@@ -179,7 +191,7 @@ serve(async (req) => {
           error: '이름과 생년월일이 모두 필요합니다.'
         }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
           status: 400
         }
       )
@@ -202,7 +214,7 @@ serve(async (req) => {
           success: true,
           data: cachedResult.result
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
 
@@ -286,12 +298,18 @@ serve(async (req) => {
 
     const fortuneData = JSON.parse(response.content)
 
+    // ✅ Blur 로직 적용
+    const isBlurred = !isPremium
+    const blurredSections = isBlurred
+      ? ['subSeries', 'avoidSeries', 'recommendations', 'energyBooster']
+      : []
+
     const result: LuckySeriesFortuneResponse['data'] = {
       name,
       birthDate,
       genre: preferredGenre,
       platform: preferredPlatform,
-      mainSeries: fortuneData.mainSeries || {
+      mainSeries: fortuneData.mainSeries || { // ✅ 무료: 공개
         title: "특별한 시리즈",
         platform: preferredPlatform,
         genre: preferredGenre,
@@ -302,7 +320,19 @@ serve(async (req) => {
         timeToWatch: "저녁 시간",
         keyElements: ["행운", "긍정", "에너지"]
       },
-      subSeries: fortuneData.subSeries || {
+      weeklyTheme: fortuneData.weeklyTheme || "긍정적인 에너지 충전", // ✅ 무료: 공개
+      luckyGenres: fortuneData.luckyGenres || [preferredGenre, "힐링", "코미디"], // ✅ 무료: 공개
+      subSeries: isBlurred ? { // 🔒 유료
+        title: "🔒 프리미엄 전용",
+        platform: "🔒",
+        genre: "🔒",
+        description: "🔒 프리미엄 결제 후 확인 가능합니다",
+        rating: 0,
+        reason: "🔒 프리미엄 결제 후 확인 가능합니다",
+        mood: "🔒",
+        timeToWatch: "🔒",
+        keyElements: ["🔒"]
+      } : (fortuneData.subSeries || {
         title: "보조 추천",
         platform: preferredPlatform,
         genre: preferredGenre,
@@ -312,20 +342,23 @@ serve(async (req) => {
         mood: "편안하고 즐거운",
         timeToWatch: "자유 시간",
         keyElements: ["힐링", "재미"]
-      },
-      avoidSeries: fortuneData.avoidSeries || {
+      }),
+      avoidSeries: isBlurred ? { // 🔒 유료
+        title: "🔒 프리미엄 전용",
+        reason: "🔒 프리미엄 결제 후 확인 가능합니다"
+      } : (fortuneData.avoidSeries || {
         title: "무거운 분위기의 콘텐츠",
         reason: "오늘은 가벼운 마음으로 즐길 수 있는 것이 좋습니다."
-      },
-      weeklyTheme: fortuneData.weeklyTheme || "긍정적인 에너지 충전",
-      luckyGenres: fortuneData.luckyGenres || [preferredGenre, "힐링", "코미디"],
-      recommendations: fortuneData.recommendations || [
+      }),
+      recommendations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.recommendations || [ // 🔒 유료
         "자신만의 시간을 가지며 콘텐츠를 즐기세요",
         "좋아하는 간식과 함께 시청하면 더욱 좋습니다",
         "감동적인 장면에서는 마음껏 감정을 표현하세요"
-      ],
-      energyBooster: fortuneData.energyBooster || "따뜻한 차 한 잔과 함께하는 힐링 타임",
-      timestamp: new Date().toISOString()
+      ]),
+      energyBooster: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (fortuneData.energyBooster || "따뜻한 차 한 잔과 함께하는 힐링 타임"), // 🔒 유료
+      timestamp: new Date().toISOString(),
+      isBlurred, // ✅ 블러 상태
+      blurredSections // ✅ 블러된 섹션 목록
     }
 
     // 결과 캐싱
@@ -344,7 +377,7 @@ serve(async (req) => {
         success: true,
         data: result
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
   } catch (error) {
@@ -356,7 +389,7 @@ serve(async (req) => {
         error: '행운 시리즈 운세 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 500
       }
     )

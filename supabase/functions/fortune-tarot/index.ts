@@ -12,6 +12,7 @@ interface TarotFortuneRequest {
   spreadType: 'single' | 'three' | 'celtic' | 'relationship' | 'decision';
   selectedCards?: number[]; // 선택된 카드 ID들
   userId?: string;
+  isPremium?: boolean; // ✅ 프리미엄 사용자 여부
 }
 
 interface TarotCard {
@@ -45,6 +46,8 @@ interface TarotFortuneResponse {
     luckyElement: string;
     focusAreas: string[];
     timestamp: string;
+    isBlurred?: boolean; // ✅ 블러 상태
+    blurredSections?: string[]; // ✅ 블러 처리된 섹션 목록
   };
   error?: string;
 }
@@ -389,7 +392,9 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    const { question, spreadType, selectedCards, userId }: TarotFortuneRequest = await req.json()
+    const { question, spreadType, selectedCards, userId, isPremium }: TarotFortuneRequest = await req.json()
+
+    console.log(`[Tarot] Request - User: ${userId}, Premium: ${isPremium}, Spread: ${spreadType}`)
 
     // 입력 데이터 검증
     if (!question || !spreadType) {
@@ -399,7 +404,7 @@ serve(async (req) => {
           error: '질문과 스프레드 타입이 모두 필요합니다.'
         }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
           status: 400
         }
       )
@@ -413,7 +418,7 @@ serve(async (req) => {
           error: '유효하지 않은 스프레드 타입입니다.'
         }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
           status: 400
         }
       )
@@ -437,7 +442,7 @@ serve(async (req) => {
           success: true,
           data: cachedResult.result
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
 
@@ -531,21 +536,31 @@ ${cardDescriptions}
 
     const fortuneData = JSON.parse(response.content)
 
+    // ✅ Premium 여부에 따라 Blur 처리
+    const isBlurred = !isPremium
+    const blurredSections = isBlurred
+      ? ['guidance', 'keyThemes', 'timeFrame', 'advice', 'luckyElement', 'focusAreas']
+      : []
+
     const result: TarotFortuneResponse['data'] = {
       question,
       spreadType,
       spreadName: spreadConfig.name,
       cards,
-      overallReading: fortuneData.overallReading,
-      guidance: fortuneData.guidance,
-      keyThemes: fortuneData.keyThemes || [],
-      energyLevel: fortuneData.energyLevel || 5,
-      timeFrame: fortuneData.timeFrame || '가까운 미래',
-      advice: fortuneData.advice,
-      luckyElement: fortuneData.luckyElement || '공기',
-      focusAreas: fortuneData.focusAreas || [],
-      timestamp: new Date().toISOString()
+      overallReading: fortuneData.overallReading, // ✅ 무료: 공개
+      guidance: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : fortuneData.guidance, // 🔒 유료
+      keyThemes: isBlurred ? ['🔒 프리미엄 전용'] : (fortuneData.keyThemes || []), // 🔒 유료
+      energyLevel: fortuneData.energyLevel || 5, // ✅ 무료: 공개
+      timeFrame: isBlurred ? '🔒 프리미엄 전용' : (fortuneData.timeFrame || '가까운 미래'), // 🔒 유료
+      advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : fortuneData.advice, // 🔒 유료
+      luckyElement: isBlurred ? '🔒' : (fortuneData.luckyElement || '공기'), // 🔒 유료
+      focusAreas: isBlurred ? ['🔒 프리미엄 전용'] : (fortuneData.focusAreas || []), // 🔒 유료
+      timestamp: new Date().toISOString(),
+      isBlurred, // ✅ Blur 상태
+      blurredSections, // ✅ Blur 처리된 섹션 목록
     }
+
+    console.log(`[Tarot] Result generated - Blurred: ${isBlurred}, Sections: ${blurredSections.length}`)
 
     // 결과 캐싱
     await supabaseClient
@@ -563,7 +578,7 @@ ${cardDescriptions}
         success: true,
         data: result
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )
 
   } catch (error) {
@@ -575,7 +590,7 @@ ${cardDescriptions}
         error: '타로 운세 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
         status: 500
       }
     )

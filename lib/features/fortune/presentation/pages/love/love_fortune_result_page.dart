@@ -1,17 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../../core/models/fortune_result.dart';
+import '../../../../../core/widgets/blurred_fortune_content.dart';
 import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../shared/components/toss_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../shared/components/toss_button.dart';
+import '../../../../../services/ad_service.dart'; // ✅ RewardedAd용
+import '../../../../../core/utils/logger.dart'; // ✅ 로그용
 
-class LoveFortuneResultPage extends StatelessWidget {
-  final Map<String, dynamic> fortuneData;
+/// 연애운 결과 페이지 (프리미엄/블러 시스템 적용)
+///
+/// **블러 섹션** (4개):
+/// - compatibilityInsights: 궁합 인사이트
+/// - predictions: 미래 예측
+/// - actionPlan: 실천 계획
+/// - warningArea: 주의사항
+///
+/// **Floating Button**: "연애 조언 모두 보기"
+class LoveFortuneResultPage extends ConsumerStatefulWidget {
+  final FortuneResult fortuneResult;
 
   const LoveFortuneResultPage({
     super.key,
-    required this.fortuneData,
+    required this.fortuneResult,
   });
+
+  @override
+  ConsumerState<LoveFortuneResultPage> createState() => _LoveFortuneResultPageState();
+}
+
+class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
+  late FortuneResult _fortuneResult;
+
+  @override
+  void initState() {
+    super.initState();
+    _fortuneResult = widget.fortuneResult;
+    debugPrint('[연애운] 결과 페이지 초기화 - isBlurred: ${_fortuneResult.isBlurred}');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,146 +57,332 @@ class LoveFortuneResultPage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
           elevation: 0,
-          iconTheme: IconThemeData(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+            ),
+            onPressed: () => context.pop(),
           ),
           title: Text(
             '연애운세 결과',
-            style: TossTheme.heading3.copyWith(
+            style: context.heading3.copyWith(
               color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
           centerTitle: true,
         ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Main score card
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    const Color(0xFFFF6B6B),
-                    const Color(0xFFFF8CC8),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFFF6B6B).withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 1. 메인 점수 카드 (공개)
+              _buildMainScoreCard(),
+              const SizedBox(height: 24),
+
+              // 2. 연애 성향 (공개)
+              _buildLoveStyleSection(),
+
+              // 3. 매력 포인트 (공개)
+              _buildCharmPointsSection(),
+
+              // 4. 개선 포인트 (공개)
+              _buildImprovementSection(),
+
+              // 5. 궁합 인사이트 (블러)
+              BlurredFortuneContent(
+                fortuneResult: _fortuneResult,
+                child: _buildCompatibilityInsightsSection(),
               ),
-              child: Column(
-                children: [
-                  const Icon(
-                    Icons.favorite_rounded,
-                    color: TossDesignSystem.white,
-                    size: 48,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    '오늘의 연애운',
-                    style: TossTheme.body2.copyWith(
-                      color: TossDesignSystem.white.withValues(alpha: 0.9),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    '${_calculateScore()}점',
-                    style: TypographyUnified.displayLarge.copyWith(
-                      color: TossDesignSystem.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    _getMainMessage(),
-                    style: TossTheme.body1.copyWith(
-                      color: TossDesignSystem.white,
-                      height: 1.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+
+              // 6. 미래 예측 (블러)
+              BlurredFortuneContent(
+                fortuneResult: _fortuneResult,
+                child: _buildPredictionsSection(),
               ),
-            ).animate()
-              .fadeIn(duration: 600.ms)
-              .slideY(begin: 0.2, end: 0),
 
-            const SizedBox(height: 24),
+              // 7. 실천 계획 (블러)
+              BlurredFortuneContent(
+                fortuneResult: _fortuneResult,
+                child: _buildActionPlanSection(),
+              ),
 
-            // Detail sections
-            _buildDetailSection(
-              context,
-              '연애 성향',
-              _getLoveStyle(),
-              Icons.psychology_rounded,
-              TossTheme.primaryBlue,
-            ),
+              // 8. 주의사항 (블러)
+              BlurredFortuneContent(
+                fortuneResult: _fortuneResult,
+                child: _buildWarningSection(),
+              ),
 
-            _buildDetailSection(
-              context,
-              '매력 포인트',
-              _getCharmPoints(),
-              Icons.star_rounded,
-              TossTheme.warning,
-            ),
+              const SizedBox(height: 32),
 
-            _buildDetailSection(
-              context,
-              '개선 포인트',
-              _getImprovementPoints(),
-              Icons.trending_up_rounded,
-              TossTheme.success,
-            ),
+              // 공유 버튼
+              TossButton(
+                text: '결과 공유하기',
+                onPressed: () {
+                  // TODO: Implement share
+                },
+                style: TossButtonStyle.secondary,
+                icon: const Icon(Icons.share, size: 20),
+              ),
 
-            _buildDetailSection(
-              context,
-              '오늘의 조언',
-              _getAdvice(),
-              Icons.lightbulb_rounded,
-              TossTheme.primaryBlue,
-            ),
+              const SizedBox(height: 12),
 
-            const SizedBox(height: 32),
+              // 다시 분석하기 버튼
+              TossButton(
+                text: '다시 분석하기',
+                onPressed: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+                icon: const Icon(Icons.refresh, size: 20),
+              ),
 
-            // Action buttons
-            TossButton(
-              text: '결과 공유하기',
-              onPressed: () {
-                // TODO: Implement share
-              },
-              style: TossButtonStyle.secondary,
-              icon: const Icon(Icons.share, size: 20),
-            ),
-
-            const SizedBox(height: 12),
-
-            TossButton(
-              text: '다시 분석하기',
-              onPressed: () {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              },
-              icon: const Icon(Icons.refresh, size: 20),
-            ),
-
-            const SizedBox(height: 40),
-          ],
+              const SizedBox(height: 80), // Floating Button 공간
+            ],
+          ),
         ),
+
+        // 🎯 Floating Button
+        floatingActionButton: _fortuneResult.isBlurred
+            ? FloatingActionButton.extended(
+                onPressed: _showAdAndUnblur,
+                backgroundColor: TossDesignSystem.tossBlue,
+                icon: const Icon(Icons.play_arrow, color: Colors.white),
+                label: Text(
+                  '연애 조언 모두 보기',
+                  style: context.buttonMedium.copyWith(color: Colors.white),
+                ),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
-    ),
     );
   }
 
-  Widget _buildDetailSection(BuildContext context, String title, String content, IconData icon, Color color) {
+  // ===== 공개 섹션 빌더 =====
+
+  Widget _buildMainScoreCard() {
+    final data = _fortuneResult.data;
+    final loveScore = data['loveScore'] as int? ?? 70;
+    final mainMessage = data['mainMessage'] as String? ?? '';
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFFF6B6B),
+            Color(0xFFFF8CC8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF6B6B).withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.favorite_rounded,
+            color: TossDesignSystem.white,
+            size: 48,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '오늘의 연애운',
+            style: context.bodyMedium.copyWith(
+              color: TossDesignSystem.white.withValues(alpha: 0.9),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '$loveScore점',
+            style: context.displayLarge.copyWith(
+              color: TossDesignSystem.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            mainMessage,
+            style: context.bodyLarge.copyWith(
+              color: TossDesignSystem.white,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 600.ms).scale(delay: 200.ms);
+  }
+
+  Widget _buildLoveStyleSection() {
+    final data = _fortuneResult.data;
+    final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
+    final loveStyle = detailedAnalysis['loveStyle'] as Map<String, dynamic>? ?? {};
+    final description = loveStyle['description'] as String? ?? '당신만의 특별한 연애 스타일을 가지고 있어요.';
+
+    return _buildDetailSection(
+      context,
+      '연애 성향',
+      description,
+      Icons.psychology_rounded,
+      TossTheme.primaryBlue,
+    );
+  }
+
+  Widget _buildCharmPointsSection() {
+    final data = _fortuneResult.data;
+    final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
+    final charmPoints = detailedAnalysis['charmPoints'] as Map<String, dynamic>? ?? {};
+    final primary = charmPoints['primary'] as String? ?? '';
+    final details = List<String>.from(charmPoints['details'] ?? []);
+
+    final content = details.isNotEmpty
+        ? '$primary\n\n• ${details.join('\n• ')}'
+        : primary;
+
+    return _buildDetailSection(
+      context,
+      '매력 포인트',
+      content.isEmpty ? '당신만의 특별한 매력을 가지고 있어요.' : content,
+      Icons.star_rounded,
+      TossTheme.warning,
+    );
+  }
+
+  Widget _buildImprovementSection() {
+    final data = _fortuneResult.data;
+    final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
+    final improvementAreas = detailedAnalysis['improvementAreas'] as Map<String, dynamic>? ?? {};
+    final main = improvementAreas['main'] as String? ?? '';
+    final specific = List<String>.from(improvementAreas['specific'] ?? []);
+
+    final content = specific.isNotEmpty
+        ? '$main\n\n• ${specific.join('\n• ')}'
+        : main;
+
+    return _buildDetailSection(
+      context,
+      '개선 포인트',
+      content.isEmpty ? '자신의 감정을 솔직하게 표현해보세요.' : content,
+      Icons.trending_up_rounded,
+      TossTheme.success,
+    );
+  }
+
+  // ===== 블러 섹션 빌더 =====
+
+  Widget _buildCompatibilityInsightsSection() {
+    final data = _fortuneResult.data;
+    final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
+    final compatibilityInsights = detailedAnalysis['compatibilityInsights'] as Map<String, dynamic>? ?? {};
+
+    final bestMatch = compatibilityInsights['bestMatch'] as String? ?? '';
+    final avoidTypes = compatibilityInsights['avoidTypes'] as String? ?? '';
+    final tips = List<String>.from(compatibilityInsights['relationshipTips'] ?? []);
+
+    final content = '''
+💖 최고 궁합: $bestMatch
+
+⚠️ 피해야 할 유형: $avoidTypes
+
+💡 관계 팁:
+${tips.isNotEmpty ? '• ${tips.join('\n• ')}' : '서로를 존중하고 이해하는 관계를 만들어가세요.'}
+''';
+
+    return _buildDetailSection(
+      context,
+      '궁합 인사이트',
+      content,
+      Icons.people_rounded,
+      const Color(0xFF9C27B0), // Purple
+    );
+  }
+
+  Widget _buildPredictionsSection() {
+    final data = _fortuneResult.data;
+    final predictions = data['predictions'] as Map<String, dynamic>? ?? {};
+
+    final thisWeek = predictions['thisWeek'] as String? ?? '';
+    final thisMonth = predictions['thisMonth'] as String? ?? '';
+    final nextThreeMonths = predictions['nextThreeMonths'] as String? ?? '';
+
+    final content = '''
+📅 이번 주: $thisWeek
+
+📅 이번 달: $thisMonth
+
+📅 앞으로 3개월: $nextThreeMonths
+''';
+
+    return _buildDetailSection(
+      context,
+      '미래 예측',
+      content,
+      Icons.calendar_today_rounded,
+      TossTheme.primaryBlue,
+    );
+  }
+
+  Widget _buildActionPlanSection() {
+    final data = _fortuneResult.data;
+    final actionPlan = data['actionPlan'] as Map<String, dynamic>? ?? {};
+
+    final immediate = List<String>.from(actionPlan['immediate'] ?? []);
+    final shortTerm = List<String>.from(actionPlan['shortTerm'] ?? []);
+    final longTerm = List<String>.from(actionPlan['longTerm'] ?? []);
+
+    final content = '''
+⚡ 즉시 실천:
+${immediate.isNotEmpty ? '• ${immediate.join('\n• ')}' : '자신의 감정을 정리해보세요.'}
+
+📆 단기 계획:
+${shortTerm.isNotEmpty ? '• ${shortTerm.join('\n• ')}' : '상대방과의 소통을 늘려보세요.'}
+
+🎯 장기 계획:
+${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 함께 그려보세요.'}
+''';
+
+    return _buildDetailSection(
+      context,
+      '실천 계획',
+      content,
+      Icons.checklist_rounded,
+      TossTheme.success,
+    );
+  }
+
+  Widget _buildWarningSection() {
+    final data = _fortuneResult.data;
+    final todaysAdvice = data['todaysAdvice'] as Map<String, dynamic>? ?? {};
+    final warningArea = todaysAdvice['warningArea'] as String? ?? '과도한 기대는 실망으로 이어질 수 있으니 주의하세요.';
+
+    return _buildDetailSection(
+      context,
+      '⚠️ 주의사항',
+      warningArea,
+      Icons.warning_rounded,
+      TossTheme.error,
+    );
+  }
+
+  // ===== 공통 빌더 =====
+
+  Widget _buildDetailSection(
+    BuildContext context,
+    String title,
+    String content,
+    IconData icon,
+    Color color,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -176,7 +391,9 @@ class LoveFortuneResultPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+        border: Border.all(
+          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,32 +401,24 @@ class LoveFortuneResultPage extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 36,
-                height: 36,
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 20,
-                ),
+                child: Icon(icon, color: color, size: 20),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Text(
                 title,
-                style: TossTheme.body1.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                ),
+                style: context.heading4.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             content,
-            style: TossTheme.body2.copyWith(
+            style: context.bodyMedium.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
               height: 1.6,
             ),
@@ -217,88 +426,76 @@ class LoveFortuneResultPage extends StatelessWidget {
         ],
       ),
     ).animate()
-      .fadeIn(delay: 200.ms, duration: 500.ms)
-      .slideX(begin: -0.1, end: 0);
+        .fadeIn(delay: 200.ms, duration: 500.ms)
+        .slideX(begin: -0.1, end: 0);
   }
 
-  int _calculateScore() {
-    // Calculate score based on input data
-    int score = 70; // Base score
+  // ===== 광고 & 블러 해제 =====
 
-    // Adjust based on relationship status
-    if (fortuneData['relationshipStatus'] == 'single') {
-      score += 5;
-    } else if (fortuneData['relationshipStatus'] == 'dating') {
-      score += 10;
-    }
+  // ✅ RewardedAd 패턴으로 교체
+  Future<void> _showAdAndUnblur() async {
+    debugPrint('[연애운] 광고 시청 후 블러 해제 시작');
 
-    // Adjust based on experience
-    if (fortuneData['loveExperience'] == 'experienced') {
-      score += 5;
-    }
+    try {
+      final adService = AdService.instance;
 
-    // Adjust based on communication
-    if (fortuneData['communicationFrequency'] == 'daily') {
-      score += 10;
-    }
+      // 광고가 준비 안됐으면 로드
+      if (!adService.isRewardedAdReady) {
+        debugPrint('[연애운] ⏳ RewardedAd 로드 중...');
+        await adService.loadRewardedAd();
 
-    return score.clamp(0, 100);
-  }
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
 
-  String _getMainMessage() {
-    final score = _calculateScore();
-    if (score >= 80) {
-      return '사랑이 꽃피는 최고의 날이에요!\n특별한 인연을 만날 수 있을 거예요.';
-    } else if (score >= 60) {
-      return '좋은 기운이 감도는 날이에요.\n마음을 열고 다가가보세요.';
-    } else if (score >= 40) {
-      return '평온한 하루가 될 거예요.\n자신을 돌아보는 시간을 가져보세요.';
-    } else {
-      return '조금 더 기다려보세요.\n좋은 인연은 곧 찾아올 거예요.';
-    }
-  }
+        if (!adService.isRewardedAdReady) {
+          debugPrint('[연애운] ❌ RewardedAd 로드 타임아웃');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: TossDesignSystem.errorRed,
+              ),
+            );
+          }
+          return;
+        }
+      }
 
-  String _getLoveStyle() {
-    final style = fortuneData['loveStyle'];
-    if (style == 'passionate') {
-      return '열정적이고 적극적인 연애 스타일을 가지고 있어요. 감정 표현이 풍부하고 상대방에게 헌신적입니다.';
-    } else if (style == 'careful') {
-      return '신중하고 진지한 연애 스타일을 가지고 있어요. 천천히 관계를 발전시키며 안정적인 관계를 추구합니다.';
-    } else if (style == 'friendly') {
-      return '친구 같은 편안한 연애 스타일을 가지고 있어요. 소통을 중시하고 함께 성장하는 관계를 추구합니다.';
-    } else {
-      return '자유롭고 독립적인 연애 스타일을 가지고 있어요. 서로의 공간을 존중하며 성숙한 관계를 추구합니다.';
-    }
-  }
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('[연애운] ✅ 광고 시청 완료, 블러 해제');
+          if (mounted) {
+            setState(() {
+              _fortuneResult = _fortuneResult.copyWith(
+                isBlurred: false,
+                blurredSections: [],
+              );
+            });
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[연애운] 광고 표시 실패', e, stackTrace);
 
-  String _getCharmPoints() {
-    final charmPoints = fortuneData['charmPoints'] as List<dynamic>? ?? [];
-    if (charmPoints.isEmpty) {
-      return '당신만의 특별한 매력을 찾아보세요. 자신감이 가장 큰 매력이 될 수 있어요.';
-    }
-    final charmList = charmPoints.map((e) => e.toString()).toList();
-    return '${charmList.join(', ')} 등이 당신의 매력 포인트에요. 이런 장점들을 자신있게 어필해보세요!';
-  }
+      // UX 개선: 에러 발생해도 블러 해제
+      if (mounted) {
+        setState(() {
+          _fortuneResult = _fortuneResult.copyWith(
+            isBlurred: false,
+            blurredSections: [],
+          );
+        });
 
-  String _getImprovementPoints() {
-    final relationshipStatus = fortuneData['relationshipStatus'];
-    if (relationshipStatus == 'single') {
-      return '새로운 만남에 더 적극적으로 나서보세요. 다양한 활동에 참여하면 좋은 인연을 만날 수 있을 거예요.';
-    } else if (relationshipStatus == 'dating') {
-      return '상대방과의 소통을 더 늘려보세요. 작은 관심과 배려가 관계를 더욱 돈독하게 만들어줄 거예요.';
-    } else {
-      return '자신의 감정을 솔직하게 표현해보세요. 진정성 있는 모습이 더 좋은 관계로 이어질 거예요.';
-    }
-  }
-
-  String _getAdvice() {
-    final score = _calculateScore();
-    if (score >= 80) {
-      return '오늘은 특별한 날이 될 거예요. 평소와 다른 스타일을 시도해보거나 새로운 장소를 방문해보세요. 운명적인 만남이 기다리고 있을지도 몰라요.';
-    } else if (score >= 60) {
-      return '긍정적인 에너지가 가득한 날이에요. 밝은 미소와 친절한 태도로 주변 사람들과 소통해보세요. 예상치 못한 좋은 일이 생길 수 있어요.';
-    } else {
-      return '오늘은 자신을 돌보는 시간을 가져보세요. 좋아하는 취미 활동을 하거나 편안한 휴식을 취하면서 내면의 평화를 찾아보세요.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+            backgroundColor: TossDesignSystem.warningOrange,
+          ),
+        );
+      }
     }
   }
 }

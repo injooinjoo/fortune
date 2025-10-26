@@ -146,17 +146,11 @@ class _UnifiedFortuneBaseWidgetState
   /// 로딩 중 플래그
   bool _isLoading = false;
 
-  /// 에러 메시지
-  String? _errorMessage;
-
   /// 생성된 운세 결과
   FortuneResult? _fortuneResult;
 
   /// 블러 상태 (광고 시청 전)
   bool _isBlurred = false;
-
-  /// 광고 표시 중 플래그
-  bool _showingAd = false;
 
   /// UnifiedFortuneService 인스턴스
   late final UnifiedFortuneService _fortuneService;
@@ -214,28 +208,33 @@ class _UnifiedFortuneBaseWidgetState
       // 2-1. 운세 생성 (블러 상태)
       await _generateFortuneBlurred(isPremium: isPremium);
 
-      // 2-2. Premium 사용자는 광고 생략
+      // 2-2. Premium 사용자는 광고 생략하고 즉시 블러 해제
       if (isPremium) {
-        Logger.info('[UnifiedFortuneBaseWidget] Premium 사용자 - 광고 생략');
+        Logger.info('[UnifiedFortuneBaseWidget] Premium 사용자 - 광고 생략, 블러 해제');
+        await _unlockBlurredContent();
         return;
       }
 
-      // 2-3. 블러된 결과가 표시된 상태에서 광고 표시
-      setState(() {
-        _showingAd = true;
-      });
-
+      // 2-3. 블러된 결과가 표시된 상태에서 광고 표시 시도
       await AdService.instance.showInterstitialAdWithCallback(
         onAdCompleted: () async {
+          Logger.info('[UnifiedFortuneBaseWidget] 광고 시청 완료 - 블러 해제');
           await _unlockBlurredContent();
         },
         onAdFailed: () async {
+          Logger.info('[UnifiedFortuneBaseWidget] 광고 표시 실패 - 블러 해제');
           await _unlockBlurredContent();
         },
       );
+      // ✅ 광고가 준비 안 됐으면 블러 유지 (AdService에서 콜백 호출 안함)
+      // FloatingBottomButton을 통해 사용자가 직접 블러 해제하도록 유도
     } catch (e) {
       Logger.error('[UnifiedFortuneBaseWidget] 운세 생성 실패', e);
-      await _unlockBlurredContent(); // 에러 시에도 블러 해제
+      // ❌ 에러 발생 시에만 블러 해제
+      if (_fortuneResult == null) {
+        // 운세 자체가 생성 안 됐으면 에러 표시
+        return;
+      }
     }
   }
 
@@ -244,7 +243,6 @@ class _UnifiedFortuneBaseWidgetState
     try {
       setState(() {
         _isLoading = true;
-        _errorMessage = null;
       });
 
       Logger.info('[UnifiedFortuneBaseWidget] 블러 상태 운세 생성 시작');
@@ -259,8 +257,14 @@ class _UnifiedFortuneBaseWidgetState
         inputConditions: conditions.toJson(),
         conditions: conditions,
         isPremium: isPremium,
-        onBlurredResult: (blurredResult) {
+        onBlurredResult: (blurredResult) async {
           // 블러 상태 결과를 즉시 UI에 표시
+          Logger.info('[UnifiedFortuneBaseWidget] 📥 onBlurredResult 콜백 호출됨');
+          Logger.info('[UnifiedFortuneBaseWidget] mounted: $mounted, isBlurred: ${blurredResult.isBlurred}');
+
+          // ✅ 1초 대기 (로딩 애니메이션 보여주기)
+          await Future.delayed(const Duration(milliseconds: 1000));
+
           if (mounted) {
             setState(() {
               _fortuneResult = blurredResult;
@@ -268,7 +272,9 @@ class _UnifiedFortuneBaseWidgetState
               _showResult = true;
               _isLoading = false;
             });
-            Logger.info('[UnifiedFortuneBaseWidget] 🔒 블러 상태 결과 표시');
+            Logger.info('[UnifiedFortuneBaseWidget] 🔒 블러 상태 결과 표시 완료 (_showResult: $_showResult)');
+          } else {
+            Logger.warning('[UnifiedFortuneBaseWidget] ⚠️ mounted=false - setState 스킵됨');
           }
         },
       );
@@ -296,7 +302,6 @@ class _UnifiedFortuneBaseWidgetState
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _errorMessage = error.toString();
         });
 
         HapticUtils.error();
@@ -316,7 +321,6 @@ class _UnifiedFortuneBaseWidgetState
     if (!mounted) return;
 
     setState(() {
-      _showingAd = false;
       if (_fortuneResult != null) {
         _fortuneResult = _fortuneResult!.copyWith(
           isBlurred: false,
@@ -366,7 +370,6 @@ class _UnifiedFortuneBaseWidgetState
 
       if (mounted) {
         setState(() {
-          _errorMessage = error.toString();
           _isLoading = false;
         });
 
@@ -385,7 +388,6 @@ class _UnifiedFortuneBaseWidgetState
     setState(() {
       _showResult = false;
       _fortuneResult = null;
-      _errorMessage = null;
     });
   }
 
@@ -440,13 +442,9 @@ class _UnifiedFortuneBaseWidgetState
               ] : null,
             )
           : null,
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : _showResult && _fortuneResult != null
-              ? _buildResultWithBlur(context)
-              : widget.inputBuilder(context, _handleSubmit),
+      body: _showResult && _fortuneResult != null
+          ? _buildResultWithBlur(context)
+          : widget.inputBuilder(context, _handleSubmit),
     );
   }
 
@@ -456,36 +454,9 @@ class _UnifiedFortuneBaseWidgetState
       return const Center(child: Text('결과가 없습니다.'));
     }
 
-    // 블러 상태면 BlurredFortuneContent로 감싸기
-    if (_isBlurred && _fortuneResult!.isBlurred) {
-      return BlurredFortuneContent(
-        fortuneResult: _fortuneResult!,
-        child: widget.resultBuilder(context, _fortuneResult!),
-        onUnlockTap: _showingAd
-            ? null // 광고 표시 중에는 버튼 비활성화
-            : () async {
-                // 수동으로 광고 표시
-                setState(() {
-                  _showingAd = true;
-                });
-
-                await AdService.instance.showInterstitialAdWithCallback(
-                  onAdCompleted: () async {
-                    await _unlockBlurredContent();
-                  },
-                  onAdFailed: () async {
-                    await _unlockBlurredContent();
-                  },
-                );
-              },
-      );
-    }
-
-    // 블러 해제된 상태면 그냥 결과 표시
-    return UnblurAnimation(
-      isUnblurring: !_isBlurred && _fortuneResult!.blurredSections.isNotEmpty,
-      child: widget.resultBuilder(context, _fortuneResult!),
-    );
+    // ✅ BlurredFortuneContent 제거 - 각 페이지에서 _buildBlurWrapper로 개별 섹션 블러 처리
+    // 블러 상태든 아니든 그냥 resultBuilder 호출
+    return widget.resultBuilder(context, _fortuneResult!);
   }
 }
 

@@ -47,6 +47,7 @@ interface BlindDateRequest {
   };
 
   userId?: string;
+  isPremium?: boolean; // ✅ 프리미엄 사용자 여부
 }
 
 // GPT-4 Vision으로 사진 분석
@@ -185,8 +186,11 @@ serve(async (req) => {
       chatContent,
       chatPlatform,
       photoAnalysis,
-      userId
+      userId,
+      isPremium = false // ✅ 프리미엄 사용자 여부
     } = requestData
+
+    console.log('💎 [BlindDate] Premium 상태:', isPremium)
 
     // Cache key 생성
     const today = new Date().toISOString().split('T')[0]
@@ -203,7 +207,7 @@ serve(async (req) => {
     if (cachedResult) {
       return new Response(
         JSON.stringify({ success: true, data: cachedResult.result }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
 
@@ -270,7 +274,7 @@ ${chatAnalysisResult.redFlags && chatAnalysisResult.redFlags.length > 0 ? `⚠�
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json; charset=utf-8',
         },
         body: JSON.stringify({
           model: 'gpt-5-nano-2025-08-07',
@@ -345,8 +349,23 @@ ${photoAnalysisText}${chatAnalysisText}
       const openaiResult = await openaiResponse.json()
       const fortuneData = JSON.parse(openaiResult.choices[0].message.content)
 
+      // ✅ Blur 로직 적용
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['successPrediction', 'firstImpressionTips', 'conversationTopics', 'outfitAdvice', 'locationAdvice', 'dosList', 'dontsList', 'finalMessage']
+        : []
+
       const result = {
-        ...fortuneData,
+        overallScore: fortuneData.overallScore, // ✅ 무료: 공개
+        content: fortuneData.content, // ✅ 무료: 공개
+        successPrediction: isBlurred ? { score: 0, message: '🔒 프리미엄 전용', advice: '🔒 프리미엄 결제 후 확인 가능합니다' } : fortuneData.successPrediction, // 🔒 유료
+        firstImpressionTips: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.firstImpressionTips, // 🔒 유료
+        conversationTopics: isBlurred ? { recommended: ['🔒 프리미엄 전용'], avoid: ['🔒 프리미엄 전용'] } : fortuneData.conversationTopics, // 🔒 유료
+        outfitAdvice: isBlurred ? { style: '🔒 프리미엄 결제 후 확인 가능합니다', colors: ['🔒 프리미엄 전용'] } : fortuneData.outfitAdvice, // 🔒 유료
+        locationAdvice: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.locationAdvice, // 🔒 유료
+        dosList: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.dosList, // 🔒 유료
+        dontsList: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.dontsList, // 🔒 유료
+        finalMessage: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : fortuneData.finalMessage, // 🔒 유료
         userInfo: { name, birthDate, gender, mbti },
         meetingInfo: { meetingDate, meetingTime, meetingType, introducer },
         analysisType,
@@ -354,7 +373,9 @@ ${photoAnalysisText}${chatAnalysisText}
         chatAnalysis: chatAnalysisResult,
         hasPhotoAnalysis: !!photoAnalysisResult || !!photoAnalysis,
         hasChatAnalysis: !!chatAnalysisResult,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        isBlurred, // ✅ 블러 상태
+        blurredSections // ✅ 블러된 섹션 목록
       }
 
       // fortune_cache에 저장
@@ -370,7 +391,7 @@ ${photoAnalysisText}${chatAnalysisText}
 
       return new Response(
         JSON.stringify({ success: true, data: result }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
 
     } finally {
@@ -385,7 +406,7 @@ ${photoAnalysisText}${chatAnalysisText}
         error: '운세 생성 중 오류가 발생했습니다.',
         details: error instanceof Error ? error.message : String(error)
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' }, status: 500 }
     )
   }
 })
