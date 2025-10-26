@@ -61,6 +61,34 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         : TossDesignSystem.white;
   }
 
+  // Parse time from birth time string like "축시 (01:00 - 03:00)"
+  TimeOfDay? _parseTimeFromBirthTime(String birthTime) {
+    try {
+      // Extract time from parentheses, e.g., "축시 (01:00 - 03:00)" -> "01:00"
+      final timeMatch = RegExp(r'\((\d{2}):(\d{2})').firstMatch(birthTime);
+      if (timeMatch != null) {
+        final hour = int.parse(timeMatch.group(1)!);
+        final minute = int.parse(timeMatch.group(2)!);
+        return TimeOfDay(hour: hour, minute: minute);
+      }
+
+      // Fallback: try to parse as "HH:MM" directly
+      if (birthTime.contains(':')) {
+        final parts = birthTime.split(':');
+        if (parts.length >= 2) {
+          final hour = int.tryParse(parts[0].trim());
+          final minute = int.tryParse(parts[1].trim().substring(0, 2));
+          if (hour != null && minute != null) {
+            return TimeOfDay(hour: hour, minute: minute);
+          }
+        }
+      }
+    } catch (e) {
+      Logger.error('Failed to parse birth time: $birthTime', e);
+    }
+    return null;
+  }
+
   // Form values
   DateTime? _birthDate;
   String? _birthTime;
@@ -396,10 +424,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       // Birth time input (숫자패드)
                       NumericTimeInput(
                         initialTime: _birthTime != null
-                            ? TimeOfDay(
-                                hour: int.parse(_birthTime!.split(':')[0]),
-                                minute: int.parse(_birthTime!.split(':')[1]),
-                              )
+                            ? _parseTimeFromBirthTime(_birthTime!)
                             : null,
                         label: '태어난 시간',
                         hint: 'HH:MM',

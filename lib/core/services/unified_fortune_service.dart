@@ -17,6 +17,7 @@ import 'fortune_generators/fortune_cookie_generator.dart';
 import 'fortune_generators/wish_generator.dart';
 import 'fortune_generators/lucky_items_generator.dart';
 import 'fortune_generators/love_generator.dart'; // ✅ 추가
+import 'fortune_generators/talent_generator.dart'; // ✅ 재능 발견 추가
 import 'fortune_optimization_service.dart';
 import '../../features/fortune/domain/models/fortune_conditions.dart';
 import '../../features/fortune/domain/models/conditions/love_fortune_conditions.dart'; // ✅ 추가
@@ -324,6 +325,9 @@ class UnifiedFortuneService {
             supabase: _supabase,
             isPremium: isPremium,
           );
+
+        case 'talent':
+          return await TalentGenerator.generate(inputConditions, _supabase);
 
         case 'avoid_people':
         case 'avoid-people':
@@ -638,6 +642,8 @@ class UnifiedFortuneService {
         return ['compatibility_score', 'relationship_advice', 'future_prediction'];
       case 'love':
         return ['compatibilityInsights', 'predictions', 'actionPlan', 'warningArea'];
+      case 'talent':
+        return ['top3_talents', 'career_roadmap', 'growth_timeline']; // ✅ 결과 페이지의 실제 섹션 키와 일치
       case 'moving':
         return ['direction_analysis', 'moving_advice', 'auspicious_dates'];
       case 'career':
@@ -655,6 +661,9 @@ class UnifiedFortuneService {
       case 'personality-dna':
         // ✅ Personality DNA 블러 섹션: 연애/직장/매칭/궁합 스타일
         return ['loveStyle', 'workStyle', 'dailyMatching', 'compatibility'];
+      case 'lucky_items':
+        // ✅ 행운 아이템 블러 섹션: 로또(마지막번호), 쇼핑, 게임, 음식, 여행, 건강, 패션, 라이프, 오늘의색상
+        return ['lotto', 'shopping', 'game', 'food', 'travel', 'health', 'fashion', 'lifestyle', 'today_color'];
       default:
         // 기본적으로 'advice', 'details', 'recommendations' 블러 처리
         return ['advice', 'details', 'recommendations'];

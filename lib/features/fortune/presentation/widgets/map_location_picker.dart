@@ -40,12 +40,19 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
   void initState() {
     super.initState();
     _mapController = MapController();
-    _selectedLocation = widget.initialLocation ?? const LatLng(37.5665, 126.9780); // 서울 중심
+    _selectedLocation = widget.initialLocation ?? const LatLng(37.5665, 126.9780); // 임시 기본값
     _selectedAddress = widget.initialAddress ?? '';
-    
+
     if (widget.initialAddress != null) {
       _searchController.text = widget.initialAddress!;
-}
+    }
+
+    // 초기 로드 시 자동으로 현재 위치 가져오기
+    if (widget.initialLocation == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _getCurrentLocation();
+      });
+    }
   }
 
   Future<void> _getCurrentLocation() async {

@@ -348,17 +348,10 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
                 : AccordionInputFormWithHeader(
                     header: _buildTitleSection(isDark),
                     sections: _accordionSections,
-                    onAllCompleted: null,
+                    onAllCompleted: _canSubmit() ? () => _submitWish() : null,
                     completionButtonText: '✨ 소원 빌기',
                   ),
-            if (_canSubmit())
-              TossFloatingProgressButtonPositioned(
-                text: '✨ 소원 빌기',
-                onPressed: _canSubmit() ? () => _submitWish() : null,
-                isEnabled: _canSubmit(),
-                showProgress: false,
-                isVisible: _canSubmit(),
-              ),
+            // ✅ 중복 제거: AccordionInputFormWithHeader의 버튼 사용
           ],
         ),
       ),

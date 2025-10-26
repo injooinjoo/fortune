@@ -132,9 +132,9 @@ serve(async (req) => {
 {
   "meta": {
     "date": "2025-08-17",
-    "weekday": "일요일", 
+    "weekday": "일요일",
     "timezone": "Asia/Seoul",
-    "city": "서울"
+    "city": "${weather?.cityName || '서울'}"
   },
   "weatherSummary": {
     "icon": "☀",
@@ -347,7 +347,7 @@ ${sajuAnalysis ? `- 천간: ${sajuAnalysis.천간}
         date: now.toISOString().split('T')[0],
         weekday: getWeekday(now.getDay()),
         timezone: "Asia/Seoul",
-        city: "서울"
+        city: weather?.cityName || "서울"
       };
       
       overall = {

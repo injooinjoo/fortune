@@ -30,7 +30,7 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
       backgroundColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 0,
-      automaticallyImplyLeading: true,
+      automaticallyImplyLeading: false, // ✅ 기본 백 버튼 제거
       iconTheme: IconThemeData(
         color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
       ),
@@ -41,7 +41,16 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
         ),
       ),
       centerTitle: centerTitle,
-      actions: actions,
+      // ✅ 우측 상단에 엑스 버튼 추가
+      actions: actions ?? [
+        IconButton(
+          icon: Icon(
+            Icons.close,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+          ),
+          onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
+        ),
+      ],
     );
   }
 

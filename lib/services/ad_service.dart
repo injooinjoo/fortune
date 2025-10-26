@@ -296,9 +296,13 @@ class AdService {
 
       await _interstitialAd!.show();
     } else {
-      // ✅ 광고 준비 안 됨 - 콜백 실행하지 않음 (블러 유지)
-      Logger.warning('⚠️ Interstitial ad not ready - keeping content blurred');
-      // 블러 상태 유지, FloatingBottomButton에서 사용자가 직접 눌렀을 때만 해제
+      // ✅ 광고 준비 안 됨 - onAdFailed 콜백 실행
+      Logger.warning('⚠️ Interstitial ad not ready - executing onAdFailed callback');
+      try {
+        await onAdFailed?.call();
+      } catch (e, stackTrace) {
+        Logger.error('[AdService] Error in onAdFailed callback (ad not ready)', e, stackTrace);
+      }
     }
   }
 

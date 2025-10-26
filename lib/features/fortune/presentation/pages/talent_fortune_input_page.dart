@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../domain/models/talent_input_model.dart';
@@ -16,6 +18,10 @@ import '../../../../services/ad_service.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
+import '../../../../presentation/providers/token_provider.dart';
+import '../../../../core/utils/logger.dart';
 
 /// Provider for talent input data
 final talentInputDataProvider = StateProvider<TalentInputData>((ref) => const TalentInputData());
@@ -51,11 +57,22 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
 
   // Accordion sections
   List<AccordionInputSection> _accordionSections = [];
+  bool _isGenerating = false; // 운세 생성 중 플래그
+
+  late UnifiedFortuneService _fortuneService;
 
   @override
   void initState() {
     super.initState();
-    _loadProfileData();
+    _fortuneService = UnifiedFortuneService(Supabase.instance.client);
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    print('[TalentFortune] 📋 데이터 초기화 시작');
+    await _loadProfileData();
+    await _loadSavedSelections();
+    print('[TalentFortune] ✅ 데이터 초기화 완료');
   }
 
   @override
@@ -70,9 +87,13 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
   }
 
   Future<void> _loadProfileData() async {
+    print('[TalentFortune] 👤 프로필 로딩 시작');
+
     // 이미 로드된 프로필 정보 사용 (앱 시작 시 로드됨)
     final profileAsync = ref.read(userProfileProvider);
     final profile = profileAsync.value;
+
+    print('[TalentFortune] 👤 프로필: ${profile != null ? "있음" : "없음"}');
 
     if (profile != null && mounted) {
       setState(() {
@@ -90,13 +111,12 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
           _birthTimeController.text = '${_birthTime!.hour.toString().padLeft(2, '0')}:${_birthTime!.minute.toString().padLeft(2, '0')}';
         }
 
-        // Accordion 섹션 초기화
-        _initializeAccordionSections();
+        print('[TalentFortune] 👤 생년월일: $_birthDate, 출생시간: $_birthTime, 성별: $_gender');
       });
-    } else {
-      // 프로필이 없으면 빈 상태로 초기화
-      _initializeAccordionSections();
     }
+
+    // Accordion 섹션 초기화는 나중에 한번만 실행
+    print('[TalentFortune] ✅ 프로필 로딩 완료');
   }
 
   TimeOfDay? _parseTimeOfDay(String timeString) {
@@ -111,6 +131,68 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
       // 파싱 실패
     }
     return null;
+  }
+
+  /// 마지막 선택 저장
+  Future<void> _saveSelections() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = {
+      'birthCity': _birthCityController.text,
+      'occupation': _occupationController.text,
+      'concerns': _selectedConcerns.toList(),
+      'interests': _selectedInterests.toList(),
+      'strengths': _strengthsController.text,
+      'weaknesses': _weaknessesController.text,
+      'workStyle': _workStyle,
+      'energySource': _energySource,
+      'problemSolving': _problemSolving,
+      'preferredRole': _preferredRole,
+    };
+    await prefs.setString('talent_fortune_selections', jsonEncode(data));
+  }
+
+  /// 저장된 선택 불러오기
+  Future<void> _loadSavedSelections() async {
+    print('[TalentFortune] 💾 저장된 선택 불러오기 시작');
+
+    final prefs = await SharedPreferences.getInstance();
+    final savedData = prefs.getString('talent_fortune_selections');
+
+    print('[TalentFortune] 💾 저장된 데이터: ${savedData != null ? "있음" : "없음"}');
+
+    if (savedData != null && mounted) {
+      try {
+        final data = jsonDecode(savedData) as Map<String, dynamic>;
+
+        setState(() {
+          _birthCityController.text = data['birthCity'] ?? '';
+          _occupationController.text = data['occupation'] ?? '';
+          _selectedConcerns.clear();
+          _selectedConcerns.addAll((data['concerns'] as List<dynamic>? ?? []).cast<String>());
+          _selectedInterests.clear();
+          _selectedInterests.addAll((data['interests'] as List<dynamic>? ?? []).cast<String>());
+          _strengthsController.text = data['strengths'] ?? '';
+          _weaknessesController.text = data['weaknesses'] ?? '';
+          _workStyle = data['workStyle'];
+          _energySource = data['energySource'];
+          _problemSolving = data['problemSolving'];
+          _preferredRole = data['preferredRole'];
+        });
+
+        print('[TalentFortune] 💾 불러온 선택: 고민=${_selectedConcerns.length}개, 관심=${_selectedInterests.length}개');
+      } catch (e) {
+        print('[TalentFortune] ❌ 저장된 선택 불러오기 실패: $e');
+      }
+    }
+
+    // Accordion 섹션 초기화 (프로필 + 저장된 선택 모두 반영)
+    if (mounted) {
+      setState(() {
+        _initializeAccordionSections();
+      });
+    }
+
+    print('[TalentFortune] ✅ 저장된 선택 불러오기 완료');
   }
 
   void _initializeAccordionSections() {
@@ -161,7 +243,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         icon: Icons.location_city_rounded,
         inputWidgetBuilder: (context, onComplete) => _buildBirthCityInput(onComplete),
         value: _birthCityController.text.isNotEmpty ? _birthCityController.text : null,
-        isCompleted: false, // 선택사항이므로 완료 체크 안함
+        isCompleted: _birthCityController.text.isNotEmpty, // 입력되면 완료 처리
         displayValue: _birthCityController.text.isNotEmpty ? _birthCityController.text : null,
       ),
 
@@ -172,7 +254,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         icon: Icons.work_rounded,
         inputWidgetBuilder: (context, onComplete) => _buildOccupationInput(onComplete),
         value: _occupationController.text.isNotEmpty ? _occupationController.text : null,
-        isCompleted: false, // 선택사항
+        isCompleted: _occupationController.text.isNotEmpty, // 입력되면 완료 처리
         displayValue: _occupationController.text.isNotEmpty ? _occupationController.text : null,
       ),
 
@@ -211,10 +293,10 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         icon: Icons.rate_review_rounded,
         inputWidgetBuilder: (context, onComplete) => _buildSelfEvaluationInput(onComplete),
         value: _strengthsController.text.isNotEmpty || _weaknessesController.text.isNotEmpty,
-        isCompleted: false, // 선택사항
+        isCompleted: _strengthsController.text.isNotEmpty || _weaknessesController.text.isNotEmpty, // 입력되면 완료 처리
         displayValue: _strengthsController.text.isNotEmpty
             ? '강점: ${_strengthsController.text}'
-            : null,
+            : (_weaknessesController.text.isNotEmpty ? '약점: ${_weaknessesController.text}' : null),
       ),
 
       // 9. 업무 스타일 (선택 필요 - 열려있음)
@@ -264,6 +346,8 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
   }
 
   void _updateAccordionSection(String id, dynamic value, String? displayValue) {
+    print('[TalentFortune] 📝 _updateAccordionSection() 호출: id=$id, value=$value');
+
     final index = _accordionSections.indexWhere((section) => section.id == id);
     if (index != -1) {
       setState(() {
@@ -278,102 +362,169 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
           isMultiSelect: _accordionSections[index].isMultiSelect, // 기존 isMultiSelect 값 유지
         );
       });
+
+      print('[TalentFortune] 📝 섹션 업데이트 완료 → setState() 호출됨');
+
+      // 선택 변경 시 자동 저장
+      _saveSelections();
     }
   }
 
   bool _canGenerate() {
-    // 필수: 생년월일, 출생시간, 성별, 고민/관심 중 1개, 성향 4개
-    return _birthDate != null &&
-        _birthTime != null &&
+    // 필수: 생년월일, 성별, 고민/관심 중 1개, 성향 4개
+    // 선택: 출생시간
+    print('[TalentFortune] 🎯 _canGenerate() 체크 시작');
+    print('[TalentFortune] 🎯 _birthDate: ${_birthDate != null ? "✅" : "❌"} ($_birthDate)');
+    print('[TalentFortune] 🎯 _gender: ${_gender != null ? "✅" : "❌"} ($_gender)');
+    print('[TalentFortune] 🎯 _selectedConcerns: ${_selectedConcerns.isNotEmpty ? "✅" : "❌"} (${_selectedConcerns.length}개)');
+    print('[TalentFortune] 🎯 _selectedInterests: ${_selectedInterests.isNotEmpty ? "✅" : "❌"} (${_selectedInterests.length}개)');
+    print('[TalentFortune] 🎯 고민/관심 중 1개 이상: ${(_selectedConcerns.isNotEmpty || _selectedInterests.isNotEmpty) ? "✅" : "❌"}');
+    print('[TalentFortune] 🎯 _workStyle: ${_workStyle != null ? "✅" : "❌"} ($_workStyle)');
+    print('[TalentFortune] 🎯 _energySource: ${_energySource != null ? "✅" : "❌"} ($_energySource)');
+    print('[TalentFortune] 🎯 _problemSolving: ${_problemSolving != null ? "✅" : "❌"} ($_problemSolving)');
+    print('[TalentFortune] 🎯 _preferredRole: ${_preferredRole != null ? "✅" : "❌"} ($_preferredRole)');
+
+    final result = _birthDate != null &&
         _gender != null &&
         (_selectedConcerns.isNotEmpty || _selectedInterests.isNotEmpty) &&
         _workStyle != null &&
         _energySource != null &&
         _problemSolving != null &&
         _preferredRole != null;
+
+    print('[TalentFortune] 🎯 최종 결과: ${result ? "✅ 생성 가능" : "❌ 생성 불가"}');
+    return result;
   }
 
   Future<void> _analyzeAndShowResult() async {
+    Logger.info('[TalentFortune] 🎬 _analyzeAndShowResult() 호출됨!');
+
     if (!_canGenerate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('필수 정보를 모두 입력해주세요'),
-          backgroundColor: TossDesignSystem.warningOrange,
-        ),
-      );
+      Logger.warning('[TalentFortune] ❌ _canGenerate() = false → 함수 종료');
       return;
     }
 
-    final inputData = TalentInputData(
-      birthDate: _birthDate!,
-      birthTime: _birthTime!,
-      gender: _gender!,
-      birthCity: _birthCityController.text.isNotEmpty ? _birthCityController.text : null,
-      currentOccupation: _occupationController.text.isNotEmpty ? _occupationController.text : null,
-      concernAreas: _selectedConcerns.toList(),
-      interestAreas: _selectedInterests.toList(),
-      selfStrengths: _strengthsController.text.isNotEmpty ? _strengthsController.text : null,
-      selfWeaknesses: _weaknessesController.text.isNotEmpty ? _weaknessesController.text : null,
-      workStyle: _workStyle!,
-      energySource: _energySource!,
-      problemSolving: _problemSolving!,
-      preferredRole: _preferredRole!,
-    );
+    if (_isGenerating) {
+      Logger.warning('[TalentFortune] ❌ 이미 생성 중 → 함수 종료');
+      return;
+    }
 
-    // Show loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Center(
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark200
-                : Colors.white,
-            borderRadius: BorderRadius.circular(16),
+    setState(() {
+      _isGenerating = true;
+    });
+
+    try {
+      // 1. 입력 데이터 준비
+      final inputData = TalentInputData(
+        birthDate: _birthDate!,
+        birthTime: _birthTime ?? const TimeOfDay(hour: 12, minute: 0), // 출생시간 없으면 정오(12시)로 기본값
+        gender: _gender!,
+        birthCity: _birthCityController.text.isNotEmpty ? _birthCityController.text : null,
+        currentOccupation: _occupationController.text.isNotEmpty ? _occupationController.text : null,
+        concernAreas: _selectedConcerns.toList(),
+        interestAreas: _selectedInterests.toList(),
+        selfStrengths: _strengthsController.text.isNotEmpty ? _strengthsController.text : null,
+        selfWeaknesses: _weaknessesController.text.isNotEmpty ? _weaknessesController.text : null,
+        workStyle: _workStyle!,
+        energySource: _energySource!,
+        problemSolving: _problemSolving!,
+        preferredRole: _preferredRole!,
+      );
+
+      Logger.info('[TalentFortune] 📋 입력 데이터 생성 완료');
+
+      // 2. Premium 상태 확인
+      final tokenState = ref.read(tokenProvider);
+      final isPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
+      Logger.info('[TalentFortune] 💎 Premium 상태: $isPremium');
+
+      // 3. API 호출 시작 (버튼 로딩 애니메이션 표시 중)
+      Logger.info('[TalentFortune] 🔮 API 호출 시작...');
+
+      final inputConditions = {
+        'birth_date': inputData.birthDate!.toIso8601String().split('T')[0],
+        'birth_time': '${inputData.birthTime!.hour.toString().padLeft(2, '0')}:${inputData.birthTime!.minute.toString().padLeft(2, '0')}',
+        'gender': inputData.gender!,
+        if (inputData.birthCity != null)
+          'birth_city': inputData.birthCity!,
+        if (inputData.currentOccupation != null)
+          'current_occupation': inputData.currentOccupation!,
+        'concern_areas': inputData.concernAreas,
+        'interest_areas': inputData.interestAreas,
+        if (inputData.selfStrengths != null)
+          'self_strengths': inputData.selfStrengths!,
+        if (inputData.selfWeaknesses != null)
+          'self_weaknesses': inputData.selfWeaknesses!,
+        'work_style': inputData.workStyle!,
+        'energy_source': inputData.energySource!,
+        'problem_solving': inputData.problemSolving!,
+        'preferred_role': inputData.preferredRole!,
+        'isPremium': isPremium,
+      };
+
+      final fortuneResult = await _fortuneService.getFortune(
+        fortuneType: 'talent',
+        dataSource: FortuneDataSource.api,
+        inputConditions: inputConditions,
+        isPremium: isPremium,
+      );
+
+      Logger.info('[TalentFortune] ✅ API 호출 완료');
+
+      // 4. 광고 표시
+      Logger.info('[TalentFortune] 📺 광고 표시 시작');
+      await AdService.instance.showInterstitialAdWithCallback(
+        onAdCompleted: () async {
+          Logger.info('[TalentFortune] ✅ 광고 완료 → 결과 페이지로 이동');
+          if (mounted) {
+            context.push('/talent-fortune-results', extra: {
+              'inputData': inputData,
+              'fortuneResult': fortuneResult,
+            });
+            setState(() {
+              _isGenerating = false;
+            });
+          }
+        },
+        onAdFailed: () async {
+          Logger.warning('[TalentFortune] ⚠️ 광고 실패 → 결과 페이지로 이동');
+          if (mounted) {
+            context.push('/talent-fortune-results', extra: {
+              'inputData': inputData,
+              'fortuneResult': fortuneResult,
+            });
+            setState(() {
+              _isGenerating = false;
+            });
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[TalentFortune] ❌ 에러 발생', e, stackTrace);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('재능 분석 중 오류가 발생했습니다: $e'),
+            backgroundColor: TossDesignSystem.error,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              Text(
-                '사주팔자 분석 중...',
-                style: TypographyUnified.bodyMedium,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    // Show AdMob interstitial ad
-    await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () async {
-        // Close loading dialog
-        if (mounted) Navigator.pop(context);
-
-        // Navigate to result page
-        if (mounted) {
-          context.push('/talent-fortune-results', extra: inputData);
-        }
-      },
-      onAdFailed: () async {
-        // Close loading dialog even if ad fails
-        if (mounted) Navigator.pop(context);
-
-        // Navigate to result page anyway
-        if (mounted) {
-          context.push('/talent-fortune-results', extra: inputData);
-        }
-      },
-    );
+        );
+        setState(() {
+          _isGenerating = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final canGenerate = _canGenerate();
+    final buttonEnabled = canGenerate && !_isGenerating;
+
+    print('[TalentFortune] 🎨 build() 호출');
+    print('[TalentFortune] 🎨 _canGenerate(): $canGenerate');
+    print('[TalentFortune] 🎨 _isGenerating: $_isGenerating');
+    print('[TalentFortune] 🎨 buttonEnabled: $buttonEnabled');
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
@@ -391,13 +542,17 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                     onAllCompleted: null,
                     completionButtonText: '🔮 재능 분석 시작하기',
                   ),
-            if (_canGenerate())
+            if (canGenerate)
               TossFloatingProgressButtonPositioned(
                 text: '🔮 재능 분석 시작하기',
-                onPressed: _canGenerate() ? () => _analyzeAndShowResult() : null,
-                isEnabled: _canGenerate(),
+                onPressed: buttonEnabled ? () {
+                  print('[TalentFortune] 🖱️ 버튼 클릭됨!');
+                  _analyzeAndShowResult();
+                } : null,
+                isEnabled: buttonEnabled,
                 showProgress: false,
-                isVisible: _canGenerate(),
+                isLoading: _isGenerating,
+                isVisible: canGenerate,
               ),
           ],
         ),

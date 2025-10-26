@@ -191,7 +191,7 @@ class _MbtiFortunePageState
       // 1. 사용자 프로필 가져오기
       final userProfile = ref.read(userProfileProvider).value;
       final userName = userProfile?.name ?? 'Unknown';
-      final birthDateStr = (userProfile?.birthDate as String?) ?? DateTime.now().toIso8601String().split('T')[0];
+      final birthDateStr = userProfile?.birthDate?.toIso8601String().split('T')[0] ?? DateTime.now().toIso8601String().split('T')[0];
 
       // 2. Premium 상태 확인
       final tokenState = ref.read(tokenProvider);
