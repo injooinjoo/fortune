@@ -92,6 +92,23 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : const Color(0xFFF8F9FA),
       extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        automaticallyImplyLeading: false, // 기본 백 버튼 제거
+        actions: [
+          // ✅ 우측 상단 엑스 버튼
+          IconButton(
+            icon: Icon(
+              Icons.close,
+              color: Colors.white,
+              size: 28,
+            ),
+            onPressed: () => context.pop(),
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           // PageView (틴더 카드 스타일 - 5장)

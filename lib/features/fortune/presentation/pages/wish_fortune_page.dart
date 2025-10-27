@@ -50,6 +50,9 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   // Accordion sections
   List<AccordionInputSection> _accordionSections = [];
 
+  // ✅ 로딩 상태
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -171,44 +174,10 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
 
     if (!mounted) return;
 
-    // 간단한 로딩 다이얼로그 표시
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => PopScope(
-        canPop: false,
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.cardBackgroundDark
-                  : Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(
-                  color: TossDesignSystem.tossBlue,
-                  strokeWidth: 3,
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  '신의 응답을 받는 중...',
-                  style: TypographyUnified.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    // ✅ 로딩 상태 활성화
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       final supabase = Supabase.instance.client;
@@ -235,8 +204,10 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
 
       if (!mounted) return;
 
-      // 로딩 다이얼로그 닫기
-      Navigator.of(context).pop();
+      // ✅ 로딩 상태 해제
+      setState(() {
+        _isLoading = false;
+      });
 
       // FortuneResult.data를 WishFortuneResult로 변환
       final result = WishFortuneResult.fromJson(fortuneResult.data);
@@ -254,7 +225,9 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
     } catch (e) {
       debugPrint('소원 분석 API 오류: $e');
       if (mounted) {
-        Navigator.of(context).pop();
+        setState(() {
+          _isLoading = false;
+        });
         _showErrorDialog('소원 분석 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.');
       }
     }
@@ -365,7 +338,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
           ? Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // ✅ Accordion 폼 (Stack 제거)
+                // ✅ Accordion 폼
                 Expanded(
                   child: AccordionInputFormWithHeader(
                     header: _buildTitleSection(isDark),
@@ -374,42 +347,13 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
                     completionButtonText: '✨ 소원 빌기',
                   ),
                 ),
-                // ✅ 하단 버튼 (Positioned 제거)
-                if (_canSubmit())
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, -2),
-                        ),
-                      ],
-                    ),
-                    child: SafeArea(
-                      child: ElevatedButton(
-                        onPressed: _canSubmit() ? () => _submitWish() : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: TossDesignSystem.tossBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 4,
-                          shadowColor: TossDesignSystem.tossBlue.withOpacity(0.3),
-                        ),
-                        child: Text(
-                          '✨ 소원 빌기',
-                          style: TypographyUnified.buttonLarge.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
+                // ✅ 하단 버튼 (TossFloatingProgressButton)
+                if (_canSubmit() || _isLoading)
+                  TossFloatingProgressButton(
+                    text: _isLoading ? '신의 응답을 받는 중...' : '✨ 소원 빌기',
+                    isEnabled: !_isLoading,
+                    onPressed: _isLoading ? null : _submitWish,
+                    isLoading: _isLoading,
                   ),
               ],
             ),
