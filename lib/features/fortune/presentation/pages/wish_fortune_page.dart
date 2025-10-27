@@ -328,8 +328,29 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
-      appBar: StandardFortuneAppBar(
-        title: '소원 빌기',
+      appBar: AppBar(
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        // ✅ 좌측 백 버튼 추가 (타로 페이지 패턴)
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
+          onPressed: () => context.pop(),
+        ),
+        iconTheme: IconThemeData(
+          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+        ),
+        title: Text(
+          '소원 빌기',
+          style: TextStyle(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: Icon(
@@ -340,21 +361,58 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            _accordionSections.isEmpty
-                ? Center(child: CircularProgressIndicator())
-                : AccordionInputFormWithHeader(
+      body: _accordionSections.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                // ✅ Accordion 폼 (Stack 제거)
+                Expanded(
+                  child: AccordionInputFormWithHeader(
                     header: _buildTitleSection(isDark),
                     sections: _accordionSections,
-                    onAllCompleted: _canSubmit() ? () => _submitWish() : null,
+                    onAllCompleted: null,
                     completionButtonText: '✨ 소원 빌기',
                   ),
-            // ✅ 중복 제거: AccordionInputFormWithHeader의 버튼 사용
-          ],
-        ),
-      ),
+                ),
+                // ✅ 하단 버튼 (Positioned 제거)
+                if (_canSubmit())
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, -2),
+                        ),
+                      ],
+                    ),
+                    child: SafeArea(
+                      child: ElevatedButton(
+                        onPressed: _canSubmit() ? () => _submitWish() : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: TossDesignSystem.tossBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 4,
+                          shadowColor: TossDesignSystem.tossBlue.withOpacity(0.3),
+                        ),
+                        child: Text(
+                          '✨ 소원 빌기',
+                          style: TypographyUnified.buttonLarge.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
     );
   }
 
