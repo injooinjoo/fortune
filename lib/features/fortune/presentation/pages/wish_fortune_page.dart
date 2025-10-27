@@ -336,25 +336,24 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
       ),
       body: _accordionSections.isEmpty
           ? Center(child: CircularProgressIndicator())
-          : Column(
+          : Stack(
               children: [
                 // ✅ Accordion 폼
-                Expanded(
-                  child: AccordionInputFormWithHeader(
-                    header: _buildTitleSection(isDark),
-                    sections: _accordionSections,
-                    onAllCompleted: null,
-                    completionButtonText: '✨ 소원 빌기',
-                  ),
+                AccordionInputFormWithHeader(
+                  header: _buildTitleSection(isDark),
+                  sections: _accordionSections,
+                  onAllCompleted: null,
+                  completionButtonText: '✨ 소원 빌기',
                 ),
-                // ✅ 하단 버튼 (TossFloatingProgressButton)
-                if (_canSubmit() || _isLoading)
-                  TossFloatingProgressButton(
-                    text: _isLoading ? '신의 응답을 받는 중...' : '✨ 소원 빌기',
-                    isEnabled: !_isLoading,
-                    onPressed: _isLoading ? null : _submitWish,
-                    isLoading: _isLoading,
-                  ),
+                // ✅ 하단 버튼 (TossFloatingProgressButtonPositioned)
+                TossFloatingProgressButtonPositioned(
+                  text: _isLoading ? '신의 응답을 받는 중...' : '✨ 소원 빌기',
+                  isEnabled: _canSubmit() && !_isLoading,
+                  onPressed: _canSubmit() && !_isLoading ? _submitWish : null,
+                  isVisible: _canSubmit() || _isLoading,
+                  showProgress: false,
+                  isLoading: _isLoading,
+                ),
               ],
             ),
     );
