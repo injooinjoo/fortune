@@ -163,10 +163,20 @@ class WeatherInfo {
   });
 
   factory WeatherInfo.fromJson(Map<String, dynamic> json) {
-    // 영어 도시명을 한글로 변환
-    String cityName = json['name'] ?? '서울';
-    cityName = _translateCityName(cityName);
-    
+    // 1. 국가 코드 확인
+    final countryCode = json['sys']?['country'] ?? '';
+
+    // 2. 한국이 아니면 기본값 '서울' 사용
+    String cityName;
+    if (countryCode != 'KR') {
+      debugPrint('⚠️ 해외 위치 감지: ${json['name']} ($countryCode) → 서울로 기본 설정');
+      cityName = '서울';
+    } else {
+      // 3. 한국이면 도시명 변환
+      cityName = json['name'] ?? '서울';
+      cityName = _translateCityName(cityName);
+    }
+
     return WeatherInfo(
       condition: json['weather'][0]['main'] ?? '맑음',
       description: json['weather'][0]['description'] ?? '맑은 날씨',
