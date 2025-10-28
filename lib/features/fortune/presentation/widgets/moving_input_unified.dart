@@ -202,13 +202,14 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
           onAllCompleted: null,
           completionButtonText: '🏠 이사운 보기',
         ),
-        if (_canContinue())
+        if (_canContinue() || _isLoading)
           TossFloatingProgressButtonPositioned(
-            text: _isLoading ? '이사운 분석중...' : '🏠 이사운 보기',
+            text: '🏠 이사운 보기',
             onPressed: _canContinue() && !_isLoading ? _handleComplete : null,
-            isEnabled: _canContinue() && !_isLoading,
-            showProgress: _isLoading,
-            isVisible: _canContinue(),
+            isEnabled: !_isLoading,
+            showProgress: false,
+            isVisible: true,
+            isLoading: _isLoading,
           ),
       ],
     );
