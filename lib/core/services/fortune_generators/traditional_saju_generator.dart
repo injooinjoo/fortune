@@ -81,7 +81,7 @@ class TraditionalSajuGenerator {
       },
       data: {
         'question': apiData['question'] as String? ?? '',
-        'answer': apiData['answer'] as String? ?? '',
+        'sections': apiData['sections'] as Map<String, dynamic>? ?? {},
         'summary': apiData['summary'] as String? ?? '',
       },
       score: null, // 전통사주는 점수 없음

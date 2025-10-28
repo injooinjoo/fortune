@@ -9,7 +9,12 @@ const corsHeaders = {
 // 전통 사주팔자 응답 스키마
 interface TraditionalSajuResponse {
   question: string;
-  answer: string;
+  sections: {
+    analysis: string;      // 사주 분석 (항상 표시)
+    answer: string;        // 질문에 대한 답변 (블러)
+    advice: string;        // 실용적인 조언 (블러)
+    supplement: string;    // 오행 보완 방법 (블러)
+  };
   summary: string;
   isBlurred: boolean;
   blurredSections: string[];
@@ -45,7 +50,7 @@ serve(async (req) => {
     const dayPillar = pillar?.day || { heavenlyStem: '병', earthlyBranch: '인' }
     const timePillar = pillar?.time || { heavenlyStem: '정', earthlyBranch: '묘' }
 
-    // LLM 프롬프트 생성
+    // LLM 프롬프트 생성 (JSON 형식으로 섹션 분리)
     const prompt = `당신은 전문 사주 상담가입니다.
 사용자의 사주팔자를 기반으로 질문에 답변해주세요.
 
@@ -68,21 +73,20 @@ serve(async (req) => {
 
 질문: ${question}
 
-조건:
-- 최소 500자 이상의 상세한 답변
-- 사주 명식의 천간(天干)과 지지(地支)를 바탕으로 구체적으로 분석
-- 오행의 균형과 상생상극 원리를 적용하여 해석
-- 주된 오행(${dominantElement})의 영향과 부족한 오행(${lackingElement})을 보완하는 방법 제시
-- 따뜻하고 긍정적인 어조
-- 실용적이고 구체적인 조언 포함
-- 한국 전통 사주 해석 방식 적용
-- 한국어로 작성
+다음 JSON 형식으로 답변해주세요:
+{
+  "analysis": "사주 명식의 천간과 지지를 바탕으로 한 전체적인 사주 분석 (150-200자)",
+  "answer": "질문에 대한 구체적이고 상세한 답변 (300-400자)",
+  "advice": "실용적인 조언과 주의사항 (200-300자)",
+  "supplement": "부족한 오행을 보완하는 구체적인 방법 (150-200자)"
+}
 
-답변 형식:
-1. 사주 분석 (천간, 지지, 오행 균형 기반)
-2. 질문에 대한 구체적인 답변
-3. 실용적인 조언과 주의사항
-4. 오행 보완 방법`
+조건:
+- 따뜻하고 긍정적인 어조
+- 오행의 균형과 상생상극 원리를 적용
+- 한국 전통 사주 해석 방식 적용
+- 각 섹션은 독립적으로 읽을 수 있어야 함
+- 반드시 JSON 형식으로만 응답`
 
     // LLM 호출
     console.log('');
@@ -93,7 +97,7 @@ serve(async (req) => {
     const response = await llm.generate([
       {
         role: 'system',
-        content: '당신은 전통 사주팔자에 정통한 전문 상담가입니다. 천간, 지지, 오행의 상생상극 원리를 바탕으로 정확하고 따뜻한 조언을 제공합니다.'
+        content: '당신은 전통 사주팔자에 정통한 전문 상담가입니다. 천간, 지지, 오행의 상생상극 원리를 바탕으로 정확하고 따뜻한 조언을 제공합니다. 반드시 JSON 형식으로만 응답하세요.'
       },
       {
         role: 'user',
@@ -102,33 +106,43 @@ serve(async (req) => {
     ], {
       temperature: 1,
       maxTokens: 8192,
-      jsonMode: false
+      jsonMode: true  // JSON 모드 활성화
     })
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
     console.log('')
 
-    const answer = response.content.trim()
+    // JSON 파싱
+    let sections
+    try {
+      sections = JSON.parse(response.content.trim())
+    } catch (e) {
+      console.error('❌ JSON 파싱 실패, 기본값 사용:', e)
+      sections = {
+        analysis: '사주 분석 중 오류가 발생했습니다.',
+        answer: '답변 생성 중 오류가 발생했습니다.',
+        advice: '조언을 생성할 수 없습니다.',
+        supplement: '보완 방법을 생성할 수 없습니다.'
+      }
+    }
 
-    // 요약 생성 (답변의 첫 200자)
-    const summary = answer.length > 200
-      ? answer.substring(0, 200) + '...'
-      : answer
+    // 요약 생성 (analysis 섹션 사용)
+    const summary = sections.analysis || '사주 분석'
 
-    // 블러 처리 (일반 사용자만)
+    // 블러 처리 (일반 사용자는 answer, advice, supplement 블러)
     const isBlurred = !isPremium
-    const blurredSections = isBlurred ? ['answer'] : []
+    const blurredSections = isBlurred ? ['answer', 'advice', 'supplement'] : []
 
     console.log('');
     console.log('📊 [Traditional-Saju] 결과 생성 완료');
     console.log(`   - isBlurred: ${isBlurred}`);
     console.log(`   - blurredSections: ${blurredSections.join(', ')}`);
-    console.log(`   - answer length: ${answer.length} characters`);
+    console.log(`   - sections: analysis(${sections.analysis?.length || 0}), answer(${sections.answer?.length || 0}), advice(${sections.advice?.length || 0}), supplement(${sections.supplement?.length || 0})`);
     console.log('');
 
     const fortuneResponse: TraditionalSajuResponse = {
       question,
-      answer,
+      sections,
       summary,
       isBlurred,
       blurredSections

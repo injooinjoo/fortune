@@ -217,19 +217,16 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
             ],
           ),
         ),
-        TossFloatingProgressButtonPositioned(
-          text: '다른 운세 보기',
-          onPressed: () {
-            setState(() {
-              _showResults = false;
-              _selectedQuestion = null;
-              _customQuestionController.clear();
-            });
-          },
-          isEnabled: true,
-          showProgress: false,
-          isVisible: true,
-        ),
+        // 블러 상태일 때만 광고 버튼 표시
+        if (_isBlurred)
+          TossFloatingProgressButtonPositioned(
+            text: '🎁 광고 보고 전체 운세 보기',
+            onPressed: _showAdAndUnblur,
+            isEnabled: true,
+            showProgress: false,
+            isVisible: true,
+            isLoading: false,
+          ),
       ],
     );
   }
@@ -385,13 +382,20 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
 
       // 3. UnifiedFortuneService 호출
       final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+
       final result = await fortuneService.getFortune(
         fortuneType: 'traditional_saju',
         dataSource: FortuneDataSource.api,
         inputConditions: {
           'question': _selectedQuestion,
-          'sajuData': sajuData,
+          'sajuData': sajuData,  // LLM에는 전체 데이터 전달
           'isPremium': isPremium,
+          // DB 저장용 간소화된 데이터
+          'simplified_for_db': {
+            'dominantElement': sajuData['dominantElement'],
+            'lackingElement': sajuData['lackingElement'],
+            'elements': sajuData['elements'],
+          },
         },
         isPremium: isPremium,
       );
@@ -426,108 +430,128 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final question = _fortuneResult!.data['question'] as String? ?? _selectedQuestion ?? '';
-    final answer = _fortuneResult!.data['answer'] as String? ?? '';
+    final sections = _fortuneResult!.data['sections'] as Map<String, dynamic>? ?? {};
 
-    return TossCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    final analysis = sections['analysis'] as String? ?? '';
+    final answer = sections['answer'] as String? ?? '';
+    final advice = sections['advice'] as String? ?? '';
+    final supplement = sections['supplement'] as String? ?? '';
+
+    return Column(
+      children: [
+        // 질문 카드
+        TossCard(
+          padding: const EdgeInsets.all(TossTheme.spacingL),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.auto_awesome, color: TossTheme.brandBlue, size: 24),
-              const SizedBox(width: TossTheme.spacingS),
-              Text(
-                '운세 결과',
-                style: TossTheme.heading3.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: TossTheme.spacingM),
-
-          // 질문
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(TossTheme.spacingM),
-            decoration: BoxDecoration(
-              color: TossTheme.brandBlue.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(TossTheme.radiusM),
-              border: Border.all(color: TossTheme.brandBlue.withValues(alpha: 0.3)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Q.',
-                  style: TossTheme.body3.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: TossTheme.brandBlue,
+              Row(
+                children: [
+                  Icon(Icons.auto_awesome, color: TossTheme.brandBlue, size: 24),
+                  const SizedBox(width: TossTheme.spacingS),
+                  Text(
+                    '질문',
+                    style: TossTheme.heading3.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    ),
                   ),
+                ],
+              ),
+              const SizedBox(height: TossTheme.spacingM),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(TossTheme.spacingM),
+                decoration: BoxDecoration(
+                  color: TossTheme.brandBlue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(TossTheme.radiusM),
+                  border: Border.all(color: TossTheme.brandBlue.withValues(alpha: 0.3)),
                 ),
-                const SizedBox(height: 4),
-                Text(
+                child: Text(
                   question,
                   style: TossTheme.body3.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
                 ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: TossTheme.spacingM),
-
-          // 답변 (블러 처리)
-          _buildBlurWrapper(
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(TossTheme.spacingM),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? TossDesignSystem.surfaceBackgroundDark
-                    : TossDesignSystem.surfaceBackgroundLight,
-                borderRadius: BorderRadius.circular(TossTheme.radiusM),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'A.',
-                    style: TossTheme.body3.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    answer,
-                    style: TossTheme.body3.copyWith(
-                      height: 1.6,
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                    ),
-                  ),
-                ],
+            ],
+          ),
+        ),
+
+        const SizedBox(height: TossTheme.spacingM),
+
+        // 사주 분석 (항상 표시)
+        _buildSection(
+          title: '📊 사주 분석',
+          content: analysis,
+          isDark: isDark,
+          sectionKey: 'analysis',
+        ),
+
+        const SizedBox(height: TossTheme.spacingM),
+
+        // 답변 (블러)
+        _buildSection(
+          title: '💬 답변',
+          content: answer,
+          isDark: isDark,
+          sectionKey: 'answer',
+        ),
+
+        const SizedBox(height: TossTheme.spacingM),
+
+        // 조언 (블러)
+        _buildSection(
+          title: '💡 조언',
+          content: advice,
+          isDark: isDark,
+          sectionKey: 'advice',
+        ),
+
+        const SizedBox(height: TossTheme.spacingM),
+
+        // 오행 보완 (블러)
+        _buildSection(
+          title: '🌿 오행 보완',
+          content: supplement,
+          isDark: isDark,
+          sectionKey: 'supplement',
+        ),
+      ],
+    );
+  }
+
+  /// 섹션 빌더
+  Widget _buildSection({
+    required String title,
+    required String content,
+    required bool isDark,
+    required String sectionKey,
+  }) {
+    return _buildBlurWrapper(
+      child: TossCard(
+        padding: const EdgeInsets.all(TossTheme.spacingL),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TossTheme.heading4.copyWith(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
             ),
-            sectionKey: 'answer',
-          ),
-
-          // 블러 상태일 때 광고 버튼 표시
-          if (_isBlurred) ...[
             const SizedBox(height: TossTheme.spacingM),
-            Center(
-              child: TossButton(
-                text: '광고 보고 잠금 해제',
-                onPressed: _showAdAndUnblur,
-                style: TossButtonStyle.primary,
+            Text(
+              content,
+              style: TossTheme.body3.copyWith(
+                height: 1.6,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
             ),
           ],
-        ],
+        ),
       ),
+      sectionKey: sectionKey,
     );
   }
 
