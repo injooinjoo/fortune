@@ -1,12 +1,18 @@
 import 'dart:ui'; // ✅ Phase 19-1: ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
+import '../../../../core/services/debug_premium_service.dart';
+import '../../../../core/utils/logger.dart';
+import '../../../../presentation/providers/token_provider.dart';
 import '../providers/saju_provider.dart';
 import '../widgets/saju_element_chart.dart';
 import '../widgets/manseryeok_display.dart';
@@ -36,6 +42,9 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
   // ✅ Phase 19-3: Blur 상태 관리
   bool _isBlurred = false;
   List<String> _blurredSections = [];
+
+  // API 응답 저장
+  FortuneResult? _fortuneResult;
   
   @override
   void initState() {
@@ -225,17 +234,6 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     );
   }
 
-  String _getLuckyDirection(String element) {
-    final directions = {
-      '목': '동쪽',
-      '화': '남쪽',
-      '토': '중앙',
-      '금': '서쪽',
-      '수': '북쪽',
-    };
-    return directions[element] ?? '동쪽';
-  }
-  
   Widget _buildBasicSajuInfo(Map<String, dynamic> sajuData) {
     // 오행 균형 데이터 생성 - sajuProvider에서 가져오기
     final sajuState = ref.watch(sajuProvider);
@@ -371,29 +369,64 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
       _isFortuneLoading = true;
     });
 
-    // 광고 표시
-    await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () async {
-        setState(() {
-          _isFortuneLoading = false;
-          _showResults = true;
-        });
-      },
-      onAdFailed: () async {
-        // 광고 실패해도 운세 표시
-        setState(() {
-          _isFortuneLoading = false;
-          _showResults = true;
-        });
-      },
-    );
+    try {
+      // 1. 프리미엄 상태 확인
+      final tokenState = ref.read(tokenProvider);
+      final premiumOverride = await DebugPremiumService.getOverrideValue();
+      final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
+
+      // 2. 사주 데이터 가져오기
+      final sajuState = ref.read(sajuProvider);
+      final sajuData = sajuState.sajuData;
+
+      if (sajuData == null) {
+        throw Exception('사주 데이터가 없습니다');
+      }
+
+      // 3. UnifiedFortuneService 호출
+      final fortuneService = UnifiedFortuneService(Supabase.instance.client);
+      final result = await fortuneService.getFortune(
+        fortuneType: 'traditional_saju',
+        dataSource: FortuneDataSource.api,
+        inputConditions: {
+          'question': _selectedQuestion,
+          'sajuData': sajuData,
+          'isPremium': isPremium,
+        },
+        isPremium: isPremium,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        _fortuneResult = result;
+        _isBlurred = result.isBlurred ?? false;
+        _blurredSections = result.blurredSections ?? [];
+        _isFortuneLoading = false;
+        _showResults = true;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isFortuneLoading = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('운세를 불러오는데 실패했습니다: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   Widget _buildFortuneResult(Map<String, dynamic> sajuData) {
-    if (_selectedQuestion == null) return const SizedBox.shrink();
+    if (_fortuneResult == null) return const SizedBox.shrink();
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    String answer = _getAnswerForQuestion(_selectedQuestion!, sajuData);
+    final question = _fortuneResult!.data['question'] as String? ?? _selectedQuestion ?? '';
+    final answer = _fortuneResult!.data['answer'] as String? ?? '';
 
     return TossCard(
       padding: const EdgeInsets.all(TossTheme.spacingL),
@@ -435,7 +468,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _selectedQuestion!,
+                  question,
                   style: TossTheme.body3.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
@@ -447,138 +480,155 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
 
           const SizedBox(height: TossTheme.spacingM),
 
-          // 답변
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(TossTheme.spacingM),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? TossDesignSystem.surfaceBackgroundDark
-                  : TossDesignSystem.surfaceBackgroundLight,
-              borderRadius: BorderRadius.circular(TossTheme.radiusM),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'A.',
-                  style: TossTheme.body3.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          // 답변 (블러 처리)
+          _buildBlurWrapper(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(TossTheme.spacingM),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? TossDesignSystem.surfaceBackgroundDark
+                    : TossDesignSystem.surfaceBackgroundLight,
+                borderRadius: BorderRadius.circular(TossTheme.radiusM),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'A.',
+                    style: TossTheme.body3.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  answer,
-                  style: TossTheme.body3.copyWith(
-                    height: 1.6,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  const SizedBox(height: 8),
+                  Text(
+                    answer,
+                    style: TossTheme.body3.copyWith(
+                      height: 1.6,
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            sectionKey: 'answer',
           ),
+
+          // 블러 상태일 때 광고 버튼 표시
+          if (_isBlurred) ...[
+            const SizedBox(height: TossTheme.spacingM),
+            Center(
+              child: TossButton(
+                text: '광고 보고 잠금 해제',
+                onPressed: _showAdAndUnblur,
+                style: TossButtonStyle.primary,
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  String _getAnswerForQuestion(String question, Map<String, dynamic> sajuData) {
-    switch (question) {
-      case '언제 돈이 들어올까요?':
-        return _getFinancialAnswer(sajuData);
-      case '어떤 일이 나에게 맞을까요?':
-        return _getCareerAnswer(sajuData);
-      case '언제 결혼하면 좋을까요?':
-        return _getMarriageAnswer(sajuData);
-      case '건강 주의사항이 있나요?':
-        return _getHealthAnswer(sajuData);
-      case '어느 방향으로 가면 좋을까요?':
-        return _getDirectionAnswer(sajuData);
-      default:
-        // 커스텀 질문에 대한 답변
-        return _getCustomAnswer(question, sajuData);
+  /// 블러 래퍼 위젯
+  Widget _buildBlurWrapper({
+    required Widget child,
+    required String sectionKey,
+  }) {
+    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(TossTheme.radiusM),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: Icon(
+              Icons.lock_outline,
+              size: 48,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 광고 시청 후 블러 해제
+  Future<void> _showAdAndUnblur() async {
+    if (_fortuneResult == null) return;
+
+    try {
+      final adService = AdService.instance;
+
+      // 리워드 광고가 준비되지 않았다면 즉시 잠금 해제
+      if (!adService.isRewardedAdReady) {
+        Logger.warning('[Traditional-Saju] ⚠️ Rewarded ad not ready - unlocking immediately');
+        if (mounted) {
+          setState(() {
+            _isBlurred = false;
+            _blurredSections = [];
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('운세가 잠금 해제되었습니다!'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+        return;
+      }
+
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          Logger.info('[Traditional-Saju] ✅ User earned reward: ${reward.amount} ${reward.type}');
+          if (mounted) {
+            setState(() {
+              _isBlurred = false;
+              _blurredSections = [];
+            });
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('운세가 잠금 해제되었습니다!'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      Logger.error('[Traditional-Saju] ❌ Failed to show rewarded ad: $e', e);
+      if (mounted) {
+        // 광고 실패 시에도 잠금 해제
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('운세가 잠금 해제되었습니다!'),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 
-  String _getCustomAnswer(String question, Map<String, dynamic> sajuData) {
-    final dominantElement = sajuData['dominantElement'] ?? '목';
-    final lackingElement = sajuData['lackingElement'] ?? '수';
-    
-    return '''당신의 사주를 기반으로 해석해드립니다.
-
-주요 포인트:
-• 현재 $dominantElement 기운이 강하여 의욕적이고 추진력이 있습니다
-• $lackingElement 기운이 부족하여 이 부분을 보완하면 더욱 좋을 것
-• 현재 대운에서는 신중하게 접근하는 것이 중요
-
-전반적으로 긍정적인 변화가 예상되며, 인내심을 가지고 추진하시기 바랍니다.''';
-  }
-
-
-  // 질문별 답변 생성 메서드들
-  String _getFinancialAnswer(Map<String, dynamic> sajuData) {
-    final dominantElement = sajuData['dominantElement'] ?? '목';
-    return '''재물운은 $dominantElement 기운의 영향으로 점진적으로 상승할 것으로 보입니다.
-
-특히 현재 대운에서는:
-• 정재보다 편재의 기운이 강하여 사업이나 투자를 통한 수익이 유리
-• 가을철(8-10월)에 재물운이 가장 왕성
-• 서쪽이나 북서쪽 방향의 사업이나 투자에 관심을 가져보세요
-
-주의사항: 과도한 욕심보다는 꾸준한 축적이 중요한 시기입니다.''';
-  }
-
-  String _getCareerAnswer(Map<String, dynamic> sajuData) {
-    return '''당신의 사주를 보면 다음과 같은 직업 분야가 특히 유리합니다:
-
-추천 직업군:
-• 교육, 상담 관련 업무 (정인의 기운)
-• 경영, 관리직 (정관의 기운)
-• 창의적 분야의 일 (식신의 기운)
-
-특히 사람을 상대하는 일이나 지식을 전달하는 업무에서 큰 성과를 거둘 수 있습니다. 혼자 하는 일보다는 팀워크가 중요한 환경에서 더욱 빛을 발할 것입니다.''';
-  }
-
-  String _getMarriageAnswer(Map<String, dynamic> sajuData) {
-    return '''결혼운을 보면:
-
-좋은 시기:
-• 현재 대운에서는 인연운이 상당히 좋습니다
-• 특히 봄철(3-5월)이나 가을철(9-11월)에 좋은 만남이 예상
-• 나이 차이가 2-3살 정도인 상대와 궁합이 잘 맞을 것
-
-결혼 후에는 배우자의 도움으로 사회적 지위나 재물운이 상승할 가능성이 높습니다. 서두르기보다는 신중하게 선택하는 것이 좋겠습니다.''';
-  }
-
-  String _getHealthAnswer(Map<String, dynamic> sajuData) {
-    final lackingElement = sajuData['lackingElement'] ?? '수';
-    return '''건강 관리에 있어 주의사항:
-
-주의할 부분:
-• $lackingElement 기운 부족으로 인한 관련 장기 약화 가능성
-• 스트레스로 인한 소화기계 문제 주의
-• 과로를 피하고 충분한 휴식 필요
-
-건강 관리법:
-• 규칙적인 운동과 균형 잡힌 식단
-• ${_getLuckyDirection(lackingElement)} 방향으로의 산책이나 운동
-• 명상이나 요가 등을 통한 정신적 안정
-
-전체적으로 큰 질병보다는 만성 피로나 스트레스 관리가 중요합니다.''';
-  }
-
-  String _getDirectionAnswer(Map<String, dynamic> sajuData) {
-    final dominantElement = sajuData['dominantElement'] ?? '목';
-    final luckyDirection = _getLuckyDirection(dominantElement);
-    
-    return '''방향과 관련된 조언:
-
-유리한 방향:
-• 주거지: $luckyDirection 방향이 가장 유리
-• 직장: $luckyDirection 방향에 있는 회사나 사업장
-• 여행: $luckyDirection 방향으로의 여행이 운기 상승에 도움
-
-이사나 이직을 고려한다면 현재 대운이 끝나는 시점인 내년 하반기가 적절한 타이밍입니다. 급하게 결정하기보다는 충분히 준비한 후 움직이는 것을 권합니다.''';
-  }
 }

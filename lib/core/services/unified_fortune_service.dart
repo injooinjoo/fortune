@@ -18,6 +18,7 @@ import 'fortune_generators/wish_generator.dart';
 import 'fortune_generators/lucky_items_generator.dart';
 import 'fortune_generators/love_generator.dart'; // ✅ 추가
 import 'fortune_generators/talent_generator.dart'; // ✅ 재능 발견 추가
+import 'fortune_generators/traditional_saju_generator.dart'; // ✅ 전통사주 추가
 import 'fortune_optimization_service.dart';
 import '../../features/fortune/domain/models/fortune_conditions.dart';
 import '../../features/fortune/domain/models/conditions/love_fortune_conditions.dart'; // ✅ 추가
@@ -328,6 +329,10 @@ class UnifiedFortuneService {
 
         case 'talent':
           return await TalentGenerator.generate(inputConditions, _supabase);
+
+        case 'traditional_saju':
+        case 'traditional-saju':
+          return await TraditionalSajuGenerator.generate(inputConditions, _supabase);
 
         case 'avoid_people':
         case 'avoid-people':
