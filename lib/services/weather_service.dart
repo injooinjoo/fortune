@@ -185,11 +185,39 @@ class WeatherInfo {
     );
   }
   
-  /// 영어 도시명을 그대로 반환 (GPT가 처리)
+  /// 영어 도시명을 한글로 변환
   static String _translateCityName(String englishName) {
-    // GPT에서 지역명을 한글로 변환하고 해석하도록
-    // 여기서는 영어 이름을 그대로 반환
-    return englishName;
+    // 주요 도시명 매핑 테이블
+    final cityMap = {
+      // 한국 주요 도시
+      'Seoul': '서울',
+      'Busan': '부산',
+      'Incheon': '인천',
+      'Daegu': '대구',
+      'Daejeon': '대전',
+      'Gwangju': '광주',
+      'Ulsan': '울산',
+      'Suwon': '수원',
+      'Seongnam': '성남',
+      'Goyang': '고양',
+      'Yongin': '용인',
+      'Bucheon': '부천',
+      'Ansan': '안산',
+      'Anyang': '안양',
+      'Pohang': '포항',
+      'Changwon': '창원',
+      'Jeju': '제주',
+
+      // 구/시 단위는 광역시로 변환
+      'Gangnam-gu': '서울',
+      'Suwon-si': '경기도',
+      'Seongnam-si': '경기도',
+      'Goyang-si': '경기도',
+    };
+
+    // ✅ 한국 도시만 변환, 해외 도시는 모두 '서울'로 기본 설정
+    // (사용자가 대부분 한국에 있고, 시뮬레이터나 VPN으로 인한 오류 방지)
+    return cityMap[englishName] ?? '서울';
   }
 
   /// 기본 날씨 정보 (API 실패 시)
