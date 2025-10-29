@@ -615,23 +615,19 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     try {
       final adService = AdService.instance;
 
-      // 리워드 광고가 준비되지 않았다면 즉시 잠금 해제
+      // 리워드 광고가 준비되지 않았다면 사용자에게 알림
       if (!adService.isRewardedAdReady) {
-        Logger.warning('[Traditional-Saju] ⚠️ Rewarded ad not ready - unlocking immediately');
+        Logger.warning('[Traditional-Saju] ⚠️ Rewarded ad not ready');
         if (mounted) {
-          setState(() {
-            _isBlurred = false;
-            _blurredSections = [];
-          });
-
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('운세가 잠금 해제되었습니다!'),
-              duration: Duration(seconds: 2),
+              content: Text('광고를 준비하고 있습니다. 잠시 후 다시 시도해주세요.'),
+              duration: Duration(seconds: 3),
+              backgroundColor: Colors.orange,
             ),
           );
         }
-        return;
+        return; // 광고 없으면 잠금 해제하지 않음
       }
 
       await adService.showRewardedAd(
@@ -655,17 +651,12 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     } catch (e) {
       Logger.error('[Traditional-Saju] ❌ Failed to show rewarded ad: $e', e);
       if (mounted) {
-        // 광고 실패 시에도 잠금 해제
-        setState(() {
-          _isBlurred = false;
-          _blurredSections = [];
-        });
-
+        // 광고 실패 시 에러 메시지만 표시 (잠금 해제 안함)
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('운세가 잠금 해제되었습니다!'),
-            backgroundColor: Colors.orange,
-            duration: Duration(seconds: 2),
+            content: Text('광고를 표시할 수 없습니다. 잠시 후 다시 시도해주세요.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
           ),
         );
       }
