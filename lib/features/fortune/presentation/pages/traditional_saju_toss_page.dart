@@ -541,41 +541,44 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     );
   }
 
-  /// 섹션 빌더
+  /// 섹션 빌더 (제목은 항상 표시, 내용만 블러)
   Widget _buildSection({
     required String title,
     required String content,
     required bool isDark,
     required String sectionKey,
   }) {
-    return _buildBlurWrapper(
-      child: TossCard(
-        padding: const EdgeInsets.all(TossTheme.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TossTheme.heading4.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-              ),
+    return TossCard(
+      padding: const EdgeInsets.all(TossTheme.spacingL),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 제목은 항상 표시 (블러 없음)
+          Text(
+            title,
+            style: TossTheme.heading4.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
-            const SizedBox(height: TossTheme.spacingM),
-            Text(
+          ),
+          const SizedBox(height: TossTheme.spacingM),
+
+          // 내용만 블러 처리
+          _buildBlurWrapper(
+            child: Text(
               content,
               style: TossTheme.body3.copyWith(
                 height: 1.6,
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
             ),
-          ],
-        ),
+            sectionKey: sectionKey,
+          ),
+        ],
       ),
-      sectionKey: sectionKey,
     );
   }
 
-  /// 블러 래퍼 위젯
+  /// 블러 래퍼 위젯 (내용만 블러 처리)
   Widget _buildBlurWrapper({
     required Widget child,
     required String sectionKey,
@@ -586,24 +589,37 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
 
     return Stack(
       children: [
+        // 블러 처리된 텍스트
         ImageFiltered(
           imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: child,
         ),
+        // 반투명 오버레이
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(TossTheme.radiusM),
+              color: Colors.black.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(TossTheme.radiusS),
             ),
           ),
         ),
-        Positioned.fill(
+        // 잠금 아이콘
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 20,
           child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.5),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.lock_outline,
+                size: 32,
+                color: Colors.white.withValues(alpha: 0.9),
+              ),
             ),
           ),
         ),
