@@ -6,6 +6,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../shared/components/loading_dots.dart'; // ✅ 점 3개 로딩 애니메이션
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -191,7 +192,26 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
           ),
         ),
         TossFloatingProgressButtonPositioned(
-          text: _isFortuneLoading ? '운세를 보고 있어요...' : '📿 하늘이 정한 나의 운명',
+          text: '📿 하늘이 정한 나의 운명',
+          customChild: _isFortuneLoading
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '운세를 보고 있어요',
+                    style: TossTheme.body3.copyWith(
+                      color: TossDesignSystem.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const LoadingDots(
+                    color: TossDesignSystem.white,
+                    size: 6.0,
+                  ),
+                ],
+              )
+            : null,
           onPressed: hasQuestion && !_isFortuneLoading ? _onFortuneButtonPressed : null,
           isEnabled: hasQuestion && !_isFortuneLoading,
           showProgress: false,
