@@ -588,8 +588,19 @@ class UnifiedFortuneService {
       final today = now.toIso8601String().split('T')[0]; // YYYY-MM-DD
 
       // ✅ DB 저장용 조건 생성 (대용량 필드 제거)
-      final conditionsForDB = Map<String, dynamic>.from(inputConditions);
-      conditionsForDB.remove('image');  // 214KB base64 제거 - DB 인덱스 크기 제한 (8KB)
+      Map<String, dynamic> conditionsForDB;
+
+      // simplified_for_db가 있으면 그것만 저장 (전통사주 등 대용량 데이터)
+      if (inputConditions.containsKey('simplified_for_db')) {
+        conditionsForDB = {
+          'question': inputConditions['question'],
+          ...inputConditions['simplified_for_db'] as Map<String, dynamic>,
+        };
+        Logger.debug('[UnifiedFortune] Using simplified_for_db for storage');
+      } else {
+        conditionsForDB = Map<String, dynamic>.from(inputConditions);
+        conditionsForDB.remove('image');  // 214KB base64 제거 - DB 인덱스 크기 제한 (8KB)
+      }
 
       // JSONB 조건을 정규화 (키 정렬)
       final normalizedConditions = _normalizeJsonb(conditionsForDB);
