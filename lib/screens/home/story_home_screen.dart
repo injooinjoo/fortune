@@ -776,18 +776,24 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
   
   Future<void> _generateStory(fortune_entity.Fortune fortune) async {
     try {
+      // ✅ 최초 mounted 체크
+      if (!mounted) return;
+
       // Ensure we have the user profile loaded
       if (userProfile == null || userProfile!.name.isEmpty) {
         await _loadUserProfile();
       }
-      
+
+      // ✅ 비동기 작업 후 mounted 체크
+      if (!mounted) return;
+
       // Use the actual name from userProfile, fallback to '사용자' only if really empty
-      final userName = (userProfile?.name != null && userProfile!.name.isNotEmpty) 
-          ? userProfile!.name 
+      final userName = (userProfile?.name != null && userProfile!.name.isNotEmpty)
+          ? userProfile!.name
           : '사용자';
-      
+
       debugPrint('🎯 Generating story with userName: "$userName" (profile name: "${userProfile?.name}")');
-      
+
       // GPT로 스토리 생성 (사주 정보 포함)
       final storyNotifier = ref.read(fortuneStoryProvider.notifier);
       await storyNotifier.generateFortuneStory(
@@ -795,40 +801,45 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
         fortune: fortune,
         userProfile: userProfile,
       );
-      
+
+      // ✅ 비동기 작업 후 mounted 체크
+      if (!mounted) return;
+
       final storyState = ref.read(fortuneStoryProvider);
       List<StorySegment>? generatedSegments;
       
       if (storyState.segments != null) {
         generatedSegments = storyState.segments;
         // 사주 분석 데이터도 가져오기
-        if (storyState.sajuAnalysis != null) {
+        if (storyState.sajuAnalysis != null && mounted) { // ✅ mounted 체크
           setState(() {
             sajuAnalysisData = storyState.sajuAnalysis;
           });
         }
-        
+
         // 확장된 데이터 추출
-        setState(() {
-          metaData = storyState.meta;
-          weatherSummaryData = storyState.weatherSummary;
-          overallData = storyState.overall;
-          categoriesData = storyState.categories;
-          sajuInsightData = storyState.sajuInsight;
-          personalActionsData = storyState.personalActions;
-          notificationData = storyState.notification;
-          shareCardData = storyState.shareCard;
-        });
+        if (mounted) { // ✅ mounted 체크
+          setState(() {
+            metaData = storyState.meta;
+            weatherSummaryData = storyState.weatherSummary;
+            overallData = storyState.overall;
+            categoriesData = storyState.categories;
+            sajuInsightData = storyState.sajuInsight;
+            personalActionsData = storyState.personalActions;
+            notificationData = storyState.notification;
+            shareCardData = storyState.shareCard;
+          });
+        }
       } else {
         // GPT 실패시 기본 스토리 생성
         generatedSegments = _createDetailedStorySegments(userName, fortune);
       }
-      
-      if (generatedSegments != null) {
+
+      if (generatedSegments != null && mounted) { // ✅ mounted 체크
         setState(() {
           storySegments = generatedSegments;
         });
-        
+
         // 생성된 스토리를 캐시에 저장
         final userId = supabase.auth.currentUser?.id;
         if (userId != null) {
@@ -843,13 +854,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
     } catch (e) {
       debugPrint('❌ Error generating story: $e');
       // 에러 발생시에도 기본 스토리 생성
-      final userName = (userProfile?.name != null && userProfile!.name.isNotEmpty) 
-          ? userProfile!.name 
+      if (!mounted) return; // ✅ dispose 체크 추가
+
+      final userName = (userProfile?.name != null && userProfile!.name.isNotEmpty)
+          ? userProfile!.name
           : '사용자';
       final fallbackSegments = _createDetailedStorySegments(userName, fortune);
-      setState(() {
-        storySegments = fallbackSegments;
-      });
+
+      if (mounted) { // ✅ setState 전 mounted 체크
+        setState(() {
+          storySegments = fallbackSegments;
+        });
+      }
     }
   }
   
