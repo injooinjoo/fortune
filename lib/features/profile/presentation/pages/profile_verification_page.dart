@@ -231,13 +231,14 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
       appBar: AppBar(
         backgroundColor: TossDesignSystem.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: TossDesignSystem.gray900),
+          icon: const Icon(Icons.arrow_back_ios, color: TossDesignSystem.gray900),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '프로필 인증',
-          style: context.heading4.copyWith(
+          style: context.heading3.copyWith(
             color: TossDesignSystem.gray900,
           ),
         ),

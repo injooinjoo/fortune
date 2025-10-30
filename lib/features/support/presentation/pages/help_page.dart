@@ -53,9 +53,10 @@ class _HelpPageState extends ConsumerState<HelpPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: false,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: _getTextColor(context)),
+          icon: Icon(Icons.arrow_back_ios, color: _getTextColor(context)),
           onPressed: () => context.pop(),
         ),
         title: Text(

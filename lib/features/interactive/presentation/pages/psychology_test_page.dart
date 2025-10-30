@@ -377,7 +377,7 @@ class _TestInputView extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.arrow_back, size: 20 * fontScale),
+                            Icon(Icons.arrow_back_ios, size: 20 * fontScale),
                             const SizedBox(width: 8),
                             Text(
                               '이전',

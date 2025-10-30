@@ -334,7 +334,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                   _pickImage(ImageSource.gallery);
                 }),
               ListTile(
-                leading: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+                leading: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                 title: const Text('취소'),
                 onTap: () => Navigator.pop(context),
               ),
