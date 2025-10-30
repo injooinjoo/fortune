@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/theme/typography_unified.dart';
 
 /// 표준 운세 페이지 AppBar
 ///
 /// 모든 운세 페이지에서 일관된 디자인을 제공합니다:
-/// - 좌측: 라운드 배경의 뒤로가기 버튼
-/// - 중앙: 페이지 제목
+/// - 좌측: iOS 스타일 백 버튼 (arrow_back_ios)
+/// - 중앙: 페이지 제목 (heading3 폰트)
 /// - 우측: 옵션(필요 시)
 class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -27,30 +28,27 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       elevation: 0,
       scrolledUnderElevation: 0,
-      automaticallyImplyLeading: false, // ✅ 기본 백 버튼 제거
+      leading: IconButton(
+        icon: Icon(
+          Icons.arrow_back_ios,
+          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+        ),
+        onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
+      ),
       iconTheme: IconThemeData(
-        color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
       ),
       title: Text(
         title,
-        style: TossTheme.heading3.copyWith(
-          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+        style: TypographyUnified.heading3.copyWith(
+          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
         ),
       ),
       centerTitle: centerTitle,
-      // ✅ 우측 상단에 엑스 버튼 추가
-      actions: actions ?? [
-        IconButton(
-          icon: Icon(
-            Icons.close,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-          ),
-          onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
-        ),
-      ],
+      actions: actions,
     );
   }
 
