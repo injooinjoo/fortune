@@ -30,7 +30,8 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
   
   DateTime? _selectedDate;
   final TextEditingController _dateController = TextEditingController();
-  
+  bool _isLoading = false; // ✅ 로딩 상태 추가
+
   @override
   void initState() {
     super.initState();
@@ -202,9 +203,18 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
 
     HapticFeedback.mediumImpact();
 
+    // ✅ 로딩 시작
+    setState(() {
+      _isLoading = true;
+    });
+
     // Show ad before navigating to analysis
     await AdService.instance.showInterstitialAdWithCallback(
       onAdCompleted: () async {
+        if (!mounted) return;
+        setState(() {
+          _isLoading = false;
+        });
         Navigator.of(context).push(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
@@ -227,6 +237,10 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
       },
       onAdFailed: () async {
         // Navigate even if ad fails
+        if (!mounted) return;
+        setState(() {
+          _isLoading = false;
+        });
         Navigator.of(context).push(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
@@ -422,11 +436,11 @@ class _BiorhythmInputPageState extends State<BiorhythmInputPage>
             ),
           TossFloatingProgressButtonPositioned(
             text: '바이오리듬 분석하기',
-            onPressed: _selectedDate != null ? _analyzeBiorhythm : null,
-            isEnabled: _selectedDate != null,
+            onPressed: _selectedDate != null && !_isLoading ? _analyzeBiorhythm : null,
+            isEnabled: _selectedDate != null && !_isLoading,
             isVisible: true,
-            showProgress: false,
-            isLoading: false,
+            showProgress: false, // ✅ 단일 단계이므로 progress는 false 유지
+            isLoading: _isLoading, // ✅ 로딩 상태 연결
           ),
         ],
       ),
