@@ -14,14 +14,20 @@ class PremiumScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        automaticallyImplyLeading: false, // 백 버튼 제거
+        title: Text(
+          '프리미엄 사주',
+          style: TypographyUnified.heading3.copyWith(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
+        ),
+      ),
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: AppHeader(
-              title: '프리미엄 사주',
-              backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
-            ),
-          ),
           SliverPadding(
             padding: const EdgeInsets.all(16),
             sliver: SliverList(

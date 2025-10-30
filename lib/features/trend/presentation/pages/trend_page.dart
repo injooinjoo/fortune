@@ -139,32 +139,24 @@ class _TrendPageState extends ConsumerState<TrendPage> {
             itemCount: trendItems.length + 1, // +1 for header
             itemBuilder: (context, index) {
               if (index == 0) {
-                // Header section replacing AppBar
+                // Header section (운세 리스트와 동일한 스타일)
                 return Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                   child: Row(
                     children: [
-                      Expanded(
-                        child: ShaderMask(
-                          shaderCallback: (bounds) => LinearGradient(
-                            colors: [
-                              Color(0xFFF58529),
-                              Color(0xFFDD2A7B),
-                              Color(0xFF8134AF)]).createShader(bounds),
-                          child: Text(
-                            '트렌드 & 테스트',
-                            style: TypographyUnified.displaySmall.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: isDark ? TossDesignSystem.white : TossDesignSystem.black),
-                          ),
+                      Text(
+                        '트렌드',
+                        style: TypographyUnified.heading3.copyWith(
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                         ),
                       ),
+                      const Spacer(),
                       IconButton(
                         icon: Icon(
                           Icons.notifications_outlined,
                           color: isDark
-                            ? TossDesignSystem.white.withValues(alpha: 0.87)
-                            : TossDesignSystem.black.withValues(alpha: 0.87)
+                            ? TossDesignSystem.textPrimaryDark
+                            : TossDesignSystem.textPrimaryLight,
                         ),
                         onPressed: () {},
                       ),

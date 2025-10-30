@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 import '../pages/fortune_list_page.dart';
-
-
+import '../providers/fortune_order_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 
@@ -14,121 +14,155 @@ class FortuneListTile extends ConsumerWidget {
   const FortuneListTile({
     super.key,
     required this.category,
-    required this.onTap});
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final gradientColors = FortuneCardImages.getGradientColors(category.type);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final orderState = ref.watch(fortuneOrderProvider);
+    final isFavorite = orderState.favorites.contains(category.type);
 
-    return InkWell(
-      onTap: onTap,
+    return Slidable(
+      key: ValueKey(category.type),
+      // 왼쪽에서 오른쪽으로 스와이프 (startActionPane)
+      startActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.25, // 스와이프 영역 비율
+        children: [
+          // 즐겨찾기 버튼 (아이콘만)
+          SlidableAction(
+            onPressed: (_) {
+              ref.read(fortuneOrderProvider.notifier).toggleFavorite(category.type);
+            },
+            backgroundColor: isFavorite
+                ? TossDesignSystem.warningOrange
+                : TossDesignSystem.tossBlue,
+            foregroundColor: TossDesignSystem.white,
+            icon: isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+            borderRadius: BorderRadius.zero,
+          ),
+        ],
+      ),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM, vertical: TossDesignSystem.spacingS),
-        child: Row(
-          children: [
-            // Small gradient thumbnail instead of image
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: gradientColors,
-                ),
-                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
-                boxShadow: [
-                  BoxShadow(
-                    color: gradientColors.first.withValues(alpha: 0.25),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Stack(
+        color: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Row(
                 children: [
-                  Center(
-                    child: Icon(
-                      category.icon,
-                      size: 24,
-                      color: TossDesignSystem.white.withValues(alpha: 0.9),
-                    ),
-                  ),
-                  // Small decorative element
-                  Positioned(
-                    right: -5,
-                    bottom: -5,
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: TossDesignSystem.white.withValues(alpha: 0.15),
+                  // 즐겨찾기 상태 표시 (별 아이콘)
+                  if (isFavorite)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: Icon(
+                        Icons.star_rounded,
+                        color: TossDesignSystem.warningOrange,
+                        size: 20,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: TossDesignSystem.spacingM),
-            // Title and description
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+
+                  // 좌측 아이콘 (토스 스타일 원형 배경) + 빨간 dot 배지
+                  Stack(
+                    clipBehavior: Clip.none,
                     children: [
-                      Expanded(
-                        child: Text(
-                          category.title,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis),
-                      ),
-                      if (category.isNew) Container(
-                          margin: const EdgeInsets.only(left: TossDesignSystem.spacingS),
-                          padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingS, vertical: 4 * 0.5),
-                          decoration: BoxDecoration(
-                            color: TossDesignSystem.errorRed,
-                            borderRadius: BorderRadius.circular(TossDesignSystem.radiusS)),
-                          child: Text(
-                            'NEW',
-                            style: TextStyle(
-                              color: TossDesignSystem.white,
-                              
-                              fontWeight: FontWeight.bold)),
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: FortuneCardImages.getGradientColors(category.type),
+                          ),
                         ),
-                      if (category.isPremium) Container(
-                          margin: const EdgeInsets.only(left: TossDesignSystem.spacingS),
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: TossDesignSystem.warningOrange,
-                            borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
-                          child: const Icon(
-                            Icons.star_rounded,
-                            size: 12,
-                            color: TossDesignSystem.white),
+                        child: Icon(
+                          category.icon,
+                          size: 20,
+                          color: isDark
+                              ? TossDesignSystem.grayDark100
+                              : TossDesignSystem.white,
+                        ),
+                      ),
+                      // 빨간 dot 배지 (새 운세 OR 오늘 안 본 운세)
+                      if (category.shouldShowRedDot)
+                        Positioned(
+                          top: -3,
+                          right: -3,
+                          child: Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFF6B6B),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isDark
+                                    ? TossDesignSystem.grayDark50
+                                    : TossDesignSystem.white,
+                                width: 2,
+                              ),
+                            ),
+                          ),
                         ),
                     ],
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingXS),
+
+                  const SizedBox(width: 16),
+
+                  // 중앙 텍스트 영역
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 제목 (NEW 배지 제거 - 아이콘 dot으로 대체)
+                        Text(
+                          category.title,
+                          style: TypographyUnified.buttonMedium.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: isDark
+                                ? TossDesignSystem.textPrimaryDark
+                                : TossDesignSystem.textPrimaryLight,
+                            height: 1.3,
+                          ),
+                        ),
+
+                        const SizedBox(height: 2),
+
+                        // 부제목 (설명)
+                        Text(
+                          category.description,
+                          style: TypographyUnified.bodySmall.copyWith(
+                            color: isDark
+                                ? TossDesignSystem.textSecondaryDark
+                                : TossDesignSystem.textSecondaryLight,
+                            height: 1.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  // 우측 액션 텍스트 (토스 스타일)
                   Text(
-                    category.description,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
+                    category.isFreeFortune
+                        ? '포인트 받기'
+                        : '${category.soulCost}원 받기',
+                    style: TypographyUnified.bodySmall.copyWith(
+                      color: isDark
+                          ? TossDesignSystem.textTertiaryDark
+                          : TossDesignSystem.textTertiaryLight,
+                    ),
+                  ),
                 ],
               ),
             ),
-            const SizedBox(width: TossDesignSystem.spacingS),
-            Icon(
-              Icons.chevron_right,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-              size: 24),
-          ],
+          ),
         ),
       ),
     );

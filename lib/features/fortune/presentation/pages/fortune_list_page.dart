@@ -9,6 +9,8 @@ import '../../../../core/config/environment.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../presentation/providers/fortune_recommendation_provider.dart';
+import '../providers/fortune_order_provider.dart';
+import '../widgets/fortune_list_tile.dart';
 
 class FortuneCategory {
   final String title;
@@ -20,6 +22,7 @@ class FortuneCategory {
   final String category;
   final bool isNew;
   final bool isPremium;
+  final bool hasViewedToday; // 오늘 조회 여부
 
   const FortuneCategory({
     required this.title,
@@ -30,14 +33,46 @@ class FortuneCategory {
     required this.description,
     required this.category,
     this.isNew = false,
-    this.isPremium = false});
-  
+    this.isPremium = false,
+    this.hasViewedToday = false,
+  });
+
   // 영혼 정보 가져오기
   int get soulAmount => SoulRates.getSoulAmount(type);
   bool get isFreeFortune => soulAmount > 0;
   bool get isPremiumFortune => soulAmount < 0;
   String get soulDescription => SoulRates.getActionDescription(type);
   int get soulCost => soulAmount.abs(); // Convert to positive cost value
+
+  // 빨간 dot 표시 여부 (새 운세 OR 오늘 안 본 운세)
+  bool get shouldShowRedDot => isNew || !hasViewedToday;
+
+  // copyWith 메서드 추가 (hasViewedToday 업데이트용)
+  FortuneCategory copyWith({
+    String? title,
+    String? route,
+    String? type,
+    IconData? icon,
+    List<Color>? gradientColors,
+    String? description,
+    String? category,
+    bool? isNew,
+    bool? isPremium,
+    bool? hasViewedToday,
+  }) {
+    return FortuneCategory(
+      title: title ?? this.title,
+      route: route ?? this.route,
+      type: type ?? this.type,
+      icon: icon ?? this.icon,
+      gradientColors: gradientColors ?? this.gradientColors,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      isNew: isNew ?? this.isNew,
+      isPremium: isPremium ?? this.isPremium,
+      hasViewedToday: hasViewedToday ?? this.hasViewedToday,
+    );
+  }
 }
 
 enum FortuneCategoryType {
@@ -79,7 +114,7 @@ class FortuneListPage extends ConsumerStatefulWidget {
   ConsumerState<FortuneListPage> createState() => _FortuneListPageState();
 }
 
-class _FortuneListPageState extends ConsumerState<FortuneListPage> 
+class _FortuneListPageState extends ConsumerState<FortuneListPage>
     with SingleTickerProviderStateMixin {
   OverlayEntry? _overlayEntry;
   late AnimationController _animationController;
@@ -89,6 +124,9 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   bool _isScrollingDown = false;
   double _lastScrollPosition = 0;
 
+  // 오늘 조회한 운세 타입 목록
+  Set<String> _viewedTodayTypes = {};
+
   @override
   void initState() {
     super.initState();
@@ -96,15 +134,45 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       duration: const Duration(milliseconds: 600),
       vsync: this
     );
-    
+
     // Initialize scroll controller
     _scrollController = ScrollController();
     _scrollController.addListener(_handleScroll);
-    
+
     // Ensure navigation is visible when this page loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(navigationVisibilityProvider.notifier).show();
+      _loadViewedTodayTypes(); // 오늘 조회 여부 로드
     });
+  }
+
+  // 오늘 조회한 운세 타입 로드
+  Future<void> _loadViewedTodayTypes() async {
+    try {
+      final user = ref.read(userProvider).value;
+      if (user == null) return;
+
+      final supabase = ref.read(supabaseClientProvider);
+      final todayStart = DateTime.now().toUtc().copyWith(hour: 0, minute: 0, second: 0, millisecond: 0);
+      final todayEnd = todayStart.add(const Duration(days: 1));
+
+      final response = await supabase
+          .from('fortune_history')
+          .select('fortune_type')
+          .eq('user_id', user.id)
+          .gte('created_at', todayStart.toIso8601String())
+          .lt('created_at', todayEnd.toIso8601String());
+
+      if (mounted) {
+        setState(() {
+          _viewedTodayTypes = (response as List)
+              .map((item) => item['fortune_type'] as String)
+              .toSet();
+        });
+      }
+    } catch (e) {
+      debugPrint('[FortuneList] 오늘 조회 여부 로드 실패: $e');
+    }
   }
 
   @override
@@ -477,11 +545,52 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   @override
   Widget build(BuildContext context) {
     final groupedCategories = _groupCategoriesByType();
+    final orderState = ref.watch(fortuneOrderProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // 정렬된 전체 카테고리 리스트 가져오기 (오늘 조회 여부 포함)
+    final allCategories = _categories.map((category) {
+      return category.copyWith(
+        hasViewedToday: _viewedTodayTypes.contains(category.type),
+      );
+    }).toList();
+    final sortedCategories = ref.read(fortuneOrderProvider.notifier).getSortedCategories(allCategories);
+
+    // 즐겨찾기와 일반 분리 (즐겨찾기 우선 정렬일 때)
+    final favoriteCategories = sortedCategories
+        .where((c) => orderState.favorites.contains(c.type))
+        .toList();
+    final otherCategories = sortedCategories
+        .where((c) => !orderState.favorites.contains(c.type))
+        .toList();
+
+    final showFavoriteSection = orderState.currentSort == SortOption.favoriteFirst && favoriteCategories.isNotEmpty;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
+      backgroundColor: isDark
           ? TossDesignSystem.grayDark50
           : TossDesignSystem.white,
+      appBar: AppBar(
+        backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: Text(
+          '운세',
+          style: TypographyUnified.heading3.copyWith(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
+        ),
+        actions: [
+          // 정렬 버튼
+          IconButton(
+            icon: Icon(
+              Icons.sort_rounded,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            ),
+            onPressed: () => _showSortOptions(context),
+          ),
+        ],
+      ),
       body: SafeArea(
         bottom: false, // 하단 네비게이션 바는 침범 허용
         child: CustomScrollView(
@@ -494,47 +603,47 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: CommonAdPlacements.listBottomAd()),
               ),
-            
-            // 토스 스타일 섹션별 리스트
+
+            // 즐겨찾기 섹션 (즐겨찾기 우선 정렬일 때만)
+            if (showFavoriteSection) ...[
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ...favoriteCategories.asMap().entries.map((entry) {
+                      return FortuneListTile(
+                        key: ValueKey('favorite_${entry.value.type}'),
+                        category: entry.value,
+                        onTap: () => _handleCategoryTap(entry.value),
+                      );
+                    }),
+                    // 얇은 구분선
+                    Container(
+                      height: 1,
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      color: isDark
+                          ? TossDesignSystem.textTertiaryDark.withValues(alpha: 0.2)
+                          : TossDesignSystem.textTertiaryLight.withValues(alpha: 0.2),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            // 정렬된 리스트 (일반)
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  final categoryTypes = groupedCategories.keys.toList();
-                  final categoryType = categoryTypes[index];
-                  final categories = groupedCategories[categoryType]!;
-                  final categoryDisplayName = _getCategoryDisplayName(categoryType);
-                  
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 섹션 제목 (토스 스타일)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 32, 20, 16),
-                        child: Text(
-                          categoryDisplayName,
-                          style: TypographyUnified.heading4.copyWith(
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? TossDesignSystem.textPrimaryDark
-                                : TossDesignSystem.textPrimaryLight,
-                          ),
-                        ),
-                      ),
-                      
-                      // 섹션의 아이템들
-                      ...categories.asMap().entries.map((entry) {
-                        final itemIndex = entry.key;
-                        final category = entry.value;
-                        
-                        return _buildTossStyleListItem(
-                          context,
-                          category,
-                          isLastInSection: itemIndex == categories.length - 1,
-                        );
-                      }),
-                    ],
+                  final categories = showFavoriteSection ? otherCategories : sortedCategories;
+                  final category = categories[index];
+
+                  return FortuneListTile(
+                    key: ValueKey(category.type),
+                    category: category,
+                    onTap: () => _handleCategoryTap(category),
                   );
                 },
-                childCount: groupedCategories.length,
+                childCount: showFavoriteSection ? otherCategories.length : sortedCategories.length,
               ),
             ),
             
@@ -546,120 +655,117 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     );
   }
 
-  // 토스 스타일 리스트 아이템 생성
-  Widget _buildTossStyleListItem(
-    BuildContext context,
-    FortuneCategory category,
-    {required bool isLastInSection}
-  ) {
-    return Container(
-      margin: EdgeInsets.only(
-        bottom: isLastInSection ? 0 : 0, // 토스는 여백으로 구분
+
+  // 정렬 옵션 선택 바텀시트
+  void _showSortOptions(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final currentSort = ref.read(fortuneOrderProvider).currentSort;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: Material(
-        color: TossDesignSystem.white.withValues(alpha: 0.0),
-        child: InkWell(
-          onTap: () => _handleCategoryTap(category),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Row(
-              children: [
-                // 좌측 아이콘 (토스 스타일 원형 배경)
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: FortuneCardImages.getGradientColors(category.type),
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 제목
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                '정렬 방식',
+                style: TypographyUnified.heading4.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // 정렬 옵션들
+            _buildSortOption(
+              context,
+              '최근 조회순',
+              '최근에 본 운세가 위로',
+              SortOption.recentlyViewed,
+              currentSort == SortOption.recentlyViewed,
+            ),
+            _buildSortOption(
+              context,
+              '조회 가능순',
+              '오늘 아직 안 본 운세가 위로',
+              SortOption.availableFirst,
+              currentSort == SortOption.availableFirst,
+            ),
+            _buildSortOption(
+              context,
+              '⭐',
+              '즐겨찾기한 운세를 상단에 고정',
+              SortOption.favoriteFirst,
+              currentSort == SortOption.favoriteFirst,
+            ),
+            _buildSortOption(
+              context,
+              '사용자 지정',
+              '드래그하여 순서 변경',
+              SortOption.custom,
+              currentSort == SortOption.custom,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 정렬 옵션 아이템
+  Widget _buildSortOption(
+    BuildContext context,
+    String title,
+    String description,
+    SortOption option,
+    bool isSelected,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return InkWell(
+      onTap: () {
+        ref.read(fortuneOrderProvider.notifier).changeSortOption(option);
+        Navigator.pop(context);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TypographyUnified.buttonMedium.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
-                  child: Icon(
-                    category.icon,
-                    size: 20,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.grayDark100
-                        : TossDesignSystem.white,
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: TypographyUnified.bodySmall.copyWith(
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                    ),
                   ),
-                ),
-                
-                const SizedBox(width: 16),
-                
-                // 중앙 텍스트 영역
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 제목
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              category.title,
-                              style: TypographyUnified.buttonMedium.copyWith(
-                                fontWeight: FontWeight.w500,
-                                color: Theme.of(context).brightness == Brightness.dark
-                                    ? TossDesignSystem.textPrimaryDark
-                                    : TossDesignSystem.textPrimaryLight,
-                                height: 1.3,
-                              ),
-                            ),
-                          ),
-                          // NEW 배지
-                          if (category.isNew) ...[
-                            const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFFF6B6B),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                'NEW',
-                                style: TypographyUnified.labelTiny.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: Theme.of(context).brightness == Brightness.dark
-                                      ? TossDesignSystem.grayDark100
-                                      : TossDesignSystem.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                      
-                      const SizedBox(height: 2),
-                      
-                      // 부제목 (설명)
-                      Text(
-                        category.description,
-                        style: TypographyUnified.bodySmall.copyWith(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.textSecondaryDark
-                              : TossDesignSystem.textSecondaryLight,
-                          height: 1.3,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                const SizedBox(width: 12),
-                
-                // 우측 액션 텍스트 (토스 스타일)
-                Text(
-                  category.isFreeFortune ? '포인트 받기' : '${category.soulCost}원 받기',
-                  style: TypographyUnified.bodySmall.copyWith(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.textTertiaryDark
-                        : TossDesignSystem.textTertiaryLight,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+            if (isSelected)
+              Icon(
+                Icons.check_circle_rounded,
+                color: TossDesignSystem.tossBlue,
+                size: 24,
+              ),
+          ],
         ),
       ),
     );
@@ -674,6 +780,9 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       fortuneType,
       category.category
     );
+
+    // Record view for order provider
+    ref.read(fortuneOrderProvider.notifier).recordView(fortuneType);
 
     // 모든 운세를 직접 페이지로 라우팅 (bottomsheet 제거)
     context.push(category.route);
