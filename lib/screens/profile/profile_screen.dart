@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/storage_service.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../core/theme/toss_design_system.dart';
+import '../../core/theme/typography_unified.dart';
 import '../../data/services/fortune_api_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../presentation/providers/auth_provider.dart';
