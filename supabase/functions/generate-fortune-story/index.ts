@@ -117,9 +117,18 @@ serve(async (req) => {
     }
 
     // 저장된 사주 데이터 조회
-    console.log('🔮 Fetching saved Saju data for user:', userName)
+    console.log('🔮 Fetching saved Saju data for user:', userName, 'userId:', user.id)
     const sajuAnalysis = await getSavedSajuData(supabase, user.id);
-    console.log('🎯 Saju analysis result:', sajuAnalysis ? '데이터 있음' : '데이터 없음');
+    if (sajuAnalysis) {
+      console.log('✅ Saju analysis found:')
+      console.log('  - 천간:', sajuAnalysis.천간)
+      console.log('  - 지지:', sajuAnalysis.지지)
+      console.log('  - 간지:', sajuAnalysis.간지)
+      console.log('  - 오행:', JSON.stringify(sajuAnalysis.오행))
+      console.log('  - 부족한 오행:', sajuAnalysis.부족한오행)
+    } else {
+      console.log('⚠️ No Saju data found for user - will generate basic fortune')
+    }
     
     // GPT-4로 종합 운세 및 스토리 생성
     const systemPrompt = `당신은 한국의 전통 사주명리학과 현대적 감성을 결합한 전문 운세 스토리텔러입니다.
@@ -252,7 +261,18 @@ serve(async (req) => {
 14. 내일을 위한 준비
 15. 종합 요약 및 마무리 (격려의 메시지)`
 
-    const userPrompt = `사용자 정보:
+    // ✅ 현재 날짜 명확히 추출
+    const now = new Date(date || new Date()) // date 파라미터 우선 사용
+    const currentDate = now.toISOString().split('T')[0] // YYYY-MM-DD
+    const currentYear = now.getFullYear()
+    const currentMonth = now.getMonth() + 1
+    const currentDay = now.getDate()
+    const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
+    const currentWeekday = weekdays[now.getDay()]
+
+    const userPrompt = `⚠️ 절대 중요: 오늘 날짜는 ${currentYear}년 ${currentMonth}월 ${currentDay}일 ${currentWeekday}입니다. 이 날짜를 반드시 사용하세요!
+
+사용자 정보:
 - 이름: ${userName} (절대적으로 중요: 이 이름 "${userName}"을 반드시 사용하세요. 절대로 "사용자님"이라고 하지 마세요. 반드시 "${userName}님"으로 호칭하세요)
 ${userProfile ? `- 생년월일: ${userProfile.birthDate}
 - 생시: ${userProfile.birthTime || '모름'}
@@ -262,6 +282,11 @@ ${userProfile ? `- 생년월일: ${userProfile.birthDate}
 - 별자리: ${userProfile.zodiacSign || ''}
 - MBTI: ${userProfile.mbti || ''}
 - 혈액형: ${userProfile.bloodType || ''}` : ''}
+
+날짜 정보 (절대 중요!):
+- 오늘 날짜: ${currentYear}년 ${currentMonth}월 ${currentDay}일 ${currentWeekday}
+- ISO 형식: ${currentDate}
+- ⚠️ 이 날짜가 아닌 다른 날짜를 사용하지 마세요!
 
 날씨 정보:
 - 상태: ${weather.description}
@@ -290,6 +315,9 @@ ${sajuAnalysis ? `- 천간: ${sajuAnalysis.천간}
 그리고 sajuAnalysis 객체도 함께 반함하세요.`
 
     console.log('🤖 Calling LLM API...')
+    console.log('📤 System prompt length:', systemPrompt.length)
+    console.log('📤 User prompt length:', userPrompt.length)
+    console.log('📤 User prompt:', userPrompt) // 전체 프롬프트 확인
 
     // ✅ LLM 모듈 사용
     const llm = LLMFactory.createFromConfig('fortune-story')
@@ -298,7 +326,7 @@ ${sajuAnalysis ? `- 천간: ${sajuAnalysis.천간}
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt }
     ], {
-      temperature: 1,
+      temperature: 0.7, // ✅ 1에서 0.7로 낮춤 (더 일관된 응답)
       maxTokens: 8192,
       jsonMode: true
     })
@@ -307,12 +335,31 @@ ${sajuAnalysis ? `- 천간: ${sajuAnalysis.천간}
     console.log(`📝 Token 사용량: prompt=${response.usage.promptTokens}, completion=${response.usage.completionTokens}, total=${response.usage.totalTokens}`)
 
     if (!response.content) {
+      console.error('❌ LLM API returned empty content')
       throw new Error('LLM API 응답 없음')
     }
 
-    const storyContent = JSON.parse(response.content)
-    console.log('📦 Story content type:', typeof storyContent)
-    console.log('📦 Story content keys:', Object.keys(storyContent))
+    console.log('📥 Raw LLM response:', response.content.substring(0, 500)) // 처음 500자 확인
+
+    let storyContent
+    try {
+      storyContent = JSON.parse(response.content)
+      console.log('✅ JSON parsing successful')
+      console.log('📦 Story content type:', typeof storyContent)
+      console.log('📦 Story content keys:', Object.keys(storyContent))
+
+      // ✅ 핵심 필드 존재 여부 로깅
+      console.log('🔍 Field validation:')
+      console.log('  - segments:', Array.isArray(storyContent.segments) ? `${storyContent.segments.length}개` : '없음')
+      console.log('  - meta:', storyContent.meta ? '있음' : '없음')
+      console.log('  - overall:', storyContent.overall ? '있음' : '없음')
+      console.log('  - categories:', storyContent.categories ? '있음' : '없음')
+      console.log('  - sajuInsight:', storyContent.sajuInsight ? '있음' : '없음')
+    } catch (parseError) {
+      console.error('❌ JSON parsing failed:', parseError)
+      console.error('📥 Failed content:', response.content)
+      throw new Error('LLM 응답 JSON 파싱 실패')
+    }
 
     // 확장된 응답 구조 처리
     let segments = [];

@@ -783,7 +783,7 @@ class _CategoryTabs extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(category.icon, style: const TextStyle(fontSize: 28)),
+                  Text(category.icon, style: TypographyUnified.heading1),
                   const SizedBox(height: 6),
                   Text(
                     category.title,
@@ -820,7 +820,7 @@ class _CategoryHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text(category.icon, style: const TextStyle(fontSize: 48)),
+          Text(category.icon, style: TypographyUnified.displayLarge),
           const SizedBox(width: 16),
           Expanded(
             child: Column(

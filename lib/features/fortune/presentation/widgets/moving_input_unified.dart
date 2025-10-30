@@ -497,7 +497,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
               children: [
                 Text(
                   purpose['icon']!,
-                  style: const TextStyle(fontSize: 32),
+                  style: TypographyUnified.displaySmall,
                 ),
                 const SizedBox(height: 8),
                 Text(

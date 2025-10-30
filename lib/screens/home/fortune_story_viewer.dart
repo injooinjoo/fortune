@@ -419,7 +419,7 @@ class FortuneStory {
     // 오늘의 기운
     segments.add(StorySegment(
       text: '오늘의 운세를\n알려드릴게요.',
-      fontSize: 32,  // numberLarge size
+      fontSize: TypographyUnified.displaySmall.fontSize!,
       fontWeight: FontWeight.w400,
     ));
 
@@ -433,7 +433,7 @@ class FortuneStory {
         if (line.isNotEmpty) {
           segments.add(StorySegment(
             text: line.trim() + (line.endsWith('.') ? '' : '.'),
-            fontSize: 28,  // heading1 size
+            fontSize: TypographyUnified.heading1.fontSize!,
             fontWeight: FontWeight.w300,
           ));
         }

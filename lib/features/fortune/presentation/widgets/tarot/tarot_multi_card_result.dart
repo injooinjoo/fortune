@@ -363,8 +363,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                                     SizedBox(height: 8),
                                     Text(
                                       card.cardNameKr,
-                                      style: TextStyle(
-                                        fontSize: 12,
+                                      style: TypographyUnified.labelMedium.copyWith(
                                         color: Color(0xFF8B95A1),
                                       ),
                                       textAlign: TextAlign.center,

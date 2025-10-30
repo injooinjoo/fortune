@@ -11,6 +11,7 @@ class SpeechRecognitionService {
   final ValueNotifier<bool> isListeningNotifier = ValueNotifier(false);
   final ValueNotifier<String> recognizedTextNotifier = ValueNotifier('');
   final ValueNotifier<String> statusNotifier = ValueNotifier('');
+  final ValueNotifier<double> soundLevelNotifier = ValueNotifier(0.0);
   
   Future<bool> initialize() async {
     try {
@@ -93,6 +94,11 @@ class SpeechRecognitionService {
               recognizedTextNotifier.value = '';
             }
           }
+        },
+        onSoundLevelChange: (level) {
+          // 사운드 레벨 업데이트 (0.0 ~ 1.0)
+          soundLevelNotifier.value = level;
+          debugPrint('🎤 Sound Level: $level');
         },
         localeId: locale,
         listenFor: const Duration(seconds: 30),

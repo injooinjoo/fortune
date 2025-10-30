@@ -283,7 +283,6 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
                 style: TypographyUnified.displayLarge.copyWith(
                   color: scoreColor,
                   fontWeight: FontWeight.w700,
-                  fontSize: 56,
                 ),
               ),
               Padding(

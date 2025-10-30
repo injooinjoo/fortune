@@ -27,8 +27,6 @@ export const FORTUNE_SPECIFIC_MODELS: Record<string, string | undefined> = {
   'blind-date': 'gemini-2.0-flash-lite',
   'ex-lover': 'gemini-2.0-flash-lite',
   'lucky-series': 'gemini-2.0-flash-lite',
-  // 특정 운세만 다른 모델 사용하고 싶을 때
-  // 'personality-dna': 'gpt-4o-mini',
 }
 
 export function getModelConfig(fortuneType: string) {

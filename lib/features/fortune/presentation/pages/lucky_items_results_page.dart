@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/components/toss_card.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 
@@ -245,10 +246,8 @@ class _LuckyItemsResultsPageState extends ConsumerState<LuckyItemsResultsPage> {
         automaticallyImplyLeading: false, // 기본 뒤로가기 버튼 숨김
         title: Text(
           '오늘의 행운 아이템',
-          style: TextStyle(
+          style: TypographyUnified.heading4.copyWith(
             color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: true,

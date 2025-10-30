@@ -13,23 +13,35 @@ export class GeminiProvider implements ILLMProvider {
 
     try {
       // Gemini API 호출
+      console.log('🔄 [Gemini] Converting messages...')
+      const contents = this.convertMessages(messages)
+      console.log('✅ [Gemini] Messages converted:', JSON.stringify(contents).substring(0, 200))
+
+      const requestBody = {
+        contents,
+        generationConfig: {
+          temperature: options?.temperature ?? 1,
+          maxOutputTokens: options?.maxTokens ?? 8192,
+          responseMimeType: options?.jsonMode ? 'application/json' : 'text/plain',
+        },
+      }
+
+      console.log('🔄 [Gemini] Stringifying request body...')
+      const bodyString = JSON.stringify(requestBody)
+      console.log('✅ [Gemini] Body stringified, length:', bodyString.length)
+
+      console.log('🔄 [Gemini] Calling Gemini API...')
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateContent?key=${this.config.apiKey}`,
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
           },
-          body: JSON.stringify({
-            contents: this.convertMessages(messages),
-            generationConfig: {
-              temperature: options?.temperature ?? 1,
-              maxOutputTokens: options?.maxTokens ?? 8192,
-              responseMimeType: options?.jsonMode ? 'application/json' : 'text/plain',
-            },
-          }),
+          body: bodyString,
         }
       )
+      console.log('✅ [Gemini] API call completed, status:', response.status)
 
       if (!response.ok) {
         const errorText = await response.text()
@@ -97,7 +109,11 @@ export class GeminiProvider implements ILLMProvider {
       }
 
       // ✅ content가 문자열인 경우 (일반 텍스트)
+      console.log('🔄 [Gemini] Combining system and user messages...')
+      console.log('  System content length:', systemMessage.content.length)
+      console.log('  User content length:', firstUserContent.length)
       const combinedContent = `${systemMessage.content}\n\n${firstUserContent}`
+      console.log('  Combined content length:', combinedContent.length)
       return [
         {
           role: 'user',

@@ -511,6 +511,48 @@ class UnifiedFortuneService {
             createdAt: DateTime.now(),
           );
 
+        case 'dream':
+          // Dream Fortune Edge Function 직접 호출
+          Logger.info('[UnifiedFortune] 🔄 Dream Fortune API 호출 시작');
+          Logger.info('[UnifiedFortune] 📋 Request Body:');
+          Logger.info('[UnifiedFortune]   - dream: "${inputConditions['dream']}"');
+          Logger.info('[UnifiedFortune]   - inputType: ${inputConditions['inputType']}');
+          Logger.info('[UnifiedFortune]   - isPremium: ${inputConditions['isPremium']}');
+          Logger.info('[UnifiedFortune]   - Full body: ${jsonEncode(inputConditions)}');
+
+          try {
+            final dreamResponse = await _supabase.functions.invoke(
+              'fortune-dream',
+              body: inputConditions,
+            );
+
+            if (dreamResponse.data == null) {
+              throw Exception('Dream API 응답 데이터 없음');
+            }
+
+            Logger.info('[UnifiedFortune] ✅ Dream Fortune API 호출 성공');
+
+            final dreamResponseData = dreamResponse.data as Map<String, dynamic>;
+            if (dreamResponseData['success'] != true) {
+              throw Exception(dreamResponseData['error'] ?? 'Dream Fortune API 호출 실패');
+            }
+
+            final dreamData = dreamResponseData['data'] as Map<String, dynamic>;
+            return FortuneResult(
+              type: 'dream',
+              title: dreamData['interpretation'] as String? ?? '꿈 해몽',
+              summary: {'message': dreamData['interpretation'] as String? ?? '해몽 완료'},
+              data: dreamData,
+              createdAt: DateTime.now(),
+            );
+          } on FunctionException catch (e) {
+            Logger.error('[UnifiedFortune] ❌ Dream Fortune API 에러');
+            Logger.error('[UnifiedFortune]   - Status: ${e.status}');
+            Logger.error('[UnifiedFortune]   - Details: ${e.details}');
+            Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');
+            rethrow;
+          }
+
         default:
           // 기본 Edge Function 호출 (레거시)
           final response = await _supabase.functions.invoke(

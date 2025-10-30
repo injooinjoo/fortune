@@ -9,6 +9,7 @@ import '../services/debug_premium_service.dart';
 import '../utils/logger.dart';
 import '../../shared/components/toast.dart';
 import '../theme/toss_design_system.dart';
+import '../theme/typography_unified.dart';
 import '../../services/ad_service.dart';
 import '../utils/haptic_utils.dart';
 import '../constants/soul_rates.dart';
@@ -420,12 +421,10 @@ class _UnifiedFortuneBaseWidgetState
               ),
               title: Text(
                 widget.title,
-                style: TextStyle(
+                style: TypographyUnified.heading4.copyWith(
                   color: isDark
                       ? TossDesignSystem.textPrimaryDark
                       : TossDesignSystem.textPrimaryLight,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
               centerTitle: true,

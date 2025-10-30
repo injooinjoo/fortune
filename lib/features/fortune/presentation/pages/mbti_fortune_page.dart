@@ -123,12 +123,10 @@ class _MbtiFortunePageState
         ),
         title: Text(
           'MBTI 운세',
-          style: TextStyle(
+          style: TypographyUnified.heading4.copyWith(
             color: isDark
                 ? TossDesignSystem.textPrimaryDark
                 : TossDesignSystem.textPrimaryLight,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: true,

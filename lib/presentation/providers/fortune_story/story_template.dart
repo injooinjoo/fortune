@@ -3,6 +3,7 @@ import '../../../screens/home/fortune_story_viewer.dart';
 import '../../../domain/entities/fortune.dart' as fortune_entity;
 import '../../../domain/entities/user_profile.dart';
 import '../../../core/utils/logger.dart';
+import '../../../core/theme/typography_unified.dart';
 
 /// 기본 스토리 템플릿 생성 (GPT 실패 시)
 class StoryTemplate {
@@ -33,7 +34,7 @@ class StoryTemplate {
     final summaryData = _getDynamicSummaryText(score);
     segments.add(StorySegment(
       text: summaryData['text'] ?? '특별한 하루입니다',
-      fontSize: 28,  // heading1 size
+      fontSize: TypographyUnified.heading1.fontSize!,
       fontWeight: FontWeight.w300,
       emoji: summaryData['emoji'] ?? '✨',
     ));
@@ -54,7 +55,7 @@ class StoryTemplate {
         if (part.trim().isNotEmpty) {
           segments.add(StorySegment(
             text: part.trim() + (part.endsWith('.') ? '' : '.'),
-            fontSize: 28,  // heading1 size
+            fontSize: TypographyUnified.heading1.fontSize!,
             fontWeight: FontWeight.w300,
           ));
         }
@@ -65,7 +66,7 @@ class StoryTemplate {
     segments.add(StorySegment(
       subtitle: '⚠️ 주의',
       text: _extractCautionText(fortune, score),
-      fontSize: 20,  // heading3 size
+      fontSize: TypographyUnified.heading3.fontSize!,
       fontWeight: FontWeight.w300,
     ));
 
@@ -124,7 +125,7 @@ class StoryTemplate {
         : '천천히 가도\n괜찮은 날';
     segments.add(StorySegment(
       text: energyText,
-      fontSize: 28,  // heading1 size
+      fontSize: TypographyUnified.heading1.fontSize!,
       fontWeight: FontWeight.w300,
       emoji: score >= 80 ? '✨' : score >= 60 ? '☁️' : '🌙',
     ));
@@ -141,7 +142,7 @@ class StoryTemplate {
     // 7. 주의사항
     segments.add(StorySegment(
       text: '잠깐,\n\n${_extractCautionText(fortune, score)}',
-      fontSize: 20,  // heading3 size
+      fontSize: TypographyUnified.heading3.fontSize!,
       fontWeight: FontWeight.w300,
     ));
 
@@ -149,7 +150,7 @@ class StoryTemplate {
     String luckyText = _extractLuckyItems(fortune).join('\n');
     segments.add(StorySegment(
       text: luckyText.isNotEmpty ? luckyText : '오늘의 색: 하늘색\n행운의 숫자: 7\n최고의 시간: 오후 2-4시',
-      fontSize: 28,  // heading1 size
+      fontSize: TypographyUnified.heading1.fontSize!,
       fontWeight: FontWeight.w300,
     ));
 

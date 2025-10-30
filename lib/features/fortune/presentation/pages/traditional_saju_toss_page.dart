@@ -615,20 +615,35 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     try {
       final adService = AdService.instance;
 
-      // 리워드 광고가 준비되지 않았다면 사용자에게 알림
+      // 광고가 준비되지 않았다면 백그라운드에서 로드
       if (!adService.isRewardedAdReady) {
-        Logger.warning('[Traditional-Saju] ⚠️ Rewarded ad not ready');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('광고를 준비하고 있습니다. 잠시 후 다시 시도해주세요.'),
-              duration: Duration(seconds: 3),
-              backgroundColor: Colors.orange,
-            ),
-          );
+        // 광고 로드 시작
+        await adService.loadRewardedAd();
+
+        // 로딩 완료 대기 (최대 5초)
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
         }
-        return; // 광고 없으면 잠금 해제하지 않음
+
+        // 여전히 준비되지 않았다면 에러 메시지
+        if (!adService.isRewardedAdReady) {
+          Logger.warning('[Traditional-Saju] ⚠️ Rewarded ad still not ready after loading');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고를 준비할 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                duration: Duration(seconds: 3),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+          return;
+        }
       }
+
+      Logger.info('[Traditional-Saju] 광고 시청 후 블러 해제 시작');
 
       await adService.showRewardedAd(
         onUserEarnedReward: (ad, reward) {

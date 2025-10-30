@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/image_upload_selector.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/components/toss_card.dart';
@@ -772,8 +773,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 children: [
                   Text(
                     '$luckScore',
-                    style: TextStyle(
-                      fontSize: 56,
+                    style: TypographyUnified.displayLarge.copyWith(
                       fontWeight: FontWeight.w800,
                       foreground: Paint()
                         ..shader = LinearGradient(
