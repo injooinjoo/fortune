@@ -58,10 +58,10 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
 
   void _initializeAccordionSections() {
     _accordionSections = [
-      // 1. 기본 정보 (나이, 성별, 연애 상태)
+      // 1. 나의 기본 정보 (나이, 성별, 연애 상태)
       AccordionInputSection(
         id: 'basicInfo',
-        title: '기본 정보',
+        title: '나의 기본 정보',
         icon: Icons.person_outline,
         inputWidgetBuilder: (context, onComplete) => _buildBasicInfoInput(onComplete),
         value: _gender != null && _relationshipStatus != null
@@ -73,10 +73,10 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
             : null,
       ),
 
-      // 2. 연애 스타일 (다중 선택)
+      // 2. 나의 연애 스타일 (다중 선택)
       AccordionInputSection(
         id: 'datingStyles',
-        title: '연애 스타일',
+        title: '나의 연애 스타일',
         icon: Icons.favorite_border,
         inputWidgetBuilder: (context, onComplete) => _buildDatingStylesInput(onComplete),
         value: _datingStyles.toList(),
@@ -87,10 +87,10 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
         isMultiSelect: true, // 다중 선택 - 선택 후에도 닫히지 않음
       ),
 
-      // 3. 중요한 가치 (5개 슬라이더)
+      // 3. 이상형 조건 중요도 (5개 슬라이더)
       AccordionInputSection(
         id: 'valueImportance',
-        title: '중요한 가치',
+        title: '이상형 조건별 중요도',
         icon: Icons.stars_rounded,
         inputWidgetBuilder: (context, onComplete) => _buildValueImportanceInput(onComplete),
         value: _valueImportance,
@@ -98,10 +98,10 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
         displayValue: '평균 ${_getAverageImportance().toStringAsFixed(1)}점',
       ),
 
-      // 4. 선호 나이대 (RangeSlider)
+      // 4. 이상형 나이대 (RangeSlider)
       AccordionInputSection(
         id: 'preferredAgeRange',
-        title: '선호 나이대',
+        title: '이상형 나이대',
         icon: Icons.cake_rounded,
         inputWidgetBuilder: (context, onComplete) => _buildPreferredAgeRangeInput(onComplete),
         value: {
@@ -112,10 +112,10 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
         displayValue: '${_preferredAgeRange.start.round()}세 ~ ${_preferredAgeRange.end.round()}세',
       ),
 
-      // 5. 선호 성격 (다중 선택, 최대 4개)
+      // 5. 이상형 성격 (다중 선택, 최대 4개)
       AccordionInputSection(
         id: 'preferredPersonality',
-        title: '선호하는 성격',
+        title: '이상형의 성격',
         icon: Icons.emoji_emotions_outlined,
         inputWidgetBuilder: (context, onComplete) => _buildPreferredPersonalityInput(onComplete),
         value: _preferredPersonality.toList(),
@@ -217,19 +217,14 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
         _hobbies.isNotEmpty;
   }
 
-  Future<void> _analyzeAndShowResult() async {
-    if (!_canGenerate()) return;
+  bool _isLoading = false;
 
-    // 로딩 다이얼로그 표시
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
+  Future<void> _analyzeAndShowResult() async {
+    if (!_canGenerate() || _isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       // 1. Premium 상태 확인
@@ -275,9 +270,10 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
         isPremium: isPremium,
       );
 
-      // 로딩 다이얼로그 닫기
       if (mounted) {
-        Navigator.of(context).pop();
+        setState(() {
+          _isLoading = false;
+        });
 
         // 5. 결과 페이지로 이동
         Navigator.of(context).push(
@@ -292,9 +288,10 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
       debugPrint('❌ [연애운] 에러 발생: $e');
       debugPrint('Stack trace: $stackTrace');
 
-      // 로딩 다이얼로그 닫기
       if (mounted) {
-        Navigator.of(context).pop();
+        setState(() {
+          _isLoading = false;
+        });
 
         // 에러 다이얼로그 표시
         showDialog(
@@ -340,9 +337,10 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
               TossFloatingProgressButtonPositioned(
                 text: '🔮 연애운세 보기',
                 onPressed: _canGenerate() ? () => _analyzeAndShowResult() : null,
-                isEnabled: _canGenerate(),
+                isEnabled: _canGenerate() && !_isLoading,
                 showProgress: false,
                 isVisible: _canGenerate(),
+                isLoading: _isLoading,
               ),
           ],
         ),

@@ -6,6 +6,7 @@ import '../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../shared/components/app_header.dart'; // For FontSize enum
+import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../presentation/providers/tarot_deck_provider.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../widgets/mystical_background.dart';
@@ -170,25 +171,14 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
               ),
               ],
               ),
-              // Floating Action Button
-              if (_tempSelectedDeckId != null) Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: FloatingActionButton.extended(
-                    onPressed: _confirmSelection,
-                    backgroundColor: const Color(0xFF9333EA),
-                    label: Text(
-                      '선택 완료',
-                      style: context.buttonMedium.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: TossDesignSystem.white),
-                    ),
-                    icon: const Icon(Icons.check, color: TossDesignSystem.white),
-                  ),
+              // FloatingBottomButton
+              if (_tempSelectedDeckId != null)
+                FloatingBottomButton(
+                  text: '선택 완료',
+                  onPressed: _confirmSelection,
+                  isLoading: false,
+                  isEnabled: true,
                 ),
-              ),
             ],
           ),
         ),
