@@ -375,20 +375,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Scaffold(
       backgroundColor: isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
         elevation: 0,
-        centerTitle: false,
+        scrolledUnderElevation: 0,
+        automaticallyImplyLeading: false,
         title: Text(
           '내 프로필',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
+          style: TypographyUnified.heading3.copyWith(
+            color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
         actions: [
           IconButton(
             icon: Icon(
               isDarkMode ? Icons.light_mode : Icons.dark_mode,
-              color: _getSecondaryTextColor(context),
+              color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
             onPressed: () {
               ref.read(themeModeProvider.notifier).toggleTheme();
@@ -397,7 +398,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           IconButton(
             icon: Icon(
               Icons.settings_outlined,
-              color: _getSecondaryTextColor(context),
+              color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
             onPressed: () => context.push('/settings'),
           ),

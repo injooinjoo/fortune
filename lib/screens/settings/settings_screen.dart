@@ -105,19 +105,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Scaffold(
       backgroundColor: _getBackgroundColor(context),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
         elevation: 0,
-        centerTitle: false,
+        scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: _getTextColor(context)),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '설정',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
+          style: TypographyUnified.heading3.copyWith(
+            color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
+        centerTitle: true,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
