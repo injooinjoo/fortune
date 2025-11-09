@@ -22,6 +22,7 @@ import 'fortune_generators/traditional_saju_generator.dart'; // ✅ 전통사주
 import 'fortune_optimization_service.dart';
 import '../../features/fortune/domain/models/fortune_conditions.dart';
 import '../../features/fortune/domain/models/conditions/love_fortune_conditions.dart'; // ✅ 추가
+import '../../features/fortune/domain/models/conditions/health_fortune_conditions.dart'; // ✅ 건강운세 추가
 
 /// 통합 운세 서비스 (최적화 시스템 통합)
 ///
@@ -363,7 +364,12 @@ class UnifiedFortuneService {
           return await ExamGenerator.generate(inputConditions, _supabase);
 
         case 'health':
-          return await HealthGenerator.generate(inputConditions, _supabase);
+          final isPremium = inputConditions['isPremium'] as bool? ?? false;
+          return await HealthGenerator.generate(
+            conditions: HealthFortuneConditions.fromInputData(inputConditions),
+            supabase: _supabase,
+            isPremium: isPremium,
+          );
 
         case 'wish':
           return await WishGenerator.generate(inputConditions, _supabase);

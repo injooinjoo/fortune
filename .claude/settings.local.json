@@ -139,7 +139,11 @@
       "Bash(while read f)",
       "Bash(do if ! grep -q \"import ''''dart:ui'''';\" \"$f\")",
       "Bash(then basename \"$f\")",
-      "Bash(do echo \"=== $file ===\" grep -n \"if (_isBlurred)\" \"/Users/jacobmac/Desktop/Dev/fortune/lib/features/fortune/presentation/pages/$file\")"
+      "Bash(do echo \"=== $file ===\" grep -n \"if (_isBlurred)\" \"/Users/jacobmac/Desktop/Dev/fortune/lib/features/fortune/presentation/pages/$file\")",
+      "Bash(if ! grep -q \"UnifiedFortuneService\" \"$file\")",
+      "Bash(if grep -q \"supabase\\.functions\\.invoke\" \"$file\")",
+      "Bash(hash -r)",
+      "Bash(claude --version)"
     ],
     "deny": [],
     "ask": [],

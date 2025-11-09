@@ -1,16 +1,23 @@
+import 'dart:ui'; // ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_theme.dart';
 import '../widgets/biorhythm_widgets.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/models/fortune_result.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../services/ad_service.dart';
+import '../../../../core/utils/logger.dart';
 
 class BiorhythmResultPage extends StatefulWidget {
   final DateTime birthDate;
-  
+  final FortuneResult fortuneResult; // API 결과
+
   const BiorhythmResultPage({
     super.key,
     required this.birthDate,
+    required this.fortuneResult,
   });
 
   @override
@@ -19,24 +26,25 @@ class BiorhythmResultPage extends StatefulWidget {
 
 class _BiorhythmResultPageState extends State<BiorhythmResultPage>
     with TickerProviderStateMixin {
-  
+
   late PageController _pageController;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  
+
   int _currentPage = 0;
   late BiorhythmData _biorhythmData;
-  
+  late FortuneResult _fortuneResult;
+
   @override
   void initState() {
     super.initState();
-    
+
     _pageController = PageController();
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -44,8 +52,9 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
       parent: _fadeController,
       curve: Curves.easeOut,
     ));
-    
-    _biorhythmData = BiorhythmData.calculate(widget.birthDate);
+
+    _biorhythmData = BiorhythmData.fromApiResult(widget.birthDate, widget.fortuneResult);
+    _fortuneResult = widget.fortuneResult;
     _fadeController.forward();
   }
 
@@ -63,6 +72,73 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
     HapticFeedback.lightImpact();
   }
 
+  // 광고 보고 블러 해제
+  Future<void> _showAdAndUnblur() async {
+    try {
+      final adService = AdService();
+
+      if (!adService.isRewardedAdReady) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 준비하는 중입니다...'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+
+        await adService.loadRewardedAd();
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고 로딩에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          Logger.info('[BiorhythmResultPage] Rewarded ad watched, removing blur');
+          if (mounted) {
+            setState(() {
+              _fortuneResult = _fortuneResult.copyWith(
+                isBlurred: false,
+                blurredSections: [],
+              );
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('운세가 잠금 해제되었습니다!'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      Logger.error('[BiorhythmResultPage] Failed to show ad', e, stackTrace);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시 중 오류가 발생했습니다.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -73,9 +149,7 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
       appBar: AppBar(
         backgroundColor: TossDesignSystem.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(
-          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-        ),
+        automaticallyImplyLeading: false, // 백버튼 제거
         title: Text(
           '바이오리듬 분석 결과',
           style: theme.textTheme.titleLarge?.copyWith(
@@ -87,37 +161,46 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
         actions: [
           IconButton(
             icon: Icon(
-              Icons.share_rounded,
+              Icons.close,
               color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-              size: 22,
             ),
-            onPressed: () {
-              // TODO: 공유 기능 구현
-              HapticFeedback.lightImpact();
-            },
+            onPressed: () => Navigator.of(context).pop(),
           ),
         ],
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // 페이지 인디케이터
-          _buildPageIndicator(),
-          
-          // 메인 콘텐츠
-          Expanded(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: _onPageChanged,
-                children: [
-                  _buildTodayStatusPage(),
-                  _buildWeeklyTrendPage(),
-                  _buildPersonalAdvicePage(),
-                ],
+          Column(
+            children: [
+              // 페이지 인디케이터
+              _buildPageIndicator(),
+
+              // 메인 콘텐츠
+              Expanded(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: PageView(
+                    controller: _pageController,
+                    onPageChanged: _onPageChanged,
+                    children: [
+                      _buildTodayStatusPage(),
+                      _buildWeeklyTrendPage(),
+                      _buildPersonalAdvicePage(),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
+
+          // 광고 보고 전체 보기 버튼 (3번째 페이지 + 블러 상태일 때만)
+          if (_currentPage == 2 && _fortuneResult.isBlurred)
+            FloatingBottomButton(
+              text: '남은 조언 모두 보기',
+              onPressed: _showAdAndUnblur,
+              isLoading: false,
+              isEnabled: true,
+            ),
         ],
       ),
     );
@@ -199,23 +282,55 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          // 개인 맞춤 분석
-          PersonalAnalysisCard(biorhythmData: _biorhythmData),
+          // 개인 맞춤 분석 (블러 처리)
+          _buildBlurredCard(
+            child: PersonalAnalysisCard(biorhythmData: _biorhythmData),
+          ),
           const SizedBox(height: 20),
-          
-          // 라이프 스타일 조언
-          LifestyleAdviceCard(biorhythmData: _biorhythmData),
+
+          // 라이프 스타일 조언 (블러 처리)
+          _buildBlurredCard(
+            child: LifestyleAdviceCard(biorhythmData: _biorhythmData),
+          ),
           const SizedBox(height: 20),
-          
-          // 건강 관리 팁
-          HealthTipsCard(biorhythmData: _biorhythmData),
+
+          // 건강 관리 팁 (블러 처리)
+          _buildBlurredCard(
+            child: HealthTipsCard(biorhythmData: _biorhythmData),
+          ),
           const SizedBox(height: 20),
-          
+
           // 다음 분석 예약
           NextAnalysisCard(),
-          const SizedBox(height: 32),
+          const SizedBox(height: 120), // 버튼 공간 확보
         ],
       ),
+    );
+  }
+
+  // 블러 처리 래퍼
+  Widget _buildBlurredCard({required Widget child}) {
+    if (!_fortuneResult.isBlurred) {
+      return child;
+    }
+
+    return Stack(
+      children: [
+        // 원본 콘텐츠 (블러)
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: child,
+        ),
+        // 블러 오버레이
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -255,35 +370,95 @@ class BiorhythmData {
     required this.statusColor,
   });
 
-  factory BiorhythmData.calculate(DateTime birthDate) {
+  // API 결과에서 생성
+  factory BiorhythmData.fromApiResult(DateTime birthDate, FortuneResult fortuneResult) {
+    final data = fortuneResult.data as Map<String, dynamic>;
     final today = DateTime.now();
     final totalDays = today.difference(birthDate).inDays;
-    
-    // 바이오리듬 계산 (각각 23일, 28일, 33일 주기)
-    final physicalToday = math.sin(2 * math.pi * totalDays / 23) * 100;
-    final emotionalToday = math.sin(2 * math.pi * totalDays / 28) * 100;
-    final intellectualToday = math.sin(2 * math.pi * totalDays / 33) * 100;
-    
-    // 주간 데이터 계산
+
+    // API 결과에서 값 추출
+    final physical = data['physical'] as Map<String, dynamic>? ?? {};
+    final emotional = data['emotional'] as Map<String, dynamic>? ?? {};
+    final intellectual = data['intellectual'] as Map<String, dynamic>? ?? {};
+
+    final physicalToday = (physical['value'] as num?)?.toDouble() ?? 0.0;
+    final emotionalToday = (emotional['value'] as num?)?.toDouble() ?? 0.0;
+    final intellectualToday = (intellectual['value'] as num?)?.toDouble() ?? 0.0;
+
+    // 주간 데이터 계산 (클라이언트에서 직접 계산)
     final physicalWeek = <double>[];
     final emotionalWeek = <double>[];
     final intellectualWeek = <double>[];
-    
+
     for (int i = 0; i < 7; i++) {
       final dayOffset = totalDays + i;
       physicalWeek.add(math.sin(2 * math.pi * dayOffset / 23) * 100);
       emotionalWeek.add(math.sin(2 * math.pi * dayOffset / 28) * 100);
       intellectualWeek.add(math.sin(2 * math.pi * dayOffset / 33) * 100);
     }
-    
+
+    final overallScore = (data['overall_score'] as num?)?.toInt() ?? 50;
+    final statusMessage = data['status_message'] as String? ?? '평균적인 상태예요';
+
+    // 상태 메시지에 따른 색상 결정
+    Color statusColor;
+    if (overallScore >= 80) {
+      statusColor = const Color(0xFF00C851);
+    } else if (overallScore >= 60) {
+      statusColor = const Color(0xFF00C896);
+    } else if (overallScore >= 40) {
+      statusColor = const Color(0xFFFFB300);
+    } else if (overallScore >= 20) {
+      statusColor = const Color(0xFFFF9500);
+    } else {
+      statusColor = const Color(0xFFFF5A5F);
+    }
+
+    return BiorhythmData._(
+      birthDate: birthDate,
+      today: today,
+      totalDays: totalDays,
+      physicalToday: physicalToday,
+      emotionalToday: emotionalToday,
+      intellectualToday: intellectualToday,
+      physicalWeek: physicalWeek,
+      emotionalWeek: emotionalWeek,
+      intellectualWeek: intellectualWeek,
+      overallScore: overallScore,
+      statusMessage: statusMessage,
+      statusColor: statusColor,
+    );
+  }
+
+  factory BiorhythmData.calculate(DateTime birthDate) {
+    final today = DateTime.now();
+    final totalDays = today.difference(birthDate).inDays;
+
+    // 바이오리듬 계산 (각각 23일, 28일, 33일 주기)
+    final physicalToday = math.sin(2 * math.pi * totalDays / 23) * 100;
+    final emotionalToday = math.sin(2 * math.pi * totalDays / 28) * 100;
+    final intellectualToday = math.sin(2 * math.pi * totalDays / 33) * 100;
+
+    // 주간 데이터 계산
+    final physicalWeek = <double>[];
+    final emotionalWeek = <double>[];
+    final intellectualWeek = <double>[];
+
+    for (int i = 0; i < 7; i++) {
+      final dayOffset = totalDays + i;
+      physicalWeek.add(math.sin(2 * math.pi * dayOffset / 23) * 100);
+      emotionalWeek.add(math.sin(2 * math.pi * dayOffset / 28) * 100);
+      intellectualWeek.add(math.sin(2 * math.pi * dayOffset / 33) * 100);
+    }
+
     // 전체 점수 계산
     final averageScore = (physicalToday + emotionalToday + intellectualToday) / 3;
     final overallScore = (averageScore + 100) ~/ 2; // 0-100 점수로 변환
-    
+
     // 상태 메시지 결정
     String statusMessage;
     Color statusColor;
-    
+
     if (overallScore >= 80) {
       statusMessage = '최고의 컨디션이에요!';
       statusColor = const Color(0xFF00C851);
@@ -300,7 +475,7 @@ class BiorhythmData {
       statusMessage = '충분한 휴식이 필요해요';
       statusColor = const Color(0xFFFF5A5F);
     }
-    
+
     return BiorhythmData._(
       birthDate: birthDate,
       today: today,

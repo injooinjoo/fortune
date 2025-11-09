@@ -1,13 +1,11 @@
-import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
 import '../../../features/fortune/domain/models/conditions/love_fortune_conditions.dart';
-import '../../../features/fortune/data/datasources/love_fortune_data_source.dart';
 import '../../utils/logger.dart';
 
 /// 연애운 생성기
 ///
-/// LoveFortuneDataSource를 사용하여 연애운을 생성
+/// Edge Function을 직접 호출하여 연애운을 생성
 class LoveGenerator {
   /// 연애운 생성
   ///
@@ -22,23 +20,69 @@ class LoveGenerator {
     Logger.info('[LoveGenerator] 연애운 생성 시작');
     Logger.info('   - isPremium: $isPremium');
 
-    // DataSource 생성
-    final dataSource = LoveFortuneDataSource(supabase);
+    try {
+      // 사용자 ID 가져오기
+      final userId = supabase.auth.currentUser?.id ?? 'anonymous';
 
-    // 사용자 ID 가져오기 (Supabase에서 직접)
-    final userId = supabase.auth.currentUser?.id ?? 'anonymous';
+      // API Payload 구성
+      final payload = {
+        ...conditions.buildAPIPayload(),
+        'isPremium': isPremium,
+      };
 
-    // API 호출
-    final result = await dataSource.getLoveFortune(
-      userId: userId,
-      conditions: conditions,
-      isPremium: isPremium,
-    );
+      Logger.info('[LoveGenerator] API 호출 시작');
+      Logger.info('   - userId: $userId');
 
-    Logger.info('[LoveGenerator] 연애운 생성 완료');
-    Logger.info('   - fortuneId: ${result.id}');
-    Logger.info('   - isBlurred: ${result.isBlurred}');
+      // Edge Function 호출
+      final response = await supabase.functions.invoke(
+        'fortune-love',
+        body: payload,
+      );
 
-    return result;
+      if (response.status != 200) {
+        throw Exception('API 호출 실패: ${response.status}');
+      }
+
+      final data = response.data as Map<String, dynamic>;
+
+      // 프리미엄이 아니면 블러 섹션 설정
+      final blurredSections = isPremium
+          ? <String>[]
+          : [
+              'compatibilityInsights',
+              'predictions',
+              'actionPlan',
+              'warningArea',
+            ];
+
+      // 점수 및 메시지 추출
+      final loveScore = data['loveScore'] as int? ?? 70;
+      final mainMessage = data['mainMessage'] as String? ?? '새로운 사랑의 기회가 찾아올 것입니다.';
+
+      final result = FortuneResult(
+        id: 'love-${DateTime.now().millisecondsSinceEpoch}',
+        type: 'love',
+        title: '연애운세',
+        summary: {
+          'score': loveScore,
+          'message': mainMessage,
+          'emoji': loveScore >= 80 ? '💕' : loveScore >= 60 ? '💖' : '💗',
+        },
+        data: data,
+        score: loveScore,
+        createdAt: DateTime.now(),
+        isBlurred: !isPremium,
+        blurredSections: blurredSections,
+      );
+
+      Logger.info('[LoveGenerator] 연애운 생성 완료');
+      Logger.info('   - fortuneId: ${result.id}');
+      Logger.info('   - isBlurred: ${result.isBlurred}');
+
+      return result;
+    } catch (e, stackTrace) {
+      Logger.error('[LoveGenerator] 연애운 생성 실패', e, stackTrace);
+      rethrow;
+    }
   }
 }

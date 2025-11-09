@@ -43,6 +43,8 @@ import '../screens/subscription/subscription_page.dart';
 
 // Import page classes for routes outside shell
 import '../features/health/presentation/pages/health_fortune_toss_page.dart';
+import '../features/health/presentation/pages/health_fortune_result_page.dart';
+import '../core/models/fortune_result.dart';
 import '../features/sports/presentation/pages/sports_fortune_page.dart' show ExerciseFortunePage;
 import '../features/fortune/presentation/pages/compatibility_page.dart';
 import '../features/fortune/presentation/pages/avoid_people_fortune_page.dart';
@@ -278,6 +280,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           state,
           const HealthFortuneTossPage(),
         ),
+      ),
+      GoRoute(
+        path: '/health-fortune-result',
+        name: 'health-fortune-result',
+        pageBuilder: (context, state) {
+          final fortuneResult = state.extra as FortuneResult;
+          return PageTransitions.slideTransition(
+            context,
+            state,
+            HealthFortuneResultPage(fortuneResult: fortuneResult),
+          );
+        },
       ),
       GoRoute(
         path: '/exercise',

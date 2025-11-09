@@ -37,6 +37,24 @@ class HealthFortuneConditions extends FortuneConditions {
     this.chronicCondition = '',
   });
 
+  /// inputConditions Map에서 HealthFortuneConditions 생성
+  factory HealthFortuneConditions.fromInputData(Map<String, dynamic> data) {
+    return HealthFortuneConditions(
+      healthConcern: data['healthConcern'] as String? ?? data['current_condition'] as String? ?? '피로감',
+      symptoms: data['symptoms'] != null
+          ? List<String>.from(data['symptoms'] as List)
+          : data['concerned_body_parts'] != null
+              ? List<String>.from(data['concerned_body_parts'] as List)
+              : [],
+      sleepQuality: data['sleepQuality'] as int? ?? data['sleep_quality'] as int? ?? 3,
+      exerciseFrequency: data['exerciseFrequency'] as int? ?? data['exercise_frequency'] as int? ?? 3,
+      stressLevel: data['stressLevel'] as int? ?? data['stress_level'] as int? ?? 3,
+      mealRegularity: data['mealRegularity'] as int? ?? data['meal_regularity'] as int? ?? 3,
+      hasChronicCondition: data['hasChronicCondition'] as bool? ?? data['has_chronic_condition'] as bool? ?? false,
+      chronicCondition: data['chronicCondition'] as String? ?? data['chronic_condition'] as String? ?? '',
+    );
+  }
+
   @override
   String generateHash() {
     final parts = <String>[
@@ -85,8 +103,8 @@ class HealthFortuneConditions extends FortuneConditions {
   Map<String, dynamic> buildAPIPayload() {
     return {
       'fortune_type': 'health',
-      'healthConcern': healthConcern,
-      'symptoms': symptoms,
+      'current_condition': healthConcern, // Edge Function이 기대하는 필드명
+      'concerned_body_parts': symptoms, // Edge Function이 기대하는 필드명
       'sleepQuality': sleepQuality,
       'exerciseFrequency': exerciseFrequency,
       'stressLevel': stressLevel,

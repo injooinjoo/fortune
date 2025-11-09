@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../widgets/body_part_selector.dart';
 import '../widgets/body_part_grid_selector.dart';
@@ -15,7 +16,6 @@ import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../services/ad_service.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -102,9 +102,6 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
           children: [
             Column(
               children: [
-                // 진행 인디케이터
-                if (_currentStep < 3) _buildProgressIndicator(),
-
                 // 페이지 뷰
                 Expanded(
                   child: PageView(
@@ -127,32 +124,6 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
       ),
     );
   }
-
-  Widget _buildProgressIndicator() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Row(
-        children: List.generate(2, (index) { // Changed from 3 to 2 steps
-          final isActive = index <= _currentStep - 1; // Adjust for starting at step 1
-          
-          return Expanded(
-            child: Container(
-              height: 4,
-              margin: EdgeInsets.only(right: index < 1 ? 8 : 0),
-              decoration: BoxDecoration(
-                color: isActive 
-                    ? TossTheme.primaryBlue 
-                    : TossTheme.borderGray200,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ).animate(target: isActive ? 1 : 0)
-              .scaleX(duration: 300.ms, curve: Curves.easeOutCubic),
-          );
-        }),
-      ),
-    );
-  }
-
 
   Widget _buildConditionSelectionPage(bool isDark) {
     return SingleChildScrollView(
@@ -801,31 +772,15 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
       _isLoading = true;
     });
 
-    // Show ad before generating health fortune
-    await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () async {
-        try {
-          await _generateHealthFortuneInternal();
-        } catch (e) {
-          Toast.error(context, '건강운세 생성 중 오류가 발생했습니다.');
-        } finally {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      },
-      onAdFailed: () async {
-        try {
-          await _generateHealthFortuneInternal();
-        } catch (e) {
-          Toast.error(context, '건강운세 생성 중 오류가 발생했습니다.');
-        } finally {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      },
-    );
+    try {
+      await _generateHealthFortuneInternal();
+    } catch (e) {
+      Toast.error(context, '건강운세 생성 중 오류가 발생했습니다.');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _shareResult() {
@@ -852,12 +807,17 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
   Future<void> _generateHealthFortuneInternal() async {
     final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
+    // 프리미엄 상태 확인
+    final tokenState = ref.read(tokenProvider);
+    final isPremium = tokenState.hasUnlimitedAccess;
+
     // UnifiedFortuneService용 input_conditions 구성 (snake_case)
     final inputConditions = {
-      'current_condition': _currentCondition?.name ?? 'normal',
+      'current_condition': _currentCondition?.name ?? 'good', // ✅ 기본값 'good'
       'concerned_body_parts': _selectedBodyParts.isNotEmpty
           ? _selectedBodyParts.map((part) => part.name).toList()
-          : null,
+          : <String>[], // ✅ null 대신 빈 배열
+      'isPremium': isPremium, // ✅ 프리미엄 여부 전달
     };
 
     final fortuneResult = await fortuneService.getFortune(
@@ -866,14 +826,10 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
       inputConditions: inputConditions,
     );
 
-    // HealthFortuneResult로 변환 (기존 UI 호환)
-    final healthResult = _convertToHealthFortuneResult(fortuneResult);
-
-    setState(() {
-      _fortuneResult = healthResult;
-    });
-
-    _goToNextStep();
+    // 새 결과 페이지로 라우팅
+    if (mounted) {
+      context.push('/health-fortune-result', extra: fortuneResult);
+    }
   }
 
   /// FortuneResult를 HealthFortuneResult로 변환
