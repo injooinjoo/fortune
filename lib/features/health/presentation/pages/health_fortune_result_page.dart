@@ -61,7 +61,13 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
           backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
           elevation: 0,
           scrolledUnderElevation: 0,
-          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+            ),
+            onPressed: () => context.go('/fortune'),
+          ),
           title: Text(
             '건강운세 결과',
             style: context.heading3.copyWith(
@@ -69,15 +75,6 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
             ),
           ),
           centerTitle: true,
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.close,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-              ),
-              onPressed: () => context.go('/fortune'),
-            ),
-          ],
         ),
         body: Stack(
           children: [

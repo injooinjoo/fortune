@@ -209,9 +209,22 @@ ${Array.from({ length: 7 }, (_, i) => {
       jsonMode: true
     })
 
-    const result = JSON.parse(response.content) as BiorhythmResponse
+    const parsedResult = JSON.parse(response.content) as BiorhythmResponse
+
+    // ✅ 프리미엄/블러 시스템 추가
+    const isBlurred = !isPremium
+    const blurredSections = isBlurred
+      ? ['personal_analysis', 'lifestyle_advice', 'health_tips']
+      : []
+
+    const result = {
+      ...parsedResult,
+      isBlurred,
+      blurredSections
+    }
 
     console.log(`✅ ${response.provider}/${response.model} - ${response.latency}ms`)
+    console.log(`💎 Premium: ${isPremium}, Blurred: ${isBlurred}`)
 
     return new Response(
       JSON.stringify(result),

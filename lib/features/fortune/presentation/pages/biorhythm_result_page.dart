@@ -149,7 +149,13 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
       appBar: AppBar(
         backgroundColor: TossDesignSystem.transparent,
         elevation: 0,
-        automaticallyImplyLeading: false, // 백버튼 제거
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text(
           '바이오리듬 분석 결과',
           style: theme.textTheme.titleLarge?.copyWith(
@@ -158,15 +164,6 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.close,
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
       ),
       body: Stack(
         children: [
