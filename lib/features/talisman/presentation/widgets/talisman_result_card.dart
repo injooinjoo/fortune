@@ -28,25 +28,8 @@ class TalismanResultCard extends StatefulWidget {
   State<TalismanResultCard> createState() => _TalismanResultCardState();
 }
 
-class _TalismanResultCardState extends State<TalismanResultCard>
-    with TickerProviderStateMixin {
-  late AnimationController _sparkleController;
+class _TalismanResultCardState extends State<TalismanResultCard> {
   bool _isSaved = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _sparkleController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _sparkleController.dispose();
-    super.dispose();
-  }
 
   Color get _categoryColor {
     switch (widget.talismanDesign.category) {
@@ -209,32 +192,6 @@ class _TalismanResultCardState extends State<TalismanResultCard>
                             : _buildPlaceholderTalisman(),
                       ),
                     ),
-                    
-                    // Sparkle Effect
-                    ...List.generate(6, (index) {
-                      return AnimatedBuilder(
-                        animation: _sparkleController,
-                        builder: (context, child) {
-                          final angle = (index * 60) + (_sparkleController.value * 360);
-                          final radius = 110.0;
-                          final x = 100 + radius * 0.8 * math.cos(angle * math.pi / 180);
-                          final y = 100 + radius * 0.8 * math.sin(angle * math.pi / 180);
-                          
-                          return Positioned(
-                            left: x - 6,
-                            top: y - 6,
-                            child: Container(
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                color: _categoryColor.withValues(alpha: 0.7),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    }),
                   ],
                 ),
                 

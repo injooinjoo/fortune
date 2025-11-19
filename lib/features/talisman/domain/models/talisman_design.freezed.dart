@@ -21,19 +21,34 @@ TalismanDesign _$TalismanDesignFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$TalismanDesign {
   String get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'user_id')
   String get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'design_type')
   TalismanDesignType get designType => throw _privateConstructorUsedError;
   TalismanCategory get category => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
+  @JsonKey(name: 'image_url')
   String get imageUrl => throw _privateConstructorUsedError;
   Map<String, dynamic> get colors => throw _privateConstructorUsedError;
   Map<String, dynamic> get symbols => throw _privateConstructorUsedError;
+  @JsonKey(name: 'mantra_text')
   String get mantraText => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'expires_at')
   DateTime? get expiresAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_premium')
   bool get isPremium => throw _privateConstructorUsedError;
+  @JsonKey(name: 'effect_score')
   int get effectScore => throw _privateConstructorUsedError;
-  List<String> get blessings => throw _privateConstructorUsedError;
+  List<String> get blessings =>
+      throw _privateConstructorUsedError; // 🆕 AI 생성 관련 필드 추가
+  @JsonKey(name: 'is_ai_generated')
+  bool get isAIGenerated => throw _privateConstructorUsedError;
+  @JsonKey(name: 'custom_characters')
+  List<String>? get customCharacters => throw _privateConstructorUsedError;
+  @JsonKey(name: 'generation_prompt')
+  String? get generationPrompt => throw _privateConstructorUsedError;
 
   /// Serializes this TalismanDesign to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,19 +68,22 @@ abstract class $TalismanDesignCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      String userId,
-      TalismanDesignType designType,
+      @JsonKey(name: 'user_id') String userId,
+      @JsonKey(name: 'design_type') TalismanDesignType designType,
       TalismanCategory category,
       String title,
-      String imageUrl,
+      @JsonKey(name: 'image_url') String imageUrl,
       Map<String, dynamic> colors,
       Map<String, dynamic> symbols,
-      String mantraText,
-      DateTime createdAt,
-      DateTime? expiresAt,
-      bool isPremium,
-      int effectScore,
-      List<String> blessings});
+      @JsonKey(name: 'mantra_text') String mantraText,
+      @JsonKey(name: 'created_at') DateTime createdAt,
+      @JsonKey(name: 'expires_at') DateTime? expiresAt,
+      @JsonKey(name: 'is_premium') bool isPremium,
+      @JsonKey(name: 'effect_score') int effectScore,
+      List<String> blessings,
+      @JsonKey(name: 'is_ai_generated') bool isAIGenerated,
+      @JsonKey(name: 'custom_characters') List<String>? customCharacters,
+      @JsonKey(name: 'generation_prompt') String? generationPrompt});
 }
 
 /// @nodoc
@@ -97,6 +115,9 @@ class _$TalismanDesignCopyWithImpl<$Res, $Val extends TalismanDesign>
     Object? isPremium = null,
     Object? effectScore = null,
     Object? blessings = null,
+    Object? isAIGenerated = null,
+    Object? customCharacters = freezed,
+    Object? generationPrompt = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -155,6 +176,18 @@ class _$TalismanDesignCopyWithImpl<$Res, $Val extends TalismanDesign>
           ? _value.blessings
           : blessings // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      isAIGenerated: null == isAIGenerated
+          ? _value.isAIGenerated
+          : isAIGenerated // ignore: cast_nullable_to_non_nullable
+              as bool,
+      customCharacters: freezed == customCharacters
+          ? _value.customCharacters
+          : customCharacters // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      generationPrompt: freezed == generationPrompt
+          ? _value.generationPrompt
+          : generationPrompt // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -169,19 +202,22 @@ abstract class _$$TalismanDesignImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      String userId,
-      TalismanDesignType designType,
+      @JsonKey(name: 'user_id') String userId,
+      @JsonKey(name: 'design_type') TalismanDesignType designType,
       TalismanCategory category,
       String title,
-      String imageUrl,
+      @JsonKey(name: 'image_url') String imageUrl,
       Map<String, dynamic> colors,
       Map<String, dynamic> symbols,
-      String mantraText,
-      DateTime createdAt,
-      DateTime? expiresAt,
-      bool isPremium,
-      int effectScore,
-      List<String> blessings});
+      @JsonKey(name: 'mantra_text') String mantraText,
+      @JsonKey(name: 'created_at') DateTime createdAt,
+      @JsonKey(name: 'expires_at') DateTime? expiresAt,
+      @JsonKey(name: 'is_premium') bool isPremium,
+      @JsonKey(name: 'effect_score') int effectScore,
+      List<String> blessings,
+      @JsonKey(name: 'is_ai_generated') bool isAIGenerated,
+      @JsonKey(name: 'custom_characters') List<String>? customCharacters,
+      @JsonKey(name: 'generation_prompt') String? generationPrompt});
 }
 
 /// @nodoc
@@ -211,6 +247,9 @@ class __$$TalismanDesignImplCopyWithImpl<$Res>
     Object? isPremium = null,
     Object? effectScore = null,
     Object? blessings = null,
+    Object? isAIGenerated = null,
+    Object? customCharacters = freezed,
+    Object? generationPrompt = freezed,
   }) {
     return _then(_$TalismanDesignImpl(
       id: null == id
@@ -269,6 +308,18 @@ class __$$TalismanDesignImplCopyWithImpl<$Res>
           ? _value._blessings
           : blessings // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      isAIGenerated: null == isAIGenerated
+          ? _value.isAIGenerated
+          : isAIGenerated // ignore: cast_nullable_to_non_nullable
+              as bool,
+      customCharacters: freezed == customCharacters
+          ? _value._customCharacters
+          : customCharacters // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      generationPrompt: freezed == generationPrompt
+          ? _value.generationPrompt
+          : generationPrompt // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -278,22 +329,27 @@ class __$$TalismanDesignImplCopyWithImpl<$Res>
 class _$TalismanDesignImpl implements _TalismanDesign {
   const _$TalismanDesignImpl(
       {required this.id,
-      required this.userId,
-      required this.designType,
+      @JsonKey(name: 'user_id') required this.userId,
+      @JsonKey(name: 'design_type')
+      this.designType = TalismanDesignType.traditional,
       required this.category,
       required this.title,
-      required this.imageUrl,
+      @JsonKey(name: 'image_url') required this.imageUrl,
       final Map<String, dynamic> colors = const {},
       final Map<String, dynamic> symbols = const {},
-      required this.mantraText,
-      required this.createdAt,
-      this.expiresAt,
-      this.isPremium = false,
-      this.effectScore = 0,
-      final List<String> blessings = const []})
+      @JsonKey(name: 'mantra_text') required this.mantraText,
+      @JsonKey(name: 'created_at') required this.createdAt,
+      @JsonKey(name: 'expires_at') this.expiresAt,
+      @JsonKey(name: 'is_premium') this.isPremium = false,
+      @JsonKey(name: 'effect_score') this.effectScore = 0,
+      final List<String> blessings = const [],
+      @JsonKey(name: 'is_ai_generated') this.isAIGenerated = false,
+      @JsonKey(name: 'custom_characters') final List<String>? customCharacters,
+      @JsonKey(name: 'generation_prompt') this.generationPrompt})
       : _colors = colors,
         _symbols = symbols,
-        _blessings = blessings;
+        _blessings = blessings,
+        _customCharacters = customCharacters;
 
   factory _$TalismanDesignImpl.fromJson(Map<String, dynamic> json) =>
       _$$TalismanDesignImplFromJson(json);
@@ -301,14 +357,17 @@ class _$TalismanDesignImpl implements _TalismanDesign {
   @override
   final String id;
   @override
+  @JsonKey(name: 'user_id')
   final String userId;
   @override
+  @JsonKey(name: 'design_type')
   final TalismanDesignType designType;
   @override
   final TalismanCategory category;
   @override
   final String title;
   @override
+  @JsonKey(name: 'image_url')
   final String imageUrl;
   final Map<String, dynamic> _colors;
   @override
@@ -329,16 +388,19 @@ class _$TalismanDesignImpl implements _TalismanDesign {
   }
 
   @override
+  @JsonKey(name: 'mantra_text')
   final String mantraText;
   @override
+  @JsonKey(name: 'created_at')
   final DateTime createdAt;
   @override
+  @JsonKey(name: 'expires_at')
   final DateTime? expiresAt;
   @override
-  @JsonKey()
+  @JsonKey(name: 'is_premium')
   final bool isPremium;
   @override
-  @JsonKey()
+  @JsonKey(name: 'effect_score')
   final int effectScore;
   final List<String> _blessings;
   @override
@@ -349,9 +411,29 @@ class _$TalismanDesignImpl implements _TalismanDesign {
     return EqualUnmodifiableListView(_blessings);
   }
 
+// 🆕 AI 생성 관련 필드 추가
+  @override
+  @JsonKey(name: 'is_ai_generated')
+  final bool isAIGenerated;
+  final List<String>? _customCharacters;
+  @override
+  @JsonKey(name: 'custom_characters')
+  List<String>? get customCharacters {
+    final value = _customCharacters;
+    if (value == null) return null;
+    if (_customCharacters is EqualUnmodifiableListView)
+      return _customCharacters;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'generation_prompt')
+  final String? generationPrompt;
+
   @override
   String toString() {
-    return 'TalismanDesign(id: $id, userId: $userId, designType: $designType, category: $category, title: $title, imageUrl: $imageUrl, colors: $colors, symbols: $symbols, mantraText: $mantraText, createdAt: $createdAt, expiresAt: $expiresAt, isPremium: $isPremium, effectScore: $effectScore, blessings: $blessings)';
+    return 'TalismanDesign(id: $id, userId: $userId, designType: $designType, category: $category, title: $title, imageUrl: $imageUrl, colors: $colors, symbols: $symbols, mantraText: $mantraText, createdAt: $createdAt, expiresAt: $expiresAt, isPremium: $isPremium, effectScore: $effectScore, blessings: $blessings, isAIGenerated: $isAIGenerated, customCharacters: $customCharacters, generationPrompt: $generationPrompt)';
   }
 
   @override
@@ -381,7 +463,13 @@ class _$TalismanDesignImpl implements _TalismanDesign {
             (identical(other.effectScore, effectScore) ||
                 other.effectScore == effectScore) &&
             const DeepCollectionEquality()
-                .equals(other._blessings, _blessings));
+                .equals(other._blessings, _blessings) &&
+            (identical(other.isAIGenerated, isAIGenerated) ||
+                other.isAIGenerated == isAIGenerated) &&
+            const DeepCollectionEquality()
+                .equals(other._customCharacters, _customCharacters) &&
+            (identical(other.generationPrompt, generationPrompt) ||
+                other.generationPrompt == generationPrompt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -401,7 +489,10 @@ class _$TalismanDesignImpl implements _TalismanDesign {
       expiresAt,
       isPremium,
       effectScore,
-      const DeepCollectionEquality().hash(_blessings));
+      const DeepCollectionEquality().hash(_blessings),
+      isAIGenerated,
+      const DeepCollectionEquality().hash(_customCharacters),
+      generationPrompt);
 
   /// Create a copy of TalismanDesign
   /// with the given fields replaced by the non-null parameter values.
@@ -423,19 +514,23 @@ class _$TalismanDesignImpl implements _TalismanDesign {
 abstract class _TalismanDesign implements TalismanDesign {
   const factory _TalismanDesign(
       {required final String id,
-      required final String userId,
-      required final TalismanDesignType designType,
+      @JsonKey(name: 'user_id') required final String userId,
+      @JsonKey(name: 'design_type') final TalismanDesignType designType,
       required final TalismanCategory category,
       required final String title,
-      required final String imageUrl,
+      @JsonKey(name: 'image_url') required final String imageUrl,
       final Map<String, dynamic> colors,
       final Map<String, dynamic> symbols,
-      required final String mantraText,
-      required final DateTime createdAt,
-      final DateTime? expiresAt,
-      final bool isPremium,
-      final int effectScore,
-      final List<String> blessings}) = _$TalismanDesignImpl;
+      @JsonKey(name: 'mantra_text') required final String mantraText,
+      @JsonKey(name: 'created_at') required final DateTime createdAt,
+      @JsonKey(name: 'expires_at') final DateTime? expiresAt,
+      @JsonKey(name: 'is_premium') final bool isPremium,
+      @JsonKey(name: 'effect_score') final int effectScore,
+      final List<String> blessings,
+      @JsonKey(name: 'is_ai_generated') final bool isAIGenerated,
+      @JsonKey(name: 'custom_characters') final List<String>? customCharacters,
+      @JsonKey(name: 'generation_prompt')
+      final String? generationPrompt}) = _$TalismanDesignImpl;
 
   factory _TalismanDesign.fromJson(Map<String, dynamic> json) =
       _$TalismanDesignImpl.fromJson;
@@ -443,31 +538,48 @@ abstract class _TalismanDesign implements TalismanDesign {
   @override
   String get id;
   @override
+  @JsonKey(name: 'user_id')
   String get userId;
   @override
+  @JsonKey(name: 'design_type')
   TalismanDesignType get designType;
   @override
   TalismanCategory get category;
   @override
   String get title;
   @override
+  @JsonKey(name: 'image_url')
   String get imageUrl;
   @override
   Map<String, dynamic> get colors;
   @override
   Map<String, dynamic> get symbols;
   @override
+  @JsonKey(name: 'mantra_text')
   String get mantraText;
   @override
+  @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override
+  @JsonKey(name: 'expires_at')
   DateTime? get expiresAt;
   @override
+  @JsonKey(name: 'is_premium')
   bool get isPremium;
   @override
+  @JsonKey(name: 'effect_score')
   int get effectScore;
   @override
-  List<String> get blessings;
+  List<String> get blessings; // 🆕 AI 생성 관련 필드 추가
+  @override
+  @JsonKey(name: 'is_ai_generated')
+  bool get isAIGenerated;
+  @override
+  @JsonKey(name: 'custom_characters')
+  List<String>? get customCharacters;
+  @override
+  @JsonKey(name: 'generation_prompt')
+  String? get generationPrompt;
 
   /// Create a copy of TalismanDesign
   /// with the given fields replaced by the non-null parameter values.

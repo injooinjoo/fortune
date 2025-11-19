@@ -1,26 +1,24 @@
-import 'dart:ui';  // ✅ ImageFilter.blur 사용
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';  // ✅ FloatingBottomButton
 import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/models/fortune_result.dart';
-import '../constants/fortune_button_spacing.dart';
-import '../widgets/standard_fortune_app_bar.dart';
-import '../../../../services/ad_service.dart';
 import '../../domain/models/conditions/compatibility_fortune_conditions.dart';
+import '../../../../core/widgets/unified_date_picker.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../services/ad_service.dart';
 
 class CompatibilityPage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -40,9 +38,13 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
   final _person2NameController = TextEditingController();
   DateTime? _person1BirthDate;
   DateTime? _person2BirthDate;
-  
+
   Map<String, dynamic>? _compatibilityData;
   bool _isLoading = false;
+
+  // ✅ 블러 상태 관리 (로컬)
+  bool _isBlurred = false;
+  List<String> _blurredSections = [];
 
   @override
   void initState() {
@@ -71,38 +73,6 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
     _person1NameController.dispose();
     _person2NameController.dispose();
     super.dispose();
-  }
-
-  Future<void> _showDatePicker({required bool isPerson1}) async {
-    final selectedDate = await showDatePicker(
-      context: context,
-      initialDate: isPerson1 
-          ? _person1BirthDate ?? DateTime.now().subtract(const Duration(days: 365 * 25))
-          : _person2BirthDate ?? DateTime.now().subtract(const Duration(days: 365 * 25)),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: TossTheme.primaryBlue,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (selectedDate != null) {
-      setState(() {
-        if (isPerson1) {
-          _person1BirthDate = selectedDate;
-        } else {
-          _person2BirthDate = selectedDate;
-        }
-      });
-      HapticFeedback.mediumImpact();
-    }
   }
 
   Future<void> _analyzeCompatibility() async {
@@ -187,6 +157,14 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       // FortuneResult → Fortune 엔티티 변환 (블러 로직 포함)
       final fortune = _convertToFortune(fortuneResult, isPremium);
 
+      debugPrint('📊 [CompatibilityPage] Fortune 변환 완료');
+      debugPrint('  ├─ isBlurred: ${fortune.isBlurred}');
+      debugPrint('  ├─ blurredSections: ${fortune.blurredSections}');
+      debugPrint('  ├─ content 길이: ${fortune.content.length}자');
+      debugPrint('  ├─ content 미리보기: ${fortune.content.substring(0, fortune.content.length > 50 ? 50 : fortune.content.length)}...');
+      debugPrint('  ├─ advice 길이: ${fortune.advice?.length ?? 0}자');
+      debugPrint('  └─ metadata keys: ${fortune.metadata?.keys.toList()}');
+
       // Parse scores from fortune response
       Map<String, double> scores = {};
 
@@ -215,7 +193,14 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
           'scores': scores,
         };
         _isLoading = false;
+        // ✅ 로컬 블러 상태 설정
+        _isBlurred = fortune.isBlurred;
+        _blurredSections = fortune.blurredSections;
       });
+
+      debugPrint('🔐 [CompatibilityPage] 로컬 블러 상태 설정');
+      debugPrint('  ├─ _isBlurred: $_isBlurred');
+      debugPrint('  └─ _blurredSections: $_blurredSections');
 
       HapticFeedback.mediumImpact();
     } catch (e) {
@@ -248,15 +233,43 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isResultView = _compatibilityData != null;
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
-      appBar: const StandardFortuneAppBar(
-        title: '궁합 분석',
+      appBar: AppBar(
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        // ✅ 결과 페이지에서는 뒤로가기 버튼 숨김
+        leading: isResultView ? const SizedBox.shrink() : IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          '궁합 분석',
+          style: TextStyle(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+        // ✅ 결과 페이지에서만 X 버튼 표시
+        actions: isResultView ? [
+          IconButton(
+            icon: Icon(
+              Icons.close,
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            ),
+            onPressed: () => context.pop(),
+          ),
+        ] : null,
       ),
-      body: _compatibilityData != null
-          ? _buildResultView()
-          : _buildInputView(),
+      body: isResultView ? _buildResultView() : _buildInputView(),
     );
   }
 
@@ -400,61 +413,19 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
                       const SizedBox(height: 12),
 
-                      GestureDetector(
-                        onTap: () => _showDatePicker(isPerson1: true),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: _person1BirthDate != null
-                                  ? TossTheme.primaryBlue
-                                  : (isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300),
-                              width: _person1BirthDate != null ? 1.5 : 1,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '생년월일',
-                                      style: TypographyUnified.labelSmall.copyWith(
-                                        color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      _person1BirthDate != null
-                                          ? '${_person1BirthDate!.year}년 ${_person1BirthDate!.month}월 ${_person1BirthDate!.day}일'
-                                          : '생년월일을 선택해주세요',
-                                      style: TypographyUnified.bodySmall.copyWith(
-                                        color: _person1BirthDate != null
-                                            ? (isDark ? TossDesignSystem.white : TossTheme.textBlack)
-                                            : (isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600),
-                                        fontWeight: _person1BirthDate != null
-                                            ? FontWeight.w500
-                                            : FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.calendar_today_rounded,
-                                color: _person1BirthDate != null
-                                    ? TossTheme.primaryBlue
-                                    : TossTheme.textGray600,
-                                size: 18,
-                              ),
-                            ],
-                          ),
-                        ),
+                      UnifiedDatePicker(
+                        mode: UnifiedDatePickerMode.numeric,
+                        selectedDate: _person1BirthDate,
+                        onDateChanged: (date) {
+                          setState(() {
+                            _person1BirthDate = date;
+                          });
+                          HapticFeedback.mediumImpact();
+                        },
+                        label: '생년월일',
+                        minDate: DateTime(1900),
+                        maxDate: DateTime.now(),
+                        showAge: false,
                       ),
                     ],
                   ),
@@ -532,59 +503,19 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
                       const SizedBox(height: 16),
 
-                      GestureDetector(
-                        onTap: () => _showDatePicker(isPerson1: false),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: _person2BirthDate != null
-                                  ? TossTheme.primaryBlue
-                                  : (isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300),
-                              width: _person2BirthDate != null ? 2 : 1,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '생년월일',
-                                    style: TossTheme.caption.copyWith(
-                                      color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    _person2BirthDate != null
-                                        ? '${_person2BirthDate!.year}년 ${_person2BirthDate!.month}월 ${_person2BirthDate!.day}일'
-                                        : '생년월일을 선택해주세요',
-                                    style: TossTheme.body2.copyWith(
-                                      color: _person2BirthDate != null
-                                          ? (isDark ? TossDesignSystem.white : TossTheme.textBlack)
-                                          : (isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600),
-                                      fontWeight: _person2BirthDate != null
-                                          ? FontWeight.w500
-                                          : FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Icon(
-                                Icons.calendar_today_rounded,
-                                color: _person2BirthDate != null
-                                    ? TossTheme.primaryBlue
-                                    : TossTheme.textGray600,
-                                size: 20,
-                              ),
-                            ],
-                          ),
-                        ),
+                      UnifiedDatePicker(
+                        mode: UnifiedDatePickerMode.numeric,
+                        selectedDate: _person2BirthDate,
+                        onDateChanged: (date) {
+                          setState(() {
+                            _person2BirthDate = date;
+                          });
+                          HapticFeedback.mediumImpact();
+                        },
+                        label: '상대방 생년월일',
+                        minDate: DateTime(1900),
+                        maxDate: DateTime.now(),
+                        showAge: false,
                       ),
                     ],
                   ),
@@ -634,25 +565,49 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
     final overallScore = scores['전체 궁합'] ?? 0.85;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
           // 전체 궁합 점수
           TossCard(
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                Text(
-                  '${_person1NameController.text} ❤️ ${_person2NameController.text}',
-                  style: TossTheme.heading3.copyWith(
-                    color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-                  ),
-                  textAlign: TextAlign.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '${_person1NameController.text} ❤️ ${_person2NameController.text}',
+                      style: TossTheme.heading3.copyWith(
+                        color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    if (fortune.metadata?['name_compatibility'] != null) ...[
+                      SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF59E0B).withValues(alpha:0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '이름 ${fortune.metadata!['name_compatibility']}%',
+                          style: TossTheme.caption.copyWith(
+                            color: const Color(0xFFF59E0B),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 CircularPercentIndicator(
                   radius: 80.0,
                   lineWidth: 12.0,
@@ -698,133 +653,93 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
           const SizedBox(height: 24),
 
-          // 세부 궁합 점수
-          TossCard(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: TossTheme.primaryBlue.withValues(alpha:0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.analytics,
-                        color: TossTheme.primaryBlue,
-                        size: 20,
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      '세부 궁합 분석',
-                      style: TossTheme.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 20),
-                
-                ...scores.entries.where((e) => e.key != '전체 궁합').map((entry) {
-                  final index = scores.keys.toList().indexOf(entry.key);
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              entry.key,
-                              style: TossTheme.body2.copyWith(
-                                color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              '${(entry.value * 100).round()}점',
-                              style: TossTheme.body2.copyWith(
-                                color: _getScoreColor(entry.value),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
+          // 세부 궁합 점수 (블러 처리)
+          UnifiedBlurWrapper(
+            isBlurred: _isBlurred,
+            blurredSections: _blurredSections,
+            sectionKey: 'detailed_scores',
+            child: TossCard(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: TossTheme.primaryBlue.withValues(alpha:0.1),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        const SizedBox(height: 8),
-                        LinearProgressIndicator(
-                          value: entry.value,
-                          backgroundColor: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            _getScoreColor(entry.value),
+                        child: Icon(
+                          Icons.analytics,
+                          color: TossTheme.primaryBlue,
+                          size: 20,
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        '세부 궁합 분석',
+                        style: TossTheme.heading4.copyWith(
+                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  ...scores.entries.where((e) => e.key != '전체 궁합').map((entry) {
+                    final index = scores.keys.toList().indexOf(entry.key);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                entry.key,
+                                style: TossTheme.body2.copyWith(
+                                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                '${(entry.value * 100).round()}점',
+                                style: TossTheme.body2.copyWith(
+                                  color: _getScoreColor(entry.value),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
-                          minHeight: 6,
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ],
-                    ).animate(delay: (index * 100).ms)
-                     .fadeIn(duration: 600.ms)
-                     .slideX(begin: 0.3),
-                  );
-                }),
-              ],
+                          const SizedBox(height: 8),
+                          LinearProgressIndicator(
+                            value: entry.value,
+                            backgroundColor: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              _getScoreColor(entry.value),
+                            ),
+                            minHeight: 6,
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ],
+                      ).animate(delay: (index * 100).ms)
+                       .fadeIn(duration: 600.ms)
+                       .slideX(begin: 0.3),
+                    );
+                  }),
+                ],
+              ),
             ),
           ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
 
           const SizedBox(height: 16),
 
-          // 궁합 설명
-          TossCard(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEC4899).withValues(alpha:0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.psychology,
-                        color: Color(0xFFEC4899),
-                        size: 20,
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      '궁합 분석 결과',
-                      style: TossTheme.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-                
-                SizedBox(height: 16),
-                
-                Text(
-                  fortune.content,
-                  style: TossTheme.body2.copyWith(
-                    color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ).animate(delay: 400.ms).fadeIn().slideY(begin: 0.3),
-
-          if (fortune.advice?.isNotEmpty == true) ...[
-            const SizedBox(height: 16),
-            
+          // 🆕 전통 궁합 (띠 + 별자리)
+          if (fortune.metadata?['zodiac_animal'] != null || fortune.metadata?['star_sign'] != null)
             TossCard(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -835,18 +750,18 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: TossTheme.success.withValues(alpha:0.1),
+                          color: const Color(0xFF8B5CF6).withValues(alpha:0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Icon(
-                          Icons.lightbulb,
-                          color: TossTheme.success,
+                        child: const Icon(
+                          Icons.brightness_5,
+                          color: Color(0xFF8B5CF6),
                           size: 20,
                         ),
                       ),
                       SizedBox(width: 12),
                       Text(
-                        '관계 개선 조언',
+                        '전통 궁합',
                         style: TossTheme.heading4.copyWith(
                           color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                           fontWeight: FontWeight.w700,
@@ -854,11 +769,407 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                       ),
                     ],
                   ),
-                  
+
                   SizedBox(height: 16),
-                  
+
+                  // 띠 궁합
+                  if (fortune.metadata?['zodiac_animal'] != null) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '띠 궁합',
+                                style: TossTheme.caption.copyWith(
+                                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                '${fortune.metadata!['zodiac_animal']['person1']} × ${fortune.metadata!['zodiac_animal']['person2']}',
+                                style: TossTheme.body2.copyWith(
+                                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: _getScoreColor(fortune.metadata!['zodiac_animal']['score'] / 100).withValues(alpha:0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${fortune.metadata!['zodiac_animal']['score']}점',
+                            style: TossTheme.caption.copyWith(
+                              color: _getScoreColor(fortune.metadata!['zodiac_animal']['score'] / 100),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      fortune.metadata!['zodiac_animal']['message'],
+                      style: TossTheme.body2.copyWith(
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+
+                  // 별자리 궁합
+                  if (fortune.metadata?['star_sign'] != null) ...[
+                    SizedBox(height: 16),
+                    Divider(color: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200),
+                    SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '별자리 궁합',
+                                style: TossTheme.caption.copyWith(
+                                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                '${fortune.metadata!['star_sign']['person1']} × ${fortune.metadata!['star_sign']['person2']}',
+                                style: TossTheme.body2.copyWith(
+                                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: _getScoreColor(fortune.metadata!['star_sign']['score'] / 100).withValues(alpha:0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${fortune.metadata!['star_sign']['score']}점',
+                            style: TossTheme.caption.copyWith(
+                              color: _getScoreColor(fortune.metadata!['star_sign']['score'] / 100),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      fortune.metadata!['star_sign']['message'],
+                      style: TossTheme.body2.copyWith(
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.3),
+
+          const SizedBox(height: 16),
+
+          // 🆕 숫자 궁합 (이름 + 운명수)
+          if (fortune.metadata?['name_compatibility'] != null || fortune.metadata?['destiny_number'] != null)
+            TossCard(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF59E0B).withValues(alpha:0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.calculate,
+                          color: Color(0xFFF59E0B),
+                          size: 20,
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        '숫자 궁합',
+                        style: TossTheme.heading4.copyWith(
+                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 16),
+
+                  // 이름 궁합
+                  if (fortune.metadata?['name_compatibility'] != null) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '이름 궁합',
+                              style: TossTheme.caption.copyWith(
+                                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              '${_person1NameController.text} ♥ ${_person2NameController.text}',
+                              style: TossTheme.body2.copyWith(
+                                color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF59E0B).withValues(alpha:0.1),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            '${fortune.metadata!['name_compatibility']}%',
+                            style: TossTheme.heading4.copyWith(
+                              color: const Color(0xFFF59E0B),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+
+                  // 운명수
+                  if (fortune.metadata?['destiny_number'] != null) ...[
+                    SizedBox(height: 16),
+                    Divider(color: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200),
+                    SizedBox(height: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '두 사람의 운명수',
+                          style: TossTheme.caption.copyWith(
+                            color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF59E0B).withValues(alpha:0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${fortune.metadata!['destiny_number']['number']}',
+                                  style: TossTheme.heading3.copyWith(
+                                    color: const Color(0xFFF59E0B),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                fortune.metadata!['destiny_number']['meaning'],
+                                style: TossTheme.body2.copyWith(
+                                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ).animate(delay: 350.ms).fadeIn().slideY(begin: 0.3),
+
+          const SizedBox(height: 16),
+
+          // 🆕 감성 궁합 (계절 + 나이차)
+          if (fortune.metadata?['season'] != null || fortune.metadata?['age_difference'] != null)
+            TossCard(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF06B6D4).withValues(alpha:0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.spa,
+                          color: Color(0xFF06B6D4),
+                          size: 20,
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        '감성 궁합',
+                        style: TossTheme.heading4.copyWith(
+                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 16),
+
+                  // 계절 궁합
+                  if (fortune.metadata?['season'] != null) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '계절 궁합',
+                              style: TossTheme.caption.copyWith(
+                                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              '${fortune.metadata!['season']['person1']} × ${fortune.metadata!['season']['person2']}',
+                              style: TossTheme.body2.copyWith(
+                                color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      fortune.metadata!['season']['message'],
+                      style: TossTheme.body2.copyWith(
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+
+                  // 나이차 분석
+                  if (fortune.metadata?['age_difference'] != null) ...[
+                    SizedBox(height: 16),
+                    Divider(color: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200),
+                    SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '나이 차이',
+                              style: TossTheme.caption.copyWith(
+                                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              fortune.metadata!['age_difference']['years'] == 0
+                                ? '동갑'
+                                : '${fortune.metadata!['age_difference']['years'].abs()}살 차이',
+                              style: TossTheme.body2.copyWith(
+                                color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      fortune.metadata!['age_difference']['message'],
+                      style: TossTheme.body2.copyWith(
+                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ).animate(delay: 400.ms).fadeIn().slideY(begin: 0.3),
+
+          const SizedBox(height: 16),
+
+          // 궁합 분석 결과 (블러 처리)
+          UnifiedBlurWrapper(
+            isBlurred: _isBlurred,
+            blurredSections: _blurredSections,
+            sectionKey: 'analysis',
+            child: TossCard(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEC4899).withValues(alpha:0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.psychology,
+                          color: Color(0xFFEC4899),
+                          size: 20,
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        '궁합 분석 결과',
+                        style: TossTheme.heading4.copyWith(
+                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 16),
+
                   Text(
-                    fortune.advice!,
+                    fortune.content,
                     style: TossTheme.body2.copyWith(
                       color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                       height: 1.6,
@@ -866,31 +1177,75 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                   ),
                 ],
               ),
-            ).animate(delay: 600.ms).fadeIn().slideY(begin: 0.3),
-          ],
-
-          const SizedBox(height: FortuneButtonSpacing.buttonTopSpacing),
-
-          // 다시 분석하기 버튼
-          FortuneButtonPositionHelper.inline(
-            child: TossButton(
-              text: '다른 사람과 궁합 보기',
-              onPressed: () {
-                setState(() {
-                  _compatibilityData = null;
-                  _person2NameController.clear();
-                  _person2BirthDate = null;
-                });
-              },
-              style: TossButtonStyle.secondary,
-              size: TossButtonSize.large,
-              width: double.infinity,
             ),
-            topSpacing: 0,
-            bottomSpacing: FortuneButtonSpacing.buttonBottomSpacing,
-          ),
-        ],
+          ).animate(delay: 450.ms).fadeIn().slideY(begin: 0.3),
+
+          if (fortune.advice?.isNotEmpty == true) ...[
+            const SizedBox(height: 16),
+
+            // 관계 개선 조언 (블러 처리)
+            UnifiedBlurWrapper(
+              isBlurred: _isBlurred,
+              blurredSections: _blurredSections,
+              sectionKey: 'advice',
+              child: TossCard(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: TossTheme.success.withValues(alpha:0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.lightbulb,
+                            color: TossTheme.success,
+                            size: 20,
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          '관계 개선 조언',
+                          style: TossTheme.heading4.copyWith(
+                            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 16),
+
+                    Text(
+                      fortune.advice!,
+                      style: TossTheme.body2.copyWith(
+                        color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                        height: 1.6,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ).animate(delay: 600.ms).fadeIn().slideY(begin: 0.3),
+            ],
+
+            const SizedBox(height: 120), // 버튼 공간 확보
+          ],
+        ),
       ),
+
+        // ✅ 블러 해제 버튼 (블러 상태일 때만 표시)
+        if (_isBlurred)
+          FloatingBottomButton(
+            text: '🎁 광고 보고 전체 내용 보기',
+            onPressed: _showAdAndUnblur,
+            isEnabled: true,
+          ),
+      ],
     );
   }
 
@@ -900,6 +1255,97 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
     if (score >= 0.7) return const Color(0xFFF59E0B); // 보통 - 노랑
     if (score >= 0.6) return const Color(0xFFEF4444); // 나쁨 - 빨강
     return TossTheme.textGray600; // 매우 나쁨 - 회색
+  }
+
+  /// 광고 시청 후 블러 해제
+  Future<void> _showAdAndUnblur() async {
+    debugPrint('');
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    debugPrint('🎁 [광고] 블러 해제 프로세스 시작');
+    debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    debugPrint('');
+
+    try {
+      final adService = AdService();
+
+      debugPrint('1️⃣ 광고 준비 상태 확인');
+      debugPrint('   - 광고 준비 상태: ${adService.isRewardedAdReady}');
+
+      if (!adService.isRewardedAdReady) {
+        debugPrint('   ⚠️ 광고가 아직 준비되지 않음');
+        debugPrint('   → 광고 로드 시작...');
+        await adService.loadRewardedAd();
+        debugPrint('   ✅ 광고 로드 완료');
+      } else {
+        debugPrint('   ✅ 광고가 이미 준비됨');
+      }
+
+      debugPrint('');
+      debugPrint('2️⃣ 리워드 광고 표시');
+      debugPrint('   - 현재 블러 상태: isBlurred=$_isBlurred');
+      debugPrint('   - 블러된 섹션: $_blurredSections');
+      debugPrint('   - 광고 준비 상태: ${adService.isRewardedAdReady}');
+      debugPrint('   → 광고 표시 중...');
+
+      // 리워드 광고 표시 및 완료 대기
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) {
+          debugPrint('');
+          debugPrint('3️⃣ 광고 시청 완료!');
+          debugPrint('   - reward.type: ${reward.type}');
+          debugPrint('   - reward.amount: ${reward.amount}');
+
+          // ✅ 광고 시청 완료 시 블러만 해제 (로컬 상태 변경)
+          if (mounted) {
+            debugPrint('   → 블러 해제 중...');
+
+            setState(() {
+              _isBlurred = false;
+              _blurredSections = [];
+            });
+
+            debugPrint('   ✅ 블러 해제 완료!');
+            debugPrint('      - 새 상태: _isBlurred=false');
+            debugPrint('      - 새 상태: _blurredSections=[]');
+
+            // 성공 메시지 표시
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('궁합 운세가 잠금 해제되었습니다!')),
+            );
+
+            debugPrint('');
+            debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            debugPrint('✅ [광고] 블러 해제 프로세스 완료!');
+            debugPrint('   → 사용자는 이제 전체 운세 내용을 볼 수 있습니다');
+            debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            debugPrint('');
+          } else {
+            debugPrint('   ⚠️ Widget이 이미 dispose됨. 블러 해제 취소.');
+          }
+        },
+      );
+    } catch (e) {
+      debugPrint('');
+      debugPrint('❌ [광고] 에러 발생: $e');
+      debugPrint('   → 사용자 경험 우선: 블러 해제 진행');
+
+      // 에러 발생 시에도 블러 해제 (사용자 경험 우선)
+      if (mounted) {
+        setState(() {
+          _isBlurred = false;
+          _blurredSections = [];
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('광고 표시에 실패했지만 운세를 확인할 수 있습니다.'),
+          ),
+        );
+
+        debugPrint('   ✅ 블러 해제 완료 (에러 처리)');
+      }
+      debugPrint('');
+    }
   }
 
   String _getScoreText(double score) {
@@ -931,139 +1377,6 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       metadata: result.data,
       isBlurred: isBlurred,  // ✅ 블러 상태
       blurredSections: blurredSections,  // ✅ 블러 섹션
-    );
-  }
-
-  /// 광고 시청 후 블러 해제
-  Future<void> _showAdAndUnblur() async {
-    final fortuneData = _compatibilityData;
-    if (fortuneData == null) return;
-
-    final fortune = fortuneData['fortune'] as Fortune;
-    debugPrint('[CompatibilityPage] 광고 시청 후 블러 해제 시작');
-
-    try {
-      final adService = AdService();
-
-      // 광고가 준비 안됐으면 로드
-      if (!adService.isRewardedAdReady) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('광고를 준비하는 중입니다...'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
-
-        await adService.loadRewardedAd();
-
-        // 로딩 완료 대기 (최대 5초)
-        int waitCount = 0;
-        while (!adService.isRewardedAdReady && waitCount < 10) {
-          await Future.delayed(const Duration(milliseconds: 500));
-          waitCount++;
-        }
-
-        if (!adService.isRewardedAdReady) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('광고 로드에 실패했습니다. 잠시 후 다시 시도해주세요.'),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          }
-          return;
-        }
-      }
-
-      // 광고 표시
-      debugPrint('[CompatibilityPage] 광고 표시 시작');
-      await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
-          debugPrint('[CompatibilityPage] 광고 보상 획득, 블러 해제');
-
-          // ✅ 블러 해제 - copyWith로 isBlurred를 false로 변경
-          if (mounted) {
-            setState(() {
-              _compatibilityData = {
-                'fortune': fortune.copyWith(
-                  isBlurred: false,
-                  blurredSections: [],
-                ),
-                'scores': fortuneData['scores'],
-              };
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('궁합 운세가 잠금 해제되었습니다!'),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          }
-        },
-      );
-    } catch (e, stackTrace) {
-      debugPrint('[CompatibilityPage] 광고 표시 실패: $e\n$stackTrace');
-
-      // 에러 발생 시에도 블러 해제 (사용자 경험 우선)
-      if (mounted) {
-        setState(() {
-          _compatibilityData = {
-            'fortune': fortune.copyWith(
-              isBlurred: false,
-              blurredSections: [],
-            ),
-            'scores': fortuneData['scores'],
-          };
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('광고 표시에 실패했지만 운세를 확인할 수 있습니다.'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
-    }
-  }
-
-  /// 블러 래퍼 위젯
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required Fortune fortune,
-    required String sectionKey,
-  }) {
-    // 블러가 필요 없거나, 해당 섹션이 블러 대상이 아니면 그대로 반환
-    if (!fortune.isBlurred || !fortune.blurredSections.contains(sectionKey)) {
-      return child;
-    }
-
-    // 블러 효과 적용
-    return Stack(
-      children: [
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

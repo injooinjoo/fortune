@@ -1,11 +1,21 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
 
 const supabase = createClient(supabaseUrl, supabaseKey)
+
+// UTF-8 안전한 해시 생성 함수 (btoa는 Latin1만 지원하여 한글 불가)
+async function createHash(text: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(text)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 50)
+}
 
 interface HealthFortuneRequest {
   fortune_type?: string
@@ -40,7 +50,8 @@ serve(async (req) => {
     console.log('💎 [Health] Premium 상태:', isPremium)
     console.log('Health fortune request:', { current_condition, concerned_body_parts })
 
-    const cacheKey = `health_fortune_${btoa(`${current_condition}_${concerned_body_parts.join(',')}`).slice(0, 50)}`
+    const hash = await createHash(`${current_condition}_${concerned_body_parts.join(',')}`)
+    const cacheKey = `health_fortune_${hash}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')

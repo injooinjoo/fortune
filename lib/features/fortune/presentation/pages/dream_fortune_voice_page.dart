@@ -30,6 +30,7 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
   bool _isBlurred = false;
   List<String> _blurredSections = [];
   String _userMessage = ''; // 사용자가 입력한 텍스트
+  bool _isShowingAd = false; // 광고 표시 중 플래그
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +39,42 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
-      appBar: StandardFortuneAppBar(
-        title: '꿈 해몽',
-        onBackPressed: () {
-          Navigator.pop(context);
-        },
+      appBar: AppBar(
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        // 결과 표시 시 백버튼 제거
+        leading: _fortuneResult == null
+            ? IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
+        automaticallyImplyLeading: _fortuneResult == null,
+        title: Text(
+          '꿈 해몽',
+          style: TextStyle(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+        // 결과 표시 시 X 버튼 표시
+        actions: _fortuneResult != null
+            ? [
+                IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ]
+            : null,
       ),
       body: Stack(
         children: [
@@ -258,7 +290,14 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
   Future<void> _showAdAndUnblur() async {
     if (_fortuneResult == null) return;
 
+    // ✅ 이미 광고 표시 중이면 무시
+    if (_isShowingAd) {
+      Logger.warning('[DreamVoice] ⚠️ 광고가 이미 표시 중입니다. 중복 호출 무시');
+      return;
+    }
+
     try {
+      _isShowingAd = true; // 광고 표시 시작
       final adService = AdService.instance;
 
       // 광고가 준비되지 않았다면 백그라운드에서 로드
@@ -297,6 +336,7 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
             setState(() {
               _isBlurred = false;
               _blurredSections = [];
+              _isShowingAd = false; // ✅ 광고 완료, 플래그 리셋
             });
 
             ScaffoldMessenger.of(context).showSnackBar(
@@ -319,6 +359,9 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
           ),
         );
       }
+    } finally {
+      // ✅ 광고가 닫히거나 에러 발생 시 항상 플래그 리셋
+      _isShowingAd = false;
     }
   }
 }

@@ -12,6 +12,7 @@ import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 import 'dart:math';
 
 /// 행운 아이템 페이지
@@ -603,41 +604,7 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
     }
   }
 
-  /// 블러 wrapper
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required String sectionKey,
-  }) {
-    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
-      return child;
-    }
-
-    return Stack(
-      children: [
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  /// _buildBlurWrapper 제거 - UnifiedBlurWrapper 사용
 
   /// 카테고리별 상세 정보
   Widget _buildCategoryDetails(String categoryId, List<int> lottoNumbers) {
@@ -649,42 +616,58 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
           isBlurred: _isBlurred && _blurredSections.contains('lotto'),
         );
       case 'shopping':
-        return _buildBlurWrapper(
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
           sectionKey: 'shopping',
           child: const _ShoppingContent(),
         );
       case 'game':
-        return _buildBlurWrapper(
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
           sectionKey: 'game',
           child: const _GameContent(),
         );
       case 'food':
-        return _buildBlurWrapper(
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
           sectionKey: 'food',
           child: const _FoodContent(),
         );
       case 'travel':
-        return _buildBlurWrapper(
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
           sectionKey: 'travel',
           child: const _TravelContent(),
         );
       case 'health':
-        return _buildBlurWrapper(
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
           sectionKey: 'health',
           child: const _HealthContent(),
         );
       case 'fashion':
-        return _buildBlurWrapper(
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
           sectionKey: 'fashion',
           child: const _FashionContent(),
         );
       case 'lifestyle':
-        return _buildBlurWrapper(
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
           sectionKey: 'lifestyle',
           child: const _LifestyleContent(),
         );
       case 'today_color':
-        return _buildBlurWrapper(
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
           sectionKey: 'today_color',
           child: _TodayColorContent(
             birthDate: _selectedBirthDate ?? DateTime.now(),

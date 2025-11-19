@@ -158,6 +158,24 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
             specificWish: wish,
           );
         },
+        onAIWishSubmitted: (wish, isAIGenerated) async {
+          final authState = ref.read(authStateProvider).value;
+          final userId = authState?.session?.user.id;
+
+          if (userId == null) {
+            _showLoginRequiredDialog(context);
+            return;
+          }
+
+          // AI 생성은 제한 체크 없이 바로 진행
+          setState(() {
+            _selectedWish = wish;
+          });
+          ref.read(talismanGenerationProvider(userId).notifier).generateTalisman(
+            category: _selectedCategory!,
+            specificWish: wish,
+          );
+        },
       ),
     );
   }

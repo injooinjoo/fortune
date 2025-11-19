@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../theme/toss_design_system.dart';
 import '../theme/typography_unified.dart';
+import 'unified_date_picker.dart';
 
 /// 🎨 공통 운세 입력 위젯 라이브러리
 ///
@@ -26,7 +27,7 @@ class FortuneInputWidgets {
 
   // ==================== 📅 날짜/시간 입력 ====================
 
-  /// 날짜 선택기 (DatePicker)
+  /// 날짜 선택기 (DatePicker) - UnifiedDatePicker 사용
   ///
   /// **파라미터**:
   /// - `label`: 입력 필드 라벨
@@ -34,6 +35,8 @@ class FortuneInputWidgets {
   /// - `onDateSelected`: 날짜 선택 콜백
   /// - `firstDate`: 선택 가능한 최소 날짜 (기본값: 1900-01-01)
   /// - `lastDate`: 선택 가능한 최대 날짜 (기본값: 오늘)
+  /// - `mode`: 날짜 선택기 모드 (기본값: wheel - 기존 showDatePicker 대체)
+  /// - `showAge`: 나이 표시 여부 (기본값: false)
   static Widget buildDatePicker({
     required BuildContext context,
     required String label,
@@ -41,86 +44,17 @@ class FortuneInputWidgets {
     required ValueChanged<DateTime> onDateSelected,
     DateTime? firstDate,
     DateTime? lastDate,
+    UnifiedDatePickerMode mode = UnifiedDatePickerMode.wheel, // wheel 모드가 기존 동작과 가장 유사
+    bool showAge = false,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: context.labelMedium.copyWith(
-            color: isDark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
-          ),
-        ),
-        const SizedBox(height: 8),
-        InkWell(
-          onTap: () async {
-            final picked = await showDatePicker(
-              context: context,
-              initialDate: selectedDate ?? DateTime.now(),
-              firstDate: firstDate ?? DateTime(1900),
-              lastDate: lastDate ?? DateTime.now(),
-              builder: (context, child) {
-                return Theme(
-                  data: Theme.of(context).copyWith(
-                    colorScheme: ColorScheme.light(
-                      primary: TossDesignSystem.tossBlue,
-                    ),
-                  ),
-                  child: child!,
-                );
-              },
-            );
-
-            if (picked != null) {
-              onDateSelected(picked);
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? TossDesignSystem.grayDark800
-                  : TossDesignSystem.gray50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isDark
-                    ? TossDesignSystem.borderDark
-                    : TossDesignSystem.borderLight,
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.calendar_today,
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.textSecondaryLight,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  selectedDate != null
-                      ? '${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일'
-                      : '날짜를 선택해주세요',
-                  style: context.bodyMedium.copyWith(
-                    color: selectedDate != null
-                        ? (isDark
-                            ? TossDesignSystem.textPrimaryDark
-                            : TossDesignSystem.textPrimaryLight)
-                        : (isDark
-                            ? TossDesignSystem.textSecondaryDark
-                            : TossDesignSystem.textSecondaryLight),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+    return UnifiedDatePicker(
+      selectedDate: selectedDate,
+      onDateChanged: onDateSelected,
+      label: label,
+      minDate: firstDate ?? DateTime(1900),
+      maxDate: lastDate ?? DateTime.now(),
+      mode: mode,
+      showAge: showAge,
     );
   }
 

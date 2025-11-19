@@ -153,6 +153,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
               onPressed: () => context.pop(),
             )
           : null,
+      automaticallyImplyLeading: false,
       iconTheme: IconThemeData(
         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
       ),
@@ -164,7 +165,6 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
         ),
       ),
       centerTitle: true,
-      // ✅ X버튼을 오른쪽(actions)으로 이동
       actions: _currentState == TarotFlowState.result
           ? [
               IconButton(

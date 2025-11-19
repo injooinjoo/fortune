@@ -216,6 +216,47 @@ class PersonalityStats {
   List<String> get labels => ['카리스마', '지능', '창의력', '리더십', '공감력'];
 }
 
+/// 데일리 운세 모델
+class DailyFortune {
+  final String luckyColor;
+  final int luckyNumber;
+  final int energyLevel;
+  final String recommendedActivity;
+  final String caution;
+  final String bestMatchToday;
+
+  const DailyFortune({
+    required this.luckyColor,
+    required this.luckyNumber,
+    required this.energyLevel,
+    required this.recommendedActivity,
+    required this.caution,
+    required this.bestMatchToday,
+  });
+
+  factory DailyFortune.fromJson(Map<String, dynamic> json) {
+    return DailyFortune(
+      luckyColor: json['luckyColor'] as String? ?? '',
+      luckyNumber: json['luckyNumber'] as int? ?? 0,
+      energyLevel: json['energyLevel'] as int? ?? 0,
+      recommendedActivity: json['recommendedActivity'] as String? ?? '',
+      caution: json['caution'] as String? ?? '',
+      bestMatchToday: json['bestMatchToday'] as String? ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'luckyColor': luckyColor,
+      'luckyNumber': luckyNumber,
+      'energyLevel': energyLevel,
+      'recommendedActivity': recommendedActivity,
+      'caution': caution,
+      'bestMatchToday': bestMatchToday,
+    };
+  }
+}
+
 /// 유명인 모델
 class Celebrity {
   final String name;
@@ -267,6 +308,7 @@ class PersonalityDNA {
   final Celebrity? celebrity;
   final String? funnyFact;
   final int? popularityRank;
+  final DailyFortune? dailyFortune;
 
   const PersonalityDNA({
     required this.mbti,
@@ -291,6 +333,7 @@ class PersonalityDNA {
     this.celebrity,
     this.funnyFact,
     this.popularityRank,
+    this.dailyFortune,
   });
 
   /// 조합 키 생성
@@ -405,6 +448,7 @@ class PersonalityDNA {
     Celebrity? celebrity,
     String? funnyFact,
     int? popularityRank,
+    DailyFortune? dailyFortune,
   }) {
     return PersonalityDNA(
       mbti: mbti ?? this.mbti,
@@ -429,6 +473,7 @@ class PersonalityDNA {
       celebrity: celebrity ?? this.celebrity,
       funnyFact: funnyFact ?? this.funnyFact,
       popularityRank: popularityRank ?? this.popularityRank,
+      dailyFortune: dailyFortune ?? this.dailyFortune,
     );
   }
 

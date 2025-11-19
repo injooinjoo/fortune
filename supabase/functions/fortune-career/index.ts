@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 
 // 환경 변수 설정
@@ -8,6 +9,15 @@ const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
 
 // Supabase 클라이언트 생성
 const supabase = createClient(supabaseUrl, supabaseKey)
+
+// UTF-8 안전한 해시 생성 함수 (btoa는 Latin1만 지원하여 한글 불가)
+async function createHash(text: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(text)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 50)
+}
 
 // 커리어 분야 매핑
 const careerFieldsMap = {
@@ -261,8 +271,9 @@ serve(async (req) => {
     const skillAnalysis = analyzeSkills(skills, careerField, currentRole)
     const predictions = generateCareerPredictions(timeHorizon, careerPath, careerField, currentRole)
 
-    // 캐시 확인
-    const cacheKey = `career_fortune_${btoa(`${fortuneType}_${currentRole}_${timeHorizon}_${careerPath}_${skills.join(',')}`).slice(0, 50)}`
+    // 캐시 확인 (UTF-8 안전한 SHA-256 해시)
+    const hash = await createHash(`${fortuneType}_${currentRole}_${timeHorizon}_${careerPath}_${skills.join(',')}`)
+    const cacheKey = `career_fortune_${hash}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')

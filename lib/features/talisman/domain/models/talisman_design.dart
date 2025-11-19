@@ -8,19 +8,23 @@ part 'talisman_design.g.dart';
 class TalismanDesign with _$TalismanDesign {
   const factory TalismanDesign({
     required String id,
-    required String userId,
-    required TalismanDesignType designType,
+    @JsonKey(name: 'user_id') required String userId,
+    @JsonKey(name: 'design_type') @Default(TalismanDesignType.traditional) TalismanDesignType designType,
     required TalismanCategory category,
     required String title,
-    required String imageUrl,
+    @JsonKey(name: 'image_url') required String imageUrl,
     @Default({}) Map<String, dynamic> colors,
     @Default({}) Map<String, dynamic> symbols,
-    required String mantraText,
-    required DateTime createdAt,
-    DateTime? expiresAt,
-    @Default(false) bool isPremium,
-    @Default(0) int effectScore,
+    @JsonKey(name: 'mantra_text') required String mantraText,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'expires_at') DateTime? expiresAt,
+    @JsonKey(name: 'is_premium') @Default(false) bool isPremium,
+    @JsonKey(name: 'effect_score') @Default(0) int effectScore,
     @Default([]) List<String> blessings,
+    // 🆕 AI 생성 관련 필드 추가
+    @JsonKey(name: 'is_ai_generated') @Default(false) bool isAIGenerated,
+    @JsonKey(name: 'custom_characters') List<String>? customCharacters,
+    @JsonKey(name: 'generation_prompt') String? generationPrompt,
   }) = _TalismanDesign;
 
   factory TalismanDesign.fromJson(Map<String, dynamic> json) =>

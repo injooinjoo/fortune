@@ -223,20 +223,16 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
         ),
       ),
       child: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 80),
-            
-            // 최적화된 로딩 리스트 (픽셀 깨짐 방지)
-            Expanded(
-              child: _OptimizedLoadingList(
-                steps: _emotionalLoadingMessages,
-                currentStep: _currentStep,
-                checkAnimation: _checkAnimation,
-                isDark: isDark,
-              ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: _OptimizedLoadingList(
+              steps: _emotionalLoadingMessages,
+              currentStep: _currentStep,
+              checkAnimation: _checkAnimation,
+              isDark: isDark,
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -281,9 +277,8 @@ class _OptimizedLoadingList extends StatelessWidget {
                     duration: const Duration(milliseconds: 600),
                     opacity: _getOpacity(i),
                     curve: Curves.easeInOutCubic,
-                    child: Container(
+                    child: SizedBox(
                       height: 80,
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: _OptimizedStepItem(
                         step: steps[currentStep + i],
                         isCompleted: (currentStep + i) < currentStep,
@@ -334,7 +329,8 @@ class _OptimizedStepItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
       children: [
         // 최적화된 체크박스 (픽셀 완벽 정렬)
         Container(

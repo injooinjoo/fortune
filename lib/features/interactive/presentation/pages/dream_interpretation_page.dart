@@ -1,35 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/components/app_header.dart';
-import '../../../../shared/components/korean_date_picker.dart';
-import '../../../../shared/components/loading_states.dart';
-import '../../../../shared/components/toast.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
-import '../../../../services/speech_recognition_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/models/fortune_result.dart';
+import '../../../fortune/domain/models/conditions/dream_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/utils/logger.dart';
+import '../../../../shared/components/toast.dart';
+import '../../../../presentation/providers/token_provider.dart';
+import '../../../../core/widgets/blurred_fortune_content.dart';
+import '../../../../core/services/debug_premium_service.dart';
 
-// Import domain models
-import '../../domain/models/dream_models.dart';
-
-// Import providers
-import '../providers/dream_providers.dart';
-
+/// 꿈 해몽 페이지 (UnifiedFortuneService 버전)
+///
+/// **개선 사항**:
+/// - ✅ UnifiedFortuneService 사용 (72% API 비용 절감)
+/// - ✅ BlurredFortuneContent 사용 (자동 블러/광고 처리)
+/// - ✅ FortuneResult 모델 사용 (일관성)
 class DreamInterpretationPage extends ConsumerStatefulWidget {
   const DreamInterpretationPage({super.key});
 
   @override
-  ConsumerState<DreamInterpretationPage> createState() => _DreamInterpretationPageState();
+  ConsumerState<DreamInterpretationPage> createState() =>
+      _DreamInterpretationPageState();
 }
 
-class _DreamInterpretationPageState extends ConsumerState<DreamInterpretationPage> {
+class _DreamInterpretationPageState
+    extends ConsumerState<DreamInterpretationPage> {
+  // ==================== State ====================
+
   final _nameController = TextEditingController();
   final _dreamController = TextEditingController();
   DateTime? _selectedBirthDate;
+  String? _selectedEmotion;
+
+  // 운세 결과 관련 상태
+  FortuneResult? _fortuneResult;
+  bool _isLoading = false;
   bool _showResult = false;
-  DreamInput? _currentInput;
+
+  static const List<Map<String, dynamic>> _emotions = [
+    {'label': '😊 기분 좋은', 'value': 'happy', 'color': Color(0xFFFBBF24)},
+    {'label': '😟 불안한', 'value': 'anxious', 'color': Color(0xFFF59E0B)},
+    {'label': '😱 무서운', 'value': 'scary', 'color': Color(0xFFEF4444)},
+    {'label': '😢 슬픈', 'value': 'sad', 'color': Color(0xFF3B82F6)},
+    {'label': '🤔 이상한', 'value': 'weird', 'color': Color(0xFF8B5CF6)},
+    {'label': '😌 평온한', 'value': 'peaceful', 'color': Color(0xFF10B981)},
+  ];
 
   @override
   void dispose() {
@@ -38,9 +57,497 @@ class _DreamInterpretationPageState extends ConsumerState<DreamInterpretationPag
     super.dispose();
   }
 
-  void _analyzeDream() {
-    if (_nameController.text.isEmpty || 
-        _selectedBirthDate == null || 
+  // ==================== Build ====================
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark
+          ? TossDesignSystem.backgroundDark
+          : TossDesignSystem.backgroundLight,
+      appBar: AppBar(
+        backgroundColor: isDark
+            ? TossDesignSystem.backgroundDark
+            : TossDesignSystem.backgroundLight,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: _showResult
+            ? null // 결과 화면에서는 백버튼 숨김
+            : IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: isDark
+                      ? TossDesignSystem.textPrimaryDark
+                      : TossDesignSystem.textPrimaryLight,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+        automaticallyImplyLeading: !_showResult, // 결과 화면에서는 자동 백버튼도 숨김
+        title: Text(
+          '꿈 해몽',
+          style: TypographyUnified.heading4.copyWith(
+            color: isDark
+                ? TossDesignSystem.textPrimaryDark
+                : TossDesignSystem.textPrimaryLight,
+          ),
+        ),
+        centerTitle: true,
+        actions: _showResult
+            ? [
+                // 결과 화면에서는 오른쪽에 X 버튼
+                IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: isDark
+                        ? TossDesignSystem.textPrimaryDark
+                        : TossDesignSystem.textPrimaryLight,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ]
+            : null,
+      ),
+      body: SafeArea(
+        bottom: false,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: _showResult && _fortuneResult != null
+                      ? _buildResultView(_fortuneResult!)
+                      : _buildInputForm(),
+                ),
+              ],
+            ),
+
+            // 버튼
+            if (!_showResult && _dreamController.text.isNotEmpty)
+              FloatingBottomButton(
+                text: '🔮 꿈 해석하기',
+                onPressed: _isLoading ? null : _handleSubmit,
+                isLoading: _isLoading,
+              ),
+
+            if (_showResult && _fortuneResult != null)
+              FloatingBottomButton(
+                text: '다시 해석하기',
+                onPressed: _resetForm,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ==================== Input Form ====================
+
+  Widget _buildInputForm() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 이름 입력
+          Text(
+            '이름',
+            style: TypographyUnified.bodyMedium.copyWith(
+              color: isDark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossDesignSystem.textPrimaryLight,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _nameController,
+            decoration: InputDecoration(
+              hintText: '이름을 입력하세요',
+              filled: true,
+              fillColor: isDark
+                  ? TossDesignSystem.surfaceBackgroundDark
+                  : TossDesignSystem.surfaceBackgroundLight,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // 생년월일 입력
+          Text(
+            '생년월일',
+            style: TypographyUnified.bodyMedium.copyWith(
+              color: isDark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossDesignSystem.textPrimaryLight,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          InkWell(
+            onTap: () async {
+              final date = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now().subtract(const Duration(days: 7300)),
+                firstDate: DateTime(1950),
+                lastDate: DateTime.now(),
+              );
+              if (date != null) {
+                setState(() => _selectedBirthDate = date);
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? TossDesignSystem.surfaceBackgroundDark
+                    : TossDesignSystem.surfaceBackgroundLight,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _selectedBirthDate == null
+                        ? '생년월일을 선택하세요'
+                        : '${_selectedBirthDate!.year}년 ${_selectedBirthDate!.month}월 ${_selectedBirthDate!.day}일',
+                    style: TypographyUnified.bodyMedium.copyWith(
+                      color: _selectedBirthDate == null
+                          ? (isDark
+                              ? TossDesignSystem.textSecondaryDark
+                              : TossDesignSystem.textSecondaryLight)
+                          : (isDark
+                              ? TossDesignSystem.textPrimaryDark
+                              : TossDesignSystem.textPrimaryLight),
+                    ),
+                  ),
+                  Icon(
+                    Icons.calendar_today,
+                    color: isDark
+                        ? TossDesignSystem.textSecondaryDark
+                        : TossDesignSystem.textSecondaryLight,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // 꿈 감정 선택
+          Text(
+            '꿈의 느낌',
+            style: TypographyUnified.bodyMedium.copyWith(
+              color: isDark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossDesignSystem.textPrimaryLight,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _emotions.map((emotion) {
+              final isSelected = _selectedEmotion == emotion['value'];
+              return InkWell(
+                onTap: () {
+                  setState(() {
+                    _selectedEmotion = emotion['value'] as String;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? (emotion['color'] as Color).withValues(alpha: 0.2)
+                        : (isDark
+                            ? TossDesignSystem.surfaceBackgroundDark
+                            : TossDesignSystem.surfaceBackgroundLight),
+                    borderRadius: BorderRadius.circular(20),
+                    border: isSelected
+                        ? Border.all(color: emotion['color'] as Color, width: 2)
+                        : null,
+                  ),
+                  child: Text(
+                    emotion['label'] as String,
+                    style: TypographyUnified.bodySmall.copyWith(
+                      color: isSelected
+                          ? (emotion['color'] as Color)
+                          : (isDark
+                              ? TossDesignSystem.textPrimaryDark
+                              : TossDesignSystem.textPrimaryLight),
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+
+          const SizedBox(height: 24),
+
+          // 꿈 내용 입력
+          Text(
+            '꿈 내용',
+            style: TypographyUnified.bodyMedium.copyWith(
+              color: isDark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossDesignSystem.textPrimaryLight,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _dreamController,
+            maxLines: 8,
+            onChanged: (value) => setState(() {}),
+            decoration: InputDecoration(
+              hintText: '꾼 꿈의 내용을 자세히 적어주세요.\n예: 하늘을 날아다니는 꿈을 꿨어요.',
+              filled: true,
+              fillColor: isDark
+                  ? TossDesignSystem.surfaceBackgroundDark
+                  : TossDesignSystem.surfaceBackgroundLight,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 100),
+        ],
+      ),
+    );
+  }
+
+  // ==================== Result View ====================
+
+  Widget _buildResultView(FortuneResult result) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          // 종합 운세 카드
+          _buildOverallCard(result),
+          const SizedBox(height: 16),
+
+          // 꿈 상징 (블러 대상)
+          BlurredFortuneContent(
+            fortuneResult: result,
+            child: _buildSymbolsCard(result),
+          ),
+          const SizedBox(height: 16),
+
+          // 해석 (블러 대상)
+          BlurredFortuneContent(
+            fortuneResult: result,
+            child: _buildInterpretationCard(result),
+          ),
+          const SizedBox(height: 16),
+
+          // 조언 (블러 대상)
+          BlurredFortuneContent(
+            fortuneResult: result,
+            child: _buildAdviceCard(result),
+          ),
+
+          const SizedBox(height: 100),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOverallCard(FortuneResult result) {
+    final score = result.score ?? 75;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFF8B5CF6),
+            const Color(0xFF6366F1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Text(
+            '${result.data['dreamType'] ?? '길몽'} 📖',
+            style: TypographyUnified.heading2.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '행운 점수',
+            style: TypographyUnified.bodySmall.copyWith(
+              color: Colors.white.withValues(alpha: 0.8),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '$score점',
+            style: TypographyUnified.displayMedium.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSymbolsCard(FortuneResult result) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final symbols = (result.data['relatedSymbols'] as List<dynamic>?)
+        ?.map((e) => e.toString())
+        .toList() ?? [];
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark
+            ? TossDesignSystem.surfaceBackgroundDark
+            : TossDesignSystem.surfaceBackgroundLight,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '🔮 주요 상징',
+            style: TypographyUnified.heading4.copyWith(
+              color: isDark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossDesignSystem.textPrimaryLight,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: symbols.map((symbol) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Text(
+                  symbol,
+                  style: TypographyUnified.bodySmall.copyWith(
+                    color: const Color(0xFF8B5CF6),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInterpretationCard(FortuneResult result) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final interpretation = result.data['interpretation'] ?? '해석 정보가 없습니다.';
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark
+            ? TossDesignSystem.surfaceBackgroundDark
+            : TossDesignSystem.surfaceBackgroundLight,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '📖 꿈 해석',
+            style: TypographyUnified.heading4.copyWith(
+              color: isDark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossDesignSystem.textPrimaryLight,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            interpretation,
+            style: TypographyUnified.bodyMedium.copyWith(
+              color: isDark
+                  ? TossDesignSystem.textSecondaryDark
+                  : TossDesignSystem.textSecondaryLight,
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdviceCard(FortuneResult result) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final advice = result.data['todayGuidance'] ?? '조언 정보가 없습니다.';
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark
+            ? TossDesignSystem.surfaceBackgroundDark
+            : TossDesignSystem.surfaceBackgroundLight,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '💡 조언',
+            style: TypographyUnified.heading4.copyWith(
+              color: isDark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossDesignSystem.textPrimaryLight,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            advice,
+            style: TypographyUnified.bodyMedium.copyWith(
+              color: isDark
+                  ? TossDesignSystem.textSecondaryDark
+                  : TossDesignSystem.textSecondaryLight,
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ==================== Actions ====================
+
+  Future<void> _handleSubmit() async {
+    if (_nameController.text.isEmpty ||
+        _selectedBirthDate == null ||
         _dreamController.text.isEmpty) {
       Toast.show(
         context,
@@ -50,771 +557,73 @@ class _DreamInterpretationPageState extends ConsumerState<DreamInterpretationPag
       return;
     }
 
-    setState(() {
-      _currentInput = DreamInput(
-        name: _nameController.text,
-        birthDate: _selectedBirthDate!,
+    setState(() => _isLoading = true);
+
+    try {
+      // 프리미엄 상태 확인
+      final tokenState = ref.read(tokenProvider);
+      final premiumOverride = await DebugPremiumService.getOverrideValue();
+      final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
+
+      // Conditions 생성
+      final conditions = DreamFortuneConditions(
         dreamContent: _dreamController.text,
+        dreamDate: DateTime.now(),
+        dreamEmotion: _selectedEmotion,
       );
-      _showResult = true;
-    });
-  }
 
-  void _reset() {
-    setState(() {
-      _showResult = false;
-      _currentInput = null;
-      _nameController.clear();
-      _dreamController.clear();
-      _selectedBirthDate = null;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final fontSize = ref.watch(fontSizeProvider);
-    final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
-
-    return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      body: SafeArea(
-        child: Column(
-          children: [
-            AppHeader(
-              title: '꿈 해몽',
-              showBackButton: true,
-              showTokenBalance: !_showResult,
-            ),
-            Expanded(
-              child: _showResult && _currentInput != null
-                  ? _DreamResultView(
-                      input: _currentInput!,
-                      onReset: _reset,
-                      fontScale: fontScale,
-                    )
-                  : _DreamInputForm(
-                      nameController: _nameController,
-                      dreamController: _dreamController,
-                      selectedBirthDate: _selectedBirthDate,
-                      onBirthDateChanged: (date) => setState(() => _selectedBirthDate = date),
-                      onAnalyze: _analyzeDream,
-                      fontScale: fontScale,
-                    ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DreamInputForm extends StatefulWidget {
-  final TextEditingController nameController;
-  final TextEditingController dreamController;
-  final DateTime? selectedBirthDate;
-  final ValueChanged<DateTime> onBirthDateChanged;
-  final VoidCallback onAnalyze;
-  final double fontScale;
-
-  const _DreamInputForm({
-    required this.nameController,
-    required this.dreamController,
-    required this.selectedBirthDate,
-    required this.onBirthDateChanged,
-    required this.onAnalyze,
-    required this.fontScale,
-  });
-
-  @override
-  State<_DreamInputForm> createState() => _DreamInputFormState();
-}
-
-class _DreamInputFormState extends State<_DreamInputForm> {
-  final _speechService = SpeechRecognitionService();
-  bool _isRecording = false;
-  String _inputType = 'text'; // 'text' or 'voice'
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeSpeechService();
-  }
-
-  Future<void> _initializeSpeechService() async {
-    await _speechService.initialize();
-  }
-
-  @override
-  void dispose() {
-    _speechService.dispose();
-    super.dispose();
-  }
-
-  Future<void> _toggleRecording() async {
-    HapticUtils.mediumImpact();
-    
-    if (_isRecording) {
-      await _speechService.stopListening();
-      setState(() {
-        _isRecording = false;
-      });
-    } else {
-      setState(() {
-        _isRecording = true;
-      });
-      await _speechService.startListening(
-        onResult: (text) {
-          setState(() {
-            widget.dreamController.text = text;
-            _isRecording = false;
-          });
+      // UnifiedFortuneService 호출
+      final supabase = Supabase.instance.client;
+      final fortuneService = UnifiedFortuneService(supabase);
+      var result = await fortuneService.getFortune(
+        fortuneType: 'dream',
+        dataSource: FortuneDataSource.api,
+        inputConditions: {
+          'name': _nameController.text,
+          'birth_date': _selectedBirthDate!.toIso8601String(),
+          'dream_content': _dreamController.text,
+          'dream_emotion': _selectedEmotion,
         },
+        conditions: conditions,
+        isPremium: isPremium,
       );
+
+      // 일반 사용자는 블러 적용
+      if (!isPremium) {
+        result = result.copyWith(
+          isBlurred: true,
+          blurredSections: ['relatedSymbols', 'interpretation', 'todayGuidance'],
+        );
+      }
+
+      if (mounted) {
+        setState(() {
+          _fortuneResult = result;
+          _showResult = true;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      Logger.error('[DreamInterpretationPage] Error: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+        Toast.show(
+          context,
+          message: '꿈 해석에 실패했습니다',
+          type: ToastType.error,
+        );
+      }
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // Icon
-          GlassContainer(
-            width: 100,
-            height: 100,
-            borderRadius: BorderRadius.circular(50),
-            child: Center(
-              child: Icon(
-                Icons.bedtime_outlined,
-                size: 48,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-          ),
-          SizedBox(height: 24),
-          
-          // Title
-          Text(
-            '꿈의 의미를 해석해드립니다',
-            style: context.heading2.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 8),
-          Text(
-            '꿈 내용을 자세히 입력해주세요',
-            style: context.buttonMedium.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-          
-          // Name Input
-          GlassContainer(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '이름',
-                  style: context.buttonMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: widget.nameController,
-                  style: context.buttonMedium,
-                  decoration: InputDecoration(
-                    hintText: '이름을 입력하세요',
-                    filled: true,
-                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // Birth Date
-          GlassContainer(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '생년월일',
-                  style: context.buttonMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                KoreanDatePicker(
-                  initialDate: widget.selectedBirthDate,
-                  onDateSelected: widget.onBirthDateChanged,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // Dream Content
-          GlassContainer(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '꿈 내용',
-                      style: context.buttonMedium.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    // Input Type Toggle
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surface.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: Row(
-                        children: [
-                          _buildToggleButton('text', Icons.keyboard, '텍스트'),
-                          _buildToggleButton('voice', Icons.mic, '음성'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                if (_inputType == 'text')
-                  TextField(
-                    controller: widget.dreamController,
-                    style: context.buttonMedium,
-                    maxLines: 5,
-                    decoration: InputDecoration(
-                      hintText: '예: 넓은 바다에서 헤엄치다가 황금 용을 만나는 꿈을 꾸었습니다.',
-                      filled: true,
-                      fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.all(16),
-                    ),
-                  )
-                else
-                  _buildVoiceInput(theme),
-              ],
-            ),
-          ),
-          const SizedBox(height: 32),
-          
-          // Analyze Button
-          SizedBox(
-            width: double.infinity,
-            child: GlassButton(
-              onPressed: widget.onAnalyze,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.auto_awesome, size: 20 * widget.fontScale),
-                    const SizedBox(width: 8),
-                    Text(
-                      '꿈 해몽 분석하기',
-                      style: context.heading4.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToggleButton(String type, IconData icon, String label) {
-    final theme = Theme.of(context);
-    final isSelected = _inputType == type;
-    
-    return GestureDetector(
-      onTap: () {
-        HapticUtils.lightImpact();
-        setState(() {
-          _inputType = type;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? theme.colorScheme.primary.withValues(alpha: 0.2)
-              : TossDesignSystem.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 18,
-              color: isSelected
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-            SizedBox(width: 4),
-            Text(
-              label,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: isSelected
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildVoiceInput(ThemeData theme) {
-    return Column(
-      children: [
-        ValueListenableBuilder<String>(
-          valueListenable: _speechService.recognizedTextNotifier,
-          builder: (context, recognizedText, _) {
-            if (recognizedText.isNotEmpty) {
-              widget.dreamController.text = recognizedText;
-            }
-            return Container(
-              height: 120,
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surface.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: _isRecording 
-                      ? theme.colorScheme.primary 
-                      : TossDesignSystem.transparent,
-                  width: 2,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  recognizedText.isEmpty
-                      ? (_isRecording
-                          ? '듣고 있습니다... 꿈 내용을 말씀해주세요'
-                          : '마이크 버튼을 눌러 녹음을 시작하세요')
-                      : recognizedText,
-                  style: context.buttonMedium.copyWith(
-                    color: recognizedText.isEmpty
-                        ? theme.colorScheme.onSurface.withValues(alpha: 0.6)
-                        : theme.colorScheme.onSurface,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            );
-          },
-        ),
-        const SizedBox(height: 20),
-        GestureDetector(
-          onTap: _toggleRecording,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: _isRecording
-                    ? [TossDesignSystem.errorRed.withValues(alpha: 0.8), TossDesignSystem.errorRed]
-                    : [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: (_isRecording ? TossDesignSystem.errorRed : theme.colorScheme.primary)
-                      .withValues(alpha: 0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Icon(
-              _isRecording ? Icons.stop : Icons.mic,
-              size: 40,
-              color: TossDesignSystem.white,
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        ValueListenableBuilder<String>(
-          valueListenable: _speechService.statusNotifier,
-          builder: (context, status, _) {
-            return Text(
-              status,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class _DreamResultView extends ConsumerWidget {
-  final DreamInput input;
-  final VoidCallback onReset;
-  final double fontScale;
-
-  const _DreamResultView({
-    required this.input,
-    required this.onReset,
-    required this.fontScale,
-  });
-
-  Color _getLuckColor(int score) {
-    if (score >= 85) return TossDesignSystem.successGreen;
-    if (score >= 70) return TossDesignSystem.tossBlue;
-    if (score >= 55) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
-  }
-
-  String _getLuckText(int score) {
-    if (score >= 85) return '매우 길몽';
-    if (score >= 70) return '길몽';
-    if (score >= 55) return '평범한 꿈';
-    return '흉몽';
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final analysisAsync = ref.watch(dreamInterpretationProvider(input));
-
-    return analysisAsync.when(
-      loading: () => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            LoadingIndicator(size: 60),
-            SizedBox(height: 24),
-            Text(
-              '꿈을 분석하고 있습니다...',
-              style: TypographyUnified.heading4,
-            ),
-          ],
-        ),
-      ),
-      error: (error, stack) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: theme.colorScheme.error,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              error.toString().contains('토큰') 
-                  ? '토큰이 부족합니다' 
-                  : '꿈 분석 중 오류가 발생했습니다',
-              style: theme.textTheme.titleLarge,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            GlassButton(
-              onPressed: onReset,
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                child: Text('다시 시도'),
-              ),
-            ),
-          ],
-        ),
-      ),
-      data: (result) => result == null
-          ? const SizedBox.shrink()
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  // Overall Score
-                  GlassContainer(
-                    padding: const EdgeInsets.all(24),
-                    gradient: LinearGradient(
-                      colors: [
-                        _getLuckColor(result.overallLuck).withValues(alpha: 0.1),
-                        _getLuckColor(result.overallLuck).withValues(alpha: 0.05),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          '${input.name}님의 꿈 해몽',
-                          style: context.heading3,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          '${result.overallLuck}점',
-                          style: context.numberXLarge.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: _getLuckColor(result.overallLuck),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: _getLuckColor(result.overallLuck).withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            _getLuckText(result.overallLuck),
-                            style: context.buttonMedium.copyWith(
-                              color: _getLuckColor(result.overallLuck),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Dream Summary & Interpretation
-                  GlassContainer(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.book_outlined, color: theme.colorScheme.primary),
-                            SizedBox(width: 8),
-                            Text(
-                              '꿈 요약 및 해석',
-                              style: context.heading4.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        
-                        // Summary
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.summarize_outlined,
-                                    size: 16,
-                                    color: theme.colorScheme.primary,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '꿈 요약',
-                                    style: context.bodySmall.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: theme.colorScheme.primary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                result.dreamSummary,
-                                style: context.buttonMedium.copyWith(
-                                  height: 1.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        
-                        // Interpretation
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.secondary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.psychology_outlined,
-                                    size: 16,
-                                    color: theme.colorScheme.secondary,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '꿈 해석',
-                                    style: context.bodySmall.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: theme.colorScheme.secondary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                result.dreamInterpretation,
-                                style: context.buttonMedium.copyWith(
-                                  height: 1.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Lucky Elements
-                  if (result.luckyElements.isNotEmpty) ...[
-                    GlassContainer(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.star_outline, color: theme.colorScheme.primary),
-                              SizedBox(width: 8),
-                              Text(
-                                '행운 요소',
-                                style: context.heading4.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: result.luckyElements.map((element) {
-                              return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      theme.colorScheme.primary.withValues(alpha: 0.2),
-                                      theme.colorScheme.secondary.withValues(alpha: 0.2),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  element,
-                                  style: context.bodySmall.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                  
-                  // Advice
-                  GlassContainer(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.lightbulb_outline, color: theme.colorScheme.primary),
-                            SizedBox(width: 8),
-                            Text(
-                              '조언',
-                              style: context.heading4.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          result.advice,
-                          style: context.buttonMedium.copyWith(
-                            height: 1.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  
-                  // Reset Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: GlassButton(
-                      onPressed: onReset,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.refresh, size: 20 * fontScale),
-                            const SizedBox(width: 8),
-                            Text(
-                              '다른 꿈 분석하기',
-                              style: context.heading4.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-    );
+  void _resetForm() {
+    setState(() {
+      _showResult = false;
+      _fortuneResult = null;
+      _nameController.clear();
+      _dreamController.clear();
+      _selectedBirthDate = null;
+      _selectedEmotion = null;
+    });
   }
 }

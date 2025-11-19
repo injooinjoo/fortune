@@ -436,6 +436,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
     final dailyMatchingData = data['dailyMatching'] as Map<String, dynamic>?;
     final compatibilityData = data['compatibility'] as Map<String, dynamic>?;
     final funStatsData = data['funStats'] as Map<String, dynamic>?;
+    final dailyFortuneData = data['dailyFortune'] as Map<String, dynamic>?;
 
     // PersonalityDNA 객체 생성
     final dnaObject = PersonalityDNA(
@@ -492,6 +493,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
       funnyFact: funStatsData != null
         ? '전국 상위 ${funStatsData['rarity_rank']}! 한국 인구의 ${funStatsData['percentage_in_korea']}를 차지합니다.'
         : null,
+      dailyFortune: dailyFortuneData != null ? DailyFortune.fromJson(dailyFortuneData) : null,
     );
 
     // ✅ 즉시 동기화 (postFrameCallback 제거)
@@ -525,6 +527,11 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
             children: [
           _buildDNAHeader(),
           const SizedBox(height: 8),
+          // ✅ 오늘의 운세 섹션 (최상단)
+          if (_currentDNA!.dailyFortune != null) ...[
+            _buildDailyFortuneSection(),
+            const SizedBox(height: 8),
+          ],
           if (_currentDNA!.todayHighlight != null) ...[
             _buildTodayHighlight(),
             const SizedBox(height: 8),
@@ -715,6 +722,235 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
         ],
       ),
     );
+  }
+
+  Widget _buildDailyFortuneSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dailyFortune = _currentDNA!.dailyFortune!;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue,
+            isDark ? TossDesignSystem.tossBlueDark.withValues(alpha: 0.7) : TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.wb_sunny_outlined,
+                color: TossDesignSystem.white,
+                size: 24,
+              ),
+              SizedBox(width: 8),
+              Text(
+                '오늘의 운세',
+                style: TypographyUnified.heading3.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: TossDesignSystem.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // 행운 색상
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: _parseColor(dailyFortune.luckyColor),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: TossDesignSystem.white, width: 2),
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '행운의 색',
+                      style: TypographyUnified.labelMedium.copyWith(
+                        color: TossDesignSystem.white.withValues(alpha: 0.8),
+                      ),
+                    ),
+                    Text(
+                      dailyFortune.luckyColor,
+                      style: TypographyUnified.buttonMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: TossDesignSystem.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // 행운 숫자
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      '행운 번호',
+                      style: TypographyUnified.labelMedium.copyWith(
+                        color: TossDesignSystem.white.withValues(alpha: 0.8),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      '${dailyFortune.luckyNumber}',
+                      style: TypographyUnified.heading3.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: TossDesignSystem.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // 에너지 레벨 프로그레스 바
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '오늘의 에너지',
+                    style: TypographyUnified.labelMedium.copyWith(
+                      color: TossDesignSystem.white.withValues(alpha: 0.8),
+                    ),
+                  ),
+                  Text(
+                    '${dailyFortune.energyLevel}%',
+                    style: TypographyUnified.heading4.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: TossDesignSystem.white,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: dailyFortune.energyLevel / 100,
+                  minHeight: 8,
+                  backgroundColor: TossDesignSystem.white.withValues(alpha: 0.3),
+                  valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.white),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // 추천 활동
+          _buildFortuneItem(
+            icon: Icons.lightbulb_outline,
+            title: '추천 활동',
+            content: dailyFortune.recommendedActivity,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 12),
+
+          // 주의사항
+          _buildFortuneItem(
+            icon: Icons.warning_amber_outlined,
+            title: '주의사항',
+            content: dailyFortune.caution,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 12),
+
+          // 오늘의 베스트 매치
+          _buildFortuneItem(
+            icon: Icons.favorite_outline,
+            title: '오늘의 베스트 매치',
+            content: dailyFortune.bestMatchToday,
+            isDark: isDark,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFortuneItem({
+    required IconData icon,
+    required String title,
+    required String content,
+    required bool isDark,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          icon,
+          color: TossDesignSystem.white,
+          size: 20,
+        ),
+        SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TypographyUnified.labelMedium.copyWith(
+                  color: TossDesignSystem.white.withValues(alpha: 0.8),
+                ),
+              ),
+              SizedBox(height: 2),
+              Text(
+                content,
+                style: TypographyUnified.buttonMedium.copyWith(
+                  fontWeight: FontWeight.w400,
+                  color: TossDesignSystem.white,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Color _parseColor(String colorName) {
+    // 색상 이름을 Color로 변환하는 간단한 매핑
+    final colorMap = {
+      '로즈 골드': Color(0xFFB76E79),
+      '코랄 핑크': Color(0xFFFF6F61),
+      '민트 그린': Color(0xFF98D8C8),
+      '라벤더': Color(0xFFE6E6FA),
+      '스카이 블루': Color(0xFF87CEEB),
+      '페일 옐로우': Color(0xFFFFFACD),
+      '피치': Color(0xFFFFDAB9),
+      '라일락': Color(0xFFC8A2C8),
+      '베이비 블루': Color(0xFF89CFF0),
+      '아이보리': Color(0xFFFFFFF0),
+      '세이지 그린': Color(0xFF9DC183),
+      '샴페인': Color(0xFFF7E7CE),
+    };
+    return colorMap[colorName] ?? TossDesignSystem.white;
   }
 
   Widget _buildTodayHighlight() {

@@ -213,8 +213,20 @@ ${Array.from({ length: 7 }, (_, i) => {
 
     console.log(`✅ ${response.provider}/${response.model} - ${response.latency}ms`)
 
+    // Flutter가 기대하는 형식으로 응답
     return new Response(
-      JSON.stringify(result),
+      JSON.stringify({
+        success: true,
+        data: {
+          title: '바이오리듬 분석',
+          summary: {
+            overall_score: result.overall_score,
+            status_message: result.status_message,
+            greeting: result.greeting,
+          },
+          ...result,
+        }
+      }),
       {
         headers: {
           ...corsHeaders,
@@ -227,8 +239,9 @@ ${Array.from({ length: 7 }, (_, i) => {
     console.error('❌ Biorhythm Error:', error)
     return new Response(
       JSON.stringify({
-        error: error.message,
-        details: '바이오리듬 분석 중 오류가 발생했습니다'
+        success: false,
+        error: error.message || '바이오리듬 분석 중 오류가 발생했습니다',
+        details: error.stack
       }),
       {
         status: 500,

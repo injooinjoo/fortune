@@ -357,6 +357,20 @@ serve(async (req) => {
     if (cachedResult?.result) {
       console.log('✅ [Step 7] Cache hit for dream fortune')
       fortuneData = cachedResult.result
+
+      // ✅ Blur 로직 적용 (캐시된 데이터에도 적용)
+      const isBlurred = !isPremium
+      const blurredSections = isBlurred
+        ? ['psychologicalInsight', 'todayGuidance', 'symbolAnalysis', 'actionAdvice']
+        : []
+
+      fortuneData = {
+        ...fortuneData,
+        isBlurred,
+        blurredSections
+      }
+
+      console.log('✅ [Step 7.1] Blur logic applied to cached result:', { isPremium, isBlurred })
     } else {
       console.log('🔄 [Step 7] Cache miss, calling LLM API')
 
@@ -482,6 +496,8 @@ serve(async (req) => {
       const blurredSections = isBlurred
         ? ['psychologicalInsight', 'todayGuidance', 'symbolAnalysis', 'actionAdvice']
         : []
+
+      console.log('🔍 [Step 13.1] Blur logic:', { isPremium, isBlurred, blurredSections })
 
       fortuneData = {
         dream,

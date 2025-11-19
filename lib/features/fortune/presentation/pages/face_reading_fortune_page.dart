@@ -11,14 +11,13 @@ import '../../../../shared/components/image_upload_selector.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../services/ad_service.dart';
-import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart' as core_models;
 import '../../domain/models/conditions/face_reading_fortune_conditions.dart';
 import 'package:crypto/crypto.dart';
 import '../../../../presentation/providers/token_provider.dart';
-import '../../../../shared/components/floating_bottom_button.dart';  // ✅ FloatingBottomButton 추가
-import '../../../../shared/components/toss_button.dart';  // ✅ TossButton 추가
+import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 
 class FaceReadingFortunePage extends ConsumerStatefulWidget {
   const FaceReadingFortunePage({super.key});
@@ -45,8 +44,47 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
-      appBar: const StandardFortuneAppBar(
-        title: '관상',
+      appBar: AppBar(
+        backgroundColor: isDark
+            ? TossDesignSystem.backgroundDark
+            : TossDesignSystem.backgroundLight,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: _fortuneResult == null
+            ? IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: isDark
+                      ? TossDesignSystem.textPrimaryDark
+                      : TossDesignSystem.textPrimaryLight,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : null, // 결과 화면에서는 백버튼 숨김
+        automaticallyImplyLeading: _fortuneResult == null, // 결과 화면에서는 자동 백버튼도 숨김
+        title: Text(
+          '관상',
+          style: TypographyUnified.heading4.copyWith(
+            color: isDark
+                ? TossDesignSystem.textPrimaryDark
+                : TossDesignSystem.textPrimaryLight,
+          ),
+        ),
+        centerTitle: true,
+        actions: _fortuneResult != null
+            ? [
+                // 결과 화면에서는 오른쪽에 X 버튼
+                IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: isDark
+                        ? TossDesignSystem.textPrimaryDark
+                        : TossDesignSystem.textPrimaryLight,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ]
+            : null,
       ),
       body: SafeArea(
         child: Stack(
@@ -542,8 +580,6 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     required String sectionKey,
     required int delay,
   }) {
-    final isBlurred = result.isBlurred && result.blurredSections.contains(sectionKey);
-
     Widget cardContent = TossCard(
       style: TossCardStyle.outlined,
       padding: const EdgeInsets.all(20),
@@ -617,97 +653,74 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
       ),
     );
 
-    // 블러 처리
-    if (isBlurred) {
-      return Stack(
-        children: [
-          ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: cardContent,
-          ),
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.lock_outline,
-                    size: 32,
-                    color: Colors.white.withValues(alpha: 0.9),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '프리미엄 전용',
-                    style: TossDesignSystem.body1.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TossButton(
-                    text: '광고 보고 잠금 해제',
-                    size: TossButtonSize.small,
-                    onPressed: _showAdAndUnblur,
-                    style: TossButtonStyle.primary,
-                  ),
+    // 블러가 필요 없거나, 해당 섹션이 블러 대상이 아니면 그대로 반환
+    if (!result.isBlurred || !result.blurredSections.contains(sectionKey)) {
+      return cardContent.animate().fadeIn(duration: 500.ms, delay: delay.ms).slideY(begin: 0.1);
+    }
+
+    // ✅ MBTI 스타일 블러 적용
+    return Stack(
+      children: [
+        // 원본 콘텐츠 (블러 처리)
+        ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: cardContent,
+        ),
+
+        // 반투명 오버레이
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  (isDark
+                      ? TossDesignSystem.backgroundDark
+                      : TossDesignSystem.backgroundLight)
+                      .withValues(alpha: 0.3),
+                  (isDark
+                      ? TossDesignSystem.backgroundDark
+                      : TossDesignSystem.backgroundLight)
+                      .withValues(alpha: 0.8),
                 ],
               ),
             ),
           ),
-        ],
-      ).animate().fadeIn(duration: 500.ms, delay: delay.ms);
-    }
-
-    return cardContent.animate().fadeIn(duration: 500.ms, delay: delay.ms).slideY(begin: 0.1);
-  }
-
-  // ✅ 블러 래퍼 헬퍼 메서드
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required FortuneResult result,
-    required String sectionKey,
-  }) {
-    // 블러가 필요 없거나, 해당 섹션이 블러 대상이 아니면 그대로 반환
-    if (!result.isBlurred || !result.blurredSections.contains(sectionKey)) {
-      return child;
-    }
-
-    // 블러 효과 적용
-    return Stack(
-      children: [
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
         ),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-        ),
+
+        // 중앙 잠금 아이콘만 표시
         Positioned.fill(
           child: Center(
             child: Icon(
               Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
+              size: 40,
+              color: (isDark
+                  ? TossDesignSystem.textPrimaryDark
+                  : TossDesignSystem.textPrimaryLight)
+                  .withValues(alpha: 0.4),
+            ).animate(onPlay: (controller) => controller.repeat())
+                .shimmer(duration: 2000.ms, color: TossDesignSystem.tossBlue.withValues(alpha: 0.2)),
           ),
         ),
       ],
-    );
+    ).animate().fadeIn(duration: 500.ms, delay: delay.ms).slideY(begin: 0.1);
   }
 
+  // ✅ _buildBlurWrapper 제거 - UnifiedBlurWrapper 사용
+
   Widget _buildTossStyleResult(BuildContext context, FortuneResult result, bool isDark) {
-    final data = result.details ?? {};
-    final luckScore = (result.overallScore ?? 75).toInt();  // 0-100 점수
+    // ✅ 실제 데이터는 result.details.details에 있음!
+    final rawData = result.details ?? {};
+    final data = (rawData['details'] as Map<String, dynamic>?) ?? rawData;
+    final luckScore = ((rawData['luckScore'] ?? result.overallScore) ?? 75).toInt();
+
+    // 🔍 디버그: 데이터 구조 확인
+    print('🔍 [FaceReading] rawData keys: ${rawData.keys.toList()}');
+    print('🔍 [FaceReading] data keys: ${data.keys.toList()}');
+    print('🔍 [FaceReading] ogwan: ${data['ogwan']}');
+    print('🔍 [FaceReading] wealth_fortune: ${data['wealth_fortune']}');
+    print('🔍 [FaceReading] overall_fortune: ${data['overall_fortune']}');
 
     return Column(
       children: [
@@ -822,63 +835,170 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
 
         const SizedBox(height: 24),
 
-        // 🌟 4대 운세 (재물, 애정, 건강, 직업)
-        _buildFortuneSection(
-          icon: Icons.monetization_on,
-          title: '재물운',
-          content: data['wealth_fortune']?.toString() ?? '재물운이 상승하는 시기입니다.',
-          score: 85,
-          color: Colors.amber,
-          isDark: isDark,
-          result: result,
-          sectionKey: 'wealth_fortune',
-          delay: 100,
-        ),
-        const SizedBox(height: 16),
+        // 🌟 전통 관상학: 오관(五官) 분석
+        if (data['ogwan'] != null) ...[
+          _buildOgwanSection(
+            data: data,
+            result: result,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 24),
+        ],
 
-        _buildFortuneSection(
-          icon: Icons.favorite,
-          title: '애정운',
-          content: data['love_fortune']?.toString() ?? '인연이 다가오고 있습니다.',
-          score: 78,
-          color: Colors.pink,
-          isDark: isDark,
-          result: result,
-          sectionKey: 'love_fortune',
-          delay: 200,
-        ),
-        const SizedBox(height: 16),
+        // 🌟 구버전 하위 호환: 4대 운세 (기존 DB 데이터용)
+        if (data['ogwan'] == null && data['wealth_fortune'] != null) ...[
+          _buildFortuneSection(
+            icon: Icons.monetization_on,
+            title: '재물운',
+            content: data['wealth_fortune']?.toString() ?? '재물운이 상승하는 시기입니다.',
+            score: 85,
+            color: Colors.amber,
+            isDark: isDark,
+            result: result,
+            sectionKey: 'wealth_fortune',
+            delay: 100,
+          ),
+          const SizedBox(height: 16),
 
-        _buildFortuneSection(
-          icon: Icons.health_and_safety,
-          title: '건강운',
-          content: data['health_fortune']?.toString() ?? '건강 관리에 신경쓰면 좋은 결과가 있을 것입니다.',
-          score: 72,
-          color: Colors.green,
-          isDark: isDark,
-          result: result,
-          sectionKey: 'health_fortune',
-          delay: 300,
-        ),
-        const SizedBox(height: 16),
+          _buildFortuneSection(
+            icon: Icons.favorite,
+            title: '애정운',
+            content: data['love_fortune']?.toString() ?? '인연이 다가오고 있습니다.',
+            score: 78,
+            color: Colors.pink,
+            isDark: isDark,
+            result: result,
+            sectionKey: 'love_fortune',
+            delay: 200,
+          ),
+          const SizedBox(height: 16),
 
-        _buildFortuneSection(
-          icon: Icons.work,
-          title: '직업운',
-          content: data['career_fortune']?.toString() ?? '새로운 기회가 찾아올 것입니다.',
-          score: 80,
-          color: TossDesignSystem.tossBlue,
-          isDark: isDark,
-          result: result,
-          sectionKey: 'career_fortune',
-          delay: 400,
-        ),
-        const SizedBox(height: 24),
+          _buildFortuneSection(
+            icon: Icons.health_and_safety,
+            title: '건강운',
+            content: data['health_fortune']?.toString() ?? '건강 관리에 신경쓰면 좋은 결과가 있을 것입니다.',
+            score: 72,
+            color: Colors.green,
+            isDark: isDark,
+            result: result,
+            sectionKey: 'health_fortune',
+            delay: 300,
+          ),
+          const SizedBox(height: 16),
+
+          _buildFortuneSection(
+            icon: Icons.work,
+            title: '직업운',
+            content: data['career_fortune']?.toString() ?? '새로운 기회가 찾아올 것입니다.',
+            score: 80,
+            color: TossDesignSystem.tossBlue,
+            isDark: isDark,
+            result: result,
+            sectionKey: 'career_fortune',
+            delay: 400,
+          ),
+          const SizedBox(height: 24),
+        ],
+
+        // 🌟 전통 관상학: 삼정(三停) 분석
+        if (data['samjeong'] != null) ...[
+          UnifiedBlurWrapper(
+            isBlurred: result.isBlurred,
+            blurredSections: result.blurredSections,
+            sectionKey: 'samjeong',
+            child: TossCard(
+              style: TossCardStyle.filled,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.linear_scale, color: TossDesignSystem.tossBlue, size: 28),
+                      const SizedBox(width: 8),
+                      Text(
+                        '삼정(三停) 분석',
+                        style: TossDesignSystem.heading3.copyWith(
+                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '상정(초년운), 중정(중년운), 하정(말년운)',
+                    style: TossDesignSystem.caption.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    data['samjeong'].toString(),
+                    style: TossDesignSystem.body1.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                      height: 1.7,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+
+        // 🌟 전통 관상학: 십이궁(十二宮) 분석
+        if (data['sibigung'] != null) ...[
+          UnifiedBlurWrapper(
+            isBlurred: result.isBlurred,
+            blurredSections: result.blurredSections,
+            sectionKey: 'sibigung',
+            child: TossCard(
+              style: TossCardStyle.filled,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.grid_view, color: TossDesignSystem.purple, size: 28),
+                      const SizedBox(width: 8),
+                      Text(
+                        '십이궁(十二宮) 분석',
+                        style: TossDesignSystem.heading3.copyWith(
+                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '얼굴 12개 영역의 상세 분석',
+                    style: TossDesignSystem.caption.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    data['sibigung'].toString(),
+                    style: TossDesignSystem.body1.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                      height: 1.7,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
 
         // 🧠 성격과 기질 (🔒 프리미엄)
         if (data['personality'] != null) ...[
-          _buildBlurWrapper(
-            result: result,
+          UnifiedBlurWrapper(
+            isBlurred: result.isBlurred,
+            blurredSections: result.blurredSections,
             sectionKey: 'personality',
             child: TossCard(
               style: TossCardStyle.filled,
@@ -937,8 +1057,9 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
 
         // ✨ 특별한 관상 특징 (🔒 프리미엄)
         if (data['special_features'] != null) ...[
-          _buildBlurWrapper(
-            result: result,
+          UnifiedBlurWrapper(
+            isBlurred: result.isBlurred,
+            blurredSections: result.blurredSections,
             sectionKey: 'special_features',
             child: TossCard(
               style: TossCardStyle.filled,
@@ -997,8 +1118,9 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
 
         // 💡 조언과 개운법 (🔒 프리미엄)
         if (data['advice'] != null) ...[
-          _buildBlurWrapper(
-            result: result,
+          UnifiedBlurWrapper(
+            isBlurred: result.isBlurred,
+            blurredSections: result.blurredSections,
             sectionKey: 'advice',
             child: TossCard(
               style: TossCardStyle.filled,
@@ -1057,8 +1179,9 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
 
         // 📖 전체 분석 (🔒 프리미엄)
         if (data['full_analysis'] != null) ...[
-          _buildBlurWrapper(
-            result: result,
+          UnifiedBlurWrapper(
+            isBlurred: result.isBlurred,
+            blurredSections: result.blurredSections,
             sectionKey: 'full_analysis',
             child: TossCard(
               style: TossCardStyle.filled,
@@ -1295,5 +1418,164 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
       'ears': Icons.hearing
     };
     return icons[part] ?? Icons.face;
+  }
+
+  // 🌟 오관(五官) 섹션 빌더
+  Widget _buildOgwanSection({
+    required Map<String, dynamic> data,
+    required FortuneResult result,
+    required bool isDark,
+  }) {
+    final ogwan = data['ogwan'] as Map<String, dynamic>?;
+    if (ogwan == null) return const SizedBox.shrink();
+
+    final ogwanItems = [
+      {
+        'key': 'ear',
+        'title': '귀(耳) - 채청관',
+        'subtitle': '복록과 수명',
+        'icon': Icons.hearing,
+        'color': TossDesignSystem.purple,
+      },
+      {
+        'key': 'eyebrow',
+        'title': '눈썹(眉) - 보수관',
+        'subtitle': '형제와 친구',
+        'icon': Icons.remove_red_eye_outlined,
+        'color': TossDesignSystem.tossBlue,
+      },
+      {
+        'key': 'eye',
+        'title': '눈(目) - 감찰관',
+        'subtitle': '마음의 창',
+        'icon': Icons.remove_red_eye,
+        'color': TossDesignSystem.successGreen,
+      },
+      {
+        'key': 'nose',
+        'title': '코(鼻) - 심변관',
+        'subtitle': '재물의 중심',
+        'icon': Icons.air,
+        'color': Colors.amber,
+      },
+      {
+        'key': 'mouth',
+        'title': '입(口) - 출납관',
+        'subtitle': '식복과 언변',
+        'icon': Icons.sentiment_satisfied,
+        'color': Colors.pink,
+      },
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 오관 헤더
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            children: [
+              Icon(Icons.face_retouching_natural, color: TossDesignSystem.purple, size: 32),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '오관(五官) 분석',
+                    style: TossDesignSystem.heading2.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '전통 관상학의 핵심 - 얼굴 5대 관문',
+                    style: TossDesignSystem.caption.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // 오관 카드들
+        ...ogwanItems.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
+          final key = item['key'] as String;
+          final content = ogwan[key]?.toString();
+
+          if (content == null || content.isEmpty) return const SizedBox.shrink();
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: UnifiedBlurWrapper(
+              isBlurred: result.isBlurred,
+              blurredSections: result.blurredSections,
+              sectionKey: 'ogwan',
+              child: TossCard(
+                style: TossCardStyle.filled,
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: (item['color'] as Color).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            item['icon'] as IconData,
+                            color: item['color'] as Color,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item['title'] as String,
+                                style: TossDesignSystem.heading4.copyWith(
+                                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                item['subtitle'] as String,
+                                style: TossDesignSystem.caption.copyWith(
+                                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      content,
+                      style: TossDesignSystem.body1.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                        height: 1.7,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ).animate().fadeIn(duration: 500.ms, delay: (100 * index).ms),
+          );
+        }),
+      ],
+    );
   }
 }

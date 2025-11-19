@@ -40,7 +40,7 @@ class PersonalityDNAService {
       final scores = _generateScores(mbti, bloodType, zodiacAnimal);
 
       // API 응답을 PersonalityDNA 객체로 변환
-      return PersonalityDNA.fromApiResponse(
+      final personalityDNA = PersonalityDNA.fromApiResponse(
         response.data,
         mbti: mbti,
         bloodType: bloodType,
@@ -49,6 +49,16 @@ class PersonalityDNAService {
         gradientColors: gradientColors,
         scores: scores,
       );
+
+      // dailyFortune이 API 응답에 포함되어 있지 않으면 수동으로 파싱
+      if (personalityDNA.dailyFortune == null && response.data['dailyFortune'] != null) {
+        final dailyFortuneData = response.data['dailyFortune'] as Map<String, dynamic>;
+        return personalityDNA.copyWith(
+          dailyFortune: DailyFortune.fromJson(dailyFortuneData),
+        );
+      }
+
+      return personalityDNA;
     } catch (e) {
       // API 오류 시 기존 로컬 로직으로 폴백
       return _generateLocalDNA(

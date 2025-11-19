@@ -13,6 +13,8 @@ import '../../data/models/user_profile.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/services/debug_premium_service.dart';
 import '../../presentation/providers/token_provider.dart';
+import '../../shared/components/settings_list_tile.dart';
+import '../../shared/components/section_header.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -102,98 +104,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   // Minimal List Components (스크린샷 스타일)
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingL,
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingS,
-      ),
-      child: Text(
-        title,
-        style: TossDesignSystem.caption.copyWith(
-          color: _getSecondaryTextColor(context),
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
-        ),
-      ),
-    );
-  }
+  // _buildSectionHeader replaced by SectionHeader component
 
-  Widget _buildListItem({
-    IconData? icon,
-    Widget? leading,
-    required String title,
-    String? subtitle,
-    Widget? trailing,
-    VoidCallback? onTap,
-    bool isLast = false,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: TossDesignSystem.marginHorizontal,
-            vertical: TossDesignSystem.spacingM,
-          ),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: isLast ? Colors.transparent : _getDividerColor(context),
-                width: 0.5,
-              ),
-            ),
-          ),
-          child: Row(
-            children: [
-              // Leading (아이콘 또는 커스텀 위젯)
-              if (icon != null)
-                Icon(
-                  icon,
-                  size: 22,
-                  color: _getSecondaryTextColor(context),
-                )
-              else if (leading != null)
-                leading,
-
-              if (icon != null || leading != null)
-                const SizedBox(width: TossDesignSystem.spacingM),
-
-              // Title & Subtitle
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TossDesignSystem.body2.copyWith(
-                        color: _getTextColor(context),
-                      ),
-                    ),
-                    if (subtitle != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: TossDesignSystem.caption.copyWith(
-                          color: _getSecondaryTextColor(context),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              // Trailing
-              if (trailing != null) trailing,
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // _buildListItem replaced by SettingsListTile component
 
   @override
   void initState() {
@@ -432,25 +345,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                     ],
                   ),
-                  child: _buildListItem(
-                    leading: CircleAvatar(
-                      radius: 24,
-                      backgroundImage: (userProfile ?? localProfile)?['profile_image_url'] != null
-                          ? NetworkImage((userProfile ?? localProfile)!['profile_image_url'])
-                          : null,
-                      child: (userProfile ?? localProfile)?['profile_image_url'] == null
-                          ? const Icon(Icons.person, size: 24)
-                          : null,
                     ),
-                    title: (userProfile ?? localProfile)?['name'] ?? '사용자',
-                    subtitle: _formatProfileSubtitle(),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: _getSecondaryTextColor(context),
+                    child: SettingsListTile(
+                      leading: CircleAvatar(
+                        radius: 24,
+                        backgroundImage: (userProfile ?? localProfile)?['profile_image_url'] != null
+                            ? NetworkImage((userProfile ?? localProfile)!['profile_image_url'])
+                            : null,
+                        child: (userProfile ?? localProfile)?['profile_image_url'] == null
+                            ? const Icon(Icons.person, size: 24)
+                            : null,
+                      ),
+                      title: (userProfile ?? localProfile)?['name'] ?? '사용자',
+                      subtitle: _formatProfileSubtitle(),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () => context.push('/profile/edit'),
+                      isLast: true,
                     ),
-                    onTap: () => context.push('/profile/edit'),
-                    isLast: true,
-                  ),
                 ),
 
               // 테스트 계정 섹션 (간소화)
@@ -469,7 +383,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildSectionHeader('테스트 계정'),
+                          children: [
+                            const SectionHeader(title: '테스트 계정'),
                             Container(
                               margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                               decoration: BoxDecoration(
@@ -489,7 +404,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               ),
                               child: Column(
                                 children: [
-                                  _buildListItem(
+                                  SettingsListTile(
                                     icon: Icons.bug_report_outlined,
                                     title: '무제한 토큰',
                                     trailing: Container(
@@ -507,7 +422,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       ),
                                     ),
                                   ),
-                                  _buildListItem(
+                                  SettingsListTile(
                                     icon: Icons.star_outline,
                                     title: '프리미엄 기능',
                                     trailing: Switch(
@@ -534,7 +449,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
 
               // 운세 활동 섹션
-              _buildSectionHeader('운세 활동'),
+              const SectionHeader(title: '운세 활동'),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                 decoration: BoxDecoration(
@@ -554,7 +469,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 child: Column(
                   children: [
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.today_outlined,
                       title: '오늘의 운세',
                       trailing: Row(
@@ -585,7 +500,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       onTap: () => context.push('/fortune/today'),
                     ),
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.local_fire_department_outlined,
                       title: '연속 접속일',
                       trailing: Text(
@@ -595,7 +510,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                       ),
                     ),
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.visibility_outlined,
                       title: '총 조회수',
                       trailing: Text(
@@ -612,7 +527,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
               // 정보 섹션
               if (userProfile != null || localProfile != null) ...[
-                _buildSectionHeader('정보'),
+                const SectionHeader(title: '정보'),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                   decoration: BoxDecoration(
@@ -632,7 +547,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                   child: Column(
                     children: [
-                      _buildListItem(
+                      SettingsListTile(
                         icon: Icons.cake_outlined,
                         title: '생년월일',
                         trailing: Text(
@@ -643,7 +558,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         onTap: () => context.push('/profile/edit'),
                       ),
-                      _buildListItem(
+                      SettingsListTile(
                         icon: Icons.access_time_outlined,
                         title: '출생시간',
                         trailing: Text(
@@ -654,7 +569,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         onTap: () => context.push('/profile/edit'),
                       ),
-                      _buildListItem(
+                      SettingsListTile(
                         icon: Icons.pets_outlined,
                         title: '띠',
                         trailing: Text(
@@ -664,7 +579,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           ),
                         ),
                       ),
-                      _buildListItem(
+                      SettingsListTile(
                         icon: Icons.stars_outlined,
                         title: '별자리',
                         trailing: Text(
@@ -674,7 +589,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           ),
                         ),
                       ),
-                      _buildListItem(
+                      SettingsListTile(
                         icon: Icons.water_drop_outlined,
                         title: '혈액형',
                         trailing: Text(
@@ -687,7 +602,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         onTap: () => context.push('/profile/edit'),
                       ),
-                      _buildListItem(
+                      SettingsListTile(
                         icon: Icons.psychology_outlined,
                         title: 'MBTI',
                         trailing: Text(
@@ -706,7 +621,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
               // 사주 & 분석 섹션
               if (userProfile != null || localProfile != null) ...[
-                _buildSectionHeader('사주 & 분석'),
+                const SectionHeader(title: '사주 & 분석'),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                   decoration: BoxDecoration(
@@ -726,7 +641,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                   child: Column(
                     children: [
-                      _buildListItem(
+                      SettingsListTile(
                         icon: Icons.auto_stories_outlined,
                         title: '사주 정보',
                         trailing: Icon(
@@ -737,7 +652,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           context.push('/profile/saju');
                         },
                       ),
-                      _buildListItem(
+                      SettingsListTile(
                         icon: Icons.wb_sunny_outlined,
                         title: '오행 분석',
                         trailing: Icon(
@@ -748,7 +663,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           context.push('/profile/elements');
                         },
                       ),
-                      _buildListItem(
+                      SettingsListTile(
                         icon: Icons.history,
                         title: '운세 기록',
                         trailing: Icon(
@@ -764,7 +679,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ],
 
               // 도구 섹션
-              _buildSectionHeader('도구'),
+              const SectionHeader(title: '도구'),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
                 decoration: BoxDecoration(
@@ -784,7 +699,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 child: Column(
                   children: [
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.share_outlined,
                       title: '친구와 공유',
                       trailing: Icon(
@@ -795,7 +710,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         await _inviteFriend();
                       },
                     ),
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.star_outline,
                       title: '프리미엄 체험',
                       trailing: Icon(

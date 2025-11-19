@@ -54,16 +54,15 @@ class FortuneListTile extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Row(
                 children: [
-                  // 즐겨찾기 상태 표시 (별 아이콘)
-                  if (isFavorite)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: Icon(
-                        Icons.star_rounded,
-                        color: TossDesignSystem.warningOrange,
-                        size: 20,
-                      ),
-                    ),
+                  // ❌ 즐겨찾기 별 아이콘 제거 (요청사항: 구분선만 있으면 됨)
+                  // if (isFavorite) ...[
+                  //   Icon(
+                  //     Icons.star,
+                  //     size: 20,
+                  //     color: Colors.amber,
+                  //   ),
+                  //   const SizedBox(width: 8),
+                  // ],
 
                   // 좌측 아이콘 (토스 스타일 원형 배경) + 빨간 dot 배지
                   Stack(

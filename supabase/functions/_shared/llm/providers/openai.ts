@@ -1,6 +1,13 @@
 // OpenAI Provider 구현
 
-import { ILLMProvider, LLMMessage, LLMResponse, GenerateOptions } from '../types.ts'
+import {
+  ILLMProvider,
+  LLMMessage,
+  LLMResponse,
+  GenerateOptions,
+  ImageGenerateOptions,
+  ImageResponse
+} from '../types.ts'
 
 export class OpenAIProvider implements ILLMProvider {
   constructor(private config: { apiKey: string; model: string }) {}
@@ -56,11 +63,55 @@ export class OpenAIProvider implements ILLMProvider {
     return !!this.config.apiKey && !!this.config.model
   }
 
+  async generateImage(
+    prompt: string,
+    options?: ImageGenerateOptions
+  ): Promise<ImageResponse> {
+    const startTime = Date.now()
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/images/generations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.config.apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'dall-e-3',
+          prompt: prompt,
+          n: 1,
+          size: options?.size ?? '1024x1792',
+          quality: options?.quality ?? 'standard',
+          style: options?.style ?? 'natural',
+          response_format: 'b64_json',
+        }),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`OpenAI Images API error: ${response.status} - ${errorText}`)
+      }
+
+      const data = await response.json()
+
+      return {
+        imageBase64: data.data[0].b64_json,
+        revisedPrompt: data.data[0].revised_prompt,
+        provider: 'openai',
+        model: 'dall-e-3',
+        latency: Date.now() - startTime,
+      }
+    } catch (error) {
+      console.error('❌ OpenAI Images API 호출 실패:', error)
+      throw error
+    }
+  }
+
   getModelInfo() {
     return {
       provider: 'openai',
       model: this.config.model,
-      capabilities: ['text', 'json', 'reasoning'],
+      capabilities: ['text', 'json', 'reasoning', 'image-generation'],
     }
   }
 }

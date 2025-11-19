@@ -143,7 +143,11 @@
       "Bash(if ! grep -q \"UnifiedFortuneService\" \"$file\")",
       "Bash(if grep -q \"supabase\\.functions\\.invoke\" \"$file\")",
       "Bash(hash -r)",
-      "Bash(claude --version)"
+      "Bash(claude --version)",
+      "Bash(dart run build_runner:*)",
+      "Bash(npx supabase functions:*)",
+      "Bash(do echo \"Deploying $func...\")",
+      "Bash(do echo -e \"\\n=== Deploying $func ===\")"
     ],
     "deny": [],
     "ask": [],

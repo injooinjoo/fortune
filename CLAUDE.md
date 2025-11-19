@@ -988,6 +988,100 @@ flutter run -d 1B54EF52-7E41-4040-A236-C169898F5527
 
 ## 🎨 표준 UI 컴포넌트 패턴
 
+### 🔒 **블러 처리 시스템 (CRITICAL)** 🔒
+
+**모든 블러 처리는 UnifiedBlurWrapper를 사용합니다!**
+
+#### ✅ 올바른 방법 (UnifiedBlurWrapper 사용)
+
+```dart
+import 'package:fortune/core/widgets/unified_blur_wrapper.dart';
+
+// 1. 블러 처리
+UnifiedBlurWrapper(
+  isBlurred: fortuneResult.isBlurred,
+  blurredSections: fortuneResult.blurredSections,
+  sectionKey: 'advice', // 섹션 고유 키
+  child: TossCard(
+    child: Text('조언 내용...'),
+  ),
+)
+
+// 2. 광고 버튼 (블러 상태일 때만)
+if (fortuneResult.isBlurred)
+  UnifiedAdUnlockButton(
+    onPressed: _showAdAndUnblur,
+  )
+
+// 3. 광고 보기 로직 (표준 구현)
+bool _isShowingAd = false;
+
+Future<void> _showAdAndUnblur() async {
+  if (_isShowingAd) return; // 중복 호출 방지
+
+  try {
+    _isShowingAd = true;
+    final adService = AdService();
+
+    await adService.showRewardedAd(
+      onRewarded: () {
+        setState(() {
+          _fortuneResult = _fortuneResult.copyWith(
+            isBlurred: false,
+            blurredSections: [],
+          );
+          _isShowingAd = false;
+        });
+      },
+      onAdDismissed: () {
+        _isShowingAd = false;
+      },
+    );
+  } catch (e) {
+    _isShowingAd = false;
+  }
+}
+```
+
+#### ❌ 잘못된 방법 (절대 사용 금지!)
+
+```dart
+// ❌ ImageFilter.blur 직접 사용 금지
+ImageFiltered(
+  imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+  child: child,
+)
+
+// ❌ _buildBlurWrapper 로컬 메서드 생성 금지
+Widget _buildBlurWrapper({...}) {
+  return Stack(...); // 커스텀 블러 구현
+}
+
+// ❌ 커스텀 블러 디자인 구현 금지
+Stack(
+  children: [
+    ImageFiltered(...),
+    Positioned.fill(child: Container(...)),
+  ],
+)
+```
+
+#### 📐 디자인 표준
+
+- **Blur**: `ImageFilter.blur(sigmaX: 10, sigmaY: 10)`
+- **그라디언트**: 0.3 → 0.8 alpha
+- **아이콘**: 40px 자물쇠, 중앙 배치, shimmer 애니메이션
+- **버튼**: "🎁 광고 보고 전체 내용 보기"
+
+#### 🗂️ 섹션 키 네이밍 규칙
+
+- 영문 소문자 + 언더스코어
+- 예: `advice`, `future_outlook`, `luck_items`
+
+**상세 가이드**: [docs/design/BLUR_SYSTEM_GUIDE.md](docs/design/BLUR_SYSTEM_GUIDE.md)
+
+---
+
 ### 📝 **폰트 크기 관리 시스템 (CRITICAL)**
 
 **모든 텍스트는 반드시 TypographyUnified를 사용합니다!**

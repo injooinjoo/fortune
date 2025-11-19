@@ -1,4 +1,4 @@
-import 'dart:ui'; // ✅ ImageFilter.blur용
+import 'dart:ui'; // ✅ ImageFilter.blur용 (deprecated - UnifiedBlurWrapper 사용)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +27,7 @@ import '../../../../services/storage_service.dart';
 import '../../../../services/user_statistics_service.dart';
 // ✅ Phase 10: BlurredFortuneContent 제거 - _buildBlurWrapper 사용
 import '../../../../services/ad_service.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 
 class DailyCalendarFortunePage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -924,8 +925,10 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
                       // 조언 (5️⃣ 블러 대상)
                       if (fortuneData['advice'] != null) ...[
-                        // ✅ Phase 7: BlurredFortuneContent → _buildBlurWrapper
-                        _buildBlurWrapper(
+                        // ✅ UnifiedBlurWrapper 사용
+                        UnifiedBlurWrapper(
+                          isBlurred: _isBlurred,
+                          blurredSections: _blurredSections,
                           sectionKey: 'advice',
                           child: _buildSectionCard(
                             icon: Icons.tips_and_updates,
@@ -939,8 +942,10 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
                       // AI 팁 (5️⃣ 블러 대상)
                       if (fortuneData['ai_tips'] != null) ...[
-                        // ✅ Phase 7: BlurredFortuneContent → _buildBlurWrapper
-                        _buildBlurWrapper(
+                        // ✅ UnifiedBlurWrapper 사용
+                        UnifiedBlurWrapper(
+                          isBlurred: _isBlurred,
+                          blurredSections: _blurredSections,
                           sectionKey: 'ai_tips',
                           child: _buildAITipsList(fortuneData['ai_tips'] as List, isDark),
                         ),
@@ -949,8 +954,10 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
                       // 주의사항 (5️⃣ 블러 대상)
                       if (fortuneData['caution'] != null) ...[
-                        // ✅ Phase 7: BlurredFortuneContent → _buildBlurWrapper
-                        _buildBlurWrapper(
+                        // ✅ UnifiedBlurWrapper 사용
+                        UnifiedBlurWrapper(
+                          isBlurred: _isBlurred,
+                          blurredSections: _blurredSections,
                           sectionKey: 'caution',
                           child: _buildSectionCard(
                             icon: Icons.warning_amber_rounded,
@@ -1380,39 +1387,5 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     );
   }
 
-  // ✅ Phase 6: Blur wrapper helper - ImageFilter.blur 적용
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required String sectionKey,
-  }) {
-    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
-      return child;
-    }
-
-    return Stack(
-      children: [
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(28),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // ✅ _buildBlurWrapper 제거 - UnifiedBlurWrapper 사용
 }

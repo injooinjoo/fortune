@@ -40,11 +40,13 @@ extension FontSizeExtension on FontSize {
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
   final bool showBackButton;
+  final bool showCloseButton;
   final bool showShareButton;
   final bool showFontSizeSelector;
   final bool showTokenBalance;
   final bool showActions;
   final VoidCallback? onBackPressed;
+  final VoidCallback? onClosePressed;
   final VoidCallback? onSharePressed;
   final Function(FontSize)? onFontSizeChanged;
   final FontSize currentFontSize;
@@ -58,11 +60,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.title,
     this.showBackButton = true,
+    this.showCloseButton = false,
     this.showShareButton = false,
     this.showFontSizeSelector = false,
     this.showTokenBalance = true,
     this.showActions = true,
     this.onBackPressed,
+    this.onClosePressed,
     this.onSharePressed,
     this.onFontSizeChanged,
     this.currentFontSize = FontSize.medium,
@@ -150,6 +154,18 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                         Icons.share_rounded,
                         color: foregroundColor ?? theme.iconTheme.color),
                       onPressed: () => _handleShare(context)),
+                  if (showCloseButton)
+                    IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        color: foregroundColor ?? theme.iconTheme.color),
+                      onPressed: () {
+                        if (onClosePressed != null) {
+                          onClosePressed!();
+                        } else {
+                          GoRouter.of(context).go('/fortune');
+                        }
+                      }),
                   if (showTokenBalance) ...[
                     const TokenBalanceWidget(),
                     const SizedBox(width: TossDesignSystem.spacingXS)],

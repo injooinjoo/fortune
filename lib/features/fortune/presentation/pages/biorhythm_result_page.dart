@@ -9,6 +9,7 @@ import '../../../../core/models/fortune_result.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 
 class BiorhythmResultPage extends StatefulWidget {
   final DateTime birthDate;
@@ -283,19 +284,28 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
       child: Column(
         children: [
           // 개인 맞춤 분석 (블러 처리)
-          _buildBlurredCard(
+          UnifiedBlurWrapper(
+            isBlurred: _fortuneResult.isBlurred,
+            blurredSections: ['personal_analysis', 'lifestyle_advice', 'health_tips'],
+            sectionKey: 'personal_analysis',
             child: PersonalAnalysisCard(biorhythmData: _biorhythmData),
           ),
           const SizedBox(height: 20),
 
           // 라이프 스타일 조언 (블러 처리)
-          _buildBlurredCard(
+          UnifiedBlurWrapper(
+            isBlurred: _fortuneResult.isBlurred,
+            blurredSections: ['personal_analysis', 'lifestyle_advice', 'health_tips'],
+            sectionKey: 'lifestyle_advice',
             child: LifestyleAdviceCard(biorhythmData: _biorhythmData),
           ),
           const SizedBox(height: 20),
 
           // 건강 관리 팁 (블러 처리)
-          _buildBlurredCard(
+          UnifiedBlurWrapper(
+            isBlurred: _fortuneResult.isBlurred,
+            blurredSections: ['personal_analysis', 'lifestyle_advice', 'health_tips'],
+            sectionKey: 'health_tips',
             child: HealthTipsCard(biorhythmData: _biorhythmData),
           ),
           const SizedBox(height: 20),
@@ -308,31 +318,7 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
     );
   }
 
-  // 블러 처리 래퍼
-  Widget _buildBlurredCard({required Widget child}) {
-    if (!_fortuneResult.isBlurred) {
-      return child;
-    }
-
-    return Stack(
-      children: [
-        // 원본 콘텐츠 (블러)
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        // 블러 오버레이
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // ✅ _buildBlurredCard 제거 - UnifiedBlurWrapper 사용
 }
 
 class BiorhythmData {

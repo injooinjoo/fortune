@@ -27,6 +27,7 @@ class LoveGenerator {
       // API Payload 구성
       final payload = {
         ...conditions.buildAPIPayload(),
+        'userId': userId, // ✅ userId 추가
         'isPremium': isPremium,
       };
 

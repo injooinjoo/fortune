@@ -49,6 +49,14 @@ interface PersonalityDNAResponse {
   todayAdvice: string
   rarityLevel: string
   socialRanking: number
+  dailyFortune: {
+    luckyColor: string
+    luckyNumber: number
+    energyLevel: number
+    recommendedActivity: string
+    caution: string
+    bestMatchToday: string
+  }
 }
 
 // MBTI별 연애 스타일
@@ -384,28 +392,140 @@ const RARITY_LEVELS = {
   '14.2': 'common', '15.7': 'common', '17.9': 'common', '19.8': 'common', '21.5': 'common'
 }
 
-// 오늘의 조언 생성
-function generateTodayAdvice(mbti: string, bloodType: string): string {
-  const advicePool = {
-    'ENTJ': '오늘은 계획보다 사람에게 집중해보세요. 당신의 리더십이 더욱 빛날 거예요.',
-    'ENTP': '오늘 떠오른 아이디어 중 하나는 꼭 실행에 옮겨보세요. 생각만으로는 부족해요.',
-    'INTJ': '오늘은 계획에 없던 즉흥적인 일을 하나 해보세요. 새로운 관점을 얻을 수 있어요.',
-    'INTP': '오늘은 머리로만 생각하지 말고 몸으로 직접 해보세요. 체험이 답을 줄 거예요.',
-    'ENFJ': '오늘은 다른 사람보다 당신 자신을 먼저 챙기세요. 자기 돌봄도 중요해요.',
-    'ENFP': '오늘은 한 가지 일에 끝까지 집중해보세요. 완주의 기쁨을 느껴보세요.',
-    'INFJ': '오늘은 혼자만의 시간을 충분히 가지세요. 내면의 목소리를 들어보세요.',
-    'INFP': '오늘은 작은 것이라도 실행에 옮겨보세요. 행동이 꿈을 현실로 만들어요.',
-    'ESTJ': '오늘은 계획에 없던 재미있는 일을 하나 끼워넣어보세요. 여유도 필요해요.',
-    'ESFJ': '오늘은 다른 사람 눈치 보지 말고 당신이 원하는 것을 해보세요.',
-    'ISTJ': '오늘은 평소와 다른 방법으로 일해보세요. 새로운 효율성을 발견할 수 있어요.',
-    'ISFJ': '오늘은 자신의 의견을 조금 더 당당하게 표현해보세요. 당신의 목소리도 소중해요.',
-    'ESTP': '오늘은 잠시 멈춰서 주변을 둘러보세요. 놓친 기회가 있을 수 있어요.',
-    'ESFP': '오늘은 조금 더 깊이 있는 대화를 나눠보세요. 새로운 매력을 발견할 거예요.',
-    'ISTP': '오늘은 당신의 기술이나 지식을 다른 사람과 나눠보세요. 생각보다 인기 많을 거예요.',
-    'ISFP': '오늘은 당신의 작품이나 아이디어를 누군가에게 보여주세요. 숨기지 마세요.'
+// 날짜 기반 결정론적 랜덤 함수 (같은 날짜면 같은 값)
+function seededRandom(date: Date, seed: string): number {
+  const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+  const combined = dateStr + seed
+  let hash = 0
+  for (let i = 0; i < combined.length; i++) {
+    hash = ((hash << 5) - hash) + combined.charCodeAt(i)
+    hash = hash & hash
   }
-  
-  return advicePool[mbti] || '오늘은 평소와 다른 작은 도전을 해보세요. 새로운 발견이 있을 거예요.'
+  return Math.abs(hash) / 2147483647
+}
+
+// 날짜 기반 배열 선택
+function selectFromArray<T>(arr: T[], date: Date, seed: string): T {
+  const random = seededRandom(date, seed)
+  const index = Math.floor(random * arr.length)
+  return arr[index]
+}
+
+// 오늘의 럭키 컬러 생성
+function generateLuckyColor(date: Date, mbti: string): string {
+  const colors = [
+    '로즈 골드', '코랄 핑크', '민트 그린', '라벤더',
+    '스카이 블루', '피치', '아이보리', '베이비 핑크',
+    '터키 블루', '샴페인 골드', '세이지 그린', '더스티 로즈',
+    '파스텔 옐로우', '라이트 퍼플', '소프트 그레이', '크림 화이트'
+  ]
+  return selectFromArray(colors, date, `color-${mbti}`)
+}
+
+// 오늘의 럭키 넘버 생성
+function generateLuckyNumber(date: Date, bloodType: string): number {
+  const random = seededRandom(date, `number-${bloodType}`)
+  return Math.floor(random * 99) + 1
+}
+
+// 오늘의 에너지 레벨 생성
+function generateEnergyLevel(date: Date, zodiac: string): number {
+  const random = seededRandom(date, `energy-${zodiac}`)
+  return Math.floor(random * 30) + 70 // 70-100% 범위
+}
+
+// 오늘의 추천 활동 생성
+function generateRecommendedActivity(date: Date, mbti: string): string {
+  const activities = {
+    'E': [ // 외향형
+      '새로운 사람들과 만남을 가져보세요',
+      '친구들과 모임을 주선해보세요',
+      '낯선 장소를 탐험해보세요',
+      '온라인 커뮤니티에 적극 참여해보세요',
+      '팀 프로젝트에 리더십을 발휘해보세요'
+    ],
+    'I': [ // 내향형
+      '좋아하는 책이나 영화에 푹 빠져보세요',
+      '혼자만의 산책 시간을 가져보세요',
+      '조용한 카페에서 생각을 정리해보세요',
+      '온라인 강의로 새로운 지식을 쌓아보세요',
+      '일기나 글쓰기로 내면을 탐구해보세요'
+    ]
+  }
+
+  const type = mbti[0] as 'E' | 'I'
+  return selectFromArray(activities[type], date, `activity-${mbti}`)
+}
+
+// 오늘의 주의사항 생성
+function generateCaution(date: Date, bloodType: string): string {
+  const cautions = {
+    'A': [
+      '오늘은 완벽주의를 조금 내려놓으세요',
+      '타인의 시선보다 내 마음을 먼저 챙기세요',
+      '과도한 걱정은 금물! 긍정적으로 생각하세요',
+      '스트레스 받으면 잠시 멈추고 심호흡을',
+      '사소한 일에 예민해지지 않도록 주의하세요'
+    ],
+    'B': [
+      '오늘은 계획적으로 움직여보세요',
+      '즉흥적인 결정은 한 번 더 생각하고',
+      '다른 사람의 의견도 귀 기울여 들어보세요',
+      '감정적인 반응은 잠시 미루고 이성적으로',
+      '목표를 정하고 차근차근 실행해보세요'
+    ],
+    'O': [
+      '오늘은 디테일에 신경 써보세요',
+      '중요한 약속이나 일정을 다시 확인하세요',
+      '낙관적인 것도 좋지만 현실 체크는 필수',
+      '편안함에 안주하지 말고 한 걸음 더',
+      '주변 사람들과의 관계에 더 신경 써보세요'
+    ],
+    'AB': [
+      '오늘은 일관성 있게 행동해보세요',
+      '우유부단함을 극복하고 결단력을 발휘하세요',
+      '너무 많은 것을 한꺼번에 하지 마세요',
+      '감정 기복을 조절하며 안정감을 유지하세요',
+      '복잡한 생각은 잠시 내려놓고 단순하게'
+    ]
+  }
+
+  return selectFromArray(cautions[bloodType], date, `caution-${bloodType}`)
+}
+
+// 오늘의 궁합 MBTI 생성
+function generateBestMatchToday(date: Date, animal: string): string {
+  const allMbti = [
+    'INTJ', 'INTP', 'ENTJ', 'ENTP',
+    'INFJ', 'INFP', 'ENFJ', 'ENFP',
+    'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
+    'ISTP', 'ISFP', 'ESTP', 'ESFP',
+  ]
+  return selectFromArray(allMbti, date, `match-${animal}`)
+}
+
+// 오늘의 조언 생성 (날짜 기반으로 다양화)
+function generateTodayAdvice(mbti: string, bloodType: string, date: Date): string {
+  const advicePool = [
+    '오늘은 계획보다 사람에게 집중해보세요',
+    '떠오른 아이디어를 하나라도 실행해보세요',
+    '즉흥적인 일을 하나 해보며 유연성을 키워보세요',
+    '머리로만 생각하지 말고 직접 행동으로 옮겨보세요',
+    '다른 사람보다 나 자신을 먼저 챙기는 하루를',
+    '한 가지 일에 끝까지 집중해보는 경험을',
+    '혼자만의 시간으로 내면을 들여다보세요',
+    '작은 것이라도 실행에 옮겨보는 용기를',
+    '계획에 없던 재미있는 일을 끼워넣어보세요',
+    '다른 사람 눈치 보지 말고 하고 싶은 것을 해보세요',
+    '평소와 다른 방법으로 일해보며 변화를 시도하세요',
+    '자신의 의견을 더 당당하게 표현해보세요',
+    '잠시 멈춰서 주변을 둘러보는 여유를',
+    '깊이 있는 대화로 새로운 관계를 만들어보세요',
+    '당신의 재능을 다른 사람과 나눠보세요',
+    '평소 하지 않던 새로운 도전을 해보세요'
+  ]
+
+  return selectFromArray(advicePool, date, `advice-${mbti}-${bloodType}`)
 }
 
 serve(async (req) => {
@@ -432,16 +552,20 @@ serve(async (req) => {
       zodiacAnimal = zodiacAnimal.slice(0, -1)
     }
 
+    // ✅ 날짜 파싱 (요청에서 받거나 현재 날짜)
+    const dateParam = requestData.date
+    const currentDate = dateParam ? new Date(dateParam) : new Date()
+
     // DNA 코드 생성
     const dnaCode = `${mbti.slice(0, 2)}-${bloodType}${zodiacAnimal.slice(0, 1)}-${Date.now().toString().slice(-4)}`
-    
+
     // 기본 데이터 가져오기
     const loveStyle = MBTI_LOVE_STYLES[mbti]
     const workStyle = MBTI_WORK_STYLES[mbti]
     const dailyMatching = MBTI_DAILY_MATCHING[mbti]
     const compatibility = COMPATIBILITY_MATCHING[mbti]
     const funStats = FUN_STATS[mbti]
-    
+
     // 희귀도 결정
     const percentage = parseFloat(funStats.percentage_in_korea)
     let rarityLevel = 'common'
@@ -449,7 +573,7 @@ serve(async (req) => {
     else if (percentage <= 3.0) rarityLevel = 'epic'
     else if (percentage <= 7.0) rarityLevel = 'rare'
     else if (percentage <= 12.0) rarityLevel = 'uncommon'
-    
+
     // 소셜 랭킹 (희귀도 기반)
     const socialRanking = rarityLevel === 'legendary' ? Math.floor(Math.random() * 5) + 1 :
                          rarityLevel === 'epic' ? Math.floor(Math.random() * 10) + 1 :
@@ -457,11 +581,27 @@ serve(async (req) => {
                          rarityLevel === 'uncommon' ? Math.floor(Math.random() * 40) + 1 :
                          Math.floor(Math.random() * 60) + 20
 
-    // 오늘의 하이라이트 생성
-    const todayHighlight = `${name}님은 오늘 ${loveStyle.title}의 매력이 빛나는 날이에요!`
-    
-    // 오늘의 조언
-    const todayAdvice = generateTodayAdvice(mbti, bloodType)
+    // ✅ 데일리 운세 생성 (날짜 기반)
+    const dailyFortune = {
+      luckyColor: generateLuckyColor(currentDate, mbti),
+      luckyNumber: generateLuckyNumber(currentDate, bloodType),
+      energyLevel: generateEnergyLevel(currentDate, zodiac),
+      recommendedActivity: generateRecommendedActivity(currentDate, mbti),
+      caution: generateCaution(currentDate, bloodType),
+      bestMatchToday: generateBestMatchToday(currentDate, zodiacAnimal),
+    }
+
+    // ✅ 오늘의 하이라이트 생성 (날짜 기반으로 다양화)
+    const highlights = [
+      `${name}님은 오늘 ${loveStyle.title}의 매력이 빛나는 날이에요!`,
+      `오늘의 ${name}님은 에너지 ${dailyFortune.energyLevel}%! 활기찬 하루를 보내세요!`,
+      `${name}님의 럭키 컬러는 ${dailyFortune.luckyColor}! 오늘 꼭 활용해보세요!`,
+      `오늘의 럭키 넘버 ${dailyFortune.luckyNumber}! ${name}님께 행운이 가득하길!`,
+    ]
+    const todayHighlight = selectFromArray(highlights, currentDate, `highlight-${mbti}`)
+
+    // ✅ 오늘의 조언 (날짜 기반)
+    const todayAdvice = generateTodayAdvice(mbti, bloodType, currentDate)
 
     const response: PersonalityDNAResponse = {
       dnaCode,
@@ -475,7 +615,8 @@ serve(async (req) => {
       funStats,
       todayAdvice,
       rarityLevel,
-      socialRanking
+      socialRanking,
+      dailyFortune,
     }
 
     return new Response(

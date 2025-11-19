@@ -26,12 +26,34 @@ export interface GenerateOptions {
   timeout?: number
 }
 
+// 이미지 생성 옵션
+export interface ImageGenerateOptions {
+  size?: '1024x1024' | '1024x1792' | '1792x1024' // DALL-E 3 지원 크기
+  quality?: 'standard' | 'hd'
+  style?: 'vivid' | 'natural'
+}
+
+// 이미지 생성 응답
+export interface ImageResponse {
+  imageBase64: string
+  revisedPrompt?: string // DALL-E 3가 수정한 프롬프트
+  provider: string
+  model: string
+  latency: number // ms
+}
+
 // 핵심 인터페이스: 모든 Provider가 구현해야 함
 export interface ILLMProvider {
   generate(
     messages: LLMMessage[],
     options?: GenerateOptions
   ): Promise<LLMResponse>
+
+  // 이미지 생성 (선택적)
+  generateImage?(
+    prompt: string,
+    options?: ImageGenerateOptions
+  ): Promise<ImageResponse>
 
   validateConfig(): boolean
 

@@ -584,11 +584,8 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
             ),
           ),
         ),
-        // 잠금 아이콘
-        Positioned(
-          left: 0,
-          right: 0,
-          top: 20,
+        // 잠금 아이콘 (중앙 배치)
+        Positioned.fill(
           child: Center(
             child: Container(
               padding: const EdgeInsets.all(12),

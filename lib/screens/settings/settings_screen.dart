@@ -9,6 +9,8 @@ import '../../presentation/providers/token_provider.dart';
 import '../../core/theme/typography_unified.dart';
 import '../../core/services/debug_premium_service.dart';
 import '../../shared/components/toast.dart';
+import '../../shared/components/settings_list_tile.dart';
+import '../../shared/components/section_header.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -131,7 +133,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: TossDesignSystem.spacingM),
 
               // 계정 섹션
-              _buildSectionHeader('계정'),
+              const SectionHeader(title: '계정'),
               Container(
                 margin: const EdgeInsets.symmetric(
                     horizontal: TossDesignSystem.marginHorizontal),
@@ -152,7 +154,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 child: Column(
                   children: [
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.person_outline,
                       title: '프로필 편집',
                       onTap: () async {
@@ -162,19 +164,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         }
                       },
                     ),
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.link_outlined,
                       title: '소셜 계정 연동',
                       subtitle: '여러 로그인 방법을 하나로 관리',
                       onTap: () => context.push('/settings/social-accounts'),
                     ),
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.phone_outlined,
                       title: '전화번호 관리',
                       subtitle: '전화번호 변경 및 인증',
                       onTap: () => context.push('/settings/phone-management'),
                     ),
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.notifications_outlined,
                       title: '알림 설정',
                       subtitle: '푸시, 문자, 운세 알림 관리',
@@ -186,7 +188,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
 
               // 앱 설정 섹션
-              _buildSectionHeader('앱 설정'),
+              const SectionHeader(title: '앱 설정'),
               Container(
                 margin: const EdgeInsets.symmetric(
                     horizontal: TossDesignSystem.marginHorizontal),
@@ -207,7 +209,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 child: Column(
                   children: [
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.dark_mode_outlined,
                       title: '다크 모드',
                       trailing: Switch(
@@ -219,7 +221,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         activeColor: TossDesignSystem.tossBlue,
                       ),
                     ),
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.language_outlined,
                       title: '언어',
                       subtitle: '한국어',
@@ -233,7 +235,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
 
               // 결제 섹션
-              _buildSectionHeader('결제'),
+              const SectionHeader(title: '결제'),
               Container(
                 margin: const EdgeInsets.symmetric(
                     horizontal: TossDesignSystem.marginHorizontal),
@@ -254,13 +256,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 child: Column(
                   children: [
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.local_offer_outlined,
                       title: '토큰 구매',
                       subtitle: '토큰 충전하기',
                       onTap: () => context.go('/payment/tokens'),
                     ),
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.card_membership_outlined,
                       title: '구독 관리',
                       subtitle: tokenState.hasUnlimitedAccess
@@ -275,7 +277,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
 
               // 지원 섹션
-              _buildSectionHeader('지원'),
+              const SectionHeader(title: '지원'),
               Container(
                 margin: const EdgeInsets.symmetric(
                     horizontal: TossDesignSystem.marginHorizontal),
@@ -296,17 +298,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 child: Column(
                   children: [
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.help_outline,
                       title: '도움말',
                       onTap: () => context.push('/help'),
                     ),
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.privacy_tip_outlined,
                       title: '개인정보 처리방침',
                       onTap: () => context.push('/policy/privacy'),
                     ),
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.description_outlined,
                       title: '이용약관',
                       onTap: () => context.push('/policy/terms'),
@@ -318,7 +320,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               // 개발자 도구 (개발 환경에서만 표시)
               if (kDebugMode) ...[
-                _buildSectionHeader('개발자 도구'),
+                const SectionHeader(title: '개발자 도구'),
                 Container(
                   margin: const EdgeInsets.symmetric(
                       horizontal: TossDesignSystem.marginHorizontal),
@@ -339,12 +341,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   child: Column(
                     children: [
-                      _buildListItem(
+                      SettingsListTile(
                         icon: Icons.cloud_download_outlined,
                         title: '유명인 정보 크롤링',
                         onTap: () => context.push('/admin/celebrity-crawling'),
                       ),
-                      _buildListItem(
+                      SettingsListTile(
                         icon: _overrideEnabled
                             ? (_premiumOverride
                                 ? Icons.workspace_premium
@@ -453,125 +455,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  // 섹션 헤더 빌더 (프로필 페이지와 동일)
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingL,
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingS,
-      ),
-      child: Text(
-        title,
-        style: TossDesignSystem.caption.copyWith(
-          color: _getSecondaryTextColor(context),
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
-        ),
-      ),
-    );
-  }
-
-  // 리스트 아이템 빌더 (프로필 페이지와 동일한 스타일)
-  Widget _buildListItem({
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    bool showBadge = false,
-    Widget? trailing,
-    VoidCallback? onTap,
-    bool isLast = false,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: TossDesignSystem.marginHorizontal,
-            vertical: TossDesignSystem.spacingM,
-          ),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: isLast ? Colors.transparent : _getDividerColor(context),
-                width: 0.5,
-              ),
-            ),
-          ),
-          child: Row(
-            children: [
-              // 아이콘 (프로필 스타일: 배경 없이 간결하게)
-              Icon(
-                icon,
-                size: 22,
-                color: _getSecondaryTextColor(context),
-              ),
-              const SizedBox(width: TossDesignSystem.spacingM),
-
-              // 타이틀 & 서브타이틀
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          title,
-                          style: TossDesignSystem.body2.copyWith(
-                            color: _getTextColor(context),
-                          ),
-                        ),
-                        if (showBadge) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: TossDesignSystem.tossBlue,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              'PRO',
-                              style: TossDesignSystem.caption.copyWith(
-                                color: TossDesignSystem.white,
-                                
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    if (subtitle != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: TossDesignSystem.caption.copyWith(
-                          color: _getSecondaryTextColor(context),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              // Trailing 위젯 또는 기본 화살표
-              if (trailing != null)
-                trailing
-              else if (onTap != null)
-                Icon(
-                  Icons.chevron_right,
-                  size: 20,
-                  color: _getSecondaryTextColor(context),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // _buildSectionHeader replaced by SectionHeader component
+  // _buildListItem replaced by SettingsListTile component
 }

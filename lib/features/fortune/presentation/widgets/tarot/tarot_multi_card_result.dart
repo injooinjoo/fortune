@@ -300,8 +300,8 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
   }
 
   Widget _buildCardItem(TarotCard card, int index, bool isDark, {bool large = false, bool small = false}) {
-    double width = large ? 180 : (small ? 80 : 100);
-    double height = large ? 260 : (small ? 120 : 145);
+    double width = large ? 220 : (small ? 90 : 120);
+    double height = large ? 320 : (small ? 135 : 180);
 
     return GestureDetector(
       onTap: () {
@@ -317,124 +317,170 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
         width: width,
         height: height,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: TossDesignSystem.black.withValues(alpha: 0.1),
-              blurRadius: 10,
+              color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+              blurRadius: 20,
+              spreadRadius: 2,
+              offset: const Offset(0, 8),
+            ),
+            BoxShadow(
+              color: TossDesignSystem.black.withValues(alpha: 0.15),
+              blurRadius: 15,
               offset: const Offset(0, 4),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Stack(
-            children: [
-              // 카드 이미지 (역방향일 경우 180도 회전)
-              Container(
-              color: TossDesignSystem.white,
-              child: Center(
-                child: AspectRatio(
-                  aspectRatio: 0.65, // 타로 카드 비율
-                  child: Transform.rotate(
-                    angle: card.isReversed ? 3.14159 : 0, // 180도 회전 (π 라디안)
-                    child: Builder(
-                      builder: (context) {
-                        print('[Tarot] 이미지 경로: ${card.imagePath}');
-                        print('[Tarot] 카드 이름: ${card.cardNameKr}');
-                        print('[Tarot] 덱 타입: ${card.deckType}');
-                        return Image.asset(
-                          card.imagePath,
-                          fit: BoxFit.contain, // cover → contain으로 변경
-                          errorBuilder: (context, error, stackTrace) {
-                            print('[Tarot] ❌ 이미지 로드 실패: ${card.imagePath}');
-                            print('[Tarot] ❌ 에러: $error');
-                            return Container(
-                              color: const Color(0xFFF5F5F5),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.image_not_supported,
-                                      color: Color(0xFF8B95A1),
-                                      size: 30,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: Stack(
+                children: [
+                  // 카드 이미지 (역방향일 경우 180도 회전)
+                  Container(
+                  color: TossDesignSystem.white,
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: 0.65, // 타로 카드 비율
+                      child: Transform.rotate(
+                        angle: card.isReversed ? 3.14159 : 0, // 180도 회전 (π 라디안)
+                        child: Builder(
+                          builder: (context) {
+                            print('[Tarot] 이미지 경로: ${card.imagePath}');
+                            print('[Tarot] 카드 이름: ${card.cardNameKr}');
+                            print('[Tarot] 덱 타입: ${card.deckType}');
+                            return Image.asset(
+                              card.imagePath,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                print('[Tarot] ❌ 이미지 로드 실패: ${card.imagePath}');
+                                print('[Tarot] ❌ 에러: $error');
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        const Color(0xFFF5F5F5),
+                                        const Color(0xFFE0E0E0),
+                                      ],
                                     ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      card.cardNameKr,
-                                      style: TypographyUnified.labelMedium.copyWith(
-                                        color: Color(0xFF8B95A1),
-                                      ),
-                                      textAlign: TextAlign.center,
+                                  ),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.auto_awesome,
+                                          color: Color(0xFF7C3AED),
+                                          size: large ? 48 : 32,
+                                        ),
+                                        SizedBox(height: 12),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                                          child: Text(
+                                            card.cardNameKr,
+                                            style: TypographyUnified.labelMedium.copyWith(
+                                              color: Color(0xFF7C3AED),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                );
+                              },
                             );
                           },
-                        );
-                      },
+                        ),
+                      ),
                     ),
                   ),
                 ),
+
+                // 역방향 표시
+                if (card.isReversed)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: TossDesignSystem.error,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: TossDesignSystem.error.withValues(alpha: 0.3),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        '역방향',
+                        style: TextStyle(
+                          color: TossDesignSystem.white,
+                          fontSize: small ? 9 : 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // 카드 이름 (작은 카드가 아닐 때만)
+                if (!small)
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(large ? 12 : 10),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            TossDesignSystem.white.withValues(alpha: 0.0),
+                            TossDesignSystem.black.withValues(alpha: 0.85),
+                          ],
+                        ),
+                      ),
+                      child: Text(
+                        card.cardNameKr,
+                        style: TextStyle(
+                          color: TossDesignSystem.white,
+                          fontSize: large ? 16 : 13,
+                          fontWeight: FontWeight.w700,
+                          shadows: [
+                            Shadow(
+                              color: TossDesignSystem.black.withValues(alpha: 0.5),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-
-            // 역방향 표시
-            if (card.isReversed)
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: TossDesignSystem.error.withValues(alpha: 0.9),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    '역방향',
-                    style: TextStyle(
-                      color: TossDesignSystem.white,
-                      fontSize: small ? 9 : 10,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-
-            // 카드 이름 (작은 카드가 아닐 때만)
-            if (!small)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        TossDesignSystem.white.withValues(alpha: 0.0),
-                        TossDesignSystem.black.withValues(alpha: 0.7),
-                      ],
-                    ),
-                  ),
-                  child: Text(
-                    card.cardNameKr,
-                    style: TextStyle(
-                      color: TossDesignSystem.white,
-                      fontSize: large ? 14 : 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
       ),

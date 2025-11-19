@@ -11,6 +11,7 @@ import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 
 /// 건강운세 결과 페이지 (프리미엄/블러 시스템 적용)
 ///
@@ -323,9 +324,12 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
             ],
           ),
           const SizedBox(height: 16),
-          isBlurred
-              ? _buildBlurredContent(contentBuilder())
-              : contentBuilder(),
+          UnifiedBlurWrapper(
+            isBlurred: _fortuneResult.isBlurred,
+            blurredSections: _fortuneResult.blurredSections,
+            sectionKey: sectionKey,
+            child: contentBuilder(),
+          ),
         ],
       ),
     ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, end: 0);
@@ -502,58 +506,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
     );
   }
 
-  // ===== 블러 컨텐츠 빌더 =====
-
-  Widget _buildBlurredContent(Widget child) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Stack(
-      children: [
-        // 원본 콘텐츠 (블러 처리)
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-
-        // 반투명 오버레이
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  (isDark
-                      ? TossDesignSystem.backgroundDark
-                      : TossDesignSystem.backgroundLight)
-                      .withValues(alpha: 0.3),
-                  (isDark
-                      ? TossDesignSystem.backgroundDark
-                      : TossDesignSystem.backgroundLight)
-                      .withValues(alpha: 0.8),
-                ],
-              ),
-            ),
-          ),
-        ),
-
-        // 중앙 잠금 아이콘
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 40,
-              color: (isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight)
-                  .withValues(alpha: 0.4),
-            ).animate(onPlay: (controller) => controller.repeat())
-                .shimmer(duration: 2000.ms, color: TossDesignSystem.tossBlue.withValues(alpha: 0.2)),
-          ),
-        ),
-      ],
-    );
-  }
+  // ===== _buildBlurredContent 제거 - UnifiedBlurWrapper 사용 =====
 
   // ===== 헬퍼 메서드 =====
 

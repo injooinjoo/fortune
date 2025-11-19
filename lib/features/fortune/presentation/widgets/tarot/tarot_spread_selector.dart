@@ -345,39 +345,66 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(3, (index) {
             final labels = ['과거', '현재', '미래'];
+            final emojis = ['⏮️', '⏸️', '⏭️'];
             return Expanded(
-              child: Column(
-                children: [
-                  Container(
-                    height: 40,
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: color.withValues(alpha: 0.3),
-                        width: 1,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Column(
+                  children: [
+                    Container(
+                      height: 60,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            color.withValues(alpha: 0.2),
+                            color.withValues(alpha: 0.1),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: color.withValues(alpha: 0.4),
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: color.withValues(alpha: 0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${index + 1}',
-                        style: TextStyle(
-                          color: color,
-                          
-                          fontWeight: FontWeight.w600,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '${index + 1}',
+                              style: TextStyle(
+                                color: color,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              emojis[index],
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    labels[index],
-                    style: TypographyUnified.labelTiny.copyWith(
-                      color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+                    SizedBox(height: 8),
+                    Text(
+                      labels[index],
+                      style: TypographyUnified.labelMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: color,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           }),
@@ -386,35 +413,57 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
 
       case TarotSpreadType.relationship:
         preview = SizedBox(
-          height: 100,
+          height: 120,
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // 중앙 카드 (현재 관계)
+              // 중앙 카드 (현재 관계) - 더 크게
               Positioned(
-                top: 30,
-                child: _buildMiniCard('4', color),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildMiniCard('3', color, size: 36),
+                    SizedBox(height: 4),
+                    Text('현재', style: TypographyUnified.labelTiny.copyWith(color: color, fontWeight: FontWeight.w600)),
+                  ],
+                ),
               ),
               // 왼쪽 카드 (나)
               Positioned(
-                left: 20,
-                top: 30,
-                child: _buildMiniCard('1', color),
+                left: 30,
+                top: 35,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildMiniCard('1', color),
+                    SizedBox(height: 4),
+                    Text('나', style: TypographyUnified.labelTiny.copyWith(color: color, fontWeight: FontWeight.w600)),
+                  ],
+                ),
               ),
               // 오른쪽 카드 (상대)
               Positioned(
-                right: 20,
-                top: 30,
-                child: _buildMiniCard('2', color),
+                right: 30,
+                top: 35,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildMiniCard('2', color),
+                    SizedBox(height: 4),
+                    Text('상대', style: TypographyUnified.labelTiny.copyWith(color: color, fontWeight: FontWeight.w600)),
+                  ],
+                ),
               ),
               // 위 카드 (과거)
               Positioned(
                 top: 0,
-                child: _buildMiniCard('3', color),
+                left: 0,
+                child: _buildMiniCard('4', color),
               ),
               // 아래 카드 (미래)
               Positioned(
                 bottom: 0,
+                right: 0,
                 child: _buildMiniCard('5', color),
               ),
             ],
@@ -423,14 +472,15 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
         break;
 
       case TarotSpreadType.celticCross:
-        preview = Center(
-          child: Text(
-            '켈틱 크로스 - 10장의 카드로\n가장 상세한 분석을 제공합니다',
-            textAlign: TextAlign.center,
-            style: TypographyUnified.labelMedium.copyWith(
-              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-              height: 1.4,
-            ),
+        preview = Container(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 6,
+            runSpacing: 6,
+            children: List.generate(10, (index) {
+              return _buildMiniCard('${index + 1}', color, showShadow: false);
+            }),
           ),
         );
         break;
@@ -442,25 +492,39 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
     return preview;
   }
 
-  Widget _buildMiniCard(String number, Color color) {
+  Widget _buildMiniCard(String number, Color color, {double size = 28, bool showShadow = true}) {
     return Container(
-      width: 24,
-      height: 32,
+      width: size,
+      height: size * 1.4,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(2),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-          width: 1,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withValues(alpha: 0.2),
+            color.withValues(alpha: 0.1),
+          ],
         ),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(
+          color: color.withValues(alpha: 0.5),
+          width: 1.5,
+        ),
+        boxShadow: showShadow ? [
+          BoxShadow(
+            color: color.withValues(alpha: 0.15),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ] : null,
       ),
       child: Center(
         child: Text(
           number,
           style: TextStyle(
             color: color,
-            
-            fontWeight: FontWeight.w600,
+            fontSize: size * 0.5,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),

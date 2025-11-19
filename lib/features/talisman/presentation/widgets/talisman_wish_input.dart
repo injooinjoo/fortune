@@ -5,15 +5,19 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/toss_button.dart';
+import '../../../../core/services/talisman_generation_service.dart' as ai_talisman;
+import '../../../../core/utils/logger.dart';
 
 class TalismanWishInput extends StatefulWidget {
   final TalismanCategory selectedCategory;
   final Function(String) onWishSubmitted;
+  final Function(String, bool)? onAIWishSubmitted; // AI 생성용 콜백
 
   const TalismanWishInput({
     super.key,
     required this.selectedCategory,
     required this.onWishSubmitted,
+    this.onAIWishSubmitted,
   });
 
   @override
@@ -24,6 +28,7 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
   final TextEditingController _wishController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _isValid = false;
+  bool _isGeneratingAI = false;
 
   @override
   void initState() {
@@ -171,26 +176,103 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
           .fadeIn(duration: 400.ms),
         
         const SizedBox(height: 40),
-        
-        // Submit Button
+
+        // AI Submit Button
         SizedBox(
           width: double.infinity,
           child: TossButton(
-            text: '부적 만들기',
-            onPressed: _isValid ? _handleSubmit : null,
+            text: _isGeneratingAI ? 'AI가 부적을 만들고 있어요...' : '🎨 AI 맞춤 부적 만들기',
+            onPressed: _isValid && !_isGeneratingAI ? _handleAISubmit : null,
             size: TossButtonSize.large,
+            style: TossButtonStyle.primary,
           ),
         ).animate(delay: 300.ms)
+          .fadeIn(duration: 400.ms)
+          .slideY(begin: 0.2, end: 0),
+
+        const SizedBox(height: 16),
+
+        // Basic Submit Button
+        SizedBox(
+          width: double.infinity,
+          child: TossButton.secondary(
+            text: '기본 부적 만들기',
+            onPressed: _isValid && !_isGeneratingAI ? _handleSubmit : null,
+            size: TossButtonSize.large,
+          ),
+        ).animate(delay: 350.ms)
           .fadeIn(duration: 400.ms)
           .slideY(begin: 0.2, end: 0),
       ],
     );
   }
 
+  Future<void> _handleAISubmit() async {
+    final wish = _wishController.text.trim();
+    if (wish.length < 5) return;
+
+    setState(() => _isGeneratingAI = true);
+
+    try {
+      final talismanService = ai_talisman.TalismanGenerationService();
+
+      // Map TalismanCategory to TalismanGenerationService category
+      final aiCategory = _mapToAICategory(widget.selectedCategory);
+
+      Logger.info('[TalismanWishInput] Generating AI talisman for category: ${aiCategory.displayName}');
+
+      // Generate AI talisman image
+      final result = await talismanService.generateTalisman(
+        category: aiCategory,
+      );
+
+      Logger.info('[TalismanWishInput] AI talisman generated: ${result.imageUrl}');
+
+      if (mounted) {
+        // Call parent callback with AI-generated result
+        widget.onAIWishSubmitted?.call(wish, true);
+      }
+    } catch (e, stackTrace) {
+      Logger.error('[TalismanWishInput] Failed to generate AI talisman: $e', e, stackTrace);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('AI 부적 생성 중 오류가 발생했습니다: $e'),
+            backgroundColor: TossDesignSystem.errorRed,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isGeneratingAI = false);
+      }
+    }
+  }
+
   void _handleSubmit() {
     final wish = _wishController.text.trim();
     if (wish.length >= 5) {
       widget.onWishSubmitted(wish);
+    }
+  }
+
+  // Map TalismanCategory to TalismanGenerationService category
+  ai_talisman.TalismanCategory _mapToAICategory(TalismanCategory category) {
+    switch (category) {
+      case TalismanCategory.health:
+        return ai_talisman.TalismanCategory.diseasePrevention;
+      case TalismanCategory.love:
+        return ai_talisman.TalismanCategory.loveRelationship;
+      case TalismanCategory.wealth:
+      case TalismanCategory.career:
+        return ai_talisman.TalismanCategory.wealthCareer;
+      case TalismanCategory.goal:
+        return ai_talisman.TalismanCategory.homeProtection;
+      case TalismanCategory.study:
+        return ai_talisman.TalismanCategory.academicSuccess;
+      case TalismanCategory.relationship:
+        return ai_talisman.TalismanCategory.homeProtection;
     }
   }
 }

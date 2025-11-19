@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 
 // 환경 변수 설정
@@ -8,6 +9,168 @@ const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
 
 // Supabase 클라이언트 생성
 const supabase = createClient(supabaseUrl, supabaseKey)
+
+// UTF-8 안전한 해시 생성 함수 (btoa는 Latin1만 지원하여 한글 불가)
+async function createHash(text: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(text)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 50)
+}
+
+// 이름 궁합 숫자 계산 (한글 자음/모음 개수)
+function calculateNameCompatibility(name1: string, name2: string): number {
+  const countChars = (name: string): number => {
+    const chars = name.split('')
+    return chars.reduce((count, char) => {
+      const code = char.charCodeAt(0)
+      if (code >= 0xAC00 && code <= 0xD7A3) {
+        // 한글 음절 분해
+        const syllable = code - 0xAC00
+        const jong = syllable % 28
+        return count + (jong === 0 ? 2 : 3) // 받침 없으면 2, 있으면 3
+      }
+      return count + 1
+    }, 0)
+  }
+
+  const combined = countChars(name1) + countChars(name2)
+  return combined % 100 // 0-99 범위
+}
+
+// 12띠 계산
+function getZodiacAnimal(birthDate: string): string {
+  const year = parseInt(birthDate.substring(0, 4))
+  const animals = ['원숭이', '닭', '개', '돼지', '쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양']
+  return animals[year % 12]
+}
+
+// 띠 궁합 평가
+function getZodiacCompatibility(animal1: string, animal2: string): { score: number; message: string } {
+  const compatibility: Record<string, Record<string, { score: number; message: string }>> = {
+    '쥐': { '소': { score: 90, message: '최고의 궁합' }, '용': { score: 95, message: '천생연분' }, '원숭이': { score: 90, message: '대길' } },
+    '소': { '쥐': { score: 90, message: '최고의 궁합' }, '뱀': { score: 95, message: '천생연분' }, '닭': { score: 90, message: '대길' } },
+    '호랑이': { '말': { score: 90, message: '최고의 궁합' }, '개': { score: 95, message: '천생연분' } },
+    '토끼': { '양': { score: 90, message: '최고의 궁합' }, '돼지': { score: 95, message: '천생연분' }, '개': { score: 85, message: '좋음' } },
+    '용': { '쥐': { score: 95, message: '천생연분' }, '원숭이': { score: 90, message: '대길' }, '닭': { score: 85, message: '좋음' } },
+    '뱀': { '소': { score: 95, message: '천생연분' }, '닭': { score: 90, message: '대길' } },
+    '말': { '호랑이': { score: 90, message: '최고의 궁합' }, '양': { score: 85, message: '좋음' }, '개': { score: 90, message: '대길' } },
+    '양': { '토끼': { score: 90, message: '최고의 궁합' }, '말': { score: 85, message: '좋음' }, '돼지': { score: 90, message: '대길' } },
+    '원숭이': { '쥐': { score: 90, message: '대길' }, '용': { score: 90, message: '최고의 궁합' } },
+    '닭': { '소': { score: 90, message: '대길' }, '뱀': { score: 90, message: '최고의 궁합' }, '용': { score: 85, message: '좋음' } },
+    '개': { '호랑이': { score: 95, message: '천생연분' }, '토끼': { score: 85, message: '좋음' }, '말': { score: 90, message: '대길' } },
+    '돼지': { '토끼': { score: 95, message: '천생연분' }, '양': { score: 90, message: '대길' } }
+  }
+
+  return compatibility[animal1]?.[animal2] || { score: 70, message: '무난함' }
+}
+
+// 별자리 계산
+function getZodiacSign(birthDate: string): string {
+  const month = parseInt(birthDate.substring(5, 7))
+  const day = parseInt(birthDate.substring(8, 10))
+
+  if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return '양자리'
+  if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return '황소자리'
+  if ((month === 5 && day >= 21) || (month === 6 && day <= 21)) return '쌍둥이자리'
+  if ((month === 6 && day >= 22) || (month === 7 && day <= 22)) return '게자리'
+  if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return '사자자리'
+  if ((month === 8 && day >= 23) || (month === 9 && day <= 23)) return '처녀자리'
+  if ((month === 9 && day >= 24) || (month === 10 && day <= 22)) return '천칭자리'
+  if ((month === 10 && day >= 23) || (month === 11 && day <= 22)) return '전갈자리'
+  if ((month === 11 && day >= 23) || (month === 12 && day <= 21)) return '사수자리'
+  if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return '염소자리'
+  if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return '물병자리'
+  return '물고기자리'
+}
+
+// 별자리 궁합 평가
+function getStarSignCompatibility(sign1: string, sign2: string): { score: number; message: string } {
+  const compatibility: Record<string, Record<string, { score: number; message: string }>> = {
+    '양자리': { '사자자리': { score: 95, message: '불꽃 튀는 열정' }, '사수자리': { score: 90, message: '최고의 케미' } },
+    '황소자리': { '처녀자리': { score: 95, message: '안정적 관계' }, '염소자리': { score: 90, message: '현실적 파트너' } },
+    '쌍둥이자리': { '천칭자리': { score: 95, message: '완벽한 소통' }, '물병자리': { score: 90, message: '자유로운 사랑' } },
+    '게자리': { '전갈자리': { score: 95, message: '깊은 교감' }, '물고기자리': { score: 90, message: '감성적 조화' } },
+    '사자자리': { '양자리': { score: 95, message: '불꽃 튀는 열정' }, '사수자리': { score: 90, message: '밝은 에너지' } },
+    '처녀자리': { '황소자리': { score: 95, message: '안정적 관계' }, '염소자리': { score: 90, message: '현실적 파트너' } },
+    '천칭자리': { '쌍둥이자리': { score: 95, message: '완벽한 소통' }, '물병자리': { score: 90, message: '이상적 관계' } },
+    '전갈자리': { '게자리': { score: 95, message: '깊은 교감' }, '물고기자리': { score: 90, message: '신비로운 인연' } },
+    '사수자리': { '양자리': { score: 90, message: '최고의 케미' }, '사자자리': { score: 90, message: '밝은 에너지' } },
+    '염소자리': { '황소자리': { score: 90, message: '현실적 파트너' }, '처녀자리': { score: 90, message: '안정적 관계' } },
+    '물병자리': { '쌍둥이자리': { score: 90, message: '자유로운 사랑' }, '천칭자리': { score: 90, message: '이상적 관계' } },
+    '물고기자리': { '게자리': { score: 90, message: '감성적 조화' }, '전갈자리': { score: 90, message: '신비로운 인연' } }
+  }
+
+  return compatibility[sign1]?.[sign2] || { score: 75, message: '노력하면 좋아짐' }
+}
+
+// 생일 숫자 합 계산
+function calculateBirthNumberSum(birthDate: string): number {
+  const digits = birthDate.replace(/\D/g, '').split('').map(Number)
+  let sum = digits.reduce((a, b) => a + b, 0)
+
+  // 한 자리 될 때까지 반복
+  while (sum >= 10) {
+    sum = sum.toString().split('').map(Number).reduce((a, b) => a + b, 0)
+  }
+
+  return sum
+}
+
+// 운명 숫자 해석
+function getDestinyNumberMeaning(num: number): string {
+  const meanings: Record<number, string> = {
+    1: '리더십형 관계',
+    2: '조화로운 파트너',
+    3: '창의적 커플',
+    4: '안정적 관계',
+    5: '자유로운 사랑',
+    6: '책임감 있는 사랑',
+    7: '신비로운 인연',
+    8: '성공적 파트너십',
+    9: '이상주의적 사랑'
+  }
+  return meanings[num] || '특별한 인연'
+}
+
+// 나이 차이 분석
+function getAgeDifference(date1: string, date2: string): { years: number; message: string } {
+  const year1 = parseInt(date1.substring(0, 4))
+  const year2 = parseInt(date2.substring(0, 4))
+  const diff = Math.abs(year1 - year2)
+
+  let message = ''
+  if (diff === 0) message = '동갑 커플, 같은 눈높이'
+  else if (diff === 1) message = '한 살 차이, 친구 같은 연인'
+  else if (diff === 3) message = '세 살 차이, 서로 배려'
+  else if (diff === 5) message = '다섯 살 차이, 든든한 파트너'
+  else if (diff >= 10) message = '큰 나이 차이, 서로 배움'
+  else message = `${diff}살 차이, 적당한 거리감`
+
+  return { years: diff, message }
+}
+
+// 계절 계산
+function getSeason(birthDate: string): string {
+  const month = parseInt(birthDate.substring(5, 7))
+  if (month >= 3 && month <= 5) return '봄'
+  if (month >= 6 && month <= 8) return '여름'
+  if (month >= 9 && month <= 11) return '가을'
+  return '겨울'
+}
+
+// 계절 궁합
+function getSeasonCompatibility(season1: string, season2: string): string {
+  if (season1 === season2) return '같은 계절, 비슷한 성향'
+  if ((season1 === '봄' && season2 === '가을') || (season1 === '가을' && season2 === '봄')) {
+    return '정반대 매력'
+  }
+  if ((season1 === '여름' && season2 === '겨울') || (season1 === '겨울' && season2 === '여름')) {
+    return '서로 다른 온도'
+  }
+  return '보완적 관계'
+}
 
 // 요청 인터페이스
 interface CompatibilityFortuneRequest {
@@ -54,8 +217,9 @@ serve(async (req) => {
       person2_name
     })
 
-    // 캐시 확인 (Deno 네이티브 btoa 사용)
-    const cacheKey = `compatibility_fortune_${btoa(`${person1_name}_${person1_birth_date}_${person2_name}_${person2_birth_date}`).slice(0, 50)}`
+    // 캐시 확인 (UTF-8 안전한 SHA-256 해시)
+    const hash = await createHash(`${person1_name}_${person1_birth_date}_${person2_name}_${person2_birth_date}`)
+    const cacheKey = `compatibility_fortune_${hash}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')
@@ -87,6 +251,7 @@ serve(async (req) => {
 7. 주의점: 관계에서 주의해야 할 점 3가지
 8. 조언: 더 좋은 관계를 위한 조언 3가지
 9. 궁합 키워드: 관계를 한 단어로 표현
+10. 연애 스타일: 각 사람의 연애 스타일 (로맨틱형/현실형/자유형/안정형 등)과 스타일 조합 분석
 
 긍정적이면서도 현실적인 관점으로 조언해주세요.`
 
@@ -130,31 +295,108 @@ serve(async (req) => {
       // ✅ Premium 여부에 따라 Blur 처리
       const isBlurred = !isPremium
       const blurredSections = isBlurred
-        ? ['personality_match', 'love_match', 'marriage_match', 'communication_match', 'strengths', 'cautions', 'advice']
+        ? ['detailed_scores', 'analysis', 'advice']  // Flutter UI의 sectionKey와 일치
         : []
 
+      console.log(`[Compatibility] 🔐 Blur 처리 - isPremium: ${isPremium}, isBlurred: ${isBlurred}, blurredSections: ${blurredSections.length}개`)
+
+      // 조언 데이터 처리 (List → String 변환)
+      const adviceData = parsedResponse.조언 || parsedResponse.advice || ['서로 배려', '대화 자주', '함께 시간']
+      const adviceString = Array.isArray(adviceData)
+        ? adviceData.join('\n• ')
+        : adviceData
+
+      console.log(`[Compatibility] 📝 조언 데이터 처리 완료 - 길이: ${adviceString?.length || 0}자`)
+
+      // ✅ 새로운 궁합 항목 계산
+      const nameCompatibility = calculateNameCompatibility(person1_name, person2_name)
+
+      const zodiacAnimal1 = getZodiacAnimal(person1_birth_date)
+      const zodiacAnimal2 = getZodiacAnimal(person2_birth_date)
+      const zodiacCompat = getZodiacCompatibility(zodiacAnimal1, zodiacAnimal2)
+
+      const starSign1 = getZodiacSign(person1_birth_date)
+      const starSign2 = getZodiacSign(person2_birth_date)
+      const starCompat = getStarSignCompatibility(starSign1, starSign2)
+
+      const birthNumber1 = calculateBirthNumberSum(person1_birth_date)
+      const birthNumber2 = calculateBirthNumberSum(person2_birth_date)
+      const destinyNumber = (birthNumber1 + birthNumber2) % 9 || 9
+
+      const ageDiff = getAgeDifference(person1_birth_date, person2_birth_date)
+
+      const season1 = getSeason(person1_birth_date)
+      const season2 = getSeason(person2_birth_date)
+      const seasonCompat = getSeasonCompatibility(season1, season2)
+
       // 응답 데이터 구조화
+      const overallCompatibilityText = parsedResponse.전반적인궁합 || parsedResponse.overall_compatibility || '좋은 궁합입니다.'
+
       fortuneData = {
         title: `${person1_name}♥${person2_name} 궁합`,
         fortune_type: 'compatibility',
         person1: { name: person1_name, birth_date: person1_birth_date },
         person2: { name: person2_name, birth_date: person2_birth_date },
-        overall_compatibility: parsedResponse.전반적인궁합 || parsedResponse.overall_compatibility || '좋은 궁합입니다.', // ✅ 무료: 공개
-        personality_match: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.성격궁합 || parsedResponse.personality_match || '성격이 잘 맞습니다.'), // 🔒 유료
-        love_match: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.애정궁합 || parsedResponse.love_match || '애정이 깊습니다.'), // 🔒 유료
-        marriage_match: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.결혼궁합 || parsedResponse.marriage_match || '결혼에 적합합니다.'), // 🔒 유료
-        communication_match: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.소통궁합 || parsedResponse.communication_match || '소통이 원활합니다.'), // 🔒 유료
-        strengths: isBlurred ? ['🔒 프리미엄 전용'] : (parsedResponse.강점 || parsedResponse.strengths || ['서로 이해', '존중', '배려']), // 🔒 유료
-        cautions: isBlurred ? ['🔒 프리미엄 전용'] : (parsedResponse.주의점 || parsedResponse.cautions || ['작은 갈등 주의', '대화 중요', '서로 존중']), // 🔒 유료
-        advice: isBlurred ? ['🔒 프리미엄 전용'] : (parsedResponse.조언 || parsedResponse.advice || ['서로 배려', '대화 자주', '함께 시간']), // 🔒 유료
+        content: overallCompatibilityText, // ✅ Flutter의 fortune.content에 매핑됨
+        overall_compatibility: overallCompatibilityText, // ✅ 무료: 공개
+        // ✅ 블러 처리: 빈 문자열 대신 실제 데이터 저장 (UnifiedBlurWrapper가 처리)
+        personality_match: parsedResponse.성격궁합 || parsedResponse.personality_match || '성격이 잘 맞습니다.',
+        love_match: parsedResponse.애정궁합 || parsedResponse.love_match || '애정이 깊습니다.',
+        marriage_match: parsedResponse.결혼궁합 || parsedResponse.marriage_match || '결혼에 적합합니다.',
+        communication_match: parsedResponse.소통궁합 || parsedResponse.communication_match || '소통이 원활합니다.',
+        strengths: parsedResponse.강점 || parsedResponse.strengths || ['서로 이해', '존중', '배려'],
+        cautions: parsedResponse.주의점 || parsedResponse.cautions || ['작은 갈등 주의', '대화 중요', '서로 존중'],
+        advice: `• ${adviceString}`,
         compatibility_keyword: parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '천생연분', // ✅ 무료: 공개
         score: parsedResponse.궁합점수 || Math.floor(Math.random() * 30) + 70, // ✅ 무료: 공개 (70-100)
+        love_style: parsedResponse.연애스타일 || parsedResponse.love_style || null, // 연애 스타일 (LLM 생성)
+        // ✅ 새로운 궁합 항목들 (무료 공개)
+        name_compatibility: nameCompatibility, // 이름 궁합 숫자 (0-99)
+        zodiac_animal: {
+          person1: zodiacAnimal1,
+          person2: zodiacAnimal2,
+          score: zodiacCompat.score,
+          message: zodiacCompat.message
+        },
+        star_sign: {
+          person1: starSign1,
+          person2: starSign2,
+          score: starCompat.score,
+          message: starCompat.message
+        },
+        destiny_number: {
+          number: destinyNumber,
+          meaning: getDestinyNumberMeaning(destinyNumber)
+        },
+        age_difference: ageDiff,
+        season: {
+          person1: season1,
+          person2: season2,
+          message: seasonCompat
+        },
         timestamp: new Date().toISOString(),
         isBlurred, // ✅ Blur 상태
         blurredSections, // ✅ Blur 처리된 섹션 목록
       }
 
-      console.log(`[Compatibility] Result generated - Blurred: ${isBlurred}, Sections: ${blurredSections.length}`)
+      console.log(`[Compatibility] ✅ 응답 데이터 구조화 완료`)
+      console.log(`[Compatibility]   📊 전체 궁합 점수: ${fortuneData.score}점`)
+      console.log(`[Compatibility]   💑 전반적인 궁합: ${fortuneData.overall_compatibility?.substring(0, 50)}...`)
+      console.log(`[Compatibility]   👥 성격 궁합: ${fortuneData.personality_match?.substring(0, 30)}...`)
+      console.log(`[Compatibility]   💘 애정 궁합: ${fortuneData.love_match?.substring(0, 30)}...`)
+      console.log(`[Compatibility]   💍 결혼 궁합: ${fortuneData.marriage_match?.substring(0, 30)}...`)
+      console.log(`[Compatibility]   💬 소통 궁합: ${fortuneData.communication_match?.substring(0, 30)}...`)
+      console.log(`[Compatibility]   ✨ 강점: ${fortuneData.strengths?.length}개`)
+      console.log(`[Compatibility]   ⚠️  주의점: ${fortuneData.cautions?.length}개`)
+      console.log(`[Compatibility]   💡 조언: ${fortuneData.advice?.length}자`)
+      console.log(`[Compatibility]   🆕 새 궁합 항목:`)
+      console.log(`[Compatibility]     - 이름 궁합: ${fortuneData.name_compatibility}%`)
+      console.log(`[Compatibility]     - 띠 궁합: ${fortuneData.zodiac_animal.person1} × ${fortuneData.zodiac_animal.person2} (${fortuneData.zodiac_animal.score}점)`)
+      console.log(`[Compatibility]     - 별자리: ${fortuneData.star_sign.person1} × ${fortuneData.star_sign.person2} (${fortuneData.star_sign.score}점)`)
+      console.log(`[Compatibility]     - 운명수: ${fortuneData.destiny_number.number}`)
+      console.log(`[Compatibility]     - 나이차: ${fortuneData.age_difference.years}살`)
+      console.log(`[Compatibility]     - 계절: ${fortuneData.season.person1} × ${fortuneData.season.person2}`)
+      console.log(`[Compatibility]   🔐 Blur: ${isBlurred}, Sections: ${blurredSections.length}개`)
 
       // 결과 캐싱
       await supabase

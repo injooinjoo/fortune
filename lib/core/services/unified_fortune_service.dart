@@ -544,15 +544,64 @@ class UnifiedFortuneService {
             }
 
             final dreamData = dreamResponseData['data'] as Map<String, dynamic>;
+
+            // 🔍 디버그: API 응답 확인
+            Logger.info('[UnifiedFortune] 🔍 Dream API Response:');
+            Logger.info('[UnifiedFortune]   - isBlurred: ${dreamData['isBlurred']}');
+            Logger.info('[UnifiedFortune]   - blurredSections: ${dreamData['blurredSections']}');
+            Logger.info('[UnifiedFortune]   - isPremium (request): ${inputConditions['isPremium']}');
+
             return FortuneResult(
               type: 'dream',
               title: dreamData['interpretation'] as String? ?? '꿈 해몽',
               summary: {'message': dreamData['interpretation'] as String? ?? '해몽 완료'},
               data: dreamData,
               createdAt: DateTime.now(),
+              isBlurred: dreamData['isBlurred'] as bool? ?? false,
+              blurredSections: dreamData['blurredSections'] != null
+                  ? List<String>.from(dreamData['blurredSections'] as List)
+                  : [],
             );
           } on FunctionException catch (e) {
             Logger.error('[UnifiedFortune] ❌ Dream Fortune API 에러');
+            Logger.error('[UnifiedFortune]   - Status: ${e.status}');
+            Logger.error('[UnifiedFortune]   - Details: ${e.details}');
+            Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');
+            rethrow;
+          }
+
+        case 'biorhythm':
+          // Biorhythm Fortune Edge Function 직접 호출
+          Logger.info('[UnifiedFortune] 🔄 Biorhythm Fortune API 호출 시작');
+          Logger.info('[UnifiedFortune] 📋 Request Body: ${jsonEncode(inputConditions)}');
+
+          try {
+            final biorhythmResponse = await _supabase.functions.invoke(
+              'fortune-biorhythm',
+              body: inputConditions,
+            );
+
+            if (biorhythmResponse.data == null) {
+              throw Exception('Biorhythm API 응답 데이터 없음');
+            }
+
+            Logger.info('[UnifiedFortune] ✅ Biorhythm Fortune API 호출 성공');
+
+            final biorhythmResponseData = biorhythmResponse.data as Map<String, dynamic>;
+            if (biorhythmResponseData['success'] != true) {
+              throw Exception(biorhythmResponseData['error'] ?? 'Biorhythm Fortune API 호출 실패');
+            }
+
+            final biorhythmData = biorhythmResponseData['data'] as Map<String, dynamic>;
+            return FortuneResult(
+              type: 'biorhythm',
+              title: biorhythmData['title'] as String? ?? '바이오리듬',
+              summary: biorhythmData['summary'] as Map<String, dynamic>? ?? {},
+              data: biorhythmData,
+              createdAt: DateTime.now(),
+            );
+          } on FunctionException catch (e) {
+            Logger.error('[UnifiedFortune] ❌ Biorhythm Fortune API 에러');
             Logger.error('[UnifiedFortune]   - Status: ${e.status}');
             Logger.error('[UnifiedFortune]   - Details: ${e.details}');
             Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');

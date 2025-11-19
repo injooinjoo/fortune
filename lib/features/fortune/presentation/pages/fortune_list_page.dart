@@ -611,10 +611,24 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ...favoriteCategories.asMap().entries.map((entry) {
-                      return FortuneListTile(
-                        key: ValueKey('favorite_${entry.value.type}'),
-                        category: entry.value,
-                        onTap: () => _handleCategoryTap(entry.value),
+                      return Row(
+                        children: [
+                          // ❌ 별 아이콘 제거 (요청사항)
+                          // const SizedBox(width: 8),
+                          // Icon(
+                          //   Icons.star,
+                          //   size: 20,
+                          //   color: Colors.amber,
+                          // ),
+                          // const SizedBox(width: 4),
+                          Expanded(
+                            child: FortuneListTile(
+                              key: ValueKey('favorite_${entry.value.type}'),
+                              category: entry.value,
+                              onTap: () => _handleCategoryTap(entry.value),
+                            ),
+                          ),
+                        ],
                       );
                     }),
                     // 얇은 구분선
