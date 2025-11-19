@@ -3,7 +3,6 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:fortune/core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 class TalentShareCard extends StatelessWidget {
   final String userName;

@@ -442,7 +442,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

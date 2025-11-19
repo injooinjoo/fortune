@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import '../../../screens/home/fortune_story_viewer.dart';
 import '../../../services/weather_service.dart';
 

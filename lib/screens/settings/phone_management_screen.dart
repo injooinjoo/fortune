@@ -6,7 +6,6 @@ import '../../core/theme/toss_design_system.dart';
 import '../../services/phone_auth_service.dart';
 import '../onboarding/steps/phone_step.dart';
 import '../onboarding/steps/phone_verification_step.dart';
-import '../../core/theme/typography_unified.dart';
 
 class PhoneManagementScreen extends ConsumerStatefulWidget {
   const PhoneManagementScreen({super.key});

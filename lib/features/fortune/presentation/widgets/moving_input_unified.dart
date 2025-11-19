@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/components/toss_card.dart';

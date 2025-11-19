@@ -5,6 +5,7 @@
 /// - 설명 (이 재능이 뭔지)
 /// - 발현 모습 (어떻게 나타나는지)
 /// - 개발 가이드 (어떻게 키울지)
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';

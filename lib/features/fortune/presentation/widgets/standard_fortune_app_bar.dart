@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/typography_unified.dart';
 
 /// 표준 운세 페이지 AppBar

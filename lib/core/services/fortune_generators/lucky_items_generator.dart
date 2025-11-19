@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
 

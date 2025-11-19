@@ -2,10 +2,10 @@
 ///
 /// 프로필 정보는 자동으로 채워지고 접혀있음
 /// 선택이 필요한 항목만 열려있음
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,7 +19,6 @@ import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../../../../core/models/fortune_result.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
 

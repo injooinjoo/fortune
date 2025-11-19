@@ -409,7 +409,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               text: '초기화',
               onPressed: () async {
                 ref.read(crawlingResultProvider.notifier).reset();
-                await ref.refresh(crawlingStatsProvider);
+                ref.refresh(crawlingStatsProvider);
               },
               style: TossButtonStyle.secondary,
             ),

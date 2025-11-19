@@ -1137,7 +1137,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             FortuneButton.retry(
               onPressed: () async {
                 // Refresh the provider
-                await ref.refresh(allCelebritiesProvider);
+                ref.refresh(allCelebritiesProvider);
               },
             ),
           ],

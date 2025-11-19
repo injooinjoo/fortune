@@ -6,7 +6,6 @@ import '../pages/fortune_list_page.dart';
 
 
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 class FortuneListCard extends ConsumerStatefulWidget {
   final FortuneCategory category;

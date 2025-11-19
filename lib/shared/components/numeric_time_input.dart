@@ -13,13 +13,13 @@ class NumericTimeInput extends StatefulWidget {
   final bool required;
 
   const NumericTimeInput({
-    Key? key,
+    super.key,
     this.initialTime,
     required this.label,
     this.hint = 'HH:MM',
     required this.onTimeChanged,
     this.required = false,
-  }) : super(key: key);
+  });
 
   @override
   State<NumericTimeInput> createState() => _NumericTimeInputState();

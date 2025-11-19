@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/fortune_metadata.dart';
 import '../../../features/fortune/presentation/pages/dream_fortune_voice_page.dart';
 import '../../../features/fortune/presentation/pages/talisman_fortune_page.dart';
 // Removed unused pages: esports, dream_fortune, best_practices, lucky_job, lucky_sidejob,

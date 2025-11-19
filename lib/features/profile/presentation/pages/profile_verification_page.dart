@@ -3,11 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../shared/components/app_header.dart' show FontSize;
 
 class ProfileVerificationPage extends ConsumerStatefulWidget {
   const ProfileVerificationPage({super.key});

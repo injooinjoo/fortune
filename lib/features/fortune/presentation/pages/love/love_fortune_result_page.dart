@@ -7,7 +7,6 @@ import '../../../../../core/widgets/blurred_fortune_content.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
-import '../../../../../shared/components/toss_button.dart';
 import '../../../../../shared/components/floating_bottom_button.dart';
 import '../../../../../services/ad_service.dart'; // ✅ RewardedAd용
 import '../../../../../core/utils/logger.dart'; // ✅ 로그용

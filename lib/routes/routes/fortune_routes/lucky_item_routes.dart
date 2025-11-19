@@ -1,6 +1,5 @@
 import 'package:go_router/go_router.dart';
 import '../../../features/fortune/presentation/pages/lucky_items_page_unified.dart';
-import '../../../features/fortune/presentation/pages/lucky_items_results_page.dart';
 // Removed merged pages: lucky_outfit, lucky_series, five_blessings
 // All merged into /lucky-items in FortuneListPage
 

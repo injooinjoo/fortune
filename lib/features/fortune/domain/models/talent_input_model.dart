@@ -4,6 +4,7 @@
 /// - Phase 1: 사주 정보 (변하지 않는 것 - The Unchangeable)
 /// - Phase 2: 현재 상태 (환경으로 만들어진 것 - The Nurture)
 /// - Phase 3: 성향 선택 (선호하는 것 - The Preference)
+library;
 
 import 'package:flutter/material.dart';
 

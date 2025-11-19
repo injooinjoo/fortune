@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import 'fortune_card.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 /// 가족 운세 카드 컴포넌트 - 토스 디자인 시스템
 class FamilyFortuneCard extends StatelessWidget {

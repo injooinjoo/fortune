@@ -18,7 +18,7 @@ import '../widgets/saju_element_chart.dart';
 import '../widgets/manseryeok_display.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
-import '../../../../presentation/providers/ad_provider.dart'; // ✅ Phase 19-2
+// ✅ Phase 19-2
 
 /// 토스 스타일 전통 사주팔자 페이지
 class TraditionalSajuTossPage extends ConsumerStatefulWidget {

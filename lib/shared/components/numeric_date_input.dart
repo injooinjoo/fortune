@@ -14,14 +14,14 @@ class NumericDateInput extends StatefulWidget {
   final DateTime? lastDate;
 
   const NumericDateInput({
-    Key? key,
+    super.key,
     this.initialDate,
     required this.label,
     this.hint = 'YYYY-MM-DD',
     required this.onDateChanged,
     this.firstDate,
     this.lastDate,
-  }) : super(key: key);
+  });
 
   @override
   State<NumericDateInput> createState() => _NumericDateInputState();

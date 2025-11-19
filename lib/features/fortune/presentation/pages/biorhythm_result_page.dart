@@ -1,4 +1,4 @@
-import 'dart:ui'; // ImageFilter.blur용
+// ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
@@ -358,7 +358,7 @@ class BiorhythmData {
 
   // API 결과에서 생성
   factory BiorhythmData.fromApiResult(DateTime birthDate, FortuneResult fortuneResult) {
-    final data = fortuneResult.data as Map<String, dynamic>;
+    final data = fortuneResult.data;
     final today = DateTime.now();
     final totalDays = today.difference(birthDate).inDays;
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'dart:math' as math;
 import '../../domain/models/talisman_design.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';

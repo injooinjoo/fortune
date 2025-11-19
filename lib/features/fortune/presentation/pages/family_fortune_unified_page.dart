@@ -86,7 +86,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   FamilyConcern? _selectedConcern;
 
   // Step 2: 세부 질문 (다중 선택)
-  Set<String> _selectedQuestions = {};
+  final Set<String> _selectedQuestions = {};
 
   // Step 3: 가족 구성원 정보
   int _familyMemberCount = 1;

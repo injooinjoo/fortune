@@ -44,6 +44,7 @@ class DetailedFortune extends Fortune {
     );
   }
 
+  @override
   DetailedFortune copyWith({
     String? id,
     String? userId,

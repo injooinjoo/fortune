@@ -3,6 +3,7 @@
 /// Part 4: 평생 성장 가이드
 /// - 성장을 도와줄 행운의 요소
 /// - 대운(大運) 기반 시기 분석
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';

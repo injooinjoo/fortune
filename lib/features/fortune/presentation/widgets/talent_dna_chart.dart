@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/typography_unified.dart';
 import 'dart:math' as math;
 
 class TalentDnaChart extends StatelessWidget {

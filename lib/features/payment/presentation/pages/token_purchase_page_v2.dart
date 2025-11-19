@@ -418,7 +418,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
       }
 
       // 구매 완료 후 토큰 잔액 새로고침
-      await ref.refresh(tokenBalanceProvider);
+      ref.refresh(tokenBalanceProvider);
       
       // 결과 페이지로 이동
       if (mounted) {
@@ -454,7 +454,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
       await _purchaseService.restorePurchases();
 
       // 복원 후 토큰 잔액 새로고침
-      await ref.refresh(tokenBalanceProvider);
+      ref.refresh(tokenBalanceProvider);
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

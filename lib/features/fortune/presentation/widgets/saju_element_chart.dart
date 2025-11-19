@@ -3,7 +3,6 @@ import '../../../../core/theme/toss_design_system.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 /// 오행 균형 차트 위젯
 class SajuElementChart extends StatefulWidget {

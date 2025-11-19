@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 /// 신의 응답을 기다리는 신비로운 로딩 애니메이션
 class DivineLoadingAnimation extends StatefulWidget {

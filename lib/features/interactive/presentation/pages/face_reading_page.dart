@@ -413,7 +413,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
         amount: _requiredTokens);
 
       // 토큰 잔액 새로고침
-      await ref.refresh(tokenBalanceProvider);
+      ref.refresh(tokenBalanceProvider);
       
       setState(() {
         _analysisResult = '''

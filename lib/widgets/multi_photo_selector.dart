@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../core/theme/toss_design_system.dart';
-import '../core/theme/typography_unified.dart';
 
 /// 여러 장의 사진을 선택할 수 있는 위젯
 class MultiPhotoSelector extends StatefulWidget {

@@ -4,14 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/wish_fortune_result.dart';
 import './wish_fortune_result_tinder.dart';
-import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../../../../core/models/fortune_result.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {

@@ -4,6 +4,7 @@
 /// - API 호출로 상세 재능 분석 데이터 수신
 /// - 블러 처리된 프리미엄 콘텐츠
 /// - 광고 시청 후 블러 해제
+library;
 
 import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
@@ -16,9 +17,6 @@ import '../../domain/models/sipseong_talent.dart';
 import '../../domain/models/saju_elements.dart';
 import '../../data/services/saju_calculator.dart';
 import '../widgets/standard_fortune_app_bar.dart';
-import '../widgets/talent_top3_widget.dart';
-import '../widgets/career_roadmap_widget.dart';
-import '../widgets/growth_timeline_widget.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
@@ -859,7 +857,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                             ),
                           ],
                         ),
-                      )).toList(),
+                      )),
                     ],
                     // ✅ 신규: 수익화 전략
                     if (monetizationStrategy.isNotEmpty) ...[
@@ -950,13 +948,13 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                             ),
                           ],
                         ),
-                      )).toList(),
+                      )),
                     ],
                   ],
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -1105,7 +1103,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                             ),
                           ],
                         ),
-                      )).toList(),
+                      )),
                     ],
                     // ✅ 신규: 체크리스트
                     if (checklist.isNotEmpty) ...[
@@ -1139,7 +1137,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                             ),
                           ],
                         ),
-                      )).toList(),
+                      )),
                     ],
                     // ✅ 신규: 기대 효과
                     if (expectedOutcome.isNotEmpty) ...[
@@ -1179,7 +1177,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -1471,7 +1469,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                   ),
                 ],
               ),
-            )).toList(),
+            )),
             const SizedBox(height: 12),
           ],
           if (challenges.isNotEmpty) ...[
@@ -1500,7 +1498,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                   ),
                 ],
               ),
-            )).toList(),
+            )),
           ],
         ],
       ),
@@ -1610,7 +1608,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                             ),
                           ],
                         ),
-                      )).toList(),
+                      )),
                     ],
                     if (skillsToAcquire.isNotEmpty) ...[
                       const SizedBox(height: 10),
@@ -1645,7 +1643,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -1705,7 +1703,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                   ),
                 ),
               ),
-            )).toList(),
+            )),
             const SizedBox(height: 12),
           ],
           if (timeManagement.isNotEmpty) ...[
@@ -1759,7 +1757,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                   ),
                 ],
               ),
-            )).toList(),
+            )),
             const SizedBox(height: 12),
           ],
           if (recommendedCourses.isNotEmpty) ...[
@@ -1788,7 +1786,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                   ),
                 ],
               ),
-            )).toList(),
+            )),
             const SizedBox(height: 12),
           ],
           if (mentorshipAdvice.isNotEmpty) ...[

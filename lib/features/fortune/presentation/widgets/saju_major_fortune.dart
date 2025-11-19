@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 /// 대운 타임라인 위젯
 class SajuMajorFortune extends StatefulWidget {

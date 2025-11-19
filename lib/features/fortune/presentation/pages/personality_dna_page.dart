@@ -52,7 +52,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
 
   // ✅ 현재 조건의 해시값 생성
   String _getCurrentConditionsHash() {
-    return 'mbti:${_selectedMbti}|blood:${_selectedBloodType}|zodiac:${_selectedZodiac}|animal:${_selectedAnimal}';
+    return 'mbti:$_selectedMbti|blood:$_selectedBloodType|zodiac:$_selectedZodiac|animal:$_selectedAnimal';
   }
 
   // MBTI 옵션

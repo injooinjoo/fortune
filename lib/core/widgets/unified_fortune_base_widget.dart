@@ -15,7 +15,6 @@ import '../utils/haptic_utils.dart';
 import '../constants/soul_rates.dart';
 import '../../presentation/providers/providers.dart';
 import '../../shared/components/token_insufficient_modal.dart';
-import 'blurred_fortune_content.dart';
 
 /// UnifiedFortuneService를 사용하는 표준 운세 위젯
 ///

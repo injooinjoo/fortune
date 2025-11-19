@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/models/celebrity_saju.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
-import '../../core/theme/typography_unified.dart';
 
 class CelebritySajuInfoWidget extends StatelessWidget {
   final CelebritySaju celebrity;

@@ -1,4 +1,4 @@
-import 'dart:ui'; // ✅ Phase 16-1: ImageFilter.blur용
+// ✅ Phase 16-1: ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,7 +13,7 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../services/ad_service.dart';
-import '../../../../presentation/providers/ad_provider.dart'; // ✅ Phase 16-2
+// ✅ Phase 16-2
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/widgets/blurred_fortune_content.dart';
@@ -50,8 +50,8 @@ class _MbtiFortunePageState
   Map<String, dynamic>? _cognitiveFunctions;
 
   // ✅ Phase 16-3: Blur 상태 관리
-  bool _isBlurred = false;
-  List<String> _blurredSections = [];
+  final bool _isBlurred = false;
+  final List<String> _blurredSections = [];
 
   // ==================== MBTI Data ====================
 

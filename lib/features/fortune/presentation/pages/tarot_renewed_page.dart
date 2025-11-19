@@ -1,4 +1,4 @@
-import 'dart:ui'; // ✅ Phase 17-1: ImageFilter.blur용
+// ✅ Phase 17-1: ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,11 +13,10 @@ import '../widgets/tarot/tarot_spread_selector.dart';
 import '../widgets/tarot/tarot_multi_card_result.dart';
 import '../../domain/models/tarot_card_model.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../services/ad_service.dart';
-import '../../../../presentation/providers/ad_provider.dart'; // ✅ Phase 17-2
+// ✅ Phase 17-2
 import '../../../../shared/components/floating_bottom_button.dart';
 
 enum TarotFlowState {
@@ -45,8 +44,8 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   final TarotDeckType _selectedDeck = TarotDeckType.riderWaite; // 기본 덱
 
   // ✅ Phase 17-3: Blur 상태 관리
-  bool _isBlurred = false;
-  List<String> _blurredSections = [];
+  final bool _isBlurred = false;
+  final List<String> _blurredSections = [];
 
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;

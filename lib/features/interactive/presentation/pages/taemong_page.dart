@@ -376,7 +376,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
       }
 
       // 토큰 잔액 새로고침
-      await ref.refresh(tokenBalanceProvider);
+      ref.refresh(tokenBalanceProvider);
       
       setState(() {
         _analysisResult = '''

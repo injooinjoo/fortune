@@ -4,6 +4,7 @@
 /// - 추천 직업군 (1순위, 2순위 with reasons)
 /// - 추천 업무 환경 (Best/Worst)
 /// - 주의해야 할 함정 & 보완점
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';

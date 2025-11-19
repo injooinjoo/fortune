@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../core/utils/logger.dart';
-import '../../core/theme/typography_unified.dart';
 
 class OAuthWebViewBottomSheet extends StatefulWidget {
   final String oauthUrl;

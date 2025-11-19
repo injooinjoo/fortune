@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../services/notification/fcm_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/utils/haptic_utils.dart';

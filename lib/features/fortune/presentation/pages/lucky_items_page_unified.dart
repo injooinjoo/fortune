@@ -35,7 +35,7 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
   DateTime? _selectedBirthDate;
   String? _selectedBirthTime;
   String? _selectedGender;
-  List<String> _selectedInterests = [];
+  final List<String> _selectedInterests = [];
   List<AccordionInputSection> _sections = [];
   bool _isGenerating = false; // 운세 생성 중 플래그
   bool _hasUserUnlockedBlur = false; // 사용자가 광고를 보고 블러를 해제했는지 여부
@@ -584,7 +584,7 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
           }
         },
       );
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('[LuckyItems] ❌ 광고 표시 실패: $e');
 
       // 에러 발생 시에도 블러 해제 (사용자 경험 우선)

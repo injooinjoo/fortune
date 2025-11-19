@@ -3,6 +3,7 @@
 /// 오행: 목(木), 화(火), 토(土), 금(金), 수(水)
 /// - 사주에서 추출된 오행 분포를 모델링
 /// - 오각형 차트로 시각화
+library;
 
 import 'package:flutter/material.dart';
 import '../../../../core/theme/typography_unified.dart';

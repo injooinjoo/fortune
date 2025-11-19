@@ -1,4 +1,4 @@
-import 'dart:ui'; // ✅ ImageFilter.blur용 (deprecated - UnifiedBlurWrapper 사용)
+// ✅ ImageFilter.blur용 (deprecated - UnifiedBlurWrapper 사용)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

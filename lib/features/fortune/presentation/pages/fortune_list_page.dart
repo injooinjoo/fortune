@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../presentation/providers/providers.dart';
-import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';

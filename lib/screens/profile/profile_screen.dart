@@ -738,7 +738,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
       ),
-    );
+    )
   }
 
   // Helper Methods

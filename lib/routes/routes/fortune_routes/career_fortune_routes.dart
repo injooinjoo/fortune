@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../features/fortune/presentation/pages/talent_fortune_input_page.dart';
 import '../../../features/fortune/presentation/pages/talent_fortune_results_page.dart';
