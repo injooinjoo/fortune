@@ -15,7 +15,7 @@ class BiorhythmFortuneConditions extends FortuneConditions {
     return 'birthDate:${birthDate.hashCode}';
   }
 
-  @override
+  /// 조건 해시 가져오기 (캐시 키로 사용)
   String getConditionsHash() {
     // 바이오리듬은 생년월일만 중요 (날짜는 제외)
     return birthDate;
@@ -44,18 +44,10 @@ class BiorhythmFortuneConditions extends FortuneConditions {
       'fortune_type': 'biorhythm',
       'birthDate': birthDate,
       'name': name,
-      'date': _formatDate(DateTime.now()),
+      'date': formatDate(DateTime.now()),
     };
   }
 
-  @override
+  /// Equatable 호환용 속성 목록
   List<Object?> get props => [birthDate, name];
-
-  /// 날짜 포맷팅 (YYYY-MM-DD)
-  String _formatDate(DateTime date) {
-    final year = date.year.toString();
-    final month = date.month.toString().padLeft(2, '0');
-    final day = date.day.toString().padLeft(2, '0');
-    return '$year-$month-$day';
-  }
 }

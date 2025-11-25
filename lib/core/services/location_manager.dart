@@ -23,9 +23,6 @@ class LocationManager {
   /// SharedPreferences 캐시 키
   static const String _cacheKey = 'last_location_cache';
 
-  /// 캐시 유효기간 (24시간)
-  static const Duration _cacheValidDuration = Duration(hours: 24);
-
   /// 현재 위치 캐시 (메모리)
   LocationInfo? _currentLocation;
 

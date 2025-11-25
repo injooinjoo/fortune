@@ -79,16 +79,6 @@
 		<dict>
 			<key>NSAllowsArbitraryLoads</key>
 			<false/>
-			<key>NSExceptionDomains</key>
-			<dict>
-				<key>api.fortune.com</key>
-				<dict>
-					<key>NSExceptionRequiresForwardSecrecy</key>
-					<true/>
-					<key>NSIncludesSubdomains</key>
-					<true/>
-				</dict>
-			</dict>
 		</dict>
 		<key>NSApplicationGroupIdentifier</key>
 		<string>group.com.beyond.fortune</string>
@@ -102,12 +92,8 @@
 		<string>This app needs access to photo library for face reading features.</string>
 		<key>NSSpeechRecognitionUsageDescription</key>
 		<string>Fortune AI가 음성을 텍스트로 변환하여 꿈 해몽을 제공하기 위해 음성 인식 권한이 필요합니다.</string>
-		<key>NSCalendarsUsageDescription</key>
-		<string>Fortune AI가 일정 기반 맞춤형 운세를 제공하기 위해 캘린더 접근 권한이 필요합니다.</string>
 		<key>NSCalendarsFullAccessUsageDescription</key>
-		<string>Fortune AI가 Google Calendar, iCloud Calendar 등의 일정을 분석하여 최적의 운세를 제공하기 위해 캘린더 전체 접근 권한이 필요합니다.</string>
-		<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
-		<string>Fortune AI가 중요한 운세 날짜를 캘린더에 저장하기 위해 쓰기 권한이 필요합니다.</string>
+		<string>Fortune AI가 일정을 분석하여 맞춤형 운세를 제공하고, 중요한 운세 날짜를 저장하기 위해 캘린더 접근 권한이 필요합니다.</string>
 		<key>NSSupportsLiveActivities</key>
 		<true/>
 		<key>NSSupportsLiveActivitiesFrequentUpdates</key>
@@ -122,17 +108,15 @@
 		<string>This app sends daily fortune notifications to keep you updated with your personalized fortunes.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Fortune AI가 현재 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
-		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>Fortune AI가 위치 기반 날씨 정보 및 맞춤형 운세 서비스를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
-		<key>NSLocationUsageDescription</key>
-		<string>Fortune AI가 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
 		<key>NSWidgetExtensionBundleIdentifiers</key>
 		<array>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneWidget</string>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneLiveActivity</string>
 		</array>
+		<!-- SKAdNetwork: Essential networks for Google AdMob (12 identifiers) -->
 		<key>SKAdNetworkItems</key>
 		<array>
+			<!-- Google AdMob (required) -->
 			<dict>
 				<key>SKAdNetworkIdentifier</key>
 				<string>cstr6suwn9.skadnetwork</string>
@@ -149,6 +133,20 @@
 				<key>SKAdNetworkIdentifier</key>
 				<string>2fnua5tdw4.skadnetwork</string>
 			</dict>
+			<!-- Firebase -->
+			<dict>
+				<key>SKAdNetworkIdentifier</key>
+				<string>v72qych5uu.skadnetwork</string>
+			</dict>
+			<dict>
+				<key>SKAdNetworkIdentifier</key>
+				<string>ludvb6z3bs.skadnetwork</string>
+			</dict>
+			<dict>
+				<key>SKAdNetworkIdentifier</key>
+				<string>cp8zw746q7.skadnetwork</string>
+			</dict>
+			<!-- Major ad networks -->
 			<dict>
 				<key>SKAdNetworkIdentifier</key>
 				<string>ydx93a7ass.skadnetwork</string>
@@ -163,71 +161,11 @@
 			</dict>
 			<dict>
 				<key>SKAdNetworkIdentifier</key>
-				<string>v72qych5uu.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>ludvb6z3bs.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>cp8zw746q7.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
 				<string>3sh42y64q3.skadnetwork</string>
 			</dict>
 			<dict>
 				<key>SKAdNetworkIdentifier</key>
 				<string>c6k4g5qg8m.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>s39g8k73mm.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>3qy4746246.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>f38h382jlk.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>hs6bdukanm.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>v4nxqhlyqp.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>wzmmz9fp6w.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>yclnxrl5pm.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>t38b2kh725.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>7ug5zh24hu.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>gta9lk7p23.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>vutu7akeur.skadnetwork</string>
-			</dict>
-			<dict>
-				<key>SKAdNetworkIdentifier</key>
-				<string>y5ghdn5j9k.skadnetwork</string>
 			</dict>
 		</array>
 		<key>StripePublishableKey</key>

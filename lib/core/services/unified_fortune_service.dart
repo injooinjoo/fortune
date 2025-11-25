@@ -515,31 +515,6 @@ class UnifiedFortuneService {
             createdAt: DateTime.now(),
           );
 
-        case 'compatibility':
-          // Compatibility Edge Function 직접 호출
-          Logger.info('[UnifiedFortune] 🔄 Compatibility API 호출 시작');
-
-          final compatibilityResponse = await _supabase.functions.invoke(
-            'fortune-compatibility',
-            body: inputConditions,
-          );
-
-          if (compatibilityResponse.data == null) {
-            throw Exception('Compatibility API 응답 데이터 없음');
-          }
-
-          Logger.info('[UnifiedFortune] ✅ Compatibility API 호출 성공');
-
-          final compatibilityData = compatibilityResponse.data as Map<String, dynamic>;
-          return FortuneResult(
-            type: 'compatibility',
-            title: compatibilityData['title'] as String? ?? '궁합 분석',
-            summary: compatibilityData['summary'] as Map<String, dynamic>? ?? {'message': '분석 완료'},
-            data: compatibilityData,
-            score: (compatibilityData['score'] as num?)?.toInt(),
-            createdAt: DateTime.now(),
-          );
-
         case 'face-reading':
           // Face Reading Edge Function 직접 호출
           Logger.info('[UnifiedFortune] 🔄 Face Reading API 호출 시작');

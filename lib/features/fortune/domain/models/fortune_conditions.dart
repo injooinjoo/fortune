@@ -43,7 +43,7 @@ abstract class FortuneConditions {
   Map<String, dynamic> buildAPIPayload();
 
   /// SHA256 해시 생성 헬퍼 (16자리)
-  String _sha256Hash(Object data) {
+  String sha256Hash(Object data) {
     final jsonString = jsonEncode(data);
     final bytes = utf8.encode(jsonString);
     final hash = sha256.convert(bytes);
@@ -51,7 +51,7 @@ abstract class FortuneConditions {
   }
 
   /// 날짜를 YYYY-MM-DD 형식으로 변환
-  String _formatDate(DateTime date) {
+  String formatDate(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }
