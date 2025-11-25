@@ -175,20 +175,39 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    const requestData = await req.json() as BlindDateRequest
-    const {
-      name, birthDate, gender, mbti,
-      meetingDate, meetingTime, meetingType, introducer,
-      importantQualities, agePreference, idealFirstDate,
-      confidence, concerns = [], isFirstBlindDate = false,
-      analysisType = 'basic',
-      photoUrls,
-      chatContent,
-      chatPlatform,
-      photoAnalysis,
-      userId,
-      isPremium = false // ✅ 프리미엄 사용자 여부
-    } = requestData
+    const requestData = await req.json() as any // Handle both camelCase and snake_case
+
+    // Support both camelCase (from Flutter) and snake_case
+    const name = requestData.name
+    const birthDate = requestData.birthDate || requestData.birth_date
+    const gender = requestData.gender
+    const mbti = requestData.mbti
+    const meetingDate = requestData.meetingDate || requestData.meeting_date
+    const meetingTime = requestData.meetingTime || requestData.meeting_time
+    const meetingType = requestData.meetingType || requestData.meeting_type
+    const introducer = requestData.introducer
+    const importantQualities = requestData.importantQualities || requestData.important_qualities || []
+    const agePreference = requestData.agePreference || requestData.age_preference
+    const idealFirstDate = requestData.idealFirstDate || requestData.ideal_first_date
+    const confidence = requestData.confidence
+    const concerns = requestData.concerns || []
+    const isFirstBlindDate = requestData.isFirstBlindDate || requestData.is_first_blind_date || false
+    const analysisType = requestData.analysisType || requestData.analysis_type || 'basic'
+    const photoUrls = requestData.photoUrls || requestData.photo_urls
+    // ✅ my_photos/partner_photos도 지원 (Base64 배열)
+    const myPhotos = requestData.my_photos || requestData.myPhotos || []
+    const partnerPhotos = requestData.partner_photos || requestData.partnerPhotos || []
+    const chatContent = requestData.chatContent || requestData.chat_content
+    const chatPlatform = requestData.chatPlatform || requestData.chat_platform
+    const photoAnalysis = requestData.photoAnalysis || requestData.photo_analysis
+    const userId = requestData.userId || requestData.user_id
+    const isPremium = requestData.isPremium ?? requestData.is_premium ?? false
+
+    console.log('📸 [BlindDate] Photo data:', {
+      hasPhotoUrls: !!photoUrls,
+      myPhotosCount: myPhotos.length,
+      partnerPhotosCount: partnerPhotos.length
+    })
 
     console.log('💎 [BlindDate] Premium 상태:', isPremium)
 
@@ -219,12 +238,21 @@ serve(async (req) => {
       let photoAnalysisResult: any = null;
       let chatAnalysisResult: any = null;
 
-      // 사진 분석 (새로운 방식)
+      // 사진 분석
       if (analysisType === 'photos' || analysisType === 'comprehensive') {
-        if (photoUrls?.myPhotos && photoUrls.myPhotos.length > 0) {
+        // ✅ 우선순위: my_photos/partner_photos (Base64 배열) > photoUrls (URL 배열)
+        const myPhotoData = myPhotos.length > 0 ? myPhotos.map(b64 => `data:image/jpeg;base64,${b64}`) : (photoUrls?.myPhotos || [])
+        const partnerPhotoData = partnerPhotos.length > 0 ? partnerPhotos.map(b64 => `data:image/jpeg;base64,${b64}`) : (photoUrls?.theirPhotos || [])
+
+        console.log('📸 [BlindDate] Analyzing photos:', {
+          myPhotoCount: myPhotoData.length,
+          partnerPhotoCount: partnerPhotoData.length
+        })
+
+        if (myPhotoData.length > 0) {
           photoAnalysisResult = await analyzePhotosWithVision(
-            photoUrls.myPhotos,
-            photoUrls.theirPhotos || []
+            myPhotoData,
+            partnerPhotoData
           );
         }
       }
@@ -265,23 +293,17 @@ ${photoAnalysis.matchingScore ? `- 매칭 확률: ${photoAnalysis.matchingScore}
 💬 대화 AI 분석 결과:
 - 상대방 호감도: ${chatAnalysisResult.interestLevel}/100
 - 대화 스타일: ${chatAnalysisResult.conversationStyle}
-- 개선 포인트: ${chatAnalysisResult.improvementTips.join(', ')}
-- 다음 대화 주제 추천: ${chatAnalysisResult.nextTopicSuggestions.join(', ')}
-${chatAnalysisResult.redFlags && chatAnalysisResult.redFlags.length > 0 ? `⚠️ 경고 신호: ${chatAnalysisResult.redFlags.join(', ')}` : ''}
+- 개선 포인트: ${Array.isArray(chatAnalysisResult.improvementTips) ? chatAnalysisResult.improvementTips.join(', ') : '없음'}
+- 다음 대화 주제 추천: ${Array.isArray(chatAnalysisResult.nextTopicSuggestions) ? chatAnalysisResult.nextTopicSuggestions.join(', ') : '없음'}
+${chatAnalysisResult.redFlags && Array.isArray(chatAnalysisResult.redFlags) && chatAnalysisResult.redFlags.length > 0 ? `⚠️ 경고 신호: ${chatAnalysisResult.redFlags.join(', ')}` : ''}
 ` : ''
 
-      const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: JSON.stringify({
-          model: 'gpt-5-nano-2025-08-07',
-          messages: [
-            {
-              role: 'system',
-              content: `당신은 연애와 소개팅 전문 상담사입니다. 소개팅의 성공 가능성을 분석하고 실질적인 조언을 제공합니다.
+      // ✅ LLM 모듈 사용 (OpenAI 직접 호출 대신)
+      const llm = LLMFactory.createFromConfig('blind-date')
+      const response = await llm.generate([
+        {
+          role: 'system',
+          content: `당신은 연애와 소개팅 전문 상담사입니다. 소개팅의 성공 가능성을 분석하고 실질적인 조언을 제공합니다.
 
 다음 JSON 형식으로 응답해주세요:
 {
@@ -306,10 +328,10 @@ ${chatAnalysisResult.redFlags && chatAnalysisResult.redFlags.length > 0 ? `⚠�
   "dontsList": ["하지말아야할 것1", "하지말아야할 것2"],
   "finalMessage": "마지막 응원 메시지 (100자 내외)"
 }`
-            },
-            {
-              role: 'user',
-              content: `이름: ${name}
+        },
+        {
+          role: 'user',
+          content: `이름: ${name}
 생년월일: ${birthDate}
 성별: ${gender}
 MBTI: ${mbti || '알 수 없음'}
@@ -321,33 +343,32 @@ MBTI: ${mbti || '알 수 없음'}
 - 소개 경로: ${introducer}
 
 선호 사항:
-- 중요 요소: ${importantQualities.join(', ')}
-- 나이 선호: ${agePreference}
-- 이상적 데이트: ${idealFirstDate}
+- 중요 요소: ${Array.isArray(importantQualities) && importantQualities.length > 0 ? importantQualities.join(', ') : '알 수 없음'}
+- 나이 선호: ${agePreference || '알 수 없음'}
+- 이상적 데이트: ${idealFirstDate || '알 수 없음'}
 
 자기 평가:
-- 자신감: ${confidence}
-- 걱정: ${concerns.join(', ') || '없음'}
+- 자신감: ${confidence || '알 수 없음'}
+- 걱정: ${Array.isArray(concerns) && concerns.length > 0 ? concerns.join(', ') : '없음'}
 - 첫 소개팅: ${isFirstBlindDate ? '예' : '아니오'}
 ${photoAnalysisText}${chatAnalysisText}
 현재 날짜: ${new Date().toLocaleDateString('ko-KR')}
 
 위 정보를 바탕으로 소개팅 성공 가능성을 분석하고 실질적인 조언을 제공해주세요.`
-            }
-          ],
-          response_format: { type: "json_object" },
-          temperature: 0.7,
-          max_tokens: 1500
-        }),
-        signal: controller.signal
+        }
+      ], {
+        temperature: 0.7,
+        maxTokens: 1500,
+        jsonMode: true
       })
 
-      if (!openaiResponse.ok) {
-        throw new Error(`OpenAI API error: ${openaiResponse.status}`)
+      console.log(`✅ LLM (main fortune): ${response.provider}/${response.model} - ${response.latency}ms`)
+
+      if (!response.content) {
+        throw new Error('LLM API 응답 없음')
       }
 
-      const openaiResult = await openaiResponse.json()
-      const fortuneData = JSON.parse(openaiResult.choices[0].message.content)
+      const fortuneData = JSON.parse(response.content)
 
       // ✅ Blur 로직 적용
       const isBlurred = !isPremium

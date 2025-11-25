@@ -37,8 +37,11 @@ serve(async (req) => {
 
     console.log('💎 [AvoidPeople] Premium 상태:', isPremium)
 
+    // 날짜 컨텍스트 분석
+    const now = new Date()
+    const today = now.toISOString().split('T')[0]
+
     // 캐시 확인
-    const today = new Date().toISOString().split('T')[0]
     const cacheKey = `${userId || 'anonymous'}_avoid-people_${today}_${JSON.stringify({environment, moodLevel, stressLevel})}`
 
     const { data: cachedResult } = await supabaseClient
@@ -49,6 +52,7 @@ serve(async (req) => {
       .single()
 
     if (cachedResult) {
+      console.log('[AvoidPeople] ✅ 캐시된 결과 반환')
       return new Response(
         JSON.stringify({
           success: true,
@@ -60,16 +64,13 @@ serve(async (req) => {
 
     // ✅ LLM 모듈 사용
     const llm = LLMFactory.createFromConfig('avoid-people')
-
-    // 날짜 컨텍스트 분석
-    const today = new Date()
-    const dayOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'][today.getDay()]
-    const hour = today.getHours()
+    const dayOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'][now.getDay()]
+    const hour = now.getHours()
     const timeOfDay = hour < 12 ? '오전' : hour < 18 ? '오후' : '저녁'
-    const season = [12, 1, 2].includes(today.getMonth() + 1) ? '겨울' :
-                   [3, 4, 5].includes(today.getMonth() + 1) ? '봄' :
-                   [6, 7, 8].includes(today.getMonth() + 1) ? '여름' : '가을'
-    const isWeekend = today.getDay() === 0 || today.getDay() === 6
+    const season = [12, 1, 2].includes(now.getMonth() + 1) ? '겨울' :
+                   [3, 4, 5].includes(now.getMonth() + 1) ? '봄' :
+                   [6, 7, 8].includes(now.getMonth() + 1) ? '여름' : '가을'
+    const isWeekend = now.getDay() === 0 || now.getDay() === 6
 
     const systemPrompt = `당신은 심리학과 대인관계 전문가입니다. 사용자의 현재 상태, 일정, 그리고 오늘의 날짜/시간 정보를 종합하여 오늘 피해야 할 사람 유형을 분석하고 구체적인 전략을 제시하세요.
 
@@ -124,7 +125,7 @@ serve(async (req) => {
 criticalAvoidTypes는 3개, personalityTypes는 5개, situationTypes는 사용자 상황에 맞게 2-3개, safeTypes는 3개를 제공하세요.`
 
     const userPrompt = `📅 날짜 정보:
-- 날짜: ${today.toLocaleDateString('ko-KR')}
+- 날짜: ${now.toLocaleDateString('ko-KR')}
 - 요일: ${dayOfWeek} (${isWeekend ? '주말' : '평일'})
 - 시간대: ${timeOfDay}
 - 계절: ${season}

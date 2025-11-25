@@ -13,10 +13,10 @@ serve(async (req) => {
 
   try {
     const requestData = await req.json()
-    const { 
+    const {
       userId,
       name,
-      birthDate, 
+      birthDate,
       birthTime,
       gender,
       isLunar,
@@ -24,20 +24,25 @@ serve(async (req) => {
       bloodType,
       zodiacSign,
       zodiacAnimal,
-      location,
+      location,  // 옵셔널 위치 정보 (deprecated)
+      userLocation,  // ✅ LocationManager에서 전달받은 실제 사용자 위치
       period = 'today',
       date
     } = requestData
 
+    console.log('📍 [Time] 사용자 위치:', userLocation || location || '미제공')
+
     // 클라이언트에서 전달받은 날짜 또는 한국 시간대로 현재 날짜 생성
-    const targetDate = date 
-      ? new Date(date) 
+    const targetDate = date
+      ? new Date(date)
       : new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}))
-    
+
     const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][targetDate.getDay()]
-    
+
     // 지역 정보 처리
-    const processedLocation = location || '서울'
+    // ✅ userLocation 우선 사용, 없으면 location, 둘 다 없으면 기본값 (강남구)
+    const rawLocation = userLocation || location || '강남구'
+    const processedLocation = rawLocation
     
     // 기간별 기본 점수 생성
     const generateBaseScore = () => {

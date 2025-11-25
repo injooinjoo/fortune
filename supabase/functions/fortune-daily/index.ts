@@ -205,21 +205,25 @@ serve(async (req) => {
       bloodType,
       zodiacSign,
       zodiacAnimal,
-      location,  // 옵셔널 위치 정보
+      location,  // 옵셔널 위치 정보 (deprecated)
+      userLocation,  // ✅ LocationManager에서 전달받은 실제 사용자 위치
       date,      // 클라이언트에서 전달받은 날짜
       isPremium = false // ✅ 프리미엄 사용자 여부
     } = requestData
 
     console.log('💎 [Daily] Premium 상태:', isPremium)
+    console.log('📍 [Daily] 사용자 위치:', userLocation || location || '미제공')
 
     // 클라이언트에서 전달받은 날짜 또는 한국 시간대로 현재 날짜 생성
-    const today = date 
-      ? new Date(date) 
+    const today = date
+      ? new Date(date)
       : new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}))
     const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][today.getDay()]
-    
+
     // 지역 정보 처리 (영어를 한글로, 광역시/도 단위로)
-    const processedLocation = location ? processLocation(location) : '서울'
+    // ✅ userLocation 우선 사용, 없으면 location, 둘 다 없으면 기본값 (강남구)
+    const rawLocation = userLocation || location || '강남구'
+    const processedLocation = processLocation(rawLocation)
     
     // 날짜 기반 시드를 생성하여 매일 다른 운세가 나오도록 함
     const dateSeed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()

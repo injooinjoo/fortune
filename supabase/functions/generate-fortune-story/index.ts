@@ -69,15 +69,18 @@ serve(async (req) => {
   try {
     const body = await req.json()
     console.log('📦 Request body:', JSON.stringify(body))
-    
-    const { 
-      userName, 
+
+    const {
+      userName,
       userProfile,
-      weather, 
-      fortune, 
-      date, 
-      storyConfig 
+      weather,
+      fortune,
+      date,
+      storyConfig,
+      userLocation  // ✅ LocationManager에서 전달받은 실제 사용자 위치
     } = body
+
+    console.log('📍 [Story] 사용자 위치:', userLocation || weather?.cityName || '미제공')
 
     // OpenAI API 키 확인
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
@@ -143,7 +146,7 @@ serve(async (req) => {
     "date": "2025-08-17",
     "weekday": "일요일",
     "timezone": "Asia/Seoul",
-    "city": "${weather?.cityName || '서울'}"
+    "city": "${userLocation || weather?.cityName || '위치 정보 없음'}"
   },
   "weatherSummary": {
     "icon": "☀",
@@ -294,7 +297,7 @@ ${userProfile ? `- 생년월일: ${userProfile.birthDate}
 날씨 정보:
 - 상태: ${weather.description}
 - 온도: ${weather.temperature}°C
-- 지역: ${weather.cityName} (이 지역명이 영어인 경우 한글로 변환하고, 상세 주소는 광역시/도 단위로 간소화하세요. 예: "Seoul" → "서울", "Suwon-si" → "경기도", "Gangnam-gu" → "서울")
+- 지역: ${userLocation || weather.cityName} (이 지역명이 영어인 경우 한글로 변환하고, 상세 주소는 광역시/도 단위로 간소화하세요. 예: "Seoul" → "서울", "Suwon-si" → "경기도", "Gangnam-gu" → "서울")
 
 운세 정보:
 - 점수: ${fortune.score}/100
@@ -405,7 +408,7 @@ ${userProfile?.birthDate ? `- 생년월일: ${userProfile.birthDate} (이 정보
         date: now.toISOString().split('T')[0],
         weekday: getWeekday(now.getDay()),
         timezone: "Asia/Seoul",
-        city: weather?.cityName || "서울"
+        city: userLocation || weather?.cityName || "위치 정보 없음"
       };
       
       overall = {
