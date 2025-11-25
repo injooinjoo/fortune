@@ -5,7 +5,8 @@ import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/services/debug_premium_service.dart';
-import '../../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../../core/widgets/unified_button.dart';
+import '../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../features/fortune/domain/models/conditions/love_fortune_conditions.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
@@ -13,7 +14,7 @@ import 'love_input_step1_page.dart';
 import 'love_input_step2_page.dart';
 import 'love_input_step3_page.dart';
 import 'love_input_step4_page.dart';
-import 'love_fortune_result_page.dart';
+import '../love/love_fortune_result_page.dart';
 
 class LoveFortuneMainPage extends ConsumerStatefulWidget {
   const LoveFortuneMainPage({super.key});
@@ -275,14 +276,16 @@ class _LoveFortuneMainPageState extends ConsumerState<LoveFortuneMainPage> {
     return ValueListenableBuilder<bool>(
       valueListenable: canProceedNotifier,
       builder: (context, canProceed, child) {
-        return TossFloatingProgressButtonPositioned(
+        return UnifiedButton.floating(
           text: buttonText,
-          currentStep: _currentStep + 1,
-          totalSteps: _totalSteps,
           onPressed: canProceed ? _nextStep : null,
           isEnabled: canProceed,
+          isLoading: false,
+          style: UnifiedButtonStyle.primary,
+          size: UnifiedButtonSize.large,
           showProgress: true,
-          isVisible: true,
+          currentStep: _currentStep + 1,
+          totalSteps: _totalSteps,
         );
       },
     );

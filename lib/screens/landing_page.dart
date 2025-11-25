@@ -15,7 +15,7 @@ import '../presentation/providers/theme_provider.dart';
 import '../core/utils/profile_validation.dart';
 import '../core/theme/toss_design_system.dart';
 import '../presentation/widgets/social_login_bottom_sheet.dart';
-import '../core/theme/typography_unified.dart';
+import '../core/providers/user_settings_provider.dart';
 
 class LandingPage extends ConsumerStatefulWidget {
   const LandingPage({super.key});
@@ -622,43 +622,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
     }
   }
 
-  Future<void> _handleInstagramLogin() async {
-    if (_isAuthProcessing) return;
 
-    setState(() => _isAuthProcessing = true);
-
-    try {
-      // Instagram login coming soon
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Instagram 로그인은 준비 중입니다.'),
-            backgroundColor: TossDesignSystem.warningOrange));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isAuthProcessing = false);
-      }
-    }
-  }
-
-  Future<void> _handleTikTokLogin() async {
-    if (_isAuthProcessing) return;
-
-    setState(() => _isAuthProcessing = true);
-
-    try {
-      // TikTok login coming soon
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('TikTok 로그인은 준비 중입니다.'),
-            backgroundColor: TossDesignSystem.warningOrange));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isAuthProcessing = false);
-      }
-    }
-  }
 
   void _startOnboarding() async {
     // Show social login bottom sheet first
@@ -722,14 +686,6 @@ class _LandingPageState extends ConsumerState<LandingPage>
         // 즉시 로그인 처리 (100ms 대기 제거)
         debugPrint('🟢 About to call _handleNaverLogin()');
         _handleNaverLogin();
-      },
-      onInstagramLogin: () {
-        Navigator.pop(context);
-        _handleInstagramLogin();
-      },
-      onTikTokLogin: () {
-        Navigator.pop(context);
-        _handleTikTokLogin();
       },
       isProcessing: _isAuthProcessing,
     );
@@ -963,6 +919,8 @@ class _LandingPageState extends ConsumerState<LandingPage>
 
     // Build 시 OAuth 상태 체크는 제거 (didChangeDependencies와 didChangeAppLifecycleState에서 처리)
     // build()에서 setState를 트리거하는 로직은 무한 리빌드를 유발할 수 있음
+    
+    final typography = ref.watch(typographyThemeProvider);
 
     if (_isCheckingAuth) {
       debugPrint('🅿️ Showing loading screen because _isCheckingAuth is true');
@@ -984,7 +942,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
               SizedBox(height: 16),
               Text(
                 '로그인 상태를 확인하고 있습니다...',
-                style: TypographyUnified.buttonMedium.copyWith(
+                style: typography.buttonMedium.copyWith(
                     color: Theme.of(context).brightness == Brightness.dark
                         ? TossDesignSystem.grayDark400
                         : TossDesignSystem.gray600),
@@ -1256,7 +1214,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
                         // App Name
                         Text(
                           'Fortune',
-                          style: TypographyUnified.heading1.copyWith(
+                          style: typography.displaySmall.copyWith(
                               fontWeight: FontWeight.w700,
                               color: Theme.of(context).colorScheme.onSurface,
                               letterSpacing: -1),
@@ -1267,7 +1225,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
                         // Subtitle
                         Text(
                           '매일 새로운 운세를 만나보세요',
-                          style: TypographyUnified.buttonMedium.copyWith(
+                          style: typography.buttonMedium.copyWith(
                               fontWeight: FontWeight.w400,
                               color: Theme.of(context).brightness ==
                                       Brightness.dark
@@ -1306,7 +1264,7 @@ class _LandingPageState extends ConsumerState<LandingPage>
                                 ),
                                 child: Text(
                                   '시작하기',
-                                  style: TypographyUnified.heading4.copyWith(
+                                  style: typography.headingSmall.copyWith(
                                       fontWeight: FontWeight.w600),
                                 ),
                               ),

@@ -7,7 +7,7 @@ import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/services/debug_premium_service.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/widgets/unified_button.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../fortune/domain/models/conditions/love_fortune_conditions.dart';
 import '../widgets/standard_fortune_app_bar.dart';
@@ -334,12 +334,10 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
                     completionButtonText: '연애운세 보기',
                   ),
             if (_canGenerate())
-              TossFloatingProgressButtonPositioned(
+              UnifiedButton.floating(
                 text: '🔮 연애운세 보기',
                 onPressed: _canGenerate() ? () => _analyzeAndShowResult() : null,
                 isEnabled: _canGenerate() && !_isLoading,
-                showProgress: false,
-                isVisible: _canGenerate(),
                 isLoading: _isLoading,
               ),
           ],

@@ -12,9 +12,8 @@ import '../../domain/models/health_fortune_model.dart';
 import '../../data/services/health_fortune_service.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -447,17 +446,17 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
               children: [
                 SizedBox(
                   width: double.infinity,
-                  child: TossButton(
+                  child: UnifiedButton(
                     text: '결과 공유하기',
                     onPressed: _shareResult,
-                    style: TossButtonStyle.secondary,
+                    style: UnifiedButtonStyle.secondary,
                     icon: const Icon(Icons.share, size: 20),
                   ),
                 ),
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
-                  child: TossButton(
+                  child: UnifiedButton(
                     text: '다시 분석하기',
                     onPressed: _restartAnalysis,
                     icon: const Icon(Icons.refresh, size: 20),
@@ -873,23 +872,19 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
 
     // Step 0: 컨디션 선택 페이지
     if (_currentStep == 0) {
-      return TossFloatingProgressButtonPositioned(
+      return UnifiedButton.floating(
         text: _currentCondition != null ? '다음 단계로' : '건너뛰기',
         onPressed: _goToNextStep,
         isEnabled: true,
-        showProgress: false,
-        isVisible: true,
       );
     }
 
     // Step 1: 신체 부위 선택 페이지
     if (_currentStep == 1) {
-      return TossFloatingProgressButtonPositioned(
+      return UnifiedButton.floating(
         text: '건강 분석하기',
         onPressed: _generateHealthFortune,
         isEnabled: !_isLoading,
-        showProgress: false,
-        isVisible: true,
         isLoading: _isLoading,
         icon: _isLoading ? null : const Icon(Icons.auto_awesome_rounded, size: 20, color: Colors.white),
       );

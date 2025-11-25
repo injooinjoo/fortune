@@ -1,7 +1,0 @@
-# Page snapshot
-
-```yaml
-- generic [ref=e1]:
-  - button "Enable accessibility" [ref=e2]
-  - img [ref=e3]
-```

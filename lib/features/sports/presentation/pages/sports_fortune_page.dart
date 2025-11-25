@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 
 class ExerciseFortunePage extends StatelessWidget {
   const ExerciseFortunePage({super.key});
@@ -136,10 +137,10 @@ class ExerciseFortunePage extends StatelessWidget {
               // 돌아가기 버튼
               SizedBox(
                 width: double.infinity,
-                child: TossButton(
+                child: UnifiedButton(
                   text: '돌아가기',
                   onPressed: () => Navigator.pop(context),
-                  style: TossButtonStyle.primary,
+                  style: UnifiedButtonStyle.primary,
                 ),
               ),
             ],

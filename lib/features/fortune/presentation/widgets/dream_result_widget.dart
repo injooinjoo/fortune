@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/theme/font_size_system.dart';
 import '../../../../core/models/fortune_result.dart';
 
 /// ChatGPT 스타일 대화형 꿈 해몽 결과 위젯
@@ -68,7 +69,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
     print('[DreamResult]   - data keys: ${data.keys.toList()}');
 
     // 데이터 추출
-    final dream = data['dream'] as String? ?? '';
+
     final interpretation = data['interpretation'] as String? ?? '';
     final mainTheme = (data['analysis'] as Map<String, dynamic>?)?['mainTheme'] as String? ?? '';
     final psychologicalInsight = (data['analysis'] as Map<String, dynamic>?)?['psychologicalInsight'] as String? ?? '';
@@ -188,7 +189,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
               child: Center(
                 child: Text(
                   icon,
-                  style: const TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: FontSizeSystem.heading4),
                 ),
               ),
             ),

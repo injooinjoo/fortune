@@ -169,7 +169,7 @@ class TalismanGenerationService {
           .eq('category', category.id)
           .count();
 
-      return response.count ?? 0;
+      return response.count;
     } catch (e) {
       Logger.error('[TalismanGen] ❌ Pool size check failed: $e', e);
       return 0;

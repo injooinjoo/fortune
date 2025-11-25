@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
@@ -587,11 +588,11 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
         top: false,
         child: SizedBox(
           width: double.infinity,
-          child: TossButton(
+          child: UnifiedButton(
             text: buttonText,
             onPressed: onPressed,
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
+            style: UnifiedButtonStyle.primary,
+            size: UnifiedButtonSize.large,
             icon: onPressed != null && !_isRevealing
                 ? Icon(_currentCardIndex == widget.selectedCards.length - 1 && _showInterpretation
                     ? Icons.auto_awesome

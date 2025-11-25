@@ -12,7 +12,8 @@ import '../../core/utils/haptic_utils.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../core/services/holiday_service.dart';
 import '../../core/models/holiday_models.dart';
-import '../../shared/components/toss_button.dart';
+import '../../core/widgets/unified_button.dart';
+import '../../core/widgets/unified_button_enums.dart';
 
 class TimeBasedFortuneBottomSheet extends ConsumerStatefulWidget {
   final VoidCallback? onDismiss;
@@ -594,15 +595,15 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           ),
         ],
       ),
-      child: TossButton(
+      child: UnifiedButton(
         text: canGetFortune 
             ? '운세 보기'
             : (_selectedDay == null 
                 ? '날짜를 선택해주세요'
                 : '선택할 수 없는 날짜입니다'),
         onPressed: (canGetFortune && !_isLoadingFortune) ? _onFortuneButtonPressed : null,
-        style: TossButtonStyle.primary,
-        size: TossButtonSize.large,
+        style: UnifiedButtonStyle.primary,
+        size: UnifiedButtonSize.large,
         isLoading: _isLoadingFortune,
         isEnabled: canGetFortune && !_isLoadingFortune,
         icon: !_isLoadingFortune ? const Icon(Icons.auto_awesome, size: 20, color: TossDesignSystem.white) : null,

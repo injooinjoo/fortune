@@ -6,13 +6,13 @@ import '../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../shared/components/app_header.dart'; // For FontSize enum
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../presentation/providers/tarot_deck_provider.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../widgets/mystical_background.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 
+import '../../../../core/widgets/unified_button.dart';
 class TarotDeckSelectionPage extends ConsumerStatefulWidget {
   final String? spreadType;
   final String? initialQuestion;
@@ -173,7 +173,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
               ),
               // FloatingBottomButton
               if (_tempSelectedDeckId != null)
-                FloatingBottomButton(
+                UnifiedButton.floating(
                   text: '선택 완료',
                   onPressed: _confirmSelection,
                   isLoading: false,

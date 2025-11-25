@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:universal_io/io.dart';
 import 'package:flutter/services.dart';
 import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/core/services/resilient_service.dart';

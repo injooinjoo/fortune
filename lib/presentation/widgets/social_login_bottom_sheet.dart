@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/toss_design_system.dart';
-import '../../core/theme/typography_unified.dart';
+import '../../core/providers/user_settings_provider.dart';
+import '../../core/theme/typography_theme.dart';
 
 /// 재사용 가능한 소셜 로그인 BottomSheet
 /// Landing Page, Onboarding 등 여러 곳에서 사용 가능
@@ -13,8 +15,6 @@ class SocialLoginBottomSheet {
     required VoidCallback onAppleLogin,
     required VoidCallback onKakaoLogin,
     required VoidCallback onNaverLogin,
-    required VoidCallback onInstagramLogin,
-    required VoidCallback onTikTokLogin,
     bool isProcessing = false,
   }) async {
     return await showModalBottomSheet<String>(
@@ -34,9 +34,13 @@ class SocialLoginBottomSheet {
             initialChildSize: 0.7,
             minChildSize: 0.5,
             maxChildSize: 0.9,
-            builder: (context, scrollController) => Theme(
-              data: ThemeData.light(),
-              child: Container(
+            builder: (context, scrollController) => Consumer(
+              builder: (context, ref, _) {
+                final typography = ref.watch(typographyThemeProvider);
+                
+                return Theme(
+                  data: ThemeData.light(),
+                  child: Container(
                 decoration: BoxDecoration(
                   color: TossDesignSystem.white,
                   borderRadius: BorderRadius.only(
@@ -67,14 +71,14 @@ class SocialLoginBottomSheet {
                             // Title
                             Text(
                               '시작하기',
-                              style: TypographyUnified.heading1.copyWith(
+                              style: typography.headingLarge.copyWith(
                                   fontWeight: FontWeight.w700,
                                   color: TossDesignSystem.gray900,
                                   letterSpacing: -0.5),
                             ),
                             SizedBox(height: 12),
                             Text('소셜 계정으로 간편하게 시작해보세요',
-                                style: TypographyUnified.buttonMedium.copyWith(
+                                style: typography.labelLarge.copyWith(
                                     color: TossDesignSystem.gray800)),
 
                             const SizedBox(height: 40),
@@ -84,38 +88,29 @@ class SocialLoginBottomSheet {
                               // Google Login
                               _buildSocialButton(
                                   onPressed: isProcessing ? null : onGoogleLogin,
-                                  type: 'google'),
+                                  type: 'google',
+                                  typography: typography),
                               const SizedBox(height: 12),
 
                               // Apple Login
                               _buildSocialButton(
                                   onPressed: isProcessing ? null : onAppleLogin,
-                                  type: 'apple'),
+                                  type: 'apple',
+                                  typography: typography),
                               const SizedBox(height: 12),
 
                               // Kakao Login
                               _buildSocialButton(
                                   onPressed: isProcessing ? null : onKakaoLogin,
-                                  type: 'kakao'),
+                                  type: 'kakao',
+                                  typography: typography),
                               const SizedBox(height: 12),
 
                               // Naver Login
                               _buildSocialButton(
                                   onPressed: isProcessing ? null : onNaverLogin,
-                                  type: 'naver'),
-                              const SizedBox(height: 12),
-
-                              // Instagram Login
-                              _buildSocialButton(
-                                  onPressed:
-                                      isProcessing ? null : onInstagramLogin,
-                                  type: 'instagram'),
-                              const SizedBox(height: 12),
-
-                              // TikTok Login
-                              _buildSocialButton(
-                                  onPressed: isProcessing ? null : onTikTokLogin,
-                                  type: 'tiktok')
+                                  type: 'naver',
+                                  typography: typography),
                             ]),
 
                             const SizedBox(height: 30),
@@ -129,7 +124,7 @@ class SocialLoginBottomSheet {
                             // Terms text
                             Text(
                                 '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                                style: TypographyUnified.labelMedium.copyWith(
+                                style: typography.labelMedium.copyWith(
                                     color: TossDesignSystem.gray600,
                                     height: 1.5),
                                 textAlign: TextAlign.center),
@@ -142,16 +137,18 @@ class SocialLoginBottomSheet {
                   ],
                 ),
               ),
-            ),
-          ),
-        );
+            );
+          },
+        ),
+      ),
+    );
       },
     );
   }
 
   /// 소셜 로그인 버튼 빌더
   static Widget _buildSocialButton(
-      {required VoidCallback? onPressed, required String type}) {
+      {required VoidCallback? onPressed, required String type, required TypographyTheme typography}) {
     Widget icon;
     String text;
 
@@ -192,22 +189,6 @@ class SocialLoginBottomSheet {
         );
         text = '네이버로 계속하기';
         break;
-      case 'instagram':
-        icon = SvgPicture.asset(
-          'assets/images/social/instagram.svg',
-          width: 24,
-          height: 24,
-        );
-        text = 'Instagram으로 계속하기';
-        break;
-      case 'tiktok':
-        icon = SvgPicture.asset(
-          'assets/images/social/tiktok.svg',
-          width: 24,
-          height: 24,
-        );
-        text = 'TikTok으로 계속하기';
-        break;
       default:
         icon = Container();
         text = '';
@@ -230,7 +211,7 @@ class SocialLoginBottomSheet {
             SizedBox(width: 12),
             Text(
               text,
-              style: TypographyUnified.buttonMedium.copyWith(
+              style: typography.labelLarge.copyWith(
                 fontWeight: FontWeight.w600,
                 color: TossDesignSystem.gray900,
                 fontFamily: 'TossProductSans',

@@ -1,6 +1,7 @@
 import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import 'dart:math';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../core/constants/tarot_minor_arcana.dart';
@@ -200,11 +201,11 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                         padding: const EdgeInsets.all(TossDesignSystem.spacingM),
                         child: SizedBox(
                           width: double.infinity,
-                          child: TossButton(
+                          child: UnifiedButton(
                             text: '닫기',
                             onPressed: () => Navigator.of(context).pop(),
-                            style: TossButtonStyle.primary,
-                            size: TossButtonSize.large,
+                            style: UnifiedButtonStyle.primary,
+                            size: UnifiedButtonSize.large,
                           ),
                         ),
                       ),

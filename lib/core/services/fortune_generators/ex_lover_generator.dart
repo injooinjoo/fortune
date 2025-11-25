@@ -15,7 +15,7 @@ class ExLoverGenerator {
     final user = supabase.auth.currentUser;
     final userProfile = user != null
         ? await supabase
-            .from('profiles')
+            .from('user_profiles')
             .select('name')
             .eq('id', user.id)
             .maybeSingle()

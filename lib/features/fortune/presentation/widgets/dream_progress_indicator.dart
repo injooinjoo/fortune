@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
@@ -112,11 +113,11 @@ class _DreamProgressIndicatorState extends State<DreamProgressIndicator> {
             children: [
               // Previous Button
               if (widget.currentStep > 0 && widget.onPrevious != null)
-                TossButton(
+                UnifiedButton(
                   text: '이전',
                   onPressed: widget.onPrevious,
-                  style: TossButtonStyle.ghost,
-                  size: TossButtonSize.medium,
+                  style: UnifiedButtonStyle.ghost,
+                  size: UnifiedButtonSize.medium,
                 )
               else
                 const SizedBox(width: 80),
@@ -131,11 +132,11 @@ class _DreamProgressIndicatorState extends State<DreamProgressIndicator> {
               
               // Next Button
               if (widget.currentStep < widget.totalSteps - 1 && widget.onNext != null)
-                TossButton(
+                UnifiedButton(
                   text: '다음',
                   onPressed: widget.onNext,
-                  style: TossButtonStyle.primary,
-                  size: TossButtonSize.medium,
+                  style: UnifiedButtonStyle.primary,
+                  size: UnifiedButtonSize.medium,
                 )
               else
                 const SizedBox(width: 80),

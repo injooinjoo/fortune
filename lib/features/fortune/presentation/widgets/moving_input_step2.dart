@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -234,11 +235,11 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
           SafeArea(
             child: SizedBox(
               width: double.infinity,
-              child: TossButton(
+              child: UnifiedButton(
                 text: '다음',
                 onPressed: _canContinue() ? _handleNext : null,
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
+                style: UnifiedButtonStyle.primary,
+                size: UnifiedButtonSize.large,
               ),
             ),
           ),

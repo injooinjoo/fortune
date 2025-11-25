@@ -7,7 +7,7 @@ import '../../../../../core/widgets/blurred_fortune_content.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
-import '../../../../../shared/components/floating_bottom_button.dart';
+import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../services/ad_service.dart'; // ✅ RewardedAd용
 import '../../../../../core/utils/logger.dart'; // ✅ 로그용
 
@@ -135,7 +135,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
 
             // 🎯 Floating Button
             if (_fortuneResult.isBlurred)
-              FloatingBottomButton(
+              UnifiedButton.floating(
                 text: '연애 조언 모두 보기',
                 onPressed: _showAdAndUnblur,
                 isLoading: false,

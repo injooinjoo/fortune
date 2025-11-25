@@ -1,5 +1,4 @@
 import 'package:device_calendar/device_calendar.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../utils/logger.dart';
 
 /// 디바이스 캘린더 연동 서비스
@@ -14,33 +13,27 @@ class DeviceCalendarService {
   /// 캘린더 권한 확인 및 요청
   Future<bool> requestCalendarPermission() async {
     try {
-      // ignore: deprecated_member_use
-      final permissionStatus = await Permission.calendar.status;
+      // device_calendar 플러그인의 내장 권한 관리 사용 (permission_handler 대신)
+      final permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
 
-      if (permissionStatus.isGranted) {
+      if (permissionsGranted.isSuccess && permissionsGranted.data == true) {
         Logger.info('[DeviceCalendar] 캘린더 권한 이미 허용됨');
         return true;
       }
 
-      if (permissionStatus.isDenied) {
-        // ignore: deprecated_member_use
-        final result = await Permission.calendar.request();
-        if (result.isGranted) {
-          Logger.info('[DeviceCalendar] 캘린더 권한 허용됨');
-          return true;
-        } else {
-          Logger.warning('[DeviceCalendar] 캘린더 권한 거부됨');
-          return false;
-        }
+      // 권한 요청 (iOS/Android 네이티브 다이얼로그 표시)
+      Logger.info('[DeviceCalendar] 캘린더 권한 요청 중...');
+      final result = await _deviceCalendarPlugin.requestPermissions();
+
+      if (result.isSuccess && result.data == true) {
+        Logger.info('[DeviceCalendar] ✅ 캘린더 권한 허용됨');
+        return true;
       }
 
-      if (permissionStatus.isPermanentlyDenied) {
-        Logger.warning('[DeviceCalendar] 캘린더 권한 영구 거부됨 - 설정으로 이동 필요');
-        await openAppSettings();
-        return false;
-      }
-
+      // 거부된 경우
+      Logger.warning('[DeviceCalendar] ❌ 캘린더 권한 거부됨 - 설정에서 수동 허용 필요');
       return false;
+
     } catch (e) {
       Logger.error('[DeviceCalendar] 권한 요청 실패', e);
       return false;

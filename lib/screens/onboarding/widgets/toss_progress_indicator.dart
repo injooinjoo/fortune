@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/theme/toss_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/toss_design_system.dart';
-import '../../../core/theme/typography_unified.dart';
+import '../../../core/providers/user_settings_provider.dart';
 
 class TossProgressIndicator extends StatelessWidget {
   final int totalSteps;
@@ -18,7 +18,7 @@ class TossProgressIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 4,
-      margin: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
+      margin: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: List.generate(totalSteps, (index) {
           final isCompleted = index < currentStep;
@@ -27,9 +27,10 @@ class TossProgressIndicator extends StatelessWidget {
           return Expanded(
             child: Container(
               height: 4,
-              margin: EdgeInsets.only(right: index < totalSteps - 1 ? TossTheme.spacingS : 0),
-              decoration: TossTheme.progressBarDecoration(
-                isActive: isCompleted || isCurrent,
+              margin: EdgeInsets.only(right: index < totalSteps - 1 ? 8 : 0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2),
+                color: (isCompleted || isCurrent) ? TossDesignSystem.primaryBlue : TossDesignSystem.gray200,
               ),
             ).animate(delay: Duration(milliseconds: index * 100))
              .scaleX(begin: 0, duration: 400.ms, curve: Curves.easeOut),
@@ -40,7 +41,7 @@ class TossProgressIndicator extends StatelessWidget {
   }
 }
 
-class TossStepIndicator extends StatelessWidget {
+class TossStepIndicator extends ConsumerWidget {
   final int currentStep;
   final int totalSteps;
   final List<String> stepTitles;
@@ -52,8 +53,10 @@ class TossStepIndicator extends StatelessWidget {
     this.stepTitles = const [],
   });
 
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final typography = ref.watch(typographyThemeProvider);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
@@ -74,14 +77,14 @@ class TossStepIndicator extends StatelessWidget {
                 stepTitles.isNotEmpty && currentStep <= stepTitles.length
                   ? stepTitles[currentStep - 1]
                   : '단계 $currentStep',
-                style: TypographyUnified.bodySmall.copyWith(
+                style: typography.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: TossDesignSystem.gray700,
                 ),
               ),
               Text(
                 '$currentStep / $totalSteps',
-                style: TypographyUnified.bodySmall.copyWith(
+                style: typography.bodySmall.copyWith(
                   fontWeight: FontWeight.w500,
                   color: TossDesignSystem.gray500,
                 ),

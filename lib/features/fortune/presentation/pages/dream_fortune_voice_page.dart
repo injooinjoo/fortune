@@ -4,18 +4,19 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/theme/font_size_system.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../services/ad_service.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../widgets/dream_voice_input_widget.dart';
 import '../widgets/dream_input_tip_card.dart';
 import '../widgets/dream_result_widget.dart';
 import '../providers/dream_voice_provider.dart';
 
+import '../../../../core/widgets/unified_button.dart';
 /// 음성 중심 꿈 해몽 페이지 (ChatGPT 앱 스타일)
 class DreamFortuneVoicePage extends ConsumerStatefulWidget {
   const DreamFortuneVoicePage({super.key});
@@ -57,7 +58,7 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
           '꿈 해몽',
           style: TextStyle(
             color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            fontSize: 18,
+            fontSize: FontSizeSystem.heading4,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -88,7 +89,7 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
 
           // 결과 화면일 때 블러 해제 버튼
           if (voiceState.state == VoicePageState.result && _isBlurred)
-            FloatingBottomButton(
+            UnifiedButton.floating(
               text: '광고 보고 전체 내용 확인하기',
               onPressed: _showAdAndUnblur,
               isEnabled: true,

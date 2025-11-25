@@ -242,7 +242,7 @@ class TypographyTheme {
   );
 
   /// Label Small (작은 라벨)
-  /// 사용처: ��션, 힌트, 타임스탬프
+  /// 사용처: 캡션, 힌트, 타임스탬프
   TextStyle get labelSmall => TextStyle(
     fontSize: _baseFontSizes['label_small']! * fontScale,
     height: 1.5,
@@ -250,6 +250,17 @@ class TypographyTheme {
     letterSpacing: 0,
     fontFamily: bodyFontFamily,
   );
+
+  // ==========================================
+  // DEPRECATED STYLES (Backward Compatibility)
+  // ==========================================
+
+  /// @deprecated Use labelLarge instead
+  TextStyle get buttonMedium => labelLarge;
+
+  /// @deprecated Use labelMedium instead
+  TextStyle get buttonSmall => labelMedium;
+
 
   /// Number Large (큰 숫자)
   /// 사용처: 금액, 중요한 수치

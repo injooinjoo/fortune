@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
 import '../../utils/logger.dart';
@@ -23,8 +22,9 @@ class ExamGenerator {
   /// ```
   static Future<FortuneResult> generate(
     Map<String, dynamic> inputConditions,
-    SupabaseClient supabase,
-  ) async {
+    SupabaseClient supabase, {
+    bool isPremium = false,
+  }) async {
     final userId = supabase.auth.currentUser?.id ?? 'unknown';
 
     // 📤 API 요청 준비
@@ -44,17 +44,21 @@ class ExamGenerator {
         'study_period': inputConditions['study_period'],
         'confidence': inputConditions['confidence'],
         'difficulty': inputConditions['difficulty'],
+        // 리뉴얼 필드
+        'exam_category': inputConditions['exam_category'],
+        if (inputConditions['exam_sub_type'] != null) 'exam_sub_type': inputConditions['exam_sub_type'],
+        if (inputConditions['target_score'] != null) 'target_score': inputConditions['target_score'],
+        'preparation_status': inputConditions['preparation_status'],
+        'time_point': inputConditions['time_point'],
+        'isPremium': isPremium,
       };
 
       Logger.info('[ExamGenerator] 📡 API 호출 중...');
 
       // Edge Function 호출
       final response = await supabase.functions.invoke(
-        'generate-fortune',
-        body: utf8.encode(jsonEncode(requestBody)),
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
+        'fortune-exam',
+        body: requestBody,
       );
 
       // 📥 응답 수신
@@ -71,7 +75,7 @@ class ExamGenerator {
 
       // 🔄 파싱
       Logger.info('[ExamGenerator] 🔄 응답 데이터 파싱 중...');
-      final result = _convertToFortuneResult(data, inputConditions);
+      final result = _convertToFortuneResult(data, inputConditions, isPremium);
 
       Logger.info('[ExamGenerator] ✅ 파싱 완료');
       Logger.info('[ExamGenerator]   📝 Title: ${result.title}');
@@ -88,35 +92,44 @@ class ExamGenerator {
   static FortuneResult _convertToFortuneResult(
     Map<String, dynamic> data,
     Map<String, dynamic> inputConditions,
+    bool isPremium,
   ) {
-    final fortuneData = data['fortune_data'] as Map<String, dynamic>? ?? {};
-    final content = data['content'] as String? ?? '';
-    final summary = data['summary'] as String? ?? '';
-    final score = data['score'] as int?;
+    final fortuneData = data['data'] as Map<String, dynamic>? ?? {};
+    final score = (fortuneData['score'] as num?)?.toInt();
+
+    // 블러 처리할 섹션 정의
+    final blurredSections = isPremium
+        ? <String>[]
+        : [
+            'pass_possibility',
+            'focus_subject',
+            'cautions',
+            'study_methods',
+            'dday_advice',
+            'lucky_hours',
+            'exam_keyword',
+            'strengths',
+            'positive_message'
+          ];
 
     return FortuneResult(
       type: 'exam',
-      title: '시험 운세',
+      title: fortuneData['title'] as String? ?? '시험 운세',
       summary: {
-        'message': summary,
         'score': score,
+        'overall_fortune': fortuneData['overall_fortune'],
         'exam_info': {
+          'category': inputConditions['exam_category'],
           'type': inputConditions['exam_type'],
           'date': inputConditions['exam_date'],
-          'confidence': inputConditions['confidence'],
+          'time_point': inputConditions['time_point'],
         },
       },
-      data: {
-        'content': content,
-        'fortune_data': fortuneData,
-        'exam_type': inputConditions['exam_type'],
-        'exam_date': inputConditions['exam_date'],
-        'study_period': inputConditions['study_period'],
-        'confidence': inputConditions['confidence'],
-        'difficulty': inputConditions['difficulty'],
-      },
+      data: fortuneData,
       score: score,
       createdAt: DateTime.now(),
+      isBlurred: !isPremium,
+      blurredSections: blurredSections,
     );
   }
 }

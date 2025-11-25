@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -153,11 +154,11 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
             child: SizedBox(
               width: double.infinity,
               height: 56,
-              child: TossButton(
+              child: UnifiedButton(
                 text: '소원 빌기',
                 onPressed: _canSubmit() ? _submitWish : null,
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
+                style: UnifiedButtonStyle.primary,
+                size: UnifiedButtonSize.large,
               ),
             ),
           ),

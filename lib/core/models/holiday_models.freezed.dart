@@ -567,7 +567,10 @@ mixin _$CalendarEventInfo {
   bool get isSpecial => throw _privateConstructorUsedError;
   bool get isAuspicious => throw _privateConstructorUsedError;
   int? get auspiciousScore => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
+  String? get description =>
+      throw _privateConstructorUsedError; // 디바이스 캘린더 연동 필드
+  bool get hasDeviceEvents => throw _privateConstructorUsedError;
+  int get deviceEventCount => throw _privateConstructorUsedError;
 
   /// Serializes this CalendarEventInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -594,7 +597,9 @@ abstract class $CalendarEventInfoCopyWith<$Res> {
       bool isSpecial,
       bool isAuspicious,
       int? auspiciousScore,
-      String? description});
+      String? description,
+      bool hasDeviceEvents,
+      int deviceEventCount});
 }
 
 /// @nodoc
@@ -621,6 +626,8 @@ class _$CalendarEventInfoCopyWithImpl<$Res, $Val extends CalendarEventInfo>
     Object? isAuspicious = null,
     Object? auspiciousScore = freezed,
     Object? description = freezed,
+    Object? hasDeviceEvents = null,
+    Object? deviceEventCount = null,
   }) {
     return _then(_value.copyWith(
       date: null == date
@@ -659,6 +666,14 @@ class _$CalendarEventInfoCopyWithImpl<$Res, $Val extends CalendarEventInfo>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      hasDeviceEvents: null == hasDeviceEvents
+          ? _value.hasDeviceEvents
+          : hasDeviceEvents // ignore: cast_nullable_to_non_nullable
+              as bool,
+      deviceEventCount: null == deviceEventCount
+          ? _value.deviceEventCount
+          : deviceEventCount // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -680,7 +695,9 @@ abstract class _$$CalendarEventInfoImplCopyWith<$Res>
       bool isSpecial,
       bool isAuspicious,
       int? auspiciousScore,
-      String? description});
+      String? description,
+      bool hasDeviceEvents,
+      int deviceEventCount});
 }
 
 /// @nodoc
@@ -705,6 +722,8 @@ class __$$CalendarEventInfoImplCopyWithImpl<$Res>
     Object? isAuspicious = null,
     Object? auspiciousScore = freezed,
     Object? description = freezed,
+    Object? hasDeviceEvents = null,
+    Object? deviceEventCount = null,
   }) {
     return _then(_$CalendarEventInfoImpl(
       date: null == date
@@ -743,6 +762,14 @@ class __$$CalendarEventInfoImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      hasDeviceEvents: null == hasDeviceEvents
+          ? _value.hasDeviceEvents
+          : hasDeviceEvents // ignore: cast_nullable_to_non_nullable
+              as bool,
+      deviceEventCount: null == deviceEventCount
+          ? _value.deviceEventCount
+          : deviceEventCount // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -759,7 +786,9 @@ class _$CalendarEventInfoImpl implements _CalendarEventInfo {
       this.isSpecial = false,
       this.isAuspicious = false,
       this.auspiciousScore,
-      this.description});
+      this.description,
+      this.hasDeviceEvents = false,
+      this.deviceEventCount = 0});
 
   factory _$CalendarEventInfoImpl.fromJson(Map<String, dynamic> json) =>
       _$$CalendarEventInfoImplFromJson(json);
@@ -785,10 +814,17 @@ class _$CalendarEventInfoImpl implements _CalendarEventInfo {
   final int? auspiciousScore;
   @override
   final String? description;
+// 디바이스 캘린더 연동 필드
+  @override
+  @JsonKey()
+  final bool hasDeviceEvents;
+  @override
+  @JsonKey()
+  final int deviceEventCount;
 
   @override
   String toString() {
-    return 'CalendarEventInfo(date: $date, holidayName: $holidayName, specialName: $specialName, auspiciousName: $auspiciousName, isHoliday: $isHoliday, isSpecial: $isSpecial, isAuspicious: $isAuspicious, auspiciousScore: $auspiciousScore, description: $description)';
+    return 'CalendarEventInfo(date: $date, holidayName: $holidayName, specialName: $specialName, auspiciousName: $auspiciousName, isHoliday: $isHoliday, isSpecial: $isSpecial, isAuspicious: $isAuspicious, auspiciousScore: $auspiciousScore, description: $description, hasDeviceEvents: $hasDeviceEvents, deviceEventCount: $deviceEventCount)';
   }
 
   @override
@@ -812,7 +848,11 @@ class _$CalendarEventInfoImpl implements _CalendarEventInfo {
             (identical(other.auspiciousScore, auspiciousScore) ||
                 other.auspiciousScore == auspiciousScore) &&
             (identical(other.description, description) ||
-                other.description == description));
+                other.description == description) &&
+            (identical(other.hasDeviceEvents, hasDeviceEvents) ||
+                other.hasDeviceEvents == hasDeviceEvents) &&
+            (identical(other.deviceEventCount, deviceEventCount) ||
+                other.deviceEventCount == deviceEventCount));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -827,7 +867,9 @@ class _$CalendarEventInfoImpl implements _CalendarEventInfo {
       isSpecial,
       isAuspicious,
       auspiciousScore,
-      description);
+      description,
+      hasDeviceEvents,
+      deviceEventCount);
 
   /// Create a copy of CalendarEventInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -856,7 +898,9 @@ abstract class _CalendarEventInfo implements CalendarEventInfo {
       final bool isSpecial,
       final bool isAuspicious,
       final int? auspiciousScore,
-      final String? description}) = _$CalendarEventInfoImpl;
+      final String? description,
+      final bool hasDeviceEvents,
+      final int deviceEventCount}) = _$CalendarEventInfoImpl;
 
   factory _CalendarEventInfo.fromJson(Map<String, dynamic> json) =
       _$CalendarEventInfoImpl.fromJson;
@@ -878,7 +922,11 @@ abstract class _CalendarEventInfo implements CalendarEventInfo {
   @override
   int? get auspiciousScore;
   @override
-  String? get description;
+  String? get description; // 디바이스 캘린더 연동 필드
+  @override
+  bool get hasDeviceEvents;
+  @override
+  int get deviceEventCount;
 
   /// Create a copy of CalendarEventInfo
   /// with the given fields replaced by the non-null parameter values.

@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
@@ -337,10 +338,10 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: TossTheme.spacingL),
-              TossButton(
+              UnifiedButton(
                 text: '운세 보러 가기',
                 onPressed: () => Navigator.of(context).pop(),
-                size: TossButtonSize.large,
+                size: UnifiedButtonSize.large,
                 width: double.infinity,
               ),
             ],

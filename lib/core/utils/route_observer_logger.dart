@@ -4,7 +4,7 @@
 /// 개발 모드(kDebugMode)에서만 동작하며, 실제 사용 패턴 분석에 활용됩니다.
 library;
 
-import 'dart:io';
+import 'package:universal_io/io.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

@@ -177,6 +177,7 @@ extension TypographyExtension on BuildContext {
   TextStyle get labelXSmall => AppTypography.labelXSmall;
 
   TextStyle get button => AppTypography.button;
+  TextStyle get buttonMedium => AppTypography.button; // Alias for button
   TextStyle get buttonSmall => AppTypography.buttonSmall;
 
   TextStyle get overline => AppTypography.overline;

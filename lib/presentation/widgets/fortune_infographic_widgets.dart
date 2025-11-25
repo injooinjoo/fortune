@@ -2,7 +2,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/toss_design_system.dart';
-import '../../shared/components/toss_button.dart';
+import '../../core/widgets/unified_button.dart';
+import '../../core/widgets/unified_button_enums.dart';
 import '../../core/theme/typography_unified.dart';
 
 /// Collection of infographic widgets for fortune completion page
@@ -1964,10 +1965,10 @@ class FortuneInfographicWidgets {
                 children: [
                   // 다시 뽑기
                   Expanded(
-                    child: TossButton.secondary(
+                    child: UnifiedButton.secondary(
                       text: '다시 뽑기',
                       onPressed: onOtherFortune ?? () {},
-                      size: TossButtonSize.medium,
+                      size: UnifiedButtonSize.medium,
                     ),
                   ),
 
@@ -1975,10 +1976,10 @@ class FortuneInfographicWidgets {
 
                   // 스토리 다시 보기
                   Expanded(
-                    child: TossButton.secondary(
+                    child: UnifiedButton.secondary(
                       text: '스토리 다시 보기',
                       onPressed: onReview ?? () {},
-                      size: TossButtonSize.medium,
+                      size: UnifiedButtonSize.medium,
                     ),
                   ),
 
@@ -1986,10 +1987,10 @@ class FortuneInfographicWidgets {
 
                   // 공유하기
                   Expanded(
-                    child: TossButton.primary(
+                    child: UnifiedButton.primary(
                       text: '공유하기',
                       onPressed: onShare,
-                      size: TossButtonSize.medium,
+                      size: UnifiedButtonSize.medium,
                     ),
                   ),
                 ],

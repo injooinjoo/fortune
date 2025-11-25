@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 
 class TalismanPremiumBottomSheet extends StatelessWidget {
   final VoidCallback? onSubscribe;
@@ -99,10 +100,10 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
             children: [
               SizedBox(
                 width: double.infinity,
-                child: TossButton(
+                child: UnifiedButton(
                   text: '월 4,900원으로 구독하기',
                   onPressed: onSubscribe,
-                  style: TossButtonStyle.primary,
+                  style: UnifiedButtonStyle.primary,
                 ),
               ),
               
@@ -110,10 +111,10 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
               
               SizedBox(
                 width: double.infinity,
-                child: TossButton(
+                child: UnifiedButton(
                   text: '1,900원으로 한 번만 구매',
                   onPressed: onOneTimePurchase,
-                  style: TossButtonStyle.secondary,
+                  style: UnifiedButtonStyle.secondary,
                 ),
               ),
               

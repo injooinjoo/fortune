@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 
 /// 사주팔자 시작 애니메이션 위젯
 class SajuIntroAnimation extends StatefulWidget {
@@ -178,10 +179,10 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                       builder: (context, child) {
                         return Opacity(
                           opacity: _textFadeAnimation.value,
-                          child: TossButton(
+                          child: UnifiedButton(
                             text: '사주팔자 보기',
                             onPressed: widget.onComplete,
-                            style: TossButtonStyle.primary,
+                            style: UnifiedButtonStyle.primary,
                             width: double.infinity,
                             icon: const Icon(Icons.auto_awesome),
                           ),

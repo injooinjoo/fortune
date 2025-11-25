@@ -7,7 +7,7 @@ import '../../../../core/models/fortune_result.dart';
 import '../../domain/models/conditions/mbti_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../core/widgets/unified_button.dart';
 import '../../../../shared/components/toss_card.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
@@ -49,9 +49,6 @@ class _MbtiFortunePageState
   double _energyLevel = 0.75;
   Map<String, dynamic>? _cognitiveFunctions;
 
-  // ✅ Phase 16-3: Blur 상태 관리
-  final bool _isBlurred = false;
-  final List<String> _blurredSections = [];
 
   // ==================== MBTI Data ====================
 
@@ -147,7 +144,7 @@ class _MbtiFortunePageState
 
             // 버튼 (입력 폼일 때: 운세 생성, 결과 화면일 때: 전체보기)
             if (!_showResult && _selectedMbti != null)
-              FloatingBottomButton(
+              UnifiedButton.floating(
                 text: '🧠 내 성격이 말하는 오늘',
                 onPressed: _isLoading ? null : _handleSubmit,
                 isLoading: _isLoading,
@@ -156,7 +153,7 @@ class _MbtiFortunePageState
 
             // 전체보기 버튼 (블러 상태일 때만 표시)
             if (_showResult && _fortuneResult != null && _fortuneResult!.isBlurred)
-              FloatingBottomButton(
+              UnifiedButton.floating(
                 text: '남은 운세 모두 보기',
                 onPressed: _showAdAndUnblur,
                 isLoading: false,

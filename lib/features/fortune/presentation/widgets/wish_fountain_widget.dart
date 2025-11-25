@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -211,11 +212,11 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
           // 소원 작성하기 버튼
           SizedBox(
             width: double.infinity,
-            child: TossButton(
+            child: UnifiedButton(
               text: widget.hasWish ? '소원 수정하기' : '소원 작성하기',
               onPressed: widget.onWriteWish,
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
+              style: UnifiedButtonStyle.primary,
+              size: UnifiedButtonSize.large,
               icon: Icon(Icons.edit),
             ),
           ),
@@ -226,11 +227,11 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
             // 동전 던지기 버튼
             SizedBox(
               width: double.infinity,
-              child: TossButton(
+              child: UnifiedButton(
                 text: widget.isThrowingCoin ? '동전 던지는 중...' : '행운의 동전 던지기 (남은 동전: ${widget.coinCount}개)',
                 onPressed: widget.isThrowingCoin ? null : widget.onThrowCoin,
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
+                style: UnifiedButtonStyle.primary,
+                size: UnifiedButtonSize.large,
                 icon: widget.isThrowingCoin ? null : Icon(Icons.toll),
               ),
             ),

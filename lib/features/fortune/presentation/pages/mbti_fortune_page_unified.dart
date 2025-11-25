@@ -8,11 +8,11 @@ import '../../../../core/models/fortune_result.dart';
 import '../../domain/models/conditions/mbti_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart'; // ✅ Phase 18-2
+// ✅ Phase 18-2
 import '../../../../presentation/providers/ad_provider.dart'; // ✅ Phase 18-2
 import '../../../../presentation/providers/user_profile_notifier.dart';
 
+import '../../../../core/widgets/unified_button.dart';
 /// MBTI 운세 페이지 (UnifiedFortuneService 버전)
 ///
 /// **개선 사항**:
@@ -156,12 +156,10 @@ class _MbtiFortunePageUnifiedState
 
         // 제출 버튼
         if (canSubmit)
-          TossFloatingProgressButtonPositioned(
+          UnifiedButton.floating(
             text: '🧠 내 성격이 말하는 오늘',
             onPressed: onSubmit,
             isEnabled: true,
-            showProgress: false,
-            isVisible: true,
           ),
       ],
     );
@@ -622,7 +620,7 @@ class _MbtiFortunePageUnifiedState
 
         // ✅ Phase 18-7: 광고 보고 전체보기 버튼
         if (_isBlurred)
-          FloatingBottomButton(
+          UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
             isEnabled: true,

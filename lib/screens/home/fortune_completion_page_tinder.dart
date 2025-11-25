@@ -12,6 +12,7 @@ import '../../domain/entities/user_profile.dart';
 import '../../presentation/widgets/fortune_infographic_widgets.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../presentation/providers/celebrity_saju_provider.dart';
+import '../../presentation/providers/location_provider.dart';
 import '../../services/weather_service.dart';
 import '../../core/theme/typography_unified.dart';
 
@@ -175,11 +176,34 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   ),
                   Row(
                     children: [
+                      // 지역 표시 추가
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final cityName = ref.currentCityName;
+                          // "위치 확인 중"이 아닐 때만 표시
+                          if (cityName != '위치 확인 중') {
+                            return Row(
+                              children: [
+                                Text(
+                                  cityName,
+                                  style: TextStyle(
+                                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                              ],
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
                       Text(
                         '${DateTime.now().year}.${DateTime.now().month.toString().padLeft(2, '0')}.${DateTime.now().day.toString().padLeft(2, '0')}',
                         style: TextStyle(
                           color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                          
+
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -194,7 +218,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                           '${widget.currentWeather!.temperature.round()}°',
                           style: TextStyle(
                             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                            
+
                             fontWeight: FontWeight.w500,
                           ),
                         ),

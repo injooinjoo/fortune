@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/career_coaching_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 
@@ -32,7 +31,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
   // Accordion sections
   List<AccordionInputSection> _accordionSections = [];
 
-  bool _isAnalyzing = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -149,37 +148,53 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
     }
 
     setState(() {
-      _isAnalyzing = true;
+      _isLoading = true;
     });
 
-    // 3초 후 결과 페이지로 이동 (실제로는 API 호출)
-    await Future.delayed(const Duration(seconds: 3));
+    try {
+      // TODO: 실제 API 호출로 교체
+      // final result = await fortuneService.getFortune(...);
 
-    final input = CareerCoachingInput(
-      currentRole: _currentRole!,
-      experienceLevel: _experienceLevel ?? 'mid',
-      primaryConcern: _primaryConcern!,
-      industry: _industry,
-      shortTermGoal: _shortTermGoal!,
-      coreValue: _coreValue!,
-      skillsToImprove: _skillsToImprove.toList(),
-    );
+      // 임시로 3초 대기 (API 호출 시뮬레이션)
+      await Future.delayed(const Duration(seconds: 3));
 
-    if (mounted) {
-      context.pushNamed(
-        'career-coaching-result',
-        extra: input,
+      final input = CareerCoachingInput(
+        currentRole: _currentRole!,
+        experienceLevel: _experienceLevel ?? 'mid',
+        primaryConcern: _primaryConcern!,
+        industry: _industry,
+        shortTermGoal: _shortTermGoal!,
+        coreValue: _coreValue!,
+        skillsToImprove: _skillsToImprove.toList(),
       );
+
+      if (mounted) {
+        context.pushNamed(
+          'career-coaching-result',
+          extra: input,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('분석 중 오류가 발생했습니다. 다시 시도해주세요.'),
+            backgroundColor: TossDesignSystem.errorRed,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    if (_isAnalyzing) {
-      return _buildAnalyzingView(isDark);
-    }
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
@@ -198,12 +213,11 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                     completionButtonText: '분석 시작',
                   ),
             if (_canGenerate())
-              TossFloatingProgressButtonPositioned(
+              UnifiedButton.floating(
                 text: '🚀 분석 시작하기',
-                onPressed: _canGenerate() ? () => _analyzeAndShowResult() : null,
-                isEnabled: _canGenerate(),
-                showProgress: false,
-                isVisible: _canGenerate(),
+                onPressed: _isLoading ? null : _analyzeAndShowResult,
+                isEnabled: !_isLoading,
+                isLoading: _isLoading,
               ),
           ],
         ),
@@ -518,75 +532,6 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildAnalyzingView(bool isDark) {
-    return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.gray50,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    TossDesignSystem.tossBlue,
-                    TossDesignSystem.successGreen,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: const Icon(
-                Icons.auto_awesome,
-                color: TossDesignSystem.white,
-                size: 48,
-              ),
-            ).animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 2000.ms, color: TossDesignSystem.white.withValues(alpha: 0.3))
-              .rotate(duration: 3000.ms),
-
-            SizedBox(height: 32),
-
-            Text(
-              '직업 전략 분석 중...',
-              style: TypographyUnified.heading3.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isDark ? TossDesignSystem.textPrimaryDark : null,
-              ),
-            ).animate()
-              .fadeIn(duration: 500.ms)
-              .slideY(begin: 0.2),
-
-            SizedBox(height: 12),
-
-            Text(
-              '맞춤형 성장 로드맵을 준비하고 있어요',
-              style: TypographyUnified.bodyMedium.copyWith(
-                color: TossDesignSystem.gray600,
-              ),
-            ).animate(delay: 200.ms)
-              .fadeIn(duration: 500.ms)
-              .slideY(begin: 0.2),
-
-            const SizedBox(height: 40),
-
-            SizedBox(
-              width: 200,
-              child: LinearProgressIndicator(
-                backgroundColor: TossDesignSystem.gray200,
-                valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.tossBlue),
-              ),
-            ).animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 1500.ms, color: TossDesignSystem.tossBlue.withValues(alpha: 0.3)),
-          ],
-        ),
-      ),
     );
   }
 }

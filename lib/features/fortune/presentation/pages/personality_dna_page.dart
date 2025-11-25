@@ -9,11 +9,11 @@ import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/conditions/personality_dna_fortune_conditions.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
-import '../../../../shared/components/floating_bottom_button.dart'; // ✅ FloatingBottomButton용
+import '../../../../core/widgets/unified_button.dart';
+// ✅ FloatingBottomButton용
 import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
 import '../../../../core/utils/logger.dart'; // ✅ 로그용
 import '../../../../presentation/providers/auth_provider.dart'; // ✅ 사용자 프로필용
@@ -223,13 +223,13 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
           Builder(
             builder: (context) {
               debugPrint('🟡 [TossButton] showProgress: $_isGenerating, isLoading: $_isGenerating, isEnabled: ${_canGenerate() && !_isGenerating}');
-              return TossFloatingProgressButtonPositioned(
+              if (!_canGenerate()) return const SizedBox.shrink();
+              return UnifiedButton.floating(
                 text: '🧬 나만의 성격 DNA 발견하기',
                 onPressed: _canGenerate() && !_isGenerating ? onComplete : null,
                 isEnabled: _canGenerate() && !_isGenerating,
                 showProgress: _isGenerating,
                 isLoading: _isGenerating, // ✅ 점 3개 애니메이션 표시!
-                isVisible: _canGenerate(),
               );
             },
           ),
@@ -591,7 +591,7 @@ class _PersonalityDNAPageState extends ConsumerState<PersonalityDNAPage> {
 
         // ✅ FloatingBottomButton (블러 상태일 때만 표시)
         if (_isBlurred)
-          FloatingBottomButton(
+          UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
             isEnabled: true,

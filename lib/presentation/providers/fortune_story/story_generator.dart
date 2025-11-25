@@ -6,6 +6,7 @@ import '../../../services/weather_service.dart';
 import '../../../domain/entities/fortune.dart' as fortune_entity;
 import '../../../domain/entities/user_profile.dart';
 import '../../../core/utils/logger.dart';
+import '../../../core/services/location_manager.dart';
 import 'dart:math' as math;
 
 /// GPT를 통한 스토리 생성
@@ -23,15 +24,21 @@ class StoryGenerator {
     UserProfile? userProfile,
   }) async {
     try {
+      // ✅ LocationManager에서 현재 위치 가져오기
+      final location = await LocationManager.instance.getCurrentLocation();
+      final userLocation = location.cityName; // 예: "강남구", "도쿄"
+
       Logger.info('📡 Calling Edge Function generate-fortune-story...');
       Logger.info('userName: $userName');
       Logger.info('fortune score: ${fortune.overallScore}');
+      Logger.info('📍 userLocation: $userLocation');
 
       // Supabase Edge Function 호출 (타임아웃 설정)
       final response = await _supabase.functions.invoke(
         'generate-fortune-story',
         body: {
           'userName': userName,
+          'userLocation': userLocation,  // ✅ LocationManager에서 가져온 실제 사용자 위치
           'userProfile': userProfile != null ? {
             'birthDate': userProfile.birthdate?.toIso8601String(),
             'birthTime': userProfile.birthTime,

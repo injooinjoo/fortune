@@ -5,7 +5,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/storage_service.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../core/theme/toss_design_system.dart';
-import '../../core/theme/typography_unified.dart';
 import '../../data/services/fortune_api_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../presentation/providers/auth_provider.dart';
@@ -15,6 +14,7 @@ import '../../core/services/debug_premium_service.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../shared/components/settings_list_tile.dart';
 import '../../shared/components/section_header.dart';
+import '../../core/providers/user_settings_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -274,6 +274,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final isDarkMode = themeMode == ThemeMode.dark ||
         (themeMode == ThemeMode.system &&
          MediaQuery.of(context).platformBrightness == Brightness.dark);
+    final typography = ref.watch(typographyThemeProvider);
 
     if (isLoading) {
       return Scaffold(
@@ -295,7 +296,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         automaticallyImplyLeading: false,
         title: Text(
           '내 프로필',
-          style: TypographyUnified.heading3.copyWith(
+          style: typography.headingMedium.copyWith(
             color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
@@ -345,8 +346,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                     ],
                   ),
-                    ),
-                    child: SettingsListTile(
+                  child: SettingsListTile(
                       leading: CircleAvatar(
                         radius: 24,
                         backgroundImage: (userProfile ?? localProfile)?['profile_image_url'] != null
@@ -383,7 +383,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                          children: [
                             const SectionHeader(title: '테스트 계정'),
                             Container(
                               margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
@@ -415,7 +414,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       ),
                                       child: Text(
                                         '활성화',
-                                        style: TossDesignSystem.caption.copyWith(
+                                        style: typography.labelSmall.copyWith(
                                           color: TossDesignSystem.successGreen,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -478,21 +477,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           if (userStats?['today_score'] != null) ...[
                             Text(
                               '${userStats!['today_score']}',
-                              style: TossDesignSystem.heading4.copyWith(
+                              style: typography.headingSmall.copyWith(
                                 color: _getTextColor(context),
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                             Text(
                               '점',
-                              style: TossDesignSystem.body2.copyWith(
+                              style: typography.bodyMedium.copyWith(
                                 color: _getSecondaryTextColor(context),
                               ),
                             ),
                           ] else
                             Text(
                               '미확인',
-                              style: TossDesignSystem.body2.copyWith(
+                              style: typography.bodyMedium.copyWith(
                                 color: _getSecondaryTextColor(context),
                               ),
                             ),
@@ -505,7 +504,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       title: '연속 접속일',
                       trailing: Text(
                         '${userStats?['consecutive_days'] ?? 0}일',
-                        style: TossDesignSystem.body2.copyWith(
+                        style: typography.bodyMedium.copyWith(
                           color: _getSecondaryTextColor(context),
                         ),
                       ),
@@ -515,7 +514,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       title: '총 조회수',
                       trailing: Text(
                         '${userStats?['total_fortunes'] ?? 0}회',
-                        style: TossDesignSystem.body2.copyWith(
+                        style: typography.bodyMedium.copyWith(
                           color: _getSecondaryTextColor(context),
                         ),
                       ),
@@ -552,7 +551,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         title: '생년월일',
                         trailing: Text(
                           _formatBirthDate((userProfile ?? localProfile)?['birth_date']),
-                          style: TossDesignSystem.body2.copyWith(
+                          style: typography.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -563,7 +562,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         title: '출생시간',
                         trailing: Text(
                           (userProfile ?? localProfile)?['birth_time'] ?? '미입력',
-                          style: TossDesignSystem.body2.copyWith(
+                          style: typography.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -574,7 +573,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         title: '띠',
                         trailing: Text(
                           (userProfile ?? localProfile)?['chinese_zodiac'] ?? '미입력',
-                          style: TossDesignSystem.body2.copyWith(
+                          style: typography.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -584,7 +583,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         title: '별자리',
                         trailing: Text(
                           (userProfile ?? localProfile)?['zodiac_sign'] ?? '미입력',
-                          style: TossDesignSystem.body2.copyWith(
+                          style: typography.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -596,7 +595,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           (userProfile ?? localProfile)?['blood_type'] != null
                               ? '${(userProfile ?? localProfile)!['blood_type']}형'
                               : '미입력',
-                          style: TossDesignSystem.body2.copyWith(
+                          style: typography.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -607,7 +606,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         title: 'MBTI',
                         trailing: Text(
                           (userProfile ?? localProfile)?['mbti']?.toUpperCase() ?? '미입력',
-                          style: TossDesignSystem.body2.copyWith(
+                          style: typography.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
@@ -719,7 +718,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       onTap: () => context.push('/subscription'),
                     ),
-                    _buildListItem(
+                    SettingsListTile(
                       icon: Icons.verified_outlined,
                       title: '프로필 인증',
                       trailing: Icon(
@@ -738,7 +737,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
       ),
-    )
+    );
   }
 
   // Helper Methods

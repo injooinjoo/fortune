@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
 import '../../utils/logger.dart';
+import '../location_manager.dart';
 
 /// 일일운세 Generator - API 기반 운세 생성
 /// 오늘/내일/주간/월간/연간 운세
@@ -23,12 +24,21 @@ class TimeBasedGenerator {
     Logger.info('[TimeBasedGenerator]   🏷️ holiday_name: ${inputConditions['holiday_name']}');
 
     try {
+      // ✅ LocationManager에서 현재 위치 가져오기
+      final location = await LocationManager.instance.getCurrentLocation();
+      final userLocation = location.cityName; // 예: "강남구", "도쿄"
+
+      Logger.info('[TimeBasedGenerator] 📍 사용자 위치: $userLocation');
+
       final requestBody = {
         'date': inputConditions['date'],
         'period': inputConditions['period'] ?? 'daily',
         'is_holiday': inputConditions['is_holiday'] ?? false,
         'holiday_name': inputConditions['holiday_name'],
         'special_name': inputConditions['special_name'],
+
+        // ✅ LocationManager에서 가져온 실제 사용자 위치 추가
+        'userLocation': userLocation,
 
         // ✨ 이벤트 기반 운세 정보 추가 (Phase 3)
         'has_event_details': inputConditions['category'] != null,

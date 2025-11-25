@@ -11,7 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/widgets/unified_button.dart';
 import '../../domain/models/talent_input_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
@@ -542,16 +542,14 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                     completionButtonText: '🔮 재능 분석 시작하기',
                   ),
             if (canGenerate)
-              TossFloatingProgressButtonPositioned(
+              UnifiedButton.floating(
                 text: '🔮 재능 분석 시작하기',
                 onPressed: buttonEnabled ? () {
                   print('[TalentFortune] 🖱️ 버튼 클릭됨!');
                   _analyzeAndShowResult();
                 } : null,
                 isEnabled: buttonEnabled,
-                showProgress: false,
                 isLoading: _isGenerating,
-                isVisible: canGenerate,
               ),
           ],
         ),

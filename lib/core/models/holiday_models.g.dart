@@ -66,6 +66,8 @@ _$CalendarEventInfoImpl _$$CalendarEventInfoImplFromJson(
       isAuspicious: json['isAuspicious'] as bool? ?? false,
       auspiciousScore: (json['auspiciousScore'] as num?)?.toInt(),
       description: json['description'] as String?,
+      hasDeviceEvents: json['hasDeviceEvents'] as bool? ?? false,
+      deviceEventCount: (json['deviceEventCount'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$CalendarEventInfoImplToJson(
@@ -80,4 +82,6 @@ Map<String, dynamic> _$$CalendarEventInfoImplToJson(
       'isAuspicious': instance.isAuspicious,
       'auspiciousScore': instance.auspiciousScore,
       'description': instance.description,
+      'hasDeviceEvents': instance.hasDeviceEvents,
+      'deviceEventCount': instance.deviceEventCount,
     };

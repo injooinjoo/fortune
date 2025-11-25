@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../domain/models/conditions/biorhythm_fortune_conditions.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/models/fortune_result.dart';
 import 'biorhythm_result_page.dart';
 
 class BiorhythmLoadingPage extends StatefulWidget {
@@ -35,6 +39,9 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
   Timer? _stepTimer;
   int _currentStep = 0;
   bool _isAnalysisComplete = false;
+  FortuneResult? _fortuneResult;
+
+
   
   final List<Map<String, dynamic>> _analysisSteps = [
     {
@@ -140,6 +147,33 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
     // 애니메이션 시작
     _startAnimations();
     _startAnalysisSteps();
+    _fetchFortune();
+  }
+
+  Future<void> _fetchFortune() async {
+    try {
+      final service = UnifiedFortuneService(Supabase.instance.client);
+      final conditions = BiorhythmFortuneConditions(
+        birthDate: widget.birthDate.toIso8601String(),
+        name: 'User',
+      );
+      
+      final result = await service.getFortune(
+        fortuneType: 'biorhythm',
+        conditions: conditions,
+        inputConditions: conditions.toJson(),
+        dataSource: FortuneDataSource.api,
+      );
+      
+      if (mounted) {
+        setState(() {
+          _fortuneResult = result;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching fortune: $e');
+      // TODO: Handle error state
+    }
   }
 
   void _startAnimations() {
@@ -169,7 +203,13 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
     });
   }
 
-  void _navigateToResult() {
+  Future<void> _navigateToResult() async {
+    // Wait for result if not ready
+    while (_fortuneResult == null) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+    }
+
     // Navigator.pushReplacement 제거 - 상태 변경으로 처리
     setState(() {
       _isAnalysisComplete = true;
@@ -189,8 +229,11 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
   @override
   Widget build(BuildContext context) {
     // 분석 완료 시 결과 페이지 표시
-    if (_isAnalysisComplete) {
-      return BiorhythmResultPage(birthDate: widget.birthDate);
+    if (_isAnalysisComplete && _fortuneResult != null) {
+      return BiorhythmResultPage(
+        birthDate: widget.birthDate,
+        fortuneResult: _fortuneResult!,
+      );
     }
 
     final theme = Theme.of(context);

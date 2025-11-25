@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:universal_io/io.dart';
 import 'package:flutter/foundation.dart';
 import '../core/utils/logger.dart';
 import '../core/services/resilient_service.dart';

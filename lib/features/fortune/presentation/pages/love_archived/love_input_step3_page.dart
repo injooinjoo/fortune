@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../../shared/components/floating_bottom_button.dart';
+import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/theme/typography_unified.dart';
 
 enum MeetingPlace { cafe, gym, library, meeting, app, hobby }
@@ -309,12 +308,11 @@ class _LoveInputStep3PageState extends State<LoveInputStep3Page> {
 
   // Floating Button Widget
   Widget buildFloatingButton() {
-    return TossFloatingProgressButtonPositioned(
+    return UnifiedButton.floating(
       text: '다음 단계로',
       onPressed: _canProceed ? _handleNext : null,
       isEnabled: _canProceed,
-      showProgress: false,
-      isVisible: true,
+      isLoading: false,
     );
   }
 

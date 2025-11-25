@@ -7,7 +7,8 @@ import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 
 class TalismanResultCard extends StatefulWidget {
   final TalismanDesign talismanDesign;
@@ -276,7 +277,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
             children: [
               SizedBox(
                 width: double.infinity,
-                child: TossButton(
+                child: UnifiedButton(
                   text: _isSaved ? '저장됨' : '부적 저장하기',
                   onPressed: _isSaved ? null : () {
                     HapticFeedback.lightImpact();
@@ -297,19 +298,19 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
               Row(
                 children: [
                   Expanded(
-                    child: TossButton(
+                    child: UnifiedButton(
                       text: '배경화면 설정',
                       onPressed: widget.onSetWallpaper,
-                      style: TossButtonStyle.secondary,
+                      style: UnifiedButtonStyle.secondary,
                       icon: const Icon(Icons.wallpaper, size: 20),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: TossButton(
+                    child: UnifiedButton(
                       text: '공유하기',
                       onPressed: widget.onShare,
-                      style: TossButtonStyle.secondary,
+                      style: UnifiedButtonStyle.secondary,
                       icon: const Icon(Icons.share, size: 20),
                     ),
                   ),

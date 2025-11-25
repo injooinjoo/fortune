@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../services/storage_service.dart';
@@ -156,11 +156,11 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TossButton(
+                UnifiedButton(
                   text: '취소',
                   onPressed: () => Navigator.of(context).pop(),
-                  style: TossButtonStyle.secondary,
-                  size: TossButtonSize.small,
+                  style: UnifiedButtonStyle.secondary,
+                  size: UnifiedButtonSize.small,
                 ),
                 Text(
                   '생년월일 선택',
@@ -169,7 +169,7 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                     color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
                   ),
                 ),
-                TossButton(
+                UnifiedButton(
                   text: '확인',
                   onPressed: () {
                     setState(() {
@@ -180,8 +180,8 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                     Navigator.of(context).pop();
                     HapticFeedback.mediumImpact();
                   },
-                  style: TossButtonStyle.primary,
-                  size: TossButtonSize.small,
+                  style: UnifiedButtonStyle.primary,
+                  size: UnifiedButtonSize.small,
                 ),
               ],
             ),
@@ -472,12 +472,10 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                   ),
                 ),
               ),
-              TossFloatingProgressButtonPositioned(
+              UnifiedButton.floating(
                 text: '바이오리듬 분석하기',
                 onPressed: _selectedDate != null && !_isLoading ? _analyzeBiorhythm : null,
                 isEnabled: _selectedDate != null && !_isLoading,
-                isVisible: true,
-                showProgress: false,
                 isLoading: _isLoading,
               ),
             ],

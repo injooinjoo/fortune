@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 
 /// 표준 운세 페이지 레이아웃
 ///
@@ -24,10 +23,10 @@ class StandardFortunePageLayout extends StatelessWidget {
   final bool isLoading;
 
   /// 버튼 스타일 (기본값: primary)
-  final TossButtonStyle buttonStyle;
+  final UnifiedButtonStyle buttonStyle;
 
   /// 버튼 사이즈 (기본값: large)
-  final TossButtonSize buttonSize;
+  final UnifiedButtonSize buttonSize;
 
   /// 버튼 아이콘 (선택 사항)
   final Widget? buttonIcon;
@@ -41,8 +40,8 @@ class StandardFortunePageLayout extends StatelessWidget {
     required this.buttonText,
     required this.onButtonPressed,
     this.isLoading = false,
-    this.buttonStyle = TossButtonStyle.primary,
-    this.buttonSize = TossButtonSize.large,
+    this.buttonStyle = UnifiedButtonStyle.primary,
+    this.buttonSize = UnifiedButtonSize.large,
     this.buttonIcon,
     this.contentPadding = const EdgeInsets.all(20),
   });
@@ -65,14 +64,14 @@ class StandardFortunePageLayout extends StatelessWidget {
         ),
 
         // 하단 고정 버튼
-        TossFloatingProgressButtonPositioned(
+        UnifiedButton.floating(
           text: buttonText,
           onPressed: onButtonPressed,
           isEnabled: onButtonPressed != null && !isLoading,
-          showProgress: false,
-          isVisible: true,
           isLoading: isLoading,
           icon: buttonIcon,
+          style: buttonStyle,
+          size: buttonSize,
         ),
       ],
     );

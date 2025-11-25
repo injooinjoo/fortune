@@ -5,7 +5,8 @@ import 'dart:ui';  // ✅ ImageFilter.blur 사용
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../data/models/pet_profile.dart';
 import '../../../../providers/pet_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
@@ -14,7 +15,6 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../services/ad_service.dart';  // ✅ RewardedAd용
-import '../../../../shared/components/floating_bottom_button.dart';  // ✅ FloatingBottomButton용
 import '../constants/fortune_button_spacing.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/standard_fortune_page_layout.dart';
@@ -122,27 +122,14 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               ? _buildFortuneResult()
               : _buildPetSelection(petState),
 
-          // ✅ Phase 5-2: FloatingBottomButton 추가 (블러 상태일 때만 표시)
+          // ✅ Phase 5-2: UnifiedButton.floating 추가 (블러 상태일 때만 표시)
           if (_fortune != null && _fortune!.isBlurred)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                padding: EdgeInsets.fromLTRB(
-                  20,
-                  0,
-                  20,
-                  16 + MediaQuery.of(context).padding.bottom,
-                ),
-                child: FloatingBottomButton(
-                  text: '광고 보고 전체 내용 확인하기',
-                  onPressed: _showAdAndUnblur,
-                  style: TossButtonStyle.primary,
-                  size: TossButtonSize.large,
-                  icon: Icon(Icons.play_arrow, color: TossDesignSystem.white),
-                ),
-              ),
+            UnifiedButton.floating(
+              text: '광고 보고 전체 내용 확인하기',
+              onPressed: _showAdAndUnblur,
+              style: UnifiedButtonStyle.primary,
+              size: UnifiedButtonSize.large,
+              icon: Icon(Icons.play_arrow, color: TossDesignSystem.white),
             ),
         ],
       ),
@@ -379,11 +366,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               ),
             ),
             const SizedBox(height: FortuneButtonSpacing.buttonTopSpacing),
-            TossButton(
+            UnifiedButton(
               text: '반려동물 등록하기',
               onPressed: () => _showAddPetBottomSheet(),
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
+              style: UnifiedButtonStyle.primary,
+              size: UnifiedButtonSize.large,
             ),
           ],
         ),
@@ -552,11 +539,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                 Consumer(
                   builder: (context, ref, child) {
                     final petState = ref.watch(petProvider);
-                    return TossButton(
+                    return UnifiedButton(
                       text: '등록하기',
                       onPressed: _canRegisterPet() ? () => _registerPet(context) : null,
                       isLoading: petState.isCreating,
-                      size: TossButtonSize.large,
+                      size: UnifiedButtonSize.large,
                       width: double.infinity,
                     );
                   },
@@ -975,19 +962,19 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
 
           // Action buttons
           FortuneButtonPositionHelper.parallel(
-            leftButton: TossButton(
+            leftButton: UnifiedButton(
               text: '다른 반려동물',
-              style: TossButtonStyle.secondary,
-              size: TossButtonSize.large,
+              style: UnifiedButtonStyle.secondary,
+              size: UnifiedButtonSize.large,
               onPressed: () {
                 setState(() => _fortune = null);
                 ref.read(petProvider.notifier).clearSelectedPet();
               },
             ),
-            rightButton: TossButton(
+            rightButton: UnifiedButton(
               text: '공유하기',
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
+              style: UnifiedButtonStyle.primary,
+              size: UnifiedButtonSize.large,
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

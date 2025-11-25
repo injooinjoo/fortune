@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/widgets/unified_button.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
@@ -201,12 +201,10 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
           completionButtonText: '🏠 이사운 보기',
         ),
         if (_canContinue() || _isLoading)
-          TossFloatingProgressButtonPositioned(
+          UnifiedButton.floating(
             text: '🏠 이사운 보기',
             onPressed: _canContinue() && !_isLoading ? _handleComplete : null,
             isEnabled: !_isLoading,
-            showProgress: false,
-            isVisible: true,
             isLoading: _isLoading,
           ),
       ],

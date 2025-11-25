@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'dart:developer' as developer;
+
+import '../core/services/location_manager.dart';
+import '../core/constants/location_mappings.dart';
 
 /// 날씨 정보를 가져오는 서비스
 class WeatherService {
@@ -13,65 +16,73 @@ class WeatherService {
   /// 현재 위치의 날씨 정보 가져오기 (캐싱 적용)
   static Future<WeatherInfo> getCurrentWeather() async {
     try {
-      // 1. 위치 권한 확인
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          // 위치 권한이 거부되면 서울 날씨 사용
-          return await _getWeatherByCity('Seoul');
-        }
-      }
+      // 1. LocationManager로부터 현재 위치 가져오기
+      final location = await LocationManager.instance.getCurrentLocation();
+      developer.log('🌤️ WeatherService: ${location.cityName} 날씨 조회');
 
-      // 2. 현재 위치 가져오기
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium,
-      );
-
-      // 3. 지역명 가져오기 (캐싱을 위해)
-      final cityResponse = await http.get(
-        Uri.parse(
-          '$_baseUrl/weather?lat=${position.latitude}&lon=${position.longitude}&appid=$_apiKey&units=metric&lang=kr',
-        ),
-      );
-
-      if (cityResponse.statusCode == 200) {
-        final data = json.decode(cityResponse.body);
-        final cityName = data['name'] ?? 'Unknown';
-        
-        // 4. 캐시 확인
-        final cachedWeather = await _getCachedWeather(cityName);
-        if (cachedWeather != null && _isCacheValid(cachedWeather['timestamp'])) {
-          debugPrint('📋 캐시된 날씨 사용: $cityName');
-          return WeatherInfo.fromJson(cachedWeather['data']);
-        }
-        
-        // 5. 캐시가 없거나 만료된 경우 새로 저장
-        debugPrint('🌤️ API에서 날씨 가져오기: $cityName');
-        await _cacheWeather(cityName, data);
-        return WeatherInfo.fromJson(data);
+      // 2. 좌표가 있으면 좌표로 조회, 없으면 도시명으로 조회
+      if (location.latitude != null && location.longitude != null) {
+        return await _getWeatherByCoordinates(
+          location.latitude!,
+          location.longitude!,
+          location.cityName,
+        );
       } else {
-        // API 호출 실패 시 기본값
-        return WeatherInfo.defaultWeather();
+        // 한글 도시명 → 영문 도시명 변환
+        final englishName = LocationMappings.toEnglish(location.cityName);
+        return await _getWeatherByCity(englishName, location.cityName);
       }
     } catch (e) {
-      debugPrint('날씨 정보 가져오기 실패: $e');
+      developer.log('❌ WeatherService 에러: $e');
       return WeatherInfo.defaultWeather();
     }
   }
 
-  /// 도시 이름으로 날씨 가져오기 (캐싱 적용)
-  static Future<WeatherInfo> _getWeatherByCity(String city) async {
+  /// 좌표로 날씨 가져오기
+  static Future<WeatherInfo> _getWeatherByCoordinates(
+    double lat,
+    double lon,
+    String cityName,
+  ) async {
     try {
       // 1. 캐시 확인
-      final cachedWeather = await _getCachedWeather(city);
+      final cachedWeather = await _getCachedWeather(cityName);
       if (cachedWeather != null && _isCacheValid(cachedWeather['timestamp'])) {
-        debugPrint('📋 캐시된 날씨 사용: $city');
-        return WeatherInfo.fromJson(cachedWeather['data']);
+        developer.log('📋 캐시된 날씨 사용: $cityName');
+        return WeatherInfo.fromJson(cachedWeather['data'], cityName);
+      }
+
+      // 2. API 호출
+      developer.log('🌤️ API에서 날씨 가져오기: $cityName (좌표)');
+      final response = await http.get(
+        Uri.parse(
+          '$_baseUrl/weather?lat=$lat&lon=$lon&appid=$_apiKey&units=metric&lang=kr',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        await _cacheWeather(cityName, data);
+        return WeatherInfo.fromJson(data, cityName);
+      }
+    } catch (e) {
+      developer.log('❌ 좌표 날씨 조회 실패: $e');
+    }
+    return WeatherInfo.defaultWeather(cityName: cityName);
+  }
+
+  /// 도시 이름으로 날씨 가져오기 (캐싱 적용)
+  static Future<WeatherInfo> _getWeatherByCity(String city, String koreanName) async {
+    try {
+      // 1. 캐시 확인
+      final cachedWeather = await _getCachedWeather(koreanName);
+      if (cachedWeather != null && _isCacheValid(cachedWeather['timestamp'])) {
+        developer.log('📋 캐시된 날씨 사용: $koreanName');
+        return WeatherInfo.fromJson(cachedWeather['data'], koreanName);
       }
 
       // 2. 캐시가 없으면 API 호출
-      debugPrint('🌤️ API에서 날씨 가져오기: $city');
+      developer.log('🌤️ API에서 날씨 가져오기: $city');
       final response = await http.get(
         Uri.parse(
           '$_baseUrl/weather?q=$city&appid=$_apiKey&units=metric&lang=kr',
@@ -81,13 +92,13 @@ class WeatherService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         // 3. 캐시에 저장
-        await _cacheWeather(city, data);
-        return WeatherInfo.fromJson(data);
+        await _cacheWeather(koreanName, data);
+        return WeatherInfo.fromJson(data, koreanName);
       }
     } catch (e) {
-      debugPrint('도시 날씨 정보 가져오기 실패: $e');
+      developer.log('❌ 도시 날씨 조회 실패: $e');
     }
-    return WeatherInfo.defaultWeather();
+    return WeatherInfo.defaultWeather(cityName: koreanName);
   }
   
   /// 캐시된 날씨 정보 가져오기
@@ -162,20 +173,9 @@ class WeatherInfo {
     required this.icon,
   });
 
-  factory WeatherInfo.fromJson(Map<String, dynamic> json) {
-    // 1. 국가 코드 확인
-    final countryCode = json['sys']?['country'] ?? '';
-
-    // 2. 한국이 아니면 기본값 '서울' 사용
-    String cityName;
-    if (countryCode != 'KR') {
-      debugPrint('⚠️ 해외 위치 감지: ${json['name']} ($countryCode) → 서울로 기본 설정');
-      cityName = '서울';
-    } else {
-      // 3. 한국이면 도시명 변환
-      cityName = json['name'] ?? '서울';
-      cityName = _translateCityName(cityName);
-    }
+  factory WeatherInfo.fromJson(Map<String, dynamic> json, [String? cityNameOverride]) {
+    // cityNameOverride가 제공되면 사용 (LocationManager로부터 받은 정확한 지역명)
+    final cityName = cityNameOverride ?? LocationMappings.toKorean(json['name'] ?? 'Seoul');
 
     return WeatherInfo(
       condition: json['weather'][0]['main'] ?? '맑음',
@@ -194,44 +194,9 @@ class WeatherInfo {
       icon: json['weather'][0]['icon'] ?? '01d',
     );
   }
-  
-  /// 영어 도시명을 한글로 변환
-  static String _translateCityName(String englishName) {
-    // 주요 도시명 매핑 테이블
-    final cityMap = {
-      // 한국 주요 도시
-      'Seoul': '서울',
-      'Busan': '부산',
-      'Incheon': '인천',
-      'Daegu': '대구',
-      'Daejeon': '대전',
-      'Gwangju': '광주',
-      'Ulsan': '울산',
-      'Suwon': '수원',
-      'Seongnam': '성남',
-      'Goyang': '고양',
-      'Yongin': '용인',
-      'Bucheon': '부천',
-      'Ansan': '안산',
-      'Anyang': '안양',
-      'Pohang': '포항',
-      'Changwon': '창원',
-      'Jeju': '제주',
-
-      // 구/시 단위는 광역시로 변환
-      'Gangnam-gu': '서울',
-      'Suwon-si': '경기도',
-      'Seongnam-si': '경기도',
-      'Goyang-si': '경기도',
-    };
-
-    // ✅ 한국 도시만 변환, 해외 도시는 모두 '서울'로 기본 설정
-    // (사용자가 대부분 한국에 있고, 시뮬레이터나 VPN으로 인한 오류 방지)
-    return cityMap[englishName] ?? '서울';
-  }
 
   /// 기본 날씨 정보 (API 실패 시)
-  factory WeatherInfo.defaultWeather() {
+  factory WeatherInfo.defaultWeather({String? cityName}) {
     return WeatherInfo(
       condition: 'Clear',
       description: '맑은 날씨',
@@ -239,7 +204,7 @@ class WeatherInfo {
       feelsLike: 20.0,
       humidity: 50.0,
       windSpeed: 2.0,
-      cityName: '서울',
+      cityName: cityName ?? '강남구',
       sunrise: DateTime.now().copyWith(hour: 6, minute: 0),
       sunset: DateTime.now().copyWith(hour: 18, minute: 0),
       icon: '01d',

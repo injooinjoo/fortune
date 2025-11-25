@@ -8,9 +8,9 @@ import '../../domain/models/conditions/moving_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../presentation/providers/ad_provider.dart';
 
+import '../../../../core/widgets/unified_button.dart';
 /// 토스 스타일 이사운 페이지 (UnifiedFortuneBaseWidget 사용)
 class MovingFortuneTossPage extends ConsumerStatefulWidget {
   const MovingFortuneTossPage({super.key});
@@ -180,7 +180,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
 
             // ✅ FloatingBottomButton
             if (_isBlurred)
-              FloatingBottomButton(
+              UnifiedButton.floating(
                 text: '광고 보고 전체 내용 확인하기',
                 onPressed: _showAdAndUnblur,
                 isEnabled: true,

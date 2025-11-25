@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../presentation/providers/celebrity_provider.dart';
 import '../../../services/celebrity_crawling_service.dart';
 import '../../../core/components/toss_card.dart';
-import '../../../shared/components/toss_button.dart';
+import '../../../core/widgets/unified_button.dart';
+import '../../../core/widgets/unified_button_enums.dart';
 import '../../../core/theme/toss_theme.dart';
 import '../../../core/theme/toss_design_system.dart';
 import '../../../core/theme/typography_unified.dart';
@@ -204,7 +205,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
           Row(
             children: [
               Expanded(
-                child: TossButton(
+                child: UnifiedButton(
                   text: '크롤링 시작',
                   onPressed: state.status == CrawlingStatus.crawling 
                     ? null 
@@ -214,12 +215,12 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: TossButton(
+                child: UnifiedButton(
                   text: '강제 업데이트',
                   onPressed: state.status == CrawlingStatus.crawling 
                     ? null 
                     : () => _crawlSingle(forceUpdate: true),
-                  style: TossButtonStyle.secondary,
+                  style: UnifiedButtonStyle.secondary,
                 ),
               ),
             ],
@@ -273,7 +274,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
           Row(
             children: [
               Expanded(
-                child: TossButton(
+                child: UnifiedButton(
                   text: '일괄 크롤링',
                   onPressed: state.status == CrawlingStatus.crawling 
                     ? null 
@@ -283,10 +284,10 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: TossButton(
+                child: UnifiedButton(
                   text: '샘플 데이터',
                   onPressed: _loadSampleNames,
-                  style: TossButtonStyle.secondary,
+                  style: UnifiedButtonStyle.secondary,
                 ),
               ),
             ],
@@ -405,13 +406,13 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
           
           if (state.status != CrawlingStatus.crawling) ...[
             const SizedBox(height: 16),
-            TossButton(
+            UnifiedButton(
               text: '초기화',
               onPressed: () async {
                 ref.read(crawlingResultProvider.notifier).reset();
                 ref.refresh(crawlingStatsProvider);
               },
-              style: TossButtonStyle.secondary,
+              style: UnifiedButtonStyle.secondary,
             ),
           ],
         ],

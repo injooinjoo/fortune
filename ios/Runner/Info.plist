@@ -110,6 +110,12 @@
 		<string>This app needs access to photo library for face reading features.</string>
 		<key>NSSpeechRecognitionUsageDescription</key>
 		<string>Fortune AI가 음성을 텍스트로 변환하여 꿈 해몽을 제공하기 위해 음성 인식 권한이 필요합니다.</string>
+		<key>NSCalendarsUsageDescription</key>
+		<string>Fortune AI가 일정 기반 맞춤형 운세를 제공하기 위해 캘린더 접근 권한이 필요합니다.</string>
+		<key>NSCalendarsFullAccessUsageDescription</key>
+		<string>Fortune AI가 Google Calendar, iCloud Calendar 등의 일정을 분석하여 최적의 운세를 제공하기 위해 캘린더 전체 접근 권한이 필요합니다.</string>
+		<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+		<string>Fortune AI가 중요한 운세 날짜를 캘린더에 저장하기 위해 쓰기 권한이 필요합니다.</string>
 		<key>NSSupportsLiveActivities</key>
 		<true/>
 		<key>NSSupportsLiveActivitiesFrequentUpdates</key>

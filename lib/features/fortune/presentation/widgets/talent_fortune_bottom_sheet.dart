@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -145,11 +146,11 @@ class _TalentFortuneBottomSheetState extends ConsumerState<TalentFortuneBottomSh
             ),
             child: SizedBox(
               width: double.infinity,
-              child: TossButton(
+              child: UnifiedButton(
                 text: _canGenerate() ? '✨ 나의 숨겨진 재능 발견하기' : '모든 질문에 답해주세요',
                 onPressed: _canGenerate() ? _generateFortune : null,
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
+                style: UnifiedButtonStyle.primary,
+                size: UnifiedButtonSize.large,
               ),
             ),
           ),

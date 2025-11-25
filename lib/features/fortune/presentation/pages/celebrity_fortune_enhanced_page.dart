@@ -5,9 +5,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/celebrity_provider.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -16,7 +15,6 @@ import '../../../../core/utils/logger.dart';
 import '../widgets/fortune_card.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/fortune_loading_skeleton.dart';
-import '../widgets/fortune_button.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 
@@ -636,14 +634,13 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         ? '다음'
         : (_isLoading ? '운세 생성 중...' : '운세 보기');
 
-    return TossFloatingProgressButtonPositioned(
+    return UnifiedButton.progress(
       text: buttonText,
       currentStep: _currentStep + 1,
       totalSteps: 3,
       onPressed: canProceed ? _handleButtonPress : null,
       isEnabled: canProceed,
-      isVisible: true,
-      showProgress: true,
+      isFloating: true,
       isLoading: _isLoading,
     );
   }
@@ -966,7 +963,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
 
         // ✅ FloatingBottomButton
         if (_isBlurred)
-          FloatingBottomButton(
+          UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
             isEnabled: true,
@@ -990,9 +987,9 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               child: Row(
                 children: [
                   Expanded(
-                    child: TossButton(
+                    child: UnifiedButton(
                       text: '다시 해보기',
-                      style: TossButtonStyle.secondary,
+                      style: UnifiedButtonStyle.secondary,
                       onPressed: () => setState(() {
                         _fortune = null;
                         _currentStep = 0;
@@ -1002,7 +999,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: TossButton(
+                    child: UnifiedButton(
                       text: '공유하기',
                       onPressed: () {
                         // TODO: 공유 기능 구현
@@ -1134,7 +1131,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            FortuneButton.retry(
+            UnifiedButton.retry(
               onPressed: () async {
                 // Refresh the provider
                 ref.refresh(allCelebritiesProvider);

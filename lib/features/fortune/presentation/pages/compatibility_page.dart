@@ -7,7 +7,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/auth_provider.dart';
@@ -17,9 +16,9 @@ import '../../../../core/models/fortune_result.dart';
 import '../../domain/models/conditions/compatibility_fortune_conditions.dart';
 import '../../../../core/widgets/unified_date_picker.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../services/ad_service.dart';
 
+import '../../../../core/widgets/unified_button.dart';
 class CompatibilityPage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
   
@@ -540,14 +539,13 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         ),
 
         // Floating 버튼 - 조건 미달성 시 숨김
-        TossFloatingProgressButtonPositioned(
-          text: '궁합 분석하기',
-          onPressed: _canAnalyze() ? _analyzeCompatibility : null,
-          isEnabled: _canAnalyze(),
-          isVisible: _canAnalyze(),
-          showProgress: false,
-          isLoading: _isLoading,
-        ),
+        if (_canAnalyze())
+          UnifiedButton.floating(
+            text: '궁합 분석하기',
+            onPressed: _canAnalyze() ? _analyzeCompatibility : null,
+            isEnabled: _canAnalyze(),
+            isLoading: _isLoading,
+          ),
       ],
     );
   }
@@ -1240,7 +1238,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
         // ✅ 블러 해제 버튼 (블러 상태일 때만 표시)
         if (_isBlurred)
-          FloatingBottomButton(
+          UnifiedButton.floating(
             text: '🎁 광고 보고 전체 내용 보기',
             onPressed: _showAdAndUnblur,
             isEnabled: true,

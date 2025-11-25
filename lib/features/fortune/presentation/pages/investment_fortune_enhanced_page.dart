@@ -8,7 +8,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/widgets/unified_button.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -202,13 +202,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           ),
 
           // Floating bottom button
-          _buildFloatingBottomButton(context, currentStep),
+          _buildFloatingButton(context, currentStep),
         ],
       ),
     );
   }
 
-  Widget _buildFloatingBottomButton(BuildContext context, int currentStep) {
+  Widget _buildFloatingButton(BuildContext context, int currentStep) {
     final data = ref.watch(investmentDataProvider);
     final isValid = _validateStep(currentStep, data);
 
@@ -228,14 +228,13 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
               }
             : null);
 
-    return TossFloatingProgressButtonPositioned(
+    return UnifiedButton.progress(
       text: buttonText,
       currentStep: currentStep + 1,
       totalSteps: 4,
       onPressed: onPressed,
       isEnabled: isValid,
-      isVisible: true,
-      showProgress: true,
+      isFloating: true,
       isLoading: false,
     );
   }

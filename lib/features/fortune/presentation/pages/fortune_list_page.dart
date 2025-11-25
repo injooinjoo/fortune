@@ -6,7 +6,7 @@ import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/providers/user_settings_provider.dart';
 import '../../../../presentation/providers/fortune_recommendation_provider.dart';
 import '../providers/fortune_order_provider.dart';
 import '../widgets/fortune_list_tile.dart';
@@ -546,6 +546,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     final groupedCategories = _groupCategoriesByType();
     final orderState = ref.watch(fortuneOrderProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final typography = ref.watch(typographyThemeProvider);
 
     // 정렬된 전체 카테고리 리스트 가져오기 (오늘 조회 여부 포함)
     final allCategories = _categories.map((category) {
@@ -575,7 +576,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
         scrolledUnderElevation: 0,
         title: Text(
           '운세',
-          style: TypographyUnified.heading3.copyWith(
+          style: typography.headingMedium.copyWith(
             color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
@@ -673,6 +674,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   void _showSortOptions(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final currentSort = ref.read(fortuneOrderProvider).currentSort;
+    final typography = ref.read(typographyThemeProvider);
 
     showModalBottomSheet(
       context: context,
@@ -690,7 +692,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 '정렬 방식',
-                style: TypographyUnified.heading4.copyWith(
+                style: typography.headingSmall.copyWith(
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                 ),
               ),
@@ -741,6 +743,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     bool isSelected,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final typography = ref.watch(typographyThemeProvider);
 
     return InkWell(
       onTap: () {
@@ -757,7 +760,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                 children: [
                   Text(
                     title,
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: typography.labelLarge.copyWith(
                       color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
@@ -765,7 +768,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: TypographyUnified.bodySmall.copyWith(
+                    style: typography.bodySmall.copyWith(
                       color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                     ),
                   ),

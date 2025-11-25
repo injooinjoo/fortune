@@ -5,7 +5,7 @@ import '../../../../core/models/fortune_result.dart';
 import '../../../fortune/domain/models/conditions/dream_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../shared/components/toast.dart';
@@ -125,14 +125,14 @@ class _DreamInterpretationPageState
 
             // 버튼
             if (!_showResult && _dreamController.text.isNotEmpty)
-              FloatingBottomButton(
+              UnifiedButton.floating(
                 text: '🔮 꿈 해석하기',
                 onPressed: _isLoading ? null : _handleSubmit,
                 isLoading: _isLoading,
               ),
 
             if (_showResult && _fortuneResult != null)
-              FloatingBottomButton(
+              UnifiedButton.floating(
                 text: '다시 해석하기',
                 onPressed: _resetForm,
               ),

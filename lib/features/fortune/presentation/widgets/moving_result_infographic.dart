@@ -6,8 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/theme/typography_unified.dart';
 
 /// 인포그래픽 스타일 이사운 결과 페이지
@@ -230,12 +229,11 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
             ),
 
             // Floating 버튼
-            TossFloatingProgressButtonPositioned(
+            UnifiedButton.floating(
               text: '다시 보기',
               onPressed: widget.onRetry,
               isEnabled: true,
-              showProgress: false,
-              isVisible: true,
+              isLoading: false,
               icon: const Icon(Icons.refresh, color: Colors.white),
             ),
           ],

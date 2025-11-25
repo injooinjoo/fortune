@@ -1,9 +1,10 @@
-import 'dart:io';
+import 'package:universal_io/io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../core/theme/toss_design_system.dart';
-import 'toss_button.dart';
+import '../../core/widgets/unified_button.dart';
+import '../../core/widgets/unified_button_enums.dart';
 
 /// 이미지 업로드 옵션 타입
 enum ImageUploadType {
@@ -328,7 +329,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
         Row(
           children: [
             Expanded(
-              child: TossButton.secondary(
+              child: UnifiedButton.secondary(
                 text: '다른 방법 선택',
                 onPressed: () {
                   setState(() {
@@ -336,12 +337,12 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                     _instagramController.clear();
                   });
                 },
-                size: TossButtonSize.medium,
+                size: UnifiedButtonSize.medium,
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: TossButton.primary(
+              child: UnifiedButton.primary(
                 text: '확인',
                 onPressed: _instagramController.text.trim().isNotEmpty
                     ? () {
@@ -372,7 +373,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                       }
                     : null,
                 isEnabled: _instagramController.text.trim().isNotEmpty,
-                size: TossButtonSize.medium,
+                size: UnifiedButtonSize.medium,
               ),
             ),
           ],

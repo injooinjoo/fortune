@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/components/toss_input.dart';
 
 /// 사주팔자 정보 입력 폼 위젯
@@ -178,10 +179,10 @@ class _SajuInputFormState extends State<SajuInputForm>
                         const SizedBox(height: TossTheme.spacingXL),
                         
                         // 확인 버튼
-                        TossButton(
+                        UnifiedButton(
                           text: '사주팔자 분석하기',
                           onPressed: _onSubmit,
-                          style: TossButtonStyle.primary,
+                          style: UnifiedButtonStyle.primary,
                           width: double.infinity,
                           icon: const Icon(Icons.auto_awesome),
                         ),

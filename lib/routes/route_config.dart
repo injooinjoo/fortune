@@ -36,7 +36,6 @@ import '../features/fortune/presentation/pages/biorhythm_fortune_page.dart';
 import '../features/fortune/presentation/pages/love_fortune_input_page.dart';
 import '../features/fortune/presentation/pages/ex_lover_fortune_simple_page.dart';
 import '../features/fortune/presentation/pages/ex_lover_emotional_result_page.dart';
-import '../features/fortune/domain/models/ex_lover_simple_model.dart';
 import '../features/fortune/presentation/pages/blind_date_fortune_page.dart';
 import '../features/fortune/presentation/pages/investment_fortune_enhanced_page.dart';
 import '../screens/subscription/subscription_page.dart';
@@ -449,11 +448,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/ex-lover-emotional-result',
         name: 'fortune-ex-lover-emotional-result',
         builder: (context, state) {
-          final input = state.extra as ExLoverSimpleInput?;
-          if (input == null) {
+          final fortuneResult = state.extra as FortuneResult?;
+          if (fortuneResult == null) {
             return const ExLoverFortuneSimplePage();
           }
-          return ExLoverEmotionalResultPage(input: input);
+          return ExLoverEmotionalResultPage(fortuneResult: fortuneResult);
         },
       ),
       GoRoute(

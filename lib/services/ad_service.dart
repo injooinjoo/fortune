@@ -1,5 +1,5 @@
 import 'package:fortune/core/theme/toss_design_system.dart';
-import 'dart:io';
+import 'package:universal_io/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:google_mobile_ads/google_mobile_ads.dart';

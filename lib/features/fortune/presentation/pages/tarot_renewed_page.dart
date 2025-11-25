@@ -7,7 +7,8 @@ import 'dart:math' as dart_math;
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../widgets/tarot/tarot_question_selector.dart';
 import '../widgets/tarot/tarot_spread_selector.dart';
 import '../widgets/tarot/tarot_multi_card_result.dart';
@@ -17,8 +18,6 @@ import '../../../../core/utils/logger.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../services/ad_service.dart';
 // ✅ Phase 17-2
-import '../../../../shared/components/floating_bottom_button.dart';
-
 enum TarotFlowState {
   initial,      // 초기 화면
   questioning,  // 질문 선택/입력
@@ -43,9 +42,6 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
   TarotSpreadResult? _tarotResult;
   final TarotDeckType _selectedDeck = TarotDeckType.riderWaite; // 기본 덱
 
-  // ✅ Phase 17-3: Blur 상태 관리
-  final bool _isBlurred = false;
-  final List<String> _blurredSections = [];
 
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -124,7 +120,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
             ),
             // ✅ FloatingBottomButton - 타로 결과 화면에서 블러 상태일 때만 표시
             if (_currentState == TarotFlowState.result && _tarotResult != null && _tarotResult!.isBlurred)
-              FloatingBottomButton(
+              UnifiedButton.floating(
                 text: '남은 운세 모두 보기',
                 onPressed: _showAdAndUnblur,
                 isLoading: false,
@@ -313,7 +309,7 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
               const SizedBox(height: 60),
               
               // 시작하기 버튼
-              TossButton(
+              UnifiedButton(
                 text: '🔮 카드가 전하는 메시지',
                 onPressed: () {
                   // ✅ InterstitialAd 제거: 바로 질문 화면으로 이동
@@ -321,8 +317,8 @@ class _TarotRenewedPageState extends ConsumerState<TarotRenewedPage>
                     _currentState = TarotFlowState.questioning;
                   });
                 },
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
+                style: UnifiedButtonStyle.primary,
+                size: UnifiedButtonSize.large,
               ),
               
               const SizedBox(height: 40),

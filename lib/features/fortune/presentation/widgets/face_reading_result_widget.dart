@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../domain/models/fortune_result.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
@@ -142,11 +143,11 @@ class FaceReadingResultWidget extends StatelessWidget {
           if (onShare != null)
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              child: TossButton(
+              child: UnifiedButton(
                 text: '결과 공유하기',
                 onPressed: onShare,
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.large,
+                style: UnifiedButtonStyle.primary,
+                size: UnifiedButtonSize.large,
                 icon: const Icon(Icons.share),
               ),
             ),

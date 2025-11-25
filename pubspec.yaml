@@ -176,6 +176,7 @@ dependencies:
   flutter_dynamic_icon_plus: ^1.2.0  # Dynamic app icons
   app_links: ^6.3.2  # Deep linking for widgets
   device_info_plus: ^11.1.0  # Device information
+  universal_io: ^2.3.1
   # flutter_native_timezone: ^2.0.0  # Timezone support - AGP 8.x compatibility issue
 
 dev_dependencies:

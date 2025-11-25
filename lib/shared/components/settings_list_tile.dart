@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/toss_design_system.dart';
+import '../../core/providers/user_settings_provider.dart';
 
-class SettingsListTile extends StatelessWidget {
+class SettingsListTile extends ConsumerWidget {
   final String title;
   final String? subtitle;
   final IconData? icon;
@@ -46,7 +48,9 @@ class SettingsListTile extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final typography = ref.watch(typographyThemeProvider);
+    
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -89,7 +93,7 @@ class SettingsListTile extends StatelessWidget {
                         Flexible(
                           child: Text(
                             title,
-                            style: TossDesignSystem.body2.copyWith(
+                            style: typography.bodyMedium.copyWith(
                               color: _getTextColor(context),
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -108,7 +112,7 @@ class SettingsListTile extends StatelessWidget {
                             ),
                             child: Text(
                               'PRO',
-                              style: TossDesignSystem.caption.copyWith(
+                              style: typography.labelSmall.copyWith(
                                 color: TossDesignSystem.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -121,7 +125,7 @@ class SettingsListTile extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         subtitle!,
-                        style: TossDesignSystem.caption.copyWith(
+                        style: typography.labelMedium.copyWith(
                           color: _getSecondaryTextColor(context),
                         ),
                         overflow: TextOverflow.ellipsis,

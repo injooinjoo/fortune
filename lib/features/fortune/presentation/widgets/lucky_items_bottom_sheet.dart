@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -371,11 +372,11 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
           ),
           child: SizedBox(
             width: double.infinity,
-            child: TossButton(
+            child: UnifiedButton(
               text: '🍀 나의 행운 아이템 찾기',
               onPressed: _isLoadingAd ? null : _handleFortuneView,
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
+              style: UnifiedButtonStyle.primary,
+              size: UnifiedButtonSize.large,
               icon: _isLoadingAd ? null : Icon(Icons.auto_awesome),
               isLoading: _isLoadingAd,
             ),

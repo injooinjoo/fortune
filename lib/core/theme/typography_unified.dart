@@ -180,10 +180,11 @@ class TypographyUnified {
   static TextStyle get labelTiny => TextStyle(
         fontSize: FontSizeSystem.labelTinyScaled,
         height: 1.4,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
         letterSpacing: 0,
         fontFamily: fontFamilyKorean,
       );
+
 
   // ==========================================
   // BUTTON STYLES (버튼 텍스트)

@@ -4,7 +4,8 @@ import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/services/talisman_generation_service.dart' as ai_talisman;
 import '../../../../core/utils/logger.dart';
 
@@ -180,11 +181,11 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
         // AI Submit Button
         SizedBox(
           width: double.infinity,
-          child: TossButton(
+          child: UnifiedButton(
             text: _isGeneratingAI ? 'AI가 부적을 만들고 있어요...' : '🎨 AI 맞춤 부적 만들기',
             onPressed: _isValid && !_isGeneratingAI ? _handleAISubmit : null,
-            size: TossButtonSize.large,
-            style: TossButtonStyle.primary,
+            size: UnifiedButtonSize.large,
+            style: UnifiedButtonStyle.primary,
           ),
         ).animate(delay: 300.ms)
           .fadeIn(duration: 400.ms)
@@ -195,10 +196,10 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
         // Basic Submit Button
         SizedBox(
           width: double.infinity,
-          child: TossButton.secondary(
+          child: UnifiedButton.secondary(
             text: '기본 부적 만들기',
             onPressed: _isValid && !_isGeneratingAI ? _handleSubmit : null,
-            size: TossButtonSize.large,
+            size: UnifiedButtonSize.large,
           ),
         ).animate(delay: 350.ms)
           .fadeIn(duration: 400.ms)

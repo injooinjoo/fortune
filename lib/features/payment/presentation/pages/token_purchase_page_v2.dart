@@ -7,7 +7,8 @@ import '../../../../presentation/widgets/common/app_header.dart';
 import '../../../../services/in_app_purchase_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import '../../../../presentation/widgets/common/custom_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../presentation/widgets/common/custom_card.dart';
 import '../../../../core/constants/in_app_products.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -355,8 +356,8 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
 
   Widget _buildPurchaseButton() {
     final isDisabled = _selectedPackageIndex == null || _isProcessing;
-    
-    return CustomButton(
+
+    return UnifiedButton(
       text: _isProcessing ? '처리 중...' : '구매하기',
       onPressed: isDisabled ? null : _handlePurchase,
       isLoading: _isProcessing,
@@ -365,10 +366,10 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
   }
 
   Widget _buildRestoreButton() {
-    return CustomButton(
+    return UnifiedButton(
       text: '구매 복원',
       onPressed: _isProcessing ? null : _handleRestore,
-      variant: ButtonVariant.secondary,
+      style: UnifiedButtonStyle.secondary,
       width: double.infinity,
     );
   }

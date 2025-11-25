@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/toss_design_system.dart';
-import '../../shared/components/toss_floating_progress_button.dart';
+import '../../core/widgets/unified_button.dart';
 import '../../shared/components/app_header.dart';
 
 class SubscriptionPage extends ConsumerStatefulWidget {
@@ -239,7 +239,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           ),
 
           // Floating Bottom Button
-          TossFloatingProgressButtonPositioned(
+          UnifiedButton.floating(
             text: _selectedPlan == 'free'
                 ? '무료 플랜 사용 중'
                 : _selectedPlan == 'monthly'
@@ -247,8 +247,6 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     : '연간 구독 시작하기 - ₩19,000/년',
             onPressed: _selectedPlan == 'free' ? null : _showSubscribeDialog,
             isEnabled: _selectedPlan != 'free',
-            showProgress: false,
-            isVisible: true,
           ),
         ],
       ),

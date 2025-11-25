@@ -1,9 +1,9 @@
 import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart'; // ✅ FloatingBottomButton용
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
+// ✅ FloatingBottomButton용
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
@@ -178,14 +178,34 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
-      appBar: StandardFortuneAppBar(
-        title: '소개팅 운세',
-        onBackPressed: _fortuneResult != null
-            ? () {
-                GoRouter.of(context).go('/fortune');
-              }
-            : null,
-      ),
+      appBar: _fortuneResult != null
+          ? AppBar(
+              backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              leading: const SizedBox.shrink(), // 백 버튼 숨김
+              title: Text(
+                '소개팅 운세',
+                style: TypographyUnified.heading3.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+              centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  ),
+                  onPressed: () {
+                    GoRouter.of(context).go('/fortune');
+                  },
+                ),
+              ],
+            )
+          : StandardFortuneAppBar(
+              title: '소개팅 운세',
+            ),
       body: SafeArea(
         child: Stack(
           children: [
@@ -199,11 +219,9 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
                         ? buildFortuneResult()
                         : buildInputForm(),
             if (_fortuneResult == null && !_isLoading && _errorMessage == null)
-              TossFloatingProgressButtonPositioned(
+              UnifiedButton.floating(
                 text: '운세 보기',
                 isEnabled: true,
-                showProgress: false,
-                isVisible: true,
                 onPressed: () async {
                   await AdService.instance.showInterstitialAdWithCallback(
                     onAdCompleted: () async {
@@ -256,11 +274,11 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            TossButton(
+            UnifiedButton(
               text: '다시 시도',
               onPressed: _generateFortune,
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.medium,
+              style: UnifiedButtonStyle.primary,
+              size: UnifiedButtonSize.medium,
             ),
           ],
         ),
@@ -319,6 +337,18 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
 
     Logger.info('[BlindDatePage] Premium 상태: $isPremium (debug: $debugPremium, real: $realPremium)');
 
+    // ✅ Analysis Type 결정 (Edge Function이 어떤 분석을 수행할지)
+    String analysisType = 'basic';
+    if (_chatContentController.text.isNotEmpty && (myEncodedPhotos?.isNotEmpty ?? false)) {
+      analysisType = 'comprehensive'; // 사진 + 대화 모두
+    } else if (myEncodedPhotos?.isNotEmpty ?? false) {
+      analysisType = 'photos'; // 사진만
+    } else if (_chatContentController.text.isNotEmpty) {
+      analysisType = 'chat'; // 대화만
+    }
+
+    Logger.info('[BlindDate] Analysis type: $analysisType (photos: ${myEncodedPhotos?.length ?? 0}, chat: ${_chatContentController.text.isNotEmpty})');
+
     // UnifiedFortuneService용 input_conditions 구성 (snake_case)
     final inputConditions = {
       'name': params['name'],
@@ -336,6 +366,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       'concerns': params['concerns'],
       'past_experience': params['pastExperience'],
       'is_first_blind_date': params['isFirstBlindDate'],
+      'analysis_type': analysisType, // ✅ 분석 타입 추가
       'my_photos': myEncodedPhotos,
       'partner_photos': partnerEncodedPhotos,
       'chat_content': _chatContentController.text.isEmpty ? null : _chatContentController.text,
@@ -560,21 +591,24 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   }
 
   /// 사진 분석 실행
+  /// ✅ Edge Function에서 Vision API를 처리하므로 로컬에서는 사진만 준비
   Future<void> _analyzePhotos() async {
     if (_myPhotos.isEmpty && _partnerPhotos.isEmpty) return;
-    
+
     setState(() => _isAnalyzingPhotos = true);
-    
+
     try {
-      final visionService = VisionApiService();
-      _photoAnalysis = await visionService.analyzeForBlindDate(
-        myPhotos: _myPhotos,
-        partnerPhotos: _partnerPhotos.isNotEmpty ? _partnerPhotos : null,
-      );
-    } catch (e) {
-      Logger.error('Photo analysis failed', e);
+      // ✅ 관상운세 패턴: 사진만 저장하고 Edge Function에서 Vision 분석
+      // 실제 Vision API 호출은 운세 제출 시 Edge Function에서 수행됨
+      Logger.info('[BlindDate] Photos prepared: my=${_myPhotos.length}, partner=${_partnerPhotos.length}');
+
       if (mounted) {
-        Toast.error(context, '사진 분석에 실패했습니다');
+        Toast.success(context, '사진이 준비되었습니다');
+      }
+    } catch (e) {
+      Logger.error('Photo preparation failed', e);
+      if (mounted) {
+        Toast.error(context, '사진 준비에 실패했습니다');
       }
     } finally {
       if (mounted) {
@@ -1180,7 +1214,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
 
         // ✅ FloatingBottomButton (블러 상태일 때만 표시)
         if (_isBlurred)
-          FloatingBottomButton(
+          UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
             isEnabled: true,
@@ -1347,11 +1381,11 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
         if (_myPhotos.isNotEmpty)
           SizedBox(
             width: double.infinity,
-            child: TossButton(
+            child: UnifiedButton(
               text: _isAnalyzingPhotos ? 'AI가 분석 중...' : 'AI 사진 분석 시작',
               onPressed: _isAnalyzingPhotos ? null : _analyzePhotos,
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.large,
+              style: UnifiedButtonStyle.primary,
+              size: UnifiedButtonSize.large,
               icon: _isAnalyzingPhotos ? null : const Icon(Icons.auto_awesome),
             ),
           ),

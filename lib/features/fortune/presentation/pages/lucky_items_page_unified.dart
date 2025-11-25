@@ -8,13 +8,12 @@ import '../../domain/models/conditions/lucky_items_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import 'dart:math';
 
+import '../../../../core/widgets/unified_button.dart';
 /// 행운 아이템 페이지
 ///
 /// 로또 번호, 오늘의 색상, 쇼핑, 게임, 음식, 여행, 건강, 패션, 라이프스타일 등
@@ -254,32 +253,32 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
           ),
         ),
 
-        // ✅ TossFloatingProgressButton (로딩 상태 관리)
-        TossFloatingProgressButtonPositioned(
-          text: '🍀 행운 아이템 확인하기',
-          onPressed: _canGenerate() && !_isGenerating ? () async {
-            // 로딩 상태 시작
-            setState(() {
-              _isGenerating = true;
-            });
+        // ✅ UnifiedButton.floating (로딩 상태 관리)
+        if (_canGenerate())
+          UnifiedButton.floating(
+            text: '🍀 행운 아이템 확인하기',
+            onPressed: _canGenerate() && !_isGenerating ? () async {
+              // 로딩 상태 시작
+              setState(() {
+                _isGenerating = true;
+              });
 
-            // 실제 운세 생성 호출
-            onSubmit();
+              // 실제 운세 생성 호출
+              onSubmit();
 
-            // 2초 후 로딩 해제 (운세 생성이 완료되면 자동으로 결과 화면으로 전환됨)
-            Future.delayed(const Duration(seconds: 2), () {
-              if (mounted) {
-                setState(() {
-                  _isGenerating = false;
-                });
-              }
-            });
-          } : null,
-          isEnabled: _canGenerate() && !_isGenerating,
-          showProgress: _isGenerating,
-          isLoading: _isGenerating,
-          isVisible: _canGenerate(),
-        ),
+              // 2초 후 로딩 해제 (운세 생성이 완료되면 자동으로 결과 화면으로 전환됨)
+              Future.delayed(const Duration(seconds: 2), () {
+                if (mounted) {
+                  setState(() {
+                    _isGenerating = false;
+                  });
+                }
+              });
+            } : null,
+            isEnabled: _canGenerate() && !_isGenerating,
+            showProgress: _isGenerating,
+            isLoading: _isGenerating,
+          ),
       ],
     );
   }
@@ -475,7 +474,7 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
 
         // ✅ 전체보기 버튼 (블러가 있을 때만 표시)
         if (_isBlurred)
-          FloatingBottomButton(
+          UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
             isEnabled: true,

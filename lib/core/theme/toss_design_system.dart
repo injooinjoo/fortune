@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'font_size_system.dart';
 
 /// 토스 디자인 시스템 완전 정의
 /// Toss Design System Complete Definition
@@ -148,7 +149,7 @@ class TossDesignSystem {
 
   /// Display Styles (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle display1 = TextStyle(
-    fontSize: 48,
+    fontSize: FontSizeSystem.displayLarge,
     height: 1.17,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.02,
@@ -156,7 +157,7 @@ class TossDesignSystem {
   );
 
   static const TextStyle display2 = TextStyle(
-    fontSize: 40,
+    fontSize: FontSizeSystem.displayMedium,
     height: 1.2,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.02,
@@ -165,7 +166,7 @@ class TossDesignSystem {
 
   /// Heading Styles (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle heading1 = TextStyle(
-    fontSize: 32,
+    fontSize: FontSizeSystem.displaySmall,
     height: 1.25,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.01,
@@ -173,7 +174,7 @@ class TossDesignSystem {
   );
 
   static const TextStyle heading2 = TextStyle(
-    fontSize: 28,
+    fontSize: FontSizeSystem.heading1,
     height: 1.29,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.01,
@@ -181,7 +182,7 @@ class TossDesignSystem {
   );
 
   static const TextStyle heading3 = TextStyle(
-    fontSize: 24,
+    fontSize: FontSizeSystem.heading2,
     height: 1.33,
     fontWeight: FontWeight.w600,
     letterSpacing: 0,
@@ -189,7 +190,7 @@ class TossDesignSystem {
   );
 
   static const TextStyle heading4 = TextStyle(
-    fontSize: 20,
+    fontSize: FontSizeSystem.heading3,
     height: 1.4,
     fontWeight: FontWeight.w600,
     letterSpacing: 0,
@@ -198,7 +199,7 @@ class TossDesignSystem {
 
   /// Body Styles (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle body1 = TextStyle(
-    fontSize: 17,
+    fontSize: FontSizeSystem.bodyLarge,
     height: 1.53,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
@@ -206,7 +207,7 @@ class TossDesignSystem {
   );
 
   static const TextStyle body2 = TextStyle(
-    fontSize: 15,
+    fontSize: FontSizeSystem.bodyMedium,
     height: 1.6,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
@@ -214,7 +215,7 @@ class TossDesignSystem {
   );
 
   static const TextStyle body3 = TextStyle(
-    fontSize: 14,
+    fontSize: FontSizeSystem.bodySmall,
     height: 1.57,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
@@ -223,7 +224,7 @@ class TossDesignSystem {
 
   /// Caption & Small (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle caption = TextStyle(
-    fontSize: 13,
+    fontSize: FontSizeSystem.labelLarge,
     height: 1.54,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
@@ -231,7 +232,7 @@ class TossDesignSystem {
   );
 
   static const TextStyle caption1 = TextStyle(
-    fontSize: 13,
+    fontSize: FontSizeSystem.labelLarge,
     height: 1.54,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
@@ -239,7 +240,7 @@ class TossDesignSystem {
   );
 
   static const TextStyle small = TextStyle(
-    fontSize: 12,
+    fontSize: FontSizeSystem.labelMedium,
     height: 1.5,
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
@@ -248,7 +249,7 @@ class TossDesignSystem {
 
   /// Button Style (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle button = TextStyle(
-    fontSize: 16,
+    fontSize: FontSizeSystem.buttonMedium,
     height: 1.5,
     fontWeight: FontWeight.w600,
     letterSpacing: 0,
@@ -257,7 +258,7 @@ class TossDesignSystem {
 
   /// Amount Style (deprecated - 고정 크기, 사용자 설정 반영 안 됨)
   static const TextStyle amountLarge = TextStyle(
-    fontSize: 32,
+    fontSize: FontSizeSystem.numberLarge,
     height: 1.25,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.02,
@@ -266,7 +267,7 @@ class TossDesignSystem {
   );
 
   static const TextStyle amountMedium = TextStyle(
-    fontSize: 24,
+    fontSize: FontSizeSystem.numberMedium,
     height: 1.33,
     fontWeight: FontWeight.w600,
     letterSpacing: -0.01,

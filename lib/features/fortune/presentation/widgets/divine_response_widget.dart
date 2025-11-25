@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -496,13 +497,13 @@ class _DivineResponseWidgetState extends State<DivineResponseWidget>
   Widget _buildShareButton() {
     return SizedBox(
       width: double.infinity,
-      child: TossButton(
+      child: UnifiedButton(
         text: '신의 응답 공유하기',
         onPressed: () {
           // TODO: 공유 기능 구현
         },
-        style: TossButtonStyle.primary,
-        size: TossButtonSize.large,
+        style: UnifiedButtonStyle.primary,
+        size: UnifiedButtonSize.large,
         icon: Icon(Icons.share),
       ),
     );

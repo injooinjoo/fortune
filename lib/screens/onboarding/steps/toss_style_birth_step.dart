@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/toss_number_pad.dart';
-import '../../../core/theme/toss_theme.dart';
 import '../../../core/theme/toss_design_system.dart';
-import '../../../core/theme/typography_unified.dart';
+import '../../../core/providers/user_settings_provider.dart';
 
-class TossStyleBirthStep extends StatefulWidget {
+class TossStyleBirthStep extends ConsumerStatefulWidget {
   final DateTime? initialDate;
   final TimeOfDay? initialTime;
   final Function(DateTime) onBirthDateChanged;
@@ -25,10 +25,10 @@ class TossStyleBirthStep extends StatefulWidget {
   });
 
   @override
-  State<TossStyleBirthStep> createState() => _TossStyleBirthStepState();
+  ConsumerState<TossStyleBirthStep> createState() => _TossStyleBirthStepState();
 }
 
-class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
+class _TossStyleBirthStepState extends ConsumerState<TossStyleBirthStep> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final FocusNode _dateFocusNode = FocusNode();
@@ -356,6 +356,10 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
     debugPrint('[Build] showCustomKeypad: $showCustomKeypad');
     debugPrint('[Build] ========== BUILD END ==========');
     
+    final typography = ref.watch(typographyThemeProvider);
+    final inputStyle = typography.headingMedium.copyWith(color: TossDesignSystem.textPrimaryLight);
+    final hintStyle = typography.headingMedium.copyWith(color: TossDesignSystem.gray400);
+    
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark
           ? TossDesignSystem.grayDark50
@@ -391,13 +395,11 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                       readOnly: true,  // Prevent system keyboard
                       showCursor: false,  // Hide cursor
                       enableInteractiveSelection: false,  // Disable text selection
-                      style: TossTheme.inputStyle,
+                      style: inputStyle,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         hintText: '생년월일을 알려주세요',
-                        hintStyle: TossTheme.inputStyle.copyWith(
-                          color: TossTheme.textGray400,
-                        ),
+                        hintStyle: hintStyle,
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -440,13 +442,13 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                         readOnly: true,  // Prevent system keyboard
                         showCursor: false,  // Hide cursor
                         enableInteractiveSelection: false,  // Disable text selection
-                        style: TossTheme.inputStyle,
+                        style: inputStyle,
                         textAlign: TextAlign.center,
                         enabled: !_isTimeUnknown,
                         decoration: InputDecoration(
                           hintText: '태어난 시간을 알려주세요',
-                          hintStyle: TossTheme.inputStyle.copyWith(
-                            color: _isTimeUnknown ? TossTheme.textGray400.withValues(alpha: 0.3) : TossTheme.textGray400,
+                          hintStyle: hintStyle.copyWith(
+                            color: _isTimeUnknown ? TossDesignSystem.gray400.withValues(alpha: 0.3) : TossDesignSystem.gray400,
                           ),
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
@@ -502,10 +504,10 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: _isTimeUnknown ? TossTheme.primaryBlue : TossTheme.textGray400,
+                                color: _isTimeUnknown ? TossDesignSystem.primaryBlue : TossDesignSystem.gray400,
                                 width: 2,
                               ),
-                              color: _isTimeUnknown ? TossTheme.primaryBlue : TossDesignSystem.white.withValues(alpha: 0.0),
+                              color: _isTimeUnknown ? TossDesignSystem.primaryBlue : TossDesignSystem.white.withValues(alpha: 0.0),
                             ),
                             child: _isTimeUnknown
                                 ? Icon(
@@ -520,8 +522,8 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                           SizedBox(width: 8),
                           Text(
                             '모르겠어요',
-                            style: TypographyUnified.bodySmall.copyWith(
-                              color: TossTheme.textGray600,
+                            style: typography.bodySmall.copyWith(
+                              color: TossDesignSystem.gray600,
                             ),
                           ),
                         ],
@@ -547,10 +549,19 @@ class _TossStyleBirthStepState extends State<TossStyleBirthStep> {
                   margin: const EdgeInsets.only(bottom: 16.0),
                   child: ElevatedButton(
                     onPressed: widget.onNext,
-                    style: TossTheme.primaryButtonStyle(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: TossDesignSystem.primaryBlue,
+                      foregroundColor: TossDesignSystem.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                      textStyle: typography.headingSmall.copyWith(fontWeight: FontWeight.w700),
+                    ),
                     child: Text(
                       '다음',
-                      style: TossTheme.button.copyWith(
+                      style: typography.headingSmall.copyWith(
+                        fontWeight: FontWeight.w700,
                         color: Theme.of(context).brightness == Brightness.dark
                             ? TossDesignSystem.grayDark100
                             : TossDesignSystem.white,

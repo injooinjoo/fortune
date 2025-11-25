@@ -1,7 +1,8 @@
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../presentation/widgets/common/custom_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/utils/haptic_utils.dart';
 
 class PaymentResultPage extends StatefulWidget {
@@ -229,7 +230,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     if (widget.isSuccess) {
       return Column(
         children: [
-          CustomButton(
+          UnifiedButton(
             onPressed: _navigateToHome,
             text: '홈으로 돌아가기',
             gradient: LinearGradient(
@@ -237,18 +238,17 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             ),
           ),
           const SizedBox(height: 12),
-          CustomButton(
+          UnifiedButton(
             onPressed: _navigateToFortuneList,
             text: '운세 보러가기',
-            backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-            textColor: TossDesignSystem.tossBlue,
+            style: UnifiedButtonStyle.ghost,
           ),
         ],
       );
     } else {
       return Column(
         children: [
-          CustomButton(
+          UnifiedButton(
             onPressed: _retry,
             text: '다시 시도',
             gradient: LinearGradient(
@@ -256,11 +256,10 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             ),
           ),
           const SizedBox(height: 12),
-          CustomButton(
+          UnifiedButton(
             onPressed: _navigateToHome,
             text: '홈으로 돌아가기',
-            backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-            textColor: TossDesignSystem.gray900,
+            style: UnifiedButtonStyle.ghost,
           ),
         ],
       );

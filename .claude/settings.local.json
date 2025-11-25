@@ -147,7 +147,15 @@
       "Bash(dart run build_runner:*)",
       "Bash(npx supabase functions:*)",
       "Bash(do echo \"Deploying $func...\")",
-      "Bash(do echo -e \"\\n=== Deploying $func ===\")"
+      "Bash(do echo -e \"\\n=== Deploying $func ===\")",
+      "Bash(xcrun simctl uninstall:*)",
+      "Bash(xcrun simctl boot:*)",
+      "Bash(open:*)",
+      "Bash(do echo \"=== $file ===\" grep -B 3 \"FloatingBottomButton\" \"$file\")",
+      "Bash(supabase migration new:*)",
+      "Bash(dart run:*)",
+      "Bash(dart fix:*)",
+      "Bash(printf:*)"
     ],
     "deny": [],
     "ask": [],

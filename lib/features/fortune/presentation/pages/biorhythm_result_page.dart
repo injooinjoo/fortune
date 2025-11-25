@@ -6,11 +6,11 @@ import '../../../../core/theme/toss_theme.dart';
 import '../widgets/biorhythm_widgets.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/models/fortune_result.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 
+import '../../../../core/widgets/unified_button.dart';
 class BiorhythmResultPage extends StatefulWidget {
   final DateTime birthDate;
   final FortuneResult fortuneResult; // API 결과
@@ -196,7 +196,7 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
 
           // 광고 보고 전체 보기 버튼 (3번째 페이지 + 블러 상태일 때만)
           if (_currentPage == 2 && _fortuneResult.isBlurred)
-            FloatingBottomButton(
+            UnifiedButton.floating(
               text: '남은 조언 모두 보기',
               onPressed: _showAdAndUnblur,
               isLoading: false,

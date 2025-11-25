@@ -8,10 +8,11 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../core/utils/logger.dart';
 import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
-import '../../../fortune/presentation/widgets/fortune_button.dart';
 import '../../../fortune/presentation/widgets/standard_fortune_app_bar.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 
 /// 포춘쿠키 타입
 enum CookieType {
@@ -766,17 +767,17 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   Widget _buildActionButtons() {
     return Column(
       children: [
-        FortuneButton(
+        UnifiedButton(
           text: '새로운 쿠키 열기',
           onPressed: _resetCookie,
-          type: FortuneButtonType.primary,
+          style: UnifiedButtonStyle.primary,
           icon: const Icon(Icons.refresh, size: 20, color: TossDesignSystem.white),
         ),
         const SizedBox(height: 12),
-        FortuneButton(
+        UnifiedButton(
           text: '운세 공유하기',
           onPressed: _shareFortune,
-          type: FortuneButtonType.secondary,
+          style: UnifiedButtonStyle.secondary,
           icon: const Icon(Icons.share_outlined, size: 20),
         ),
       ],

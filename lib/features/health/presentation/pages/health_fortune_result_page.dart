@@ -6,7 +6,7 @@ import '../../../../core/models/fortune_result.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../core/widgets/unified_button.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
@@ -147,7 +147,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
             // 🎯 Floating Button
             if (_fortuneResult.isBlurred)
-              FloatingBottomButton(
+              UnifiedButton.floating(
                 text: '건강 조언 모두 보기',
                 onPressed: _showAdAndUnblur,
                 isLoading: false,

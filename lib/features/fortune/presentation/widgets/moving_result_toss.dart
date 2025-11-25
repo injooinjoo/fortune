@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../core/components/toss_card.dart';
@@ -176,11 +177,11 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                 // 공유하기 버튼
                 SizedBox(
                   width: double.infinity,
-                  child: TossButton(
+                  child: UnifiedButton(
                     text: '결과 공유하기',
                     onPressed: _shareResult,
-                    style: TossButtonStyle.ghost,
-                    size: TossButtonSize.large,
+                    style: UnifiedButtonStyle.ghost,
+                    size: UnifiedButtonSize.large,
                   ),
                 ),
                 
@@ -189,11 +190,11 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                 // 다시 보기 버튼
                 SizedBox(
                   width: double.infinity,
-                  child: TossButton(
+                  child: UnifiedButton(
                     text: '다시 보기',
                     onPressed: widget.onRetry,
-                    style: TossButtonStyle.primary,
-                    size: TossButtonSize.large,
+                    style: UnifiedButtonStyle.primary,
+                    size: UnifiedButtonSize.large,
                   ),
                 ),
               ],

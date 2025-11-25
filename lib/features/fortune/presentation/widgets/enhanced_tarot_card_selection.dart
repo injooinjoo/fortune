@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../core/constants/tarot_metadata.dart';
@@ -386,14 +387,14 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               if (!_showSpreadPositions) ...[
-                TossButton(
+                UnifiedButton(
                   text: '취소',
                   onPressed: widget.onCancel,
-                  style: TossButtonStyle.text,
-                  size: TossButtonSize.medium,
+                  style: UnifiedButtonStyle.text,
+                  size: UnifiedButtonSize.medium,
                 ),
                 if (_selectedCards.isNotEmpty)
-                  TossButton(
+                  UnifiedButton(
                     text: '다시 선택',
                     onPressed: () {
                       setState(() {
@@ -401,8 +402,8 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
                         _cardFlipped.clear();
                       });
                     },
-                    style: TossButtonStyle.primary,
-                    size: TossButtonSize.medium,
+                    style: UnifiedButtonStyle.primary,
+                    size: UnifiedButtonSize.medium,
                   ),
               ],
             ],

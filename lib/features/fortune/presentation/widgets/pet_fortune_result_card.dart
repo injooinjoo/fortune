@@ -5,8 +5,9 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../domain/entities/fortune.dart';
 import 'fortune_card.dart';
-import 'fortune_button.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 
 /// 반려동물 운세 결과 카드 - 토스 디자인 시스템 적용
 class PetFortuneResultCard extends StatelessWidget {
@@ -689,25 +690,25 @@ class PetFortuneResultCard extends StatelessWidget {
       child: Column(
         children: [
           if (onShare != null)
-            FortuneButton(
+            UnifiedButton(
               text: '공유하기',
               onPressed: onShare,
-              type: FortuneButtonType.primary,
+              style: UnifiedButtonStyle.primary,
               icon: const Icon(Icons.share, size: 20),
               width: double.infinity,
             ),
           if (onRetry != null) ...[
             const SizedBox(height: 12),
-            FortuneButton.retry(
+            UnifiedButton.retry(
               onPressed: onRetry,
             ),
           ],
           if (onSave != null) ...[
             const SizedBox(height: 12),
-            FortuneButton(
+            UnifiedButton(
               text: '저장하기',
               onPressed: onSave,
-              type: FortuneButtonType.secondary,
+              style: UnifiedButtonStyle.secondary,
               icon: const Icon(Icons.bookmark_border, size: 20),
               width: double.infinity,
             ),

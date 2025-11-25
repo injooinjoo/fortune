@@ -8,7 +8,8 @@ import 'package:go_router/go_router.dart';
 import '../../domain/models/wish_fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../shared/components/floating_bottom_button.dart'; // ✅ FloatingBottomButton용
+import '../../../../core/widgets/unified_button.dart';
+// ✅ FloatingBottomButton용
 import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
 import '../../../../core/utils/logger.dart'; // ✅ 로그용
 import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
@@ -178,7 +179,7 @@ class _WishFortuneResultTinderState extends ConsumerState<WishFortuneResultTinde
               bottom: 100,
               left: 0,
               right: 0,
-              child: FloatingBottomButton(
+              child: UnifiedButton.floating(
                 text: '광고 보고 전체 내용 확인하기',
                 onPressed: _showAdAndUnblur,
                 isEnabled: true,

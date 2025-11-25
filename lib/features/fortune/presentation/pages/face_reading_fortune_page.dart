@@ -8,7 +8,6 @@ import '../../domain/models/fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/image_upload_selector.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -16,9 +15,9 @@ import '../../../../core/models/fortune_result.dart' as core_models;
 import '../../domain/models/conditions/face_reading_fortune_conditions.dart';
 import 'package:crypto/crypto.dart';
 import '../../../../presentation/providers/token_provider.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 
+import '../../../../core/widgets/unified_button.dart';
 class FaceReadingFortunePage extends ConsumerStatefulWidget {
   const FaceReadingFortunePage({super.key});
 
@@ -97,7 +96,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 : _buildTossStyleInputSection(context, isDark),
             // ✅ FloatingBottomButton - 결과 화면에서 블러 상태일 때만 표시
             if (_fortuneResult != null && _fortuneResult!.isBlurred)
-              FloatingBottomButton(
+              UnifiedButton.floating(
                 text: '남은 운세 모두 보기',
                 onPressed: _showAdAndUnblur,
                 isLoading: false,
@@ -307,11 +306,9 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         ),
 
         // Floating Bottom Button
-        TossFloatingProgressButtonPositioned(
+        UnifiedButton.floating(
           text: _isAnalyzing ? 'AI가 분석 중...' : 'AI 관상 분석 시작',
           isEnabled: !_isAnalyzing,
-          showProgress: false,
-          isVisible: true,
           onPressed: _isAnalyzing ? null : () async {
             // ✅ InterstitialAd 제거: 바로 분석 시작
             await _startAnalysis();
@@ -1346,79 +1343,6 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     );
   }
   
-  Widget _buildFacePartAnalysis(String part, String analysis, IconData icon, bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha:0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: TossDesignSystem.tossBlue,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  part,
-                  style: TossDesignSystem.body1.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  analysis,
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  String _translateFacePart(String part) {
-    final translations = {
-      'forehead': '이마',
-      'eyes': '눈',
-      'nose': '코',
-      'mouth': '입',
-      'chin': '턱',
-      'cheeks': '볼',
-      'eyebrows': '눈썹',
-      'ears': '귀'
-    };
-    return translations[part] ?? part;
-  }
-  
-  IconData _getFacePartIcon(String part) {
-    final icons = {
-      'forehead': Icons.face,
-      'eyes': Icons.remove_red_eye,
-      'nose': Icons.face,
-      'mouth': Icons.sentiment_satisfied,
-      'chin': Icons.face,
-      'cheeks': Icons.face,
-      'eyebrows': Icons.face,
-      'ears': Icons.hearing
-    };
-    return icons[part] ?? Icons.face;
-  }
 
   // 🌟 오관(五官) 섹션 빌더
   Widget _buildOgwanSection({

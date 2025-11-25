@@ -19,9 +19,10 @@ import '../../data/services/saju_calculator.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/widgets/unified_button.dart';
 import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
 import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
-import '../../../../shared/components/floating_bottom_button.dart'; // ✅ FloatingBottomButton용
+// ✅ FloatingBottomButton용
 import '../../../../core/utils/logger.dart'; // ✅ 로그용
 import '../../../../core/services/unified_fortune_service.dart'; // ✅ UnifiedFortuneService
 import '../../../../core/models/fortune_result.dart'; // ✅ FortuneResult
@@ -391,7 +392,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
 
           // ✅ FloatingBottomButton (블러 상태일 때만 표시)
           if (_isBlurred)
-            FloatingBottomButton(
+            UnifiedButton.floating(
               text: '광고 보고 전체 내용 확인하기',
               onPressed: _showAdAndUnblur,
               isEnabled: true,

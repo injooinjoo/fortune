@@ -1,17 +1,16 @@
-import 'dart:ui'; // ✅ Phase 19-1: ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../providers/saju_provider.dart';
 import '../widgets/saju_element_chart.dart';
@@ -126,12 +125,12 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
               ),
             ),
             const SizedBox(height: 24),
-            TossButton(
+            UnifiedButton(
               text: '다시 시도',
               onPressed: () {
                 ref.read(sajuProvider.notifier).fetchUserSaju();
               },
-              style: TossButtonStyle.primary,
+              style: UnifiedButtonStyle.primary,
             ),
           ],
         ),
@@ -190,14 +189,14 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
             ],
           ),
         ),
-        TossFloatingProgressButtonPositioned(
-          text: _isFortuneLoading ? '운세를 보고 있어요' : '📿 하늘이 정한 나의 운명',
-          onPressed: hasQuestion && !_isFortuneLoading ? _onFortuneButtonPressed : null,
-          isEnabled: hasQuestion && !_isFortuneLoading,
-          showProgress: false,
-          isLoading: _isFortuneLoading,
-          isVisible: hasQuestion,
-        ),
+        if (hasQuestion)
+          UnifiedButton.floating(
+            text: _isFortuneLoading ? '운세를 보고 있어요' : '📿 하늘이 정한 나의 운명',
+            onPressed: hasQuestion && !_isFortuneLoading ? _onFortuneButtonPressed : null,
+            isEnabled: hasQuestion && !_isFortuneLoading,
+            showProgress: false,
+            isLoading: _isFortuneLoading,
+          ),
       ],
     );
   }
@@ -220,12 +219,11 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
         ),
         // 블러 상태일 때만 광고 버튼 표시
         if (_isBlurred)
-          TossFloatingProgressButtonPositioned(
+          UnifiedButton.floating(
             text: '🎁 광고 보고 전체 운세 보기',
             onPressed: _showAdAndUnblur,
             isEnabled: true,
             showProgress: false,
-            isVisible: true,
             isLoading: false,
           ),
       ],
@@ -288,7 +286,7 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
             Container(
               width: double.infinity,
               margin: const EdgeInsets.only(bottom: TossTheme.spacingS),
-              child: TossButton(
+              child: UnifiedButton(
                 text: question,
                 onPressed: () {
                   setState(() {
@@ -296,9 +294,9 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
                     _customQuestionController.clear();
                   });
                 },
-                style: _selectedQuestion == question 
-                    ? TossButtonStyle.primary 
-                    : TossButtonStyle.secondary,
+                style: _selectedQuestion == question
+                    ? UnifiedButtonStyle.primary
+                    : UnifiedButtonStyle.secondary,
               ),
             ),
           ),
@@ -405,8 +403,8 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
 
       setState(() {
         _fortuneResult = result;
-        _isBlurred = result.isBlurred ?? false;
-        _blurredSections = result.blurredSections ?? [];
+        _isBlurred = result.isBlurred;
+        _blurredSections = result.blurredSections;
         _isFortuneLoading = false;
         _showResults = true;
       });
@@ -544,7 +542,10 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
           const SizedBox(height: TossTheme.spacingM),
 
           // 내용만 블러 처리
-          _buildBlurWrapper(
+          UnifiedBlurWrapper(
+            isBlurred: _isBlurred,
+            blurredSections: _blurredSections,
+            sectionKey: sectionKey,
             child: Text(
               content,
               style: TossTheme.body3.copyWith(
@@ -552,58 +553,13 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
             ),
-            sectionKey: sectionKey,
           ),
         ],
       ),
     );
   }
 
-  /// 블러 래퍼 위젯 (내용만 블러 처리)
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required String sectionKey,
-  }) {
-    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
-      return child;
-    }
 
-    return Stack(
-      children: [
-        // 블러 처리된 텍스트
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        // 반투명 오버레이
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(TossTheme.radiusS),
-            ),
-          ),
-        ),
-        // 잠금 아이콘 (중앙 배치)
-        Positioned.fill(
-          child: Center(
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.5),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.lock_outline,
-                size: 32,
-                color: Colors.white.withValues(alpha: 0.9),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
   /// 광고 시청 후 블러 해제
   Future<void> _showAdAndUnblur() async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/components/toss_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../talisman/domain/models/talisman_wish.dart';
 import '../../../talisman/presentation/widgets/talisman_wish_selector.dart';
@@ -244,7 +245,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
           const SizedBox(height: 32),
           SizedBox(
             width: double.infinity,
-            child: TossButton(
+            child: UnifiedButton(
               text: '다시 시도',
               onPressed: () {
                 ref.read(talismanGenerationProvider(userId).notifier).reset();
@@ -313,20 +314,20 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
         title: const Text('로그인이 필요합니다'),
         content: const Text('부적을 생성하려면 로그인이 필요합니다.'),
         actions: [
-          TossButton(
+          UnifiedButton(
             text: '취소',
             onPressed: () => Navigator.of(context).pop(),
-            style: TossButtonStyle.text,
-            size: TossButtonSize.medium,
+            style: UnifiedButtonStyle.text,
+            size: UnifiedButtonSize.medium,
           ),
-          TossButton(
+          UnifiedButton(
             text: '로그인',
             onPressed: () {
               Navigator.of(context).pop();
               // TODO: 로그인 페이지로 이동
             },
-            style: TossButtonStyle.text,
-            size: TossButtonSize.medium,
+            style: UnifiedButtonStyle.text,
+            size: UnifiedButtonSize.medium,
           ),
         ],
       ),

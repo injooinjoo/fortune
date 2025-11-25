@@ -5,9 +5,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/components/toss_card.dart';
-import '../../../../shared/components/toss_button.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
-import '../../../../shared/components/floating_bottom_button.dart';
+import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -603,14 +602,13 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
       buttonText = '다음';
     }
 
-    return TossFloatingProgressButtonPositioned(
+    return UnifiedButton.progress(
       text: buttonText,
       currentStep: _currentStep + 1,
       totalSteps: 4,
       onPressed: _canProceed() ? _handleNext : null,
       isEnabled: _canProceed(),
-      isVisible: true,
-      showProgress: true,
+      isFloating: true,
       isLoading: _isLoading,
     );
   }
@@ -855,9 +853,9 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           Row(
             children: [
               Expanded(
-                child: TossButton(
+                child: UnifiedButton(
                   text: '다시 해보기',
-                  style: TossButtonStyle.secondary,
+                  style: UnifiedButtonStyle.secondary,
                   onPressed: () => setState(() {
                     _fortune = null;
                     _currentStep = 0;
@@ -872,7 +870,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: TossButton(
+                child: UnifiedButton(
                   text: '공유하기',
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -889,7 +887,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
         // ✅ FloatingBottomButton
         if (_isBlurred)
-          FloatingBottomButton(
+          UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
             isEnabled: true,

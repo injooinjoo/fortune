@@ -44,6 +44,9 @@ class CalendarEventInfo with _$CalendarEventInfo {
     @Default(false) bool isAuspicious,
     int? auspiciousScore,
     String? description,
+    // 디바이스 캘린더 연동 필드
+    @Default(false) bool hasDeviceEvents,
+    @Default(0) int deviceEventCount,
   }) = _CalendarEventInfo;
 
   factory CalendarEventInfo.fromJson(Map<String, dynamic> json) => _$CalendarEventInfoFromJson(json);

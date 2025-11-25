@@ -14,6 +14,7 @@ import 'routes/route_config.dart';
 import 'core/theme/toss_design_system.dart';
 // // import 'presentation/providers/app_providers.dart'; // Has syntax errors
 import 'presentation/providers/theme_provider.dart';
+import 'core/theme/font_size_system.dart';
 //     if (dart.library.html) 'core/utils/url_cleaner_web.dart';
 import 'services/ad_service.dart';
 import 'services/remote_config_service.dart';
@@ -205,6 +206,9 @@ class MyApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
     // 🎯 사용자 폰트 설정을 앱 전체에 적용
     final userSettings = ref.watch(userSettingsProvider);
+    
+    // FontSizeSystem에 스케일 팩터 동기화 (TypographyUnified용)
+    FontSizeSystem.setScaleFactor(userSettings.fontScale);
 
     return MaterialApp.router(
       title: 'Fortune - 운세 서비스',

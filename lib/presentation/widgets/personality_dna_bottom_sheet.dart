@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../shared/components/toss_button.dart';
+import '../../core/widgets/unified_button.dart';
+import '../../core/widgets/unified_button_enums.dart';
 import '../../services/ad_service.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../core/services/personality_dna_service.dart';
@@ -158,34 +159,34 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                   ? Row(
                       children: [
                         Expanded(
-                          child: TossButton(
+                          child: UnifiedButton(
                             text: '이전',
                             onPressed: () {
                               setState(() {
                                 _showDetailedView = false;
                               });
                             },
-                            style: TossButtonStyle.secondary,
-                            size: TossButtonSize.large,
+                            style: UnifiedButtonStyle.secondary,
+                            size: UnifiedButtonSize.large,
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           flex: 2,
-                          child: TossButton(
+                          child: UnifiedButton(
                             text: '🧬 나만의 성격 DNA 발견하기',
                             onPressed: _canGenerate && !_isLoading
                                 ? _generatePersonalityDNA
                                 : null,
-                            style: TossButtonStyle.primary,
-                            size: TossButtonSize.large,
+                            style: UnifiedButtonStyle.primary,
+                            size: UnifiedButtonSize.large,
                             isLoading: _isLoading,
                             isEnabled: _canGenerate && !_isLoading,
                           ),
                         ),
                       ],
                     )
-                  : TossButton(
+                  : UnifiedButton(
                       text: _canGenerate
                           ? '🧬 나만의 성격 DNA 발견하기'
                           : '📝 정보 수정하기',
@@ -196,8 +197,8 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                                 _showDetailedView = true;
                               });
                             },
-                      style: TossButtonStyle.primary,
-                      size: TossButtonSize.large,
+                      style: UnifiedButtonStyle.primary,
+                      size: UnifiedButtonSize.large,
                       isLoading: _isLoading,
                       width: double.infinity,
                     ),

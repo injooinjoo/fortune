@@ -72,11 +72,21 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
         // Final result - 녹음 완료
         if (text.isNotEmpty) {
           _textController.text = text;
+          // 커서를 끝으로 이동
+          _textController.selection = TextSelection.fromPosition(
+            TextPosition(offset: text.length),
+          );
         }
       },
       onPartialResult: (text) {
         // Partial result - 실시간 업데이트
         if (text.isNotEmpty) {
+          // 텍스트 필드 업데이트 (화면에 즉시 반영)
+          _textController.text = text;
+          _textController.selection = TextSelection.fromPosition(
+            TextPosition(offset: text.length),
+          );
+          
           ref.read(dreamVoiceProvider.notifier).updateRecognizedText(text);
         }
       },
@@ -94,7 +104,7 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
     ref.read(dreamVoiceProvider.notifier).stopRecording();
 
     // STT 변환 대기 (좀 더 긴 딜레이)
-    await Future.delayed(const Duration(milliseconds: 800));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     // 텍스트가 있으면 전송
     final text = _textController.text.trim();
@@ -158,47 +168,52 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
                 ),
                 child: Row(
                 children: [
-                  // TextField + 스펙트럼
+                  // TextField (항상 표시)
                   Expanded(
-                    child: _isRecording
-                        ? // 녹음 중: 스펙트럼만 표시
-                        Center(
-                            child: ValueListenableBuilder<double>(
-                              valueListenable: _speechService.soundLevelNotifier,
-                              builder: (context, soundLevel, child) {
-                                return VoiceSpectrumAnimation(
-                                  isRecording: _isRecording,
-                                  barCount: 30,
-                                  soundLevel: soundLevel,
-                                );
-                              },
-                            ),
-                          )
-                        : // 녹음 안할 때: TextField 표시
-                        Padding(
-                            padding: const EdgeInsets.only(left: 20, right: 16),
-                            child: TextField(
-                              controller: _textController,
-                              style: TypographyUnified.bodyMedium.copyWith(
-                                color: isDark ? Colors.white : Colors.black,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: '무슨 꿈이었나요?',
-                                hintStyle: TypographyUnified.bodyMedium.copyWith(
-                                  color: isDark ? Colors.grey[500] : Colors.grey[600],
-                                ),
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                filled: false,
-                                contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                                isDense: true,
-                              ),
-                              maxLines: 1,
-                            ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20, right: 8),
+                      child: TextField(
+                        controller: _textController,
+                        style: TypographyUnified.bodyMedium.copyWith(
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: _isRecording ? '듣고 있어요...' : '무슨 꿈이었나요?',
+                          hintStyle: TypographyUnified.bodyMedium.copyWith(
+                            color: _isRecording 
+                                ? (isDark ? const Color(0xFF6B4EFF) : const Color(0xFF5835E8)) // 녹음 중 힌트 색상 강조
+                                : (isDark ? Colors.grey[500] : Colors.grey[600]),
                           ),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          filled: false,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                          isDense: true,
+                        ),
+                        maxLines: 1,
+                        // 녹음 중일 때는 읽기 전용으로 설정할 수도 있지만, 
+                        // 사용자가 수정하고 싶을 수 있으므로 활성화 유지
+                      ),
+                    ),
                   ),
+
+                  // 녹음 중일 때 스펙트럼 애니메이션 표시
+                  if (_isRecording)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: ValueListenableBuilder<double>(
+                        valueListenable: _speechService.soundLevelNotifier,
+                        builder: (context, soundLevel, child) {
+                          return VoiceSpectrumAnimation(
+                            isRecording: _isRecording,
+                            barCount: 5,
+                            soundLevel: soundLevel,
+                          );
+                        },
+                      ),
+                    ),
 
                   // 마이크 버튼 (텍스트 없고 녹음 안할 때만)
                   if (!_hasText && !_isRecording)
@@ -224,12 +239,16 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: _isRecording 
+                        ? (isDark ? Colors.red[400] : Colors.red) // 녹음 중지 버튼은 빨간색 계열
+                        : (isDark ? Colors.white : Colors.black),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     _isRecording ? Icons.stop : Icons.arrow_upward,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: _isRecording 
+                        ? Colors.white 
+                        : (isDark ? Colors.black : Colors.white),
                     size: 22,
                   ),
                 ),

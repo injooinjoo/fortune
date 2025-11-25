@@ -6,7 +6,7 @@ import '../../domain/models/wish_fortune_result.dart';
 import './wish_fortune_result_tinder.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -343,15 +343,14 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
                   onAllCompleted: null,
                   completionButtonText: '✨ 소원 빌기',
                 ),
-                // ✅ 하단 버튼 (TossFloatingProgressButtonPositioned)
-                TossFloatingProgressButtonPositioned(
-                  text: _isLoading ? '신의 응답을 받는 중...' : '✨ 소원 빌기',
-                  isEnabled: _canSubmit() && !_isLoading,
-                  onPressed: _canSubmit() && !_isLoading ? _submitWish : null,
-                  isVisible: _canSubmit() || _isLoading,
-                  showProgress: false,
-                  isLoading: _isLoading,
-                ),
+                // ✅ 하단 버튼 (UnifiedButton.floating)
+                if (_canSubmit() || _isLoading)
+                  UnifiedButton.floating(
+                    text: _isLoading ? '신의 응답을 받는 중...' : '✨ 소원 빌기',
+                    isEnabled: _canSubmit() && !_isLoading,
+                    onPressed: _canSubmit() && !_isLoading ? _submitWish : null,
+                    isLoading: _isLoading,
+                  ),
               ],
             ),
     );

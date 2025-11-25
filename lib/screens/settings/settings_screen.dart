@@ -6,11 +6,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/providers/token_provider.dart';
-import '../../core/theme/typography_unified.dart';
 import '../../core/services/debug_premium_service.dart';
 import '../../shared/components/toast.dart';
 import '../../shared/components/settings_list_tile.dart';
 import '../../shared/components/section_header.dart';
+import '../../core/providers/user_settings_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -103,6 +103,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final isDarkMode = themeMode == ThemeMode.dark ||
         (themeMode == ThemeMode.system &&
             MediaQuery.of(context).platformBrightness == Brightness.dark);
+    final typography = ref.watch(typographyThemeProvider);
 
     return Scaffold(
       backgroundColor: _getBackgroundColor(context),
@@ -119,7 +120,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
         title: Text(
           '설정',
-          style: TypographyUnified.heading3.copyWith(
+          style: typography.headingMedium.copyWith(
             color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
@@ -378,13 +379,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         builder: (context) => AlertDialog(
                           title: Text(
                             '로그아웃',
-                            style: TossDesignSystem.heading4.copyWith(
+                            style: typography.headingSmall.copyWith(
                               color: _getTextColor(context),
                             ),
                           ),
                           content: Text(
                             '정말 로그아웃 하시겠습니까?',
-                            style: TossDesignSystem.body2.copyWith(
+                            style: typography.bodyMedium.copyWith(
                               color: _getTextColor(context),
                             ),
                           ),
@@ -393,7 +394,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               onPressed: () => Navigator.pop(context, false),
                               child: Text(
                                 '취소',
-                                style: TossDesignSystem.button.copyWith(
+                                style: typography.labelLarge.copyWith(
                                   color: _getSecondaryTextColor(context),
                                 ),
                               ),
@@ -402,7 +403,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               onPressed: () => Navigator.pop(context, true),
                               child: Text(
                                 '로그아웃',
-                                style: TossDesignSystem.button.copyWith(
+                                style: typography.labelLarge.copyWith(
                                   color: TossDesignSystem.errorRed,
                                 ),
                               ),
@@ -429,7 +430,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     child: Text(
                       '로그아웃',
-                      style: TossDesignSystem.button.copyWith(
+                      style: typography.labelLarge.copyWith(
                         color: TossDesignSystem.errorRed,
                       ),
                     ),
@@ -442,7 +443,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Center(
                 child: Text(
                   'Fortune v1.0.0',
-                  style: TossDesignSystem.caption.copyWith(
+                  style: typography.labelMedium.copyWith(
                     color: _getSecondaryTextColor(context),
                   ),
                 ),
