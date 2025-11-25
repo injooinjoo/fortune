@@ -92,3 +92,12 @@ coverage/
 # Screen analysis results (debug mode only)
 visited_screens.json
 screen_analysis_result.json
+
+# Test artifacts
+test-results/
+playwright-report/
+playwright.live.config.js
+/playwright/tests/*.spec.js
+
+# Node modules (for Playwright)
+node_modules/
