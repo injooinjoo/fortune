@@ -199,9 +199,9 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                         color: TossDesignSystem.gray600,
                         onTap: () async {
                           final result = await ref.read(tokenProvider.notifier).claimDailyTokens();
-                          if (result && mounted) {
+                          if (result && context.mounted) {
                             Navigator.of(context).pop(true);
-                          } else if (mounted) {
+                          } else if (context.mounted) {
                             _showClaimError();
                           }
                         },

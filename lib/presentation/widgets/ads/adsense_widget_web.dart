@@ -1,3 +1,4 @@
+// ignore_for_file: deprecated_member_use, avoid_web_libraries_in_flutter
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'dart:html' as html;
 import 'dart:ui_web' as ui;
@@ -31,7 +32,6 @@ class AdSenseWidget extends StatefulWidget {
 
 class _AdSenseWidgetState extends State<AdSenseWidget> {
   late String _viewId;
-  bool _isAdLoaded = false;
 
   @override
   void initState() {
@@ -97,9 +97,6 @@ class _AdSenseWidgetState extends State<AdSenseWidget> {
             ..text = '(adsbygoogle = window.adsbygoogle || []).push({});';
           html.document.body?.append(script);
           script.remove();
-          setState(() {
-            _isAdLoaded = true;
-          });
           Logger.info('AdSense ad loaded successfully');
         } catch (e) {
           Logger.error('Failed to push AdSense ad', e);

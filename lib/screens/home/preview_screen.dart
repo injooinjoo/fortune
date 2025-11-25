@@ -174,10 +174,11 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
   }
 
   Future<void> _handleSocialLoginInBottomSheet(String provider, StateSetter setBottomSheetState) async {
+    if (!mounted) return;
     setBottomSheetState(() {
       _bottomSheetLoading = true;
     });
-    
+
     try {
       AuthResponse? response;
       
@@ -198,7 +199,9 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
       
       // OAuth flows return null (handled by deep linking)
       // Direct auth flows return AuthResponse
-      if (response != null && response.user != null && mounted) {
+      if (!mounted) return;
+
+      if (response != null && response.user != null) {
         // Close bottom sheet and call success callback
         Navigator.pop(context);
         widget.onLoginSuccess?.call();

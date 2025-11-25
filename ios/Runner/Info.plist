@@ -104,8 +104,6 @@
 			<string>com.fortune.fortune.checkCompatibility</string>
 			<string>com.fortune.fortune.checkLuckyNumbers</string>
 		</array>
-		<key>NSUserNotificationUsageDescription</key>
-		<string>This app sends daily fortune notifications to keep you updated with your personalized fortunes.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Fortune AI가 현재 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
 		<key>NSWidgetExtensionBundleIdentifiers</key>

@@ -155,7 +155,8 @@
       "Bash(supabase migration new:*)",
       "Bash(dart run:*)",
       "Bash(dart fix:*)",
-      "Bash(printf:*)"
+      "Bash(printf:*)",
+      "Bash(java -version:*)"
     ],
     "deny": [],
     "ask": [],

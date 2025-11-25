@@ -751,10 +751,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
       final score = fortune.overallScore ?? 80;
       if (score >= 90) {
         tags.add('최고운');
-      } else if (score >= 80) tags.add('대길');
-      else if (score >= 70) tags.add('길');
-      else if (score >= 60) tags.add('보통');
-      else tags.add('주의');
+      } else if (score >= 80) {
+        tags.add('대길');
+      } else if (score >= 70) {
+        tags.add('길');
+      } else if (score >= 60) {
+        tags.add('보통');
+      } else {
+        tags.add('주의');
+      }
 
       // FortuneHistoryService에 저장 (새로운 히스토리 테이블)
       final historyService = FortuneHistoryService();

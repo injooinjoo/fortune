@@ -55,8 +55,6 @@ class SocialAuthService {
   // Sign Out
   Future<void> signOut() async {
     try {
-      final provider = await getCurrentProvider();
-
       // Kakao logout
       try {
         await kakao.UserApi.instance.logout();

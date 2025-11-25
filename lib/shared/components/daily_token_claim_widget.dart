@@ -104,7 +104,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
       await SecureStorage.setString('last_daily_claim_date', todayString);
 
       // Update token balance
-      ref.refresh(tokenBalanceProvider);
+      ref.invalidate(tokenBalanceProvider);
 
       // Show success message
       if (mounted) {

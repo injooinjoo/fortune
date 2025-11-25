@@ -356,33 +356,6 @@ class DreamElementsAnalysisService {
         : '꿈이 전하는 메시지에 귀 기울이고 내면의 지혜를 신뢰하세요';
   }
 
-  static List<String> _identifyLuckyElements(Map<String, List<String>> elements) {
-    final luckyElements = <String>[];
-    
-    // 긍정적 상징 찾기
-    for (final entry in elements.entries) {
-      for (final symbol in entry.value) {
-        final data = symbolDatabase[symbol];
-        if (data != null) {
-          // 긍정적 의미가 강한 상징
-          if (symbol == '태양' || symbol == '새' || symbol == '물') {
-            luckyElements.add('$symbol - ${data['positive']}');
-          }
-        }
-      }
-    }
-    
-    // 색상 중 긍정적인 것
-    if (elements['색상']!.contains('노란')) {
-      luckyElements.add('노란색 - 희망과 긍정의 에너지');
-    }
-    if (elements['색상']!.contains('초록')) {
-      luckyElements.add('초록색 - 성장과 치유의 에너지');
-    }
-    
-    return luckyElements;
-  }
-
   // 꿈의 감정 흐름 분석
   static List<double> analyzeEmotionalFlow(String dreamText) {
     // 간단한 감정 변화 시뮬레이션 (실제로는 더 정교한 분석 필요,

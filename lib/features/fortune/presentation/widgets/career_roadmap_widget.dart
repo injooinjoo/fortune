@@ -34,7 +34,7 @@ class CareerRoadmapWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -111,8 +111,8 @@ class CareerRoadmapWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: rank == 1
-                      ? TossDesignSystem.tossBlue.withOpacity(0.1)
-                      : TossDesignSystem.gray300.withOpacity(0.1),
+                      ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
+                      : TossDesignSystem.gray300.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: rank == 1 ? TossDesignSystem.tossBlue : TossDesignSystem.gray500,
@@ -148,7 +148,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: rank == 1
-                        ? TossDesignSystem.tossBlue.withOpacity(0.3)
+                        ? TossDesignSystem.tossBlue.withValues(alpha: 0.3)
                         : TossDesignSystem.gray400,
                     width: 1,
                   ),
@@ -170,7 +170,7 @@ class CareerRoadmapWidget extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: rank == 1
-                  ? TossDesignSystem.tossBlue.withOpacity(0.05)
+                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.05)
                   : (isDark ? TossDesignSystem.grayDark300 : Colors.white),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -226,10 +226,10 @@ class CareerRoadmapWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.05),
+              color: Colors.green.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.green.withOpacity(0.2),
+                color: Colors.green.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -241,7 +241,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
+                        color: Colors.green.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -282,10 +282,10 @@ class CareerRoadmapWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.05),
+              color: Colors.red.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.red.withOpacity(0.2),
+                color: Colors.red.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -297,7 +297,7 @@ class CareerRoadmapWidget extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
+                        color: Colors.red.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -364,10 +364,10 @@ class CareerRoadmapWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.warningOrange.withOpacity(0.05),
+              color: TossDesignSystem.warningOrange.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.warningOrange.withOpacity(0.2),
+                color: TossDesignSystem.warningOrange.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -416,10 +416,10 @@ class CareerRoadmapWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withOpacity(0.05),
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.tossBlue.withOpacity(0.2),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),

@@ -5,6 +5,7 @@ import '../../../../core/components/toss_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/components/toss_input.dart';
+import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 
 /// 사주팔자 정보 입력 폼 위젯
 class SajuInputForm extends StatefulWidget {
@@ -74,32 +75,6 @@ class _SajuInputFormState extends State<SajuInputForm>
     _animationController.dispose();
     _nameController.dispose();
     super.dispose();
-  }
-
-  void _selectDate() async {
-    final pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime(1990, 1, 1),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      locale: const Locale('ko', 'KR'),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: TossTheme.brandBlue,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-    }
   }
 
   void _selectTime(String? value) {
@@ -296,40 +271,12 @@ class _SajuInputFormState extends State<SajuInputForm>
             ],
           ),
           const SizedBox(height: TossTheme.spacingM),
-          GestureDetector(
-            onTap: _selectDate,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(TossTheme.spacingM),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: _selectedDate != null 
-                    ? TossTheme.brandBlue 
-                    : TossTheme.borderPrimary,
-                ),
-                borderRadius: BorderRadius.circular(TossTheme.radiusM),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _selectedDate != null
-                        ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'
-                        : '생년월일을 선택해주세요',
-                    style: TossTheme.body1.copyWith(
-                      color: _selectedDate != null
-                          ? TossTheme.textBlack
-                          : TossTheme.textGray500,
-                    ),
-                  ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16,
-                    color: TossTheme.textGray500,
-                  ),
-                ],
-              ),
-            ),
+          NumericDateInput(
+            selectedDate: _selectedDate,
+            onDateChanged: (date) => setState(() => _selectedDate = date),
+            minDate: DateTime(1900),
+            maxDate: DateTime.now(),
+            showAge: true,
           ),
         ],
       ),

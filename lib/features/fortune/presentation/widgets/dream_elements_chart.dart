@@ -131,8 +131,8 @@ class _DreamElementsChartState extends State<DreamElementsChart>
                   centerSpaceRadius: 80,
                   sections: _getPieChartSections(),
                 ),
-                swapAnimationDuration: const Duration(milliseconds: 150),
-                swapAnimationCurve: Curves.linear,
+                duration: const Duration(milliseconds: 150),
+                curve: Curves.linear,
               ),
               // 중앙 텍스트
               Center(

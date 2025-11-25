@@ -265,8 +265,8 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
       padding: const EdgeInsets.all(24),
       gradient: LinearGradient(
         colors: [
-          scoreColor.withOpacity(0.1),
-          scoreColor.withOpacity(0.05),
+          scoreColor.withValues(alpha: 0.1),
+          scoreColor.withValues(alpha: 0.05),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -310,7 +310,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: scoreColor.withOpacity(0.2),
+                color: scoreColor.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -344,7 +344,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -393,7 +393,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -454,8 +454,8 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.tossBlue.withOpacity(0.1),
-          TossDesignSystem.tossBlue.withOpacity(0.05),
+          TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+          TossDesignSystem.tossBlue.withValues(alpha: 0.05),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -468,7 +468,7 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withOpacity(0.2),
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
@@ -494,10 +494,10 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withOpacity(0.15),
+                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: TossDesignSystem.tossBlue.withOpacity(0.3),
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),

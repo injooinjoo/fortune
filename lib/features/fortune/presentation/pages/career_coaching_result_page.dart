@@ -258,7 +258,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                             // Fortune 데이터 추출
                             Builder(
                               builder: (context) {
-                                final fortuneData = _fortuneResult!.data as Map<String, dynamic>;
+                                final fortuneData = _fortuneResult!.data;
                                 final healthScore = fortuneData['health_score'] as Map<String, dynamic>?;
                                 final marketTrends = fortuneData['market_trends'] as Map<String, dynamic>?;
                                 final insights = fortuneData['key_insights'] as List?;
@@ -716,7 +716,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                 ),
                 child: Center(
                   child: Text(
-                    '${weekNumber}주',
+                    '$weekNumber주',
                     style: context.labelMedium.copyWith(
                       color: TossDesignSystem.white,
                       fontWeight: FontWeight.bold,
@@ -915,7 +915,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '예상 기간: ${estimatedMonths}개월',
+                  '예상 기간: $estimatedMonths개월',
                   style: context.bodyMedium.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700,
                   ),
@@ -1036,29 +1036,6 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
         ],
       ),
     ).animate(delay: 100.ms).fadeIn(duration: 500.ms).slideY(begin: 0.1);
-  }
-
-  Widget _buildLoadingView(bool isDark) {
-    return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.tossBlue),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              '커리어 분석 중...',
-              style: context.bodyMedium.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildErrorView(bool isDark) {

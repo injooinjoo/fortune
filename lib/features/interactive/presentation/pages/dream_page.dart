@@ -9,6 +9,7 @@ import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 
 // Import domain models
 import '../../domain/models/dream_models.dart';
@@ -341,44 +342,11 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                   ),
                 ),
                 const SizedBox(height: 8),
-                InkWell(
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: _selectedDate,
-                      firstDate: DateTime.now().subtract(const Duration(days: 365)),
-                      lastDate: DateTime.now(),
-                    );
-                    if (date != null) {
-                      setState(() {
-                        _selectedDate = date;
-                      });
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: theme.colorScheme.outline.withValues(alpha: 0.3)),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.calendar_today_rounded,
-                          size: 20,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '${_selectedDate.year}년 ${_selectedDate.month}월 ${_selectedDate.day}일',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontSize: fontSize,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                NumericDateInput(
+                  selectedDate: _selectedDate,
+                  onDateChanged: (date) => setState(() => _selectedDate = date),
+                  minDate: DateTime.now().subtract(const Duration(days: 365)),
+                  maxDate: DateTime.now(),
                 ),
               ],
             ),

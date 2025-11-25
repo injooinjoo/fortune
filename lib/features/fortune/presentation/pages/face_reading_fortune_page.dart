@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';  // ✅ ImageFilter.blur 사용
 import 'package:flutter/material.dart';
+import '../../../../core/utils/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -713,11 +714,11 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     final luckScore = ((rawData['luckScore'] ?? result.overallScore) ?? 75).toInt();
 
     // 🔍 디버그: 데이터 구조 확인
-    print('🔍 [FaceReading] rawData keys: ${rawData.keys.toList()}');
-    print('🔍 [FaceReading] data keys: ${data.keys.toList()}');
-    print('🔍 [FaceReading] ogwan: ${data['ogwan']}');
-    print('🔍 [FaceReading] wealth_fortune: ${data['wealth_fortune']}');
-    print('🔍 [FaceReading] overall_fortune: ${data['overall_fortune']}');
+    Logger.debug('[FaceReading] rawData keys: ${rawData.keys.toList()}');
+    Logger.debug('[FaceReading] data keys: ${data.keys.toList()}');
+    Logger.debug('[FaceReading] ogwan: ${data['ogwan']}');
+    Logger.debug('[FaceReading] wealth_fortune: ${data['wealth_fortune']}');
+    Logger.debug('[FaceReading] overall_fortune: ${data['overall_fortune']}');
 
     return Column(
       children: [

@@ -23,6 +23,7 @@ import '../../../../core/models/fortune_result.dart';
 import 'dart:convert';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/services/debug_premium_service.dart';
+import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../../presentation/providers/token_provider.dart';
 
 class BlindDateFortunePage extends ConsumerStatefulWidget {
@@ -454,36 +455,13 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
           ),
           const SizedBox(height: 16),
           // Birth Date Picker
-          InkWell(
-            onTap: () async {
-              final date = await showDatePicker(
-                context: context,
-                initialDate: _birthDate ?? DateTime.now(),
-                firstDate: DateTime(1900),
-                lastDate: DateTime.now()
-              );
-              if (date != null) {
-                setState(() => _birthDate = date);
-              }
-            },
-            child: InputDecorator(
-              decoration: InputDecoration(
-                labelText: '생년월일',
-                prefixIcon: const Icon(Icons.calendar_today),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12))
-              ),
-              child: Text(
-                _birthDate != null
-                    ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
-                    : '생년월일을 선택하세요',
-                style: TextStyle(
-                  color: _birthDate != null
-                      ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.6)
-                )
-              )
-            )
+          NumericDateInput(
+            label: '생년월일',
+            selectedDate: _birthDate,
+            onDateChanged: (date) => setState(() => _birthDate = date),
+            minDate: DateTime(1900),
+            maxDate: DateTime.now(),
+            showAge: true,
           ),
           const SizedBox(height: 16),
           // Gender Selection
@@ -678,36 +656,12 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
               ),
               const SizedBox(height: 16),
               // Meeting Date
-              InkWell(
-                onTap: () async {
-                  final date = await showDatePicker(
-                    context: context,
-                    initialDate: _meetingDate ?? DateTime.now().add(const Duration(days: 1)),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 90))
-                  );
-                  if (date != null) {
-                    setState(() {
-                      _meetingDate = date;
-                    });
-                  }
-                },
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: '만남 예정일',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                    suffixIcon: const Icon(Icons.calendar_today),
-                  ),
-                  child: Text(
-                    _meetingDate != null
-                        ? '${_meetingDate!.year}년 ${_meetingDate!.month}월 ${_meetingDate!.day}일'
-                        : '날짜를 선택하세요',
-                  ),
-                ),
+              NumericDateInput(
+                label: '만남 예정일',
+                selectedDate: _meetingDate,
+                onDateChanged: (date) => setState(() => _meetingDate = date),
+                minDate: DateTime.now(),
+                maxDate: DateTime.now().add(const Duration(days: 90)),
               ),
               SizedBox(height: 16),
               // Meeting Time

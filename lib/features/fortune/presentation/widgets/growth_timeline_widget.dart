@@ -35,7 +35,7 @@ class GrowthTimelineWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -114,15 +114,15 @@ class GrowthTimelineWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      TossDesignSystem.tossBlue.withOpacity(0.1),
-                      TossDesignSystem.tossBlueDark.withOpacity(0.05),
+                      TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                      TossDesignSystem.tossBlueDark.withValues(alpha: 0.05),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: TossDesignSystem.tossBlue.withOpacity(0.3),
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -158,15 +158,15 @@ class GrowthTimelineWidget extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            TossDesignSystem.tossBlue.withOpacity(0.1),
-            TossDesignSystem.tossBlueDark.withOpacity(0.05),
+            TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+            TossDesignSystem.tossBlueDark.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: TossDesignSystem.tossBlue.withOpacity(0.2),
+          color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -277,7 +277,7 @@ class GrowthTimelineWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isActive
-            ? wuxingColor.withOpacity(0.1)
+            ? wuxingColor.withValues(alpha: 0.1)
             : (isDark ? TossDesignSystem.grayDark300 : Colors.white),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
@@ -292,7 +292,7 @@ class GrowthTimelineWidget extends StatelessWidget {
             width: 70,
             padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: isActive ? wuxingColor.withOpacity(0.2) : TossDesignSystem.gray200,
+              color: isActive ? wuxingColor.withValues(alpha: 0.2) : TossDesignSystem.gray200,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -335,7 +335,7 @@ class GrowthTimelineWidget extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: wuxingColor.withOpacity(0.2),
+                        color: wuxingColor.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -466,15 +466,15 @@ class DaeunSummaryWidget extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            TossDesignSystem.tossBlue.withOpacity(0.1),
-            TossDesignSystem.tossBlueDark.withOpacity(0.05),
+            TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+            TossDesignSystem.tossBlueDark.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: TossDesignSystem.tossBlue.withOpacity(0.2),
+          color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
           width: 1,
         ),
       ),

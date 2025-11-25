@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/widgets/unified_button.dart';
-import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../services/storage_service.dart';
@@ -17,7 +16,6 @@ import '../../../../core/utils/logger.dart';
 import '../../../../shared/components/toast.dart';
 import 'biorhythm_result_page.dart';
 import '../widgets/standard_fortune_app_bar.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 class BiorhythmInputPage extends ConsumerStatefulWidget {
   const BiorhythmInputPage({super.key});
@@ -35,7 +33,6 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
   late Animation<double> _fadeAnimation;
   
   DateTime? _selectedDate;
-  final TextEditingController _dateController = TextEditingController();
   bool _isLoading = false; // ✅ 로딩 상태 추가
 
   @override
@@ -95,8 +92,6 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
 
           setState(() {
             _selectedDate = birthDate;
-            _dateController.text =
-                '${birthDate.year}.${birthDate.month.toString().padLeft(2, '0')}.${birthDate.day.toString().padLeft(2, '0')}';
           });
         }
       } else {
@@ -110,8 +105,6 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
 
           setState(() {
             _selectedDate = birthDate;
-            _dateController.text =
-                '${birthDate.year}.${birthDate.month.toString().padLeft(2, '0')}.${birthDate.day.toString().padLeft(2, '0')}';
           });
         }
       }
@@ -125,83 +118,7 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
   void dispose() {
     _pulseController.dispose();
     _fadeController.dispose();
-    _dateController.dispose();
     super.dispose();
-  }
-
-  void _showDatePicker() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: TossDesignSystem.transparent,
-      isScrollControlled: true,
-      builder: (context) => _buildDatePickerModal(),
-    );
-  }
-
-  Widget _buildDatePickerModal() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    DateTime tempDate = _selectedDate ?? DateTime.now().subtract(const Duration(days: 365 * 25));
-
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.6,
-      decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        children: [
-          // 헤더
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                UnifiedButton(
-                  text: '취소',
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: UnifiedButtonStyle.secondary,
-                  size: UnifiedButtonSize.small,
-                ),
-                Text(
-                  '생년월일 선택',
-                  style: TypographyUnified.heading4.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-                  ),
-                ),
-                UnifiedButton(
-                  text: '확인',
-                  onPressed: () {
-                    setState(() {
-                      _selectedDate = tempDate;
-                      _dateController.text = 
-                          '${tempDate.year}.${tempDate.month.toString().padLeft(2, '0')}.${tempDate.day.toString().padLeft(2, '0')}';
-                    });
-                    Navigator.of(context).pop();
-                    HapticFeedback.mediumImpact();
-                  },
-                  style: UnifiedButtonStyle.primary,
-                  size: UnifiedButtonSize.small,
-                ),
-              ],
-            ),
-          ),
-          
-          // 날짜 선택기
-          Expanded(
-            child: CupertinoDatePicker(
-              mode: CupertinoDatePickerMode.date,
-              initialDateTime: tempDate,
-              minimumDate: DateTime(1900),
-              maximumDate: DateTime.now(),
-              onDateTimeChanged: (date) {
-                tempDate = date;
-              },
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   void _analyzeBiorhythm() async {
@@ -407,47 +324,12 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                                   ),
                                   const SizedBox(height: 16),
 
-                                  GestureDetector(
-                                    onTap: _showDatePicker,
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: isDark ? TossDesignSystem.grayDark700 : TossTheme.backgroundSecondary,
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: _selectedDate != null
-                                              ? TossTheme.primaryBlue
-                                              : (isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300),
-                                          width: _selectedDate != null ? 2 : 1,
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            _selectedDate != null
-                                                ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'
-                                                : '생년월일을 선택해주세요',
-                                            style: theme.textTheme.bodyLarge?.copyWith(
-                                              color: _selectedDate != null
-                                                  ? (isDark ? TossDesignSystem.white : TossTheme.textBlack)
-                                                  : (isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600),
-                                              fontWeight: _selectedDate != null
-                                                  ? FontWeight.w500
-                                                  : FontWeight.w400,
-                                            ),
-                                          ),
-                                          Icon(
-                                            Icons.calendar_today_rounded,
-                                            color: _selectedDate != null
-                                                ? TossTheme.primaryBlue
-                                                : (isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600),
-                                            size: 20,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                  NumericDateInput(
+                                    selectedDate: _selectedDate,
+                                    onDateChanged: (date) => setState(() => _selectedDate = date),
+                                    minDate: DateTime(1900),
+                                    maxDate: DateTime.now(),
+                                    showAge: true,
                                   ),
                                 ],
                               ),

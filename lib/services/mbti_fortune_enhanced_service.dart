@@ -213,7 +213,9 @@ class MbtiFortuneEnhancedService {
     final weekday = date.weekday;
     if (weekday == 1) {
       risk += 15; // 월요일
-    } else if (weekday >= 6) risk -= 10; // 주말
+    } else if (weekday >= 6) {
+      risk -= 10; // 주말
+    }
     
     // 랜덤 변동
     risk += random.nextDouble() * 20 - 10;

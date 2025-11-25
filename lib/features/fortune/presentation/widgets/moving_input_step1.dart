@@ -3,6 +3,7 @@ import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 
 /// 1단계: 기본 정보 입력
 class MovingInputStep1 extends StatefulWidget {
@@ -29,31 +30,6 @@ class _MovingInputStep1State extends State<MovingInputStep1> {
 
   bool _canContinue() {
     return _nameController.text.trim().isNotEmpty && _birthDate != null;
-  }
-
-  Future<void> _selectBirthDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _birthDate ?? DateTime(1990, 1, 1),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: TossTheme.primaryBlue,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    
-    if (picked != null) {
-      setState(() {
-        _birthDate = picked;
-      });
-    }
   }
 
   void _handleNext() {
@@ -111,42 +87,13 @@ class _MovingInputStep1State extends State<MovingInputStep1> {
           const SizedBox(height: TossTheme.spacingXL),
           
           // 생년월일 선택
-          Text(
-            '생년월일',
-            style: TossTheme.body1.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: TossTheme.spacingM),
-          TossCard(
-            onTap: _selectBirthDate,
-            padding: const EdgeInsets.all(TossTheme.spacingM),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.calendar_today_outlined,
-                  color: _birthDate != null 
-                      ? TossTheme.primaryBlue 
-                      : TossTheme.textGray400,
-                  size: 20,
-                ),
-                const SizedBox(width: TossTheme.spacingM),
-                Expanded(
-                  child: Text(
-                    _birthDate != null
-                        ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
-                        : '생년월일을 선택하세요',
-                    style: _birthDate != null
-                        ? TossTheme.inputStyle
-                        : TossTheme.hintStyle,
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right,
-                  color: TossTheme.textGray400,
-                ),
-              ],
-            ),
+          NumericDateInput(
+            label: '생년월일',
+            selectedDate: _birthDate,
+            onDateChanged: (date) => setState(() => _birthDate = date),
+            minDate: DateTime(1900),
+            maxDate: DateTime.now(),
+            showAge: true,
           ),
           
           const Spacer(),

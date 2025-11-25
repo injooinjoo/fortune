@@ -17,7 +17,6 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
   late NotificationSettings _settings;
   TimeOfDay _morningTime = const TimeOfDay(hour: 7, minute: 0);
   TimeOfDay _eveningTime = const TimeOfDay(hour: 21, minute: 0);
-  bool _isLoading = false;
 
   // TOSS Design System Helper Methods
   bool _isDarkMode(BuildContext context) {
@@ -471,8 +470,6 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
   }
 
   Future<void> _saveSettings() async {
-    setState(() => _isLoading = true);
-
     try {
       await _fcmService.updateSettings(_settings);
       
@@ -504,8 +501,6 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           ),
         );
       }
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 

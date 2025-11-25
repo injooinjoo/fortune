@@ -408,9 +408,9 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             const SizedBox(height: 16),
             UnifiedButton(
               text: '초기화',
-              onPressed: () async {
+              onPressed: () {
                 ref.read(crawlingResultProvider.notifier).reset();
-                ref.refresh(crawlingStatsProvider);
+                ref.invalidate(crawlingStatsProvider);
               },
               style: UnifiedButtonStyle.secondary,
             ),

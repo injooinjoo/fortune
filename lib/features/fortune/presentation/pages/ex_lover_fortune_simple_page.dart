@@ -14,6 +14,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../services/ad_service.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 
 import '../../../../core/widgets/unified_button.dart';
 class ExLoverFortuneSimplePage extends ConsumerStatefulWidget {
@@ -396,68 +397,13 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
           SizedBox(height: 32),
           
           // 상대방 생년월일
-          Text(
-            '상대방 생년월일 (선택)',
-            style: TossDesignSystem.body1.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 12),
-          
-          TossCard(
-            style: TossCardStyle.filled,
-            padding: const EdgeInsets.all(16),
-            onTap: () async {
-              final date = await showDatePicker(
-                context: context,
-                initialDate: _exBirthDate ?? DateTime.now(),
-                firstDate: DateTime(1950),
-                lastDate: DateTime.now(),
-                builder: (context, child) {
-                  return Theme(
-                    data: Theme.of(context).copyWith(
-                      colorScheme: ColorScheme.light(
-                        primary: TossDesignSystem.purple,
-                      ),
-                    ),
-                    child: child!,
-                  );
-                },
-              );
-              if (date != null) {
-                setState(() {
-                  _exBirthDate = date;
-                });
-              }
-            },
-            child: Row(
-              children: [
-                Icon(
-                  Icons.calendar_today_rounded,
-                  color: TossDesignSystem.purple,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    _exBirthDate != null
-                        ? '${_exBirthDate!.year}년 ${_exBirthDate!.month}월 ${_exBirthDate!.day}일'
-                        : '생년월일 선택',
-                    style: TossDesignSystem.body2.copyWith(
-                      color: _exBirthDate != null
-                          ? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900)
-                          : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
-                    ),
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
-                  size: 20,
-                ),
-              ],
-            ),
+          NumericDateInput(
+            label: '상대방 생년월일 (선택)',
+            selectedDate: _exBirthDate,
+            onDateChanged: (date) => setState(() => _exBirthDate = date),
+            minDate: DateTime(1950),
+            maxDate: DateTime.now(),
+            showAge: true,
           ),
           
           SizedBox(height: 32),

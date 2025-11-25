@@ -124,23 +124,21 @@ class DailyTokenClaimWidget extends ConsumerStatefulWidget {
 class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ElevatedButton(
-        onPressed: () {
-          // Handle claim logic
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: TossDesignSystem.white,
-          foregroundColor: TossDesignSystem.gray600,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+    return ElevatedButton(
+      onPressed: () {
+        // Handle claim logic
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: TossDesignSystem.white,
+        foregroundColor: TossDesignSystem.gray600,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: Text(
-          '받기',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+      ),
+      child: Text(
+        '받기',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

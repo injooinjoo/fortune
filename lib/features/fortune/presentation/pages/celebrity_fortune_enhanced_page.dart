@@ -39,11 +39,10 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
   // ✅ Blur 상태 관리
   bool _isBlurred = false;
   List<String> _blurredSections = [];
-  
+
   // Search related
   final _searchController = TextEditingController();
   List<Celebrity> _searchResults = [];
-  bool _isSearching = false;
 
   @override
   void initState() {
@@ -229,27 +228,22 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
     if (query.isEmpty) {
       setState(() {
         _searchResults = [];
-        _isSearching = false;
       });
       return;
     }
-    
-    setState(() => _isSearching = true);
-    
+
     final searchNotifier = ref.read(celebritySearchProvider.notifier);
     await searchNotifier.search(query: query, limit: 20);
-    
+
     final searchResults = ref.read(celebritySearchProvider);
     searchResults.when(
       data: (results) {
         setState(() {
           _searchResults = results;
-          _isSearching = false;
         });
       },
-      loading: () => setState(() => _isSearching = true),
+      loading: () {},
       error: (error, stack) {
-        setState(() => _isSearching = false);
         Logger.error('Celebrity search failed', error);
       },
     );
@@ -1132,9 +1126,9 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
             ),
             const SizedBox(height: 20),
             UnifiedButton.retry(
-              onPressed: () async {
+              onPressed: () {
                 // Refresh the provider
-                ref.refresh(allCelebritiesProvider);
+                ref.invalidate(allCelebritiesProvider);
               },
             ),
           ],

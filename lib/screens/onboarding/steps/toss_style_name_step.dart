@@ -198,14 +198,13 @@ class _TossStyleNameStepState extends ConsumerState<TossStyleNameStep> {
 
   Future<void> _handleSocialLoginInBottomSheet(String provider, StateSetter setBottomSheetState) async {
     // Debug: Show immediate feedback
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('$provider 로그인 시도 중...'),
-          duration: const Duration(seconds: 1),
-        ),
-      );
-    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$provider 로그인 시도 중...'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
     
     setBottomSheetState(() {
       _bottomSheetLoading = true;
@@ -231,7 +230,9 @@ class _TossStyleNameStepState extends ConsumerState<TossStyleNameStep> {
       
       // OAuth flows return null (handled by deep linking)
       // Direct auth flows return AuthResponse
-      if (response != null && response.user != null && mounted) {
+      if (!mounted) return;
+
+      if (response != null && response.user != null) {
         // Close bottom sheet and navigate to home
         Navigator.pop(context);
         context.go('/home');

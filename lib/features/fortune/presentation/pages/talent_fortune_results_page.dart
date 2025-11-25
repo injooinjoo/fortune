@@ -13,9 +13,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../domain/models/talent_input_model.dart';
-import '../../domain/models/sipseong_talent.dart';
-import '../../domain/models/saju_elements.dart';
-import '../../data/services/saju_calculator.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -48,10 +45,6 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
   String? _error;
 
   // 로컬 사주 계산 (기본 정보용)
-  late Map<String, dynamic> _sajuResult;
-  late WuxingDistribution _wuxingDistribution;
-  late List<SipseongTalent> _top3Talents;
-  late List<Map<String, dynamic>> _daeunList;
   late int _currentAge;
 
   // Blur 상태 관리
@@ -176,8 +169,6 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
   /// 로컬 사주 계산 (API 실패 시 fallback용)
   void _calculateLocalSaju() {
     final birthDate = widget.inputData.birthDate!;
-    final birthTime = widget.inputData.birthTime!;
-    final gender = widget.inputData.gender!;
 
     // 현재 나이 계산
     final now = DateTime.now();
@@ -191,25 +182,6 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     Logger.info('[TalentFortune]   - 생년월일: $birthDate');
     Logger.info('[TalentFortune]   - 현재 날짜: $now');
     Logger.info('[TalentFortune]   - 계산된 나이: $_currentAge살');
-
-    // 사주 계산
-    _sajuResult = SajuCalculator.calculateSaju(
-      birthDate,
-      birthTime.hour,
-      birthTime.minute,
-    );
-
-    // 오행 분포
-    _wuxingDistribution = WuxingDistribution.fromCounts(_sajuResult['wuxing']);
-
-    // 십성 분석
-    final sipseongCounts = SajuCalculator.analyzeSipseongInSaju(_sajuResult);
-    _top3Talents = SipseongTalentProvider.getTop3Talents(sipseongCounts);
-
-    // 대운 계산
-    _daeunList = SajuCalculator.calculateDaeun(birthDate, gender, _currentAge);
-
-    Logger.info('[TalentFortune] ✅ 로컬 사주 계산 완료');
   }
 
   // ✅ Phase 5: 광고 시청 후 블러 해제
@@ -499,8 +471,8 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            TossDesignSystem.tossBlue.withOpacity(0.1),
-            TossDesignSystem.tossBlueDark.withOpacity(0.05),
+            TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+            TossDesignSystem.tossBlueDark.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -654,7 +626,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withOpacity(0.1),
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, size: 20, color: TossDesignSystem.tossBlue),
@@ -744,7 +716,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                   color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray50,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: TossDesignSystem.tossBlue.withOpacity(0.2),
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -806,7 +778,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.tossBlue.withOpacity(0.05),
+                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Column(
@@ -866,7 +838,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.successGreen.withOpacity(0.05),
+                          color: TossDesignSystem.successGreen.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Column(
@@ -897,7 +869,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.warningOrange.withOpacity(0.05),
+                          color: TossDesignSystem.warningOrange.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Column(
@@ -1027,7 +999,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                           width: 32,
                           height: 32,
                           decoration: BoxDecoration(
-                            color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                            color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Center(
@@ -1069,7 +1041,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
@@ -1146,10 +1118,10 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.successGreen.withOpacity(0.05),
+                          color: TossDesignSystem.successGreen.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: TossDesignSystem.successGreen.withOpacity(0.2),
+                            color: TossDesignSystem.successGreen.withValues(alpha: 0.2),
                             width: 1,
                           ),
                         ),
@@ -1430,7 +1402,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withOpacity(0.05),
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -1550,7 +1522,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                   color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray50,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: TossDesignSystem.tossBlue.withOpacity(0.3),
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
                     width: 2,
                   ),
                 ),
@@ -1627,7 +1599,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                         children: skillsToAcquire.map((skill) => Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
-                            color: TossDesignSystem.successGreen.withOpacity(0.1),
+                            color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -1719,7 +1691,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: TossDesignSystem.warningOrange.withOpacity(0.05),
+                color: TossDesignSystem.warningOrange.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -1802,7 +1774,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: TossDesignSystem.warningOrange.withOpacity(0.05),
+                color: TossDesignSystem.warningOrange.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(

@@ -102,7 +102,7 @@ class WidgetService {
   
   /// Register widget update callback
   static void registerUpdateCallback(Future<void> Function(Uri?) callback) {
-    HomeWidget.registerBackgroundCallback(callback);
+    HomeWidget.registerInteractivityCallback(callback);
   }
   
   /// Get initial widget data (when app is launched from widget,

@@ -18,7 +18,6 @@ import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../core/models/fortune_result.dart' as core_fortune;
 
 class HealthFortuneTossPage extends ConsumerStatefulWidget {
   const HealthFortuneTossPage({super.key});
@@ -774,6 +773,7 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
     try {
       await _generateHealthFortuneInternal();
     } catch (e) {
+      if (!mounted) return;
       Toast.error(context, '건강운세 생성 중 오류가 발생했습니다.');
     } finally {
       setState(() {
@@ -829,39 +829,6 @@ class _HealthFortuneTossPageState extends ConsumerState<HealthFortuneTossPage> {
     if (mounted) {
       context.push('/health-fortune-result', extra: fortuneResult);
     }
-  }
-
-  /// FortuneResult를 HealthFortuneResult로 변환
-  HealthFortuneResult _convertToHealthFortuneResult(core_fortune.FortuneResult fortuneResult) {
-
-    // 간단한 mock 변환 (기존 UI 호환)
-    return HealthFortuneResult(
-      id: fortuneResult.id ?? '',
-      userId: Supabase.instance.client.auth.currentUser?.id ?? '',
-      createdAt: fortuneResult.createdAt ?? DateTime.now(),
-      overallScore: fortuneResult.score ?? 70,
-      mainMessage: fortuneResult.summary['message'] as String? ?? '건강 상태가 양호합니다',
-      bodyPartHealthList: [], // Edge Function에서 반환된 데이터로 채워야 함
-      recommendations: [], // Edge Function에서 반환된 데이터로 채워야 함
-      avoidanceList: [],
-      timeline: const HealthTimeline(
-        morning: HealthTimeSlot(
-          timeLabel: '오전',
-          conditionScore: 70,
-          description: '오전 컨디션 양호',
-        ),
-        afternoon: HealthTimeSlot(
-          timeLabel: '오후',
-          conditionScore: 75,
-          description: '오후 컨디션 좋음',
-        ),
-        evening: HealthTimeSlot(
-          timeLabel: '저녁',
-          conditionScore: 80,
-          description: '저녁 컨디션 최고',
-        ),
-      ),
-    );
   }
 
   Widget _buildFloatingButtons() {

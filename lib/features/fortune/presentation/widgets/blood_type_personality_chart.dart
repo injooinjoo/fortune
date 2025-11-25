@@ -6,6 +6,7 @@ import '../../../../services/blood_type_analysis_service.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 
 class BloodTypePersonalityChart extends StatefulWidget {
   final String bloodType;
@@ -447,54 +448,12 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
     
     return Column(
       children: [
-        GlassContainer(
-          padding: AppSpacing.paddingAll16,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '선택된 날짜',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              GestureDetector(
-                onTap: () async {
-                  final date = await showDatePicker(
-                    context: context,
-                    initialDate: _selectedDate,
-                    firstDate: DateTime.now().subtract(const Duration(days: 365)),
-                    lastDate: DateTime.now().add(const Duration(days: 365)));
-                  if (date != null) {
-                    setState(() => _selectedDate = date);
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
-                      width: 1)),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.primary),
-                      const SizedBox(width: AppSpacing.spacing2),
-                      Text(
-                        '${_selectedDate.year}.${_selectedDate.month}.${_selectedDate.day}',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+        NumericDateInput(
+          label: '선택된 날짜',
+          selectedDate: _selectedDate,
+          onDateChanged: (date) => setState(() => _selectedDate = date),
+          minDate: DateTime.now().subtract(const Duration(days: 365)),
+          maxDate: DateTime.now().add(const Duration(days: 365)),
         ),
         const SizedBox(height: AppSpacing.spacing5),
         AnimatedBuilder(

@@ -415,7 +415,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                      ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                       : TossDesignSystem.gray100,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
@@ -555,7 +555,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                        ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                         : TossDesignSystem.gray100,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(

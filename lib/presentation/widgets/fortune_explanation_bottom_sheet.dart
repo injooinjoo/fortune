@@ -7,6 +7,7 @@ import '../../services/ad_service.dart';
 import '../../core/utils/logger.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../core/theme/typography_unified.dart';
+import '../../core/widgets/date_picker/numeric_date_input.dart';
 
 class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
   final String fortuneType;
@@ -294,43 +295,16 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         const SizedBox(height: 16),
         
         // Birth date
-        InkWell(
-          onTap: () => _selectDate(context),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.grayDark300
-                    : TossDesignSystem.gray300,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.calendar_today),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    _selectedDate != null
-                        ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'
-                        : '생년월일을 선택하세요',
-                    style: TextStyle(
-                      color: _selectedDate != null
-                          ? (Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark900
-                              : TossDesignSystem.black)
-                          : (Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark600
-                              : TossDesignSystem.gray600),
-                      
-                    ),
-                  ),
-                ),
-                const Icon(Icons.arrow_drop_down),
-              ],
-            ),
-          ),
+        NumericDateInput(
+          label: '생년월일',
+          selectedDate: _selectedDate,
+          onDateChanged: (date) {
+            setState(() => _selectedDate = date);
+            _checkFormValidity();
+          },
+          minDate: DateTime(1900),
+          maxDate: DateTime.now(),
+          showAge: true,
         ),
         
         SizedBox(height: 16),
@@ -620,6 +594,8 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         ]);
                       }
 
+                      if (!context.mounted) return;
+
                       // Show ad if ready
                       if (AdService.instance.isInterstitialAdReady) {
                         Logger.debug('📺 [FortuneExplanationBottomSheet] Showing interstitial ad');
@@ -627,23 +603,25 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                           onAdCompleted: () async {
                             Logger.debug('📺 [FortuneExplanationBottomSheet] Ad completed, navigating to fortune page');
                             // Navigate to fortune route after ad completes
-                            context.go(fortuneRoute, extra: fortuneParams);
+                            if (context.mounted) context.go(fortuneRoute, extra: fortuneParams);
                           },
                           onAdFailed: () async {
                             Logger.debug('📺 [FortuneExplanationBottomSheet] Ad failed, navigating to fortune page anyway');
                             // Navigate even if ad fails
-                            context.go(fortuneRoute, extra: fortuneParams);
+                            if (context.mounted) context.go(fortuneRoute, extra: fortuneParams);
                           },
                         );
                       } else {
                         Logger.debug('📺 [FortuneExplanationBottomSheet] Ad not ready after timeout, proceeding without ad');
                         // Navigate without ad if not ready
-                        context.go(fortuneRoute, extra: fortuneParams);
+                        // ignore: use_build_context_synchronously
+                        if (context.mounted) context.go(fortuneRoute, extra: fortuneParams);
                       }
                     } catch (e) {
                       Logger.error('❌ [FortuneExplanationBottomSheet] Error showing ad: $e');
                       // Navigate even if error occurs
-                      context.go(fortuneRoute, extra: fortuneParams);
+                      // ignore: use_build_context_synchronously
+                      if (context.mounted) context.go(fortuneRoute, extra: fortuneParams);
                     }
                   }
                 : null,
@@ -671,21 +649,6 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         ),
       ),
     );
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-      });
-      _checkFormValidity();
-    }
   }
 
   String _getFortuneTypeName(String fortuneType) {

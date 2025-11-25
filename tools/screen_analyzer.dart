@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, curly_braces_in_flow_control_structures
+
 /// Flutter Screen Usage Analyzer
 ///
 /// 정적 분석 도구: lib/screens/ 폴더의 모든 화면 클래스를 분석하고

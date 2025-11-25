@@ -225,9 +225,13 @@ class HealthFortuneService {
     String category;
     if (score >= 90) {
       category = 'excellent';
-    } else if (score >= 70) category = 'good';
-    else if (score >= 50) category = 'caution';
-    else category = 'warning';
+    } else if (score >= 70) {
+      category = 'good';
+    } else if (score >= 50) {
+      category = 'caution';
+    } else {
+      category = 'warning';
+    }
 
     final options = descriptions[category]!;
     return options[_random.nextInt(options.length)];

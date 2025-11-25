@@ -33,7 +33,7 @@ class TalentTop3Widget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -128,7 +128,7 @@ class _TalentRankCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: rankColor.withOpacity(0.2),
+                  color: rankColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: rankColor,
@@ -277,15 +277,15 @@ class TalentTop3Summary extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            TossDesignSystem.tossBlue.withOpacity(0.1),
-            TossDesignSystem.tossBlueDark.withOpacity(0.05),
+            TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+            TossDesignSystem.tossBlueDark.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: TossDesignSystem.tossBlue.withOpacity(0.2),
+          color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -311,7 +311,7 @@ class TalentTop3Summary extends StatelessWidget {
                     width: 24,
                     height: 24,
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.tossBlue.withOpacity(0.1),
+                      color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: TossDesignSystem.tossBlue,

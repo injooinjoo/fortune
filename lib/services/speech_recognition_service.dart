@@ -103,9 +103,11 @@ class SpeechRecognitionService {
         localeId: locale,
         listenFor: const Duration(seconds: 30),
         pauseFor: const Duration(seconds: 3),
-        partialResults: true,
-        onDevice: false,
-        listenMode: stt.ListenMode.confirmation
+        listenOptions: stt.SpeechListenOptions(
+          partialResults: true,
+          onDevice: false,
+          listenMode: stt.ListenMode.confirmation,
+        ),
       );
       
       _isListening = true;

@@ -145,6 +145,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
 
           // 하루 제한 체크
           final canCreate = await ref.read(dailyTalismanLimitProvider(userId).future);
+          if (!mounted || !context.mounted) return;
           if (canCreate) {
             // 제한 초과 시 프리미엄 안내
             await _showPremiumBottomSheet(context);

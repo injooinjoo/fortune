@@ -12,6 +12,7 @@ import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/widgets/blurred_fortune_content.dart';
 import '../../../../core/services/debug_premium_service.dart';
+import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 
 /// 꿈 해몽 페이지 (UnifiedFortuneService 버전)
 ///
@@ -181,62 +182,13 @@ class _DreamInterpretationPageState
           const SizedBox(height: 24),
 
           // 생년월일 입력
-          Text(
-            '생년월일',
-            style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          InkWell(
-            onTap: () async {
-              final date = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now().subtract(const Duration(days: 7300)),
-                firstDate: DateTime(1950),
-                lastDate: DateTime.now(),
-              );
-              if (date != null) {
-                setState(() => _selectedBirthDate = date);
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? TossDesignSystem.surfaceBackgroundDark
-                    : TossDesignSystem.surfaceBackgroundLight,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _selectedBirthDate == null
-                        ? '생년월일을 선택하세요'
-                        : '${_selectedBirthDate!.year}년 ${_selectedBirthDate!.month}월 ${_selectedBirthDate!.day}일',
-                    style: TypographyUnified.bodyMedium.copyWith(
-                      color: _selectedBirthDate == null
-                          ? (isDark
-                              ? TossDesignSystem.textSecondaryDark
-                              : TossDesignSystem.textSecondaryLight)
-                          : (isDark
-                              ? TossDesignSystem.textPrimaryDark
-                              : TossDesignSystem.textPrimaryLight),
-                    ),
-                  ),
-                  Icon(
-                    Icons.calendar_today,
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.textSecondaryLight,
-                  ),
-                ],
-              ),
-            ),
+          NumericDateInput(
+            label: '생년월일',
+            selectedDate: _selectedBirthDate,
+            onDateChanged: (date) => setState(() => _selectedBirthDate = date),
+            minDate: DateTime(1950),
+            maxDate: DateTime.now(),
+            showAge: true,
           ),
 
           const SizedBox(height: 24),

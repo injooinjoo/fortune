@@ -216,7 +216,7 @@ class PerformanceCacheService {
     
     // Check network connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none) return;
+    if (connectivityResult.contains(ConnectivityResult.none)) return;
     
     // Process one item from queue
     final type = _preloadQueue.first;

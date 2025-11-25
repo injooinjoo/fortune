@@ -242,8 +242,11 @@ class CrawlPriorityCalculator {
     if (celebrity.searchVolume != null) {
       if (celebrity.searchVolume! > 1000000) {
         priority += 100;
-      } else if (celebrity.searchVolume! > 500000) priority += 50;
-      else if (celebrity.searchVolume! > 100000) priority += 20;
+      } else if (celebrity.searchVolume! > 500000) {
+        priority += 50;
+      } else if (celebrity.searchVolume! > 100000) {
+        priority += 20;
+      }
     }
     
     // 최근 활동 보너스
@@ -254,7 +257,9 @@ class CrawlPriorityCalculator {
         final yearsDiff = now.year - lastActiveYear;
         if (yearsDiff <= 1) {
           priority += 30;
-        } else if (yearsDiff <= 3) priority += 15;
+        } else if (yearsDiff <= 3) {
+          priority += 15;
+        }
       }
     }
     

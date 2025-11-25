@@ -1,3 +1,4 @@
+// ignore_for_file: camel_case_types
 import 'package:universal_io/io.dart';
 import 'package:flutter/services.dart';
 import 'package:fortune/core/utils/logger.dart';

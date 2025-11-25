@@ -27,7 +27,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   int _currentStep = 0;
   User? _currentUser;
-  bool _isLoading = false;
 
   // Form values
   String _name = '';
@@ -155,8 +154,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Future<void> _handleSubmit() async {
-    setState(() => _isLoading = true);
-    
     try {
       // 프로필 데이터 준비
       final birthTimeString = _birthTime != null 
@@ -254,10 +251,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
           const SnackBar(
             content: Text('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.'),
             backgroundColor: TossDesignSystem.errorRed));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
       }
     }
   }

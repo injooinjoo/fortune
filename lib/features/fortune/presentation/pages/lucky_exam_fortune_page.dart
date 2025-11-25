@@ -830,7 +830,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
 
     final fortune = _fortuneResult!;
     final score = fortune.overallScore ?? 75;
-    final data = fortune.metadata as Map<String, dynamic>? ?? {};
+    final data = fortune.metadata ?? {};
 
     // ✅ Phase 15-4: result.isBlurred 동기화
     if (_isBlurred != fortune.isBlurred || _blurredSections.length != fortune.blurredSections.length) {
@@ -1046,7 +1046,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                           ],
                         ),
                       ),
-                    ).toList(),
+                    ),
                   ],
                 ),
               ),
@@ -1103,7 +1103,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                           ],
                         ),
                       ),
-                    ).toList(),
+                    ),
                   ],
                 ),
               ),

@@ -281,8 +281,6 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
     required Widget Function() contentBuilder,
   }) {
     final sectionKey = _getSectionKeyFromTitle(title);
-    final isBlurred = _fortuneResult.isBlurred &&
-        _fortuneResult.blurredSections.contains(sectionKey);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(

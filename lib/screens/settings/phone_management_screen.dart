@@ -128,6 +128,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
               _showVerification = true;
             });
           } catch (e) {
+            if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),
@@ -138,7 +139,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
         },
       );
     }
-    
+
     if (_showVerification) {
       return PhoneVerificationStep(
         phoneNumber: _phoneNumber,
@@ -162,8 +163,8 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             setState(() {
               _showVerification = false;
             });
-            
-            if (mounted) {
+
+            if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('전화번호가 성공적으로 변경되었습니다'),
@@ -173,6 +174,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
               context.pop();
             }
           } catch (e) {
+            if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),
@@ -187,6 +189,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
               phoneNumber: _phoneNumber,
               countryCode: _countryCode,
             );
+            if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('인증번호가 재발송되었습니다'),
@@ -194,6 +197,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
               ),
             );
           } catch (e) {
+            if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),

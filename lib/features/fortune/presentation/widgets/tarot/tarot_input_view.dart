@@ -3,8 +3,6 @@ import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../../shared/components/app_header.dart' show FontSize;
-import '../../../../../presentation/providers/font_size_provider.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
 
@@ -48,8 +46,6 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fontSize = ref.watch(fontSizeProvider);
-    final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
 
     return Column(
       children: [

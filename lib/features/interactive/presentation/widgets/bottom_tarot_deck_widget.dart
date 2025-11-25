@@ -32,7 +32,6 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
   
   double _dragStartX = 0;
   double _currentRotation = 0;
-  int? _selectedIndex;
 
   @override
   void initState() {
@@ -198,7 +197,6 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     _rotationController.forward(from: 0).then((_) {
       setState(() {
         _currentRotation = targetRotation;
-        _selectedIndex = index;
       });
     });
   }

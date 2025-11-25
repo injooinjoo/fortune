@@ -134,7 +134,7 @@ class WuxingDistribution {
     final recs = <String>[];
 
     if (weak != null) {
-      recs.add('${weak!.korean}(${weak!.keyword}) 요소를 강화하세요: ${weak!.season}, ${weak!.direction} 방향, ${weak!.color.value.toRadixString(16)} 색상 활용');
+      recs.add('${weak!.korean}(${weak!.keyword}) 요소를 강화하세요: ${weak!.season}, ${weak!.direction} 방향, ${weak!.color.toARGB32().toRadixString(16)} 색상 활용');
     }
 
     if (balanceScore < 60) {
@@ -253,7 +253,7 @@ class _PentagonPainter extends CustomPainter {
 
   void _drawBackgroundPentagon(Canvas canvas, List<Offset> points) {
     final paint = Paint()
-      ..color = Colors.grey.withOpacity(0.1)
+      ..color = Colors.grey.withValues(alpha: 0.1)
       ..style = PaintingStyle.fill;
 
     final path = Path()..moveTo(points[0].dx, points[0].dy);
@@ -267,7 +267,7 @@ class _PentagonPainter extends CustomPainter {
 
   void _drawGridLines(Canvas canvas, Offset center, double radius, List<Offset> dataPoints) {
     final paint = Paint()
-      ..color = Colors.grey.withOpacity(0.2)
+      ..color = Colors.grey.withValues(alpha: 0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
@@ -307,7 +307,7 @@ class _PentagonPainter extends CustomPainter {
   void _drawDataPentagon(Canvas canvas, Offset center, double radius, List<Offset> points) {
     // 채워진 오각형
     final fillPaint = Paint()
-      ..color = distribution.dominant.color.withOpacity(0.3)
+      ..color = distribution.dominant.color.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
 
     final fillPath = Path()..moveTo(points[0].dx, points[0].dy);
@@ -351,7 +351,6 @@ class _PentagonPainter extends CustomPainter {
 
       final type = types[i];
       final percentage = distribution.percentages[type] ?? 0;
-      final count = distribution.counts[type] ?? 0;
 
       String text = '';
       if (showLabels && showValues) {
@@ -411,7 +410,7 @@ class WuxingDetailCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),

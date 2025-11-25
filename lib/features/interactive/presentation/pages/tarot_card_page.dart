@@ -253,8 +253,11 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       final tags = <String>['타로', '${now.year}년${now.month}월'];
       if (spreadType == 'three') {
         tags.add('쓰리카드');
-      } else if (spreadType == 'celtic') tags.add('켈틱크로스');
-      else if (spreadType == 'relationship') tags.add('연애운');
+      } else if (spreadType == 'celtic') {
+        tags.add('켈틱크로스');
+      } else if (spreadType == 'relationship') {
+        tags.add('연애운');
+      }
 
       // FortuneHistoryService에 저장
       final historyService = FortuneHistoryService();
@@ -288,6 +291,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       final hasEnoughTokens = await tokenService.checkAndConsumeTokens(
         tokenCost,
         'tarot');
+      if (!mounted) return;
 
       if (!hasEnoughTokens) {
         Toast.show(
@@ -311,6 +315,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
           },
         },
       );
+      if (!mounted) return;
 
       if (response['success'] == true && response['data'] != null) {
         final fortuneData = response['data'] as Map<String, dynamic>;
@@ -328,6 +333,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
         throw Exception(response['error'] ?? '타로 카드 해석에 실패했습니다');
       }
     } catch (e) {
+      if (!mounted) return;
       Toast.show(
         context,
         message: '타로 리딩 중 오류가 발생했습니다',

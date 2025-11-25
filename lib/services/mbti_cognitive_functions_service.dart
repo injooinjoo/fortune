@@ -423,18 +423,4 @@ class MbtiCognitiveFunctionsService {
     
     return activities[function] ?? '자기 개발 활동';
   }
-
-  static String _getCautionArea(String function) {
-    final cautions = {
-      'Te': '타인의 감정 무시, 지나친 통제',
-      'Ti': '과도한 분석으로 인한 결정 지연',
-      'Fe': '자기 희생, 갈등 회피',
-      'Fi': '주관적 판단, 타협 거부',
-      'Ne': '집중력 부족, 현실 도피',
-      'Ni': '고집, 타인 의견 무시',
-      'Se': '충동적 행동, 장기 계획 무시',
-      'Si': '변화 거부, 과거 집착'};
-    
-    return cautions[function] ?? '균형 유지';
-  }
 }

@@ -68,10 +68,10 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
   }
 
   Future<void> _initializeData() async {
-    print('[TalentFortune] 📋 데이터 초기화 시작');
+    Logger.debug('[TalentFortune] 📋 데이터 초기화 시작');
     await _loadProfileData();
     await _loadSavedSelections();
-    print('[TalentFortune] ✅ 데이터 초기화 완료');
+    Logger.debug('[TalentFortune] ✅ 데이터 초기화 완료');
   }
 
   @override
@@ -86,13 +86,13 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
   }
 
   Future<void> _loadProfileData() async {
-    print('[TalentFortune] 👤 프로필 로딩 시작');
+    Logger.debug('[TalentFortune] 👤 프로필 로딩 시작');
 
     // 이미 로드된 프로필 정보 사용 (앱 시작 시 로드됨)
     final profileAsync = ref.read(userProfileProvider);
     final profile = profileAsync.value;
 
-    print('[TalentFortune] 👤 프로필: ${profile != null ? "있음" : "없음"}');
+    Logger.debug('[TalentFortune] 👤 프로필: ${profile != null ? "있음" : "없음"}');
 
     if (profile != null && mounted) {
       setState(() {
@@ -110,12 +110,12 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
           _birthTimeController.text = '${_birthTime!.hour.toString().padLeft(2, '0')}:${_birthTime!.minute.toString().padLeft(2, '0')}';
         }
 
-        print('[TalentFortune] 👤 생년월일: $_birthDate, 출생시간: $_birthTime, 성별: $_gender');
+        Logger.debug('[TalentFortune] 👤 생년월일: $_birthDate, 출생시간: $_birthTime, 성별: $_gender');
       });
     }
 
     // Accordion 섹션 초기화는 나중에 한번만 실행
-    print('[TalentFortune] ✅ 프로필 로딩 완료');
+    Logger.debug('[TalentFortune] ✅ 프로필 로딩 완료');
   }
 
   TimeOfDay? _parseTimeOfDay(String timeString) {
@@ -152,12 +152,12 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
 
   /// 저장된 선택 불러오기
   Future<void> _loadSavedSelections() async {
-    print('[TalentFortune] 💾 저장된 선택 불러오기 시작');
+    Logger.debug('[TalentFortune] 💾 저장된 선택 불러오기 시작');
 
     final prefs = await SharedPreferences.getInstance();
     final savedData = prefs.getString('talent_fortune_selections');
 
-    print('[TalentFortune] 💾 저장된 데이터: ${savedData != null ? "있음" : "없음"}');
+    Logger.debug('[TalentFortune] 💾 저장된 데이터: ${savedData != null ? "있음" : "없음"}');
 
     if (savedData != null && mounted) {
       try {
@@ -178,9 +178,9 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
           _preferredRole = data['preferredRole'];
         });
 
-        print('[TalentFortune] 💾 불러온 선택: 고민=${_selectedConcerns.length}개, 관심=${_selectedInterests.length}개');
+        Logger.debug('[TalentFortune] 💾 불러온 선택: 고민=${_selectedConcerns.length}개, 관심=${_selectedInterests.length}개');
       } catch (e) {
-        print('[TalentFortune] ❌ 저장된 선택 불러오기 실패: $e');
+        Logger.debug('[TalentFortune] ❌ 저장된 선택 불러오기 실패: $e');
       }
     }
 
@@ -191,7 +191,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
       });
     }
 
-    print('[TalentFortune] ✅ 저장된 선택 불러오기 완료');
+    Logger.debug('[TalentFortune] ✅ 저장된 선택 불러오기 완료');
   }
 
   void _initializeAccordionSections() {
@@ -345,7 +345,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
   }
 
   void _updateAccordionSection(String id, dynamic value, String? displayValue) {
-    print('[TalentFortune] 📝 _updateAccordionSection() 호출: id=$id, value=$value');
+    Logger.debug('[TalentFortune] 📝 _updateAccordionSection() 호출: id=$id, value=$value');
 
     final index = _accordionSections.indexWhere((section) => section.id == id);
     if (index != -1) {
@@ -362,7 +362,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         );
       });
 
-      print('[TalentFortune] 📝 섹션 업데이트 완료 → setState() 호출됨');
+      Logger.debug('[TalentFortune] 📝 섹션 업데이트 완료 → setState() 호출됨');
 
       // 선택 변경 시 자동 저장
       _saveSelections();
@@ -372,16 +372,16 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
   bool _canGenerate() {
     // 필수: 생년월일, 성별, 고민/관심 중 1개, 성향 4개
     // 선택: 출생시간
-    print('[TalentFortune] 🎯 _canGenerate() 체크 시작');
-    print('[TalentFortune] 🎯 _birthDate: ${_birthDate != null ? "✅" : "❌"} ($_birthDate)');
-    print('[TalentFortune] 🎯 _gender: ${_gender != null ? "✅" : "❌"} ($_gender)');
-    print('[TalentFortune] 🎯 _selectedConcerns: ${_selectedConcerns.isNotEmpty ? "✅" : "❌"} (${_selectedConcerns.length}개)');
-    print('[TalentFortune] 🎯 _selectedInterests: ${_selectedInterests.isNotEmpty ? "✅" : "❌"} (${_selectedInterests.length}개)');
-    print('[TalentFortune] 🎯 고민/관심 중 1개 이상: ${(_selectedConcerns.isNotEmpty || _selectedInterests.isNotEmpty) ? "✅" : "❌"}');
-    print('[TalentFortune] 🎯 _workStyle: ${_workStyle != null ? "✅" : "❌"} ($_workStyle)');
-    print('[TalentFortune] 🎯 _energySource: ${_energySource != null ? "✅" : "❌"} ($_energySource)');
-    print('[TalentFortune] 🎯 _problemSolving: ${_problemSolving != null ? "✅" : "❌"} ($_problemSolving)');
-    print('[TalentFortune] 🎯 _preferredRole: ${_preferredRole != null ? "✅" : "❌"} ($_preferredRole)');
+    Logger.debug('[TalentFortune] 🎯 _canGenerate() 체크 시작');
+    Logger.debug('[TalentFortune] 🎯 _birthDate: ${_birthDate != null ? "✅" : "❌"} ($_birthDate)');
+    Logger.debug('[TalentFortune] 🎯 _gender: ${_gender != null ? "✅" : "❌"} ($_gender)');
+    Logger.debug('[TalentFortune] 🎯 _selectedConcerns: ${_selectedConcerns.isNotEmpty ? "✅" : "❌"} (${_selectedConcerns.length}개)');
+    Logger.debug('[TalentFortune] 🎯 _selectedInterests: ${_selectedInterests.isNotEmpty ? "✅" : "❌"} (${_selectedInterests.length}개)');
+    Logger.debug('[TalentFortune] 🎯 고민/관심 중 1개 이상: ${(_selectedConcerns.isNotEmpty || _selectedInterests.isNotEmpty) ? "✅" : "❌"}');
+    Logger.debug('[TalentFortune] 🎯 _workStyle: ${_workStyle != null ? "✅" : "❌"} ($_workStyle)');
+    Logger.debug('[TalentFortune] 🎯 _energySource: ${_energySource != null ? "✅" : "❌"} ($_energySource)');
+    Logger.debug('[TalentFortune] 🎯 _problemSolving: ${_problemSolving != null ? "✅" : "❌"} ($_problemSolving)');
+    Logger.debug('[TalentFortune] 🎯 _preferredRole: ${_preferredRole != null ? "✅" : "❌"} ($_preferredRole)');
 
     final result = _birthDate != null &&
         _gender != null &&
@@ -391,7 +391,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         _problemSolving != null &&
         _preferredRole != null;
 
-    print('[TalentFortune] 🎯 최종 결과: ${result ? "✅ 생성 가능" : "❌ 생성 불가"}');
+    Logger.debug('[TalentFortune] 🎯 최종 결과: ${result ? "✅ 생성 가능" : "❌ 생성 불가"}');
     return result;
   }
 
@@ -520,10 +520,10 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
     final canGenerate = _canGenerate();
     final buttonEnabled = canGenerate && !_isGenerating;
 
-    print('[TalentFortune] 🎨 build() 호출');
-    print('[TalentFortune] 🎨 _canGenerate(): $canGenerate');
-    print('[TalentFortune] 🎨 _isGenerating: $_isGenerating');
-    print('[TalentFortune] 🎨 buttonEnabled: $buttonEnabled');
+    Logger.debug('[TalentFortune] 🎨 build() 호출');
+    Logger.debug('[TalentFortune] 🎨 _canGenerate(): $canGenerate');
+    Logger.debug('[TalentFortune] 🎨 _isGenerating: $_isGenerating');
+    Logger.debug('[TalentFortune] 🎨 buttonEnabled: $buttonEnabled');
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
@@ -545,7 +545,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
               UnifiedButton.floating(
                 text: '🔮 재능 분석 시작하기',
                 onPressed: buttonEnabled ? () {
-                  print('[TalentFortune] 🖱️ 버튼 클릭됨!');
+                  Logger.debug('[TalentFortune] 🖱️ 버튼 클릭됨!');
                   _analyzeAndShowResult();
                 } : null,
                 isEnabled: buttonEnabled,
@@ -728,7 +728,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: isSelected
-              ? TossDesignSystem.tossBlue.withOpacity(0.1)
+              ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
               : TossDesignSystem.gray100,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
@@ -834,7 +834,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                      ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                       : TossDesignSystem.gray100,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
@@ -894,7 +894,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                      ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                       : TossDesignSystem.gray100,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
@@ -1035,7 +1035,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? TossDesignSystem.tossBlue.withOpacity(0.1)
+                    ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                     : TossDesignSystem.gray100,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(

@@ -625,14 +625,16 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       age: age,
     );
 
-    if (pet != null && mounted) {
+    if (!mounted) return;
+
+    if (pet != null) {
       Logger.info('✅ Pet registration successful, closing bottom sheet');
-      Navigator.of(bottomSheetContext).pop();
+      if (bottomSheetContext.mounted) Navigator.of(bottomSheetContext).pop();
       _selectPetAndGenerateFortune(pet);
     } else {
       Logger.error('❌ Pet registration failed');
       final petState = ref.read(petProvider);
-      if (petState.hasError && mounted) {
+      if (petState.hasError) {
         Logger.error('🔥 Pet state error: ${petState.error}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

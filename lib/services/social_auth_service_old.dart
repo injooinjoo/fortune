@@ -172,7 +172,7 @@ class SocialAuthService {
         Logger.warning('[SocialAuthService] Apple 로그인 전체 오류 세부사항 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.toString()}');
         
         // Check for specific error code 1000
-        if (e.message.contains('1000') ?? false || e.toString().contains('1000')) {
+        if (e.message.contains('1000') || e.toString().contains('1000')) {
           Logger.warning('[SocialAuthService] Apple 로그인 오류 1000 발생 (선택적 기능, 설정 확인 필요): 설정 문제 감지됨');
           Logger.warning('[SocialAuthService] Apple 로그인 설정 문제 (선택적 기능, 앱 ID 설정 확인 필요): 앱 ID 구성이 올바르지 않을 가능성');
           throw Exception('Apple ID 설정을 확인해주세요');
@@ -296,9 +296,8 @@ class SocialAuthService {
             try {
               await _supabase.from('user_profiles').insert(minimalProfile);
               Logger.info('Minimal profile created successfully');
-              
+
               // Try to update with additional fields separately
-              final updates = <String, dynamic>{};
               if (photoUrl != null && provider == 'google') {
                 // Try both column names
                 try {
@@ -893,9 +892,6 @@ class SocialAuthService {
   // 로그아웃
   Future<void> signOut() async {
     try {
-      // 현재 provider 확인
-      final provider = await getCurrentProvider();
-      
       // Google Sign-Out은 Supabase signOut이 자동으로 처리함
       // Supabase OAuth를 사용하므로 별도의 Google Sign-Out 불필요
       

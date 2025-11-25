@@ -18,10 +18,10 @@ class FortuneOptimizationService {
   final SupabaseClient _supabase;
 
   // 상수
-  static const int DB_POOL_THRESHOLD = 1000; // DB 풀 최소 크기
-  static const double RANDOM_SELECTION_PROBABILITY = 0.3; // 30% 확률
-  static const double PERSONAL_CACHE_AD_PROBABILITY = 0.5; // 개인 캐시 50% 광고 확률
-  static const Duration DELAY_DURATION = Duration(seconds: 5); // 5초 대기
+  static const int dbPoolThreshold = 1000; // DB 풀 최소 크기
+  static const double randomSelectionProbability = 0.3; // 30% 확률
+  static const double personalCacheAdProbability = 0.5; // 개인 캐시 50% 광고 확률
+  static const Duration delayDuration = Duration(seconds: 5); // 5초 대기
 
   FortuneOptimizationService({SupabaseClient? supabase})
       : _supabase = supabase ?? Supabase.instance.client;
@@ -55,11 +55,11 @@ class FortuneOptimizationService {
       );
       if (personalCache != null) {
         // 50% 확률로 광고 표시
-        final showAd = Random().nextDouble() < PERSONAL_CACHE_AD_PROBABILITY;
+        final showAd = Random().nextDouble() < personalCacheAdProbability;
         if (showAd) {
           Logger.debug('[FortuneOptimization] ✅ [1단계] 개인 캐시 히트 - 50% 광고 표시');
           await onShowAd();
-          await Future.delayed(DELAY_DURATION);
+          await Future.delayed(delayDuration);
         } else {
           Logger.debug('[FortuneOptimization] ✅ [1단계] 개인 캐시 히트 - 즉시 반환 (광고 생략)');
         }
@@ -164,8 +164,8 @@ class FortuneOptimizationService {
 
       final count = countResponse.count;
 
-      if (count < DB_POOL_THRESHOLD) {
-        debugPrint('  ✗ DB 풀 부족 ($count/$DB_POOL_THRESHOLD)');
+      if (count < dbPoolThreshold) {
+        debugPrint('  ✗ DB 풀 부족 ($count/$dbPoolThreshold)');
         return null;
       }
 
@@ -184,7 +184,7 @@ class FortuneOptimizationService {
 
       // 2-3. 5초 대기
       debugPrint('  ⏳ 5초 대기 중...');
-      await Future.delayed(DELAY_DURATION);
+      await Future.delayed(delayDuration);
 
       // 2-4. 사용자 히스토리에 저장
       await _saveToUserHistory(
@@ -216,7 +216,7 @@ class FortuneOptimizationService {
     try {
       // 3-1. 30% 확률 체크
       final random = Random().nextDouble();
-      if (random >= RANDOM_SELECTION_PROBABILITY) {
+      if (random >= randomSelectionProbability) {
         debugPrint('  ✗ 랜덤 미선택 (${(random * 100).toStringAsFixed(1)}% > 30%)');
         return null;
       }
@@ -242,7 +242,7 @@ class FortuneOptimizationService {
 
       // 3-3. 5초 대기
       debugPrint('  ⏳ 5초 대기 중...');
-      await Future.delayed(DELAY_DURATION);
+      await Future.delayed(delayDuration);
 
       // 3-4. 사용자 히스토리에 저장
       await _saveToUserHistory(
@@ -283,7 +283,7 @@ class FortuneOptimizationService {
       // 5. 광고 표시 (5초)
       debugPrint('  📺 광고 표시 중...');
       await onShowAd();
-      await Future.delayed(DELAY_DURATION);
+      await Future.delayed(delayDuration);
 
       // 6. API 호출
       debugPrint('  🔄 API 호출 중...');

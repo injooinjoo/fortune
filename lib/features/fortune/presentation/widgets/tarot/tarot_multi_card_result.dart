@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
+import '../../../../../core/utils/logger.dart';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/widgets/unified_button.dart';
-import '../../../../../core/widgets/unified_button_enums.dart';
-import '../../../../../services/ad_service.dart';
 import 'tarot_card_detail_modal.dart';
 import '../../../../../core/theme/typography_unified.dart';
 
@@ -357,15 +355,15 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                         angle: card.isReversed ? 3.14159 : 0, // 180도 회전 (π 라디안)
                         child: Builder(
                           builder: (context) {
-                            print('[Tarot] 이미지 경로: ${card.imagePath}');
-                            print('[Tarot] 카드 이름: ${card.cardNameKr}');
-                            print('[Tarot] 덱 타입: ${card.deckType}');
+                            Logger.debug('[Tarot] 이미지 경로: ${card.imagePath}');
+                            Logger.debug('[Tarot] 카드 이름: ${card.cardNameKr}');
+                            Logger.debug('[Tarot] 덱 타입: ${card.deckType}');
                             return Image.asset(
                               card.imagePath,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
-                                print('[Tarot] ❌ 이미지 로드 실패: ${card.imagePath}');
-                                print('[Tarot] ❌ 에러: $error');
+                                Logger.debug('[Tarot] ❌ 이미지 로드 실패: ${card.imagePath}');
+                                Logger.debug('[Tarot] ❌ 에러: $error');
                                 return Container(
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
@@ -667,40 +665,4 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
     );
   }
 
-  Widget _buildActionButtons() {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: UnifiedButton(
-            text: '다시 뽑기',
-            onPressed: () async {
-              await AdService.instance.showInterstitialAdWithCallback(
-                onAdCompleted: () async {
-                  widget.onRetry();
-                },
-                onAdFailed: () async {
-                  widget.onRetry();
-                },
-              );
-            },
-            style: UnifiedButtonStyle.primary,
-            size: UnifiedButtonSize.large,
-          ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: UnifiedButton(
-            text: '다른 운세 보기',
-            onPressed: () {
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-            style: UnifiedButtonStyle.secondary,
-            size: UnifiedButtonSize.large,
-          ),
-        ),
-      ],
-    );
-  }
 }

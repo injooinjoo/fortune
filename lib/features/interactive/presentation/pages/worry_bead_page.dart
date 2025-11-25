@@ -450,7 +450,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
       }
 
       // 토큰 잔액 새로고침
-      ref.refresh(tokenBalanceProvider);
+      ref.invalidate(tokenBalanceProvider);
       
       // TODO: 실제 API 호출로 대체
       await Future.delayed(const Duration(seconds: 1));

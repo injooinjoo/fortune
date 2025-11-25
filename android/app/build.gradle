@@ -14,7 +14,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.beyond.fortune"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34  // Explicitly set for Google Play Store compliance (API 34 required)
     ndkVersion = "26.3.11579264"  // Using required NDK version
 
     compileOptions {
@@ -30,7 +30,7 @@ android {
     defaultConfig {
         applicationId = "com.beyond.fortune"
         minSdk = 23
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 34  // Explicitly set for Google Play Store compliance (API 34 required)
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         

@@ -130,11 +130,17 @@ class FortuneHistoryService {
     if (score != null) {
       if (score >= 90) {
         tags.add('최고운');
-      } else if (score >= 80) tags.add('대길');
-      else if (score >= 70) tags.add('길');
-      else if (score >= 60) tags.add('보통');
-      else if (score >= 40) tags.add('소흉');
-      else tags.add('주의');
+      } else if (score >= 80) {
+        tags.add('대길');
+      } else if (score >= 70) {
+        tags.add('길');
+      } else if (score >= 60) {
+        tags.add('보통');
+      } else if (score >= 40) {
+        tags.add('소흉');
+      } else {
+        tags.add('주의');
+      }
     }
 
     return tags;

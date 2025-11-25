@@ -45,7 +45,7 @@ class FortuneCard extends StatelessWidget {
     List<Color>? adjustedGradient;
     if (gradient != null && !isDarkMode) {
       // Light mode에서는 밝은 색상으로 변경
-      adjustedGradient = lightModeGradients[gradient!.first.value] ?? 
+      adjustedGradient = lightModeGradients[gradient!.first.toARGB32()] ??
           gradient!.map((color) => Color.lerp(color, TossDesignSystem.grayDark900, 0.85)!).toList();
     } else {
       adjustedGradient = gradient;

@@ -153,15 +153,6 @@ class AdService {
     }
   }
 
-  /// Preload ads for better user experience
-  Future<void> _preloadAds() async {
-    await loadBannerAd();
-    await loadInterstitialAd();
-    await loadRewardedAd();
-  }
-
-  // Removed _preloadAdsInBackground - ads will be loaded on-demand
-
   /// Load a banner ad
   Future<void> loadBannerAd({
     AdSize adSize = AdSize.banner,

@@ -143,14 +143,8 @@ class _UnifiedFortuneBaseWidgetState
   /// 현재 상태: 입력 중 or 결과 표시
   bool _showResult = false;
 
-  /// 로딩 중 플래그
-  bool _isLoading = false;
-
   /// 생성된 운세 결과
   FortuneResult? _fortuneResult;
-
-  /// 블러 상태 (광고 시청 전)
-  bool _isBlurred = false;
 
   /// UnifiedFortuneService 인스턴스
   late final UnifiedFortuneService _fortuneService;
@@ -174,6 +168,7 @@ class _UnifiedFortuneBaseWidgetState
 
     // 디버그 모드에서 프리미엄 오버라이드 확인
     final premiumOverride = await DebugPremiumService.getOverrideValue();
+    if (!mounted) return;
     final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
 
     if (premiumOverride != null) {
@@ -242,10 +237,6 @@ class _UnifiedFortuneBaseWidgetState
   /// 블러 상태로 운세 생성 (신규)
   Future<void> _generateFortuneBlurred({required bool isPremium}) async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
-
       Logger.info('[UnifiedFortuneBaseWidget] 블러 상태 운세 생성 시작');
 
       // 1. FortuneConditions 생성
@@ -269,9 +260,7 @@ class _UnifiedFortuneBaseWidgetState
           if (mounted) {
             setState(() {
               _fortuneResult = blurredResult;
-              _isBlurred = blurredResult.isBlurred;
               _showResult = true;
-              _isLoading = false;
             });
             Logger.info('[UnifiedFortuneBaseWidget] 🔒 블러 상태 결과 표시 완료 (_showResult: $_showResult)');
           } else {
@@ -287,9 +276,7 @@ class _UnifiedFortuneBaseWidgetState
       // Premium 사용자는 블러 없이 즉시 표시
       setState(() {
         _fortuneResult = result;
-        _isBlurred = result.isBlurred;
         _showResult = true;
-        _isLoading = false;
       });
 
       HapticUtils.success();
@@ -301,10 +288,6 @@ class _UnifiedFortuneBaseWidgetState
       );
 
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-
         HapticUtils.error();
         Toast.show(
           context,

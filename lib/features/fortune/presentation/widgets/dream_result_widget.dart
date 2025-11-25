@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../../../core/utils/logger.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/theme/font_size_system.dart';
@@ -64,9 +65,9 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final data = widget.fortuneResult.data;
 
-    print('[DreamResult] 🎨 Building ChatGPT-style widget');
-    print('[DreamResult]   - isBlurred: ${widget.isBlurred}');
-    print('[DreamResult]   - data keys: ${data.keys.toList()}');
+    Logger.debug('[DreamResult] 🎨 Building ChatGPT-style widget');
+    Logger.debug('[DreamResult]   - isBlurred: ${widget.isBlurred}');
+    Logger.debug('[DreamResult]   - data keys: ${data.keys.toList()}');
 
     // 데이터 추출
 

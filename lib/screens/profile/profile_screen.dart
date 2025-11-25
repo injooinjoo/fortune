@@ -61,12 +61,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         : TossDesignSystem.white;
   }
 
-  Color _getDividerColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray200;
-  }
-
   // Helper methods
   String _formatProfileSubtitle() {
     final profile = userProfile ?? localProfile;

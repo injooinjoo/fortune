@@ -97,8 +97,8 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
     }
   }
 
-  void _onKeyDown(RawKeyEvent event, int index) {
-    if (event is RawKeyDownEvent &&
+  void _onKeyDown(KeyEvent event, int index) {
+    if (event is KeyDownEvent &&
         event.logicalKey == LogicalKeyboardKey.backspace) {
       if (_controllers[index].text.isEmpty && index > 0) {
         _focusNodes[index - 1].requestFocus();
@@ -176,9 +176,9 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                     width: context.fortuneTheme.socialSharing.shareButtonSize - 8,
                     height: context.fortuneTheme.formStyles.inputHeight,
                     margin: EdgeInsets.only(right: 8),
-                    child: RawKeyboardListener(
+                    child: KeyboardListener(
                       focusNode: FocusNode(),
-                      onKey: (event) => _onKeyDown(event, index),
+                      onKeyEvent: (event) => _onKeyDown(event, index),
                       child: TextField(
                         controller: _controllers[index],
                         focusNode: _focusNodes[index],

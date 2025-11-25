@@ -1,5 +1,6 @@
 import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
+import '../../../../core/utils/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../core/models/fortune_result.dart';
@@ -449,8 +450,8 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
       _isBlurred = result.isBlurred;
       _blurredSections = List<String>.from(result.blurredSections);
 
-      print('[LuckyItems] 🔒 블러 상태 동기화 (최초): $_isBlurred');
-      print('[LuckyItems] 🔒 블러 섹션: $_blurredSections');
+      Logger.debug('[LuckyItems] 🔒 블러 상태 동기화 (최초): $_isBlurred');
+      Logger.debug('[LuckyItems] 🔒 블러 섹션: $_blurredSections');
     }
 
     final lottoNumbers = _generateLottoNumbers();
@@ -522,7 +523,7 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
 
   /// 광고 보고 블러 제거
   Future<void> _showAdAndUnblur() async {
-    print('[LuckyItems] 🎬 광고 시청 후 블러 해제 시작');
+    Logger.debug('[LuckyItems] 🎬 광고 시청 후 블러 해제 시작');
 
     try {
       final adService = ref.read(adServiceProvider);
@@ -563,10 +564,10 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
       }
 
       // 광고 표시
-      print('[LuckyItems] 🎬 광고 표시 시작');
+      Logger.debug('[LuckyItems] 🎬 광고 표시 시작');
       await adService.showRewardedAd(
         onUserEarnedReward: (ad, rewardItem) {
-          print('[LuckyItems] ✅ 광고 보상 획득, 블러 해제');
+          Logger.debug('[LuckyItems] ✅ 광고 보상 획득, 블러 해제');
 
           if (mounted) {
             setState(() {
@@ -584,7 +585,7 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
         },
       );
     } catch (e) {
-      print('[LuckyItems] ❌ 광고 표시 실패: $e');
+      Logger.debug('[LuckyItems] ❌ 광고 표시 실패: $e');
 
       // 에러 발생 시에도 블러 해제 (사용자 경험 우선)
       if (mounted) {
@@ -677,30 +678,6 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
     }
   }
 
-  /// 사주 기반 오늘의 색상 생성
-  Map<String, dynamic> _generateTodayColor() {
-    final birthDate = _selectedBirthDate ?? DateTime.now();
-    final now = DateTime.now();
-
-    // 사주 기반 시드
-    final seed = birthDate.day + birthDate.month * 10 + now.day + now.month * 100;
-    final random = Random(seed);
-
-    // RGB 생성
-    final r = random.nextInt(256);
-    final g = random.nextInt(256);
-    final b = random.nextInt(256);
-
-    final hex = '#${r.toRadixString(16).padLeft(2, '0')}'
-        '${g.toRadixString(16).padLeft(2, '0')}'
-        '${b.toRadixString(16).padLeft(2, '0')}';
-
-    return {
-      'hex': hex,
-      'color': Color.fromARGB(255, r, g, b),
-      'rgb': {'r': r, 'g': g, 'b': b},
-    };
-  }
 }
 
 // ==================== 모델 ====================
@@ -722,68 +699,6 @@ class CategoryModel {
 }
 
 // ==================== 위젯 컴포넌트 ====================
-
-/// 카테고리 탭 리스트
-class _CategoryTabs extends StatelessWidget {
-  final List<CategoryModel> categories;
-  final int selectedIndex;
-  final ValueChanged<int> onSelect;
-
-  const _CategoryTabs({
-    required this.categories,
-    required this.selectedIndex,
-    required this.onSelect,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 100,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          final category = categories[index];
-          final isSelected = selectedIndex == index;
-
-          return GestureDetector(
-            onTap: () => onSelect(index),
-            child: Container(
-              width: 80,
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? category.color.withValues(alpha: 0.2)
-                    : TossDesignSystem.gray100,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isSelected ? category.color : TossDesignSystem.gray200,
-                  width: isSelected ? 2 : 1,
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(category.icon, style: TypographyUnified.heading1),
-                  const SizedBox(height: 6),
-                  Text(
-                    category.title,
-                    style: TypographyUnified.labelSmall.copyWith(
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                      color: isSelected ? category.color : TossDesignSystem.gray600,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
 
 /// 카테고리 헤더
 class _CategoryHeader extends StatelessWidget {

@@ -501,49 +501,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       category: 'petFamily',
       isNew: true)];
 
-  // 토스 스타일 카테고리 그룹핑
-  Map<String, List<FortuneCategory>> _groupCategoriesByType() {
-    final Map<String, List<FortuneCategory>> grouped = {};
-    
-    // 카테고리별 그룹핑
-    for (final category in _categories) {
-      final categoryType = category.category;
-      if (!grouped.containsKey(categoryType)) {
-        grouped[categoryType] = [];
-      }
-      grouped[categoryType]!.add(category);
-    }
-    
-    return grouped;
-  }
-
-  // 카테고리 타입명을 한글로 변환
-  String _getCategoryDisplayName(String categoryType) {
-    switch (categoryType) {
-      case 'love':
-        return '연애·인연';
-      case 'career':
-        return '취업·사업';
-      case 'money':
-        return '재물·투자';
-      case 'health':
-        return '건강·라이프';
-      case 'traditional':
-        return '전통·사주';
-      case 'lifestyle':
-        return '생활·운세';
-      case 'interactive':
-        return '인터랙티브';
-      case 'petFamily':
-        return '반려·육아';
-      default:
-        return categoryType;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final groupedCategories = _groupCategoriesByType();
     final orderState = ref.watch(fortuneOrderProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final typography = ref.watch(typographyThemeProvider);

@@ -77,6 +77,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     try {
       // Simulate sending verification code
       await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
       HapticUtils.mediumImpact();
 
       Toast.show(
@@ -89,6 +90,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         _currentStep = 1;
       });
     } catch (e) {
+      if (!mounted) return;
       Toast.show(
         context,
         message: '인증번호 발송에 실패했습니다',
@@ -118,6 +120,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     try {
       // Simulate verification
       await Future.delayed(const Duration(seconds: 1));
+      if (!mounted) return;
       HapticUtils.success();
 
       setState(() {
@@ -131,6 +134,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         type: ToastType.success,
       );
     } catch (e) {
+      if (!mounted) return;
       Toast.show(
         context,
         message: '인증에 실패했습니다',
@@ -160,6 +164,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     try {
       // Simulate sending verification email
       await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
       HapticUtils.mediumImpact();
 
       Toast.show(
@@ -172,6 +177,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         _isEmailVerified = true;
       });
     } catch (e) {
+      if (!mounted) return;
       Toast.show(
         context,
         message: '이메일 발송에 실패했습니다',
