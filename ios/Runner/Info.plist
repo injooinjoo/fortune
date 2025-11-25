@@ -91,15 +91,7 @@
 			</dict>
 		</dict>
 		<key>NSApplicationGroupIdentifier</key>
-		<string>group.com.fortune.fortune</string>
-		<key>NSBonjourServices</key>
-		<array>
-			<string>_dartobservatory._tcp</string>
-			<string>_dart-vm-service._tcp</string>
-			<string>$(DART_DEBUG_BONJOUR_SERVICE)</string>
-		</array>
-		<key>NSLocalNetworkUsageDescription</key>
-		<string>This app needs local network access for Flutter debugging</string>
+		<string>group.com.beyond.fortune</string>
 		<key>NSCameraUsageDescription</key>
 		<string>This app needs camera access for face reading features.</string>
 		<key>NSMicrophoneUsageDescription</key>
@@ -297,16 +289,12 @@
 		<false/>
 		<key>naverConsumerKey</key>
 		<string>QMEfy6U82j8nKG3HSE8y</string>
-		<key>naverConsumerSecret</key>
-		<string>Hu5KdO9DxK</string>
 		<key>naverServiceAppName</key>
 		<string>Fortune</string>
 		<key>naverServiceAppUrlScheme</key>
 		<string>naverQMEfy6U82j8nKG3HSE8y</string>
 		<key>NidClientID</key>
 		<string>QMEfy6U82j8nKG3HSE8y</string>
-		<key>NidClientSecret</key>
-		<string>Hu5KdO9DxK</string>
 		<key>NidAppName</key>
 		<string>Fortune</string>
 		<key>NidUrlScheme</key>
