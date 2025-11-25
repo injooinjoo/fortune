@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/toss_design_system.dart';
 import '../theme/typography_unified.dart';
-import '../../shared/components/toss_button.dart';
+import '../../core/widgets/unified_button.dart';
+import '../../core/widgets/unified_button_enums.dart';
 
 /// TOSS 스타일 Dialog
 class TossDialog {
@@ -239,20 +240,20 @@ class _TossConfirmationDialog extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: TossButton(
+              child: UnifiedButton(
                 text: cancelText,
                 onPressed: () => Navigator.of(context).pop(false),
-                style: TossButtonStyle.secondary,
-                size: TossButtonSize.medium,
+                style: UnifiedButtonStyle.secondary,
+                size: UnifiedButtonSize.medium,
               ),
             ),
             SizedBox(width: TossDesignSystem.spacingM),
             Expanded(
-              child: TossButton(
+              child: UnifiedButton(
                 text: confirmText,
                 onPressed: () => Navigator.of(context).pop(true),
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.medium,
+                style: UnifiedButtonStyle.primary,
+                size: UnifiedButtonSize.medium,
               ),
             ),
           ],
@@ -296,11 +297,11 @@ class _TossAlertDialog extends StatelessWidget {
         SizedBox(height: TossDesignSystem.spacingL),
         SizedBox(
           width: double.infinity,
-          child: TossButton(
+          child: UnifiedButton(
             text: actionText,
             onPressed: () => Navigator.of(context).pop(),
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.medium,
+            style: UnifiedButtonStyle.primary,
+            size: UnifiedButtonSize.medium,
           ),
         ),
       ],
@@ -372,11 +373,11 @@ class _TossSuccessDialog extends StatelessWidget {
         SizedBox(height: TossDesignSystem.spacingL),
         SizedBox(
           width: double.infinity,
-          child: TossButton(
+          child: UnifiedButton(
             text: actionText,
             onPressed: () => Navigator.of(context).pop(),
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.medium,
+            style: UnifiedButtonStyle.primary,
+            size: UnifiedButtonSize.medium,
           ),
         ),
       ],
@@ -439,11 +440,11 @@ class _TossErrorDialog extends StatelessWidget {
         SizedBox(height: TossDesignSystem.spacingL),
         SizedBox(
           width: double.infinity,
-          child: TossButton(
+          child: UnifiedButton(
             text: actionText,
             onPressed: () => Navigator.of(context).pop(),
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.medium,
+            style: UnifiedButtonStyle.primary,
+            size: UnifiedButtonSize.medium,
           ),
         ),
       ],

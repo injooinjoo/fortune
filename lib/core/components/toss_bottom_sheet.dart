@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/toss_design_system.dart';
-import '../../shared/components/toss_button.dart';
+import '../../core/widgets/unified_button.dart';
+import '../../core/widgets/unified_button_enums.dart';
 
 /// TOSS 스타일 Bottom Sheet
 class TossBottomSheet {
@@ -237,17 +238,17 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: TossButton(
+                  child: UnifiedButton(
                     text: cancelText,
-                    style: TossButtonStyle.secondary,
+                    style: UnifiedButtonStyle.secondary,
                     onPressed: () => Navigator.of(context).pop(false),
                   ),
                 ),
                 SizedBox(width: TossDesignSystem.spacingM),
                 Expanded(
-                  child: TossButton(
+                  child: UnifiedButton(
                     text: confirmText,
-                    style: TossButtonStyle.primary,
+                    style: UnifiedButtonStyle.primary,
                     onPressed: () => Navigator.of(context).pop(true),
                   ),
                 ),

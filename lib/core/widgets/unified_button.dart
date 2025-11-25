@@ -1,0 +1,918 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
+import 'unified_button_enums.dart';
+import 'dart:async';
+
+/// 모든 버튼 기능을 통합한 UnifiedButton
+///
+/// 기능:
+/// - 4가지 스타일 (primary, secondary, ghost, text)
+/// - 3가지 크기 (large, medium, small)
+/// - Floating 기능 (화면 하단 고정)
+/// - Progress 기능 (프로그레스 바)
+/// - Loading 기능 (3-dot, circular, tarot, mystical)
+/// - Debouncing (중복 클릭 방지)
+/// - 햅틱 피드백
+/// - 다크모드 자동 대응
+/// - Gradient 지원
+/// - 애니메이션 (fadeIn, slideY, scale)
+///
+/// 사용 예시:
+/// ```dart
+/// // 기본 버튼
+/// UnifiedButton(
+///   text: '확인',
+///   onPressed: () {},
+/// )
+///
+/// // Floating 버튼 (하단 고정)
+/// UnifiedButton.floating(
+///   text: '다음',
+///   onPressed: () {},
+/// )
+///
+/// // Progress 버튼
+/// UnifiedButton.progress(
+///   text: '다음',
+///   currentStep: 2,
+///   totalSteps: 5,
+///   onPressed: () {},
+/// )
+/// ```
+class UnifiedButton extends StatefulWidget {
+  // ========== 기본 설정 ==========
+  final String text;
+  final VoidCallback? onPressed;
+  final bool isEnabled;
+
+  // ========== 스타일 설정 ==========
+  final UnifiedButtonStyle style;
+  final UnifiedButtonSize size;
+
+  // ========== 로딩 설정 ==========
+  final bool isLoading;
+  final String? loadingText;
+  final UnifiedLoadingType loadingType;
+
+  // ========== 프로그레스 설정 ==========
+  final bool showProgress;
+  final int? currentStep;
+  final int? totalSteps;
+  final Color? progressColor;
+
+  // ========== Floating 설정 ==========
+  final bool isFloating;
+  final double floatingBottom;
+  final double floatingHeight;
+  final EdgeInsetsGeometry? floatingPadding;
+  final bool hideWhenDisabled;
+
+  // ========== 추가 옵션 ==========
+  final Widget? icon;
+  final double? width;
+  final EdgeInsetsGeometry? margin;
+  final Gradient? gradient;
+  final bool enableHaptic;
+  final bool enableDebounce;
+  final Duration debounceDuration;
+
+  // ========== 애니메이션 ==========
+  final bool enableAnimation;
+  final Duration? animationDelay;
+  final UnifiedButtonAnimation? animationType;
+
+  const UnifiedButton({
+    super.key,
+    required this.text,
+    this.onPressed,
+    this.isEnabled = true,
+    this.style = UnifiedButtonStyle.primary,
+    this.size = UnifiedButtonSize.large,
+    this.isLoading = false,
+    this.loadingText,
+    this.loadingType = UnifiedLoadingType.dots,
+    this.showProgress = false,
+    this.currentStep,
+    this.totalSteps,
+    this.progressColor,
+    this.isFloating = false,
+    this.floatingBottom = 0.0,
+    this.floatingHeight = 58.0,
+    this.floatingPadding,
+    this.hideWhenDisabled = false,
+    this.icon,
+    this.width,
+    this.margin,
+    this.gradient,
+    this.enableHaptic = true,
+    this.enableDebounce = true,
+    this.debounceDuration = const Duration(milliseconds: 500),
+    this.enableAnimation = false,
+    this.animationDelay,
+    this.animationType,
+  });
+
+  // ========== Factory 생성자 (기존 호환성) ==========
+
+  /// UnifiedButton.primary 호환
+  factory UnifiedButton.primary({
+    required String text,
+    VoidCallback? onPressed,
+    UnifiedButtonSize size = UnifiedButtonSize.large,
+    bool isLoading = false,
+    bool isEnabled = true,
+    Widget? icon,
+    double? width,
+    EdgeInsetsGeometry? margin,
+  }) {
+    return UnifiedButton(
+      text: text,
+      onPressed: onPressed,
+      style: UnifiedButtonStyle.primary,
+      size: size,
+      isLoading: isLoading,
+      isEnabled: isEnabled,
+      icon: icon,
+      width: width,
+      margin: margin,
+    );
+  }
+
+  /// UnifiedButton.secondary 호환
+  factory UnifiedButton.secondary({
+    required String text,
+    VoidCallback? onPressed,
+    UnifiedButtonSize size = UnifiedButtonSize.large,
+    bool isLoading = false,
+    bool isEnabled = true,
+    Widget? icon,
+    double? width,
+    EdgeInsetsGeometry? margin,
+  }) {
+    return UnifiedButton(
+      text: text,
+      onPressed: onPressed,
+      style: UnifiedButtonStyle.secondary,
+      size: size,
+      isLoading: isLoading,
+      isEnabled: isEnabled,
+      icon: icon,
+      width: width,
+      margin: margin,
+    );
+  }
+
+  /// UnifiedButton.ghost 호환
+  factory UnifiedButton.ghost({
+    required String text,
+    VoidCallback? onPressed,
+    UnifiedButtonSize size = UnifiedButtonSize.medium,
+    bool isLoading = false,
+    bool isEnabled = true,
+    Widget? icon,
+    double? width,
+    EdgeInsetsGeometry? margin,
+  }) {
+    return UnifiedButton(
+      text: text,
+      onPressed: onPressed,
+      style: UnifiedButtonStyle.ghost,
+      size: size,
+      isLoading: isLoading,
+      isEnabled: isEnabled,
+      icon: icon,
+      width: width,
+      margin: margin,
+    );
+  }
+
+  /// UnifiedButton.text 호환
+  factory UnifiedButton.text({
+    required String text,
+    VoidCallback? onPressed,
+    UnifiedButtonSize size = UnifiedButtonSize.small,
+    bool isLoading = false,
+    bool isEnabled = true,
+    Widget? icon,
+    EdgeInsetsGeometry? margin,
+  }) {
+    return UnifiedButton(
+      text: text,
+      onPressed: onPressed,
+      style: UnifiedButtonStyle.text,
+      size: size,
+      isLoading: isLoading,
+      isEnabled: isEnabled,
+      icon: icon,
+      width: null,
+      margin: margin,
+    );
+  }
+
+  /// FloatingBottomButton 호환
+  factory UnifiedButton.floating({
+    required String text,
+    VoidCallback? onPressed,
+    UnifiedButtonStyle style = UnifiedButtonStyle.primary,
+    UnifiedButtonSize size = UnifiedButtonSize.large,
+    bool isLoading = false,
+    bool isEnabled = true,
+    Widget? icon,
+    bool showShadow = true,
+    Color? backgroundColor,
+    EdgeInsetsGeometry? padding,
+    bool hideWhenDisabled = false,
+    double height = 58.0,
+    double bottom = 0.0,
+    bool showProgress = false,
+    int? currentStep,
+    int? totalSteps,
+  }) {
+    return UnifiedButton(
+      text: text,
+      onPressed: onPressed,
+      style: style,
+      size: size,
+      isLoading: isLoading,
+      isEnabled: isEnabled,
+      icon: icon,
+      isFloating: true,
+      floatingBottom: bottom,
+      floatingHeight: height,
+      floatingPadding: padding,
+      hideWhenDisabled: hideWhenDisabled,
+      showProgress: showProgress,
+      currentStep: currentStep,
+      totalSteps: totalSteps,
+    );
+  }
+
+  /// TossFloatingProgressButton 호환
+  factory UnifiedButton.progress({
+    required String text,
+    required int currentStep,
+    required int totalSteps,
+    VoidCallback? onPressed,
+    bool isEnabled = true,
+    bool isFloating = false,
+    double height = 58.0,
+    bool isLoading = false,
+    Widget? icon,
+  }) {
+    return UnifiedButton(
+      text: text,
+      onPressed: onPressed,
+      isEnabled: isEnabled,
+      showProgress: true,
+      currentStep: currentStep,
+      totalSteps: totalSteps,
+      isFloating: isFloating,
+      floatingHeight: height,
+      isLoading: isLoading,
+      icon: icon,
+    );
+  }
+
+  /// FortuneButton.analyze 호환
+  factory UnifiedButton.analyze({
+    required VoidCallback? onPressed,
+    bool isLoading = false,
+    String text = '운세 분석하기',
+    bool enableAnimation = true,
+    Duration? animationDelay,
+  }) {
+    return UnifiedButton(
+      text: isLoading ? '분석 중...' : text,
+      onPressed: isLoading ? null : onPressed,
+      style: UnifiedButtonStyle.primary,
+      isLoading: isLoading,
+      icon: isLoading ? null : const Icon(Icons.auto_awesome, size: 20),
+      width: double.infinity,
+      enableAnimation: enableAnimation,
+      animationDelay: animationDelay,
+      animationType: UnifiedButtonAnimation.fadeIn,
+    );
+  }
+
+  /// FortuneButton.next 호환
+  factory UnifiedButton.next({
+    required VoidCallback? onPressed,
+    bool isEnabled = true,
+    String text = '다음',
+    bool enableAnimation = true,
+    Duration? animationDelay,
+  }) {
+    return UnifiedButton(
+      text: text,
+      onPressed: isEnabled ? onPressed : null,
+      style: UnifiedButtonStyle.primary,
+      isEnabled: isEnabled,
+      width: double.infinity,
+      enableAnimation: enableAnimation,
+      animationDelay: animationDelay,
+      animationType: UnifiedButtonAnimation.fadeIn,
+    );
+  }
+
+  /// FortuneButton.previous 호환
+  factory UnifiedButton.previous({
+    required VoidCallback? onPressed,
+    String text = '이전',
+    bool enableAnimation = true,
+    Duration? animationDelay,
+  }) {
+    return UnifiedButton(
+      text: text,
+      onPressed: onPressed,
+      style: UnifiedButtonStyle.secondary,
+      width: double.infinity,
+      enableAnimation: enableAnimation,
+      animationDelay: animationDelay,
+      animationType: UnifiedButtonAnimation.fadeIn,
+    );
+  }
+
+  /// FortuneButton.viewFortune 호환
+  factory UnifiedButton.viewFortune({
+    required VoidCallback? onPressed,
+    bool isEnabled = true,
+    bool isLoading = false,
+    String text = '운세 보기',
+    bool enableAnimation = true,
+    Duration? animationDelay,
+  }) {
+    return UnifiedButton(
+      text: isLoading ? '운세 생성 중...' : text,
+      onPressed: (isEnabled && !isLoading) ? onPressed : null,
+      style: UnifiedButtonStyle.primary,
+      isLoading: isLoading,
+      icon: const Icon(Icons.visibility, size: 20),
+      width: double.infinity,
+      enableAnimation: enableAnimation,
+      animationDelay: animationDelay,
+      animationType: UnifiedButtonAnimation.fadeIn,
+    );
+  }
+
+  /// FortuneButton.retry 호환
+  factory UnifiedButton.retry({
+    required VoidCallback? onPressed,
+    String text = '다시 시도',
+    bool enableAnimation = true,
+    Duration? animationDelay,
+  }) {
+    return UnifiedButton(
+      text: text,
+      onPressed: onPressed,
+      style: UnifiedButtonStyle.secondary,
+      icon: const Icon(Icons.refresh, size: 20),
+      width: double.infinity,
+      enableAnimation: enableAnimation,
+      animationDelay: animationDelay,
+      animationType: UnifiedButtonAnimation.fadeIn,
+    );
+  }
+
+  @override
+  State<UnifiedButton> createState() => _UnifiedButtonState();
+}
+
+class _UnifiedButtonState extends State<UnifiedButton> {
+  Timer? _debounceTimer;
+  bool _isProcessing = false;
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
+  /// Debouncing + 햅틱 피드백 적용 탭 핸들러
+  void _handleTap() {
+    // Debounce 비활성화 시 바로 실행
+    if (!widget.enableDebounce) {
+      if (widget.enableHaptic) {
+        TossDesignSystem.hapticLight();
+      }
+      widget.onPressed?.call();
+      return;
+    }
+
+    // 이미 처리 중이면 무시
+    if (_isProcessing) return;
+
+    // Debounce 타이머 취소
+    _debounceTimer?.cancel();
+
+    // Debounce 시간 후 재활성화
+    _debounceTimer = Timer(widget.debounceDuration, () {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
+    });
+
+    setState(() {
+      _isProcessing = true;
+    });
+
+    if (widget.enableHaptic) {
+      TossDesignSystem.hapticLight();
+    }
+    widget.onPressed?.call();
+  }
+
+  /// 진행률 계산 (0.0 ~ 1.0)
+  double get _progressPercentage {
+    if (!widget.showProgress ||
+        widget.currentStep == null ||
+        widget.totalSteps == null ||
+        widget.totalSteps == 0) {
+      return 1.0;
+    }
+    return (widget.currentStep! / widget.totalSteps!).clamp(0.0, 1.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget button = _buildButton(context);
+
+    // 애니메이션 적용
+    if (widget.enableAnimation) {
+      button = _applyAnimation(button);
+    }
+
+    // Floating 래퍼 적용
+    if (widget.isFloating) {
+      return _buildFloatingWrapper(context, button);
+    }
+
+    // margin 적용
+    if (widget.margin != null) {
+      button = Padding(
+        padding: widget.margin!,
+        child: button,
+      );
+    }
+
+    return button;
+  }
+
+  Widget _buildButton(BuildContext context) {
+    // Progress 버튼
+    if (widget.showProgress &&
+        widget.currentStep != null &&
+        widget.totalSteps != null) {
+      return _buildProgressButton(context);
+    }
+
+    // 일반 버튼
+    return _buildBasicButton(context);
+  }
+
+  Widget _buildProgressButton(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final effectiveEnabled =
+        widget.isEnabled && !widget.isLoading && !_isProcessing && widget.onPressed != null;
+
+    // 색상 정의
+    final backgroundColor = isDark
+        ? TossDesignSystem.grayDark200
+        : TossDesignSystem.gray100;
+
+    final progressColor = widget.progressColor ??
+        (effectiveEnabled
+            ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
+            : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300));
+
+    // 프로그레스가 텍스트 위치를 넘었는지 여부
+    final isProgressOverText = _progressPercentage >= 0.5;
+
+    final textColor = effectiveEnabled
+        ? (isProgressOverText
+            ? TossDesignSystem.white
+            : (isDark
+                ? TossDesignSystem.textPrimaryDark
+                : TossDesignSystem.textPrimaryLight))
+        : (isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500);
+
+    return SizedBox(
+      width: widget.width ?? double.infinity,
+      height: widget.floatingHeight,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: effectiveEnabled ? _handleTap : null,
+          borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+            child: Stack(
+              children: [
+                // 배경 레이어
+                Container(
+                  width: double.infinity,
+                  height: widget.floatingHeight,
+                  color: backgroundColor,
+                ),
+
+                // 프로그레스 레이어
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  width: (widget.width ?? MediaQuery.of(context).size.width) *
+                      _progressPercentage,
+                  height: widget.floatingHeight,
+                  color: progressColor,
+                ),
+
+                // 텍스트 및 아이콘 레이어
+                Center(
+                  child: widget.isLoading
+                      ? _buildLoadingIndicator(textColor)
+                      : AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 200),
+                          style: TossDesignSystem.button.copyWith(
+                            color: textColor,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (widget.icon != null) ...[
+                                widget.icon!,
+                                const SizedBox(width: TossDesignSystem.spacingXS),
+                              ],
+                              Text(widget.text),
+                            ],
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBasicButton(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final effectiveEnabled =
+        widget.isEnabled && !widget.isLoading && !_isProcessing && widget.onPressed != null;
+
+    Widget child = widget.isLoading
+        ? _buildLoadingIndicator(_getTextColor(isDark, effectiveEnabled))
+        : Row(
+            mainAxisSize: widget.width != null ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (widget.icon != null) ...[
+                widget.icon!,
+                if (widget.text.isNotEmpty)
+                  const SizedBox(width: TossDesignSystem.spacingXS),
+              ],
+              if (widget.text.isNotEmpty)
+                Text(
+                  widget.text,
+                  style: _getTextStyle(isDark, effectiveEnabled),
+                ),
+            ],
+          );
+
+    Widget button;
+
+    switch (widget.style) {
+      case UnifiedButtonStyle.primary:
+        button = ElevatedButton(
+          onPressed: effectiveEnabled ? _handleTap : null,
+          style: _getPrimaryButtonStyle(isDark, effectiveEnabled),
+          child: child,
+        );
+        break;
+
+      case UnifiedButtonStyle.secondary:
+        button = ElevatedButton(
+          onPressed: effectiveEnabled ? _handleTap : null,
+          style: _getSecondaryButtonStyle(isDark, effectiveEnabled),
+          child: child,
+        );
+        break;
+
+      case UnifiedButtonStyle.ghost:
+        button = OutlinedButton(
+          onPressed: effectiveEnabled ? _handleTap : null,
+          style: _getGhostButtonStyle(isDark, effectiveEnabled),
+          child: child,
+        );
+        break;
+
+      case UnifiedButtonStyle.text:
+        button = TextButton(
+          onPressed: effectiveEnabled ? _handleTap : null,
+          style: _getTextButtonStyle(isDark, effectiveEnabled),
+          child: child,
+        );
+        break;
+    }
+
+    if (widget.width != null) {
+      button = SizedBox(
+        width: widget.width,
+        child: button,
+      );
+    }
+
+    return button;
+  }
+
+  Widget _buildFloatingWrapper(BuildContext context, Widget button) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    // hideWhenDisabled가 true이고 onPressed가 null이면 버튼 숨김
+    if (widget.hideWhenDisabled && widget.onPressed == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: widget.floatingBottom,
+      child: Container(
+        color: Colors.transparent,
+        padding: widget.floatingPadding ??
+            EdgeInsets.fromLTRB(
+              20,
+              0,
+              20,
+              16 + bottomPadding,
+            ),
+        child: SizedBox(
+          height: widget.floatingHeight,
+          child: button,
+        ),
+      ),
+    );
+  }
+
+  Widget _applyAnimation(Widget button) {
+    if (widget.animationDelay != null) {
+      button = button
+          .animate(delay: widget.animationDelay!)
+          .fadeIn(duration: 300.ms)
+          .slideY(begin: 0.2, end: 0);
+    } else {
+      button = button
+          .animate()
+          .fadeIn(duration: 300.ms)
+          .slideY(begin: 0.2, end: 0);
+    }
+
+    return button;
+  }
+
+  Widget _buildLoadingIndicator(Color color) {
+    switch (widget.loadingType) {
+      case UnifiedLoadingType.dots:
+        return _ThreeDotsLoadingIndicator(color: color);
+      case UnifiedLoadingType.circular:
+        return SizedBox(
+          width: 20,
+          height: 20,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(color),
+          ),
+        );
+      case UnifiedLoadingType.tarot:
+      case UnifiedLoadingType.mystical:
+        // TODO: 추후 타로/신비 애니메이션 구현
+        return _ThreeDotsLoadingIndicator(color: color);
+    }
+  }
+
+  double _getHeight() {
+    switch (widget.size) {
+      case UnifiedButtonSize.large:
+        return TossDesignSystem.buttonHeightLarge;
+      case UnifiedButtonSize.medium:
+        return TossDesignSystem.buttonHeightMedium;
+      case UnifiedButtonSize.small:
+        return TossDesignSystem.buttonHeightSmall;
+    }
+  }
+
+  EdgeInsetsGeometry _getPadding() {
+    switch (widget.size) {
+      case UnifiedButtonSize.large:
+        return const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingL);
+      case UnifiedButtonSize.medium:
+        return const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM);
+      case UnifiedButtonSize.small:
+        return const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM);
+    }
+  }
+
+  TextStyle _getTextStyle(bool isDark, bool enabled) {
+    final baseStyle = widget.size == UnifiedButtonSize.small
+        ? TossDesignSystem.body3
+        : TossDesignSystem.button;
+
+    return baseStyle.copyWith(
+      color: _getTextColor(isDark, enabled),
+    );
+  }
+
+  Color _getTextColor(bool isDark, bool enabled) {
+    if (!enabled) {
+      return isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400;
+    }
+
+    switch (widget.style) {
+      case UnifiedButtonStyle.primary:
+        return TossDesignSystem.white;
+      case UnifiedButtonStyle.secondary:
+        return isDark
+            ? TossDesignSystem.grayDark900
+            : TossDesignSystem.gray900;
+      case UnifiedButtonStyle.ghost:
+        return isDark
+            ? TossDesignSystem.tossBlueDark
+            : TossDesignSystem.tossBlue;
+      case UnifiedButtonStyle.text:
+        return isDark
+            ? TossDesignSystem.tossBlueDark
+            : TossDesignSystem.tossBlue;
+    }
+  }
+
+  ButtonStyle _getPrimaryButtonStyle(bool isDark, bool enabled) {
+    return ElevatedButton.styleFrom(
+      backgroundColor: enabled
+          ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
+          : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
+      foregroundColor: TossDesignSystem.white,
+      disabledBackgroundColor:
+          isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+      disabledForegroundColor:
+          isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      shadowColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      minimumSize: Size(0, _getHeight()),
+      padding: _getPadding(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+      ),
+    );
+  }
+
+  ButtonStyle _getSecondaryButtonStyle(bool isDark, bool enabled) {
+    return ElevatedButton.styleFrom(
+      backgroundColor:
+          isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+      foregroundColor: enabled
+          ? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900)
+          : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
+      disabledBackgroundColor:
+          isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+      disabledForegroundColor:
+          isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      shadowColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      minimumSize: Size(0, _getHeight()),
+      padding: _getPadding(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+      ),
+    );
+  }
+
+  ButtonStyle _getGhostButtonStyle(bool isDark, bool enabled) {
+    return OutlinedButton.styleFrom(
+      foregroundColor: enabled
+          ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
+          : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      disabledForegroundColor:
+          isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+      minimumSize: Size(0, _getHeight()),
+      padding: _getPadding(),
+      side: BorderSide(
+        color: enabled
+            ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
+            : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
+        width: 1,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+      ),
+    );
+  }
+
+  ButtonStyle _getTextButtonStyle(bool isDark, bool enabled) {
+    return TextButton.styleFrom(
+      foregroundColor: enabled
+          ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
+          : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      disabledForegroundColor:
+          isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+      padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingXS),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+      ),
+    );
+  }
+}
+
+/// 점 3개 로딩 애니메이션
+class _ThreeDotsLoadingIndicator extends StatefulWidget {
+  final Color color;
+
+  const _ThreeDotsLoadingIndicator({required this.color});
+
+  @override
+  State<_ThreeDotsLoadingIndicator> createState() =>
+      _ThreeDotsLoadingIndicatorState();
+}
+
+class _ThreeDotsLoadingIndicatorState extends State<_ThreeDotsLoadingIndicator>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, (index) {
+        return AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            // 각 점마다 0.2초씩 딜레이
+            final delay = index * 0.2;
+            final value = (_controller.value - delay) % 1.0;
+
+            // 0.0 ~ 0.5: fade in (0.3 → 1.0)
+            // 0.5 ~ 1.0: fade out (1.0 → 0.3)
+            final opacity = value < 0.5
+                ? 0.3 + (value * 2) * 0.7
+                : 1.0 - ((value - 0.5) * 2) * 0.7;
+
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: index == 1 ? 4 : 2),
+              child: Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: widget.color.withValues(alpha: opacity.clamp(0.3, 1.0)),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
+}
+
+/// 하단 버튼 공간만큼의 여백을 제공하는 위젯
+class BottomButtonSpacing extends StatelessWidget {
+  final double additionalSpacing;
+
+  const BottomButtonSpacing({
+    super.key,
+    this.additionalSpacing = 0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    // 버튼 높이(58) + 하단 패딩(16) + bottom safe area + 추가 여백
+    return SizedBox(
+      height: 58 + 16 + bottomPadding + additionalSpacing,
+    );
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../shared/components/toss_button.dart';
+import '../../../../../core/widgets/unified_button.dart';
+import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../../core/constants/tarot_metadata.dart';
@@ -332,22 +333,22 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
         children: [
           if (widget.onNewReading != null)
             Expanded(
-              child: TossButton(
+              child: UnifiedButton(
                 text: '새로운 리딩',
                 onPressed: widget.onNewReading,
-                style: TossButtonStyle.ghost,
-                size: TossButtonSize.medium,
+                style: UnifiedButtonStyle.ghost,
+                size: UnifiedButtonSize.medium,
                 icon: Icon(Icons.refresh),
               ),
             ),
           if (widget.onShare != null) ...[
             const SizedBox(width: 16),
             Expanded(
-              child: TossButton(
+              child: UnifiedButton(
                 text: '공유하기',
                 onPressed: widget.onShare,
-                style: TossButtonStyle.primary,
-                size: TossButtonSize.medium,
+                style: UnifiedButtonStyle.primary,
+                size: UnifiedButtonSize.medium,
                 icon: Icon(Icons.share),
               ),
             ),

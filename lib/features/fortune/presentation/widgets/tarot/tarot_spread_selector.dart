@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../domain/models/tarot_card_model.dart';
-import '../../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/theme/font_size_system.dart';
 
 class TarotSpreadSelector extends StatefulWidget {
   final Function(TarotSpreadType) onSpreadSelected;
@@ -149,14 +150,12 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
             ),
 
             // FloatingBottomButton
-            TossFloatingProgressButtonPositioned(
+            UnifiedButton.floating(
               text: '카드 뽑기',
               onPressed: _selectedSpread != null
                   ? () => widget.onSpreadSelected(_selectedSpread!)
                   : null,
               isEnabled: _selectedSpread != null,
-              showProgress: false,
-              isVisible: true,
             ),
           ],
         ),
@@ -225,7 +224,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                       child: Icon(
                         icon,
                         color: isSelected ? TossDesignSystem.white : color,
-                        size: 24,
+                        size: FontSizeSystem.heading2,
                       ),
                     ),
 
@@ -284,7 +283,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                       Icon(
                         Icons.check_circle,
                         color: color,
-                        size: 24,
+                        size: FontSizeSystem.heading2,
                       ),
                   ],
                 ),
@@ -381,13 +380,13 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                               '${index + 1}',
                               style: TextStyle(
                                 color: color,
-                                fontSize: 20,
+                                fontSize: FontSizeSystem.heading3,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                             Text(
                               emojis[index],
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(fontSize: FontSizeSystem.buttonMedium),
                             ),
                           ],
                         ),
@@ -521,7 +520,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
           number,
           style: TextStyle(
             color: color,
-            fontSize: size * 0.5,
+            fontSize: FontSizeSystem.scale(size * 0.5),
             fontWeight: FontWeight.w700,
           ),
         ),

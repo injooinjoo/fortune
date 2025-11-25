@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../shared/components/toss_button.dart';
+import '../../../../../core/widgets/unified_button.dart';
+import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/app_header.dart' show FontSize;
@@ -146,11 +147,11 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
         // Proceed button
         SizedBox(
           width: double.infinity,
-          child: TossButton(
+          child: UnifiedButton(
             text: '계속하기',
             onPressed: _handleProceed,
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
+            style: UnifiedButtonStyle.primary,
+            size: UnifiedButtonSize.large,
             icon: Icon(Icons.auto_awesome),
           ),
         ),

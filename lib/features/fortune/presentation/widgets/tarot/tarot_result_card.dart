@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../shared/components/toss_button.dart';
+import '../../../../../core/widgets/unified_button.dart';
+import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../../core/theme/toss_design_system.dart';
@@ -306,11 +307,11 @@ class _TarotResultCardState extends State<TarotResultCard>
                   // 다시 보기 버튼
                   SizedBox(
                     width: double.infinity,
-                    child: TossButton(
+                    child: UnifiedButton(
                       text: '다른 질문하기',
                       onPressed: widget.onRetry,
-                      style: TossButtonStyle.ghost,
-                      size: TossButtonSize.large,
+                      style: UnifiedButtonStyle.ghost,
+                      size: UnifiedButtonSize.large,
                     ),
                   ),
                   
@@ -319,11 +320,11 @@ class _TarotResultCardState extends State<TarotResultCard>
                   // 공유 버튼
                   SizedBox(
                     width: double.infinity,
-                    child: TossButton(
+                    child: UnifiedButton(
                       text: '결과 공유하기',
                       onPressed: _shareResult,
-                      style: TossButtonStyle.primary,
-                      size: TossButtonSize.large,
+                      style: UnifiedButtonStyle.primary,
+                      size: UnifiedButtonSize.large,
                       icon: Icon(Icons.share),
                     ),
                   ),

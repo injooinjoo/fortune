@@ -1,7 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import '../../../../../shared/components/toss_button.dart';
+import '../../../../../core/widgets/unified_button.dart';
+import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../../presentation/providers/font_size_provider.dart';
@@ -232,25 +233,25 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
       child: Row(
         children: [
           Expanded(
-            child: TossButton(
+            child: UnifiedButton(
               text: '카드 섞기',
               onPressed: _isShuffling ? null : _shuffleCards,
-              style: TossButtonStyle.ghost,
-              size: TossButtonSize.medium,
+              style: UnifiedButtonStyle.ghost,
+              size: UnifiedButtonSize.medium,
               icon: Icon(Icons.shuffle),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: TossButton(
+            child: UnifiedButton(
               text: '다시 선택',
               onPressed: _selectedCards.isEmpty ? null : () {
                 setState(() {
                   _selectedCards.clear();
                 });
               },
-              style: TossButtonStyle.primary,
-              size: TossButtonSize.medium,
+              style: UnifiedButtonStyle.primary,
+              size: UnifiedButtonSize.medium,
               icon: Icon(Icons.refresh),
             ),
           ),

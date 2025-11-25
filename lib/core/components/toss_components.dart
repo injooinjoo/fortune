@@ -1,5 +1,6 @@
 // 버튼
-export '../../shared/components/toss_button.dart';
+export '../widgets/unified_button.dart';
+export '../widgets/unified_button_enums.dart';
 
 // 카드
 export 'toss_card.dart';

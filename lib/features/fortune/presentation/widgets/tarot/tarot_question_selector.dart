@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../shared/components/toss_floating_progress_button.dart';
+import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
 
@@ -252,12 +252,10 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
             ),
 
             // FloatingBottomButton
-            TossFloatingProgressButtonPositioned(
+            UnifiedButton.floating(
               text: '운세 보기',
               onPressed: hasSelection ? widget.onStartReading : null,
               isEnabled: hasSelection,
-              showProgress: false,
-              isVisible: true,
             ),
           ],
         ),

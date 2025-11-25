@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../shared/components/toss_button.dart';
+import '../../../../../core/widgets/unified_button.dart';
+import '../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../services/ad_service.dart';
 import 'tarot_card_detail_modal.dart';
 import '../../../../../core/theme/typography_unified.dart';
@@ -671,7 +672,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
       children: [
         SizedBox(
           width: double.infinity,
-          child: TossButton(
+          child: UnifiedButton(
             text: '다시 뽑기',
             onPressed: () async {
               await AdService.instance.showInterstitialAdWithCallback(
@@ -683,20 +684,20 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                 },
               );
             },
-            style: TossButtonStyle.primary,
-            size: TossButtonSize.large,
+            style: UnifiedButtonStyle.primary,
+            size: UnifiedButtonSize.large,
           ),
         ),
         const SizedBox(height: 12),
         SizedBox(
           width: double.infinity,
-          child: TossButton(
+          child: UnifiedButton(
             text: '다른 운세 보기',
             onPressed: () {
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
-            style: TossButtonStyle.secondary,
-            size: TossButtonSize.large,
+            style: UnifiedButtonStyle.secondary,
+            size: UnifiedButtonSize.large,
           ),
         ),
       ],
