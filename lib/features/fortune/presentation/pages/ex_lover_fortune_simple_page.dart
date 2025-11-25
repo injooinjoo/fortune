@@ -3,14 +3,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../shared/components/toss_floating_progress_button.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
+import '../../domain/models/conditions/ex_lover_fortune_conditions.dart';
+import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../presentation/providers/token_provider.dart';
+import '../../../../core/utils/logger.dart';
 import '../../../../services/ad_service.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 
+import '../../../../core/widgets/unified_button.dart';
 class ExLoverFortuneSimplePage extends ConsumerStatefulWidget {
   const ExLoverFortuneSimplePage({super.key});
 
@@ -21,12 +26,13 @@ class ExLoverFortuneSimplePage extends ConsumerStatefulWidget {
 class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimplePage> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
-  
+  bool _isLoading = false; // ✅ 로딩 상태 추가
+
   // Step 1: 핵심 질문
   String? _timeSinceBreakup;
   String? _currentEmotion;
   String? _mainCuriosity;
-  
+
   // Step 2: 선택 정보
   DateTime? _exBirthDate;
   String? _breakupReason;
@@ -101,66 +107,88 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
     });
   }
 
-  void _analyzeAndShowResult() async {
-    final input = ExLoverSimpleInput(
-      timeSinceBreakup: _timeSinceBreakup!,
-      currentEmotion: _currentEmotion!,
-      mainCuriosity: _mainCuriosity!,
-      exBirthDate: _exBirthDate,
-      breakupReason: _breakupReason,
-    );
-    
-    // Show loading indicator
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Center(
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: TossDesignSystem.white,
-            borderRadius: BorderRadius.circular(12),
+  Future<void> _analyzeAndShowResult() async {
+    // ✅ 1단계: 로딩 시작
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // ✅ 2단계: Premium 확인
+      final tokenState = ref.read(tokenProvider);
+      final isPremium = tokenState.hasUnlimitedAccess;
+
+      Logger.info('[ExLoverFortune] Premium 상태: $isPremium');
+
+      // ✅ 3단계: FortuneConditions 생성
+      final conditions = ExLoverFortuneConditions(
+        timeSinceBreakup: _timeSinceBreakup!,
+        currentEmotion: _currentEmotion!,
+        mainCuriosity: _mainCuriosity!,
+        exBirthDate: _exBirthDate,
+        breakupReason: _breakupReason,
+      );
+
+      // ✅ 4단계: UnifiedFortuneService 호출
+      final fortuneService = UnifiedFortuneService(
+        Supabase.instance.client,
+        enableOptimization: true,
+      );
+
+      final result = await fortuneService.getFortune(
+        fortuneType: 'ex_lover',
+        dataSource: FortuneDataSource.api,
+        inputConditions: conditions.toJson(),
+        conditions: conditions,
+        isPremium: isPremium, // ✅ Premium 상태 전달
+      );
+
+      Logger.info('[ExLoverFortune] 운세 생성 완료: ${result.id}');
+
+      // ✅ 5단계: 로딩 종료
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+
+      // ✅ 6단계: 광고 표시 (InterstitialAd)
+      await AdService.instance.showInterstitialAdWithCallback(
+        onAdCompleted: () async {
+          // 결과 페이지로 이동
+          if (mounted) {
+            context.push(
+              '/ex-lover-emotional-result',
+              extra: result, // ✅ FortuneResult 전달
+            );
+          }
+        },
+        onAdFailed: () async {
+          // 광고 실패해도 결과 페이지로 이동
+          if (mounted) {
+            context.push(
+              '/ex-lover-emotional-result',
+              extra: result, // ✅ FortuneResult 전달
+            );
+          }
+        },
+      );
+    } catch (error, stackTrace) {
+      Logger.error('[ExLoverFortune] 운세 생성 실패', error, stackTrace);
+
+      // 로딩 종료
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('운세 생성 중 오류가 발생했습니다'),
+            backgroundColor: TossDesignSystem.errorRed,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(
-                color: TossDesignSystem.purple,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '분석 중...',
-                style: TossDesignSystem.body2,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-    
-    // Show AdMob interstitial ad
-    await AdService.instance.showInterstitialAdWithCallback(
-      onAdCompleted: () async {
-        // Close loading dialog
-        Navigator.pop(context);
-        
-        // Navigate to result page
-        context.push(
-          '/ex-lover-emotional-result',
-          extra: input,
         );
-      },
-      onAdFailed: () async {
-        // Close loading dialog even if ad fails
-        Navigator.pop(context);
-        
-        // Navigate to result page anyway
-        context.push(
-          '/ex-lover-emotional-result',
-          extra: input,
-        );
-      },
-    );
+      }
+    }
   }
 
   @override
@@ -201,14 +229,11 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
   Widget _buildFloatingButton() {
     final canProceed = _currentStep == 0 ? _canProceedStep1() : _canProceedStep2();
 
-    return TossFloatingProgressButtonPositioned(
+    return UnifiedButton.floating(
       text: _currentStep == 0 ? '다음' : '마음 분석하기',
-      currentStep: _currentStep + 1,
-      totalSteps: 2,
-      onPressed: canProceed ? _nextStep : null,
-      isEnabled: canProceed,
-      showProgress: true,
-      isVisible: true,
+      onPressed: (_isLoading || !canProceed) ? null : _nextStep,
+      isLoading: _isLoading, // ✅ 로딩 상태 전달
+      isEnabled: canProceed && !_isLoading,
     );
   }
 

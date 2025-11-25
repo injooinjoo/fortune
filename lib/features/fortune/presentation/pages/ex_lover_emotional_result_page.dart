@@ -1,4 +1,3 @@
-import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -8,17 +7,18 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
-import '../../../../shared/components/floating_bottom_button.dart'; // ✅ FloatingBottomButton용
-import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
-import '../../../../core/utils/logger.dart'; // ✅ 로그용
-import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
+import '../../../../core/models/fortune_result.dart';
+import '../../../../core/widgets/blurred_fortune_content.dart'; // ✅ BlurredFortuneContent
+import '../../../../services/ad_service.dart';
+import '../../../../core/utils/logger.dart';
 
+import '../../../../core/widgets/unified_button.dart';
 class ExLoverEmotionalResultPage extends ConsumerStatefulWidget {
-  final ExLoverSimpleInput input;
+  final FortuneResult fortuneResult;
 
   const ExLoverEmotionalResultPage({
     super.key,
-    required this.input,
+    required this.fortuneResult,
   });
 
   @override
@@ -26,41 +26,100 @@ class ExLoverEmotionalResultPage extends ConsumerStatefulWidget {
 }
 
 class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalResultPage> {
-  ExLoverEmotionalResult? _result;
-
-  // ✅ Blur 상태 관리
-  bool _isBlurred = false;
-  List<String> _blurredSections = [];
+  late FortuneResult _fortuneResult;
+  late ExLoverEmotionalResult _parsedResult;
 
   @override
   void initState() {
     super.initState();
-    _result = _generateResult(widget.input);
+    _fortuneResult = widget.fortuneResult;
 
-    // ✅ Premium 체크 및 Blur 상태 설정
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final tokenState = ref.read(tokenProvider);
-      final isPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
+    // ✅ FortuneResult.data에서 전애인운세 데이터 파싱
+    _parsedResult = _parseFortuneData(_fortuneResult.data);
 
-      setState(() {
-        _isBlurred = !isPremium;
-        _blurredSections = _isBlurred
-            ? ['emotional_prescription', 'relationship_insight', 'new_beginning']
-            : [];
-      });
+    Logger.info('[전애인운세] isPremium: ${!_fortuneResult.isBlurred}, isBlurred: ${_fortuneResult.isBlurred}');
+  }
 
-      debugPrint('🔒 [전애인운세] isPremium: $isPremium, isBlurred: $_isBlurred, blurredSections: $_blurredSections');
-    });
+  // ✅ FortuneResult.data를 ExLoverEmotionalResult로 파싱
+  ExLoverEmotionalResult _parseFortuneData(dynamic data) {
+    // Edge Function이 legacy 형식으로 데이터를 반환하므로 변환 필요
+    if (data is Map<String, dynamic>) {
+      // 'data' 필드가 있으면 그 안의 데이터를 사용 (Edge Function 응답: {success: true, data: {...}})
+      final actualData = data['data'] as Map<String, dynamic>? ?? data;
+
+      // Edge Function 응답 형식을 ExLoverEmotionalResult로 변환
+      if (actualData.containsKey('overall_fortune') || actualData.containsKey('reunion_possibility')) {
+        return ExLoverEmotionalResult(
+          emotionalPrescription: EmotionalPrescription(
+            currentState: actualData['emotion_healing'] as String? ?? '감정을 정리하고 있습니다.',
+            recommendedActivities: (actualData['recommendations'] as List?)?.cast<String>() ?? [],
+            thingsToAvoid: (actualData['cautions'] as List?)?.cast<String>() ?? [],
+            healingAdvice: actualData['emotion_healing'] as String? ?? '천천히 치유해나가세요.',
+            healingProgress: 50, // Edge Function에 없으므로 기본값
+          ),
+          relationshipInsight: RelationshipInsight(
+            reunionPossibility: 50, // Edge Function에 없으므로 기본값
+            theirCurrentFeelings: actualData['overall_fortune'] as String? ?? '시간이 해결해줄 것입니다.',
+            contactTiming: actualData['reunion_possibility'] as String? ?? '조금 더 시간이 필요합니다.',
+            karmicLesson: actualData['overall_fortune'] as String? ?? '모든 관계는 배움의 기회입니다.',
+            isThinkingOfYou: false,
+          ),
+          newBeginning: NewBeginning(
+            readinessLevel: 'preparing',
+            expectedTiming: '3-6개월 후',
+            growthPoints: (actualData['recommendations'] as List?)?.cast<String>() ?? [],
+            newLoveAdvice: actualData['new_beginning'] as String? ?? '새로운 만남이 기다립니다.',
+            readinessScore: 50,
+          ),
+          overallScore: actualData['score'] as int? ?? 50,
+          specialMessage: actualData['fortune_keyword'] as String? ?? '치유',
+        );
+      }
+
+      // 새로운 형식 (emotional_prescription, relationship_insight 등)
+      if (actualData.containsKey('emotional_prescription') ||
+          actualData.containsKey('emotionalPrescription')) {
+        return ExLoverEmotionalResult.fromJson(actualData);
+      }
+
+      Logger.warning('[전애인운세] 예상치 못한 데이터 구조: ${actualData.keys.toList()}');
+    }
+
+    // Fallback: 기본값 생성 (임시)
+    Logger.warning('[전애인운세] 기본값 생성 - data type: ${data.runtimeType}');
+    return _generateDefaultResult();
+  }
+
+  ExLoverEmotionalResult _generateDefaultResult() {
+    return ExLoverEmotionalResult(
+      emotionalPrescription: EmotionalPrescription(
+        currentState: '감정 상태를 분석하고 있습니다.',
+        recommendedActivities: ['휴식', '명상'],
+        thingsToAvoid: ['스트레스', '과로'],
+        healingAdvice: '천천히 치유해나가세요.',
+        healingProgress: 50,
+      ),
+      relationshipInsight: RelationshipInsight(
+        reunionPossibility: 50,
+        theirCurrentFeelings: '분석 중입니다.',
+        contactTiming: '조금 더 시간이 필요합니다.',
+        karmicLesson: '모든 관계는 배움의 기회입니다.',
+        isThinkingOfYou: false,
+      ),
+      newBeginning: NewBeginning(
+        readinessLevel: 'preparing',
+        expectedTiming: '3-6개월 후',
+        growthPoints: ['자기 이해', '감정 관리'],
+        newLoveAdvice: '천천히 준비하세요.',
+        readinessScore: 50,
+      ),
+      overallScore: 50,
+      specialMessage: '마음을 돌보는 시간을 가지세요.',
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_result == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
@@ -68,17 +127,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
       appBar: AppBar(
         backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
         elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            // 페이지 스택을 모두 제거하고 홈으로 이동
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          },
-          icon: Icon(
-            Icons.close_rounded,
-            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-            size: 24,
-          ),
-        ),
+        automaticallyImplyLeading: false, // ✅ 뒤로가기 버튼 제거
         title: Text(
           '운세 결과',
           style: TossDesignSystem.heading3.copyWith(
@@ -88,11 +137,14 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () => _shareResult(context, _result!),
+            onPressed: () {
+              // 페이지 스택을 모두 제거하고 홈으로 이동
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
             icon: Icon(
-              Icons.share_rounded,
+              Icons.close_rounded,
               color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-              size: 20,
+              size: 24,
             ),
           ),
         ],
@@ -104,52 +156,54 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-            // 메인 메시지
-            _buildMainMessage(_result!, isDark).animate()
-              .fadeIn(duration: 400.ms)
-              .slideY(begin: 0.1, end: 0),
+                // 메인 메시지 (블러 없음)
+                _buildMainMessage(_parsedResult, isDark)
+                    .animate()
+                    .fadeIn(duration: 400.ms)
+                    .slideY(begin: 0.1, end: 0),
 
-            const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-            // Premium 섹션 2: 오늘의 감정 처방
-            _buildBlurWrapper(
-              sectionKey: 'emotional_prescription',
-              child: _buildEmotionalPrescription(_result!.emotionalPrescription, isDark),
-            )
-              .animate(delay: 100.ms)
-              .fadeIn(duration: 400.ms)
-              .slideX(begin: -0.05, end: 0),
+                // ✅ BlurredFortuneContent로 통합 블러 적용
+                BlurredFortuneContent(
+                  fortuneResult: _fortuneResult,
+                  child: Column(
+                    children: [
+                      // Premium 섹션 2: 오늘의 감정 처방
+                      _buildEmotionalPrescription(
+                              _parsedResult.emotionalPrescription, isDark)
+                          .animate(delay: 100.ms)
+                          .fadeIn(duration: 400.ms)
+                          .slideX(begin: -0.05, end: 0),
 
-            const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-            // Premium 섹션 3: 그 사람과의 인연
-            _buildBlurWrapper(
-              sectionKey: 'relationship_insight',
-              child: _buildRelationshipInsight(_result!.relationshipInsight, widget.input, isDark),
-            )
-              .animate(delay: 200.ms)
-              .fadeIn(duration: 400.ms)
-              .slideX(begin: 0.05, end: 0),
+                      // Premium 섹션 3: 그 사람과의 인연
+                      _buildRelationshipInsight(
+                              _parsedResult.relationshipInsight, isDark)
+                          .animate(delay: 200.ms)
+                          .fadeIn(duration: 400.ms)
+                          .slideX(begin: 0.05, end: 0),
 
-            const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-            // Premium 섹션 4: 새로운 시작
-            _buildBlurWrapper(
-              sectionKey: 'new_beginning',
-              child: _buildNewBeginning(_result!.newBeginning, isDark),
-            )
-              .animate(delay: 300.ms)
-              .fadeIn(duration: 400.ms)
-              .slideX(begin: -0.05, end: 0),
-            
+                      // Premium 섹션 4: 새로운 시작
+                      _buildNewBeginning(_parsedResult.newBeginning, isDark)
+                          .animate(delay: 300.ms)
+                          .fadeIn(duration: 400.ms)
+                          .slideX(begin: -0.05, end: 0),
+                    ],
+                  ),
+                ),
+
                 const SizedBox(height: 100), // 버튼 공간 확보
               ],
             ),
           ),
 
           // ✅ FloatingBottomButton (블러 상태일 때만 표시)
-          if (_isBlurred)
-            FloatingBottomButton(
+          if (_fortuneResult.isBlurred)
+            UnifiedButton.floating(
               text: '광고 보고 전체 내용 확인하기',
               onPressed: _showAdAndUnblur,
               isEnabled: true,
@@ -393,10 +447,11 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
     );
   }
 
-  Widget _buildRelationshipInsight(RelationshipInsight insight, ExLoverSimpleInput input, bool isDark) {
-    // 사용자가 선택한 궁금증에 따라 강조할 내용 결정
-    final showReunion = input.mainCuriosity == 'reunionChance';
-    final showFeelings = input.mainCuriosity == 'theirFeelings';
+  Widget _buildRelationshipInsight(RelationshipInsight insight, bool isDark) {
+    // TODO: 조건 데이터를 FortuneResult에 포함시켜야 함
+    // 임시로 모든 섹션을 표시
+    final showReunion = true;
+    final showFeelings = true;
     
     return TossCard(
       style: TossCardStyle.filled,
@@ -1069,31 +1124,41 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
     }
   }
 
-  // ✅ RewardedAd 패턴
+  // ✅ 광고 시청 & 블러 해제 (MBTI 패턴)
   Future<void> _showAdAndUnblur() async {
-    debugPrint('[전애인운세] 광고 시청 후 블러 해제 시작');
+    if (!_fortuneResult.isBlurred) return;
 
     try {
-      final adService = AdService.instance;
+      final adService = AdService();
 
-      // 광고가 준비 안됐으면 로드
+      // 광고가 준비 안됐으면 로드 (두 번 클릭 방지)
       if (!adService.isRewardedAdReady) {
-        debugPrint('[전애인운세] ⏳ RewardedAd 로드 중...');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 준비하는 중입니다...'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+
+        // 광고 로드 시작
         await adService.loadRewardedAd();
 
+        // 로딩 완료 대기 (최대 5초)
         int waitCount = 0;
         while (!adService.isRewardedAdReady && waitCount < 10) {
           await Future.delayed(const Duration(milliseconds: 500));
           waitCount++;
         }
 
+        // 타임아웃 처리
         if (!adService.isRewardedAdReady) {
-          debugPrint('[전애인운세] ❌ RewardedAd 로드 타임아웃');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
-                backgroundColor: TossDesignSystem.errorRed,
+                content: Text('광고 로딩에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+                duration: Duration(seconds: 3),
               ),
             );
           }
@@ -1101,71 +1166,37 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
         }
       }
 
+      // 리워드 광고 표시
       await adService.showRewardedAd(
         onUserEarnedReward: (ad, reward) {
-          debugPrint('[전애인운세] ✅ 광고 시청 완료, 블러 해제');
+          Logger.info('[전애인운세] Rewarded ad watched, removing blur');
           if (mounted) {
             setState(() {
-              _isBlurred = false;
-              _blurredSections = [];
+              _fortuneResult = _fortuneResult.copyWith(
+                isBlurred: false,
+                blurredSections: [],
+              );
             });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('운세가 잠금 해제되었습니다!'),
+                duration: Duration(seconds: 2),
+              ),
+            );
           }
         },
       );
     } catch (e, stackTrace) {
-      Logger.error('[전애인운세] 광고 표시 실패', e, stackTrace);
-
-      // UX 개선: 에러 발생해도 블러 해제
+      Logger.error('[전애인운세] Failed to show ad', e, stackTrace);
       if (mounted) {
-        setState(() {
-          _isBlurred = false;
-          _blurredSections = [];
-        });
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
-            backgroundColor: TossDesignSystem.warningOrange,
+            content: Text('광고 표시 중 오류가 발생했습니다.'),
+            duration: Duration(seconds: 2),
           ),
         );
       }
     }
-  }
-
-  // ✅ Blur wrapper helper
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required String sectionKey,
-  }) {
-    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
-      return child;
-    }
-
-    return Stack(
-      children: [
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   void _shareResult(BuildContext context, ExLoverEmotionalResult result) {

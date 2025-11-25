@@ -22,19 +22,19 @@ class ExLoverSimpleInput {
 class ExLoverEmotionalResult {
   // 오늘의 감정 처방
   final EmotionalPrescription emotionalPrescription;
-  
+
   // 그 사람과의 인연
   final RelationshipInsight relationshipInsight;
-  
+
   // 새로운 시작
   final NewBeginning newBeginning;
-  
+
   // 전체 운세 점수
   final int overallScore;
-  
+
   // 특별 메시지
   final String specialMessage;
-  
+
   ExLoverEmotionalResult({
     required this.emotionalPrescription,
     required this.relationshipInsight,
@@ -42,6 +42,22 @@ class ExLoverEmotionalResult {
     required this.overallScore,
     required this.specialMessage,
   });
+
+  factory ExLoverEmotionalResult.fromJson(Map<String, dynamic> json) {
+    return ExLoverEmotionalResult(
+      emotionalPrescription: EmotionalPrescription.fromJson(
+        json['emotional_prescription'] as Map<String, dynamic>,
+      ),
+      relationshipInsight: RelationshipInsight.fromJson(
+        json['relationship_insight'] as Map<String, dynamic>,
+      ),
+      newBeginning: NewBeginning.fromJson(
+        json['new_beginning'] as Map<String, dynamic>,
+      ),
+      overallScore: json['overall_score'] as int? ?? 50,
+      specialMessage: json['special_message'] as String? ?? '',
+    );
+  }
 }
 
 /// 오늘의 감정 처방
@@ -51,7 +67,7 @@ class EmotionalPrescription {
   final List<String> thingsToAvoid; // 피해야 할 것들
   final String healingAdvice; // 치유 조언
   final int healingProgress; // 치유 진행도 (0-100)
-  
+
   EmotionalPrescription({
     required this.currentState,
     required this.recommendedActivities,
@@ -59,6 +75,22 @@ class EmotionalPrescription {
     required this.healingAdvice,
     required this.healingProgress,
   });
+
+  factory EmotionalPrescription.fromJson(Map<String, dynamic> json) {
+    return EmotionalPrescription(
+      currentState: json['current_state'] as String? ?? '',
+      recommendedActivities: (json['recommended_activities'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      thingsToAvoid: (json['things_to_avoid'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      healingAdvice: json['healing_advice'] as String? ?? '',
+      healingProgress: json['healing_progress'] as int? ?? 50,
+    );
+  }
 }
 
 /// 그 사람과의 인연
@@ -68,7 +100,7 @@ class RelationshipInsight {
   final String contactTiming; // 연락 타이밍 조언
   final String karmicLesson; // 이 관계에서 배울 점
   final bool isThinkingOfYou; // 상대방도 생각하고 있을까
-  
+
   RelationshipInsight({
     required this.reunionPossibility,
     required this.theirCurrentFeelings,
@@ -76,6 +108,16 @@ class RelationshipInsight {
     required this.karmicLesson,
     required this.isThinkingOfYou,
   });
+
+  factory RelationshipInsight.fromJson(Map<String, dynamic> json) {
+    return RelationshipInsight(
+      reunionPossibility: json['reunion_possibility'] as int? ?? 50,
+      theirCurrentFeelings: json['their_current_feelings'] as String? ?? '',
+      contactTiming: json['contact_timing'] as String? ?? '',
+      karmicLesson: json['karmic_lesson'] as String? ?? '',
+      isThinkingOfYou: json['is_thinking_of_you'] as bool? ?? false,
+    );
+  }
 }
 
 /// 새로운 시작
@@ -85,7 +127,7 @@ class NewBeginning {
   final List<String> growthPoints; // 성장 포인트
   final String newLoveAdvice; // 새로운 사랑 조언
   final int readinessScore; // 준비도 점수 (0-100)
-  
+
   NewBeginning({
     required this.readinessLevel,
     required this.expectedTiming,
@@ -93,6 +135,19 @@ class NewBeginning {
     required this.newLoveAdvice,
     required this.readinessScore,
   });
+
+  factory NewBeginning.fromJson(Map<String, dynamic> json) {
+    return NewBeginning(
+      readinessLevel: json['readiness_level'] as String? ?? 'preparing',
+      expectedTiming: json['expected_timing'] as String? ?? '',
+      growthPoints: (json['growth_points'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      newLoveAdvice: json['new_love_advice'] as String? ?? '',
+      readinessScore: json['readiness_score'] as int? ?? 50,
+    );
+  }
 }
 
 /// 감정 카드 데이터

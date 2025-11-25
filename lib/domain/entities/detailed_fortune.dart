@@ -1,3 +1,4 @@
+import '../../core/constants/fortune_detailed_metadata.dart';
 import 'fortune.dart';
 
 // 상세 운세 엔티티 (UI에서 사용하는 확장된 Fortune)
@@ -59,6 +60,31 @@ class DetailedFortune extends Fortune {
     Map<String, dynamic>? scoreBreakdown,
     Map<String, dynamic>? luckyItems,
     List<String>? recommendations,
+    // ✅ Missing parameters from parent Fortune class
+    bool? isBlurred,
+    List<String>? blurredSections,
+    // Parent parameters that might be needed for full compatibility
+    List<String>? warnings,
+    String? summary,
+    Map<String, dynamic>? additionalInfo,
+    Map<String, List<DetailedLuckyItem>>? detailedLuckyItems,
+    String? greeting,
+    Map<String, int>? hexagonScores,
+    List<TimeSpecificFortune>? timeSpecificFortunes,
+    List<BirthYearFortune>? birthYearFortunes,
+    Map<String, dynamic>? fiveElements,
+    String? specialTip,
+    String? period,
+    Map<String, dynamic>? meta,
+    Map<String, dynamic>? weatherSummary,
+    Map<String, dynamic>? overall,
+    Map<String, dynamic>? categories,
+    Map<String, dynamic>? sajuInsight,
+    List<Map<String, dynamic>>? personalActions,
+    Map<String, dynamic>? notification,
+    Map<String, dynamic>? shareCard,
+    List<String>? uiBlocks,
+    Map<String, dynamic>? explain,
   }) {
     return DetailedFortune(
       id: id ?? this.id,

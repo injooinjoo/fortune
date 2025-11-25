@@ -2,7 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/toss_design_system.dart';
-import '../../shared/components/toss_floating_progress_button.dart';
+import 'unified_button.dart';
+import 'unified_button_enums.dart';
 
 /// 통일된 블러 처리 위젯
 ///
@@ -152,13 +153,13 @@ class UnifiedAdUnlockButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TossFloatingProgressButtonPositioned(
+    return UnifiedButton.floating(
       text: customText ?? '🎁 광고 보고 전체 내용 보기',
       onPressed: onPressed,
       isEnabled: true,
-      showProgress: false,
-      isVisible: true,
       isLoading: false,
+      style: UnifiedButtonStyle.primary,
+      size: UnifiedButtonSize.large,
     );
   }
 }

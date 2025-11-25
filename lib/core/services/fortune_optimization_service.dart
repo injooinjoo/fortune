@@ -1,7 +1,9 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/cached_fortune_result.dart';
 import '../../features/fortune/domain/models/fortune_conditions.dart';
+import '../utils/logger.dart';
 
 /// 운세 조회 최적화 서비스 (API 비용 72% 절감)
 ///
@@ -42,7 +44,7 @@ class FortuneOptimizationService {
   }) async {
     final conditionsHash = conditions.generateHash();
 
-    print('🔮 운세 조회 시작: $fortuneType (hash: $conditionsHash)');
+    Logger.info('[FortuneOptimization] 🔮 운세 조회 시작: $fortuneType (hash: $conditionsHash)');
 
     try {
       // 1️⃣ 개인 캐시 확인
@@ -55,11 +57,11 @@ class FortuneOptimizationService {
         // 50% 확률로 광고 표시
         final showAd = Random().nextDouble() < PERSONAL_CACHE_AD_PROBABILITY;
         if (showAd) {
-          print('✅ [1단계] 개인 캐시 히트 - 50% 광고 표시');
+          Logger.debug('[FortuneOptimization] ✅ [1단계] 개인 캐시 히트 - 50% 광고 표시');
           await onShowAd();
           await Future.delayed(DELAY_DURATION);
         } else {
-          print('✅ [1단계] 개인 캐시 히트 - 즉시 반환 (광고 생략)');
+          Logger.debug('[FortuneOptimization] ✅ [1단계] 개인 캐시 히트 - 즉시 반환 (광고 생략)');
         }
         return personalCache.copyWith(source: 'personal_cache');
       }
@@ -72,7 +74,7 @@ class FortuneOptimizationService {
         conditions: conditions,
       );
       if (dbPoolResult != null) {
-        print('✅ [2단계] DB 풀 사용 - 랜덤 선택 완료');
+        Logger.debug('[FortuneOptimization] ✅ [2단계] DB 풀 사용 - 랜덤 선택 완료');
         return dbPoolResult.copyWith(source: 'db_pool');
       }
 
@@ -84,12 +86,12 @@ class FortuneOptimizationService {
         conditions: conditions,
       );
       if (randomResult != null) {
-        print('✅ [3단계] 랜덤 선택 - DB에서 가져옴');
+        Logger.debug('[FortuneOptimization] ✅ [3단계] 랜덤 선택 - DB에서 가져옴');
         return randomResult.copyWith(source: 'random_selection');
       }
 
       // 4️⃣-6️⃣ API 호출
-      print('🔄 [4-6단계] API 호출 진행');
+      Logger.debug('[FortuneOptimization] 🔄 [4-6단계] API 호출 진행');
       return await _callAPIAndSave(
         userId: userId,
         fortuneType: fortuneType,
@@ -99,8 +101,8 @@ class FortuneOptimizationService {
         onAPICall: onAPICall,
       );
     } catch (e, stackTrace) {
-      print('❌ 운세 조회 실패: $e');
-      print('Stack trace: $stackTrace');
+      debugPrint('❌ 운세 조회 실패: $e');
+      debugPrint('Stack trace: $stackTrace');
       rethrow;
     }
   }
@@ -114,9 +116,9 @@ class FortuneOptimizationService {
     required String conditionsHash,
   }) async {
     try {
+      // ✅ Date 컬럼으로 조회 (unique constraint와 일치)
       final today = DateTime.now();
-      final todayStart = DateTime(today.year, today.month, today.day);
-      final todayEnd = todayStart.add(const Duration(days: 1));
+      final todayDate = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
 
       final result = await _supabase
           .from('fortune_results')
@@ -124,21 +126,20 @@ class FortuneOptimizationService {
           .eq('user_id', userId)
           .eq('fortune_type', fortuneType)
           .eq('conditions_hash', conditionsHash)
-          .gte('created_at', todayStart.toIso8601String())
-          .lt('created_at', todayEnd.toIso8601String())
+          .eq('date', todayDate)  // ✅ FIXED: Use date column (not created_at)
           .order('created_at', ascending: false)
           .limit(1)
           .maybeSingle();
 
       if (result != null) {
-        print('  ✓ 개인 캐시 발견');
+        debugPrint('  ✓ 개인 캐시 발견');
         return CachedFortuneResult.fromJson(result);
       }
 
-      print('  ✗ 개인 캐시 없음');
+      debugPrint('  ✗ 개인 캐시 없음');
       return null;
     } catch (e) {
-      print('  ⚠️ 개인 캐시 조회 실패: $e');
+      debugPrint('  ⚠️ 개인 캐시 조회 실패: $e');
       return null; // 에러 시 다음 단계로 진행
     }
   }
@@ -161,14 +162,14 @@ class FortuneOptimizationService {
           .eq('conditions_hash', conditionsHash)
           .count();
 
-      final count = countResponse.count ?? 0;
+      final count = countResponse.count;
 
       if (count < DB_POOL_THRESHOLD) {
-        print('  ✗ DB 풀 부족 ($count/$DB_POOL_THRESHOLD)');
+        debugPrint('  ✗ DB 풀 부족 ($count/$DB_POOL_THRESHOLD)');
         return null;
       }
 
-      print('  ✓ DB 풀 충분 ($count개)');
+      debugPrint('  ✓ DB 풀 충분 ($count개)');
 
       // 2-2. 랜덤 선택
       final randomOffset = Random().nextInt(count);
@@ -182,7 +183,7 @@ class FortuneOptimizationService {
           .single();
 
       // 2-3. 5초 대기
-      print('  ⏳ 5초 대기 중...');
+      debugPrint('  ⏳ 5초 대기 중...');
       await Future.delayed(DELAY_DURATION);
 
       // 2-4. 사용자 히스토리에 저장
@@ -198,7 +199,7 @@ class FortuneOptimizationService {
 
       return CachedFortuneResult.fromJson(randomResult);
     } catch (e) {
-      print('  ⚠️ DB 풀 조회 실패: $e');
+      debugPrint('  ⚠️ DB 풀 조회 실패: $e');
       return null; // 에러 시 다음 단계로 진행
     }
   }
@@ -216,11 +217,11 @@ class FortuneOptimizationService {
       // 3-1. 30% 확률 체크
       final random = Random().nextDouble();
       if (random >= RANDOM_SELECTION_PROBABILITY) {
-        print('  ✗ 랜덤 미선택 (${(random * 100).toStringAsFixed(1)}% > 30%)');
+        debugPrint('  ✗ 랜덤 미선택 (${(random * 100).toStringAsFixed(1)}% > 30%)');
         return null;
       }
 
-      print('  ✓ 랜덤 선택 (${(random * 100).toStringAsFixed(1)}% < 30%)');
+      debugPrint('  ✓ 랜덤 선택 (${(random * 100).toStringAsFixed(1)}% < 30%)');
 
       // 3-2. DB에서 최근 100개 중 랜덤 선택
       final results = await _supabase
@@ -232,15 +233,15 @@ class FortuneOptimizationService {
           .limit(100);
 
       if (results.isEmpty) {
-        print('  ✗ DB에 데이터 없음');
+        debugPrint('  ✗ DB에 데이터 없음');
         return null;
       }
 
       final selectedResult = results[Random().nextInt(results.length)];
-      print('  ✓ ${results.length}개 중 하나 선택');
+      debugPrint('  ✓ ${results.length}개 중 하나 선택');
 
       // 3-3. 5초 대기
-      print('  ⏳ 5초 대기 중...');
+      debugPrint('  ⏳ 5초 대기 중...');
       await Future.delayed(DELAY_DURATION);
 
       // 3-4. 사용자 히스토리에 저장
@@ -256,7 +257,7 @@ class FortuneOptimizationService {
 
       return CachedFortuneResult.fromJson(selectedResult);
     } catch (e) {
-      print('  ⚠️ 랜덤 선택 실패: $e');
+      debugPrint('  ⚠️ 랜덤 선택 실패: $e');
       return null; // 에러 시 API 호출로 진행
     }
   }
@@ -272,22 +273,22 @@ class FortuneOptimizationService {
     required Future<void> Function() onShowAd,
     required Future<Map<String, dynamic>> Function(Map<String, dynamic>) onAPICall,
   }) async {
-    print('  🔄 API 호출 준비');
+    debugPrint('  🔄 API 호출 준비');
 
     try {
       // 4. API 페이로드 생성
       final payload = conditions.buildAPIPayload();
-      print('  ✓ 페이로드 생성 완료');
+      debugPrint('  ✓ 페이로드 생성 완료');
 
       // 5. 광고 표시 (5초)
-      print('  📺 광고 표시 중...');
+      debugPrint('  📺 광고 표시 중...');
       await onShowAd();
       await Future.delayed(DELAY_DURATION);
 
       // 6. API 호출
-      print('  🔄 API 호출 중...');
+      debugPrint('  🔄 API 호출 중...');
       final resultData = await onAPICall(payload);
-      print('  ✓ API 응답 수신');
+      debugPrint('  ✓ API 응답 수신');
 
       // 6-2. DB 저장
       final savedResult = await _saveToUserHistory(
@@ -300,10 +301,10 @@ class FortuneOptimizationService {
         apiCall: true,
       );
 
-      print('  ✅ API 호출 성공 및 fortune_results 저장 완료');
+      debugPrint('  ✅ API 호출 성공 및 fortune_results 저장 완료');
       return savedResult;
     } catch (e) {
-      print('  ❌ API 호출 실패: $e');
+      debugPrint('  ❌ API 호출 실패: $e');
       rethrow;
     }
   }
@@ -345,10 +346,10 @@ class FortuneOptimizationService {
           .select()
           .single();
 
-      print('  ✅ fortune_results 저장 완료');
+      debugPrint('  ✅ fortune_results 저장 완료');
       return CachedFortuneResult.fromJson(response);
     } catch (e) {
-      print('  ❌ fortune_results 저장 실패: $e');
+      debugPrint('  ❌ fortune_results 저장 실패: $e');
 
       // DB 저장 실패해도 결과는 반환 (메모리에서 생성)
       // ⚠️ 주의: 저장 실패 시 다음 실행에서 캐시를 찾을 수 없음!
@@ -384,7 +385,7 @@ class FortuneOptimizationService {
 
       return response as int;
     } catch (e) {
-      print('⚠️ Pool size 조회 실패: $e');
+      debugPrint('⚠️ Pool size 조회 실패: $e');
       return 0;
     }
   }
@@ -408,7 +409,7 @@ class FortuneOptimizationService {
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      print('⚠️ API stats 조회 실패: $e');
+      debugPrint('⚠️ API stats 조회 실패: $e');
       return [];
     }
   }

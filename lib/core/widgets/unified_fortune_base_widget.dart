@@ -222,8 +222,9 @@ class _UnifiedFortuneBaseWidgetState
           await _unlockBlurredContent();
         },
         onAdFailed: () async {
-          Logger.info('[UnifiedFortuneBaseWidget] 광고 표시 실패 - 블러 해제');
-          await _unlockBlurredContent();
+          Logger.info('[UnifiedFortuneBaseWidget] 광고 표시 실패 - 블러 유지 (사용자가 다시 시도하도록)');
+          // ❌ 자동으로 블러 해제하지 않음!
+          // 사용자가 FloatingBottomButton을 다시 눌러서 재시도하도록 유도
         },
       );
       // ✅ 광고가 준비 안 됐으면 블러 유지 (AdService에서 콜백 호출 안함)
@@ -326,7 +327,6 @@ class _UnifiedFortuneBaseWidgetState
           isBlurred: false,
           blurredSections: [],
         );
-        _isBlurred = false;
       }
     });
 
@@ -334,62 +334,6 @@ class _UnifiedFortuneBaseWidgetState
     Logger.info('[UnifiedFortuneBaseWidget] ✅ 블러 해제 완료');
   }
 
-  /// 실제 운세 생성 로직 (레거시 - 기존 호환성 유지)
-  Future<void> _generateFortune() async {
-    try {
-      Logger.info('[UnifiedFortuneBaseWidget] API 호출 시작');
-
-      // 1. FortuneConditions 생성
-      final conditions = await widget.conditionsBuilder();
-
-      // 2. UnifiedFortuneService 호출 (6단계 최적화 자동 적용)
-      final result = await _fortuneService.getFortune(
-        fortuneType: widget.fortuneType,
-        dataSource: widget.dataSource,
-        inputConditions: conditions.toJson(),
-        conditions: conditions,
-      );
-
-      Logger.info('[UnifiedFortuneBaseWidget] 운세 생성 완료: ${result.id}');
-
-      if (!mounted) return;
-
-      setState(() {
-        _fortuneResult = result;
-        _showResult = true;
-        _isLoading = false;
-      });
-
-      HapticUtils.success();
-    } catch (error, stackTrace) {
-      Logger.error(
-        '[UnifiedFortuneBaseWidget] 운세 생성 실패: ${widget.fortuneType}',
-        error,
-        stackTrace,
-      );
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-
-        HapticUtils.error();
-        Toast.show(
-          context,
-          message: '운세 생성 중 오류가 발생했습니다',
-          type: ToastType.error,
-        );
-      }
-    }
-  }
-
-  /// 다시 입력하기 (결과 화면에서 입력 화면으로 돌아가기)
-  void _handleReset() {
-    setState(() {
-      _showResult = false;
-      _fortuneResult = null;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -358,10 +358,57 @@ class UnifiedFortuneService {
         case 'startup-career':
           return await CareerGenerator.generate(inputConditions, _supabase);
 
+        case 'career_coaching':
+        case 'career-coaching':
+          // Career Coaching Edge Function 직접 호출
+          final isPremium = inputConditions['isPremium'] as bool? ?? false;
+
+          final payload = {
+            'currentRole': inputConditions['currentRole'],
+            'experienceLevel': inputConditions['experienceLevel'],
+            'industry': inputConditions['industry'],
+            'primaryConcern': inputConditions['primaryConcern'],
+            'shortTermGoal': inputConditions['shortTermGoal'],
+            'skillsToImprove': inputConditions['skillsToImprove'],
+            'coreValue': inputConditions['coreValue'],
+            'isPremium': isPremium,
+          };
+
+          final response = await _supabase.functions.invoke(
+            'fortune-career-coaching',
+            body: payload,
+          );
+
+          if (response.data == null) {
+            throw Exception('Career Coaching API 응답 데이터 없음');
+          }
+
+          final responseData = response.data as Map<String, dynamic>;
+          if (responseData['success'] == true && responseData.containsKey('fortune')) {
+            final fortuneData = responseData['fortune'] as Map<String, dynamic>;
+            Logger.info('[UnifiedFortune] ✅ Career Coaching API 호출 성공');
+
+            return FortuneResult(
+              type: 'career_coaching',
+              title: '커리어 코칭',
+              summary: {},
+              data: fortuneData,
+              score: (fortuneData['health_score']?['overall_score'] as num?)?.toInt() ?? 70,
+              createdAt: DateTime.now(),
+            );
+          } else {
+            throw Exception('Career Coaching API 응답 형식 오류');
+          }
+
         case 'exam':
         case 'lucky_exam':
         case 'lucky-exam':
-          return await ExamGenerator.generate(inputConditions, _supabase);
+          final isPremium = inputConditions['isPremium'] as bool? ?? false;
+          return await ExamGenerator.generate(
+            inputConditions,
+            _supabase,
+            isPremium: isPremium,
+          );
 
         case 'health':
           final isPremium = inputConditions['isPremium'] as bool? ?? false;
