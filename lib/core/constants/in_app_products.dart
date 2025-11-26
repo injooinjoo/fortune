@@ -6,9 +6,11 @@ class InAppProducts {
   static const String tokens100 = 'com.beyond.fortune.tokens100';
   static const String tokens200 = 'com.beyond.fortune.tokens200';
 
-  // Subscription Products
+  // Subscription Products (광고 제거 + 무제한 이용)
   static const String monthlySubscription =
       'com.beyond.fortune.subscription.monthly';
+  static const String yearlySubscription =
+      'com.beyond.fortune.subscription.yearly';
 
   // Product Details
   static const Map<String, ProductInfo> productDetails = {
@@ -42,11 +44,20 @@ class InAppProducts {
       isSubscription: false),
     monthlySubscription: ProductInfo(
       id: monthlySubscription,
-      title: '무제한 이용권',
-      description: '한 달 동안 모든 운세 무제한 이용',
-      price: 2500,
-      tokens: -1, // Unlimited,
-      isSubscription: true)};
+      title: '월간 프리미엄',
+      description: '광고 제거 + 모든 운세 무제한',
+      price: 1900,
+      tokens: -1, // Unlimited
+      isSubscription: true,
+      subscriptionPeriod: 'monthly'),
+    yearlySubscription: ProductInfo(
+      id: yearlySubscription,
+      title: '연간 프리미엄',
+      description: '광고 제거 + 모든 운세 무제한 (17% 할인)',
+      price: 19000,
+      tokens: -1, // Unlimited
+      isSubscription: true,
+      subscriptionPeriod: 'yearly')};
 
   // Get all consumable product IDs
   static List<String> get consumableIds => [
@@ -57,7 +68,8 @@ class InAppProducts {
 
   // Get all subscription product IDs
   static List<String> get subscriptionIds => [
-        monthlySubscription];
+        monthlySubscription,
+        yearlySubscription];
 
   // Get all product IDs
   static List<String> get allProductIds => [
@@ -72,6 +84,7 @@ class ProductInfo {
   final int price; // in KRW
   final int tokens; // -1 for unlimited
   final bool isSubscription;
+  final String? subscriptionPeriod; // 'monthly' or 'yearly'
 
   const ProductInfo({
     required this.id,
@@ -79,5 +92,22 @@ class ProductInfo {
     required this.description,
     required this.price,
     required this.tokens,
-    required this.isSubscription});
+    required this.isSubscription,
+    this.subscriptionPeriod});
+
+  /// 구독 여부에 따른 혜택 문구
+  String get benefitText {
+    if (isSubscription) {
+      return '광고 제거 + 무제한 운세';
+    }
+    return '$tokens 토큰 충전';
+  }
+
+  /// 월간 기준 가격 (연간 구독 시 할인율 계산용)
+  int get monthlyEquivalentPrice {
+    if (subscriptionPeriod == 'yearly') {
+      return (price / 12).round();
+    }
+    return price;
+  }
 }

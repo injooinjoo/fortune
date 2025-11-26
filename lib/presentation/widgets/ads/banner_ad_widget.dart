@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../providers/ad_provider.dart';
+import '../../providers/subscription_provider.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/config/environment.dart';
 
 /// Widget to display banner ads
+/// Premium subscribers will not see ads
 class BannerAdWidget extends ConsumerStatefulWidget {
   final AdSize adSize;
   final EdgeInsets padding;
@@ -81,6 +83,12 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // Premium subscribers don't see ads
+    final isPremium = ref.watch(isPremiumProvider);
+    if (isPremium) {
+      return const SizedBox.shrink();
+    }
+
     if (!_isAdLoaded || _bannerAd == null) {
       // Return empty container while loading
       return Container(

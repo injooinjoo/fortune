@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../core/widgets/unified_button.dart';
+import '../../core/constants/in_app_products.dart';
+import '../../services/payment/in_app_purchase_service.dart';
 import '../../shared/components/app_header.dart';
+import '../../shared/components/toast.dart';
+import '../../presentation/providers/subscription_provider.dart';
 
 class SubscriptionPage extends ConsumerStatefulWidget {
   const SubscriptionPage({super.key});
@@ -13,6 +17,41 @@ class SubscriptionPage extends ConsumerStatefulWidget {
 
 class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
   String _selectedPlan = 'free'; // free, monthly, yearly
+  bool _isLoading = false;
+  final InAppPurchaseService _purchaseService = InAppPurchaseService();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePurchaseService();
+  }
+
+  Future<void> _initializePurchaseService() async {
+    await _purchaseService.initialize();
+    _purchaseService.setContext(context);
+    _purchaseService.setCallbacks(
+      onPurchaseStarted: () {
+        if (mounted) {
+          setState(() => _isLoading = true);
+        }
+      },
+      onPurchaseSuccess: (message) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          // 구독 상태 업데이트
+          ref.read(subscriptionProvider.notifier).setActive(true);
+          Toast.show(context, message: message, type: ToastType.success);
+          Navigator.of(context).pop(); // 구독 완료 후 이전 화면으로
+        }
+      },
+      onPurchaseError: (error) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          Toast.show(context, message: error, type: ToastType.error);
+        }
+      },
+    );
+  }
 
   // TOSS Design System Helper Methods
   bool _isDarkMode(BuildContext context) {
@@ -233,6 +272,22 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               ),
             ),
 
+            const SizedBox(height: TossDesignSystem.spacingM),
+
+            // Restore Purchases Button (Apple 심사 필수)
+            Center(
+              child: TextButton(
+                onPressed: _isLoading ? null : _restorePurchases,
+                child: Text(
+                  '이전 구매 복원',
+                  style: TossDesignSystem.body2.copyWith(
+                    color: TossDesignSystem.tossBlue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ),
+
             const SizedBox(height: 100), // FloatingBottomButton 공간 확보
           ],
         ),
@@ -240,13 +295,15 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
 
           // Floating Bottom Button
           UnifiedButton.floating(
-            text: _selectedPlan == 'free'
-                ? '무료 플랜 사용 중'
-                : _selectedPlan == 'monthly'
-                    ? '월간 구독 시작하기 - ₩1,900/월'
-                    : '연간 구독 시작하기 - ₩19,000/년',
-            onPressed: _selectedPlan == 'free' ? null : _showSubscribeDialog,
-            isEnabled: _selectedPlan != 'free',
+            text: _isLoading
+                ? '처리 중...'
+                : _selectedPlan == 'free'
+                    ? '무료 플랜 사용 중'
+                    : _selectedPlan == 'monthly'
+                        ? '월간 구독 시작하기 - ₩1,900/월'
+                        : '연간 구독 시작하기 - ₩19,000/년',
+            onPressed: _selectedPlan == 'free' || _isLoading ? null : _startSubscription,
+            isEnabled: _selectedPlan != 'free' && !_isLoading,
           ),
         ],
       ),
@@ -439,38 +496,43 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     );
   }
 
-  void _showSubscribeDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: _getCardColor(context),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Text(
-          '구독 준비 중',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
-          ),
-        ),
-        content: Text(
-          '구독 기능은 현재 준비 중입니다.\n곧 서비스 예정입니다.',
-          style: TossDesignSystem.body2.copyWith(
-            color: _getSecondaryTextColor(context),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              '확인',
-              style: TossDesignSystem.button.copyWith(
-                color: TossDesignSystem.tossBlue,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  Future<void> _startSubscription() async {
+    if (_isLoading) return;
+
+    String productId;
+    if (_selectedPlan == 'monthly') {
+      productId = InAppProducts.monthlySubscription;
+    } else if (_selectedPlan == 'yearly') {
+      productId = InAppProducts.yearlySubscription;
+    } else {
+      return; // free plan selected
+    }
+
+    try {
+      setState(() => _isLoading = true);
+      await _purchaseService.purchaseProduct(productId);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        Toast.show(context, message: e.toString(), type: ToastType.error);
+      }
+    }
+  }
+
+  Future<void> _restorePurchases() async {
+    if (_isLoading) return;
+
+    try {
+      setState(() => _isLoading = true);
+      await _purchaseService.restorePurchases();
+      if (mounted) {
+        Toast.show(context, message: '구매 복원을 시작합니다...', type: ToastType.info);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        Toast.show(context, message: e.toString(), type: ToastType.error);
+      }
+    }
   }
 }

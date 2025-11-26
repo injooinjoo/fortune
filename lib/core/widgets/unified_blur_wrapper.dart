@@ -1,9 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/toss_design_system.dart';
 import 'unified_button.dart';
 import 'unified_button_enums.dart';
+import '../../presentation/providers/subscription_provider.dart';
 
 /// 통일된 블러 처리 위젯
 ///
@@ -25,7 +27,9 @@ import 'unified_button_enums.dart';
 /// - 중앙 자물쇠 아이콘 + shimmer 애니메이션
 ///
 /// **참고**: [docs/design/BLUR_SYSTEM_GUIDE.md](../../docs/design/BLUR_SYSTEM_GUIDE.md)
-class UnifiedBlurWrapper extends StatelessWidget {
+///
+/// **프리미엄 사용자**: 프리미엄 구독자는 블러 없이 전체 콘텐츠를 볼 수 있습니다.
+class UnifiedBlurWrapper extends ConsumerWidget {
   /// 전체 블러 여부 (FortuneResult.isBlurred)
   final bool isBlurred;
 
@@ -55,7 +59,13 @@ class UnifiedBlurWrapper extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 프리미엄 사용자는 블러 처리 없이 전체 콘텐츠 표시
+    final isPremium = ref.watch(isPremiumProvider);
+    if (isPremium) {
+      return child;
+    }
+
     // 블러 적용 여부 판단
     final shouldBlur = isBlurred && blurredSections.contains(sectionKey);
 
@@ -138,7 +148,9 @@ class UnifiedBlurWrapper extends StatelessWidget {
 ///   customText: '특별한 광고 버튼 텍스트',
 /// )
 /// ```
-class UnifiedAdUnlockButton extends StatelessWidget {
+///
+/// **프리미엄 사용자**: 프리미엄 구독자에게는 버튼이 표시되지 않습니다.
+class UnifiedAdUnlockButton extends ConsumerWidget {
   /// 광고 보기 콜백
   final VoidCallback onPressed;
 
@@ -152,7 +164,13 @@ class UnifiedAdUnlockButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 프리미엄 사용자는 광고 버튼 숨김
+    final isPremium = ref.watch(isPremiumProvider);
+    if (isPremium) {
+      return const SizedBox.shrink();
+    }
+
     return UnifiedButton.floating(
       text: customText ?? '🎁 광고 보고 전체 내용 보기',
       onPressed: onPressed,

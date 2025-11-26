@@ -376,13 +376,13 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     required String zodiacSign}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.zodiacFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('zodiac'),
         userId: userId,
         fortuneType: 'zodiac',
         data: {
           'zodiacSign': zodiacSign});
     }
-    
+
     // Fall back to parent class method
     return super.getZodiacFortune(userId: userId, zodiacSign: zodiacSign);
   }
@@ -476,7 +476,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getTomorrowFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.tomorrowFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('tomorrow'),
         userId: userId,
         fortuneType: 'tomorrow');
     }
@@ -488,7 +488,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getHourlyFortune({required String userId, required DateTime targetTime}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.hourlyFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('hourly'),
         userId: userId,
         fortuneType: 'hourly',
         data: {'targetTime': targetTime.toIso8601String()});
@@ -501,7 +501,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getWeeklyFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.weeklyFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('weekly'),
         userId: userId,
         fortuneType: 'weekly');
     }
@@ -513,7 +513,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getMonthlyFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.monthlyFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('monthly'),
         userId: userId,
         fortuneType: 'monthly');
     }
@@ -525,7 +525,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getYearlyFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.yearlyFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('yearly'),
         userId: userId,
         fortuneType: 'yearly');
     }
@@ -537,7 +537,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getSajuFortune({required String userId, required DateTime birthDate}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.sajuFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('saju'),
         userId: userId,
         fortuneType: 'saju',
         data: {'birthDate': birthDate.toIso8601String()});
@@ -549,7 +549,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getTojeongFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.tojeongFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('tojeong'),
         userId: userId,
         fortuneType: 'tojeong');
     }
@@ -560,7 +560,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getPalmistryFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.palmistryFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('palmistry'),
         userId: userId,
         fortuneType: 'palmistry');
     }
@@ -571,7 +571,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getPhysiognomyFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.physiognomyFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('physiognomy'),
         userId: userId,
         fortuneType: 'physiognomy');
     }
@@ -594,7 +594,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getMarriageFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.marriageFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('marriage'),
         userId: userId,
         fortuneType: 'marriage');
     }
@@ -631,7 +631,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getBusinessFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.businessFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('business'),
         userId: userId,
         fortuneType: 'business');
     }
@@ -642,7 +642,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getEmploymentFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.employmentFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('employment'),
         userId: userId,
         fortuneType: 'employment');
     }
@@ -653,7 +653,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getStartupFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.startupFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('startup'),
         userId: userId,
         fortuneType: 'startup');
     }
@@ -665,7 +665,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getWealthFortune({required String userId, Map<String, dynamic>? financialData}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.wealthFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('wealth'),
         userId: userId,
         fortuneType: 'wealth',
         data: financialData);
@@ -713,7 +713,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getTodayFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.todayFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('today'),
         userId: userId,
         fortuneType: 'today');
     }
@@ -725,7 +725,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getBloodTypeFortune({required String userId, required String bloodType}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.bloodTypeFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('blood-type'),
         userId: userId,
         fortuneType: 'blood-type',
         data: {'bloodType': bloodType});
@@ -738,7 +738,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getZodiacAnimalFortune({required String userId, required String zodiacAnimal}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.zodiacAnimalFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('zodiac-animal'),
         userId: userId,
         fortuneType: 'zodiac-animal',
         data: {'zodiacAnimal': zodiacAnimal});
@@ -751,7 +751,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getLuckyColorFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.luckyColorFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('lucky-color'),
         userId: userId,
         fortuneType: 'lucky-color');
     }
@@ -763,7 +763,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getLuckyNumberFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.luckyNumberFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('lucky-number'),
         userId: userId,
         fortuneType: 'lucky-number');
     }
@@ -790,7 +790,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getLuckyFoodFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.luckyFoodFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('lucky-food'),
         userId: userId,
         fortuneType: 'lucky-food');
     }
@@ -814,7 +814,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getPastLifeFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.pastLifeFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('past-life'),
         userId: userId,
         fortuneType: 'past-life');
     }
@@ -826,7 +826,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getNewYearFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.newYearFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('new-year'),
         userId: userId,
         fortuneType: 'new-year');
     }
@@ -841,7 +841,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     Map<String, dynamic>? params}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.personalityFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('personality'),
         userId: userId,
         fortuneType: 'personality');
     }
@@ -877,7 +877,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getWishFortune({required String userId, required String wish}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.wishFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('wish'),
         userId: userId,
         fortuneType: 'wish',
         data: {'wish': wish}
@@ -903,7 +903,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getLuckyBaseballFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.luckyBaseballFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('lucky-baseball'),
         userId: userId,
         fortuneType: 'lucky-baseball');
     }
@@ -914,7 +914,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getLuckyGolfFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.luckyGolfFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('lucky-golf'),
         userId: userId,
         fortuneType: 'lucky-golf');
     }
@@ -925,7 +925,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getLuckyTennisFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.luckyTennisFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('lucky-tennis'),
         userId: userId,
         fortuneType: 'lucky-tennis');
     }
@@ -936,7 +936,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getLuckyRunningFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.luckyRunningFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('lucky-running'),
         userId: userId,
         fortuneType: 'lucky-running');
     }
@@ -947,7 +947,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getLuckyCyclingFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.luckyCyclingFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('lucky-cycling'),
         userId: userId,
         fortuneType: 'lucky-cycling');
     }
@@ -958,7 +958,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getLuckySwimFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.luckySwimFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('lucky-swim'),
         userId: userId,
         fortuneType: 'lucky-swim');
     }
@@ -969,7 +969,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getLuckyHikingFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.luckyHikingFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('lucky-hiking'),
         userId: userId,
         fortuneType: 'lucky-hiking');
     }
@@ -980,7 +980,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Fortune> getLuckyFishingFortune({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.luckyFishingFortune,
+        endpoint: EdgeFunctionsEndpoints.getEndpointForType('lucky-fishing'),
         userId: userId,
         fortuneType: 'lucky-fishing'
       );

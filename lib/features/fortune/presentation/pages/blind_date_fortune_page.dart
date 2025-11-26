@@ -1111,7 +1111,9 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       return const SizedBox.shrink();
     }
 
+    // ✅ fit: StackFit.expand 추가 - 전체 화면을 채워서 버튼이 하단에 고정되도록 함
     return Stack(
+      fit: StackFit.expand,
       children: [
         // 메인 콘텐츠
         SingleChildScrollView(

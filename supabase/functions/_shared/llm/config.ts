@@ -2,7 +2,7 @@
 
 // 환경변수에서 Provider 결정 (단일 선택)
 export const LLM_GLOBAL_CONFIG = {
-  provider: (Deno.env.get('LLM_PROVIDER') || 'gemini') as 'openai' | 'gemini' | 'anthropic',
+  provider: (Deno.env.get('LLM_PROVIDER') || 'gemini') as 'openai' | 'gemini' | 'anthropic' | 'grok',
   defaultModel: Deno.env.get('LLM_DEFAULT_MODEL') || 'gemini-2.0-flash-lite',
   defaultTemperature: 1,
   defaultMaxTokens: 8192,

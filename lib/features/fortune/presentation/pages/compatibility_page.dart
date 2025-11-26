@@ -563,7 +563,9 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
     final overallScore = scores['전체 궁합'] ?? 0.85;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // ✅ fit: StackFit.expand 추가 - 전체 화면을 채워서 버튼이 하단에 고정되도록 함
     return Stack(
+      fit: StackFit.expand,
       children: [
         SingleChildScrollView(
           padding: const EdgeInsets.all(20),

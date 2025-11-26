@@ -156,7 +156,15 @@
       "Bash(dart run:*)",
       "Bash(dart fix:*)",
       "Bash(printf:*)",
-      "Bash(java -version:*)"
+      "Bash(java -version:*)",
+      "Bash(do echo \"=== $file ===\" grep -n \"Stack\\|StackFit\\|SingleChildScrollView\" \"$file\")",
+      "Bash(do if grep -q \"SingleChildScrollView\" \"$f\")",
+      "Bash(then if ! grep -q \"StackFit.expand\" \"$f\")",
+      "Bash(supabase status:*)",
+      "Bash(do if ! grep -q \"_generateFortune\\|fortuneServiceProvider\\|UnifiedFortuneService\" $file)",
+      "Bash(then basename $file fi done)",
+      "Bash(do if ! grep -q \"fortuneServiceProvider\\|UnifiedFortuneService\" \"$file\")",
+      "Bash(bash:*)"
     ],
     "deny": [],
     "ask": [],

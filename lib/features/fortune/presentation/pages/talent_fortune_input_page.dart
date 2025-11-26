@@ -21,6 +21,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
+import '../../domain/models/conditions/talent_fortune_conditions.dart';
 
 /// Provider for talent input data
 final talentInputDataProvider = StateProvider<TalentInputData>((ref) => const TalentInputData());
@@ -461,10 +462,15 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         'isPremium': isPremium,
       };
 
+      // ✅ 최적화 시스템용 conditions 생성 (캐시/DB 재사용)
+      final conditions = TalentFortuneConditions.fromInputData(inputConditions);
+      Logger.info('[TalentFortune] 🔑 Conditions hash: ${conditions.generateHash()}');
+
       final fortuneResult = await _fortuneService.getFortune(
         fortuneType: 'talent',
         dataSource: FortuneDataSource.api,
         inputConditions: inputConditions,
+        conditions: conditions, // ✅ 최적화 시스템 활성화
         isPremium: isPremium,
       );
 

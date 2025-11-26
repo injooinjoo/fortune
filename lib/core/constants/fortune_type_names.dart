@@ -14,19 +14,22 @@ class FortuneTypeNames {
     'yearly': '연간 운세',
     
     // Traditional Korean Fortunes (전통 운세)
+    'traditional': '전통 운세',
     'saju': '사주팔자',
     'traditional-saju': '전통 사주',
+    'tarot': '타로',
     'saju-psychology': '사주 심리학',
     'tojeong': '토정비결',
     'salpuli': '살풀이',
     'palmistry': '손금',
     'physiognomy': '관상',
-    'face-reading': '얼굴 읽기',
+    'face-reading': '관상',  // face-reading = physiognomy 동일
     'five-blessings': '오복',
     
     // Personal/Character Fortunes (성격/캐릭터 운세)
     'mbti': 'MBTI 운세',
     'personality': '성격',
+    'personality-dna': '성격 DNA',
     'blood-type': '혈액형 운세',
     'zodiac': '별자리 운세',
     'zodiac-animal': '띠 운세',
@@ -51,13 +54,14 @@ class FortuneTypeNames {
     'career': '직업운',
     'employment': '취업운',
     'business': '사업운',
-    'startup': '시작업 운세',
+    'startup': '창업 운세',
     'lucky-job': '행운의 직업',
     'lucky-sidejob': '부업 운세',
     'lucky-exam': '시험 운세',
     
     // Wealth & Investment (재물/투자)
     'wealth': '재물운',
+    'investment': '투자 운세',
     'lucky-investment': '투자 운세',
     'lucky-realestate': '부동산운',
     'lucky-stock': '주식 운세',
@@ -103,7 +107,7 @@ class FortuneTypeNames {
     'timeline': '인생 타임라인',
     'talisman': '부적',
     'new-year': '새해 운세',
-    'celebrity': '연예인',
+    'celebrity': '유명인 운세',
     'same-birthday-celebrity': '같은 생일 연예인',
     'network-report': '네트워크 리포트',
     'dream': '꿈 해몽',

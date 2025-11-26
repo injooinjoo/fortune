@@ -12,6 +12,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 import 'dart:math';
 
 import '../../../../core/widgets/unified_button.dart';
@@ -286,37 +287,26 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
 
   /// 생년월일 선택기
   Widget _buildDatePicker(Function(dynamic) onValueChanged) {
-    return Column(
-      children: [
-        ListTile(
-          leading: const Icon(Icons.calendar_today),
-          title: Text(_selectedBirthDate == null
-              ? '생년월일을 선택하세요'
-              : '${_selectedBirthDate!.year}년 ${_selectedBirthDate!.month}월 ${_selectedBirthDate!.day}일'),
-          onTap: () async {
-            final date = await showDatePicker(
-              context: context,
-              initialDate: _selectedBirthDate ?? DateTime(1990),
-              firstDate: DateTime(1900),
-              lastDate: DateTime.now(),
+    return NumericDateInput(
+      label: '생년월일',
+      selectedDate: _selectedBirthDate,
+      onDateChanged: (date) {
+        setState(() {
+          _selectedBirthDate = date;
+          final index = _sections.indexWhere((s) => s.id == 'birthDate');
+          if (index != -1) {
+            _sections[index] = _sections[index].copyWith(
+              isCompleted: true,
+              value: date,
+              displayValue: '생년월일: ${date.year}.${date.month}.${date.day}',
             );
-            if (date != null) {
-              setState(() {
-                _selectedBirthDate = date;
-                final index = _sections.indexWhere((s) => s.id == 'birthDate');
-                if (index != -1) {
-                  _sections[index] = _sections[index].copyWith(
-                    isCompleted: true,
-                    value: date,
-                    displayValue: '생년월일: ${date.year}.${date.month}.${date.day}',
-                  );
-                }
-              });
-              onValueChanged(date);
-            }
-          },
-        ),
-      ],
+          }
+        });
+        onValueChanged(date);
+      },
+      minDate: DateTime(1900),
+      maxDate: DateTime.now(),
+      showAge: true,
     );
   }
 
@@ -456,7 +446,9 @@ class _LuckyItemsPageUnifiedState extends ConsumerState<LuckyItemsPageUnified> {
 
     final lottoNumbers = _generateLottoNumbers();
 
+    // ✅ fit: StackFit.expand 추가 - 전체 화면을 채워서 버튼이 하단에 고정되도록 함
     return Stack(
+      fit: StackFit.expand,
       children: [
         // ✅ 원페이지 스크롤 (모든 카테고리 세로로 배치)
         SingleChildScrollView(

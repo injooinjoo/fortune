@@ -17,6 +17,7 @@ import 'presentation/providers/theme_provider.dart';
 import 'core/theme/font_size_system.dart';
 //     if (dart.library.html) 'core/utils/url_cleaner_web.dart';
 import 'services/ad_service.dart';
+import 'services/att_service.dart';
 import 'services/remote_config_service.dart';
 // import 'presentation/providers/font_size_provider.dart'; // ⚠️ REMOVED: 이제 user_settings_provider 사용
 import 'core/services/test_auth_service.dart';
@@ -120,6 +121,19 @@ void main() async {
     Logger.info('Naver SDK ready (initialized on first use)');
   }
   
+  // Initialize ATT (App Tracking Transparency) first - required before ads on iOS 14.5+
+  if (!kIsWeb) {
+    try {
+      debugPrint('🔒 [ATT] Requesting App Tracking Transparency authorization...');
+      final attStatus = await AttService.instance.requestTrackingAuthorization();
+      debugPrint('🔒 [ATT] Authorization status: $attStatus');
+      Logger.info('ATT authorization status: $attStatus');
+    } catch (e) {
+      debugPrint('⚠️ [ATT] ATT request failed: $e');
+      Logger.warning('ATT request failed: $e');
+    }
+  }
+
   // Initialize Ad Service in background - don't block app startup
   // DISABLE ADS FOR TESTING ON REAL DEVICES
   const bool disableAdsForTesting = false; // Enable ads for release build

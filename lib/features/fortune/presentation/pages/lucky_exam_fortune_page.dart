@@ -15,6 +15,7 @@ import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../domain/models/conditions/lucky_exam_fortune_conditions.dart';
+import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 
 import '../../../../core/widgets/unified_button.dart';
 class LuckyExamFortunePage extends ConsumerStatefulWidget {
@@ -36,6 +37,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
   String _selectedCategory = ''; // 시험 카테고리
   String? _selectedSubType; // 세부 시험 종류
   String _examDate = ''; // 시험 날짜
+  DateTime? _selectedExamDate; // 시험 날짜 DateTime
   String? _targetScore; // 목표 점수
   String _preparationStatus = '준비중'; // 준비 상태
   String _timePoint = 'preparation'; // 자동 계산됨
@@ -486,60 +488,17 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 시험 예정일
-              Text(
-                '시험 예정일',
-                style: TossDesignSystem.caption.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.gray600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () async {
-                  final date = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                  );
-                  if (date != null) {
-                    setState(() {
-                      _examDate = date.toIso8601String().split('T')[0];
-                    });
-                  }
+              NumericDateInput(
+                label: '시험 예정일',
+                selectedDate: _selectedExamDate,
+                onDateChanged: (date) {
+                  setState(() {
+                    _selectedExamDate = date;
+                    _examDate = date.toIso8601String().split('T')[0];
+                  });
                 },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: isDark
-                            ? TossDesignSystem.gray600
-                            : TossDesignSystem.gray300),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _examDate.isEmpty ? '날짜를 선택하세요' : _examDate,
-                        style: TossDesignSystem.body2.copyWith(
-                          color: _examDate.isEmpty
-                              ? TossDesignSystem.gray400
-                              : (isDark
-                                  ? TossDesignSystem.textPrimaryDark
-                                  : TossDesignSystem.gray900),
-                        ),
-                      ),
-                      Icon(
-                        Icons.calendar_today,
-                        size: 20,
-                        color: TossDesignSystem.gray400,
-                      ),
-                    ],
-                  ),
-                ),
+                minDate: DateTime.now(),
+                maxDate: DateTime.now().add(const Duration(days: 365)),
               ),
 
               const SizedBox(height: 20),
@@ -811,12 +770,52 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
   Future<void> _showAdAndUnblur() async {
     final adService = ref.read(adServiceProvider);
 
-    await adService.showRewardedAd(
-      onUserEarnedReward: (ad, reward) {
+    await adService.showRewardedAdWithCallback(
+      onUserEarnedReward: () {
         setState(() {
           _isBlurred = false;
           _blurredSections = [];
         });
+      },
+      onAdNotReady: () {
+        // 광고가 준비되지 않은 경우 - 로딩 시도 후 안내
+        if (mounted) {
+          // 광고 다시 로드 시도
+          adService.loadRewardedAd();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('광고를 불러오는 중입니다. 잠시 후 다시 시도해주세요.'),
+              backgroundColor: TossDesignSystem.warningOrange,
+              duration: const Duration(seconds: 3),
+              action: SnackBarAction(
+                label: '무료로 보기',
+                textColor: TossDesignSystem.white,
+                onPressed: () {
+                  setState(() {
+                    _isBlurred = false;
+                    _blurredSections = [];
+                  });
+                },
+              ),
+            ),
+          );
+        }
+      },
+      onAdFailedToShow: () {
+        // 광고 표시 실패 시 무료로 전체 보기 허용
+        if (mounted) {
+          setState(() {
+            _isBlurred = false;
+            _blurredSections = [];
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고 로드에 실패했습니다. 전체 내용을 확인하세요.'),
+              backgroundColor: TossDesignSystem.successGreen,
+            ),
+          );
+        }
       },
     );
   }
@@ -844,10 +843,14 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
       });
     }
 
-    return StandardFortuneResultLayout(
-      child: Stack(
-        children: [
-          Column(
+    // ✅ 수정: Stack을 바깥에 두고 SingleChildScrollView와 버튼을 형제 관계로 배치
+    // ✅ fit: StackFit.expand 추가 - 전체 화면을 채워서 버튼이 하단에 고정되도록 함
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(20, 20, 20, _isBlurred ? 120 : 40), // 블러 버튼 공간 확보
+          child: Column(
             children: [
           // 메인 결과 카드
           TossCard(
@@ -1111,6 +1114,185 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             const SizedBox(height: 20),
           ],
 
+          // 🆕 디데이 조언
+          if (data['dday_advice'] != null && data['dday_advice'] is String && data['dday_advice'] != '🔒 프리미엄 결제 후 확인 가능합니다') ...[
+            UnifiedBlurWrapper(
+              isBlurred: _isBlurred,
+              blurredSections: _blurredSections,
+              sectionKey: 'dday_advice',
+              child: TossCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.calendar_today, color: TossDesignSystem.tossBlue, size: 24),
+                        const SizedBox(width: 8),
+                        Text(
+                          '시험 당일 조언',
+                          style: TossDesignSystem.body1.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      data['dday_advice'] as String,
+                      style: TossDesignSystem.body2.copyWith(height: 1.5),
+                    ),
+                  ],
+                ),
+              ),
+            ).animate(delay: 275.ms).fadeIn().slideY(begin: 0.3),
+            const SizedBox(height: 20),
+          ],
+
+          // 🆕 행운의 시간
+          if (data['lucky_hours'] != null && data['lucky_hours'] is String && data['lucky_hours'] != '🔒 프리미엄 결제 후 확인 가능합니다') ...[
+            UnifiedBlurWrapper(
+              isBlurred: _isBlurred,
+              blurredSections: _blurredSections,
+              sectionKey: 'lucky_hours',
+              child: TossCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.access_time, color: TossDesignSystem.warningOrange, size: 24),
+                        const SizedBox(width: 8),
+                        Text(
+                          '행운의 시간',
+                          style: TossDesignSystem.body1.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      data['lucky_hours'] as String,
+                      style: TossDesignSystem.body2.copyWith(height: 1.5),
+                    ),
+                  ],
+                ),
+              ),
+            ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.3),
+            const SizedBox(height: 20),
+          ],
+
+          // 🆕 당신의 강점
+          if (data['strengths'] != null && data['strengths'] is List && (data['strengths'] as List).isNotEmpty && (data['strengths'] as List).first != '🔒 프리미엄 결제 후 확인 가능합니다') ...[
+            UnifiedBlurWrapper(
+              isBlurred: _isBlurred,
+              blurredSections: _blurredSections,
+              sectionKey: 'strengths',
+              child: TossCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.stars, color: TossDesignSystem.successGreen, size: 24),
+                        const SizedBox(width: 8),
+                        Text(
+                          '당신의 강점',
+                          style: TossDesignSystem.body1.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: (data['strengths'] as List).map((strength) =>
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: TossDesignSystem.successGreen.withValues(alpha: 0.3)),
+                          ),
+                          child: Text(
+                            strength as String,
+                            style: TossDesignSystem.caption.copyWith(
+                              color: TossDesignSystem.successGreen,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ).animate(delay: 325.ms).fadeIn().slideY(begin: 0.3),
+            const SizedBox(height: 20),
+          ],
+
+          // 🆕 응원 메시지
+          if (data['positive_message'] != null && data['positive_message'] is String && data['positive_message'] != '🔒 프리미엄 결제 후 확인 가능합니다') ...[
+            UnifiedBlurWrapper(
+              isBlurred: _isBlurred,
+              blurredSections: _blurredSections,
+              sectionKey: 'positive_message',
+              child: TossCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.favorite, color: TossDesignSystem.errorRed, size: 24),
+                        const SizedBox(width: 8),
+                        Text(
+                          '응원 메시지',
+                          style: TossDesignSystem.body1.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                            TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        data['positive_message'] as String,
+                        style: TossDesignSystem.body2.copyWith(
+                          height: 1.6,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ).animate(delay: 350.ms).fadeIn().slideY(begin: 0.3),
+            const SizedBox(height: 20),
+          ],
+
           // 세부 점수 (기존 코드 유지 - scoreBreakdown이 있는 경우)
           if (fortune.scoreBreakdown != null) ...[
             UnifiedBlurWrapper(
@@ -1334,17 +1516,16 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           const SizedBox(height: 40),
             ],
           ),
+        ),  // SingleChildScrollView 닫기
 
-          // ✅ Phase 15-7: 광고 보고 전체보기 버튼
-          if (_isBlurred)
-            UnifiedButton.floating(
-              text: '광고 보고 전체 내용 확인하기',
-              onPressed: _showAdAndUnblur,
-              isEnabled: true,
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 116), // bottom: 100 효과
-            ),
-        ],
-      ),
+        // ✅ Phase 15-7: 광고 보고 전체보기 버튼 (Stack 바로 아래 배치)
+        if (_isBlurred)
+          UnifiedButton.floating(
+            text: '광고 보고 전체 내용 확인하기',
+            onPressed: _showAdAndUnblur,
+            isEnabled: true,
+          ),
+      ],
     );
   }
 

@@ -65,7 +65,7 @@ export interface ILLMProvider {
 }
 
 export interface LLMConfig {
-  provider: 'openai' | 'gemini' | 'anthropic'
+  provider: 'openai' | 'gemini' | 'anthropic' | 'grok'
   model: string
   apiKey: string
   temperature?: number

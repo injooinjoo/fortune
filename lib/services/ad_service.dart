@@ -78,11 +78,13 @@ class AdService {
         // Don't rethrow - let the app continue
       }
 
-      // Configure test devices for development
-      if (kDebugMode) {
-        try {
-          Logger.info('🎯 [AdMob] Debug mode: Configuring test device settings...');
-          final testDeviceIds = <String>[];
+      // Configure COPPA compliance and test devices
+      try {
+        Logger.info('🎯 [AdMob] Configuring COPPA compliance settings...');
+        final testDeviceIds = <String>[];
+
+        if (kDebugMode) {
+          Logger.info('🎯 [AdMob] Debug mode: Adding test device settings...');
           if (Platform.isAndroid) {
             // Add Android test device IDs here if needed
             // testDeviceIds.add('YOUR_ANDROID_TEST_DEVICE_ID');
@@ -90,21 +92,27 @@ class AdService {
             // Add iOS test device IDs here if needed
             // testDeviceIds.add('YOUR_IOS_TEST_DEVICE_ID');
           }
-
-          final config = RequestConfiguration(
-            testDeviceIds: testDeviceIds,
-          );
-
-          await MobileAds.instance.updateRequestConfiguration(config).timeout(
-            const Duration(seconds: 1),
-            onTimeout: () {
-              Logger.warning('⚠️ [AdMob] Test device configuration timed out');
-            },
-          );
-          Logger.info('✅ [AdMob] Test device configuration complete');
-        } catch (e) {
-          Logger.warning('⚠️ [AdMob] Failed to configure test devices: $e');
         }
+
+        // COPPA 규정 준수 설정 (전체 이용가 앱)
+        // - tagForChildDirectedTreatment: 아동 대상 콘텐츠로 취급
+        // - maxAdContentRating: 모든 연령에 적합한 광고만 표시
+        final config = RequestConfiguration(
+          testDeviceIds: testDeviceIds,
+          tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
+          tagForUnderAgeOfConsent: TagForUnderAgeOfConsent.yes,
+          maxAdContentRating: MaxAdContentRating.g,  // General - 모든 연령
+        );
+
+        await MobileAds.instance.updateRequestConfiguration(config).timeout(
+          const Duration(seconds: 1),
+          onTimeout: () {
+            Logger.warning('⚠️ [AdMob] Request configuration timed out');
+          },
+        );
+        Logger.info('✅ [AdMob] COPPA compliance configuration complete');
+      } catch (e) {
+        Logger.warning('⚠️ [AdMob] Failed to configure COPPA settings: $e');
       }
 
       _isInitialized = true;
@@ -349,6 +357,45 @@ class AdService {
       await _rewardedAd!.show(onUserEarnedReward: onUserEarnedReward);
     } else {
       Logger.warning('Rewarded ad not ready');
+    }
+  }
+
+  /// Show a rewarded ad with callbacks for success and failure
+  Future<void> showRewardedAdWithCallback({
+    required void Function() onUserEarnedReward,
+    void Function()? onAdNotReady,
+    void Function()? onAdFailedToShow,
+  }) async {
+    if (_isRewardedAdReady && _rewardedAd != null) {
+      // Set up callback for when ad fails to show
+      _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _isRewardedAdReady = false;
+          Logger.info('📱 [AdMob] Rewarded ad dismissed');
+          // Load next rewarded ad
+          loadRewardedAd();
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          ad.dispose();
+          _isRewardedAdReady = false;
+          Logger.warning('⚠️ [AdMob] Rewarded ad failed to show: ${error.message}');
+          onAdFailedToShow?.call();
+        },
+        onAdShowedFullScreenContent: (ad) {
+          Logger.info('📱 [AdMob] Rewarded ad showed');
+        },
+      );
+
+      await _rewardedAd!.show(
+        onUserEarnedReward: (ad, reward) {
+          Logger.info('🎁 [AdMob] User earned reward: ${reward.amount} ${reward.type}');
+          onUserEarnedReward();
+        },
+      );
+    } else {
+      Logger.warning('⚠️ [AdMob] Rewarded ad not ready - calling onAdNotReady callback');
+      onAdNotReady?.call();
     }
   }
 

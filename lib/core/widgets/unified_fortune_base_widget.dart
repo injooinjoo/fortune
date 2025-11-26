@@ -15,6 +15,7 @@ import '../utils/haptic_utils.dart';
 import '../constants/soul_rates.dart';
 import '../../presentation/providers/providers.dart';
 import '../../shared/components/token_insufficient_modal.dart';
+import '../../services/screenshot_detection_service.dart';
 
 /// UnifiedFortuneService를 사용하는 표준 운세 위젯
 ///
@@ -149,6 +150,9 @@ class _UnifiedFortuneBaseWidgetState
   /// UnifiedFortuneService 인스턴스
   late final UnifiedFortuneService _fortuneService;
 
+  /// ScreenshotDetectionService 인스턴스
+  late final ScreenshotDetectionService _screenshotService;
+
   @override
   void initState() {
     super.initState();
@@ -156,6 +160,40 @@ class _UnifiedFortuneBaseWidgetState
       Supabase.instance.client,
       enableOptimization: widget.enableOptimization,
     );
+    _screenshotService = ref.read(screenshotDetectionServiceProvider);
+    _initScreenshotDetection();
+  }
+
+  /// 스크린샷 감지 초기화
+  Future<void> _initScreenshotDetection() async {
+    await _screenshotService.initialize();
+    _screenshotService.onScreenshotDialogRequested = (ctx) {
+      if (_showResult && _fortuneResult != null) {
+        _showShareDialog();
+      }
+    };
+  }
+
+  /// 공유 다이얼로그 표시
+  void _showShareDialog() {
+    if (!mounted || _fortuneResult == null) return;
+
+    final content = _fortuneResult!.data['content']?.toString() ??
+        _fortuneResult!.data['summary']?.toString() ??
+        '';
+
+    _screenshotService.showScreenshotSharingDialog(
+      context: context,
+      fortuneType: widget.fortuneType,
+      fortuneTitle: widget.title,
+      fortuneContent: content,
+    );
+  }
+
+  @override
+  void dispose() {
+    _screenshotService.dispose();
+    super.dispose();
   }
 
   /// 운세 생성 실행 (신규 플로우: 블러 결과 즉시 표시 → 광고 → 블러 해제)
@@ -355,6 +393,17 @@ class _UnifiedFortuneBaseWidgetState
               ),
               centerTitle: true,
               actions: _showResult ? [
+                // 공유 버튼 (LinkedIn/TikTok 스타일)
+                IconButton(
+                  icon: Icon(
+                    Icons.share_outlined,
+                    color: isDark
+                        ? TossDesignSystem.textPrimaryDark
+                        : TossDesignSystem.textPrimaryLight,
+                  ),
+                  onPressed: _showShareDialog,
+                  tooltip: '공유하기',
+                ),
                 IconButton(
                   icon: Icon(
                     Icons.close,

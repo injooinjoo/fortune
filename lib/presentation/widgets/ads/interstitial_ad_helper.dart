@@ -1,14 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/ad_provider.dart';
+import '../../providers/subscription_provider.dart';
 import '../../../core/utils/logger.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 
 /// Helper class for showing interstitial ads with frequency capping
+/// Premium subscribers will not see ads
 class InterstitialAdHelper {
   static Future<bool> showInterstitialAd(WidgetRef ref) async {
+    // Premium subscribers don't see ads
+    final isPremium = ref.read(isPremiumProvider);
+    if (isPremium) {
+      Logger.info('Premium user - skipping interstitial ad');
+      return false;
+    }
+
     final adService = ref.read(adServiceProvider);
     final frequencyCap = ref.read(adFrequencyCapProvider);
-    
+
     // Check if we can show an interstitial ad
     if (!frequencyCap.canShowInterstitial()) {
       Logger.info('Interstitial ad frequency cap reached');
@@ -46,14 +55,21 @@ class InterstitialAdHelper {
   }
   
   /// Preload an interstitial ad for later use
+  /// Premium subscribers don't need ads preloaded
   static Future<void> preloadInterstitialAd(WidgetRef ref) async {
+    // Premium subscribers don't need ads
+    final isPremium = ref.read(isPremiumProvider);
+    if (isPremium) {
+      return;
+    }
+
     final adService = ref.read(adServiceProvider);
-    
+
     if (!adService.isInitialized) {
       Logger.warning('AdMob not initialized');
       return;
     }
-    
+
     if (!adService.isInterstitialAdReady) {
       await adService.loadInterstitialAd();
     }

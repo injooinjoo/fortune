@@ -3,6 +3,8 @@
 import { ILLMProvider } from './types.ts'
 import { GeminiProvider } from './providers/gemini.ts'
 import { OpenAIProvider } from './providers/openai.ts'
+import { AnthropicProvider } from './providers/anthropic.ts'
+import { GrokProvider } from './providers/grok.ts'
 import { getModelConfig } from './config.ts'
 
 export class LLMFactory {
@@ -30,7 +32,16 @@ export class LLMFactory {
         })
 
       case 'anthropic':
-        throw new Error('Anthropic provider not implemented yet')
+        return new AnthropicProvider({
+          apiKey: Deno.env.get('ANTHROPIC_API_KEY') || '',
+          model: config.model,
+        })
+
+      case 'grok':
+        return new GrokProvider({
+          apiKey: Deno.env.get('XAI_API_KEY') || '',
+          model: config.model,
+        })
 
       default:
         throw new Error(`Unknown provider: ${config.provider}`)
@@ -39,11 +50,11 @@ export class LLMFactory {
 
   /**
    * 특정 Provider와 모델로 직접 생성
-   * @param provider 'gemini' | 'openai' | 'anthropic'
+   * @param provider 'gemini' | 'openai' | 'anthropic' | 'grok'
    * @param model 모델 이름
    * @returns ILLMProvider 인스턴스
    */
-  static create(provider: 'gemini' | 'openai' | 'anthropic', model: string): ILLMProvider {
+  static create(provider: 'gemini' | 'openai' | 'anthropic' | 'grok', model: string): ILLMProvider {
     switch (provider) {
       case 'gemini':
         return new GeminiProvider({
@@ -58,7 +69,16 @@ export class LLMFactory {
         })
 
       case 'anthropic':
-        throw new Error('Anthropic provider not implemented yet')
+        return new AnthropicProvider({
+          apiKey: Deno.env.get('ANTHROPIC_API_KEY') || '',
+          model,
+        })
+
+      case 'grok':
+        return new GrokProvider({
+          apiKey: Deno.env.get('XAI_API_KEY') || '',
+          model,
+        })
 
       default:
         throw new Error(`Unknown provider: ${provider}`)

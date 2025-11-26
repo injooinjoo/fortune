@@ -1,17 +1,25 @@
+/// 레거시 API 엔드포인트 (기존 백엔드 호환용)
+///
+/// 주의: 운세 관련 기능은 Edge Functions를 우선 사용합니다.
+/// Edge Functions 엔드포인트는 [EdgeFunctionsEndpoints] 클래스를 참조하세요.
+///
+/// 이 파일은 아직 Edge Function으로 마이그레이션되지 않은 기능이나
+/// 레거시 호환성을 위해 유지됩니다.
 class ApiEndpoints {
   // Base URL은 환경변수에서 가져옴
   static const String baseUrl = String.fromEnvironment('API_BASE_URL',
       defaultValue: 'https://fortune.example.com');
 
-  // Auth endpoints
+  // Auth endpoints (레거시 - 현재 Supabase Auth 사용)
   static const String login = '/api/auth/login';
   static const String logout = '/api/auth/logout';
   static const String profile = '/api/profile';
   static const String tokenHistory = '/api/user/token-history';
 
-  // Fortune endpoints - 59개 운세 타입
+  // Fortune endpoints - 레거시 API 경로
+  // 주의: Edge Functions 사용 시 EdgeFunctionsEndpoints.getEndpointForType() 사용
   // 일일/시간별 운세
-  static const String dailyFortune = '/fortune-daily';
+  static const String dailyFortune = '/api/fortune/daily';
   static const String today = '/api/fortune/today';
   static const String tomorrow = '/api/fortune/tomorrow';
   static const String hourly = '/api/fortune/hourly';
@@ -30,7 +38,7 @@ class ApiEndpoints {
   static const String faceReading = '/api/fortune/face-reading';
 
   // 성격/심리
-  static const String mbtiFortune = '/fortune-mbti';  // Edge Function 경로로 수정
+  static const String mbtiFortune = '/api/fortune/mbti';
   static const String personality = '/api/fortune/personality';
   static const String bloodType = '/api/fortune/blood-type';
   static const String sajuPsychology = '/api/fortune/saju-psychology';
@@ -63,7 +71,7 @@ class ApiEndpoints {
   static const String wealthFortune = '/api/fortune/wealth';
   static const String luckyInvestment = '/api/fortune/lucky-investment';
   static const String luckyRealEstate = '/api/fortune/lucky-realestate';
-  static const String investmentEnhanced = '/api/fortune/investment-enhanced';
+  static const String investmentEnhanced = '/api/fortune/investment';
 
   // 이사/생활
   static const String moving = '/api/fortune/moving';
