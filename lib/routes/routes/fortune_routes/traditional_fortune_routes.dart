@@ -6,11 +6,11 @@ import '../../../features/fortune/presentation/pages/tarot_page.dart';
 // All merged into /traditional in FortuneListPage
 
 final traditionalFortuneRoutes = [
-  // Traditional Fortune Unified (통합 사주 운세)
+  // Traditional Fortune (통합 사주 운세)
   GoRoute(
     path: '/traditional',
     name: 'fortune-traditional',
-    builder: (context, state) => const TraditionalFortuneUnifiedPage()),
+    builder: (context, state) => const TraditionalFortunePage()),
 
   // Face Reading (관상)
   GoRoute(
@@ -18,9 +18,9 @@ final traditionalFortuneRoutes = [
     name: 'fortune-face-reading',
     builder: (context, state) => const FaceReadingFortunePage()),
 
-  // Tarot Renewed (타로)
+  // Tarot (타로)
   GoRoute(
     path: '/tarot',
     name: 'fortune-tarot',
-    builder: (context, state) => const TarotRenewedPage()),
+    builder: (context, state) => const TarotPage()),
 ];

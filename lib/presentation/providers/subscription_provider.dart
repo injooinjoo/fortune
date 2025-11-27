@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../services/payment/in_app_purchase_service.dart';
+import '../../services/in_app_purchase_service.dart';
 import '../../core/utils/logger.dart';
 
 /// 구독 상태 모델

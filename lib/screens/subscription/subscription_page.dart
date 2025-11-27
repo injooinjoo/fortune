@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/toss_design_system.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/constants/in_app_products.dart';
-import '../../services/payment/in_app_purchase_service.dart';
+import '../../services/in_app_purchase_service.dart';
 import '../../shared/components/app_header.dart';
 import '../../shared/components/toast.dart';
 import '../../presentation/providers/subscription_provider.dart';
