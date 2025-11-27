@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/toss_card.dart';
@@ -8,7 +9,7 @@ import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../core/providers/user_settings_provider.dart';
 import '../../../../presentation/providers/fortune_history_provider.dart';
 import '../../domain/models/fortune_history.dart';
 import '../widgets/statistics_dashboard.dart';
@@ -49,8 +50,8 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = ref.watch(fontSizeProvider);
-    final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
+    final userSettings = ref.watch(userSettingsProvider);
+    final fontScale = userSettings.fontScale;
     final historyState = ref.watch(fortuneHistoryProvider);
 
     return Scaffold(
@@ -459,7 +460,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
       history: filteredHistory,
       fontScale: 1.0,
       onItemTap: (FortuneHistory item) {
-        // TODO: Navigate to detail view
+        context.push('/fortune-history/${item.id}', extra: item);
       },
     );
   }

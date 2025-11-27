@@ -223,6 +223,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                     ),
                     SettingsListTile(
+                      icon: Icons.vibration_outlined,
+                      title: '진동 피드백',
+                      subtitle: '버튼 및 카드 터치 시 진동',
+                      trailing: Switch(
+                        value: ref.watch(userSettingsProvider).hapticEnabled,
+                        onChanged: (value) {
+                          ref.read(userSettingsProvider.notifier).setHapticEnabled(value);
+                          // 활성화 시 즉시 햅틱 피드백 제공
+                          if (value) {
+                            TossDesignSystem.hapticLight();
+                          }
+                        },
+                        activeColor: TossDesignSystem.tossBlue,
+                      ),
+                    ),
+                    SettingsListTile(
                       icon: Icons.language_outlined,
                       title: '언어',
                       subtitle: '한국어',

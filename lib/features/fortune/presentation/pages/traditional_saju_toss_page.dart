@@ -17,6 +17,7 @@ import '../widgets/saju_element_chart.dart';
 import '../widgets/manseryeok_display.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 // ✅ Phase 19-2
 
 /// 토스 스타일 전통 사주팔자 페이지
@@ -431,10 +432,10 @@ class _TraditionalSajuTossPageState extends ConsumerState<TraditionalSajuTossPag
     final question = _fortuneResult!.data['question'] as String? ?? _selectedQuestion ?? '';
     final sections = _fortuneResult!.data['sections'] as Map<String, dynamic>? ?? {};
 
-    final analysis = sections['analysis'] as String? ?? '';
-    final answer = sections['answer'] as String? ?? '';
-    final advice = sections['advice'] as String? ?? '';
-    final supplement = sections['supplement'] as String? ?? '';
+    final analysis = FortuneTextCleaner.cleanNullable(sections['analysis'] as String?);
+    final answer = FortuneTextCleaner.cleanNullable(sections['answer'] as String?);
+    final advice = FortuneTextCleaner.cleanNullable(sections['advice'] as String?);
+    final supplement = FortuneTextCleaner.cleanNullable(sections['supplement'] as String?);
 
     return Column(
       children: [

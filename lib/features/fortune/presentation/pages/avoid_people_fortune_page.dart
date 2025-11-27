@@ -11,6 +11,7 @@ import '../../../../core/utils/logger.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 import 'package:flutter/services.dart'; // ✅ HapticFeedback
 
 class AvoidPeopleFortunePage extends ConsumerStatefulWidget {
@@ -197,7 +198,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
         // _hasInitializedBlur 플래그로 최초 1회만 동기화
         // 사용자가 광고를 보고 블러를 해제하면 _isBlurred는 false로 유지됨
 
-        final content = result.data['content'] as String? ?? '';
+        final content = FortuneTextCleaner.cleanNullable(result.data['content'] as String?);
 
         return Stack(
           children: [
@@ -261,7 +262,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                result.data['people_types'] as String? ?? '오늘 특별히 주의해야 할 사람 유형 정보',
+                                FortuneTextCleaner.clean(result.data['people_types'] as String? ?? '오늘 특별히 주의해야 할 사람 유형 정보'),
                                 style: context.bodyMedium,
                               ),
                             ],
@@ -292,7 +293,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                result.data['situation_tips'] as String? ?? '상황별 대처 방법 정보',
+                                FortuneTextCleaner.clean(result.data['situation_tips'] as String? ?? '상황별 대처 방법 정보'),
                                 style: context.bodyMedium,
                               ),
                             ],
@@ -323,7 +324,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                result.data['advice'] as String? ?? '오늘의 조언 정보',
+                                FortuneTextCleaner.clean(result.data['advice'] as String? ?? '오늘의 조언 정보'),
                                 style: context.bodyMedium,
                               ),
                             ],

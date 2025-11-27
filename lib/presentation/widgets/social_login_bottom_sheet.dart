@@ -29,25 +29,22 @@ class SocialLoginBottomSheet {
         debugPrint(
             '🌐 [BOTTOMSHEET] textTheme.bodyLarge.color: ${Theme.of(bottomSheetContext).textTheme.bodyLarge?.color}');
 
-        return StatefulBuilder(
-          builder: (context, setModalState) => DraggableScrollableSheet(
-            initialChildSize: 0.7,
-            minChildSize: 0.5,
-            maxChildSize: 0.9,
-            builder: (context, scrollController) => Consumer(
-              builder: (context, ref, _) {
-                final typography = ref.watch(typographyThemeProvider);
-                
-                return Theme(
-                  data: ThemeData.light(),
-                  child: Container(
+        return Consumer(
+          builder: (context, ref, _) {
+            final typography = ref.watch(typographyThemeProvider);
+
+            return Theme(
+              data: ThemeData.light(),
+              child: Container(
                 decoration: BoxDecoration(
                   color: TossDesignSystem.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(25),
-                      topRight: Radius.circular(25)),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(25),
+                    topRight: Radius.circular(25),
+                  ),
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Drag handle
                     Container(
@@ -61,77 +58,81 @@ class SocialLoginBottomSheet {
                     ),
 
                     // Content
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 20),
-                        child: Column(
-                          children: [
-                            // Title
-                            Text(
-                              '시작하기',
-                              style: typography.headingLarge.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: TossDesignSystem.gray900,
-                                  letterSpacing: -0.5),
-                            ),
-                            SizedBox(height: 12),
-                            Text('소셜 계정으로 간편하게 시작해보세요',
-                                style: typography.labelLarge.copyWith(
-                                    color: TossDesignSystem.gray800)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 20),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Title
+                          Text(
+                            '시작하기',
+                            style: typography.headingLarge.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: TossDesignSystem.gray900,
+                                letterSpacing: -0.5),
+                          ),
+                          const SizedBox(height: 12),
+                          Text('소셜 계정으로 간편하게 시작해보세요',
+                              style: typography.labelLarge.copyWith(
+                                  color: TossDesignSystem.gray800)),
 
-                            const SizedBox(height: 40),
+                          const SizedBox(height: 40),
 
-                            // Social Login Buttons
-                            Column(children: [
-                              // Google Login
-                              _buildSocialButton(
-                                  onPressed: isProcessing ? null : onGoogleLogin,
-                                  type: 'google',
-                                  typography: typography),
-                              const SizedBox(height: 12),
+                          // Social Login Buttons
+                          // NOTE: Kakao and Naver are temporarily hidden.
+                          // TODO: Re-enable when ready for production rollout.
+                          // See: .claude/docs/09-social-login-status.md for details.
+                          Column(children: [
+                            // Google Login
+                            _buildSocialButton(
+                                onPressed: isProcessing ? null : onGoogleLogin,
+                                type: 'google',
+                                typography: typography),
+                            const SizedBox(height: 12),
 
-                              // Apple Login
-                              _buildSocialButton(
-                                  onPressed: isProcessing ? null : onAppleLogin,
-                                  type: 'apple',
-                                  typography: typography),
-                              const SizedBox(height: 12),
+                            // Apple Login
+                            _buildSocialButton(
+                                onPressed: isProcessing ? null : onAppleLogin,
+                                type: 'apple',
+                                typography: typography),
 
-                              // Kakao Login
-                              _buildSocialButton(
-                                  onPressed: isProcessing ? null : onKakaoLogin,
-                                  type: 'kakao',
-                                  typography: typography),
-                              const SizedBox(height: 12),
+                            // ============================================
+                            // TEMPORARILY HIDDEN: Kakao & Naver Login
+                            // Reason: Focus on Google/Apple for initial launch
+                            // Re-enable by uncommenting below when ready
+                            // ============================================
+                            // const SizedBox(height: 12),
+                            // // Kakao Login
+                            // _buildSocialButton(
+                            //     onPressed: isProcessing ? null : onKakaoLogin,
+                            //     type: 'kakao',
+                            //     typography: typography),
+                            // const SizedBox(height: 12),
+                            // // Naver Login
+                            // _buildSocialButton(
+                            //     onPressed: isProcessing ? null : onNaverLogin,
+                            //     type: 'naver',
+                            //     typography: typography),
+                          ]),
 
-                              // Naver Login
-                              _buildSocialButton(
-                                  onPressed: isProcessing ? null : onNaverLogin,
-                                  type: 'naver',
-                                  typography: typography),
-                            ]),
+                          const SizedBox(height: 30),
 
-                            const SizedBox(height: 30),
+                          const Divider(height: 1),
 
-                            Divider(
-                              height: 1,
-                            ),
+                          const SizedBox(height: 20),
 
-                            const SizedBox(height: 20),
+                          // Terms text
+                          Text(
+                              '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
+                              style: typography.labelMedium.copyWith(
+                                  color: TossDesignSystem.gray600,
+                                  height: 1.5),
+                              textAlign: TextAlign.center),
 
-                            // Terms text
-                            Text(
-                                '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                                style: typography.labelMedium.copyWith(
-                                    color: TossDesignSystem.gray600,
-                                    height: 1.5),
-                                textAlign: TextAlign.center),
-
-                            const SizedBox(height: 20),
-                          ],
-                        ),
+                          // Safe area bottom padding
+                          SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
+                        ],
                       ),
                     ),
                   ],
@@ -139,9 +140,7 @@ class SocialLoginBottomSheet {
               ),
             );
           },
-        ),
-      ),
-    );
+        );
       },
     );
   }

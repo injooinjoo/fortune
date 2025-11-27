@@ -63,6 +63,10 @@ class DetailedFortune extends Fortune {
     // ✅ Missing parameters from parent Fortune class
     bool? isBlurred,
     List<String>? blurredSections,
+    // ✅ Percentile fields
+    int? percentile,
+    int? totalTodayViewers,
+    bool? isPercentileValid,
     // Parent parameters that might be needed for full compatibility
     List<String>? warnings,
     String? summary,

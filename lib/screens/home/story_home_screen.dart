@@ -11,6 +11,8 @@ import '../../presentation/providers/fortune_story_provider.dart';
 import '../../services/cache_service.dart';
 import '../../services/weather_service.dart';
 import '../../services/fortune_history_service.dart';
+import '../../services/user_statistics_service.dart';
+import '../../services/storage_service.dart';
 import '../../widgets/emotional_loading_checklist.dart';
 import '../../widgets/profile_completion_dialog.dart';
 import '../../core/utils/profile_validation.dart';
@@ -282,6 +284,18 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
       return;
     }
 
+    // 연속 접속일 업데이트 (앱 시작 시 한 번만)
+    final userId = supabase.auth.currentUser?.id;
+    if (userId != null) {
+      try {
+        final statisticsService = UserStatisticsService(supabase, StorageService());
+        await statisticsService.updateConsecutiveDays(userId);
+        debugPrint('✅ [StoryHomeScreen] Updated consecutive days for user: $userId');
+      } catch (e) {
+        debugPrint('⚠️ [StoryHomeScreen] Failed to update consecutive days: $e');
+      }
+    }
+
     // Quick cache check에서 이미 로드했으면 스킵
     if (_hasCachedData && todaysFortune != null && storySegments != null) {
       debugPrint('✅ Data already loaded by quick cache check, loading user profile only');
@@ -469,31 +483,39 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
       debugPrint('⏳ Profile already loading, skipping duplicate request');
       return;
     }
-    
+
     _isLoadingProfile = true;
-    
+
     try {
       final userId = supabase.auth.currentUser?.id;
       if (userId != null) {
+        // 로컬 스토리지에서 먼저 이름 확인 (사용자가 직접 입력한 이름)
+        final localProfile = await StorageService().getUserProfile();
+        final localName = localProfile?['name'] as String?;
+        debugPrint('📦 Local profile name: $localName');
+
         final response = await supabase
             .from('user_profiles')
             .select()
             .eq('id', userId)
             .maybeSingle();
-        
+
         if (response != null) {
-          debugPrint('✅ User profile loaded: name=${response['name']}');
-          
+          // 로컬 스토리지 이름을 우선 사용 (사용자가 직접 입력한 이름)
+          final dbName = response['name'] as String?;
+          final String finalName = (localName?.isNotEmpty == true) ? localName! : (dbName ?? '');
+          debugPrint('✅ User profile loaded: dbName=$dbName, localName=$localName, finalName=$finalName');
+
           // Check if Saju calculation is needed
           final sajuCalculated = response['saju_calculated'] ?? false;
           final birthDate = response['birth_date'];
           final birthTime = response['birth_time'];
-          
+
           setState(() {
             userProfile = UserProfile(
               id: response['id'],
               email: response['email'] ?? supabase.auth.currentUser?.email ?? '',
-              name: response['name'] ?? '',
+              name: finalName,
               birthdate: response['birth_date'] != null 
                   ? DateTime.tryParse(response['birth_date']) 
                   : null,

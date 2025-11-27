@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -62,8 +64,8 @@ serve(async (req) => {
       )
     }
 
-    // ✅ LLM 모듈 사용
-    const llm = LLMFactory.createFromConfig('avoid-people')
+    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    const llm = await LLMFactory.createFromConfigAsync('avoid-people')
     const dayOfWeek = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'][now.getDay()]
     const hour = now.getHours()
     const timeOfDay = hour < 12 ? '오전' : hour < 18 ? '오후' : '저녁'
@@ -161,6 +163,16 @@ ${socialFatigue >= 4 ? '- 사회적 피로도가 높으므로 혼자 있는 시�
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
 
+    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    await UsageLogger.log({
+      fortuneType: 'avoid-people',
+      userId: userId,
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: { environment, moodLevel, stressLevel, socialFatigue, isPremium }
+    })
+
     if (!response.content) {
       throw new Error('LLM API 응답 없음')
     }
@@ -212,6 +224,10 @@ ${socialFatigue >= 4 ? '- 사회적 피로도가 높으므로 혼자 있는 시�
 
     console.log(`[AvoidPeople] ✅ 최종 결과 구조화 완료`)
 
+    // ✅ Percentile 계산 추가
+    const percentileData = await calculatePercentile(supabaseClient, 'avoid-people', result.overallScore)
+    const resultWithPercentile = addPercentileToResult(result, percentileData)
+
     // 결과 캐싱
     await supabaseClient
       .from('fortune_cache')
@@ -219,14 +235,14 @@ ${socialFatigue >= 4 ? '- 사회적 피로도가 높으므로 혼자 있는 시�
         cache_key: cacheKey,
         fortune_type: 'avoid-people',
         user_id: userId || null,
-        result: result,
+        result: resultWithPercentile,
         created_at: new Date().toISOString()
       })
 
     return new Response(
       JSON.stringify({
         success: true,
-        data: result
+        data: resultWithPercentile
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )

@@ -93,7 +93,7 @@ struct FortuneProvider: TimelineProvider {
         // Add timeout protection
         let startTime = Date()
         
-        guard let sharedDefaults = UserDefaults(suiteName: "group.com.fortune.fortune") else {
+        guard let sharedDefaults = UserDefaults(suiteName: "group.com.beyond.fortune") else {
             print("[Widget] Failed to access app group UserDefaults")
             return nil
         }
@@ -165,7 +165,7 @@ struct LoveFortuneProvider: TimelineProvider {
     }
     
     private func loadLoveFortuneData() -> LoveFortuneEntry? {
-        guard let sharedDefaults = UserDefaults(suiteName: "group.com.fortune.fortune"),
+        guard let sharedDefaults = UserDefaults(suiteName: "group.com.beyond.fortune"),
               let data = sharedDefaults.data(forKey: "widget_fortune_love"),
               let loveData = try? JSONDecoder().decode(LoveFortuneWidgetData.self, from: data) else {
             return nil

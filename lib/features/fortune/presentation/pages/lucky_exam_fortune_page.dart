@@ -13,6 +13,7 @@ import 'dart:math' as math;
 import '../../../../services/ad_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../domain/models/conditions/lucky_exam_fortune_conditions.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
@@ -497,8 +498,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                     _examDate = date.toIso8601String().split('T')[0];
                   });
                 },
-                minDate: DateTime.now(),
-                maxDate: DateTime.now().add(const Duration(days: 365)),
+                minDate: DateTime(1900),
+                maxDate: DateTime(2300),
               ),
 
               const SizedBox(height: 20),
@@ -915,7 +916,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    data['overall_fortune'] as String? ?? fortune.content,
+                    FortuneTextCleaner.clean(data['overall_fortune'] as String? ?? fortune.content),
                     style: TossDesignSystem.body2.copyWith(
                       height: 1.6,
                     ),
@@ -954,7 +955,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      data['pass_possibility'] as String,
+                      FortuneTextCleaner.clean(data['pass_possibility'] as String),
                       style: TossDesignSystem.body2.copyWith(height: 1.5),
                     ),
                   ],
@@ -990,7 +991,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      data['focus_subject'] as String,
+                      FortuneTextCleaner.clean(data['focus_subject'] as String),
                       style: TossDesignSystem.body2.copyWith(height: 1.5),
                     ),
                   ],
@@ -1042,7 +1043,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                             ),
                             Expanded(
                               child: Text(
-                                method as String,
+                                FortuneTextCleaner.clean(method as String),
                                 style: TossDesignSystem.body2.copyWith(height: 1.5),
                               ),
                             ),
@@ -1099,7 +1100,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                             ),
                             Expanded(
                               child: Text(
-                                caution as String,
+                                FortuneTextCleaner.clean(caution as String),
                                 style: TossDesignSystem.body2.copyWith(height: 1.5),
                               ),
                             ),
@@ -1140,7 +1141,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      data['dday_advice'] as String,
+                      FortuneTextCleaner.clean(data['dday_advice'] as String),
                       style: TossDesignSystem.body2.copyWith(height: 1.5),
                     ),
                   ],
@@ -1176,7 +1177,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      data['lucky_hours'] as String,
+                      FortuneTextCleaner.clean(data['lucky_hours'] as String),
                       style: TossDesignSystem.body2.copyWith(height: 1.5),
                     ),
                   ],
@@ -1223,7 +1224,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                             border: Border.all(color: TossDesignSystem.successGreen.withValues(alpha: 0.3)),
                           ),
                           child: Text(
-                            strength as String,
+                            FortuneTextCleaner.clean(strength as String),
                             style: TossDesignSystem.caption.copyWith(
                               color: TossDesignSystem.successGreen,
                               fontWeight: FontWeight.bold,
@@ -1278,7 +1279,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        data['positive_message'] as String,
+                        FortuneTextCleaner.clean(data['positive_message'] as String),
                         style: TossDesignSystem.body2.copyWith(
                           height: 1.6,
                           fontWeight: FontWeight.w500,

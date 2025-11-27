@@ -47,6 +47,11 @@ class Fortune extends Equatable {
   final bool isBlurred; // 블러 상태
   final List<String> blurredSections; // 블러 처리된 섹션 키
 
+  // ✅ 퍼센타일 필드 (오늘 운세를 본 사람들 중 상위 몇 %)
+  final int? percentile; // 상위 퍼센타일 (예: 15 = 상위 15%)
+  final int? totalTodayViewers; // 오늘 해당 운세를 본 총 인원수
+  final bool isPercentileValid; // 퍼센타일 데이터 유효 여부 (최소 샘플 수 충족 시 true)
+
   const Fortune({
     required this.id,
     required this.userId,
@@ -84,6 +89,9 @@ class Fortune extends Equatable {
     this.explain,
     this.isBlurred = false,  // ✅ Default
     this.blurredSections = const [],  // ✅ Default
+    this.percentile,
+    this.totalTodayViewers,
+    this.isPercentileValid = false,
   });
 
   // Getter for backwards compatibility
@@ -139,6 +147,9 @@ class Fortune extends Equatable {
     Map<String, dynamic>? explain,
     bool? isBlurred,  // ✅ 블러 해제용
     List<String>? blurredSections,  // ✅ 블러 해제용
+    int? percentile,
+    int? totalTodayViewers,
+    bool? isPercentileValid,
   }) {
     return Fortune(
       id: id ?? this.id,
@@ -177,6 +188,9 @@ class Fortune extends Equatable {
       explain: explain ?? this.explain,
       isBlurred: isBlurred ?? this.isBlurred,
       blurredSections: blurredSections ?? this.blurredSections,
+      percentile: percentile ?? this.percentile,
+      totalTodayViewers: totalTodayViewers ?? this.totalTodayViewers,
+      isPercentileValid: isPercentileValid ?? this.isPercentileValid,
     );
   }
 
@@ -189,6 +203,7 @@ class Fortune extends Equatable {
     meta, weatherSummary, overall, categories, sajuInsight, personalActions,
     notification, shareCard, uiBlocks, explain,
     isBlurred, blurredSections,  // ✅ 블러 필드 추가
+    percentile, totalTodayViewers, isPercentileValid,  // ✅ 퍼센타일 필드 추가
   ];
 
   Map<String, dynamic> toJson() {

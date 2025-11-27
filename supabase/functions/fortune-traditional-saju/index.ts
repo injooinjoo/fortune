@@ -1,5 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -27,6 +30,11 @@ serve(async (req) => {
   }
 
   try {
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    )
+
     const requestData = await req.json()
     const {
       userId,
@@ -92,7 +100,7 @@ serve(async (req) => {
     console.log('');
     console.log('🤖 [Traditional-Saju] LLM 호출 시작...');
 
-    const llm = LLMFactory.createFromConfig('traditional-saju')
+    const llm = await LLMFactory.createFromConfigAsync('traditional-saju')
 
     const response = await llm.generate([
       {
@@ -110,6 +118,17 @@ serve(async (req) => {
     })
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    await UsageLogger.log({
+      fortuneType: 'traditional-saju',
+      userId: userId,
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: { question, dominantElement, lackingElement, isPremium }
+    })
+
     console.log('')
 
     // JSON 파싱

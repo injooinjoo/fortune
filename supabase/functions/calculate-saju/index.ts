@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -305,8 +306,8 @@ serve(async (req) => {
 
 위 사주 정보를 바탕으로 상세한 분석을 제공해주세요.`
 
-    // ✅ LLM 모듈 사용
-    const llm = LLMFactory.createFromConfig('saju')
+    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    const llm = await LLMFactory.createFromConfigAsync('saju')
 
     const response = await llm.generate([
       { role: 'system', content: systemPrompt },
@@ -318,6 +319,16 @@ serve(async (req) => {
     })
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    await UsageLogger.log({
+      fortuneType: 'calculate-saju',
+      userId: user.id,
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: { birthDate, birthTime, isLunar }
+    })
 
     if (!response.content) {
       throw new Error('LLM API 응답 없음')
@@ -373,18 +384,18 @@ serve(async (req) => {
     }
 
     console.log('✅ Complete saju calculated and saved with GPT analysis')
-    
+
     return new Response(
       JSON.stringify({
         success: true,
         data: savedData,
         cached: false,
-        tokensUsed: gptData.usage?.total_tokens || 0,
+        tokensUsed: response.tokensUsed || 0,
         message: 'GPT 분석을 포함한 상세 사주가 계산되었습니다.'
       }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
+        status: 200
       }
     )
 

@@ -29,6 +29,7 @@ import '../../../../services/ad_service.dart';
 import '../../../../core/widgets/toss_info_banner.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/services/device_calendar_service.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 
 import '../../../../core/widgets/unified_button.dart';
 class DailyCalendarFortunePage extends ConsumerStatefulWidget {
@@ -1354,7 +1355,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                         _buildSectionCard(
                           icon: Icons.lightbulb_outline,
                           title: 'AI 인사이트',
-                          content: fortuneData['ai_insight'] as String,
+                          content: FortuneTextCleaner.cleanAndTruncate(fortuneData['ai_insight'] as String),
                           isDark: isDark,
                         ),
                         const SizedBox(height: 16),
@@ -1376,7 +1377,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                           child: _buildSectionCard(
                             icon: Icons.tips_and_updates,
                             title: '조언',
-                            content: fortuneData['advice'] as String,
+                            content: FortuneTextCleaner.cleanAndTruncate(fortuneData['advice'] as String),
                             isDark: isDark,
                           ),
                         ),
@@ -1405,7 +1406,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                           child: _buildSectionCard(
                             icon: Icons.warning_amber_rounded,
                             title: '주의사항',
-                            content: fortuneData['caution'] as String,
+                            content: FortuneTextCleaner.cleanAndTruncate(fortuneData['caution'] as String),
                             isDark: isDark,
                             isWarning: true,
                           ),
@@ -1425,8 +1426,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
               UnifiedButton.floating(
                 text: '광고 보고 전체 내용 확인하기',
                 onPressed: _showAdAndUnblur,
+                isLoading: false,
                 isEnabled: true,
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 116), // bottom: 100 효과
               ),
           ],
         ),
@@ -1667,7 +1668,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                   const SizedBox(height: 8),
                   if (categoryInfo['title'] != null)
                     Text(
-                      categoryInfo['title'] as String,
+                      FortuneTextCleaner.clean(categoryInfo['title'] as String),
                       style: context.bodyMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
@@ -1676,7 +1677,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                   const SizedBox(height: 4),
                   if (categoryInfo['advice'] != null)
                     Text(
-                      categoryInfo['advice'] as String,
+                      FortuneTextCleaner.cleanAndTruncate(categoryInfo['advice'] as String),
                       style: context.bodySmall.copyWith(
                         color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                         height: 1.5,
@@ -1744,7 +1745,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                   if (categories['total']['advice'] is Map) ...[
                     // advice가 Map 구조인 경우 (idiom + description)
                     Text(
-                      (categories['total']['advice'] as Map)['idiom'] as String? ?? '',
+                      FortuneTextCleaner.clean((categories['total']['advice'] as Map)['idiom'] as String? ?? ''),
                       style: context.bodyLarge.copyWith(
                         fontWeight: FontWeight.w700,
                         color: AppTheme.primaryColor,
@@ -1752,7 +1753,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      (categories['total']['advice'] as Map)['description'] as String? ?? '',
+                      FortuneTextCleaner.cleanAndTruncate((categories['total']['advice'] as Map)['description'] as String? ?? ''),
                       style: context.bodyMedium.copyWith(
                         color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                         height: 1.6,
@@ -1761,7 +1762,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                   ] else ...[
                     // advice가 String인 경우 (하위 호환)
                     Text(
-                      categories['total']['advice'] as String? ?? '',
+                      FortuneTextCleaner.cleanAndTruncate(categories['total']['advice'] as String? ?? ''),
                       style: context.bodyMedium.copyWith(
                         color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                         height: 1.6,
@@ -1829,7 +1830,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      tip,
+                      FortuneTextCleaner.cleanAndTruncate(tip, maxLength: 80),
                       style: context.bodyMedium.copyWith(
                         color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                         height: 1.5,
@@ -1845,5 +1846,4 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     );
   }
 
-  // ✅ _buildBlurWrapper 제거 - UnifiedBlurWrapper 사용
 }

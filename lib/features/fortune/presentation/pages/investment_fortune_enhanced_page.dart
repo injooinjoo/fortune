@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -813,31 +813,39 @@ class _InvestmentFortuneEnhancedPageState
     );
 
     try {
+      // Supabase Edge Function 직접 호출
       final params = {
         'userId': data.userId,
-        'name': data.name,
-        'birthDate': data.birthDate?.toIso8601String(),
-        'gender': data.gender,
-        'birthTime': data.birthTime,
+        'ticker': {
+          'symbol': data.selectedTicker?.symbol ?? '',
+          'name': data.selectedTicker?.name ?? '',
+          'category': data.selectedCategory?.name ?? 'stock',
+        },
         'investmentType': data.selectedCategory?.name ?? 'stock',
         'targetName': data.selectedTicker?.name ?? '',
-        'ticker': {
-          'symbol': data.selectedTicker?.symbol,
-          'name': data.selectedTicker?.name,
-          'category': data.selectedTicker?.category,
-        },
-        'riskTolerance': data.riskTolerance,
-        'investmentGoal': data.investmentGoal,
-        'investmentHorizon': data.investmentHorizon,
-        'amount': 10000000, // 기본값
+        'riskTolerance': data.riskTolerance ?? 'moderate',
         'timeframe': _getHorizonLabel(data.investmentHorizon),
         'purpose': _getGoalLabel(data.investmentGoal),
-        'experience': 'intermediate', // 기본값
+        'experience': 'intermediate',
+        'isPremium': false,
       };
 
-      final fortuneService = ref.read(fortuneServiceProvider);
-      final fortune = await fortuneService.getInvestmentEnhancedFortune(
-          userId: data.userId!, investmentData: params);
+      debugPrint('📊 [Investment] Calling Edge Function with params: $params');
+
+      final response = await Supabase.instance.client.functions.invoke(
+        'fortune-investment',
+        body: params,
+      );
+
+      debugPrint('📊 [Investment] Response status: ${response.status}');
+      debugPrint('📊 [Investment] Response data: ${response.data}');
+
+      if (response.status != 200) {
+        throw Exception('Edge Function 호출 실패: ${response.status}');
+      }
+
+      final responseData = response.data as Map<String, dynamic>;
+      final fortune = responseData['fortune'] as Map<String, dynamic>;
 
       if (mounted) {
         Navigator.of(context).pop();
@@ -851,6 +859,7 @@ class _InvestmentFortuneEnhancedPageState
         );
       }
     } catch (e) {
+      debugPrint('❌ [Investment] Error: $e');
       if (mounted) {
         Navigator.of(context).pop();
 

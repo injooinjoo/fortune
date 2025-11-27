@@ -7,6 +7,7 @@ import '../../../../core/models/fortune_result.dart';
 import '../../domain/models/conditions/mbti_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../shared/components/toss_card.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -798,7 +799,7 @@ class _MbtiFortunePageState
 
     final colors = _mbtiColors[_selectedMbti!]!;
     final data = result.data as Map<String, dynamic>? ?? {};
-    final todayFortune = data['todayFortune'] as String? ?? result.summary['message'] as String? ?? '';
+    final todayFortune = FortuneTextCleaner.clean(data['todayFortune'] as String? ?? result.summary['message'] as String? ?? '');
     final luckyItems = {
       if (data['luckyColor'] != null) '색상': data['luckyColor'],
       if (data['luckyNumber'] != null) '숫자': data['luckyNumber'].toString(),
@@ -945,19 +946,19 @@ class _MbtiFortunePageState
         String categoryText = '';
         switch (category) {
           case '연애운':
-            categoryText = data['loveFortune'] as String? ?? _getCategoryFortune(category);
+            categoryText = FortuneTextCleaner.clean(data['loveFortune'] as String? ?? _getCategoryFortune(category));
             break;
           case '직업운':
-            categoryText = data['careerFortune'] as String? ?? _getCategoryFortune(category);
+            categoryText = FortuneTextCleaner.clean(data['careerFortune'] as String? ?? _getCategoryFortune(category));
             break;
           case '재물운':
-            categoryText = data['moneyFortune'] as String? ?? _getCategoryFortune(category);
+            categoryText = FortuneTextCleaner.clean(data['moneyFortune'] as String? ?? _getCategoryFortune(category));
             break;
           case '건강운':
-            categoryText = data['healthFortune'] as String? ?? _getCategoryFortune(category);
+            categoryText = FortuneTextCleaner.clean(data['healthFortune'] as String? ?? _getCategoryFortune(category));
             break;
           default:
-            categoryText = _getCategoryFortune(category);
+            categoryText = FortuneTextCleaner.clean(_getCategoryFortune(category));
         }
 
         return Padding(

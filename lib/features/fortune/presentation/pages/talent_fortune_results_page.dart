@@ -21,6 +21,7 @@ import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 
 import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
 // ✅ FloatingBottomButton용
 import '../../../../core/utils/logger.dart'; // ✅ 로그용
+import '../../../../core/utils/fortune_text_cleaner.dart'; // ✅ 마크다운 클리닝
 import '../../../../core/services/unified_fortune_service.dart'; // ✅ UnifiedFortuneService
 import '../../../../core/models/fortune_result.dart'; // ✅ FortuneResult
 
@@ -462,7 +463,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
   /// Part 1: 종합 브리핑 (LLM 분석 결과)
   Widget _buildOverviewSection(bool isDark) {
     // ✅ API 데이터 사용 (content - 항상 공개)
-    final content = _fortuneResult?.data['content'] as String? ?? '';
+    final content = FortuneTextCleaner.cleanNullable(_fortuneResult?.data['content'] as String?);
     final score = _fortuneResult?.score ?? 0;
     final luckyItems = _fortuneResult?.data['luckyItems'] as Map<String, dynamic>?;
 
@@ -699,14 +700,14 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
           ...talentInsights.asMap().entries.map((entry) {
             final index = entry.key;
             final insight = entry.value as Map<String, dynamic>;
-            final talent = insight['talent'] as String? ?? '';
+            final talent = FortuneTextCleaner.cleanNullable(insight['talent'] as String?);
             final potential = insight['potential'] as int? ?? 0;
-            final description = insight['description'] as String? ?? '';
-            final developmentPath = insight['developmentPath'] as String? ?? '';
-            final practicalApplications = (insight['practicalApplications'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-            final monetizationStrategy = insight['monetizationStrategy'] as String? ?? '';
-            final portfolioBuilding = insight['portfolioBuilding'] as String? ?? '';
-            final recommendedResources = (insight['recommendedResources'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
+            final description = FortuneTextCleaner.cleanNullable(insight['description'] as String?);
+            final developmentPath = FortuneTextCleaner.cleanNullable(insight['developmentPath'] as String?);
+            final practicalApplications = (insight['practicalApplications'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+            final monetizationStrategy = FortuneTextCleaner.cleanNullable(insight['monetizationStrategy'] as String?);
+            final portfolioBuilding = FortuneTextCleaner.cleanNullable(insight['portfolioBuilding'] as String?);
+            final recommendedResources = (insight['recommendedResources'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
 
             return Padding(
               padding: EdgeInsets.only(bottom: index < talentInsights.length - 1 ? 16 : 0),
@@ -975,12 +976,12 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
           ...weeklyPlan.asMap().entries.map((entry) {
             final index = entry.key;
             final dayPlan = entry.value as Map<String, dynamic>;
-            final day = dayPlan['day'] as String? ?? '';
-            final focus = dayPlan['focus'] as String? ?? '';
-            final activities = (dayPlan['activities'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-            final timeNeeded = dayPlan['timeNeeded'] as String? ?? '';
-            final checklist = (dayPlan['checklist'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-            final expectedOutcome = dayPlan['expectedOutcome'] as String? ?? '';
+            final day = FortuneTextCleaner.cleanNullable(dayPlan['day'] as String?);
+            final focus = FortuneTextCleaner.cleanNullable(dayPlan['focus'] as String?);
+            final activities = (dayPlan['activities'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+            final timeNeeded = FortuneTextCleaner.cleanNullable(dayPlan['timeNeeded'] as String?);
+            final checklist = (dayPlan['checklist'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+            final expectedOutcome = FortuneTextCleaner.cleanNullable(dayPlan['expectedOutcome'] as String?);
 
             return Padding(
               padding: EdgeInsets.only(bottom: index < weeklyPlan.length - 1 ? 12 : 0),
@@ -1158,7 +1159,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
 
   /// Part 4: 상세 분석 & 육각형 스탯 (LLM 분석 - description, hexagonScores)
   Widget _buildDetailedAnalysis(bool isDark) {
-    final description = _fortuneResult?.data['description'] as String? ?? '';
+    final description = FortuneTextCleaner.cleanNullable(_fortuneResult?.data['description'] as String?);
     final hexagonScores = _fortuneResult?.data['hexagonScores'] as Map<String, dynamic>?;
 
     return Column(
@@ -1291,9 +1292,9 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     final mentalModel = _fortuneResult?.data['mentalModel'] as Map<String, dynamic>?;
     if (mentalModel == null) return SizedBox.shrink();
 
-    final thinkingStyle = mentalModel['thinkingStyle'] as String? ?? '';
-    final decisionPattern = mentalModel['decisionPattern'] as String? ?? '';
-    final learningStyle = mentalModel['learningStyle'] as String? ?? '';
+    final thinkingStyle = FortuneTextCleaner.cleanNullable(mentalModel['thinkingStyle'] as String?);
+    final decisionPattern = FortuneTextCleaner.cleanNullable(mentalModel['decisionPattern'] as String?);
+    final learningStyle = FortuneTextCleaner.cleanNullable(mentalModel['learningStyle'] as String?);
 
     return TossCard(
       child: Column(
@@ -1376,9 +1377,9 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     final collaboration = _fortuneResult?.data['collaboration'] as Map<String, dynamic>?;
     if (collaboration == null) return SizedBox.shrink();
 
-    final goodMatch = (collaboration['goodMatch'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-    final challenges = (collaboration['challenges'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-    final teamRole = collaboration['teamRole'] as String? ?? '';
+    final goodMatch = (collaboration['goodMatch'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+    final challenges = (collaboration['challenges'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+    final teamRole = FortuneTextCleaner.cleanNullable(collaboration['teamRole'] as String?);
 
     return TossCard(
       child: Column(
@@ -1510,9 +1511,9 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
             final periodData = growthRoadmap[period] as Map<String, dynamic>?;
             if (periodData == null) return SizedBox.shrink();
 
-            final goal = periodData['goal'] as String? ?? '';
-            final milestones = (periodData['milestones'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-            final skillsToAcquire = (periodData['skillsToAcquire'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
+            final goal = FortuneTextCleaner.cleanNullable(periodData['goal'] as String?);
+            final milestones = (periodData['milestones'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+            final skillsToAcquire = (periodData['skillsToAcquire'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
 
             return Padding(
               padding: EdgeInsets.only(bottom: index < periods.length - 1 ? 16 : 0),
@@ -1627,11 +1628,11 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     final learningStrategy = _fortuneResult?.data['learningStrategy'] as Map<String, dynamic>?;
     if (learningStrategy == null) return SizedBox.shrink();
 
-    final effectiveMethods = (learningStrategy['effectiveMethods'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-    final timeManagement = learningStrategy['timeManagement'] as String? ?? '';
-    final recommendedBooks = (learningStrategy['recommendedBooks'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-    final recommendedCourses = (learningStrategy['recommendedCourses'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-    final mentorshipAdvice = learningStrategy['mentorshipAdvice'] as String? ?? '';
+    final effectiveMethods = (learningStrategy['effectiveMethods'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+    final timeManagement = FortuneTextCleaner.cleanNullable(learningStrategy['timeManagement'] as String?);
+    final recommendedBooks = (learningStrategy['recommendedBooks'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+    final recommendedCourses = (learningStrategy['recommendedCourses'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+    final mentorshipAdvice = FortuneTextCleaner.cleanNullable(learningStrategy['mentorshipAdvice'] as String?);
 
     return TossCard(
       child: Column(

@@ -11,6 +11,8 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/ad_provider.dart';
 
 import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
+
 /// 토스 스타일 이사운 페이지 (UnifiedFortuneBaseWidget 사용)
 class MovingFortuneTossPage extends ConsumerStatefulWidget {
   const MovingFortuneTossPage({super.key});
@@ -79,14 +81,14 @@ class _MovingFortuneTossPageState extends ConsumerState<MovingFortuneTossPage> {
         final data = result.data;
 
         // API에서 받은 데이터 추출
-        final title = data['title'] as String? ?? '이사운';
-        final overallFortune = data['overall_fortune'] as String? ?? '';
-        final directionAnalysis = data['direction_analysis'] as String? ?? '';
-        final timingAnalysis = data['timing_analysis'] as String? ?? '';
-        final cautions = (data['cautions'] as List<dynamic>?)?.cast<String>() ?? [];
-        final recommendations = (data['recommendations'] as List<dynamic>?)?.cast<String>() ?? [];
-        final luckyDates = (data['lucky_dates'] as List<dynamic>?)?.cast<String>() ?? [];
-        final summaryKeyword = data['summary_keyword'] as String? ?? '';
+        final title = FortuneTextCleaner.clean(data['title'] as String? ?? '이사운');
+        final overallFortune = FortuneTextCleaner.cleanNullable(data['overall_fortune'] as String?);
+        final directionAnalysis = FortuneTextCleaner.cleanNullable(data['direction_analysis'] as String?);
+        final timingAnalysis = FortuneTextCleaner.cleanNullable(data['timing_analysis'] as String?);
+        final cautions = (data['cautions'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+        final recommendations = (data['recommendations'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+        final luckyDates = (data['lucky_dates'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+        final summaryKeyword = FortuneTextCleaner.cleanNullable(data['summary_keyword'] as String?);
         final score = result.score ?? 50;
 
         return Stack(

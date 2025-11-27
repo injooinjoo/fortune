@@ -17,6 +17,7 @@
 | "운세", "Fortune", "블러", "프리미엄", "토큰" | `fortune-domain-expert` | 6단계 프로세스, UnifiedFortuneService, 블러 시스템 |
 | "테스트", "Test", "검증", "커버리지" | `testing-architect` | Widget/Provider 테스트 패턴, Mock |
 | "에러", "버그", "오류", "안돼", "크래시" | `error-resolver` | 근본원인 분석, 전체 검색, 패턴 적용 |
+| "위젯", "Widget", "홈화면", "즐겨찾기 위젯" | `widget-specialist` | iOS WidgetKit, Android AppWidget, home_widget, App Group |
 
 **복합 요청 시**: 여러 Agent의 전문성을 조합하여 적용
 
@@ -87,6 +88,7 @@
 | [06-llm-module.md](.claude/docs/06-llm-module.md) | LLM 모듈 | LLMFactory, PromptManager, Edge Function |
 | [07-jira-workflow.md](.claude/docs/07-jira-workflow.md) | JIRA 워크플로우 | 티켓 생성, Git 커밋 |
 | [08-agents-skills.md](.claude/docs/08-agents-skills.md) | Agents & Skills | 7 Agents, 10 Skills |
+| [10-widget-system.md](.claude/docs/10-widget-system.md) | 홈 화면 위젯 | iOS/Android 위젯, 즐겨찾기 롤링, App Group |
 
 ---
 

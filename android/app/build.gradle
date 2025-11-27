@@ -14,7 +14,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.beyond.fortune"
-    compileSdk = 34  // Explicitly set for Google Play Store compliance (API 34 required)
+    compileSdk = 35  // Updated for androidx.glance dependency compatibility
     ndkVersion = "26.3.11579264"  // Using required NDK version
 
     compileOptions {

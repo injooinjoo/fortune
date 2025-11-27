@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -91,8 +92,8 @@ ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profil
 - 격려하지만 현실적인 멘토처럼
 - 위로하지만 힘을 주는 응원자처럼`
 
-    // ✅ LLM 모듈 사용
-    const llm = LLMFactory.createFromConfig('wish')
+    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    const llm = await LLMFactory.createFromConfigAsync('wish')
 
     const response = await llm.generate([
       {
@@ -127,6 +128,15 @@ ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profil
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
     console.log('✅ AI 응답 원본:', response.content)
+
+    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    await UsageLogger.log({
+      fortuneType: 'analyze-wish',
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: { category, urgency }
+    })
 
     if (!response.content) {
       throw new Error('LLM API 응답 없음')

@@ -10,11 +10,23 @@ enum CelebrityType {
   @JsonValue('streamer')
   streamer('스트리머'),
 
+  @JsonValue('youtuber')
+  youtuber('유튜버'),
+
   @JsonValue('politician')
   politician('정치인'),
 
   @JsonValue('business')
   business('기업인'),
+
+  @JsonValue('business_leader')
+  businessLeader('기업인'),
+
+  @JsonValue('entertainer')
+  entertainer('방송인'),
+
+  @JsonValue('singer')
+  singer('가수'),
 
   @JsonValue('solo_singer')
   soloSinger('솔로 가수'),
@@ -45,6 +57,60 @@ enum Gender {
 
   final String displayName;
   const Gender(this.displayName);
+}
+
+// MBTI type enum
+enum MbtiType {
+  @JsonValue('INTJ')
+  intj('INTJ'),
+  @JsonValue('INTP')
+  intp('INTP'),
+  @JsonValue('ENTJ')
+  entj('ENTJ'),
+  @JsonValue('ENTP')
+  entp('ENTP'),
+  @JsonValue('INFJ')
+  infj('INFJ'),
+  @JsonValue('INFP')
+  infp('INFP'),
+  @JsonValue('ENFJ')
+  enfj('ENFJ'),
+  @JsonValue('ENFP')
+  enfp('ENFP'),
+  @JsonValue('ISTJ')
+  istj('ISTJ'),
+  @JsonValue('ISFJ')
+  isfj('ISFJ'),
+  @JsonValue('ESTJ')
+  estj('ESTJ'),
+  @JsonValue('ESFJ')
+  esfj('ESFJ'),
+  @JsonValue('ISTP')
+  istp('ISTP'),
+  @JsonValue('ISFP')
+  isfp('ISFP'),
+  @JsonValue('ESTP')
+  estp('ESTP'),
+  @JsonValue('ESFP')
+  esfp('ESFP');
+
+  final String displayName;
+  const MbtiType(this.displayName);
+}
+
+// Blood type enum
+enum BloodType {
+  @JsonValue('A')
+  a('A형'),
+  @JsonValue('B')
+  b('B형'),
+  @JsonValue('O')
+  o('O형'),
+  @JsonValue('AB')
+  ab('AB형');
+
+  final String displayName;
+  const BloodType(this.displayName);
 }
 
 // External IDs structure
@@ -299,6 +365,14 @@ class Celebrity {
   @JsonKey(fromJson: _timeFromJson, toJson: _timeToJson)
   final DateTime? birthTime; // 출생시각
 
+  // Personal characteristics
+  final MbtiType? mbti; // MBTI 성격유형
+  final BloodType? bloodType; // 혈액형
+
+  // Group affiliation
+  final bool isGroupMember; // 그룹 소속 여부
+  final String? groupName; // 소속 그룹명
+
   // Professional information
   final int? activeFrom; // 데뷔/프로 전향 연도
   final String? agencyManagement; // 소속
@@ -329,6 +403,10 @@ class Celebrity {
     this.nationality = '한국',
     this.birthPlace,
     this.birthTime,
+    this.mbti,
+    this.bloodType,
+    this.isGroupMember = false,
+    this.groupName,
     this.activeFrom,
     this.agencyManagement,
     this.languages = const ['한국어'],
@@ -399,6 +477,10 @@ class Celebrity {
     String? nationality,
     String? birthPlace,
     DateTime? birthTime,
+    MbtiType? mbti,
+    BloodType? bloodType,
+    bool? isGroupMember,
+    String? groupName,
     int? activeFrom,
     String? agencyManagement,
     List<String>? languages,
@@ -420,6 +502,10 @@ class Celebrity {
       nationality: nationality ?? this.nationality,
       birthPlace: birthPlace ?? this.birthPlace,
       birthTime: birthTime ?? this.birthTime,
+      mbti: mbti ?? this.mbti,
+      bloodType: bloodType ?? this.bloodType,
+      isGroupMember: isGroupMember ?? this.isGroupMember,
+      groupName: groupName ?? this.groupName,
       activeFrom: activeFrom ?? this.activeFrom,
       agencyManagement: agencyManagement ?? this.agencyManagement,
       languages: languages ?? this.languages,
@@ -464,6 +550,10 @@ class CelebrityFilter {
   final String? nationality;
   final String? zodiacSign;
   final String? chineseZodiac;
+  final MbtiType? mbti;
+  final BloodType? bloodType;
+  final bool? isGroupMember;
+  final String? groupName;
 
   const CelebrityFilter({
     this.celebrityType,
@@ -474,6 +564,10 @@ class CelebrityFilter {
     this.nationality,
     this.zodiacSign,
     this.chineseZodiac,
+    this.mbti,
+    this.bloodType,
+    this.isGroupMember,
+    this.groupName,
   });
 
   factory CelebrityFilter.fromJson(Map<String, dynamic> json) => _$CelebrityFilterFromJson(json);

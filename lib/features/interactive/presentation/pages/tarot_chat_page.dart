@@ -13,6 +13,7 @@ import '../../../../data/services/fortune_api_service.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 
 // Example questions for quick access
 final tarotExampleQuestions = [
@@ -217,8 +218,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
 
       if (response['success'] == true) {
         final data = response['data'] ?? {};
-        final interpretation = data['interpretation'] ?? '';
-        final advice = data['advice'] ?? '';
+        final interpretation = FortuneTextCleaner.cleanNullable(data['interpretation'] as String?);
+        final advice = FortuneTextCleaner.cleanNullable(data['advice'] as String?);
         final cards = (data['cards'] as List<dynamic>?)?.map((card) {
           return TarotCardInfo(
             name: card['name'] ?? '',

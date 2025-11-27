@@ -7,6 +7,7 @@ import '../../../../../core/widgets/blurred_fortune_content.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../services/ad_service.dart'; // ✅ RewardedAd용
 import '../../../../../core/utils/logger.dart'; // ✅ 로그용
@@ -152,7 +153,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
   Widget _buildMainScoreCard() {
     final data = _fortuneResult.data;
     final loveScore = data['loveScore'] as int? ?? 70;
-    final mainMessage = data['mainMessage'] as String? ?? '';
+    final mainMessage = FortuneTextCleaner.clean(data['mainMessage'] as String? ?? '');
 
     return Container(
       padding: const EdgeInsets.all(24),
@@ -214,7 +215,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
     final data = _fortuneResult.data;
     final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
     final loveStyle = detailedAnalysis['loveStyle'] as Map<String, dynamic>? ?? {};
-    final description = loveStyle['description'] as String? ?? '당신만의 특별한 연애 스타일을 가지고 있어요.';
+    final description = FortuneTextCleaner.clean(loveStyle['description'] as String? ?? '당신만의 특별한 연애 스타일을 가지고 있어요.');
 
     return _buildDetailSection(
       context,
@@ -229,8 +230,8 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
     final data = _fortuneResult.data;
     final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
     final charmPoints = detailedAnalysis['charmPoints'] as Map<String, dynamic>? ?? {};
-    final primary = charmPoints['primary'] as String? ?? '';
-    final details = List<String>.from(charmPoints['details'] ?? []);
+    final primary = FortuneTextCleaner.clean(charmPoints['primary'] as String? ?? '');
+    final details = List<String>.from(charmPoints['details'] ?? []).map((d) => FortuneTextCleaner.clean(d.toString())).toList();
 
     final content = details.isNotEmpty
         ? '$primary\n\n• ${details.join('\n• ')}'
@@ -249,8 +250,8 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
     final data = _fortuneResult.data;
     final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
     final improvementAreas = detailedAnalysis['improvementAreas'] as Map<String, dynamic>? ?? {};
-    final main = improvementAreas['main'] as String? ?? '';
-    final specific = List<String>.from(improvementAreas['specific'] ?? []);
+    final main = FortuneTextCleaner.clean(improvementAreas['main'] as String? ?? '');
+    final specific = List<String>.from(improvementAreas['specific'] ?? []).map((s) => FortuneTextCleaner.clean(s.toString())).toList();
 
     final content = specific.isNotEmpty
         ? '$main\n\n• ${specific.join('\n• ')}'
@@ -328,9 +329,9 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
     final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
     final compatibilityInsights = detailedAnalysis['compatibilityInsights'] as Map<String, dynamic>? ?? {};
 
-    final bestMatch = compatibilityInsights['bestMatch'] as String? ?? '';
-    final avoidTypes = compatibilityInsights['avoidTypes'] as String? ?? '';
-    final tips = List<String>.from(compatibilityInsights['relationshipTips'] ?? []);
+    final bestMatch = FortuneTextCleaner.clean(compatibilityInsights['bestMatch'] as String? ?? '');
+    final avoidTypes = FortuneTextCleaner.clean(compatibilityInsights['avoidTypes'] as String? ?? '');
+    final tips = List<String>.from(compatibilityInsights['relationshipTips'] ?? []).map((t) => FortuneTextCleaner.clean(t.toString())).toList();
 
     final content = '''
 💖 최고 궁합: $bestMatch
@@ -355,9 +356,9 @@ ${tips.isNotEmpty ? '• ${tips.join('\n• ')}' : '서로를 존중하고 이�
     final data = _fortuneResult.data;
     final predictions = data['predictions'] as Map<String, dynamic>? ?? {};
 
-    final thisWeek = predictions['thisWeek'] as String? ?? '';
-    final thisMonth = predictions['thisMonth'] as String? ?? '';
-    final nextThreeMonths = predictions['nextThreeMonths'] as String? ?? '';
+    final thisWeek = FortuneTextCleaner.clean(predictions['thisWeek'] as String? ?? '');
+    final thisMonth = FortuneTextCleaner.clean(predictions['thisMonth'] as String? ?? '');
+    final nextThreeMonths = FortuneTextCleaner.clean(predictions['nextThreeMonths'] as String? ?? '');
 
     final content = '''
 📅 이번 주: $thisWeek
@@ -381,9 +382,9 @@ ${tips.isNotEmpty ? '• ${tips.join('\n• ')}' : '서로를 존중하고 이�
     final data = _fortuneResult.data;
     final actionPlan = data['actionPlan'] as Map<String, dynamic>? ?? {};
 
-    final immediate = List<String>.from(actionPlan['immediate'] ?? []);
-    final shortTerm = List<String>.from(actionPlan['shortTerm'] ?? []);
-    final longTerm = List<String>.from(actionPlan['longTerm'] ?? []);
+    final immediate = List<String>.from(actionPlan['immediate'] ?? []).map((i) => FortuneTextCleaner.clean(i.toString())).toList();
+    final shortTerm = List<String>.from(actionPlan['shortTerm'] ?? []).map((s) => FortuneTextCleaner.clean(s.toString())).toList();
+    final longTerm = List<String>.from(actionPlan['longTerm'] ?? []).map((l) => FortuneTextCleaner.clean(l.toString())).toList();
 
     final content = '''
 ⚡ 즉시 실천:
@@ -409,7 +410,7 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
   Widget _buildWarningContent() {
     final data = _fortuneResult.data;
     final todaysAdvice = data['todaysAdvice'] as Map<String, dynamic>? ?? {};
-    final warningArea = todaysAdvice['warningArea'] as String? ?? '과도한 기대는 실망으로 이어질 수 있으니 주의하세요.';
+    final warningArea = FortuneTextCleaner.clean(todaysAdvice['warningArea'] as String? ?? '과도한 기대는 실망으로 이어질 수 있으니 주의하세요.');
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Text(

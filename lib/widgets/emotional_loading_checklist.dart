@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../presentation/providers/navigation_visibility_provider.dart';
 import '../core/theme/toss_design_system.dart';
 import '../core/theme/typography_unified.dart';
+import '../core/services/fortune_haptic_service.dart';
 
 /// 최적화된 감성적인 로딩 체크리스트 위젯 (픽셀 깨짐 방지)
 class EmotionalLoadingChecklist extends ConsumerStatefulWidget {
@@ -123,13 +124,17 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
     }
   }
   
-  void _completeLoading() {
+  void _completeLoading() async {
     if (_isCompleted || !mounted) return;
-    
+
     setState(() {
       _isCompleted = true;
     });
-    
+
+    // 로딩 완료 시 success 햅틱
+    final haptic = ref.read(fortuneHapticServiceProvider);
+    await haptic.loadingComplete();
+
     debugPrint('✅ Loading animation completed by API');
     if (widget.isLoggedIn) {
       widget.onComplete?.call();
@@ -140,7 +145,8 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
   
   void _startAnimation() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    
+    final haptic = ref.read(fortuneHapticServiceProvider);
+
     while (!_isCompleted && mounted && !widget.isApiComplete) {
       for (int i = 0; i < _emotionalLoadingMessages.length; i++) {
         if (_isCompleted || !mounted || widget.isApiComplete) {
@@ -149,20 +155,23 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
           }
           return;
         }
-        
+
         // 현재 단계 업데이트 (부드럽게)
         if (mounted) {
           setState(() {
             _currentStep = i;
           });
-          
+
+          // 각 스텝마다 햅틱 피드백
+          await haptic.loadingStep();
+
           // 체크 애니메이션 실행
           _checkController.forward();
         }
-        
+
         // 적절한 대기 시간
         await Future.delayed(const Duration(milliseconds: 1800));
-        
+
         // API 완료 체크
         if (_isCompleted || !mounted || widget.isApiComplete) {
           if (widget.isApiComplete && !_isCompleted) {
@@ -170,13 +179,13 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
           }
           return;
         }
-        
+
         // 다음 스텝 준비
         if (i < _emotionalLoadingMessages.length - 1) {
           _checkController.reset();
         }
       }
-      
+
       // 한 사이클 완료 후 초기화
       if (!_isCompleted && mounted && !widget.isApiComplete) {
         setState(() {

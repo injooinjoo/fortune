@@ -73,6 +73,16 @@ class ExamGenerator {
       final data = response.data as Map<String, dynamic>;
       Logger.info('[ExamGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
+      // 🔍 응답 데이터 상세 로깅
+      final fortuneData = data['data'] as Map<String, dynamic>? ?? {};
+      Logger.info('[ExamGenerator]   📋 Fortune data keys: ${fortuneData.keys.toList()}');
+      Logger.info('[ExamGenerator]   🔍 pass_possibility: ${fortuneData['pass_possibility']}');
+      Logger.info('[ExamGenerator]   🔍 focus_subject: ${fortuneData['focus_subject']}');
+      Logger.info('[ExamGenerator]   🔍 study_methods: ${fortuneData['study_methods']}');
+      Logger.info('[ExamGenerator]   🔍 cautions: ${fortuneData['cautions']}');
+      Logger.info('[ExamGenerator]   🔍 dday_advice: ${fortuneData['dday_advice']}');
+      Logger.info('[ExamGenerator]   🔍 positive_message: ${fortuneData['positive_message']}');
+
       // 🔄 파싱
       Logger.info('[ExamGenerator] 🔄 응답 데이터 파싱 중...');
       final result = _convertToFortuneResult(data, inputConditions, isPremium);

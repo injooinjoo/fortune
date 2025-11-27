@@ -2,6 +2,8 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -255,8 +257,8 @@ serve(async (req) => {
 
 긍정적이면서도 현실적인 관점으로 조언해주세요.`
 
-      // ✅ LLM 모듈 사용 (Provider 자동 선택)
-      const llm = LLMFactory.createFromConfig('compatibility')
+      // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+      const llm = await LLMFactory.createFromConfigAsync('compatibility')
 
       const response = await llm.generate([
         {
@@ -273,11 +275,20 @@ serve(async (req) => {
         jsonMode: true
       })
 
-      console.log(`✅ LLM 호출 완료:`)
-      console.log(`  Provider: ${response.provider}`)
-      console.log(`  Model: ${response.model}`)
-      console.log(`  Latency: ${response.latency}ms`)
-      console.log(`  Tokens: ${response.usage.totalTokens}`)
+      console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+      // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+      await UsageLogger.log({
+        fortuneType: 'compatibility',
+        provider: response.provider,
+        model: response.model,
+        response: response,
+        metadata: {
+          person1_name,
+          person2_name,
+          isPremium
+        }
+      })
 
       if (!response.content) {
         throw new Error('LLM API 응답을 받을 수 없습니다.')
@@ -409,10 +420,14 @@ serve(async (req) => {
         })
     }
 
+    // ✅ 퍼센타일 계산
+    const percentileData = await calculatePercentile(supabase, 'compatibility', fortuneData.score)
+    const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
+
     // 성공 응답
     const response = {
       success: true,
-      data: fortuneData
+      data: fortuneDataWithPercentile
     }
 
     return new Response(JSON.stringify(response), {

@@ -13,6 +13,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/widgets/blurred_fortune_content.dart';
 import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 
 /// 꿈 해몽 페이지 (UnifiedFortuneService 버전)
 ///
@@ -419,7 +420,7 @@ class _DreamInterpretationPageState
 
   Widget _buildInterpretationCard(FortuneResult result) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final interpretation = result.data['interpretation'] ?? '해석 정보가 없습니다.';
+    final interpretation = FortuneTextCleaner.clean(result.data['interpretation'] as String? ?? '해석 정보가 없습니다.');
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -458,7 +459,7 @@ class _DreamInterpretationPageState
 
   Widget _buildAdviceCard(FortuneResult result) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final advice = result.data['todayGuidance'] ?? '조언 정보가 없습니다.';
+    final advice = FortuneTextCleaner.clean(result.data['todayGuidance'] as String? ?? '조언 정보가 없습니다.');
 
     return Container(
       padding: const EdgeInsets.all(20),

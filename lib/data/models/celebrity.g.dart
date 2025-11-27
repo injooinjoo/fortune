@@ -256,6 +256,10 @@ Celebrity _$CelebrityFromJson(Map<String, dynamic> json) => Celebrity(
       nationality: json['nationality'] as String? ?? '한국',
       birthPlace: json['birthPlace'] as String?,
       birthTime: _timeFromJson(json['birthTime'] as String?),
+      mbti: $enumDecodeNullable(_$MbtiTypeEnumMap, json['mbti']),
+      bloodType: $enumDecodeNullable(_$BloodTypeEnumMap, json['bloodType']),
+      isGroupMember: json['isGroupMember'] as bool? ?? false,
+      groupName: json['groupName'] as String?,
       activeFrom: (json['activeFrom'] as num?)?.toInt(),
       agencyManagement: json['agencyManagement'] as String?,
       languages: (json['languages'] as List<dynamic>?)
@@ -287,6 +291,10 @@ Map<String, dynamic> _$CelebrityToJson(Celebrity instance) => <String, dynamic>{
       'nationality': instance.nationality,
       'birthPlace': instance.birthPlace,
       'birthTime': _timeToJson(instance.birthTime),
+      'mbti': _$MbtiTypeEnumMap[instance.mbti],
+      'bloodType': _$BloodTypeEnumMap[instance.bloodType],
+      'isGroupMember': instance.isGroupMember,
+      'groupName': instance.groupName,
       'activeFrom': instance.activeFrom,
       'agencyManagement': instance.agencyManagement,
       'languages': instance.languages,
@@ -306,12 +314,42 @@ const _$GenderEnumMap = {
 const _$CelebrityTypeEnumMap = {
   CelebrityType.proGamer: 'pro_gamer',
   CelebrityType.streamer: 'streamer',
+  CelebrityType.youtuber: 'youtuber',
   CelebrityType.politician: 'politician',
   CelebrityType.business: 'business',
+  CelebrityType.businessLeader: 'business_leader',
+  CelebrityType.entertainer: 'entertainer',
+  CelebrityType.singer: 'singer',
   CelebrityType.soloSinger: 'solo_singer',
   CelebrityType.idolMember: 'idol_member',
   CelebrityType.actor: 'actor',
   CelebrityType.athlete: 'athlete',
+};
+
+const _$MbtiTypeEnumMap = {
+  MbtiType.intj: 'INTJ',
+  MbtiType.intp: 'INTP',
+  MbtiType.entj: 'ENTJ',
+  MbtiType.entp: 'ENTP',
+  MbtiType.infj: 'INFJ',
+  MbtiType.infp: 'INFP',
+  MbtiType.enfj: 'ENFJ',
+  MbtiType.enfp: 'ENFP',
+  MbtiType.istj: 'ISTJ',
+  MbtiType.isfj: 'ISFJ',
+  MbtiType.estj: 'ESTJ',
+  MbtiType.esfj: 'ESFJ',
+  MbtiType.istp: 'ISTP',
+  MbtiType.isfp: 'ISFP',
+  MbtiType.estp: 'ESTP',
+  MbtiType.esfp: 'ESFP',
+};
+
+const _$BloodTypeEnumMap = {
+  BloodType.a: 'A',
+  BloodType.b: 'B',
+  BloodType.o: 'O',
+  BloodType.ab: 'AB',
 };
 
 CelebrityFilter _$CelebrityFilterFromJson(Map<String, dynamic> json) =>
@@ -325,6 +363,10 @@ CelebrityFilter _$CelebrityFilterFromJson(Map<String, dynamic> json) =>
       nationality: json['nationality'] as String?,
       zodiacSign: json['zodiacSign'] as String?,
       chineseZodiac: json['chineseZodiac'] as String?,
+      mbti: $enumDecodeNullable(_$MbtiTypeEnumMap, json['mbti']),
+      bloodType: $enumDecodeNullable(_$BloodTypeEnumMap, json['bloodType']),
+      isGroupMember: json['isGroupMember'] as bool?,
+      groupName: json['groupName'] as String?,
     );
 
 Map<String, dynamic> _$CelebrityFilterToJson(CelebrityFilter instance) =>
@@ -337,4 +379,8 @@ Map<String, dynamic> _$CelebrityFilterToJson(CelebrityFilter instance) =>
       'nationality': instance.nationality,
       'zodiacSign': instance.zodiacSign,
       'chineseZodiac': instance.chineseZodiac,
+      'mbti': _$MbtiTypeEnumMap[instance.mbti],
+      'bloodType': _$BloodTypeEnumMap[instance.bloodType],
+      'isGroupMember': instance.isGroupMember,
+      'groupName': instance.groupName,
     };

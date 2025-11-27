@@ -96,6 +96,8 @@
 		<string>Fortune AI가 음성을 텍스트로 변환하여 꿈 해몽을 제공하기 위해 음성 인식 권한이 필요합니다.</string>
 		<key>NSCalendarsFullAccessUsageDescription</key>
 		<string>Fortune AI가 일정을 분석하여 맞춤형 운세를 제공하고, 중요한 운세 날짜를 저장하기 위해 캘린더 접근 권한이 필요합니다.</string>
+		<key>NSCalendarsUsageDescription</key>
+		<string>Fortune AI가 중요한 운세 날짜를 캘린더에 저장하기 위해 접근 권한이 필요합니다.</string>
 		<key>NSSupportsLiveActivities</key>
 		<true/>
 		<key>NSSupportsLiveActivitiesFrequentUpdates</key>
@@ -108,6 +110,8 @@
 		</array>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Fortune AI가 현재 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Fortune AI가 위치 기반 맞춤 운세를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
 		<key>NSWidgetExtensionBundleIdentifiers</key>
 		<array>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneWidget</string>

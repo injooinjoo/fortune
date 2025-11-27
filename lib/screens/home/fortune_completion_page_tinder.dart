@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/theme/toss_design_system.dart';
+import '../../core/utils/fortune_text_cleaner.dart';
 import '../../domain/entities/fortune.dart' as fortune_entity;
 import '../../domain/entities/user_profile.dart';
 import '../../presentation/widgets/fortune_infographic_widgets.dart';
@@ -262,11 +263,11 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         borderRadius: BorderRadius.circular(28),
         child: Column(
           children: [
-            // 카드 컨텐츠 (스크롤 비활성화 - PageView가 제스처 처리)
+            // 카드 컨텐츠 (세로 스크롤 활성화)
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(32),
-                physics: const NeverScrollableScrollPhysics(),
+                physics: const ClampingScrollPhysics(),
                 child: _buildCardContent(
                   context,
                   index,
@@ -386,29 +387,30 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           ),
           child: Column(
             children: [
-              // 점수 - 매우 얇은 타이포그래피
+              // 점수 - 크고 임팩트 있는 숫자
               Text(
                 '$score',
-                style: TypographyUnified.displayLarge.copyWith(
+                style: TextStyle(
+                  fontSize: 96,
                   color: scoreColor,
-                  fontWeight: FontWeight.w100,
-                  letterSpacing: -5,
+                  fontWeight: FontWeight.w200,
+                  letterSpacing: -4,
                   height: 1.0,
                 ),
               ).animate()
                 .fadeIn(duration: 500.ms)
                 .scale(begin: const Offset(0.9, 0.9), duration: 500.ms, curve: Curves.easeOut),
 
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
 
-              // 서브텍스트 (미세하게)
+              // 서브텍스트
               Text(
                 'POINTS',
                 style: TextStyle(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.35),
-                  
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 2,
+                  fontSize: 14,
+                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4),
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 3,
                 ),
               ).animate()
                 .fadeIn(duration: 500.ms, delay: 150.ms),
@@ -850,7 +852,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
   Widget _buildCategoryDetailCard(String title, String categoryKey, int baseScore, bool isDark) {
     final categoryData = _getCategoryData(categoryKey, baseScore);
     final score = categoryData['score'] as int;
-    final advice = categoryData['advice'] as String;
+    final advice = FortuneTextCleaner.clean(categoryData['advice'] as String);
     final emoji = _getCategoryEmoji(categoryKey);
     final scoreColor = _getPulseScoreColor(score);
 
@@ -898,31 +900,34 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 점수 표시
+              // 점수 표시 - 크고 임팩트 있게
               Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
                 children: [
                   Text(
                     '$score',
                     style: TextStyle(
+                      fontSize: 56,
                       color: scoreColor,
-                      
                       fontWeight: FontWeight.w200,
+                      letterSpacing: -2,
                       height: 1.0,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   Text(
                     '점',
                     style: TextStyle(
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4),
-                      
+                      fontSize: 18,
+                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
               // 프로그레스 바
               Stack(
@@ -1106,6 +1111,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                     matchScore: matchScore,
                     description: '사주 오행의 균형이 비슷합니다',
                     isDark: isDark,
+                    celebrityType: celeb.category,
                   ),
                 );
               }).toList(),
@@ -1123,8 +1129,38 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     required int matchScore,
     required String description,
     required bool isDark,
+    String? celebrityType,
   }) {
     final scoreColor = _getPulseScoreColor(matchScore);
+
+    // 직업별 이모지 매핑 (DB 영어 category 값 사용)
+    String getTypeEmoji(String? type) {
+      switch (type?.toLowerCase()) {
+        case 'singer':
+        case 'solo_singer':
+        case 'idol_member':
+          return '🎤';
+        case 'actor':
+          return '🎬';
+        case 'athlete':
+        case 'sports':
+          return '⚽';
+        case 'politician':
+          return '🏛️';
+        case 'business_leader':
+        case 'business':
+          return '💼';
+        case 'pro_gamer':
+          return '🎮';
+        case 'streamer':
+        case 'youtuber':
+          return '📺';
+        case 'entertainer':
+          return '🎭';
+        default:
+          return '⭐';
+      }
+    }
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -1141,7 +1177,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
       ),
       child: Row(
         children: [
-          // 아바타 (심플하게)
+          // 아바타 (직업별 이모지)
           Container(
             width: 56,
             height: 56,
@@ -1155,11 +1191,9 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             ),
             child: Center(
               child: Text(
-                name.substring(0, 1),
-                style: TextStyle(
-                  color: scoreColor,
-                  
-                  fontWeight: FontWeight.w600,
+                getTypeEmoji(celebrityType),
+                style: const TextStyle(
+                  fontSize: 24,
                 ),
               ),
             ),
@@ -1223,9 +1257,9 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
 
   Widget _buildFallbackCelebrityCards(bool isDark) {
     final fallbackCelebrities = [
-      {'name': '아이유', 'match': 85, 'description': '창의적이고 감성적인 성향이 비슷합니다'},
-      {'name': '박서준', 'match': 78, 'description': '리더십과 추진력이 유사합니다'},
-      {'name': '김고은', 'match': 72, 'description': '예술적 감각이 닮았습니다'},
+      {'name': '아이유', 'match': 85, 'description': '창의적이고 감성적인 성향이 비슷합니다', 'type': '솔로 가수'},
+      {'name': '박서준', 'match': 78, 'description': '리더십과 추진력이 유사합니다', 'type': '배우'},
+      {'name': '김고은', 'match': 72, 'description': '예술적 감각이 닮았습니다', 'type': '배우'},
     ];
 
     return Column(
@@ -1237,6 +1271,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
             matchScore: celeb['match'] as int,
             description: celeb['description'] as String,
             isDark: isDark,
+            celebrityType: celeb['type'] as String,
           ),
         );
       }).toList(),
@@ -1278,7 +1313,8 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
 
   String? _getMainScoreSubtitle() {
     final description = widget.fortune?.metadata?['categories']?['total']?['advice']?['description'];
-    return description?.toString();
+    if (description == null) return null;
+    return FortuneTextCleaner.clean(description.toString());
   }
 
   /// 총운 300자 상세 설명 가져오기
@@ -1286,7 +1322,7 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     // 1. API에서 받은 300자 설명 우선
     final fullDescription = widget.fortune?.metadata?['categories']?['total']?['advice']?['full_description'];
     if (fullDescription != null && fullDescription.toString().isNotEmpty) {
-      return fullDescription.toString();
+      return FortuneTextCleaner.clean(fullDescription.toString());
     }
 
     // 2. 점수 기반 300자 상세 설명 (fallback)
@@ -1365,9 +1401,9 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         dailyPredictions['morning'] != null &&
         dailyPredictions['morning'].toString().isNotEmpty) {
       return {
-        'morning': dailyPredictions['morning']?.toString() ?? '',
-        'afternoon': dailyPredictions['afternoon']?.toString() ?? '',
-        'evening': dailyPredictions['evening']?.toString() ?? '',
+        'morning': FortuneTextCleaner.clean(dailyPredictions['morning']?.toString() ?? ''),
+        'afternoon': FortuneTextCleaner.clean(dailyPredictions['afternoon']?.toString() ?? ''),
+        'evening': FortuneTextCleaner.clean(dailyPredictions['evening']?.toString() ?? ''),
       };
     }
 
@@ -1377,9 +1413,9 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
         timeAdvice['morning'] != null &&
         timeAdvice['morning'].toString().isNotEmpty) {
       return {
-        'morning': timeAdvice['morning']?.toString() ?? '',
-        'afternoon': timeAdvice['afternoon']?.toString() ?? '',
-        'evening': timeAdvice['evening']?.toString() ?? '',
+        'morning': FortuneTextCleaner.clean(timeAdvice['morning']?.toString() ?? ''),
+        'afternoon': FortuneTextCleaner.clean(timeAdvice['afternoon']?.toString() ?? ''),
+        'evening': FortuneTextCleaner.clean(timeAdvice['evening']?.toString() ?? ''),
       };
     }
 
@@ -1387,9 +1423,9 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
     final hourlyAdvice = widget.fortune?.metadata?['hourly_advice'];
     if (hourlyAdvice != null) {
       return {
-        'morning': hourlyAdvice['morning']?.toString() ?? '',
-        'afternoon': hourlyAdvice['afternoon']?.toString() ?? '',
-        'evening': hourlyAdvice['evening']?.toString() ?? '',
+        'morning': FortuneTextCleaner.clean(hourlyAdvice['morning']?.toString() ?? ''),
+        'afternoon': FortuneTextCleaner.clean(hourlyAdvice['afternoon']?.toString() ?? ''),
+        'evening': FortuneTextCleaner.clean(hourlyAdvice['evening']?.toString() ?? ''),
       };
     }
 
@@ -1622,8 +1658,8 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  sajuData['insight']?.toString() ??
-                  '당신의 사주는 균형잡힌 에너지를 가지고 있습니다. 오늘은 본래의 성향을 잘 활용하면 좋은 결과를 얻을 수 있습니다.',
+                  FortuneTextCleaner.clean(sajuData['insight']?.toString() ??
+                  '당신의 사주는 균형잡힌 에너지를 가지고 있습니다. 오늘은 본래의 성향을 잘 활용하면 좋은 결과를 얻을 수 있습니다.'),
                   style: TypographyUnified.bodySmall.copyWith(
                     color: Colors.white,
                     height: 1.6,
@@ -2553,7 +2589,6 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
 
         // 베스트/워스트 시간대 요약 (1줄로 축소)
         Container(
-          height: 68,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF2D2D2D).withValues(alpha: 0.5) : const Color(0xFFF8F9FA),
@@ -2604,20 +2639,23 @@ class _FortuneCompletionPageTinderState extends ConsumerState<FortuneCompletionP
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,  // Fix overflow
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         '주의',
-                        style: TypographyUnified.labelMedium.copyWith(
+                        style: TypographyUnified.labelSmall.copyWith(
                           color: const Color(0xFFEF4444),
                           fontWeight: FontWeight.w600,
+                          height: 1.0,
                         ),
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         '$worstHour시',
-                        style: TypographyUnified.buttonMedium.copyWith(
+                        style: TypographyUnified.buttonSmall.copyWith(
                           color: isDark ? Colors.white : Colors.black87,
                           fontWeight: FontWeight.w700,
+                          height: 1.0,
                         ),
                       ),
                     ],

@@ -314,6 +314,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
       body: SafeArea(
+        bottom: false, // 하단 네비게이션 바는 침범 허용
         child: SingleChildScrollView(
           controller: _scrollController,
           child: Column(
@@ -350,7 +351,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ? const Icon(Icons.person, size: 24)
                             : null,
                       ),
-                      title: (userProfile ?? localProfile)?['name'] ?? '사용자',
+                      // 로컬 스토리지 이름 우선 (사용자가 직접 입력한 이름), DB 이름 폴백
+                      title: localProfile?['name'] ?? userProfile?['name'] ?? '사용자',
                       subtitle: _formatProfileSubtitle(),
                       trailing: Icon(
                         Icons.chevron_right,
@@ -505,7 +507,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     SettingsListTile(
                       icon: Icons.visibility_outlined,
-                      title: '총 조회수',
+                      title: '총 운세 본 수',
                       trailing: Text(
                         '${userStats?['total_fortunes'] ?? 0}회',
                         style: typography.bodyMedium.copyWith(
@@ -726,7 +728,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
 
-              const SizedBox(height: TossDesignSystem.spacingXXL),
+              // 네비게이션 바 높이(56) + SafeArea 하단 여백 확보
+              const SizedBox(height: 100),
             ],
           ),
         ),

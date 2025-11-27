@@ -10,12 +10,13 @@ class CelebrityService {
 
   static final SupabaseClient _supabase = Supabase.instance.client;
 
-  /// Get all celebrities
+  /// Get all celebrities (active only, excludes groups)
   Future<List<Celebrity>> getAllCelebrities({int limit = 100}) async {
     try {
       final response = await _supabase
           .from('celebrities')
           .select()
+          .eq('is_active', true)
           .order('name')
           .limit(limit);
 
@@ -42,7 +43,7 @@ class CelebrityService {
     }
   }
 
-  /// Get celebrities by type
+  /// Get celebrities by type (active only)
   Future<List<Celebrity>> getCelebritiesByType(
     CelebrityType type, {
     int limit = 50,
@@ -51,6 +52,7 @@ class CelebrityService {
       final response = await _supabase
           .from('celebrities')
           .select()
+          .eq('is_active', true)
           .eq('celebrity_type', type.name)
           .order('name')
           .limit(limit);
@@ -62,7 +64,7 @@ class CelebrityService {
     }
   }
 
-  /// Search celebrities
+  /// Search celebrities (active only)
   Future<List<Celebrity>> searchCelebrities(
     String query, {
     CelebrityType? type,
@@ -74,6 +76,7 @@ class CelebrityService {
       var queryBuilder = _supabase
           .from('celebrities')
           .select()
+          .eq('is_active', true)
           .ilike('name', '%$query%');
 
       if (type != null) {
@@ -99,13 +102,13 @@ class CelebrityService {
     }
   }
 
-  /// Get random celebrities
+  /// Get random celebrities (active only, excludes groups)
   Future<List<Celebrity>> getRandomCelebrities({
     int count = 10,
     CelebrityType? type,
   }) async {
     try {
-      var queryBuilder = _supabase.from('celebrities').select();
+      var queryBuilder = _supabase.from('celebrities').select().eq('is_active', true);
 
       if (type != null) {
         queryBuilder = queryBuilder.eq('celebrity_type', type.name);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 
@@ -57,7 +58,7 @@ class FortuneDisplay extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: AppSpacing.spacing2),
           Text(
-            description,
+            FortuneTextCleaner.clean(description),
             style: Theme.of(context).textTheme.bodyMedium)]));
   }
 
@@ -206,7 +207,7 @@ class FortuneDisplay extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium)]),
                 const SizedBox(height: AppSpacing.spacing2),
                 Text(
-                  entry.value.toString(),
+                  FortuneTextCleaner.clean(entry.value.toString()),
                   style: Theme.of(context).textTheme.bodyMedium)])));
       }).toList());
   }
@@ -233,7 +234,7 @@ class FortuneDisplay extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium)]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
-            advice!,
+            FortuneTextCleaner.clean(advice!),
             style: Theme.of(context).textTheme.bodyMedium)]));
   }
 
@@ -259,7 +260,7 @@ class FortuneDisplay extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium)]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
-            warningMessage!,
+            FortuneTextCleaner.clean(warningMessage!),
             style: Theme.of(context).textTheme.bodyMedium)]));
   }
 

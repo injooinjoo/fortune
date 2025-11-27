@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fortune/domain/entities/fortune.dart' show Fortune;
+import 'package:fortune/services/favorites_widget_data_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../pages/fortune_list_page.dart';
 
@@ -115,6 +117,16 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
 
     state = state.copyWith(favorites: newFavorites);
     await _saveToPreferences();
+
+    // 위젯 데이터 동기화
+    await _syncWidgetFavorites(newFavorites);
+  }
+
+  /// 위젯 즐겨찾기 동기화
+  Future<void> _syncWidgetFavorites(Set<String> favorites) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('fortune_favorites', favorites.toList());
+    await FavoritesWidgetDataManager.syncToWidget();
   }
 
   /// 사용자 지정 순서 업데이트 (드래그 앤 드롭)
@@ -136,6 +148,20 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
 
     state = state.copyWith(lastViewed: newLastViewed);
     await _saveToPreferences();
+  }
+
+  /// 운세 데이터를 위젯에 캐시 (즐겨찾기된 운세만)
+  Future<void> cacheFortuneForWidget(String fortuneType, Fortune fortune) async {
+    // 즐겨찾기된 운세만 캐시
+    if (state.favorites.contains(fortuneType)) {
+      await FavoritesWidgetDataManager.cacheFortune(fortuneType, fortune);
+      await FavoritesWidgetDataManager.syncToWidget();
+    }
+  }
+
+  /// 위젯 롤링 업데이트 트리거
+  Future<void> triggerWidgetRolling() async {
+    await FavoritesWidgetDataManager.handleRollingUpdate();
   }
 
   /// 오늘 조회 가능 여부 확인

@@ -90,7 +90,6 @@ class EdgeFunctionsEndpoints {
 
   // 행운 아이템
   static const String luckyItemsFortune = '/fortune-lucky-items';
-  static const String luckySeriesFortune = '/fortune-lucky-series';
 
   // 특별 운세
   static const String avoidPeopleFortune = '/fortune-avoid-people';
@@ -136,7 +135,6 @@ class EdgeFunctionsEndpoints {
       'family-harmony': familyHarmonyFortune,
       // 행운 아이템
       'lucky-items': luckyItemsFortune,
-      'lucky-series': luckySeriesFortune,
       // 특별 운세
       'avoid-people': avoidPeopleFortune,
       // 반려동물

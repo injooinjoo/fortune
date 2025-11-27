@@ -2,6 +2,8 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -84,30 +86,100 @@ serve(async (req) => {
     } else {
       console.log('🔄 Cache miss, calling LLM API')
 
-      // ✅ LLM 모듈 사용 (Provider 자동 선택)
-      const llm = LLMFactory.createFromConfig('moving')
+      // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+      const llm = await LLMFactory.createFromConfigAsync('moving')
 
-      // 프롬프트 생성
-      const systemPrompt = '당신은 한국의 전문 이사운세 전문가입니다. 항상 한국어로 JSON 형식으로 응답하며, 실용적이고 긍정적인 조언을 제공합니다.'
+      // ✅ 강화된 시스템 프롬프트 (풍수지리 전문가 페르소나 + 분석 프레임워크)
+      const systemPrompt = `당신은 30년 경력의 풍수지리(風水地理) 전문가이자 택일(擇日) 전문 상담사입니다.
+동양 철학의 음양오행(陰陽五行)과 팔방위(八方位) 이론을 깊이 연구했으며, 수천 건의 이사 상담 경험이 있습니다.
 
-      const userPrompt = `당신은 한국의 전문 이사운세 전문가입니다. 다음 정보를 바탕으로 구체적이고 실용적인 이사 조언을 JSON 형식으로 제공해주세요.
+# 전문 분야
+- 풍수지리학: 양택풍수(陽宅風水), 음택풍수(陰宅風水), 지리오결(地理五訣)
+- 택일학(擇日學): 이사길일 선정, 오행배합(五行配合), 십이신살(十二神殺)
+- 방위학: 팔방위(八方位), 동사택/서사택(東四宅/西四宅), 구궁비성(九宮飛星)
+- 공간배치: 현관, 부엌, 침실 위치와 기운 흐름
 
-현재 거주지: "${current_area}"
-이사 예정지: "${target_area}"
-이사 시기: ${moving_period}
-이사 목적: ${purpose}
+# 분석 철학
+1. **과학적 풍수**: 미신이 아닌 환경학적 관점에서 해석
+2. **균형성**: 긍정적이되 현실적인 조언
+3. **실용성**: 즉시 적용 가능한 구체적 방법
+4. **맞춤형**: 이사 목적과 시기에 맞는 개인화된 분석
 
-다음 정보를 포함하여 상세한 이사운을 JSON 형식으로 제공해주세요:
+# 출력 형식 (반드시 JSON 형식으로)
+{
+  "title": "희망적인 제목 (예: '서쪽으로의 이사, 재물운이 열립니다')",
+  "score": 70-95 사이 정수 (이사운 종합 점수),
+  "overall_fortune": "전반적인 이사운 분석 (최소 200자, 길흉 판단과 종합적 해석)",
+  "direction_analysis": {
+    "direction": "방위 (동/서/남/북/동북/동남/서북/서남 중 택1)",
+    "direction_meaning": "해당 방위의 풍수적 의미 (100자 이상)",
+    "element": "해당 방위의 오행 (목/화/토/금/수)",
+    "element_effect": "오행이 미치는 영향 (100자 이상)",
+    "compatibility": "이사 방위 궁합 점수 (0-100)",
+    "compatibility_reason": "궁합 판단 이유 (100자 이상)"
+  },
+  "timing_analysis": {
+    "season_luck": "해당 계절의 이사운 (봄/여름/가을/겨울)",
+    "season_meaning": "계절별 의미와 오행 관계 (100자 이상)",
+    "month_luck": "해당 월의 이사운 점수 (0-100)",
+    "recommendation": "시기 적절성 평가 및 조언 (100자 이상)"
+  },
+  "lucky_dates": {
+    "recommended_dates": ["이사하기 좋은 날짜 3개 (예: '음력 X월 X일', '양력 X월 X일 토요일')"],
+    "avoid_dates": ["피해야 할 날짜 또는 일진 2개"],
+    "best_time": "하루 중 이사하기 좋은 시간대 (구체적 시간)",
+    "reason": "날짜 선정 이유 (100자 이상)"
+  },
+  "feng_shui_tips": {
+    "entrance": "현관 관련 풍수 조언 (50자 이상)",
+    "living_room": "거실 관련 풍수 조언 (50자 이상)",
+    "bedroom": "침실 관련 풍수 조언 (50자 이상)",
+    "kitchen": "부엌 관련 풍수 조언 (50자 이상)"
+  },
+  "cautions": {
+    "moving_day": ["이사 당일 주의사항 3가지 (구체적)"],
+    "first_week": ["입주 첫 주 주의사항 3가지"],
+    "things_to_avoid": ["절대 하지 말아야 할 것 2가지"]
+  },
+  "recommendations": {
+    "before_moving": ["이사 전 준비사항 3가지"],
+    "moving_day_ritual": ["이사 당일 행운 의식 3가지 (예: 쌀과 소금 먼저 들이기)"],
+    "after_moving": ["입주 후 실천사항 3가지"]
+  },
+  "lucky_items": {
+    "items": ["이사 시 행운을 부르는 물건 3가지"],
+    "colors": ["새 집에 어울리는 행운의 색상 2가지"],
+    "plants": ["집안에 두면 좋은 식물 2가지"]
+  },
+  "summary": {
+    "one_line": "이사운을 한 문장으로 요약",
+    "keywords": ["핵심 키워드 3개"],
+    "final_message": "따뜻한 마무리 메시지 (100자 이상)"
+  }
+}
 
-1. 전반적인 운세: 이사의 길흉과 전체적인 운
-2. 방위 분석: 현재 위치에서 이사갈 곳의 방위와 의미
-3. 시기 분석: 이사 시기의 적절성과 주의사항
-4. 주의사항: 이사할 때 특히 조심해야 할 점 3가지
-5. 추천사항: 이사를 성공적으로 마치기 위한 조언 3가지
-6. 행운의 날: 이사하기 좋은 날짜 추천
-7. 정리 키워드: 이사운을 한 줄로 요약
+# 분량 요구사항
+- 전체: 최소 1500자 이상
+- 각 주요 섹션: 최소 100자 이상
+- overall_fortune: 200자 이상
+- 구체적 상황에 맞춘 맞춤형 분석 (일반적 표현 금지)
 
-긍정적이면서도 현실적인 관점으로 조언해주세요.`
+# 주의사항
+- 현재 지역과 이사 지역을 기반으로 실제 방위 분석
+- 이사 시기와 목적에 맞는 맞춤형 조언
+- 모호한 점술 표현 금지 (구체적 날짜, 시간, 방법 제시)
+- 반드시 유효한 JSON 형식으로 출력`
+
+      const userPrompt = `# 이사 상담 요청 정보
+
+## 이사 정보
+- 현재 거주지: ${current_area}
+- 이사 예정지: ${target_area}
+- 이사 예정 시기: ${moving_period || '미정'}
+- 이사 목적: ${purpose || '새로운 시작'}
+
+위 정보를 바탕으로 전문적이고 상세한 이사운 분석을 JSON 형식으로 제공해주세요.
+특히 ${current_area}에서 ${target_area}로의 방위 분석과 ${moving_period || '향후'} 시기의 적절성을 중점적으로 분석해주세요.`
 
       // ✅ LLM 호출 (Provider 무관)
       const response = await llm.generate([
@@ -119,11 +191,22 @@ serve(async (req) => {
         jsonMode: true
       })
 
-      console.log(`✅ LLM 호출 완료:`)
-      console.log(`  Provider: ${response.provider}`)
-      console.log(`  Model: ${response.model}`)
-      console.log(`  Latency: ${response.latency}ms`)
-      console.log(`  Tokens: ${response.usage.totalTokens}`)
+      console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+      // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+      await UsageLogger.log({
+        fortuneType: 'moving',
+        provider: response.provider,
+        model: response.model,
+        response: response,
+        metadata: {
+          current_area,
+          target_area,
+          moving_period,
+          purpose,
+          isPremium
+        }
+      })
 
       // JSON 파싱
       let parsedResponse: any
@@ -134,28 +217,124 @@ serve(async (req) => {
         throw new Error('API 응답 형식이 올바르지 않습니다.')
       }
 
-      // ✅ Blur 로직 적용
+      // ✅ Blur 로직 적용 (프리미엄이 아니면 상세 분석 블러 처리)
       const isBlurred = !isPremium
       const blurredSections = isBlurred
-        ? ['direction_analysis', 'timing_analysis', 'cautions', 'recommendations', 'lucky_dates', 'summary_keyword']
+        ? ['direction_analysis', 'timing_analysis', 'lucky_dates', 'feng_shui_tips', 'cautions', 'recommendations', 'lucky_items']
         : []
+
+      // 블러 처리용 기본 메시지
+      const blurredMessage = '🔒 프리미엄 결제 후 확인 가능합니다'
+      const blurredArray = ['🔒 프리미엄 결제 후 확인 가능합니다']
 
       // 응답 데이터 구조화
       fortuneData = {
-        title: `${current_area} → ${target_area} 이사운`,
+        title: parsedResponse.title || `${current_area} → ${target_area} 이사운`,
         fortune_type: 'moving',
         current_area,
         target_area,
         moving_period,
         purpose,
-        score: Math.floor(Math.random() * 30) + 70, // ✅ 무료: 공개
-        overall_fortune: parsedResponse.전반적인운세 || parsedResponse.overall_fortune || '길한 이사입니다.', // ✅ 무료: 공개
-        direction_analysis: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.방위분석 || parsedResponse.direction_analysis || '좋은 방향입니다.'), // 🔒 유료
-        timing_analysis: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (parsedResponse.시기분석 || parsedResponse.timing_analysis || '적절한 시기입니다.'), // 🔒 유료
-        cautions: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.주의사항 || parsedResponse.cautions || ['이사 전 청소', '풍수 확인', '날짜 선택']), // 🔒 유료
-        recommendations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.추천사항 || parsedResponse.recommendations || ['긍정적 마음', '계획적 준비', '이웃 인사']), // 🔒 유료
-        lucky_dates: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (parsedResponse.행운의날 || parsedResponse.lucky_dates || ['주말', '오전 시간대']), // 🔒 유료
-        summary_keyword: isBlurred ? '🔒' : (parsedResponse.정리키워드 || parsedResponse.summary_keyword || '길한 이사'), // 🔒 유료
+        // ✅ 무료: 공개 섹션
+        score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
+        overall_fortune: parsedResponse.overall_fortune || '새로운 터전에서 좋은 기운이 함께 합니다.',
+
+        // 🔒 프리미엄: 방위 분석
+        direction_analysis: isBlurred ? {
+          direction: blurredMessage,
+          direction_meaning: blurredMessage,
+          element: blurredMessage,
+          element_effect: blurredMessage,
+          compatibility: 0,
+          compatibility_reason: blurredMessage
+        } : (parsedResponse.direction_analysis || {
+          direction: '분석 중',
+          direction_meaning: '방위 분석 중입니다.',
+          element: '분석 중',
+          element_effect: '오행 분석 중입니다.',
+          compatibility: 75,
+          compatibility_reason: '궁합 분석 중입니다.'
+        }),
+
+        // 🔒 프리미엄: 시기 분석
+        timing_analysis: isBlurred ? {
+          season_luck: blurredMessage,
+          season_meaning: blurredMessage,
+          month_luck: 0,
+          recommendation: blurredMessage
+        } : (parsedResponse.timing_analysis || {
+          season_luck: '분석 중',
+          season_meaning: '계절 분석 중입니다.',
+          month_luck: 75,
+          recommendation: '시기 분석 중입니다.'
+        }),
+
+        // 🔒 프리미엄: 길일 추천
+        lucky_dates: isBlurred ? {
+          recommended_dates: blurredArray,
+          avoid_dates: blurredArray,
+          best_time: blurredMessage,
+          reason: blurredMessage
+        } : (parsedResponse.lucky_dates || {
+          recommended_dates: ['날짜 분석 중'],
+          avoid_dates: ['분석 중'],
+          best_time: '오전',
+          reason: '길일 분석 중입니다.'
+        }),
+
+        // 🔒 프리미엄: 풍수 조언
+        feng_shui_tips: isBlurred ? {
+          entrance: blurredMessage,
+          living_room: blurredMessage,
+          bedroom: blurredMessage,
+          kitchen: blurredMessage
+        } : (parsedResponse.feng_shui_tips || {
+          entrance: '현관 분석 중입니다.',
+          living_room: '거실 분석 중입니다.',
+          bedroom: '침실 분석 중입니다.',
+          kitchen: '부엌 분석 중입니다.'
+        }),
+
+        // 🔒 프리미엄: 주의사항
+        cautions: isBlurred ? {
+          moving_day: blurredArray,
+          first_week: blurredArray,
+          things_to_avoid: blurredArray
+        } : (parsedResponse.cautions || {
+          moving_day: ['주의사항 분석 중'],
+          first_week: ['분석 중'],
+          things_to_avoid: ['분석 중']
+        }),
+
+        // 🔒 프리미엄: 추천사항
+        recommendations: isBlurred ? {
+          before_moving: blurredArray,
+          moving_day_ritual: blurredArray,
+          after_moving: blurredArray
+        } : (parsedResponse.recommendations || {
+          before_moving: ['준비사항 분석 중'],
+          moving_day_ritual: ['분석 중'],
+          after_moving: ['분석 중']
+        }),
+
+        // 🔒 프리미엄: 행운 아이템
+        lucky_items: isBlurred ? {
+          items: blurredArray,
+          colors: blurredArray,
+          plants: blurredArray
+        } : (parsedResponse.lucky_items || {
+          items: ['분석 중'],
+          colors: ['분석 중'],
+          plants: ['분석 중']
+        }),
+
+        // ✅ 무료: 요약 (일부만 공개)
+        summary: {
+          one_line: parsedResponse.summary?.one_line || '좋은 이사가 될 것입니다.',
+          keywords: isBlurred ? blurredArray : (parsedResponse.summary?.keywords || ['분석 중']),
+          final_message: parsedResponse.summary?.final_message || '새로운 터전에서 행복한 나날 되세요.'
+        },
+
         timestamp: new Date().toISOString(),
         isBlurred, // ✅ 블러 상태
         blurredSections, // ✅ 블러된 섹션 목록
@@ -176,10 +355,14 @@ serve(async (req) => {
         })
     }
 
+    // ✅ 퍼센타일 계산
+    const percentileData = await calculatePercentile(supabase, 'moving', fortuneData.score)
+    const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
+
     // 성공 응답
     const responseData = {
       success: true,
-      data: fortuneData
+      data: fortuneDataWithPercentile
     }
 
     return new Response(JSON.stringify(responseData), {

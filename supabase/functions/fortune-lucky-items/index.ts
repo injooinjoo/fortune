@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -72,8 +74,8 @@ serve(async (req) => {
     console.log('💎 [LuckyItems] Premium 상태:', isPremium)
     console.log(`[fortune-lucky-items] 🎯 Request received:`, { userId, name, birthDate })
 
-    // LLM 호출
-    const llm = LLMFactory.createFromConfig('fortune-lucky-items')
+    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    const llm = await LLMFactory.createFromConfigAsync('fortune-lucky-items')
 
     const systemPrompt = `당신은 동양 철학과 오행(五行) 이론에 기반한 행운 아이템 분석 전문가입니다.
 사용자의 생년월일, 출생 시간, 성별, 관심사를 기반으로 개인화된 행운 아이템을 추천합니다.
@@ -142,6 +144,16 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
 
     console.log(`[fortune-lucky-items] ✅ LLM 응답 수신 (${response.latency}ms, ${response.usage?.totalTokens || 0} tokens)`)
 
+    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    await UsageLogger.log({
+      fortuneType: 'lucky-items',
+      userId: userId,
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: { name, birthDate, gender, interests, isPremium }
+    })
+
     // JSON 파싱
     let fortuneData: any
     try {
@@ -160,28 +172,34 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
       : []
 
     // 응답 데이터 구성
+    const resultData = {
+      title: fortuneData.title || `행운 아이템 - ${name}님`,
+      summary: fortuneData.summary || '', // ✅ 무료: 공개
+      keyword: fortuneData.keyword || '', // ✅ 무료: 공개
+      color: fortuneData.color || '', // ✅ 무료: 공개
+      numbers: fortuneData.numbers || [3, 7, 21], // ✅ 무료: 공개
+      direction: fortuneData.direction || '동쪽', // ✅ 무료: 공개
+      element: fortuneData.element || '금', // ✅ 무료: 공개
+      score: fortuneData.score || 75, // ✅ 무료: 공개
+      fashion: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.fashion || []), // 🔒 유료
+      food: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.food || []), // 🔒 유료
+      jewelry: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.jewelry || []), // 🔒 유료
+      material: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.material || []), // 🔒 유료
+      places: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.places || []), // 🔒 유료
+      relationships: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.relationships || []), // 🔒 유료
+      advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (fortuneData.advice || ''), // 🔒 유료
+      timestamp: new Date().toISOString(),
+      isBlurred, // ✅ 블러 상태
+      blurredSections, // ✅ 블러된 섹션 목록
+    }
+
+    // ✅ Percentile 계산 추가
+    const percentileData = await calculatePercentile(supabaseClient, 'lucky-items', resultData.score)
+    const resultDataWithPercentile = addPercentileToResult(resultData, percentileData)
+
     const result: LuckyItemsResponse = {
       success: true,
-      data: {
-        title: fortuneData.title || `행운 아이템 - ${name}님`,
-        summary: fortuneData.summary || '', // ✅ 무료: 공개
-        keyword: fortuneData.keyword || '', // ✅ 무료: 공개
-        color: fortuneData.color || '', // ✅ 무료: 공개
-        numbers: fortuneData.numbers || [3, 7, 21], // ✅ 무료: 공개
-        direction: fortuneData.direction || '동쪽', // ✅ 무료: 공개
-        element: fortuneData.element || '금', // ✅ 무료: 공개
-        score: fortuneData.score || 75, // ✅ 무료: 공개
-        fashion: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.fashion || []), // 🔒 유료
-        food: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.food || []), // 🔒 유료
-        jewelry: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.jewelry || []), // 🔒 유료
-        material: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.material || []), // 🔒 유료
-        places: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.places || []), // 🔒 유료
-        relationships: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : (fortuneData.relationships || []), // 🔒 유료
-        advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : (fortuneData.advice || ''), // 🔒 유료
-        timestamp: new Date().toISOString(),
-        isBlurred, // ✅ 블러 상태
-        blurredSections, // ✅ 블러된 섹션 목록
-      },
+      data: resultDataWithPercentile as LuckyItemsResponse['data'],
     }
 
     console.log(`[fortune-lucky-items] ✅ 응답 생성 완료`)

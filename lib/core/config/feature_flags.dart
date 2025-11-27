@@ -9,7 +9,7 @@ class FeatureFlags {
   static FeatureFlags get instance => _instance;
 
   // Feature flag for Edge Functions migration
-  bool _useEdgeFunctions = false; // Temporarily disabled for debugging
+  bool _useEdgeFunctions = true; // ✅ Enabled - using Edge Functions with percentile support
   
   // Percentage of users to enable Edge Functions for (0-100)
   int _edgeFunctionsRolloutPercentage = 100; // Enable for all users

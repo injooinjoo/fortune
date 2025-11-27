@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     : TossDesignSystem.black,
                 fontWeight: FontWeight.w300,
                 letterSpacing: 2,
-                fontFamily: 'NotoSansKR',
+                fontFamily: 'ZenSerif',
               ),
             )
                 .animate()

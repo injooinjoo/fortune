@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../domain/entities/fortune.dart';
 
 class FortuneContentCard extends StatelessWidget {
@@ -25,7 +26,7 @@ class FortuneContentCard extends StatelessWidget {
               ),
               const SizedBox(height: TossDesignSystem.spacingS),
               Text(
-                fortune.content,
+                FortuneTextCleaner.clean(fortune.content),
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge
@@ -87,7 +88,7 @@ class FortuneContentCard extends StatelessWidget {
                       const SizedBox(width: TossDesignSystem.spacingS),
                       Expanded(
                         child: Text(
-                          rec,
+                          FortuneTextCleaner.clean(rec),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
@@ -123,7 +124,7 @@ class FortuneContentCard extends StatelessWidget {
                       const SizedBox(width: TossDesignSystem.spacingS),
                       Expanded(
                         child: Text(
-                          warning,
+                          FortuneTextCleaner.clean(warning),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),

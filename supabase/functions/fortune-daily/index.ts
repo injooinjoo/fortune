@@ -1,5 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile } from '../_shared/percentile/calculator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -193,6 +196,12 @@ serve(async (req) => {
   }
 
   try {
+    // Supabase 클라이언트 생성 (퍼센타일 계산용)
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    )
+
     const requestData = await req.json()
     const {
       userId,
@@ -505,8 +514,8 @@ ${idiom}의 의미를 자연스럽게 녹여내면서 오늘 하루를 어떻게
 점수에 맞는 적절한 톤으로 ${categoryName}에 대한 오늘의 조언을 작성해주세요.`;
         }
 
-        // ✅ LLM 모듈 사용
-        const llm = LLMFactory.createFromConfig('daily')
+        // ✅ LLM 모듈 사용 (DB 설정 기반 동적 모델 선택)
+        const llm = await LLMFactory.createFromConfigAsync('daily')
 
         const response = await llm.generate([
           {
@@ -524,6 +533,16 @@ ${idiom}의 의미를 자연스럽게 녹여내면서 오늘 하루를 어떻게
         })
 
         console.log(`✅ LLM 호출 완료 (${category}): ${response.provider}/${response.model} - ${response.latency}ms`)
+
+        // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+        await UsageLogger.log({
+          fortuneType: 'daily',
+          userId: userId,
+          provider: response.provider,
+          model: response.model,
+          response: response,
+          metadata: { category, categoryScore, idiom, name, birthDate, zodiacAnimal, zodiacSign, mbtiType }
+        })
 
         return response.content.trim()
       } catch (error) {
@@ -1394,10 +1413,26 @@ ${idiom}의 의미를 자연스럽게 녹여내면서 오늘 하루를 어떻게
       console.log('✅ Fortune validation passed successfully');
     }
 
+    // ✅ 퍼센타일 계산 (오늘 운세를 본 사람들 중 상위 몇 %)
+    const percentileData = await calculatePercentile(
+      supabaseClient,
+      'daily',
+      score
+    )
+    console.log(`📊 [Daily] Percentile: ${percentileData.isPercentileValid ? `상위 ${percentileData.percentile}%` : '데이터 부족'}`)
+
+    // 퍼센타일 정보를 fortune에 추가
+    const fortuneWithPercentile = {
+      ...fortune,
+      percentile: percentileData.percentile,
+      totalTodayViewers: percentileData.totalTodayViewers,
+      isPercentileValid: percentileData.isPercentileValid
+    }
+
     // 운세와 스토리를 함께 반환
     return new Response(
-      JSON.stringify({ 
-        fortune,
+      JSON.stringify({
+        fortune: fortuneWithPercentile,
         storySegments,
         cached: false,
         tokensUsed: 0

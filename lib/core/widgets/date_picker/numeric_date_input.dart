@@ -165,6 +165,22 @@ class _NumericDateInputState extends State<NumericDateInput> {
     // 숫자만 추출
     final numbers = value.replaceAll(RegExp(r'[^0-9]'), '');
 
+    // 백스페이스 감지: 입력 텍스트가 줄었는데 숫자 개수가 같거나 더 많은 경우
+    // (한글 "년/월/일"만 삭제된 경우) → 마지막 숫자 수동 삭제
+    if (value.length < _controller.text.length &&
+        numbers.length >= _rawInput.length &&
+        _rawInput.isNotEmpty) {
+      setState(() {
+        _rawInput = _rawInput.substring(0, _rawInput.length - 1);
+        _controller.text = _formatDisplay(_rawInput);
+        _controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller.text.length),
+        );
+        _errorMessage = null;
+      });
+      return;
+    }
+
     if (numbers.length > 8) {
       return; // 최대 8자리 (YYYYMMDD)
     }

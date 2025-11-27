@@ -28,6 +28,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
 
   Future<void> _initializePurchaseService() async {
     await _purchaseService.initialize();
+    if (!mounted) return;
     _purchaseService.setContext(context);
     _purchaseService.setCallbacks(
       onPurchaseStarted: () {
@@ -269,6 +270,58 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                 style: TossDesignSystem.caption.copyWith(
                   color: _getSecondaryTextColor(context),
                 ),
+              ),
+            ),
+
+            const SizedBox(height: TossDesignSystem.spacingL),
+
+            // Subscription Management Guide (Apple 심사 필수)
+            Container(
+              padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+              decoration: BoxDecoration(
+                color: _getCardColor(context),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: _getDividerColor(context),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 18,
+                        color: TossDesignSystem.tossBlue,
+                      ),
+                      const SizedBox(width: TossDesignSystem.spacingS),
+                      Text(
+                        '구독 관리 방법',
+                        style: TossDesignSystem.body2.copyWith(
+                          color: _getTextColor(context),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: TossDesignSystem.spacingM),
+                  Text(
+                    '구독 취소 및 관리는 Apple ID 설정에서 가능합니다:\n\n'
+                    '1. 설정 앱 열기\n'
+                    '2. 상단의 [내 이름] 탭\n'
+                    '3. [구독] 선택\n'
+                    '4. Fortune 앱 선택\n'
+                    '5. [구독 취소] 또는 플랜 변경\n\n'
+                    '• 구독 기간 종료 최소 24시간 전에 취소해야 다음 결제가 되지 않습니다.\n'
+                    '• 무료 체험 기간 중 취소하면 체험 기간 종료와 함께 구독이 해지됩니다.',
+                    style: TossDesignSystem.caption.copyWith(
+                      color: _getSecondaryTextColor(context),
+                      height: 1.5,
+                    ),
+                  ),
+                ],
               ),
             ),
 

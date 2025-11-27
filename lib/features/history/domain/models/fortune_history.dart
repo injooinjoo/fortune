@@ -44,7 +44,7 @@ class FortuneHistory extends Equatable {
       summary: json['summary'] as Map<String, dynamic>,
       createdAt: DateTime.parse(json['created_at'] as String),
       metadata: json['metadata'] as Map<String, dynamic>?,
-      detailedResult: json['detailed_result'] as Map<String, dynamic>?,
+      detailedResult: json['fortune_data'] as Map<String, dynamic>? ?? json['detailed_result'] as Map<String, dynamic>?,
       tags: (json['tags'] as List?)?.cast<String>(),
       viewCount: json['view_count'] as int?,
       isShared: json['is_shared'] as bool?,

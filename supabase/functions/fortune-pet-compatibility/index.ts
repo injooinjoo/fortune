@@ -1,4 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,6 +14,11 @@ serve(async (req) => {
   }
 
   try {
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    )
+
     const requestData = await req.json()
     const {
       userId,
@@ -552,10 +559,14 @@ serve(async (req) => {
       blurredSections // ✅ 블러된 섹션 목록
     }
 
+    // ✅ Percentile 계산 추가
+    const percentileData = await calculatePercentile(supabaseClient, 'pet-compatibility', compatibilityScore)
+    const fortuneWithPercentile = addPercentileToResult(fortune, percentileData)
+
     // Edge Function 응답 형식에 맞춰 반환
     return new Response(
-      JSON.stringify({ 
-        fortune,
+      JSON.stringify({
+        fortune: fortuneWithPercentile,
         tokensUsed: 0
       }),
       { 

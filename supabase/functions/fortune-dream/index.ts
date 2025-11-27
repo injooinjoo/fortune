@@ -1,6 +1,8 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -448,9 +450,9 @@ serve(async (req) => {
 
 위 가이드를 철저히 따라 전문적이고 풍부한 해몽을 작성해주세요.`
 
-      // ✅ 실제 LLM 호출
+      // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
       console.log('🔄 [Step 8] Calling LLM API for dream interpretation')
-      const llm = LLMFactory.createFromConfig('dream')
+      const llm = await LLMFactory.createFromConfigAsync('dream')
 
       const llmResponse = await llm.generate([
         {
@@ -485,6 +487,15 @@ serve(async (req) => {
       })
 
       console.log('✅ [Step 9] LLM response received:', { provider: llmResponse.provider, model: llmResponse.model, latency: `${llmResponse.latency}ms` })
+
+      // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+      await UsageLogger.log({
+        fortuneType: 'dream',
+        provider: llmResponse.provider,
+        model: llmResponse.model,
+        response: llmResponse,
+        metadata: { dreamLength: dream.length, dreamType, inputType, isPremium }
+      })
 
       const parsedResponse = JSON.parse(llmResponse.content)
       console.log('✅ [Step 10] Response parsed successfully')
@@ -535,11 +546,15 @@ serve(async (req) => {
       console.log('✅ [Step 16] Result cached')
     }
 
+    // ✅ 퍼센타일 계산
+    const percentileData = await calculatePercentile(supabase, 'dream', fortuneData.emotionalBalance * 10) // 1-10 → 10-100 변환
+    const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
+
     // 성공 응답
     console.log('🔄 [Step 17] Building success response')
     const response: DreamFortuneResponse = {
       success: true,
-      data: fortuneData
+      data: fortuneDataWithPercentile
     }
 
     console.log('✅ [Step 18] Sending response')

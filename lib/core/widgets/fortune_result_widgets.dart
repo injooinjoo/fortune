@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/toss_design_system.dart';
 import '../theme/app_theme_extensions.dart';
 import '../../shared/glassmorphism/glass_container.dart';
-import '../../shared/components/app_header.dart'; // FontSize enum
-import '../../presentation/providers/font_size_provider.dart';
+import '../../core/providers/user_settings_provider.dart';
 import '../utils/haptic_utils.dart';
+import '../utils/fortune_text_cleaner.dart';
 import '../../presentation/widgets/fortune_explanation_bottom_sheet.dart';
 import '../../core/constants/fortune_type_names.dart';
 
@@ -274,7 +274,7 @@ class FortuneResultWidgets {
   }) {
     if (description.isEmpty) return const SizedBox.shrink();
 
-    final fontSize = ref.watch(fontSizeProvider);
+    final fontScale = ref.watch(userSettingsProvider).fontScale;
 
     return GlassCard(
       padding: const EdgeInsets.all(20),
@@ -307,9 +307,9 @@ class FortuneResultWidgets {
           ),
           const SizedBox(height: 16),
           Text(
-            description,
+            FortuneTextCleaner.clean(description),
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: _getFontSize(fontSize),
+                  fontSize: 16 * fontScale,
                   height: 1.6,
                 ),
           ),
@@ -355,7 +355,7 @@ class FortuneResultWidgets {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      rec,
+                      FortuneTextCleaner.clean(rec),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
@@ -434,17 +434,5 @@ class FortuneResultWidgets {
     }
 
     return Icon(iconData, size: 32, color: color);
-  }
-
-  /// 폰트 크기 반환
-  static double _getFontSize(FontSize size) {
-    switch (size) {
-      case FontSize.small:
-        return 14;
-      case FontSize.medium:
-        return 16;
-      case FontSize.large:
-        return 18;
-    }
   }
 }

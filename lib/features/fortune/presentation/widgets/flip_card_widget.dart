@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
-class FlipCardWidget extends StatefulWidget {
+class FlipCardWidget extends ConsumerStatefulWidget {
   final int cardIndex;
   final bool isSelected;
   final int selectionOrder;
@@ -26,15 +27,16 @@ class FlipCardWidget extends StatefulWidget {
   });
 
   @override
-  State<FlipCardWidget> createState() => _FlipCardWidgetState();
+  ConsumerState<FlipCardWidget> createState() => _FlipCardWidgetState();
 }
 
-class _FlipCardWidgetState extends State<FlipCardWidget>
+class _FlipCardWidgetState extends ConsumerState<FlipCardWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _flipController;
   late Animation<double> _flipAnimation;
   bool _isFlipped = false;
   bool _showParticles = false;
+  bool _hapticTriggered = false;
 
   @override
   void initState() {
@@ -51,6 +53,14 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
       parent: _flipController,
       curve: Curves.easeInOut,
     ));
+
+    // 애니메이션 50% 지점에서 mysticalReveal 햅틱 트리거
+    _flipAnimation.addListener(() {
+      if (_flipAnimation.value >= 0.5 && !_hapticTriggered && _isFlipped) {
+        _hapticTriggered = true;
+        ref.read(fortuneHapticServiceProvider).mysticalReveal();
+      }
+    });
 
     _flipAnimation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -81,11 +91,10 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
       setState(() {
         _isFlipped = true;
         _showParticles = widget.showParticles;
+        _hapticTriggered = false; // 햅틱 트리거 리셋
       });
       _flipController.forward();
-
-      // Add haptic feedback when card flips
-      HapticFeedback.mediumImpact();
+      // mysticalReveal 햅틱은 애니메이션 50% 지점에서 자동 트리거됨
     }
   }
 

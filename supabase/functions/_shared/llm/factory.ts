@@ -6,17 +6,32 @@ import { OpenAIProvider } from './providers/openai.ts'
 import { AnthropicProvider } from './providers/anthropic.ts'
 import { GrokProvider } from './providers/grok.ts'
 import { getModelConfig } from './config.ts'
+import { ConfigService } from './config-service.ts'
 
 export class LLMFactory {
   /**
-   * 운세 타입에 맞는 LLM Provider 생성
+   * [비동기] DB 기반 동적 설정으로 LLM Provider 생성
+   * DB에서 설정을 조회하고, A/B 테스트 지원
+   * @param fortuneType 운세 타입
+   * @returns ILLMProvider 인스턴스
+   */
+  static async createFromConfigAsync(fortuneType: string): Promise<ILLMProvider> {
+    const config = await ConfigService.getModelConfig(fortuneType)
+
+    console.log(`🔧 LLM 설정 (동적): ${config.provider}/${config.model}${config.isAbTest ? ' [A/B]' : ''}`)
+
+    return this.createProvider(config.provider, config.model)
+  }
+
+  /**
+   * [동기] 정적 설정으로 LLM Provider 생성 (기존 호환성 유지)
    * @param fortuneType 운세 타입 (예: 'moving', 'tarot', 'love')
    * @returns ILLMProvider 인스턴스
    */
   static createFromConfig(fortuneType: string): ILLMProvider {
     const config = getModelConfig(fortuneType)
 
-    console.log(`🔧 LLM 설정: ${config.provider}/${config.model}`)
+    console.log(`🔧 LLM 설정 (정적): ${config.provider}/${config.model}`)
 
     switch (config.provider) {
       case 'gemini':
@@ -55,6 +70,16 @@ export class LLMFactory {
    * @returns ILLMProvider 인스턴스
    */
   static create(provider: 'gemini' | 'openai' | 'anthropic' | 'grok', model: string): ILLMProvider {
+    return this.createProvider(provider, model)
+  }
+
+  /**
+   * Provider 인스턴스 생성 (내부용)
+   */
+  private static createProvider(
+    provider: 'gemini' | 'openai' | 'anthropic' | 'grok',
+    model: string
+  ): ILLMProvider {
     switch (provider) {
       case 'gemini':
         return new GeminiProvider({

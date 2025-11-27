@@ -102,7 +102,7 @@
                 android:resource="@xml/fortune_daily_widget_info" />
         </receiver>
         
-        <receiver 
+        <receiver
             android:name=".FortuneLoveWidget"
             android:exported="true">
             <intent-filter>
@@ -112,7 +112,20 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/fortune_love_widget_info" />
         </receiver>
-        
+
+        <!-- Favorites Rolling Widget -->
+        <receiver
+            android:name=".FavoritesAppWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.beyond.fortune.ACTION_FAVORITES_ROLLING_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/favorites_widget_info" />
+        </receiver>
+
         <!-- WorkManager initialization -->
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"

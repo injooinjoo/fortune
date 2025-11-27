@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/toss_design_system.dart';
+import '../services/fortune_haptic_service.dart';
 import 'unified_button.dart';
 import 'unified_button_enums.dart';
 import '../../presentation/providers/subscription_provider.dart';
@@ -29,7 +30,7 @@ import '../../presentation/providers/subscription_provider.dart';
 /// **참고**: [docs/design/BLUR_SYSTEM_GUIDE.md](../../docs/design/BLUR_SYSTEM_GUIDE.md)
 ///
 /// **프리미엄 사용자**: 프리미엄 구독자는 블러 없이 전체 콘텐츠를 볼 수 있습니다.
-class UnifiedBlurWrapper extends ConsumerWidget {
+class UnifiedBlurWrapper extends ConsumerStatefulWidget {
   /// 전체 블러 여부 (FortuneResult.isBlurred)
   final bool isBlurred;
 
@@ -59,19 +60,46 @@ class UnifiedBlurWrapper extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UnifiedBlurWrapper> createState() => _UnifiedBlurWrapperState();
+}
+
+class _UnifiedBlurWrapperState extends ConsumerState<UnifiedBlurWrapper> {
+  bool _wasBlurred = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _wasBlurred = widget.isBlurred && widget.blurredSections.contains(widget.sectionKey);
+  }
+
+  @override
+  void didUpdateWidget(UnifiedBlurWrapper oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final newShouldBlur = widget.isBlurred && widget.blurredSections.contains(widget.sectionKey);
+
+    // 블러 상태가 true → false로 전환되면 premiumUnlock 햅틱 트리거
+    if (_wasBlurred && !newShouldBlur) {
+      ref.read(fortuneHapticServiceProvider).premiumUnlock();
+    }
+
+    _wasBlurred = newShouldBlur;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // 프리미엄 사용자는 블러 처리 없이 전체 콘텐츠 표시
     final isPremium = ref.watch(isPremiumProvider);
     if (isPremium) {
-      return child;
+      return widget.child;
     }
 
     // 블러 적용 여부 판단
-    final shouldBlur = isBlurred && blurredSections.contains(sectionKey);
+    final shouldBlur = widget.isBlurred && widget.blurredSections.contains(widget.sectionKey);
 
     // 블러 필요 없으면 원본 그대로 반환
     if (!shouldBlur) {
-      return child;
+      return widget.child;
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -80,8 +108,8 @@ class UnifiedBlurWrapper extends ConsumerWidget {
       children: [
         // 원본 콘텐츠 (블러 처리)
         ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
-          child: child,
+          imageFilter: ImageFilter.blur(sigmaX: widget.sigmaX, sigmaY: widget.sigmaY),
+          child: widget.child,
         ),
 
         // 반투명 오버레이

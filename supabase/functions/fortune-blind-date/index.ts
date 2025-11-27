@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -102,8 +104,8 @@ JSON 형식으로 응답:
 
   messages.push({ role: "user", content: userContent });
 
-  // ✅ LLM 모듈 사용
-  const llm = LLMFactory.createFromConfig('blind-date')
+  // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+  const llm = await LLMFactory.createFromConfigAsync('blind-date')
   const response = await llm.generate(messages, {
     temperature: 1,
     maxTokens: 8192,
@@ -111,6 +113,15 @@ JSON 형식으로 응답:
   })
 
   console.log(`✅ LLM (analyzeProfilePhoto): ${response.provider}/${response.model} - ${response.latency}ms`)
+
+  // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+  await UsageLogger.log({
+    fortuneType: 'blind-date-photo',
+    provider: response.provider,
+    model: response.model,
+    response: response,
+    metadata: { myPhotosCount: myPhotos.length, theirPhotosCount: theirPhotos.length }
+  })
 
   if (!response.content) {
     throw new Error('LLM API 응답 없음');
@@ -130,8 +141,8 @@ async function analyzeChatConversation(
   nextTopicSuggestions: string[];
   redFlags?: string[];
 }> {
-  // ✅ LLM 모듈 사용
-  const llm = LLMFactory.createFromConfig('blind-date')
+  // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+  const llm = await LLMFactory.createFromConfigAsync('blind-date')
   const response = await llm.generate([{
     role: "system",
     content: "당신은 연애 대화 분석 전문가입니다. 소개팅 대화를 분석하여 상대방의 관심도와 개선점을 찾아냅니다."
@@ -156,6 +167,15 @@ JSON 형식으로 분석:
   })
 
   console.log(`✅ LLM (analyzeChatConversation): ${response.provider}/${response.model} - ${response.latency}ms`)
+
+  // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+  await UsageLogger.log({
+    fortuneType: 'blind-date-chat',
+    provider: response.provider,
+    model: response.model,
+    response: response,
+    metadata: { chatPlatform, chatLength: chatContent.length }
+  })
 
   if (!response.content) {
     throw new Error('LLM API 응답 없음');
@@ -298,8 +318,8 @@ ${photoAnalysis.matchingScore ? `- 매칭 확률: ${photoAnalysis.matchingScore}
 ${chatAnalysisResult.redFlags && Array.isArray(chatAnalysisResult.redFlags) && chatAnalysisResult.redFlags.length > 0 ? `⚠️ 경고 신호: ${chatAnalysisResult.redFlags.join(', ')}` : ''}
 ` : ''
 
-      // ✅ LLM 모듈 사용 (OpenAI 직접 호출 대신)
-      const llm = LLMFactory.createFromConfig('blind-date')
+      // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+      const llm = await LLMFactory.createFromConfigAsync('blind-date')
       const response = await llm.generate([
         {
           role: 'system',
@@ -364,6 +384,16 @@ ${photoAnalysisText}${chatAnalysisText}
 
       console.log(`✅ LLM (main fortune): ${response.provider}/${response.model} - ${response.latency}ms`)
 
+      // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+      await UsageLogger.log({
+        fortuneType: 'blind-date',
+        userId: userId,
+        provider: response.provider,
+        model: response.model,
+        response: response,
+        metadata: { analysisType, isPremium, hasPhotoAnalysis: !!photoAnalysisResult, hasChatAnalysis: !!chatAnalysisResult }
+      })
+
       if (!response.content) {
         throw new Error('LLM API 응답 없음')
       }
@@ -410,8 +440,12 @@ ${photoAnalysisText}${chatAnalysisText}
           created_at: new Date().toISOString()
         })
 
+      // ✅ 퍼센타일 계산
+      const percentileData = await calculatePercentile(supabaseClient, 'blind-date', result.overallScore)
+      const resultWithPercentile = addPercentileToResult(result, percentileData)
+
       return new Response(
-        JSON.stringify({ success: true, data: result }),
+        JSON.stringify({ success: true, data: resultWithPercentile }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
 

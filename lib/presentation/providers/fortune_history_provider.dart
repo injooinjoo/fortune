@@ -22,7 +22,7 @@ class FortuneHistoryNotifier extends StateNotifier<AsyncValue<List<FortuneHistor
       }
       
       final response = await supabase
-          .from('fortune_results')
+          .from('fortune_history')
           .select()
           .eq('user_id', userId)
           .order('created_at', ascending: false)
@@ -43,7 +43,7 @@ class FortuneHistoryNotifier extends StateNotifier<AsyncValue<List<FortuneHistor
       final supabase = Supabase.instance.client;
       
       await supabase
-          .from('fortune_results')
+          .from('fortune_history')
           .delete()
           .eq('id', id);
       

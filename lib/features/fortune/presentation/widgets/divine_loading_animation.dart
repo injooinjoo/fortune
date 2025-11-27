@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 /// 신의 응답을 기다리는 신비로운 로딩 애니메이션
-class DivineLoadingAnimation extends StatefulWidget {
+class DivineLoadingAnimation extends ConsumerStatefulWidget {
   final VoidCallback? onComplete;
   final int durationSeconds;
 
@@ -14,10 +16,10 @@ class DivineLoadingAnimation extends StatefulWidget {
   });
 
   @override
-  State<DivineLoadingAnimation> createState() => _DivineLoadingAnimationState();
+  ConsumerState<DivineLoadingAnimation> createState() => _DivineLoadingAnimationState();
 }
 
-class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
+class _DivineLoadingAnimationState extends ConsumerState<DivineLoadingAnimation>
     with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late AnimationController _rotateController;
@@ -55,6 +57,7 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
 
   void _startLoadingSequence() async {
     final stepDuration = Duration(milliseconds: (widget.durationSeconds * 1000 / _loadingSteps.length).round());
+    final haptic = ref.read(fortuneHapticServiceProvider);
 
     for (int i = 0; i < _loadingSteps.length; i++) {
       if (!mounted) return;
@@ -63,6 +66,13 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
         _currentStep = i;
       });
 
+      // 각 스텝마다 햅틱 피드백 (마지막 스텝은 success)
+      if (i == _loadingSteps.length - 1) {
+        await haptic.loadingLastStep(); // success 햅틱
+      } else {
+        await haptic.loadingStep(); // soft 햅틱
+      }
+
       _fadeController.forward(from: 0);
 
       await Future.delayed(stepDuration);
@@ -70,6 +80,7 @@ class _DivineLoadingAnimationState extends State<DivineLoadingAnimation>
 
     if (mounted) {
       await Future.delayed(const Duration(milliseconds: 500));
+      await haptic.loadingComplete(); // 완료 시 success 햅틱
       widget.onComplete?.call();
     }
   }

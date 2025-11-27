@@ -143,8 +143,11 @@ class _TossStyleNameStepState extends ConsumerState<TossStyleNameStep> {
                     padding: EdgeInsets.symmetric(vertical: 40),
                     child: CircularProgressIndicator(),
                   )
-                else ...[                    
+                else ...[
                   // Social Login Buttons (unified design)
+                  // NOTE: Kakao and Naver are temporarily hidden.
+                  // TODO: Re-enable when ready for production rollout.
+                  // See: .claude/docs/09-social-login-status.md for details.
                   _buildSocialLoginButton(
                   context: context,
                   label: 'Google로 계속하기',
@@ -152,29 +155,33 @@ class _TossStyleNameStepState extends ConsumerState<TossStyleNameStep> {
                   onTap: () => _handleSocialLoginInBottomSheet('google', setBottomSheetState),
                 ),
                 const SizedBox(height: 12),
-                
+
                 _buildSocialLoginButton(
                   context: context,
                   label: 'Apple로 계속하기',
                   logoPath: 'assets/images/social/apple.svg',
                   onTap: () => _handleSocialLoginInBottomSheet('apple', setBottomSheetState),
                 ),
-                const SizedBox(height: 12),
-                
-                _buildSocialLoginButton(
-                  context: context,
-                  label: '카카오로 계속하기',
-                  logoPath: 'assets/images/social/kakao.svg',
-                  onTap: () => _handleSocialLoginInBottomSheet('kakao', setBottomSheetState),
-                ),
-                const SizedBox(height: 12),
-                
-                _buildSocialLoginButton(
-                  context: context,
-                  label: '네이버로 계속하기',
-                  logoPath: 'assets/images/social/naver.svg',
-                  onTap: () => _handleSocialLoginInBottomSheet('naver', setBottomSheetState),
-                ),
+
+                // ============================================
+                // TEMPORARILY HIDDEN: Kakao & Naver Login
+                // Reason: Focus on Google/Apple for initial launch
+                // Re-enable by uncommenting below when ready
+                // ============================================
+                // const SizedBox(height: 12),
+                // _buildSocialLoginButton(
+                //   context: context,
+                //   label: '카카오로 계속하기',
+                //   logoPath: 'assets/images/social/kakao.svg',
+                //   onTap: () => _handleSocialLoginInBottomSheet('kakao', setBottomSheetState),
+                // ),
+                // const SizedBox(height: 12),
+                // _buildSocialLoginButton(
+                //   context: context,
+                //   label: '네이버로 계속하기',
+                //   logoPath: 'assets/images/social/naver.svg',
+                //   onTap: () => _handleSocialLoginInBottomSheet('naver', setBottomSheetState),
+                // ),
                 ],  // Close the else block for loading
                 
                 const SizedBox(height: 30),

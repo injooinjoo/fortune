@@ -3,12 +3,17 @@ import WidgetKit
 
 class WidgetDataManager {
     static let shared = WidgetDataManager()
-    
-    private let appGroupIdentifier = "group.com.fortune.fortune"
+
+    private let appGroupIdentifier = "group.com.beyond.fortune"
     private let fortuneDataKey = "widget_fortune_daily"
     private let loveFortuneDataKey = "widget_fortune_love"
     private let lastUpdateKey = "widget_last_update"
-    
+
+    // Favorites widget keys
+    private let favoritesKey = "fortune_favorites"
+    private let rollingIndexKey = "widget_rolling_index"
+    private let fortuneCachePrefix = "widget_fortune_cache_"
+
     private var sharedDefaults: UserDefaults? {
         return UserDefaults(suiteName: appGroupIdentifier)
     }
@@ -84,12 +89,77 @@ class WidgetDataManager {
     // MARK: - Clear Data
     func clearAllData() {
         guard let sharedDefaults = sharedDefaults else { return }
-        
+
         sharedDefaults.removeObject(forKey: fortuneDataKey)
         sharedDefaults.removeObject(forKey: loveFortuneDataKey)
         sharedDefaults.removeObject(forKey: lastUpdateKey)
-        
+
         // Reload all widgets
         WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    // MARK: - Favorites Widget Data
+
+    /// Get current favorites list
+    func getFavorites() -> [String] {
+        return sharedDefaults?.stringArray(forKey: favoritesKey) ?? []
+    }
+
+    /// Save favorites list
+    func saveFavorites(_ favorites: [String]) {
+        sharedDefaults?.set(favorites, forKey: favoritesKey)
+        reloadFavoritesWidget()
+    }
+
+    /// Get current rolling index
+    func getRollingIndex() -> Int {
+        return sharedDefaults?.integer(forKey: rollingIndexKey) ?? 0
+    }
+
+    /// Save rolling index
+    func saveRollingIndex(_ index: Int) {
+        sharedDefaults?.set(index, forKey: rollingIndexKey)
+    }
+
+    /// Cache fortune data for widget display
+    func cacheFortune(type: String, data: [String: Any]) {
+        guard let sharedDefaults = sharedDefaults else { return }
+
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: data)
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                sharedDefaults.set(jsonString, forKey: "\(fortuneCachePrefix)\(type)")
+            }
+        } catch {
+            print("Failed to cache fortune data for \(type): \(error)")
+        }
+    }
+
+    /// Get cached fortune data
+    func getCachedFortune(type: String) -> [String: Any]? {
+        guard let sharedDefaults = sharedDefaults,
+              let jsonString = sharedDefaults.string(forKey: "\(fortuneCachePrefix)\(type)"),
+              let jsonData = jsonString.data(using: .utf8) else {
+            return nil
+        }
+
+        return try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any]
+    }
+
+    /// Reload favorites widget
+    func reloadFavoritesWidget() {
+        WidgetCenter.shared.reloadTimelines(ofKind: "FavoritesFortuneWidget")
+    }
+
+    /// Roll to next favorite and trigger widget update
+    func rollToNextFavorite() {
+        let favorites = getFavorites()
+        guard !favorites.isEmpty else { return }
+
+        let currentIndex = getRollingIndex()
+        let nextIndex = (currentIndex + 1) % favorites.count
+
+        saveRollingIndex(nextIndex)
+        reloadFavoritesWidget()
     }
 }

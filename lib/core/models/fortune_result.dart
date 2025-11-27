@@ -41,6 +41,15 @@ class FortuneResult {
   /// 예: ['advice', 'luckItems', 'warnings', 'detailedAnalysis']
   final List<String> blurredSections;
 
+  /// 오늘 운세를 본 사람들 중 상위 퍼센타일 (예: 15 = 상위 15%)
+  final int? percentile;
+
+  /// 오늘 해당 운세를 본 총 인원수
+  final int? totalTodayViewers;
+
+  /// 퍼센타일 데이터 유효 여부 (최소 샘플 수 충족 시 true)
+  final bool isPercentileValid;
+
   FortuneResult({
     this.id,
     required this.type,
@@ -53,6 +62,9 @@ class FortuneResult {
     this.viewCount,
     this.isBlurred = false,
     this.blurredSections = const [],
+    this.percentile,
+    this.totalTodayViewers,
+    this.isPercentileValid = false,
   });
 
   /// JSON으로부터 FortuneResult 생성
@@ -75,6 +87,9 @@ class FortuneResult {
       blurredSections: json['blurred_sections'] != null
           ? List<String>.from(json['blurred_sections'] as List)
           : [],
+      percentile: json['percentile'] as int?,
+      totalTodayViewers: json['total_today_viewers'] as int?,
+      isPercentileValid: json['is_percentile_valid'] as bool? ?? false,
     );
   }
 
@@ -94,6 +109,9 @@ class FortuneResult {
       if (viewCount != null) 'view_count': viewCount,
       'is_blurred': isBlurred,
       'blurred_sections': blurredSections,
+      if (percentile != null) 'percentile': percentile,
+      if (totalTodayViewers != null) 'total_today_viewers': totalTodayViewers,
+      'is_percentile_valid': isPercentileValid,
     };
   }
 
@@ -110,6 +128,9 @@ class FortuneResult {
     int? viewCount,
     bool? isBlurred,
     List<String>? blurredSections,
+    int? percentile,
+    int? totalTodayViewers,
+    bool? isPercentileValid,
   }) {
     return FortuneResult(
       id: id ?? this.id,
@@ -123,6 +144,9 @@ class FortuneResult {
       viewCount: viewCount ?? this.viewCount,
       isBlurred: isBlurred ?? this.isBlurred,
       blurredSections: blurredSections ?? this.blurredSections,
+      percentile: percentile ?? this.percentile,
+      totalTodayViewers: totalTodayViewers ?? this.totalTodayViewers,
+      isPercentileValid: isPercentileValid ?? this.isPercentileValid,
     );
   }
 

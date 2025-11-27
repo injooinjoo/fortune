@@ -14,6 +14,7 @@
     <!-- Widget Descriptions -->
     <string name="widget_daily_description">오늘의 운세를 홈 화면에서 바로 확인하세요</string>
     <string name="widget_love_description">연애운과 궁합을 홈 화면에서 확인하세요</string>
+    <string name="widget_favorites_description">즐겨찾기한 운세를 1분마다 롤링하여 보여줍니다</string>
     
     <!-- App Shortcuts -->
     <string name="shortcut_daily_fortune_short">오늘의 운세</string>

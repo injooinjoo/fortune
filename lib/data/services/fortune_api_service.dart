@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/network/api_client.dart';
 import '../../core/constants/api_endpoints.dart';
+import '../../core/constants/edge_functions_endpoints.dart';
 import '../../core/errors/exceptions.dart';
 import '../../core/utils/logger.dart';
 import '../../domain/entities/fortune.dart';
@@ -71,15 +72,17 @@ class FortuneApiService {
       final queryParams = {
         if (date != null) 'date': null};
 
+      // Use Edge Function endpoint for daily fortune
+      final endpoint = EdgeFunctionsEndpoints.dailyFortune;
       Logger.debug('🔍 [FortuneApiService] Making API call', {
-        'endpoint': ApiEndpoints.dailyFortune,
+        'endpoint': endpoint,
         'queryParams': null,
         'hasSajuData': userProfileResponse != null});
-      
+
       final apiStopwatch = Logger.startTimer('API Call - daily');
-      final response = userProfileResponse != null 
+      final response = userProfileResponse != null
         ? await _apiClient.post(
-            ApiEndpoints.dailyFortune,
+            endpoint,
             data: {
               ...queryParams,
               'birthDate': userProfileResponse['birth_date'],
@@ -90,7 +93,7 @@ class FortuneApiService {
               'zodiacAnimal': userProfileResponse['chinese_zodiac']
             })
         : await _apiClient.get(
-            ApiEndpoints.dailyFortune,
+            endpoint,
             queryParameters: queryParams);
       Logger.endTimer('API Call - daily', apiStopwatch);
 

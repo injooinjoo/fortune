@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -104,8 +106,8 @@ serve(async (req) => {
     }
 
     // OpenAI API 호출
-    // ✅ LLM 모듈 사용
-    const llm = LLMFactory.createFromConfig('investment')
+    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    const llm = await LLMFactory.createFromConfigAsync('investment')
 
     const systemPrompt = `당신은 ${categoryLabel} 투자 운세 전문가입니다. 사용자가 선택한 종목(${tickerName})에 대한 투자 운세와 실용적인 조언을 제공합니다.
 
@@ -170,6 +172,20 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
 
+    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    await UsageLogger.log({
+      fortuneType: 'investment',
+      userId: userId,
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: {
+        tickerSymbol,
+        tickerCategory,
+        isPremium
+      }
+    })
+
     if (!response.content) {
       throw new Error('LLM API 응답 없음')
     }
@@ -226,6 +242,10 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       blurredSections
     }
 
+    // ✅ Percentile 계산 추가
+    const percentileData = await calculatePercentile(supabaseClient, 'investment', result.overallScore)
+    const resultWithPercentile = addPercentileToResult(result, percentileData)
+
     // 결과 캐싱
     await supabaseClient
       .from('fortune_cache')
@@ -233,13 +253,13 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
         cache_key: cacheKey,
         fortune_type: 'investment',
         user_id: userId || null,
-        result: result,
+        result: resultWithPercentile,
         created_at: new Date().toISOString()
       })
 
     return new Response(
       JSON.stringify({
-        fortune: result,
+        fortune: resultWithPercentile,
         cached: false,
         tokensUsed: response.tokensUsed || 0
       }),

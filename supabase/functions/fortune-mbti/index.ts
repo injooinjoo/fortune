@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -202,8 +204,8 @@ serve(async (req) => {
       )
     }
 
-    // ✅ LLM 모듈 사용 (Provider 자동 선택)
-    const llm = LLMFactory.createFromConfig('mbti')
+    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    const llm = await LLMFactory.createFromConfigAsync('mbti')
 
     const systemPrompt = `당신은 전문적인 MBTI 운세 전문가입니다. 각 MBTI 유형의 특성을 깊이 이해하고 있으며, 한국 전통 운세와 현대 심리학을 결합하여 정확하고 의미있는 운세를 제공합니다.
 
@@ -240,6 +242,16 @@ ${mbti} 유형의 특성을 고려하여 오늘의 운세를 JSON 형식으로 �
     })
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    await UsageLogger.log({
+      fortuneType: 'mbti',
+      userId: userId,
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: { name, mbti, birthDate, isPremium }
+    })
 
     if (!response.content) {
       console.error('LLM 응답 없음')
@@ -291,10 +303,14 @@ ${mbti} 유형의 특성을 고려하여 오늘의 운세를 JSON 형식으로 �
         created_at: new Date().toISOString()
       })
 
+    // ✅ 퍼센타일 계산
+    const percentileData = await calculatePercentile(supabaseClient, 'mbti', result.energyLevel)
+    const resultWithPercentile = addPercentileToResult(result, percentileData)
+
     return new Response(
       JSON.stringify({
         success: true,
-        data: result
+        data: resultWithPercentile
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )

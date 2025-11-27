@@ -6,6 +6,7 @@ import '../../../../core/models/fortune_result.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/logger.dart';
@@ -221,7 +222,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
   Widget _buildOverallHealthSection() {
     final data = _fortuneResult.data;
-    final overallHealth = data['overall_health'] as String? ?? '건강하십니다.';
+    final overallHealth = FortuneTextCleaner.clean(data['overall_health'] as String? ?? '건강하십니다.');
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -355,7 +356,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  entry.value.toString(),
+                  FortuneTextCleaner.clean(entry.value.toString()),
                   style: context.bodyMedium.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     height: 1.5,
@@ -369,7 +370,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
     }
 
     // String 형식일 경우 (기본)
-    final bodyPartAdvice = bodyPartAdviceRaw as String? ?? '주의가 필요합니다.';
+    final bodyPartAdvice = FortuneTextCleaner.clean(bodyPartAdviceRaw as String? ?? '주의가 필요합니다.');
     return Text(
       bodyPartAdvice,
       style: context.bodyMedium.copyWith(
@@ -398,7 +399,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
               ),
               Expanded(
                 child: Text(
-                  caution.toString(),
+                  FortuneTextCleaner.clean(caution.toString()),
                   style: context.bodyMedium.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     height: 1.5,
@@ -443,7 +444,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
   Widget _buildDietAdviceContent() {
     final data = _fortuneResult.data;
-    final dietAdvice = data['diet_advice'] as String? ?? '균형잡힌 식사를 하세요.';
+    final dietAdvice = FortuneTextCleaner.clean(data['diet_advice'] as String? ?? '균형잡힌 식사를 하세요.');
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Text(
@@ -457,7 +458,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
   Widget _buildExerciseAdviceContent() {
     final data = _fortuneResult.data;
-    final exerciseAdvice = data['exercise_advice'] as String? ?? '꾸준한 운동이 중요합니다.';
+    final exerciseAdvice = FortuneTextCleaner.clean(data['exercise_advice'] as String? ?? '꾸준한 운동이 중요합니다.');
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Text(

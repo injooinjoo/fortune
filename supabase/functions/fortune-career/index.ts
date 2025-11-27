@@ -2,6 +2,8 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 // 환경 변수 설정
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -316,8 +318,8 @@ serve(async (req) => {
 
 전문적이고 실행 가능한 조언을 제공하되, 희망적이면서도 현실적인 관점을 유지해주세요. 구체적인 수치나 확률보다는 질적 분석에 중점을 둬주세요.`
 
-      // ✅ LLM 모듈 사용 (Provider 자동 선택)
-      const llm = LLMFactory.createFromConfig('career')
+      // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+      const llm = await LLMFactory.createFromConfigAsync('career')
 
       const response = await llm.generate([
         {
@@ -334,11 +336,21 @@ serve(async (req) => {
         jsonMode: true
       })
 
-      console.log(`✅ LLM 호출 완료:`)
-      console.log(`  Provider: ${response.provider}`)
-      console.log(`  Model: ${response.model}`)
-      console.log(`  Latency: ${response.latency}ms`)
-      console.log(`  Tokens: ${response.usage.totalTokens}`)
+      console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+      // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+      await UsageLogger.log({
+        fortuneType: 'career',
+        provider: response.provider,
+        model: response.model,
+        response: response,
+        metadata: {
+          currentRole,
+          careerPath,
+          timeHorizon,
+          isPremium
+        }
+      })
 
       // JSON 파싱
       let parsedResponse: any
@@ -398,10 +410,14 @@ serve(async (req) => {
         })
     }
 
+    // ✅ 퍼센타일 계산
+    const percentileData = await calculatePercentile(supabase, 'career', fortuneData.careerScore)
+    const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
+
     // 성공 응답
     const response: CareerFortuneResponse = {
       success: true,
-      data: fortuneData
+      data: fortuneDataWithPercentile
     }
 
     return new Response(JSON.stringify(response), {

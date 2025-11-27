@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../shared/components/image_upload_selector.dart';
 import '../../../../core/components/toss_card.dart';
 import '../../../../services/ad_service.dart';
@@ -820,7 +821,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
               // 전체적인 인상
               if (data['overall_fortune'] != null)
                 Text(
-                  data['overall_fortune'],
+                  FortuneTextCleaner.clean(data['overall_fortune']),
                   style: TossDesignSystem.body1.copyWith(
                     color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
                     height: 1.6,
@@ -832,6 +833,16 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.9, 0.9)),
 
         const SizedBox(height: 24),
+
+        // 🌟 닮은꼴 유명인 섹션 (무료 공개 - 바이럴 효과)
+        if (data['similar_celebrities'] != null &&
+            (data['similar_celebrities'] as List).isNotEmpty) ...[
+          _buildSimilarCelebritiesSection(
+            celebrities: data['similar_celebrities'] as List,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 24),
+        ],
 
         // 🌟 전통 관상학: 오관(五官) 분석
         if (data['ogwan'] != null) ...[
@@ -848,7 +859,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           _buildFortuneSection(
             icon: Icons.monetization_on,
             title: '재물운',
-            content: data['wealth_fortune']?.toString() ?? '재물운이 상승하는 시기입니다.',
+            content: FortuneTextCleaner.clean(data['wealth_fortune']?.toString() ?? '재물운이 상승하는 시기입니다.'),
             score: 85,
             color: Colors.amber,
             isDark: isDark,
@@ -861,7 +872,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           _buildFortuneSection(
             icon: Icons.favorite,
             title: '애정운',
-            content: data['love_fortune']?.toString() ?? '인연이 다가오고 있습니다.',
+            content: FortuneTextCleaner.clean(data['love_fortune']?.toString() ?? '인연이 다가오고 있습니다.'),
             score: 78,
             color: Colors.pink,
             isDark: isDark,
@@ -874,7 +885,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           _buildFortuneSection(
             icon: Icons.health_and_safety,
             title: '건강운',
-            content: data['health_fortune']?.toString() ?? '건강 관리에 신경쓰면 좋은 결과가 있을 것입니다.',
+            content: FortuneTextCleaner.clean(data['health_fortune']?.toString() ?? '건강 관리에 신경쓰면 좋은 결과가 있을 것입니다.'),
             score: 72,
             color: Colors.green,
             isDark: isDark,
@@ -887,7 +898,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           _buildFortuneSection(
             icon: Icons.work,
             title: '직업운',
-            content: data['career_fortune']?.toString() ?? '새로운 기회가 찾아올 것입니다.',
+            content: FortuneTextCleaner.clean(data['career_fortune']?.toString() ?? '새로운 기회가 찾아올 것입니다.'),
             score: 80,
             color: TossDesignSystem.tossBlue,
             isDark: isDark,
@@ -932,7 +943,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    data['samjeong'].toString(),
+                    FortuneTextCleaner.clean(data['samjeong'].toString()),
                     style: TossDesignSystem.body1.copyWith(
                       color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
                       height: 1.7,
@@ -979,7 +990,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    data['sibigung'].toString(),
+                    FortuneTextCleaner.clean(data['sibigung'].toString()),
                     style: TossDesignSystem.body1.copyWith(
                       color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
                       height: 1.7,
@@ -1040,7 +1051,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    data['personality'].toString(),
+                    FortuneTextCleaner.clean(data['personality'].toString()),
                     style: TossDesignSystem.body1.copyWith(
                       color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
                       height: 1.7,
@@ -1101,7 +1112,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    data['special_features'].toString(),
+                    FortuneTextCleaner.clean(data['special_features'].toString()),
                     style: TossDesignSystem.body1.copyWith(
                       color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
                       height: 1.7,
@@ -1162,7 +1173,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    data['advice'].toString(),
+                    FortuneTextCleaner.clean(data['advice'].toString()),
                     style: TossDesignSystem.body1.copyWith(
                       color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
                       height: 1.7,
@@ -1502,5 +1513,207 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         }),
       ],
     );
+  }
+
+  // 🌟 닮은꼴 유명인 섹션 빌더
+  Widget _buildSimilarCelebritiesSection({
+    required List celebrities,
+    required bool isDark,
+  }) {
+    return TossCard(
+      style: TossCardStyle.filled,
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [TossDesignSystem.warningOrange, Colors.amber],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.star_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '닮은꼴 유명인',
+                    style: TossDesignSystem.heading3.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '당신의 관상과 비슷한 유명인',
+                    style: TossDesignSystem.caption.copyWith(
+                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // 유명인 카드 목록
+          ...celebrities.asMap().entries.map((entry) {
+            final index = entry.key;
+            final celeb = entry.value as Map<String, dynamic>;
+            return _buildCelebrityCard(celeb, index, isDark);
+          }),
+        ],
+      ),
+    ).animate().fadeIn(duration: 500.ms, delay: 300.ms).slideY(begin: 0.1);
+  }
+
+  // 🌟 개별 유명인 카드 빌더
+  Widget _buildCelebrityCard(Map<String, dynamic> celeb, int index, bool isDark) {
+    final name = celeb['name']?.toString() ?? '유명인';
+    final occupation = celeb['occupation']?.toString() ?? '연예인';
+    final similarParts = celeb['similar_parts']?.toString() ?? '전체적인 인상';
+    final reason = celeb['reason']?.toString() ?? '비슷한 인상을 가지고 있습니다.';
+
+    // 직업별 색상 지정
+    final Color avatarColor;
+    if (occupation.contains('배우')) {
+      avatarColor = TossDesignSystem.purple;
+    } else if (occupation.contains('가수') || occupation.contains('아이돌')) {
+      avatarColor = TossDesignSystem.tossBlue;
+    } else if (occupation.contains('운동선수') || occupation.contains('스포츠')) {
+      avatarColor = TossDesignSystem.successGreen;
+    } else if (occupation.contains('MC') || occupation.contains('방송인')) {
+      avatarColor = TossDesignSystem.warningOrange;
+    } else {
+      avatarColor = Colors.pink;
+    }
+
+    return Container(
+      margin: EdgeInsets.only(bottom: index < 2 ? 12 : 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Notion 스타일 아바타 (이니셜)
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [avatarColor, avatarColor.withValues(alpha: 0.7)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: avatarColor.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                name.isNotEmpty ? name[0] : '?',
+                style: TossDesignSystem.heading2.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+
+          // 정보
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 이름 & 직업
+                Row(
+                  children: [
+                    Text(
+                      name,
+                      style: TossDesignSystem.heading4.copyWith(
+                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: avatarColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        occupation,
+                        style: TossDesignSystem.caption.copyWith(
+                          color: avatarColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+
+                // 닮은 부위
+                Row(
+                  children: [
+                    Icon(
+                      Icons.compare_arrows,
+                      size: 14,
+                      color: TossDesignSystem.purple,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        '닮은 부위: $similarParts',
+                        style: TossDesignSystem.body3.copyWith(
+                          color: TossDesignSystem.purple,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+
+                // 이유
+                Text(
+                  reason,
+                  style: TossDesignSystem.body3.copyWith(
+                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                    height: 1.4,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 400.ms, delay: (100 + index * 80).ms).slideX(begin: 0.1);
   }
 }

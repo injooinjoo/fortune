@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../domain/entities/fortune.dart';
 import 'fortune_card.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -168,6 +169,11 @@ class FortuneResultCard extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
+          // ✅ 퍼센타일 뱃지 표시 (유효한 경우에만)
+          if (fortune.isPercentileValid && fortune.percentile != null) ...[
+            const SizedBox(height: 12),
+            _buildPercentileBadge(fortune.percentile!, isDark),
+          ],
           const SizedBox(height: 8),
           Text(
             _getScoreDescription(score),
@@ -181,7 +187,57 @@ class FortuneResultCard extends StatelessWidget {
       ),
     );
   }
-  
+
+  /// 퍼센타일 뱃지 위젯
+  Widget _buildPercentileBadge(int percentile, bool isDark) {
+    // 상위 %에 따른 색상 및 메시지 설정
+    final Color badgeColor;
+    final String emoji;
+
+    if (percentile <= 10) {
+      badgeColor = TossDesignSystem.orange;  // 골드 대신 오렌지 사용
+      emoji = '🏆';
+    } else if (percentile <= 25) {
+      badgeColor = TossDesignSystem.successGreen;
+      emoji = '⭐';
+    } else if (percentile <= 50) {
+      badgeColor = TossDesignSystem.tossBlue;
+      emoji = '✨';
+    } else {
+      badgeColor = TossDesignSystem.warningOrange;
+      emoji = '🍀';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: badgeColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: badgeColor.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            emoji,
+            style: const TextStyle(fontSize: 16),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            '오늘 운세 본 사람 중 상위 $percentile%',
+            style: TossDesignSystem.caption.copyWith(
+              color: badgeColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMainContent(BuildContext context, bool isDark) {
     return FortuneCard(
       title: '오늘의 운세',
@@ -190,7 +246,7 @@ class FortuneResultCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            fortune.content,
+            FortuneTextCleaner.clean(fortune.content),
             style: TossDesignSystem.body2.copyWith(
               color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
               height: 1.8,
@@ -205,7 +261,7 @@ class FortuneResultCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                fortune.description!,
+                FortuneTextCleaner.clean(fortune.description!),
                 style: TossDesignSystem.body3.copyWith(
                   color: TossDesignSystem.tossBlue,
                   height: 1.6,
@@ -333,7 +389,7 @@ class FortuneResultCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    recommendation,
+                    FortuneTextCleaner.clean(recommendation),
                     style: TossDesignSystem.body3.copyWith(
                       color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
                       height: 1.5,
@@ -368,7 +424,7 @@ class FortuneResultCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    warning,
+                    FortuneTextCleaner.clean(warning),
                     style: TossDesignSystem.body3.copyWith(
                       color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
                       height: 1.5,

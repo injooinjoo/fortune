@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -333,8 +334,8 @@ ${userProfile?.birthDate ? `- 생년월일: ${userProfile.birthDate} (이 정보
     console.log('📤 User prompt length:', userPrompt.length)
     console.log('📤 User prompt:', userPrompt) // 전체 프롬프트 확인
 
-    // ✅ LLM 모듈 사용
-    const llm = LLMFactory.createFromConfig('fortune-story')
+    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    const llm = await LLMFactory.createFromConfigAsync('fortune-story')
 
     const response = await llm.generate([
       { role: 'system', content: systemPrompt },
@@ -347,6 +348,16 @@ ${userProfile?.birthDate ? `- 생년월일: ${userProfile.birthDate} (이 정보
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
     console.log(`📝 Token 사용량: prompt=${response.usage.promptTokens}, completion=${response.usage.completionTokens}, total=${response.usage.totalTokens}`)
+
+    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    await UsageLogger.log({
+      fortuneType: 'fortune-story',
+      userId: user.id,
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: { userName, userLocation, hasSajuAnalysis: !!sajuAnalysis }
+    })
 
     if (!response.content) {
       console.error('❌ LLM API returned empty content')

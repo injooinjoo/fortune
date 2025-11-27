@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -69,8 +71,8 @@ serve(async (req) => {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 30000)
 
-    // ✅ LLM 모듈 사용
-    const llm = LLMFactory.createFromConfig('talent')
+    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    const llm = await LLMFactory.createFromConfigAsync('talent')
 
     const response = await llm.generate([
       {
@@ -241,6 +243,16 @@ serve(async (req) => {
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
 
+    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    await UsageLogger.log({
+      fortuneType: 'talent',
+      userId: userId,
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: { talentArea, goals, experience, timeAvailable, isPremium }
+    })
+
     if (!response.content) {
       throw new Error('LLM API 응답 없음')
     }
@@ -297,6 +309,15 @@ serve(async (req) => {
       blurredSections // ✅ 블러된 섹션 목록
     }
 
+    // ✅ 퍼센타일 계산 (오늘 운세를 본 사람들 중 상위 몇 %)
+    const percentileData = await calculatePercentile(
+      supabaseClient,
+      'talent',
+      fortuneData.overallScore
+    )
+    const resultWithPercentile = addPercentileToResult(result, percentileData)
+    console.log(`📊 [Talent] Percentile: ${percentileData.isPercentileValid ? `상위 ${percentileData.percentile}%` : '데이터 부족'}`)
+
     // 결과 캐싱
     await supabaseClient
       .from('fortune_cache')
@@ -304,13 +325,13 @@ serve(async (req) => {
         cache_key: cacheKey,
         fortune_type: 'talent',
         user_id: userId || null,
-        result: result,
+        result: resultWithPercentile,
         created_at: new Date().toISOString()
       })
 
     return new Response(
       JSON.stringify({
-        fortune: result,
+        fortune: resultWithPercentile,
         cached: false,
         tokensUsed: response.usage?.totalTokens || 0
       }),

@@ -1,7 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { extractUsername, fetchInstagramProfileImage, downloadAndEncodeImage } from '../_shared/instagram/scraper.ts'
+import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -41,8 +43,8 @@ serve(async (req) => {
       isPremium = false
     } = requestBody
 
-    // ✅ LLM 모듈 사용
-    const llm = LLMFactory.createFromConfig('face-reading')
+    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    const llm = await LLMFactory.createFromConfigAsync('face-reading')
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -259,6 +261,28 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
 - 피부 관리와 혈색 개선
 - 자세와 걸음걸이 교정
 
+## 8. 닮은꼴 유명인 분석
+제공된 얼굴 사진을 분석하여 관상학적으로 유사한 한국 유명인 3명을 찾아주세요.
+
+### 분석 기준
+- 전체적인 얼굴형과 이목구비 비율
+- 인상과 표정에서 풍기는 분위기
+- 한국 유명인 우선 (배우, 가수, 운동선수, 아이돌 등)
+- 성별 일치 권장
+
+### 각 유명인에 대해 아래 형식으로 작성:
+**닮은 유명인 1**: [이름] ([직업])
+- 닮은 부위: [눈, 코, 입, 전체 분위기 등 구체적으로]
+- 이유: [왜 닮았는지 2-3문장으로 설명]
+
+**닮은 유명인 2**: [이름] ([직업])
+- 닮은 부위: [구체적 부위]
+- 이유: [설명]
+
+**닮은 유명인 3**: [이름] ([직업])
+- 닮은 부위: [구체적 부위]
+- 이유: [설명]
+
 # 작성 원칙
 1. **전통성**: 마의상법, 달마상법 등 전통 이론에 근거한 해석
 2. **구체성**: 모호한 표현 금지, 관상 부위와 연결하여 설명
@@ -299,6 +323,16 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
     })
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+
+    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    await UsageLogger.log({
+      fortuneType: 'face-reading',
+      userId: userId,
+      provider: response.provider,
+      model: response.model,
+      response: response,
+      metadata: { analysis_source, userName, userGender, isPremium }
+    })
 
     const analysisResult = response.content
 
@@ -341,6 +375,10 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
                   extractSection(analysisResult, '개운법') ||
                   '자신의 장점을 살리고 약점을 보완하세요.'
 
+    // ✅ 유사 유명인 추출
+    const similarCelebrities = extractSimilarCelebrities(analysisResult)
+    console.log(`✅ [FaceReading] Similar celebrities found: ${similarCelebrities.length}`, similarCelebrities.map(c => c.name))
+
     // Format the response
     // ✅ Blur 로직 적용
     const isBlurred = !isPremium
@@ -360,13 +398,20 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
         samjeong: samjeong, // 🔒 프리미엄: 삼정(三停) 분석
         sibigung: sibigung, // 🔒 프리미엄: 십이궁(十二宮) 분석
         advice: advice, // 🔒 프리미엄: 조언과 개운법
-        full_analysis: analysisResult // 🔒 프리미엄: 전체 분석
+        full_analysis: analysisResult, // 🔒 프리미엄: 전체 분석
+
+        // ✅ 닮은꼴 유명인 (무료 공개 - 바이럴 효과)
+        similar_celebrities: similarCelebrities
       },
       luckScore: luckScore, // ✅ 무료: 공개
       timestamp: new Date().toISOString(),
       isBlurred, // ✅ 블러 상태
       blurredSections // ✅ 블러된 섹션 목록
     }
+
+    // ✅ 퍼센타일 계산
+    const percentileData = await calculatePercentile(supabase, 'face-reading', fortuneResponse.luckScore)
+    const fortuneResponseWithPercentile = addPercentileToResult(fortuneResponse, percentileData)
 
     // Save to database if user is logged in
     if (userId) {
@@ -388,7 +433,7 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
     }
 
     return new Response(
-      JSON.stringify(fortuneResponse),
+      JSON.stringify(fortuneResponseWithPercentile),
       {
         headers: {
           ...corsHeaders,
@@ -443,4 +488,48 @@ function extractFaceType(text: string): string {
     }
   }
   return '조화로운 얼굴형'
+}
+
+// Helper function to extract similar celebrities
+function extractSimilarCelebrities(text: string): Array<{
+  name: string;
+  occupation: string;
+  similar_parts: string;
+  reason: string;
+}> {
+  const celebrities: Array<{
+    name: string;
+    occupation: string;
+    similar_parts: string;
+    reason: string;
+  }> = []
+
+  // 정규식으로 유명인 정보 추출
+  const regex = /\*\*닮은 유명인 \d+\*\*:\s*(.+?)\s*\((.+?)\)\s*\n-?\s*닮은 부위:\s*(.+?)\n-?\s*이유:\s*(.+?)(?=\n\n|\n\*\*닮은 유명인|\n#|$)/gis
+
+  let match
+  while ((match = regex.exec(text)) !== null && celebrities.length < 3) {
+    celebrities.push({
+      name: match[1].trim(),
+      occupation: match[2].trim(),
+      similar_parts: match[3].trim(),
+      reason: match[4].trim().replace(/\n/g, ' ')
+    })
+  }
+
+  // 정규식으로 못 찾으면 대체 방법 시도
+  if (celebrities.length === 0) {
+    const altRegex = /닮은 유명인[^:]*:\s*([가-힣a-zA-Z]+)\s*\(?([^)\n]*)\)?/gi
+    let altMatch
+    while ((altMatch = altRegex.exec(text)) !== null && celebrities.length < 3) {
+      celebrities.push({
+        name: altMatch[1].trim(),
+        occupation: altMatch[2]?.trim() || '연예인',
+        similar_parts: '전체적인 인상',
+        reason: '얼굴형과 분위기가 비슷합니다.'
+      })
+    }
+  }
+
+  return celebrities
 }

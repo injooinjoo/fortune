@@ -17,6 +17,9 @@ class FortuneResult {
   final Map<String, dynamic>? additionalInfo;
   final bool isBlurred;  // ✅ 블러 상태
   final List<String> blurredSections;  // ✅ 블러 처리된 섹션 키
+  final int? percentile;  // ✅ 상위 퍼센타일 (예: 15 = 상위 15%)
+  final int? totalTodayViewers;  // ✅ 오늘 해당 운세를 본 총 인원수
+  final bool isPercentileValid;  // ✅ 퍼센타일 데이터 유효 여부
 
   FortuneResult({
     this.id,
@@ -36,6 +39,9 @@ class FortuneResult {
     this.additionalInfo,
     this.isBlurred = false,  // ✅ Default
     this.blurredSections = const [],  // ✅ Default
+    this.percentile,
+    this.totalTodayViewers,
+    this.isPercentileValid = false,
   });
 
   // Getter for fortune object - returns self for compatibility
@@ -66,6 +72,9 @@ class FortuneResult {
     Map<String, dynamic>? additionalInfo,
     bool? isBlurred,
     List<String>? blurredSections,
+    int? percentile,
+    int? totalTodayViewers,
+    bool? isPercentileValid,
   }) {
     return FortuneResult(
       id: id ?? this.id,
@@ -85,6 +94,9 @@ class FortuneResult {
       additionalInfo: additionalInfo ?? this.additionalInfo,
       isBlurred: isBlurred ?? this.isBlurred,
       blurredSections: blurredSections ?? this.blurredSections,
+      percentile: percentile ?? this.percentile,
+      totalTodayViewers: totalTodayViewers ?? this.totalTodayViewers,
+      isPercentileValid: isPercentileValid ?? this.isPercentileValid,
     );
   }
 
@@ -117,6 +129,9 @@ class FortuneResult {
       blurredSections: map['blurredSections'] != null
           ? List<String>.from(map['blurredSections'])
           : [],  // ✅ Default []
+      percentile: map['percentile'] as int?,
+      totalTodayViewers: map['totalTodayViewers'] as int?,
+      isPercentileValid: map['isPercentileValid'] ?? false,
     );
   }
 
@@ -139,6 +154,9 @@ class FortuneResult {
       'additionalInfo': null,
       'isBlurred': isBlurred,  // ✅ Added
       'blurredSections': blurredSections,  // ✅ Added
+      'percentile': percentile,  // ✅ Added
+      'totalTodayViewers': totalTodayViewers,  // ✅ Added
+      'isPercentileValid': isPercentileValid,  // ✅ Added
     };
   }
 }

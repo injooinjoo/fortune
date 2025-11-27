@@ -11,6 +11,8 @@ import '../screens/profile/saju_detail_page.dart';
 import '../screens/profile/elements_detail_page.dart';
 import '../screens/profile/profile_verification_page.dart';
 import '../features/history/presentation/pages/fortune_history_page.dart';
+import '../features/history/presentation/pages/fortune_history_detail_page.dart';
+import '../features/history/domain/models/fortune_history.dart';
 import '../screens/settings/settings_screen.dart';
 import '../screens/settings/social_accounts_screen.dart';
 import '../screens/settings/phone_management_screen.dart';
@@ -68,6 +70,7 @@ import '../features/admin/pages/celebrity_crawling_page.dart';
 import 'routes/auth_routes.dart';
 import 'routes/fortune_routes.dart';
 import 'routes/interactive_routes.dart';
+import 'routes/trend_routes.dart';
 
 import '../core/utils/page_transitions.dart';
 import '../core/utils/route_observer_logger.dart';
@@ -220,6 +223,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       // Fortune routes (outside shell - no navigation bar for consistent UX)
       ...fortuneRoutes,
+
+      // Fortune history detail route (outside shell)
+      GoRoute(
+        path: '/fortune-history/:id',
+        name: 'fortune-history-detail',
+        pageBuilder: (context, state) {
+          final history = state.extra as FortuneHistory;
+          return PageTransitions.slideTransition(
+            context,
+            state,
+            FortuneHistoryDetailPage(history: history),
+          );
+        },
+      ),
+
+      // Trend content routes (outside shell - 네비게이션 바 숨김)
+      ...trendRoutes,
 
       // Settings routes (outside shell - no navigation bar)
       GoRoute(

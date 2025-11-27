@@ -42,12 +42,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Future<void> _initializeUser() async {
     final session = Supabase.instance.client.auth.currentSession;
     _currentUser = session?.user;
-    
+
     // Load existing profile if available
     try {
       // First try to get profile from database for authenticated users
       Map<String, dynamic>? existingProfile;
-      
+
       if (_currentUser != null) {
         try {
           final dbProfile = await Supabase.instance.client
@@ -55,7 +55,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               .select()
               .eq('id', _currentUser!.id)
               .maybeSingle();
-          
+
           if (dbProfile != null) {
             existingProfile = dbProfile;
           }
@@ -63,25 +63,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
           debugPrint('Error loading profile from database: $e');
         }
       }
-      
+
       // Fall back to local storage if no database profile
       existingProfile ??= await _storageService.getUserProfile();
-      
+
       if (existingProfile != null) {
         setState(() {
           // Pre-fill name
           // Kakao 사용자의 경우 email.split('@')[0]를 사용하지 않음
           String defaultName = '';
-          if (_currentUser?.email != null && 
+          if (_currentUser?.email != null &&
               !_currentUser!.email!.contains('kakao_')) {
             defaultName = _currentUser!.email!.split('@')[0];
           }
-          
-          _name = existingProfile!['name'] ?? 
+
+          _name = existingProfile!['name'] ??
               _currentUser?.userMetadata?['full_name'] ??
               _currentUser?.userMetadata?['name'] ??
               defaultName;
-          
+
           // Pre-fill birth date if available
           if (existingProfile['birth_date'] != null) {
             try {
@@ -90,7 +90,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               debugPrint('Error parsing birth date: $e');
             }
           }
-          
+
           // Pre-fill birth time if available
           if (existingProfile['birth_time'] != null) {
             try {
@@ -112,14 +112,31 @@ class _OnboardingPageState extends State<OnboardingPage> {
         setState(() {
           // Kakao 사용자의 경우 email.split('@')[0]를 사용하지 않음
           String defaultName = '';
-          if (_currentUser?.email != null && 
+          if (_currentUser?.email != null &&
               !_currentUser!.email!.contains('kakao_')) {
             defaultName = _currentUser!.email!.split('@')[0];
           }
-          
+
           _name = _currentUser?.userMetadata?['full_name'] ??
               _currentUser?.userMetadata?['name'] ??
               defaultName;
+        });
+      }
+
+      // [App Store Guideline 4.0] Skip name step if name already exists from social login
+      // Apple Sign In and Google Sign In already provide user's name
+      if (_name.isNotEmpty && _name != '사용자' && mounted) {
+        debugPrint('📱 [Onboarding] Name already exists from social login: $_name');
+        debugPrint('📱 [Onboarding] Skipping to birth date step (App Store Guideline 4.0)');
+
+        // Wait for widget to build, then skip to birth date step
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _currentStep == 0) {
+            setState(() {
+              _currentStep = 1;
+            });
+            _pageController.jumpToPage(1);
+          }
         });
       }
     } catch (e) {
