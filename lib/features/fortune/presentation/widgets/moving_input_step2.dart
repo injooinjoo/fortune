@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
@@ -93,7 +93,7 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
                     ),
                   ),
                   const SizedBox(height: TossTheme.spacingM),
-                  TossCard(
+                  AppCard(
                     onTap: () => _showAreaSelector(true),
                     padding: const EdgeInsets.all(TossTheme.spacingM),
                     child: Row(
@@ -132,7 +132,7 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
                     ),
                   ),
                   const SizedBox(height: TossTheme.spacingM),
-                  TossCard(
+                  AppCard(
                     onTap: () => _showAreaSelector(false),
                     padding: const EdgeInsets.all(TossTheme.spacingM),
                     child: Row(
@@ -174,7 +174,7 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
                   
                   ..._periods.map((period) => Padding(
                     padding: const EdgeInsets.only(bottom: TossTheme.spacingS),
-                    child: TossCard(
+                    child: AppCard(
                       onTap: () {
                         setState(() {
                           _movingPeriod = period['title']!;

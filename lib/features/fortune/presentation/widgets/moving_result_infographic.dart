@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -331,7 +331,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
       child: Column(
         children: [
           // 종합 점수 카드
-          TossCard(
+          AppCard(
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
@@ -494,7 +494,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
           const SizedBox(height: 20),
           
           // 운세 차트
-          TossCard(
+          AppCard(
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
@@ -608,7 +608,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
             final date = entry.value;
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
@@ -681,7 +681,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
           const SizedBox(height: 20),
           
           // 레이더 차트
-          TossCard(
+          AppCard(
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
@@ -912,7 +912,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 20),
-                    child: TossCard(
+                    child: AppCard(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -992,7 +992,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
           const SizedBox(height: 20),
           
           // 총 비용 카드
-          TossCard(
+          AppCard(
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
@@ -1149,7 +1149,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
   }
 
   Widget _buildQuickInfoCard(String title, String value, IconData icon, Color color) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

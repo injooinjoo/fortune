@@ -181,7 +181,8 @@
       "Bash(npm install:*)",
       "Bash(npx playwright install:*)",
       "Bash(npx playwright test:*)",
-      "Bash(supabase functions download:*)"
+      "Bash(supabase functions download:*)",
+      "Bash({} ;)"
     ],
     "deny": [],
     "ask": [],

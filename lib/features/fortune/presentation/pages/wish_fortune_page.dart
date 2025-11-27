@@ -3,13 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/wish_fortune_result.dart';
-import './wish_fortune_result_tinder.dart';
+import './wish_fortune_result_page.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../services/speech_recognition_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/services/unified_fortune_service.dart';
+import '../widgets/voice_spectrum_animation.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
@@ -41,9 +43,12 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   // Controllers
   final TextEditingController _wishController = TextEditingController();
 
+  // Speech Recognition
+  final SpeechRecognitionService _speechService = SpeechRecognitionService();
+  bool _isRecording = false;
+
   // Selection state
   WishCategory? _selectedCategory;
-  int? _urgencyLevel;
 
   // Accordion sections
   List<AccordionInputSection> _accordionSections = [];
@@ -60,13 +65,21 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
       AdService.instance.loadInterstitialAd();
     });
 
+    // 음성 인식 초기화
+    _initializeSpeechService();
+
     // Accordion 섹션 초기화
     _initializeAccordionSections();
+  }
+
+  Future<void> _initializeSpeechService() async {
+    await _speechService.initialize();
   }
 
   @override
   void dispose() {
     _wishController.dispose();
+    _speechService.dispose();
     super.dispose();
   }
 
@@ -85,11 +98,11 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
             : null,
       ),
 
-      // 2. 소원 입력
+      // 2. 소원 입력 (음성 입력 지원)
       AccordionInputSection(
         id: 'wish',
-        title: '소원을 자세히 적어주세요',
-        icon: Icons.edit_rounded,
+        title: '소원을 말하거나 적어주세요',
+        icon: Icons.mic_rounded,
         inputWidgetBuilder: (context, onComplete) => _buildWishInput(onComplete),
         value: _wishController.text.isNotEmpty ? _wishController.text : null,
         isCompleted: _wishController.text.isNotEmpty,
@@ -97,19 +110,6 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
             ? (_wishController.text.length > 30
                 ? '${_wishController.text.substring(0, 30)}...'
                 : _wishController.text)
-            : null,
-      ),
-
-      // 3. 긴급도 선택
-      AccordionInputSection(
-        id: 'urgency',
-        title: '얼마나 간절한가요?',
-        icon: Icons.favorite_rounded,
-        inputWidgetBuilder: (context, onComplete) => _buildUrgencyInput(onComplete),
-        value: _urgencyLevel,
-        isCompleted: _urgencyLevel != null,
-        displayValue: _urgencyLevel != null
-            ? _getUrgencyText(_urgencyLevel!)
             : null,
       ),
     ];
@@ -134,8 +134,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
 
   bool _canSubmit() {
     return _selectedCategory != null &&
-        _wishController.text.trim().isNotEmpty &&
-        _urgencyLevel != null;
+        _wishController.text.trim().length >= 10;
   }
 
   /// 소원 빌기 실행
@@ -168,7 +167,6 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   void _generateDivineResponse() async {
     final wishText = _wishController.text.trim();
     final category = _selectedCategory!.name;
-    final urgency = _urgencyLevel!;
 
     if (!mounted) return;
 
@@ -190,7 +188,6 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
         inputConditions: {
           'wish_text': wishText,
           'category': category,
-          'urgency': urgency,
           'user_profile': userProfile != null
               ? {
                   'birth_date': userProfile['birth_date'],
@@ -212,11 +209,10 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
 
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => WishFortuneResultTinder(
+          builder: (context) => WishFortuneResultPage(
             result: result,
             wishText: wishText,
             category: category,
-            urgency: urgency,
           ),
         ),
       );
@@ -449,23 +445,81 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   }
 
   Widget _buildWishInput(Function(dynamic) onComplete) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '마음을 담아 작성해주세요',
+          '마이크를 누르거나 직접 작성해주세요',
           style: TypographyUnified.labelMedium.copyWith(
-            color: TossDesignSystem.gray600,
+            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
+
+        // 🎤 음성 입력 버튼
+        Center(
+          child: GestureDetector(
+            onTap: _toggleRecording,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _isRecording
+                    ? TossDesignSystem.errorRed.withValues(alpha: 0.1)
+                    : TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                border: Border.all(
+                  color: _isRecording
+                      ? TossDesignSystem.errorRed
+                      : TossDesignSystem.tossBlue,
+                  width: 3,
+                ),
+              ),
+              child: Icon(
+                _isRecording ? Icons.stop_rounded : Icons.mic_rounded,
+                size: 40,
+                color: _isRecording
+                    ? TossDesignSystem.errorRed
+                    : TossDesignSystem.tossBlue,
+              ),
+            ),
+          ),
+        ),
+
+        // 음성 인식 중 애니메이션
+        if (_isRecording) ...[
+          const SizedBox(height: 16),
+          Center(
+            child: VoiceSpectrumAnimation(
+              isRecording: _isRecording,
+              soundLevel: _speechService.soundLevelNotifier.value,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Center(
+            child: Text(
+              '소원을 말해주세요...',
+              style: TypographyUnified.bodySmall.copyWith(
+                color: TossDesignSystem.errorRed,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+
+        const SizedBox(height: 16),
+
+        // 텍스트 입력 필드
         TextField(
           controller: _wishController,
           maxLines: 4,
           decoration: InputDecoration(
             hintText: '마음을 담아 소원을 적어보세요...',
             filled: true,
-            fillColor: TossDesignSystem.gray100,
+            fillColor: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray100,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -474,10 +528,14 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: TossDesignSystem.tossBlue, width: 2),
             ),
+            hintStyle: TypographyUnified.bodyMedium.copyWith(
+              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray500,
+            ),
           ),
-          style: TypographyUnified.bodyMedium,
+          style: TypographyUnified.bodyMedium.copyWith(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          ),
           onChanged: (value) {
-            // UI 상태만 업데이트 (onComplete 호출 안함)
             _updateAccordionSection(
               'wish',
               value.isNotEmpty ? value : null,
@@ -485,8 +543,25 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
             );
           },
         ),
+
+        const SizedBox(height: 8),
+
+        // 글자수 힌트
+        Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            '${_wishController.text.length}자 / 최소 10자',
+            style: TypographyUnified.labelSmall.copyWith(
+              color: _wishController.text.length >= 10
+                  ? TossDesignSystem.successGreen
+                  : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray500),
+            ),
+          ),
+        ),
+
         const SizedBox(height: 12),
-        // 다음 버튼 (10자 이상 입력 시 활성화)
+
+        // 완료 버튼
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
@@ -508,10 +583,10 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              disabledBackgroundColor: TossDesignSystem.gray200,
+              disabledBackgroundColor: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
             ),
             child: Text(
-              '다음',
+              '완료',
               style: TypographyUnified.buttonMedium.copyWith(
                 fontWeight: FontWeight.w600,
               ),
@@ -522,94 +597,71 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
     );
   }
 
-  Widget _buildUrgencyInput(Function(dynamic) onComplete) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '간절함의 정도를 선택해주세요',
-          style: TypographyUnified.labelMedium.copyWith(
-            color: TossDesignSystem.gray600,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Column(
-          children: [1, 2, 3, 4, 5].map((level) {
-            final isSelected = _urgencyLevel == level;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    _urgencyLevel = level;
-                    _updateAccordionSection(
-                      'urgency',
-                      level,
-                      _getUrgencyText(level),
-                    );
-                  });
-                  TossDesignSystem.hapticLight();
-                  onComplete(level);
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                        : TossDesignSystem.gray100,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
-                      width: 2,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        '⭐' * level,
-                        style: TypographyUnified.buttonMedium,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          _getUrgencyText(level),
-                          style: TypographyUnified.buttonMedium.copyWith(
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                            color: isSelected ? TossDesignSystem.tossBlue : null,
-                          ),
-                        ),
-                      ),
-                      if (isSelected)
-                        Icon(
-                          Icons.check_circle,
-                          color: TossDesignSystem.tossBlue,
-                          size: 24,
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
+  /// 음성 녹음 토글
+  void _toggleRecording() async {
+    if (_isRecording) {
+      // 녹음 중지
+      await _speechService.stopListening();
+      setState(() {
+        _isRecording = false;
+      });
+    } else {
+      // 녹음 시작
+      setState(() {
+        _isRecording = true;
+      });
+
+      TossDesignSystem.hapticMedium();
+
+      // 상태 변경 리스너 등록 (자동 종료 감지)
+      _speechService.isListeningNotifier.addListener(_onListeningStateChanged);
+
+      await _speechService.startListening(
+        onResult: (result) {
+          if (mounted) {
+            setState(() {
+              // 기존 텍스트에 음성 인식 결과 추가
+              final currentText = _wishController.text;
+              if (currentText.isEmpty) {
+                _wishController.text = result;
+              } else {
+                _wishController.text = '$currentText $result';
+              }
+              // 커서를 맨 끝으로 이동
+              _wishController.selection = TextSelection.fromPosition(
+                TextPosition(offset: _wishController.text.length),
+              );
+
+              _updateAccordionSection(
+                'wish',
+                _wishController.text,
+                _wishController.text.length > 30
+                    ? '${_wishController.text.substring(0, 30)}...'
+                    : _wishController.text,
+              );
+            });
+          }
+        },
+        onPartialResult: (partial) {
+          // 부분 결과 업데이트 (실시간 UI 갱신)
+          if (mounted) {
+            setState(() {});
+          }
+        },
+      );
+    }
   }
 
-  String _getUrgencyText(int level) {
-    switch (level) {
-      case 1:
-        return '조금 바라는 정도예요';
-      case 2:
-        return '그럭저럭 이루고 싶어요';
-      case 3:
-        return '꽤 간절해요';
-      case 4:
-        return '정말 간절해요';
-      case 5:
-        return '온 마음을 다해 빌어요';
-      default:
-        return '';
+  /// 음성 인식 상태 변경 핸들러
+  void _onListeningStateChanged() {
+    if (!_speechService.isListeningNotifier.value && _isRecording) {
+      // 음성 인식이 자동으로 종료된 경우
+      if (mounted) {
+        setState(() {
+          _isRecording = false;
+        });
+      }
+      _speechService.isListeningNotifier.removeListener(_onListeningStateChanged);
     }
   }
 

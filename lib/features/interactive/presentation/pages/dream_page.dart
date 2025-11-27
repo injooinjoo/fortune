@@ -6,7 +6,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../core/providers/user_settings_provider.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
@@ -81,7 +81,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fontSize = ref.watch(fontSizeProvider);
+    final baseFontSize = 16 * ref.watch(userSettingsProvider).fontScale;
     final dreamEntries = ref.watch(dreamEntriesProvider);
 
     return Scaffold(
@@ -100,8 +100,8 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
         ],
       ),
       body: _isWriting
-          ? _buildWritingView(theme, fontSize.value)
-          : _buildMainView(theme, fontSize.value, dreamEntries),
+          ? _buildWritingView(theme, baseFontSize)
+          : _buildMainView(theme, baseFontSize, dreamEntries),
     );
   }
 
@@ -514,7 +514,7 @@ class DreamDetailSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final fontSize = ref.watch(fontSizeProvider);
+    final baseFontSize = 16 * ref.watch(userSettingsProvider).fontScale;
     final analysisAsync = ref.watch(dreamAnalysisProvider(entry.id));
 
     return Container(
@@ -547,13 +547,13 @@ class DreamDetailSheet extends ConsumerWidget {
                   Text(
                     entry.title,
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      fontSize: fontSize.value + 4,
+                      fontSize: baseFontSize + 4,
                       fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text(
                     '${entry.date.year}년 ${entry.date.month}월 ${entry.date.day}일',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      fontSize: fontSize.value - 2,
+                      fontSize: baseFontSize - 2,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                   ),
                   const SizedBox(height: 20),
@@ -567,13 +567,13 @@ class DreamDetailSheet extends ConsumerWidget {
                         Text(
                           '꿈 내용',
                           style: theme.textTheme.titleMedium?.copyWith(
-                            fontSize: fontSize.value + 2,
+                            fontSize: baseFontSize + 2,
                             fontWeight: FontWeight.bold)),
                         const SizedBox(height: 12),
                         Text(
                           entry.content,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            fontSize: fontSize.value,
+                            fontSize: baseFontSize,
                             height: 1.6)),
                       ],
                     ),
@@ -590,7 +590,7 @@ class DreamDetailSheet extends ConsumerWidget {
                           Text(
                             '태그',
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: fontSize.value + 2,
+                              fontSize: baseFontSize + 2,
                               fontWeight: FontWeight.bold)),
                           const SizedBox(height: 12),
                           Wrap(
@@ -632,7 +632,7 @@ class DreamDetailSheet extends ConsumerWidget {
                                 Text(
                                   'AI 꿈 해석',
                                   style: theme.textTheme.titleMedium?.copyWith(
-                                    fontSize: fontSize.value + 2,
+                                    fontSize: baseFontSize + 2,
                                     fontWeight: FontWeight.bold))]),
                             const SizedBox(height: 16),
                             // Dream Type and Score
@@ -649,7 +649,7 @@ class DreamDetailSheet extends ConsumerWidget {
                                     style: TextStyle(
                                       color: theme.colorScheme.primary,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: fontSize.value - 2)),
+                                      fontSize: baseFontSize - 2)),
                                 ),
                                 const SizedBox(width: 12),
                                 Container(
@@ -663,7 +663,7 @@ class DreamDetailSheet extends ConsumerWidget {
                                     style: TextStyle(
                                       color: _getLuckColor(analysis.overallLuck),
                                       fontWeight: FontWeight.bold,
-                                      fontSize: fontSize.value - 2)),
+                                      fontSize: baseFontSize - 2)),
                                 ),
                               ],
                             ),
@@ -672,14 +672,14 @@ class DreamDetailSheet extends ConsumerWidget {
                             Text(
                               analysis.interpretation,
                               style: theme.textTheme.bodyLarge?.copyWith(
-                                fontSize: fontSize.value,
+                                fontSize: baseFontSize,
                                 height: 1.6)),
                             const SizedBox(height: 16),
                             // Symbols
                             Text(
                               '주요 상징',
                               style: theme.textTheme.titleSmall?.copyWith(
-                                fontSize: fontSize.value,
+                                fontSize: baseFontSize,
                                 fontWeight: FontWeight.bold)),
                             const SizedBox(height: 8),
                             Wrap(
@@ -712,7 +712,7 @@ class DreamDetailSheet extends ConsumerWidget {
                                     child: Text(
                                       analysis.advice,
                                       style: theme.textTheme.bodyMedium?.copyWith(
-                                        fontSize: fontSize.value - 1)),
+                                        fontSize: baseFontSize - 1)),
                                   ),
                                 ],
                               ),

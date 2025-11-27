@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/unified_button.dart';
 import 'package:flutter/services.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../services/region_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -400,7 +400,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
           final isSelected = _movingPeriod == period['title'];
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: TossCard(
+            child: AppCard(
               onTap: () {
                 setState(() {
                   _movingPeriod = period['title']!;
@@ -472,7 +472,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
         itemBuilder: (context, index) {
           final purpose = _purposes[index];
           final isSelected = _purpose == purpose['title'];
-          return TossCard(
+          return AppCard(
             onTap: () {
               setState(() {
                 _purpose = purpose['title']!;

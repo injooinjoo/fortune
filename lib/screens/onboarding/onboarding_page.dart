@@ -6,8 +6,8 @@ import '../../models/user_profile.dart';
 import '../../services/storage_service.dart';
 import '../../utils/date_utils.dart';
 import '../../core/theme/toss_design_system.dart';
-import 'steps/toss_style_name_step.dart';
-import 'steps/toss_style_birth_step.dart';
+import 'steps/name_input_step.dart';
+import 'steps/birth_input_step.dart';
 
 class OnboardingPage extends StatefulWidget {
   final bool isPartialCompletion;
@@ -283,7 +283,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         physics: const NeverScrollableScrollPhysics(),
         children: [
           // Step 1: Name
-          TossStyleNameStep(
+          NameInputStep(
             initialName: _name,
             onNameChanged: (name) {
               setState(() {
@@ -294,7 +294,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
           
           // Step 2: Birth Date & Time
-          TossStyleBirthStep(
+          BirthInputStep(
             initialDate: _birthDate,
             initialTime: _birthTime,
             onBirthDateChanged: (date) {

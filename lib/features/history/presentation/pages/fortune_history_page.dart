@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/theme/toss_theme.dart';
@@ -87,11 +87,11 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 child: Row(
                   children: [
                     Expanded(
-                      child: TossCard(
+                      child: AppCard(
                         onTap: () => setState(() => _tabController.index = 0),
                         style: _tabController.index == 0 
-                          ? TossCardStyle.filled 
-                          : TossCardStyle.outlined,
+                          ? AppCardStyle.filled 
+                          : AppCardStyle.outlined,
                         padding: const EdgeInsets.symmetric(
                           vertical: TossTheme.spacingS, 
                           horizontal: TossTheme.spacingM,
@@ -110,11 +110,11 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                     ),
                     const SizedBox(width: TossTheme.spacingS),
                     Expanded(
-                      child: TossCard(
+                      child: AppCard(
                         onTap: () => setState(() => _tabController.index = 1),
                         style: _tabController.index == 1 
-                          ? TossCardStyle.filled 
-                          : TossCardStyle.outlined,
+                          ? AppCardStyle.filled 
+                          : AppCardStyle.outlined,
                         padding: const EdgeInsets.symmetric(
                           vertical: TossTheme.spacingS, 
                           horizontal: TossTheme.spacingM,
@@ -133,11 +133,11 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                     ),
                     const SizedBox(width: TossTheme.spacingS),
                     Expanded(
-                      child: TossCard(
+                      child: AppCard(
                         onTap: () => setState(() => _tabController.index = 2),
                         style: _tabController.index == 2 
-                          ? TossCardStyle.filled 
-                          : TossCardStyle.outlined,
+                          ? AppCardStyle.filled 
+                          : AppCardStyle.outlined,
                         padding: const EdgeInsets.symmetric(
                           vertical: TossTheme.spacingS, 
                           horizontal: TossTheme.spacingM,
@@ -156,11 +156,11 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                     ),
                     const SizedBox(width: TossTheme.spacingS),
                     Expanded(
-                      child: TossCard(
+                      child: AppCard(
                         onTap: () => setState(() => _tabController.index = 3),
                         style: _tabController.index == 3 
-                          ? TossCardStyle.filled 
-                          : TossCardStyle.outlined,
+                          ? AppCardStyle.filled 
+                          : AppCardStyle.outlined,
                         padding: const EdgeInsets.symmetric(
                           horizontal: TossTheme.spacingM,
                           vertical: TossTheme.spacingS,
@@ -186,7 +186,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
               // 이번 달 요약 카드 (토스 스타일)
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
-                child: TossCard(
+                child: AppCard(
                   padding: const EdgeInsets.all(TossTheme.spacingL),
                   child: Column(
                     children: [
@@ -313,7 +313,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     return Center(
       child: Container(
         margin: const EdgeInsets.all(TossTheme.spacingXL),
-        child: TossCard(
+        child: AppCard(
           padding: const EdgeInsets.all(TossTheme.spacingXL),
           child: Column(
             mainAxisSize: MainAxisSize.min,

@@ -8,7 +8,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../domain/models/sipseong_talent.dart';
 import '../../../../core/theme/typography_unified.dart';
 
@@ -84,7 +84,7 @@ class GrowthTimelineWidget extends StatelessWidget {
   }
 
   Widget _buildLuckyElementsSection(bool isDark) {
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -206,7 +206,7 @@ class GrowthTimelineWidget extends StatelessWidget {
   }
 
   Widget _buildDaeunTimeline(bool isDark) {
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

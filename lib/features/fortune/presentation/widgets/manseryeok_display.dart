@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/typography_unified.dart';
 
 /// 토스 스타일의 만세력 사주 표시 위젯
@@ -15,7 +15,7 @@ class ManseryeokDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingL),
       child: Builder(
         builder: (context) {

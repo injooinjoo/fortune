@@ -9,7 +9,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/widgets/unified_button.dart';
-import '../../../../shared/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../shared/components/toast.dart';
@@ -737,7 +737,7 @@ class _MbtiFortunePageState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colors = _mbtiColors[_selectedMbti!]!;
 
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -805,7 +805,7 @@ class _MbtiFortunePageState
       if (data['luckyNumber'] != null) '숫자': data['luckyNumber'].toString(),
     };
 
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -889,7 +889,7 @@ class _MbtiFortunePageState
 
   Widget _buildCognitiveFunctionsCard() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -963,7 +963,7 @@ class _MbtiFortunePageState
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: TossCard(
+          child: AppCard(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1005,7 +1005,7 @@ class _MbtiFortunePageState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final compatibleTypes = _getCompatibleTypes(_selectedMbti!);
 
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/components/toss_card.dart';
+import '../../../../../core/components/app_card.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../pages/biorhythm_result_page.dart';
 import '../../../../../core/theme/toss_design_system.dart';
@@ -19,8 +19,8 @@ class PersonalAnalysisCard extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final age = DateTime.now().difference(biorhythmData.birthDate).inDays ~/ 365;
 
-    return TossCard(
-      style: TossCardStyle.elevated,
+    return AppCard(
+      style: AppCardStyle.elevated,
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,8 +95,8 @@ class LifestyleAdviceCard extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final advices = _getLifestyleAdvices();
 
-    return TossCard(
-      style: TossCardStyle.filled,
+    return AppCard(
+      style: AppCardStyle.filled,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,8 +247,8 @@ class HealthTipsCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return TossCard(
-      style: TossCardStyle.outlined,
+    return AppCard(
+      style: AppCardStyle.outlined,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,8 +386,8 @@ class NextAnalysisCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return TossCard(
-      style: TossCardStyle.filled,
+    return AppCard(
+      style: AppCardStyle.filled,
       padding: const EdgeInsets.all(20),
       child: Row(
         children: [

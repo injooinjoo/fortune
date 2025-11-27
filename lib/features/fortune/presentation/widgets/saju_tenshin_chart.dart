@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 
 /// 십신 분포 차트 위젯
 class SajuTenshinChart extends StatefulWidget {
@@ -133,7 +133,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
     return AnimatedBuilder(
       animation: widget.animationController,
       builder: (context, child) {
-        return TossCard(
+        return AppCard(
           padding: const EdgeInsets.all(TossTheme.spacingL),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

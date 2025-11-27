@@ -4,7 +4,7 @@ import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../domain/models/conditions/avoid_people_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/logger.dart';
@@ -625,8 +625,8 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
               const SizedBox(height: 40),
 
               // 체크박스
-              TossCard(
-                style: TossCardStyle.elevated,
+              AppCard(
+                style: AppCardStyle.elevated,
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [

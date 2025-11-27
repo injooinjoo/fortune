@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/widgets/blurred_fortune_content.dart'; // ✅ BlurredFortuneContent
@@ -211,8 +211,8 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
   }
 
   Widget _buildMainMessage(ExLoverEmotionalResult result, bool isDark) {
-    return TossCard(
-      style: TossCardStyle.elevated,
+    return AppCard(
+      style: AppCardStyle.elevated,
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
@@ -275,8 +275,8 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
   }
 
   Widget _buildEmotionalPrescription(EmotionalPrescription prescription, bool isDark) {
-    return TossCard(
-      style: TossCardStyle.filled,
+    return AppCard(
+      style: AppCardStyle.filled,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -450,8 +450,8 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
     final showReunion = true;
     final showFeelings = true;
     
-    return TossCard(
-      style: TossCardStyle.filled,
+    return AppCard(
+      style: AppCardStyle.filled,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -618,8 +618,8 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
   }
 
   Widget _buildNewBeginning(NewBeginning newBeginning, bool isDark) {
-    return TossCard(
-      style: TossCardStyle.filled,
+    return AppCard(
+      style: AppCardStyle.filled,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

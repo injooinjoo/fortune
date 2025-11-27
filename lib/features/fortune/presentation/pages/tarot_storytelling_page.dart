@@ -9,8 +9,7 @@ import 'dart:math' as math;
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../widgets/standard_fortune_app_bar.dart';
-import '../../../../shared/components/app_header.dart'; // For FontSize enum
-import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../core/providers/user_settings_provider.dart';
 import '../widgets/tarot_card_reveal_widget.dart';
 import '../widgets/tarot_interpretation_bubble.dart';
 import '../widgets/mystical_background.dart';
@@ -171,8 +170,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = ref.watch(fontSizeProvider);
-    final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
+    final fontScale = ref.watch(userSettingsProvider).fontScale;
 
     return Scaffold(
       backgroundColor: TossDesignSystem.black,

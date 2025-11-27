@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../domain/models/fortune_history.dart';
@@ -39,7 +39,7 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
 
   @override
   Widget build(BuildContext context) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingL),
       child: Column(
         children: [

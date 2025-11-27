@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../domain/models/conditions/biorhythm_fortune_conditions.dart';
@@ -263,8 +263,8 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
               
               // 메인 분석 카드
               Expanded(
-                child: TossCard(
-                  style: TossCardStyle.elevated,
+                child: AppCard(
+                  style: AppCardStyle.elevated,
                   padding: const EdgeInsets.all(32),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -466,8 +466,8 @@ class _BiorhythmLoadingPageState extends State<BiorhythmLoadingPage>
   }
 
   Widget _buildBottomInfo() {
-    return TossCard(
-      style: TossCardStyle.filled,
+    return AppCard(
+      style: AppCardStyle.filled,
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [

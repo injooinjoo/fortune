@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/services/debug_premium_service.dart';
@@ -26,7 +26,7 @@ import '../../../../services/storage_service.dart';
 import '../../../../services/user_statistics_service.dart';
 // ✅ Phase 10: BlurredFortuneContent 제거 - _buildBlurWrapper 사용
 import '../../../../services/ad_service.dart';
-import '../../../../core/widgets/toss_info_banner.dart';
+import '../../../../core/widgets/info_banner.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/services/device_calendar_service.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
@@ -695,7 +695,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
   }
 
   Widget _buildCalendarBanner() {
-    return TossInfoBanner(
+    return InfoBanner(
       icon: Icons.calendar_month,
       iconColor: TossDesignSystem.tossBlue,
       title: '캘린더 연동해서 이벤트운세받기',
@@ -853,7 +853,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
   Widget _buildCalendar() {
     final theme = Theme.of(context);
 
-    return TossCard(
+    return AppCard(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       child: TableCalendar<CalendarEventInfo>(
@@ -1037,7 +1037,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     final theme = Theme.of(context);
     final eventInfo = _events[DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day)];
 
-    return TossCard(
+    return AppCard(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       child: Column(
@@ -1550,7 +1550,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     // 문단 구분을 위해 '. '으로 문장 분리
     final sentences = content.split('. ').where((s) => s.trim().isNotEmpty).toList();
 
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1628,7 +1628,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: TossCard(
+            child: AppCard(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1704,9 +1704,9 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
               ),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: TossCard(
+            child: AppCard(
               padding: const EdgeInsets.all(20),
-              style: TossCardStyle.transparent,
+              style: AppCardStyle.transparent,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1780,7 +1780,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
   // AI 팁 리스트
   Widget _buildAITipsList(List tips, bool isDark) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

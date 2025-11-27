@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../services/celebrity_service_new.dart';
+import '../../services/celebrity_service.dart';
 import '../../services/celebrity_crawling_service.dart';
 import '../../data/models/celebrity_simple.dart';
 

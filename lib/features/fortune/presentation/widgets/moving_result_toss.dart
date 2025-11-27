@@ -3,7 +3,7 @@ import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -208,7 +208,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
   }
 
   Widget _buildScoreCard() {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingXL),
       child: Column(
         children: [
@@ -284,7 +284,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
   }
 
   Widget _buildMainAdviceCard() {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingXL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,7 +321,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
   }
 
   Widget _buildLuckyDatesCard() {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingXL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,7 +388,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
   }
 
   Widget _buildDirectionCard() {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingXL),
       child: Column(
         children: [
@@ -437,7 +437,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
   }
 
   Widget _buildSummaryCard() {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingXL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

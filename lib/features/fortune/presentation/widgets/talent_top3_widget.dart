@@ -10,7 +10,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../domain/models/sipseong_talent.dart';
 import '../../../../core/theme/typography_unified.dart';
 
@@ -118,7 +118,7 @@ class _TalentRankCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final rankColor = _getRankColor(rank);
 
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

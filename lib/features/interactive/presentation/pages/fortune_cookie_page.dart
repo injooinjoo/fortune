@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/utils/logger.dart';
 import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
@@ -307,9 +307,9 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
-        child: TossCard(
+        child: AppCard(
           padding: const EdgeInsets.all(20),
-          style: isSelected ? TossCardStyle.filled : TossCardStyle.outlined,
+          style: isSelected ? AppCardStyle.filled : AppCardStyle.outlined,
           child: Row(
             children: [
               Container(
@@ -556,7 +556,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
       builder: (context, child) {
         return Transform.scale(
           scale: _paperAnimation.value,
-          child: TossCard(
+          child: AppCard(
             padding: const EdgeInsets.all(32),
             child: Column(
               children: [
@@ -735,7 +735,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
   Widget _buildLuckyCard(String title, String value, IconData icon, Color color) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [

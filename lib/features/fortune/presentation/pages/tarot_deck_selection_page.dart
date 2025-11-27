@@ -5,9 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../widgets/standard_fortune_app_bar.dart';
-import '../../../../shared/components/app_header.dart'; // For FontSize enum
 import '../../../../presentation/providers/tarot_deck_provider.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../core/providers/user_settings_provider.dart';
 import '../widgets/mystical_background.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -85,8 +84,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fontSize = ref.watch(fontSizeProvider);
-    final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
+    final fontScale = ref.watch(userSettingsProvider).fontScale;
 
     final currentDeckId = ref.watch(selectedTarotDeckProvider);
     final recommendedDecks = ref.watch(recommendedDecksProvider);

@@ -260,7 +260,7 @@ class AppColors {
     return getThemedColor(context, tossBackground, tossBackgroundDark);
   }
   
-  static Color getTossCardBackground(BuildContext context) {
+  static Color getAppCardBackground(BuildContext context) {
     return getThemedColor(context, tossCardBackground, tossCardBackgroundDark);
   }
   

@@ -4,10 +4,9 @@ import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../../core/constants/tarot_metadata.dart';
-import '../../../../../presentation/providers/font_size_provider.dart';
+import '../../../../../core/providers/user_settings_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/loading_states.dart';
-import '../../../../../shared/components/app_header.dart' show FontSize;
 import '../../../../../core/theme/typography_unified.dart';
 import 'tarot_card_widget.dart';
 
@@ -72,8 +71,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fontSize = ref.watch(fontSizeProvider);
-    final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
+    final fontScale = ref.watch(userSettingsProvider).fontScale;
 
     if (widget.isLoading) {
       return const LoadingStateWidget(

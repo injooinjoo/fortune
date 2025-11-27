@@ -7,7 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -285,7 +285,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 헤더 카드
-                TossCard(
+                AppCard(
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     children: [
@@ -377,9 +377,9 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
                 const SizedBox(height: 12),
 
-                TossCard(
+                AppCard(
                   padding: const EdgeInsets.all(16),
-                  style: TossCardStyle.outlined,
+                  style: AppCardStyle.outlined,
                   child: Column(
                     children: [
                       TextField(
@@ -470,7 +470,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
                 const SizedBox(height: 16),
 
-                TossCard(
+                AppCard(
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
@@ -572,7 +572,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
           child: Column(
             children: [
           // 전체 궁합 점수
-          TossCard(
+          AppCard(
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
@@ -658,7 +658,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
             isBlurred: _isBlurred,
             blurredSections: _blurredSections,
             sectionKey: 'detailed_scores',
-            child: TossCard(
+            child: AppCard(
               padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -740,7 +740,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
           // 🆕 전통 궁합 (띠 + 별자리)
           if (fortune.metadata?['zodiac_animal'] != null || fortune.metadata?['star_sign'] != null)
-            TossCard(
+            AppCard(
               padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -886,7 +886,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
           // 🆕 숫자 궁합 (이름 + 운명수)
           if (fortune.metadata?['name_compatibility'] != null || fortune.metadata?['destiny_number'] != null)
-            TossCard(
+            AppCard(
               padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1017,7 +1017,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
           // 🆕 감성 궁합 (계절 + 나이차)
           if (fortune.metadata?['season'] != null || fortune.metadata?['age_difference'] != null)
-            TossCard(
+            AppCard(
               padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1136,7 +1136,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
             isBlurred: _isBlurred,
             blurredSections: _blurredSections,
             sectionKey: 'analysis',
-            child: TossCard(
+            child: AppCard(
               padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1188,7 +1188,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'advice',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

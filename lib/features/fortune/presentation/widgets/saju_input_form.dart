@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
-import '../../../../core/components/toss_input.dart';
+import '../../../../core/components/app_input.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 
 /// 사주팔자 정보 입력 폼 위젯
@@ -198,7 +198,7 @@ class _SajuInputFormState extends State<SajuInputForm>
   }
 
   Widget _buildNameInput() {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -243,7 +243,7 @@ class _SajuInputFormState extends State<SajuInputForm>
   }
 
   Widget _buildDateInput() {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,7 +284,7 @@ class _SajuInputFormState extends State<SajuInputForm>
   }
 
   Widget _buildTimeInput() {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,7 +381,7 @@ class _SajuInputFormState extends State<SajuInputForm>
   }
 
   Widget _buildGenderInput() {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

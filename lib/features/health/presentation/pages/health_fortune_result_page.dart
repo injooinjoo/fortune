@@ -222,7 +222,10 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
   Widget _buildOverallHealthSection() {
     final data = _fortuneResult.data;
-    final overallHealth = FortuneTextCleaner.clean(data['overall_health'] as String? ?? '건강하십니다.');
+    final overallHealthRaw = data['overall_health'];
+    final overallHealth = FortuneTextCleaner.clean(
+      overallHealthRaw is String ? overallHealthRaw : '건강하십니다.',
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -369,8 +372,10 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
       );
     }
 
-    // String 형식일 경우 (기본)
-    final bodyPartAdvice = FortuneTextCleaner.clean(bodyPartAdviceRaw as String? ?? '주의가 필요합니다.');
+    // String 형식일 경우 (기본) - 타입 안전하게 처리
+    final bodyPartAdvice = FortuneTextCleaner.clean(
+      bodyPartAdviceRaw is String ? bodyPartAdviceRaw : '주의가 필요합니다.',
+    );
     return Text(
       bodyPartAdvice,
       style: context.bodyMedium.copyWith(
@@ -444,7 +449,10 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
   Widget _buildDietAdviceContent() {
     final data = _fortuneResult.data;
-    final dietAdvice = FortuneTextCleaner.clean(data['diet_advice'] as String? ?? '균형잡힌 식사를 하세요.');
+    final dietAdviceRaw = data['diet_advice'];
+    final dietAdvice = FortuneTextCleaner.clean(
+      dietAdviceRaw is String ? dietAdviceRaw : '균형잡힌 식사를 하세요.',
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Text(
@@ -458,7 +466,10 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
   Widget _buildExerciseAdviceContent() {
     final data = _fortuneResult.data;
-    final exerciseAdvice = FortuneTextCleaner.clean(data['exercise_advice'] as String? ?? '꾸준한 운동이 중요합니다.');
+    final exerciseAdviceRaw = data['exercise_advice'];
+    final exerciseAdvice = FortuneTextCleaner.clean(
+      exerciseAdviceRaw is String ? exerciseAdviceRaw : '꾸준한 운동이 중요합니다.',
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Text(
@@ -472,7 +483,8 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
   Widget _buildHealthKeywordContent() {
     final data = _fortuneResult.data;
-    final healthKeyword = data['health_keyword'] as String? ?? '건강';
+    final healthKeywordRaw = data['health_keyword'];
+    final healthKeyword = healthKeywordRaw is String ? healthKeywordRaw : '건강';
 
     return Container(
       padding: const EdgeInsets.all(16),

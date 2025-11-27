@@ -5,7 +5,7 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/korean_date_picker.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../core/providers/user_settings_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 
@@ -94,8 +94,7 @@ class _PsychologyTestPageState extends ConsumerState<PsychologyTestPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fontSize = ref.watch(fontSizeProvider);
-    final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
+    final fontScale = ref.watch(userSettingsProvider).fontScale;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,

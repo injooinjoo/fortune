@@ -10,7 +10,7 @@ import '../widgets/ads/cross_platform_ad_widget.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
-import '../../core/components/toss_fortune_loading_screen.dart';
+import '../../core/components/fortune_loading_screen.dart';
 import '../../core/theme/toss_design_system.dart';
 
 class AdLoadingScreen extends ConsumerStatefulWidget {

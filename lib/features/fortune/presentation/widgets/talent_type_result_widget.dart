@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../domain/models/talent_type.dart';
@@ -18,7 +18,7 @@ class TalentTypeResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
@@ -163,7 +163,7 @@ class TalentStrengthCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,7 +260,7 @@ class RecommendedCareersWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,7 +325,7 @@ class ActionPlanWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

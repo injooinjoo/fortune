@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/components/toss_card.dart';
+import '../../../../../core/components/app_card.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../pages/biorhythm_result_page.dart';
 import '../../../../../core/theme/toss_design_system.dart';
@@ -18,8 +18,8 @@ class TodayOverallStatusCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return TossCard(
-      style: TossCardStyle.elevated,
+    return AppCard(
+      style: AppCardStyle.elevated,
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
@@ -138,8 +138,8 @@ class RhythmDetailCards extends StatelessWidget {
       builder: (context) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
 
-        return TossCard(
-          style: TossCardStyle.outlined,
+        return AppCard(
+          style: AppCardStyle.outlined,
           padding: const EdgeInsets.all(20),
           child: Row(
             children: [

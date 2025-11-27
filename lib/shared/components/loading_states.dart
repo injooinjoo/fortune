@@ -62,12 +62,12 @@ class LoadingStateWidget extends StatelessWidget {
   }
 }
 
-class TossLoadingOverlay extends StatelessWidget {
+class AppLoadingOverlay extends StatelessWidget {
   final bool isLoading;
   final Widget child;
   final String? message;
 
-  const TossLoadingOverlay({
+  const AppLoadingOverlay({
     super.key,
     required this.isLoading,
     required this.child,

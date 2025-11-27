@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
@@ -11,7 +11,7 @@ class DreamInputTipCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingL),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

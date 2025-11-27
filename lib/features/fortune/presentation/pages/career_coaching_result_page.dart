@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../domain/models/career_coaching_model.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -375,7 +375,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     final marketScore = healthScore['market_score'] as int? ?? 0;
     final balanceScore = healthScore['balance_score'] as int? ?? 0;
 
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
@@ -480,7 +480,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     final demandLevel = marketTrends['demand_level'] as String? ?? '';
     final salaryTrend = marketTrends['salary_trend'] as String? ?? '';
 
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -546,7 +546,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     final impact = insight['impact'] as String? ?? '';
     final description = insight['description'] as String? ?? '';
 
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -630,7 +630,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     return Column(
       children: [
         // Focus Area
-        TossCard(
+        AppCard(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -700,7 +700,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     final tasks = week['tasks'] as List? ?? [];
     final milestone = week['milestone'] as String? ?? '';
 
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -803,7 +803,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     final estimatedMonths = growthRoadmap['estimated_months'] as int? ?? 0;
     final keyMilestones = growthRoadmap['key_milestones'] as List? ?? [];
 
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -958,7 +958,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
   }
 
   Widget _buildRecommendationsCard(List skills, bool isDark) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

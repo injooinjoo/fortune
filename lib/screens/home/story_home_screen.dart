@@ -17,7 +17,7 @@ import '../../widgets/emotional_loading_checklist.dart';
 import '../../widgets/profile_completion_dialog.dart';
 import '../../core/utils/profile_validation.dart';
 import 'fortune_story_viewer.dart';
-import 'fortune_completion_page_tinder.dart';
+import 'fortune_swipe_page.dart';
 import 'preview_screen.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/theme/toss_design_system.dart';
@@ -1150,7 +1150,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
     // Navigator push로 완료 페이지 열기
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FortuneCompletionPageTinder(
+        builder: (context) => FortuneSwipePage(
           fortune: todaysFortune,
           userName: userProfile?.name,
           userProfile: userProfile,
@@ -1250,7 +1250,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
     }
 
     // 기본 화면: Tinder 완료 페이지
-    debugPrint('🎯 Showing default FortuneCompletionPageTinder');
+    debugPrint('🎯 Showing default FortuneSwipePage');
     debugPrint('🔍 [StoryHomeScreen] userProfile: ${userProfile?.name}, fortune: ${todaysFortune != null}');
 
     // 네비게이션 바 즉시 표시 (build 후에)
@@ -1263,7 +1263,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
       }
     });
 
-    return FortuneCompletionPageTinder(
+    return FortuneSwipePage(
       fortune: todaysFortune,
       userName: userProfile?.name,
       userProfile: userProfile,

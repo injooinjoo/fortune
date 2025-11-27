@@ -27,23 +27,23 @@ import '../features/notification/presentation/pages/notification_settings_page.d
 import '../features/support/presentation/pages/help_page.dart';
 import '../features/policy/presentation/pages/privacy_policy_page.dart';
 import '../features/policy/presentation/pages/terms_of_service_page.dart';
-import '../features/payment/presentation/pages/token_purchase_page_v2.dart';
+import '../features/payment/presentation/pages/token_purchase_page.dart';
 import '../features/settings/presentation/pages/font_settings_page.dart';
 
 // Import pages that need to hide navigation bar
-import '../features/fortune/presentation/pages/moving_fortune_toss_page.dart';
-import '../features/fortune/presentation/pages/traditional_saju_toss_page.dart';
+import '../features/fortune/presentation/pages/moving_fortune_page.dart';
+import '../features/fortune/presentation/pages/traditional_saju_page.dart';
 import '../features/fortune/presentation/pages/talisman_fortune_page.dart';
 import '../features/fortune/presentation/pages/biorhythm_fortune_page.dart';
 import '../features/fortune/presentation/pages/love_fortune_input_page.dart';
 import '../features/fortune/presentation/pages/ex_lover_fortune_simple_page.dart';
 import '../features/fortune/presentation/pages/ex_lover_emotional_result_page.dart';
 import '../features/fortune/presentation/pages/blind_date_fortune_page.dart';
-import '../features/fortune/presentation/pages/investment_fortune_enhanced_page.dart';
+import '../features/fortune/presentation/pages/investment_fortune_page.dart';
 import '../screens/subscription/subscription_page.dart';
 
 // Import page classes for routes outside shell
-import '../features/health/presentation/pages/health_fortune_toss_page.dart';
+import '../features/health/presentation/pages/health_fortune_page.dart';
 import '../features/health/presentation/pages/health_fortune_result_page.dart';
 import '../core/models/fortune_result.dart';
 import '../features/sports/presentation/pages/sports_fortune_page.dart' show ExerciseFortunePage;
@@ -57,9 +57,9 @@ import '../features/fortune/presentation/pages/career_coaching_result_page.dart'
 import '../features/fortune/domain/models/career_coaching_model.dart';
 import '../features/fortune/presentation/pages/lucky_exam_fortune_page.dart';
 import '../features/interactive/presentation/pages/fortune_cookie_page.dart';
-import '../features/fortune/presentation/pages/celebrity_fortune_enhanced_page.dart';
+import '../features/fortune/presentation/pages/celebrity_fortune_page.dart';
 import '../features/fortune/presentation/pages/pet_compatibility_page.dart';
-import '../features/fortune/presentation/pages/family_fortune_unified_page.dart';
+import '../features/fortune/presentation/pages/family_fortune_page.dart';
 import '../features/fortune/presentation/pages/daily_calendar_fortune_page.dart';
 // import '../features/fortune/presentation/pages/mbti_fortune_page.dart'; // Now in fortuneRoutes
 
@@ -297,7 +297,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => PageTransitions.slideTransition(
           context,
           state,
-          const HealthFortuneTossPage(),
+          const HealthFortunePage(),
         ),
       ),
       GoRoute(
@@ -406,7 +406,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/token-purchase',
         name: 'token-purchase',
-        builder: (context, state) => const TokenPurchasePageV2(),
+        builder: (context, state) => const TokenPurchasePage(),
       ),
       GoRoute(
         path: '/help',
@@ -428,7 +428,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/moving',
         name: 'fortune-moving',
-        builder: (context, state) => const MovingFortuneTossPage(),
+        builder: (context, state) => const MovingFortunePage(),
       ),
       GoRoute(
         path: '/daily-calendar',
@@ -441,7 +441,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/traditional-saju',
         name: 'fortune-traditional-saju',
-        builder: (context, state) => const TraditionalSajuTossPage(),
+        builder: (context, state) => const TraditionalSajuPage(),
       ),
       // Physiognomy route removed - page deleted
       GoRoute(

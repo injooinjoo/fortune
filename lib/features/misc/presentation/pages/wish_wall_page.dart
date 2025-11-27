@@ -4,7 +4,7 @@ import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../core/providers/user_settings_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 // Wish model
@@ -190,7 +190,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fontSize = ref.watch(fontSizeProvider);
+    final baseFontSize = 16 * ref.watch(userSettingsProvider).fontScale;
     final wishes = ref.watch(wishesProvider);
 
     return Scaffold(
@@ -258,7 +258,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                   Text(
                     '첫 번째 소원을 적어보세요',
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      fontSize: fontSize.value + 2,
+                      fontSize: baseFontSize + 2,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
@@ -266,14 +266,14 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
               ),
             ),
           if (wishes.isNotEmpty)
-            ...wishes.map((wish) => _buildWishNote(context, theme, fontSize.value, wish)),
+            ...wishes.map((wish) => _buildWishNote(context, theme, baseFontSize, wish)),
 
           // Write form
           if (_showWriteForm)
             Container(
               color: TossDesignSystem.black.withValues(alpha: 0.5),
               child: Center(
-                child: _buildWriteForm(theme, fontSize.value),
+                child: _buildWriteForm(theme, baseFontSize),
               ),
             ),
         ],

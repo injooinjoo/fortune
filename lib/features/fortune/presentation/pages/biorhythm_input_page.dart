@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -239,8 +239,8 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                           // 메인 설명 카드
                           FadeTransition(
                             opacity: _fadeAnimation,
-                            child: TossCard(
-                              style: TossCardStyle.elevated,
+                            child: AppCard(
+                              style: AppCardStyle.elevated,
                               padding: const EdgeInsets.all(24),
                               child: Column(
                                 children: [
@@ -309,8 +309,8 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                           // 생년월일 입력 카드
                           FadeTransition(
                             opacity: _fadeAnimation,
-                            child: TossCard(
-                              style: TossCardStyle.outlined,
+                            child: AppCard(
+                              style: AppCardStyle.outlined,
                               padding: const EdgeInsets.all(20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

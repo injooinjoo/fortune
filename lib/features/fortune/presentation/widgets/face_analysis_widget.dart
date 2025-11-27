@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -122,7 +122,7 @@ class FaceAnalysisResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
@@ -265,7 +265,7 @@ class FaceStrengthsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,7 +356,7 @@ class RecommendedCareersWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -423,7 +423,7 @@ class LifeAdviceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

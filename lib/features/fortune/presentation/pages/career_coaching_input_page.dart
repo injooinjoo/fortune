@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../domain/models/career_coaching_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -269,9 +269,9 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             TossDesignSystem.hapticLight();
             onComplete(role.id);
           },
-          child: TossCard(
+          child: AppCard(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            style: _currentRole == role.id ? TossCardStyle.filled : TossCardStyle.outlined,
+            style: _currentRole == role.id ? AppCardStyle.filled : AppCardStyle.outlined,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -311,9 +311,9 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
           },
           child: Container(
             margin: const EdgeInsets.only(bottom: 12),
-            child: TossCard(
+            child: AppCard(
               padding: const EdgeInsets.all(16),
-              style: _primaryConcern == concern.id ? TossCardStyle.filled : TossCardStyle.outlined,
+              style: _primaryConcern == concern.id ? AppCardStyle.filled : AppCardStyle.outlined,
               child: Row(
                 children: [
                   Container(

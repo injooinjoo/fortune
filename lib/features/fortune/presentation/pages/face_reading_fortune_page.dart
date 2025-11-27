@@ -10,7 +10,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../shared/components/image_upload_selector.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart' as core_models;
@@ -209,8 +209,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           
           // Preview Card
           if (_uploadResult != null)
-            TossCard(
-              style: TossCardStyle.filled,
+            AppCard(
+              style: AppCardStyle.filled,
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,8 +280,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           const SizedBox(height: 24),
           
           // Analysis Features
-          TossCard(
-            style: TossCardStyle.outlined,
+          AppCard(
+            style: AppCardStyle.outlined,
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -579,8 +579,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     required String sectionKey,
     required int delay,
   }) {
-    Widget cardContent = TossCard(
-      style: TossCardStyle.outlined,
+    Widget cardContent = AppCard(
+      style: AppCardStyle.outlined,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -915,8 +915,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             isBlurred: result.isBlurred,
             blurredSections: result.blurredSections,
             sectionKey: 'samjeong',
-            child: TossCard(
-              style: TossCardStyle.filled,
+            child: AppCard(
+              style: AppCardStyle.filled,
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -962,8 +962,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             isBlurred: result.isBlurred,
             blurredSections: result.blurredSections,
             sectionKey: 'sibigung',
-            child: TossCard(
-              style: TossCardStyle.filled,
+            child: AppCard(
+              style: AppCardStyle.filled,
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1009,8 +1009,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             isBlurred: result.isBlurred,
             blurredSections: result.blurredSections,
             sectionKey: 'personality',
-            child: TossCard(
-              style: TossCardStyle.filled,
+            child: AppCard(
+              style: AppCardStyle.filled,
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1070,8 +1070,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             isBlurred: result.isBlurred,
             blurredSections: result.blurredSections,
             sectionKey: 'special_features',
-            child: TossCard(
-              style: TossCardStyle.filled,
+            child: AppCard(
+              style: AppCardStyle.filled,
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1131,8 +1131,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             isBlurred: result.isBlurred,
             blurredSections: result.blurredSections,
             sectionKey: 'advice',
-            child: TossCard(
-              style: TossCardStyle.filled,
+            child: AppCard(
+              style: AppCardStyle.filled,
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1192,8 +1192,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             isBlurred: result.isBlurred,
             blurredSections: result.blurredSections,
             sectionKey: 'full_analysis',
-            child: TossCard(
-              style: TossCardStyle.filled,
+            child: AppCard(
+              style: AppCardStyle.filled,
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1249,8 +1249,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         
         // Character Analysis
         if (data['character_traits'] != null) ...[
-          TossCard(
-            style: TossCardStyle.filled,
+          AppCard(
+            style: AppCardStyle.filled,
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1452,8 +1452,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
               isBlurred: result.isBlurred,
               blurredSections: result.blurredSections,
               sectionKey: 'ogwan',
-              child: TossCard(
-                style: TossCardStyle.filled,
+              child: AppCard(
+                style: AppCardStyle.filled,
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1520,8 +1520,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     required List celebrities,
     required bool isDark,
   }) {
-    return TossCard(
-      style: TossCardStyle.filled,
+    return AppCard(
+      style: AppCardStyle.filled,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

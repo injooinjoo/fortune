@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/components/toss_card.dart';
+import '../../../../../core/components/app_card.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../pages/biorhythm_result_page.dart';
 import '../../../../../core/theme/toss_design_system.dart';
@@ -21,8 +21,8 @@ class TodayRecommendationCard extends StatelessWidget {
     // 점수에 따른 추천 활동
     List<String> recommendations = _getRecommendations();
 
-    return TossCard(
-      style: TossCardStyle.filled,
+    return AppCard(
+      style: AppCardStyle.filled,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,8 +133,8 @@ class WeeklyActivityGuide extends StatelessWidget {
 
     final activities = _getWeeklyActivities();
 
-    return TossCard(
-      style: TossCardStyle.outlined,
+    return AppCard(
+      style: AppCardStyle.outlined,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

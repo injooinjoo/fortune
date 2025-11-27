@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
 import '../../domain/models/conditions/ex_lover_fortune_conditions.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -245,8 +245,8 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 위로 메시지
-          TossCard(
-            style: TossCardStyle.elevated,
+          AppCard(
+            style: AppCardStyle.elevated,
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
@@ -352,8 +352,8 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TossCard(
-            style: TossCardStyle.elevated,
+          AppCard(
+            style: AppCardStyle.elevated,
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
@@ -480,8 +480,8 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
     
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: TossCard(
-        style: TossCardStyle.filled,
+      child: AppCard(
+        style: AppCardStyle.filled,
         padding: const EdgeInsets.all(16),
         onTap: () {
           setState(() {
@@ -559,8 +559,8 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
     
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: TossCard(
-        style: TossCardStyle.filled,
+      child: AppCard(
+        style: AppCardStyle.filled,
         padding: const EdgeInsets.all(16),
         onTap: () {
           setState(() {

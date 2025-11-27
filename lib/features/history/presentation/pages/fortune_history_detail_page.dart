@@ -6,7 +6,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -126,7 +126,7 @@ class FortuneHistoryDetailPage extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: TossCard(
+      child: AppCard(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
@@ -180,7 +180,7 @@ class FortuneHistoryDetailPage extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: TossCard(
+      child: AppCard(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,7 +266,7 @@ class FortuneHistoryDetailPage extends StatelessWidget {
   Widget _buildContentSection(String title, String content, IconData icon, Color color, bool isDark) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: TossCard(
+      child: AppCard(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,7 +309,7 @@ class FortuneHistoryDetailPage extends StatelessWidget {
   Widget _buildLuckyItemsSection(BuildContext context, bool isDark, Map<String, dynamic> luckyItems) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: TossCard(
+      child: AppCard(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -383,7 +383,7 @@ class FortuneHistoryDetailPage extends StatelessWidget {
   Widget _buildListSection(BuildContext context, bool isDark, String title, List<String> items, IconData icon, Color color) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: TossCard(
+      child: AppCard(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

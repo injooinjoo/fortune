@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../presentation/providers/celebrity_provider.dart';
 import '../../../services/celebrity_crawling_service.dart';
-import '../../../core/components/toss_card.dart';
+import '../../../core/components/app_card.dart';
 import '../../../core/widgets/unified_button.dart';
 import '../../../core/widgets/unified_button_enums.dart';
 import '../../../core/theme/toss_theme.dart';
@@ -76,7 +76,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
   }
 
   Widget _buildStatsCard(AsyncValue<CrawlingStats> statsAsync) {
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -163,7 +163,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
   }
 
   Widget _buildSingleCrawlingSection(CrawlingState state) {
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -231,7 +231,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
   }
 
   Widget _buildBatchCrawlingSection(CrawlingState state) {
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -322,7 +322,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
         return const SizedBox.shrink();
     }
 
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

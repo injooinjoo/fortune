@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
-import '../../../features/fortune/presentation/pages/traditional_fortune_unified_page.dart';
+import '../../../features/fortune/presentation/pages/traditional_fortune_page.dart';
 import '../../../features/fortune/presentation/pages/face_reading_fortune_page.dart';
-import '../../../features/fortune/presentation/pages/tarot_renewed_page.dart';
+import '../../../features/fortune/presentation/pages/tarot_page.dart';
 // Removed merged pages: tojeong, palmistry, saju, destiny
 // All merged into /traditional in FortuneListPage
 

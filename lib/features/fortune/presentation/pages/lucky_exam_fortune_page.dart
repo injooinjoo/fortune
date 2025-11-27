@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/standard_fortune_page_layout.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../domain/entities/fortune.dart';
 import 'dart:math' as math;
@@ -279,7 +279,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
 
   // 헤더 카드 (기존 유지)
   Widget _buildHeaderCard(bool isDark) {
-    return TossCard(
+    return AppCard(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
@@ -346,7 +346,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           ),
         ),
         const SizedBox(height: 16),
-        TossCard(
+        AppCard(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,7 +483,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           ),
         ),
         const SizedBox(height: 16),
-        TossCard(
+        AppCard(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -606,7 +606,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           ),
         ),
         const SizedBox(height: 16),
-        TossCard(
+        AppCard(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -854,7 +854,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           child: Column(
             children: [
           // 메인 결과 카드
-          TossCard(
+          AppCard(
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
@@ -935,7 +935,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'pass_possibility',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -971,7 +971,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'focus_subject',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1007,7 +1007,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'study_methods',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1064,7 +1064,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'cautions',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1121,7 +1121,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'dday_advice',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1157,7 +1157,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'lucky_hours',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1193,7 +1193,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'strengths',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1246,7 +1246,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'positive_message',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1300,7 +1300,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'score_breakdown',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1371,7 +1371,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'recommendations',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1432,7 +1432,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               isBlurred: _isBlurred,
               blurredSections: _blurredSections,
               sectionKey: 'lucky_items',
-              child: TossCard(
+              child: AppCard(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

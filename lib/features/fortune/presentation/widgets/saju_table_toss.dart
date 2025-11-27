@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_design_system.dart';
 
 /// 토스 스타일 사주팔자 명식 테이블
@@ -54,7 +54,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
     return AnimatedBuilder(
       animation: widget.animationController,
       builder: (context, child) {
-        return TossCard(
+        return AppCard(
           padding: const EdgeInsets.all(TossTheme.spacingL),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

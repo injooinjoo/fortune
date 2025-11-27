@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 
@@ -63,7 +63,7 @@ class _MovingInputStep1State extends State<MovingInputStep1> {
             ),
           ),
           const SizedBox(height: TossTheme.spacingM),
-          TossCard(
+          AppCard(
             padding: const EdgeInsets.symmetric(
               horizontal: TossTheme.spacingM,
               vertical: TossTheme.spacingS,

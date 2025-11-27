@@ -5,7 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../presentation/providers/auth_provider.dart';
 // import '../../presentation/widgets/ads/common_ad_placements.dart';
-import '../../core/components/toss_fortune_loading_screen.dart';
+import '../../core/components/fortune_loading_screen.dart';
 import '../../core/theme/typography_unified.dart';
 
 class AdLoadingScreen extends ConsumerStatefulWidget {
@@ -99,7 +99,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
       body: Stack(
         children: [
           // 토스 스타일 로딩 화면
-          TossFortuneLoadingScreen(
+          FortuneLoadingScreen(
             fortuneType: widget.fortuneType,
             duration: const Duration(seconds: 5),
             onComplete: widget.onComplete,

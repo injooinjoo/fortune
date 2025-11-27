@@ -14,7 +14,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../domain/models/talent_input_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
-import '../../../../core/components/toss_card.dart';
+import '../../../../core/components/app_card.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
@@ -545,7 +545,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
 
             // ✅ LLM 분석 브리핑 (항상 공개)
             if (content.isNotEmpty)
-              TossCard(
+              AppCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -582,7 +582,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
 
             // ✅ 행운 아이템 (항상 공개)
             if (luckyItems != null)
-              TossCard(
+              AppCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -663,7 +663,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     final talentInsights = _fortuneResult?.data['talentInsights'] as List<dynamic>? ?? [];
 
     if (talentInsights.isEmpty) {
-      return TossCard(
+      return AppCard(
         child: Center(
           child: Text(
             '재능 인사이트 데이터가 없습니다',
@@ -675,7 +675,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
       );
     }
 
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -939,7 +939,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     final weeklyPlan = _fortuneResult?.data['weeklyPlan'] as List<dynamic>? ?? [];
 
     if (weeklyPlan.isEmpty) {
-      return TossCard(
+      return AppCard(
         child: Center(
           child: Text(
             '주간 계획 데이터가 없습니다',
@@ -951,7 +951,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
       );
     }
 
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1166,7 +1166,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
       children: [
         // 상세 분석
         if (description.isNotEmpty)
-          TossCard(
+          AppCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1203,7 +1203,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
 
         // 육각형 스탯
         if (hexagonScores != null)
-          TossCard(
+          AppCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1296,7 +1296,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     final decisionPattern = FortuneTextCleaner.cleanNullable(mentalModel['decisionPattern'] as String?);
     final learningStyle = FortuneTextCleaner.cleanNullable(mentalModel['learningStyle'] as String?);
 
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1381,7 +1381,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     final challenges = (collaboration['challenges'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
     final teamRole = FortuneTextCleaner.cleanNullable(collaboration['teamRole'] as String?);
 
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1487,7 +1487,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     final periods = ['month1', 'month3', 'month6', 'year1'];
     final periodNames = {'month1': '1개월', 'month3': '3개월', 'month6': '6개월', 'year1': '1년'};
 
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1634,7 +1634,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     final recommendedCourses = (learningStrategy['recommendedCourses'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
     final mentorshipAdvice = FortuneTextCleaner.cleanNullable(learningStrategy['mentorshipAdvice'] as String?);
 
-    return TossCard(
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

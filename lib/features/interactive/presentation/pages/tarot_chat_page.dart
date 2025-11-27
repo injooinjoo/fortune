@@ -6,7 +6,7 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/constants/tarot_metadata.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../core/providers/user_settings_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/tarot_deck_provider.dart';
 import '../../../../data/services/fortune_api_service.dart';
@@ -334,8 +334,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
   @override
   Widget build(BuildContext context) {
     final messages = ref.watch(chatMessagesProvider);
-    final fontSize = ref.watch(fontSizeProvider);
-    final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
+    final fontScale = ref.watch(userSettingsProvider).fontScale;
 
     return Scaffold(
       backgroundColor: TossDesignSystem.gray50,

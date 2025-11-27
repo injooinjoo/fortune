@@ -2,7 +2,7 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/app_animations.dart';
-import '../../core/components/toss_fortune_loading_screen.dart';
+import '../../core/components/fortune_loading_screen.dart';
 
 class FortuneLoadingWidget extends StatelessWidget {
   final String? message;
