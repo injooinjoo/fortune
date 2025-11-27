@@ -26,11 +26,14 @@ serve(async (req) => {
   }
 
   try {
-    const { wish_text, category, urgency, user_profile } = await req.json()
+    const { wish_text, category, urgency: rawUrgency, user_profile } = await req.json()
 
-    if (!wish_text || !category || !urgency) {
-      throw new Error('필수 파라미터가 누락되었습니다: wish_text, category, urgency')
+    if (!wish_text || !category) {
+      throw new Error('필수 파라미터가 누락되었습니다: wish_text, category')
     }
+
+    // urgency는 선택적 (기본값: 3 - 보통)
+    const urgency = rawUrgency ?? 3
 
     console.log('📝 소원 분석 요청:', { wish_text, category, urgency, user_profile })
 

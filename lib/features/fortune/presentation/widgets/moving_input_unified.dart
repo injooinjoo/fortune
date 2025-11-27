@@ -464,7 +464,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
-            childAspectRatio: 0.9, // 높이를 조금 더 늘림
+            childAspectRatio: 0.75, // 이모지 + 텍스트 오버플로우 방지
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
           ),

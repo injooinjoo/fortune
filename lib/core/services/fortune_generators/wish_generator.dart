@@ -14,7 +14,6 @@ class WishGenerator {
   /// {
   ///   "wish_text": "원하는 소원 내용",
   ///   "category": "love" | "money" | "health" | "success" | "family" | "study" | "other",
-  ///   "urgency": 1-5 (간절함 정도),
   ///   "user_profile": {
   ///     "birth_date": "1990-01-01",
   ///     "zodiac": "snake"
@@ -33,13 +32,11 @@ class WishGenerator {
     Logger.info('[WishGenerator]   👤 user_id: $userId');
     Logger.info('[WishGenerator]   ✨ wish_text: ${inputConditions['wish_text']}');
     Logger.info('[WishGenerator]   📂 category: ${inputConditions['category']}');
-    Logger.info('[WishGenerator]   🔥 urgency: ${inputConditions['urgency']}');
 
     try {
       final requestBody = {
         'wish_text': inputConditions['wish_text'],
         'category': inputConditions['category'],
-        'urgency': inputConditions['urgency'],
         'user_profile': inputConditions['user_profile'],
       };
 
@@ -100,7 +97,6 @@ class WishGenerator {
         'message': wishData['divine_message'] ?? '',
         'wish_text': inputConditions['wish_text'],
         'category': inputConditions['category'],
-        'urgency': inputConditions['urgency'],
       },
       data: wishData, // 전체 응답을 data 필드에 저장
       score: null, // 소원은 점수가 없음

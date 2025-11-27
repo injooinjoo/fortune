@@ -7,7 +7,7 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/providers/user_settings_provider.dart';
-import '../../../../presentation/providers/providers.dart';
+
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 

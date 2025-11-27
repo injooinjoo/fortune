@@ -87,27 +87,10 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : const Color(0xFFF8F9FA),
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        automaticallyImplyLeading: false, // 기본 백 버튼 제거
-        actions: [
-          // ✅ 우측 상단 엑스 버튼
-          IconButton(
-            icon: Icon(
-              Icons.close,
-              color: Colors.white,
-              size: 28,
-            ),
-            onPressed: () => context.pop(),
-          ),
-        ],
-      ),
       body: Stack(
         children: [
           // PageView (틴더 카드 스타일 - 5장)
@@ -124,7 +107,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
 
           // 프로그레스 바 (맨 위)
           Positioned(
-            top: MediaQuery.of(context).padding.top,
+            top: MediaQuery.of(context).padding.top + 8,
             left: 0,
             right: 0,
             child: Container(
@@ -147,19 +130,17 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
             ),
           ),
 
-          // 닫기 버튼
+          // 닫기 버튼 (우측 상단)
           Positioned(
             top: MediaQuery.of(context).padding.top + 16,
             right: 20,
             child: GestureDetector(
-              onTap: () {
-                context.pop();
-              },
+              onTap: () => context.pop(),
               child: Container(
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -171,22 +152,9 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
             ),
           ),
 
-          // ✅ FloatingBottomButton (블러 상태일 때만 표시)
-          if (_isBlurred)
-            Positioned(
-              bottom: 100,
-              left: 0,
-              right: 0,
-              child: UnifiedButton.floating(
-                text: '광고 보고 전체 내용 확인하기',
-                onPressed: _showAdAndUnblur,
-                isEnabled: true,
-              ),
-            ),
-
           // 페이지 인디케이터 (중앙 하단)
           Positioned(
-            bottom: 40,
+            bottom: bottomPadding + 24,
             left: 0,
             right: 0,
             child: Center(
@@ -210,6 +178,19 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
               ),
             ),
           ),
+
+          // ✅ FloatingBottomButton (블러 상태일 때만 표시)
+          if (_isBlurred)
+            Positioned(
+              bottom: bottomPadding + 60,
+              left: 20,
+              right: 20,
+              child: UnifiedButton.floating(
+                text: '광고 보고 전체 내용 확인하기',
+                onPressed: _showAdAndUnblur,
+                isEnabled: true,
+              ),
+            ),
         ],
       ),
     );
@@ -218,10 +199,13 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   /// 풀사이즈 카드 빌더
   Widget _buildFullSizeCard(BuildContext context, int index, bool isDark) {
     final topPadding = MediaQuery.of(context).padding.top;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    // 블러 상태일 때 버튼 공간 확보 (버튼 높이 56 + 여유 20)
+    final bottomMargin = _isBlurred ? bottomPadding + 120 : bottomPadding + 60;
 
     return Container(
       height: double.infinity,
-      margin: EdgeInsets.fromLTRB(20, topPadding + 60, 20, 80),
+      margin: EdgeInsets.fromLTRB(20, topPadding + 40, 20, bottomMargin),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
         borderRadius: BorderRadius.circular(28),
@@ -237,7 +221,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(28),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(28),
           child: _buildCardContent(context, index, isDark),
         ),
       ),

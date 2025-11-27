@@ -108,11 +108,10 @@ class CelebritySajuService {
           .map((data) => CelebritySaju.fromJson(data))
           .toList();
     } catch (e) {
-      // RPC 함수가 없는 경우 대안 (is_active=true만 조회, 그룹 제외)
+      // RPC 함수가 없는 경우 대안
       final response = await _supabase
           .from('celebrities')
           .select()
-          .eq('is_active', true)
           .limit(limit * 3);
 
       final allCelebrities = (response as List)

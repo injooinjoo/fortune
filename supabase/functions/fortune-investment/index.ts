@@ -141,8 +141,10 @@ serve(async (req) => {
   "advice": "종합 투자 조언 (200자 내외)"
 }`
 
-    // 투자금액 표시 (없으면 생략)
-    const amountText = amount ? `투자 예정 금액: ${amount.toLocaleString()}원` : ''
+    // 투자금액 표시 (없으면 생략) - 타입 안전 처리
+    const amountText = (amount !== undefined && amount !== null && typeof amount === 'number')
+      ? `투자 예정 금액: ${amount.toLocaleString()}원`
+      : ''
 
     const userPrompt = `[투자 종목 정보]
 종목명: ${tickerName}
@@ -261,7 +263,7 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       JSON.stringify({
         fortune: resultWithPercentile,
         cached: false,
-        tokensUsed: response.tokensUsed || 0
+        tokensUsed: response.usage?.totalTokens || 0
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
     )

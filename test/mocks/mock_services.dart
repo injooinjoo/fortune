@@ -26,20 +26,22 @@ class MockUser extends Mock implements User {}
 class TestData {
   static Fortune createTestFortune({
     String id = 'test-fortune-id',
+    String userId = 'test-user-id',
     String type = 'daily',
     String content = '오늘의 운세입니다.',
     int overallScore = 85,
     String? description,
-    List<String>? luckyItems,
+    Map<String, dynamic>? luckyItems,
     List<String>? recommendations,
   }) {
     return Fortune(
       id: id,
+      userId: userId,
       type: type,
       content: content,
       overallScore: overallScore,
       description: description ?? '좋은 하루가 될 것입니다.',
-      luckyItems: luckyItems ?? ['행운의 숫자: 7', '행운의 색: 파랑'],
+      luckyItems: luckyItems ?? {'color': '파랑', 'number': 7},
       recommendations: recommendations ?? ['긍정적인 마음을 유지하세요'],
       category: 'general',
       createdAt: DateTime.now(),
@@ -47,16 +49,20 @@ class TestData {
   }
 
   static TokenBalance createTestTokenBalance({
+    String userId = 'test-user-id',
     int remainingTokens = 10,
     int usedTokens = 5,
     int totalTokens = 15,
     bool hasUnlimitedAccess = false,
+    DateTime? lastUpdated,
   }) {
     return TokenBalance(
+      userId: userId,
       remainingTokens: remainingTokens,
       usedTokens: usedTokens,
       totalTokens: totalTokens,
       hasUnlimitedAccess: hasUnlimitedAccess,
+      lastUpdated: lastUpdated ?? DateTime.now(),
     );
   }
 

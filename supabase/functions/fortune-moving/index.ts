@@ -223,11 +223,7 @@ serve(async (req) => {
         ? ['direction_analysis', 'timing_analysis', 'lucky_dates', 'feng_shui_tips', 'cautions', 'recommendations', 'lucky_items']
         : []
 
-      // 블러 처리용 기본 메시지
-      const blurredMessage = '🔒 프리미엄 결제 후 확인 가능합니다'
-      const blurredArray = ['🔒 프리미엄 결제 후 확인 가능합니다']
-
-      // 응답 데이터 구조화
+      // ✅ 응답 데이터 구조화 (항상 실제 데이터 반환, 클라이언트에서 블러 처리)
       fortuneData = {
         title: parsedResponse.title || `${current_area} → ${target_area} 이사운`,
         fortune_type: 'moving',
@@ -235,103 +231,69 @@ serve(async (req) => {
         target_area,
         moving_period,
         purpose,
-        // ✅ 무료: 공개 섹션
+        // 공개 섹션
         score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
         overall_fortune: parsedResponse.overall_fortune || '새로운 터전에서 좋은 기운이 함께 합니다.',
 
-        // 🔒 프리미엄: 방위 분석
-        direction_analysis: isBlurred ? {
-          direction: blurredMessage,
-          direction_meaning: blurredMessage,
-          element: blurredMessage,
-          element_effect: blurredMessage,
-          compatibility: 0,
-          compatibility_reason: blurredMessage
-        } : (parsedResponse.direction_analysis || {
-          direction: '분석 중',
+        // 방위 분석
+        direction_analysis: parsedResponse.direction_analysis || {
+          direction: '동',
           direction_meaning: '방위 분석 중입니다.',
-          element: '분석 중',
+          element: '목',
           element_effect: '오행 분석 중입니다.',
           compatibility: 75,
           compatibility_reason: '궁합 분석 중입니다.'
-        }),
+        },
 
-        // 🔒 프리미엄: 시기 분석
-        timing_analysis: isBlurred ? {
-          season_luck: blurredMessage,
-          season_meaning: blurredMessage,
-          month_luck: 0,
-          recommendation: blurredMessage
-        } : (parsedResponse.timing_analysis || {
-          season_luck: '분석 중',
+        // 시기 분석
+        timing_analysis: parsedResponse.timing_analysis || {
+          season_luck: '봄',
           season_meaning: '계절 분석 중입니다.',
           month_luck: 75,
           recommendation: '시기 분석 중입니다.'
-        }),
+        },
 
-        // 🔒 프리미엄: 길일 추천
-        lucky_dates: isBlurred ? {
-          recommended_dates: blurredArray,
-          avoid_dates: blurredArray,
-          best_time: blurredMessage,
-          reason: blurredMessage
-        } : (parsedResponse.lucky_dates || {
+        // 길일 추천
+        lucky_dates: parsedResponse.lucky_dates || {
           recommended_dates: ['날짜 분석 중'],
           avoid_dates: ['분석 중'],
           best_time: '오전',
           reason: '길일 분석 중입니다.'
-        }),
+        },
 
-        // 🔒 프리미엄: 풍수 조언
-        feng_shui_tips: isBlurred ? {
-          entrance: blurredMessage,
-          living_room: blurredMessage,
-          bedroom: blurredMessage,
-          kitchen: blurredMessage
-        } : (parsedResponse.feng_shui_tips || {
+        // 풍수 조언
+        feng_shui_tips: parsedResponse.feng_shui_tips || {
           entrance: '현관 분석 중입니다.',
           living_room: '거실 분석 중입니다.',
           bedroom: '침실 분석 중입니다.',
           kitchen: '부엌 분석 중입니다.'
-        }),
+        },
 
-        // 🔒 프리미엄: 주의사항
-        cautions: isBlurred ? {
-          moving_day: blurredArray,
-          first_week: blurredArray,
-          things_to_avoid: blurredArray
-        } : (parsedResponse.cautions || {
+        // 주의사항
+        cautions: parsedResponse.cautions || {
           moving_day: ['주의사항 분석 중'],
           first_week: ['분석 중'],
           things_to_avoid: ['분석 중']
-        }),
+        },
 
-        // 🔒 프리미엄: 추천사항
-        recommendations: isBlurred ? {
-          before_moving: blurredArray,
-          moving_day_ritual: blurredArray,
-          after_moving: blurredArray
-        } : (parsedResponse.recommendations || {
+        // 추천사항
+        recommendations: parsedResponse.recommendations || {
           before_moving: ['준비사항 분석 중'],
           moving_day_ritual: ['분석 중'],
           after_moving: ['분석 중']
-        }),
+        },
 
-        // 🔒 프리미엄: 행운 아이템
-        lucky_items: isBlurred ? {
-          items: blurredArray,
-          colors: blurredArray,
-          plants: blurredArray
-        } : (parsedResponse.lucky_items || {
+        // 행운 아이템
+        lucky_items: parsedResponse.lucky_items || {
           items: ['분석 중'],
           colors: ['분석 중'],
           plants: ['분석 중']
-        }),
+        },
 
-        // ✅ 무료: 요약 (일부만 공개)
+        // 요약
         summary: {
           one_line: parsedResponse.summary?.one_line || '좋은 이사가 될 것입니다.',
-          keywords: isBlurred ? blurredArray : (parsedResponse.summary?.keywords || ['분석 중']),
+          keywords: parsedResponse.summary?.keywords || ['행운', '새출발', '번영'],
           final_message: parsedResponse.summary?.final_message || '새로운 터전에서 행복한 나날 되세요.'
         },
 

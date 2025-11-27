@@ -11,7 +11,6 @@ import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../widgets/voice_spectrum_animation.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
@@ -450,147 +449,90 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '마이크를 누르거나 직접 작성해주세요',
-          style: TypographyUnified.labelMedium.copyWith(
-            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
+        // 텍스트 입력 필드 + 마이크 버튼 (GPT 스타일 - 통합형)
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray100,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: _isRecording
+                  ? TossDesignSystem.tossBlue
+                  : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray200),
+              width: 1,
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
+          child: Column(
+            children: [
+              // 텍스트 입력 영역
+              TextField(
+                controller: _wishController,
+                maxLines: 4,
+                minLines: 3,
+                decoration: InputDecoration(
+                  hintText: _isRecording ? '듣고 있어요...' : '소원을 말하거나 적어주세요',
+                  filled: false,
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                  hintStyle: TypographyUnified.bodyMedium.copyWith(
+                    color: _isRecording
+                        ? TossDesignSystem.tossBlue
+                        : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray500),
+                  ),
+                ),
+                style: TypographyUnified.bodyMedium.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+                onChanged: (value) {
+                  setState(() {});
+                  _updateAccordionSection(
+                    'wish',
+                    value.isNotEmpty ? value : null,
+                    value.length > 30 ? '${value.substring(0, 30)}...' : value,
+                  );
+                },
+              ),
 
-        // 🎤 음성 입력 버튼
-        Center(
-          child: GestureDetector(
-            onTap: _toggleRecording,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _isRecording
-                    ? TossDesignSystem.errorRed.withValues(alpha: 0.1)
-                    : TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                border: Border.all(
-                  color: _isRecording
-                      ? TossDesignSystem.errorRed
-                      : TossDesignSystem.tossBlue,
-                  width: 3,
+              // 하단 툴바 (글자수 + 마이크)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 8, 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // 글자수
+                    Text(
+                      '${_wishController.text.length}/10자',
+                      style: TypographyUnified.labelSmall.copyWith(
+                        color: _wishController.text.length >= 10
+                            ? TossDesignSystem.successGreen
+                            : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray400),
+                      ),
+                    ),
+
+                    // 마이크 버튼
+                    GestureDetector(
+                      onTap: _toggleRecording,
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _isRecording
+                              ? TossDesignSystem.tossBlue
+                              : Colors.transparent,
+                        ),
+                        child: Icon(
+                          _isRecording ? Icons.stop_rounded : Icons.mic_none_rounded,
+                          size: 20,
+                          color: _isRecording
+                              ? Colors.white
+                              : (isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray500),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Icon(
-                _isRecording ? Icons.stop_rounded : Icons.mic_rounded,
-                size: 40,
-                color: _isRecording
-                    ? TossDesignSystem.errorRed
-                    : TossDesignSystem.tossBlue,
-              ),
-            ),
-          ),
-        ),
-
-        // 음성 인식 중 애니메이션
-        if (_isRecording) ...[
-          const SizedBox(height: 16),
-          Center(
-            child: VoiceSpectrumAnimation(
-              isRecording: _isRecording,
-              soundLevel: _speechService.soundLevelNotifier.value,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Center(
-            child: Text(
-              '소원을 말해주세요...',
-              style: TypographyUnified.bodySmall.copyWith(
-                color: TossDesignSystem.errorRed,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-
-        const SizedBox(height: 16),
-
-        // 텍스트 입력 필드
-        TextField(
-          controller: _wishController,
-          maxLines: 4,
-          decoration: InputDecoration(
-            hintText: '마음을 담아 소원을 적어보세요...',
-            filled: true,
-            fillColor: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray100,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: TossDesignSystem.tossBlue, width: 2),
-            ),
-            hintStyle: TypographyUnified.bodyMedium.copyWith(
-              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray500,
-            ),
-          ),
-          style: TypographyUnified.bodyMedium.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-          ),
-          onChanged: (value) {
-            _updateAccordionSection(
-              'wish',
-              value.isNotEmpty ? value : null,
-              value.length > 30 ? '${value.substring(0, 30)}...' : value,
-            );
-          },
-        ),
-
-        const SizedBox(height: 8),
-
-        // 글자수 힌트
-        Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            '${_wishController.text.length}자 / 최소 10자',
-            style: TypographyUnified.labelSmall.copyWith(
-              color: _wishController.text.length >= 10
-                  ? TossDesignSystem.successGreen
-                  : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray500),
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 12),
-
-        // 완료 버튼
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: _wishController.text.trim().length >= 10
-                ? () {
-                    final value = _wishController.text.trim();
-                    _updateAccordionSection(
-                      'wish',
-                      value,
-                      value.length > 30 ? '${value.substring(0, 30)}...' : value,
-                    );
-                    onComplete(value);
-                  }
-                : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TossDesignSystem.tossBlue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              disabledBackgroundColor: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-            ),
-            child: Text(
-              '완료',
-              style: TypographyUnified.buttonMedium.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            ],
           ),
         ),
       ],

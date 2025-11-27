@@ -1,4 +1,3 @@
-import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/unified_fortune_base_widget.dart';
@@ -8,10 +7,10 @@ import '../../domain/models/conditions/moving_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../presentation/providers/ad_provider.dart';
-
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
+import '../../../../services/ad_service.dart';
 
 /// 토스 스타일 이사운 페이지 (UnifiedFortuneBaseWidget 사용)
 class MovingFortunePage extends ConsumerStatefulWidget {
@@ -80,113 +79,172 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final data = result.data;
 
-        // API에서 받은 데이터 추출
+        // API에서 받은 데이터 추출 (새 응답 구조에 맞게)
         final title = FortuneTextCleaner.clean(data['title'] as String? ?? '이사운');
         final overallFortune = FortuneTextCleaner.cleanNullable(data['overall_fortune'] as String?);
-        final directionAnalysis = FortuneTextCleaner.cleanNullable(data['direction_analysis'] as String?);
-        final timingAnalysis = FortuneTextCleaner.cleanNullable(data['timing_analysis'] as String?);
-        final cautions = (data['cautions'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
-        final recommendations = (data['recommendations'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
-        final luckyDates = (data['lucky_dates'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
-        final summaryKeyword = FortuneTextCleaner.cleanNullable(data['summary_keyword'] as String?);
         final score = result.score ?? 50;
+
+        // 방위 분석 (객체)
+        final directionAnalysis = data['direction_analysis'] as Map<String, dynamic>?;
+        final directionContent = directionAnalysis != null
+            ? '${FortuneTextCleaner.cleanNullable(directionAnalysis['direction_meaning'] as String?)}\n\n'
+              '오행: ${FortuneTextCleaner.cleanNullable(directionAnalysis['element'] as String?)} - '
+              '${FortuneTextCleaner.cleanNullable(directionAnalysis['element_effect'] as String?)}\n\n'
+              '궁합도: ${directionAnalysis['compatibility'] ?? 0}점\n'
+              '${FortuneTextCleaner.cleanNullable(directionAnalysis['compatibility_reason'] as String?)}'
+            : '';
+
+        // 시기 분석 (객체)
+        final timingAnalysis = data['timing_analysis'] as Map<String, dynamic>?;
+        final timingContent = timingAnalysis != null
+            ? '${FortuneTextCleaner.cleanNullable(timingAnalysis['season_meaning'] as String?)}\n\n'
+              '이달의 운: ${timingAnalysis['month_luck'] ?? 0}점\n'
+              '${FortuneTextCleaner.cleanNullable(timingAnalysis['recommendation'] as String?)}'
+            : '';
+
+        // 주의사항 (객체 안의 배열)
+        final cautionsData = data['cautions'] as Map<String, dynamic>?;
+        final cautions = <String>[];
+        if (cautionsData != null) {
+          final movingDay = (cautionsData['moving_day'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+          final firstWeek = (cautionsData['first_week'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+          final thingsToAvoid = (cautionsData['things_to_avoid'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+          cautions.addAll(movingDay);
+          cautions.addAll(firstWeek);
+          cautions.addAll(thingsToAvoid);
+        }
+
+        // 추천사항 (객체 안의 배열)
+        final recommendationsData = data['recommendations'] as Map<String, dynamic>?;
+        final recommendations = <String>[];
+        if (recommendationsData != null) {
+          final beforeMoving = (recommendationsData['before_moving'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+          final movingDayRitual = (recommendationsData['moving_day_ritual'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+          final afterMoving = (recommendationsData['after_moving'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+          recommendations.addAll(beforeMoving);
+          recommendations.addAll(movingDayRitual);
+          recommendations.addAll(afterMoving);
+        }
+
+        // 행운의 날 (객체 안의 배열)
+        final luckyDatesData = data['lucky_dates'] as Map<String, dynamic>?;
+        final luckyDates = (luckyDatesData?['recommended_dates'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+
+        // 요약 키워드
+        final summaryData = data['summary'] as Map<String, dynamic>?;
+        final summaryKeyword = summaryData?['one_line'] as String? ?? '';
 
         return Stack(
           children: [
             SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.fromLTRB(20, 20, 20, _isBlurred ? 140 : 40),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              // 제목
-              Text(
-                title,
-                style: TypographyUnified.heading2.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // 운세 점수 카드
-              _buildScoreCard(score, summaryKeyword, isDark),
-              const SizedBox(height: 20),
-
-              // 전반적인 운세
-              if (overallFortune.isNotEmpty)
-                _buildSectionCard(
-                  title: '전반적인 운세',
-                  icon: Icons.brightness_5,
-                  content: overallFortune,
-                  isDark: isDark,
-                ),
-              const SizedBox(height: 16),
-
-              // 방위 분석
-              if (directionAnalysis.isNotEmpty)
-                _buildBlurWrapper(
-                  sectionKey: 'direction_analysis',
-                  child: _buildSectionCard(
-                    title: '방위 분석',
-                    icon: Icons.explore,
-                    content: directionAnalysis,
-                    isDark: isDark,
+                  // 제목
+                  Text(
+                    title,
+                    style: TypographyUnified.heading2.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    ),
                   ),
-                ),
-              const SizedBox(height: 16),
+                  const SizedBox(height: 24),
 
-              // 시기 분석
-              if (timingAnalysis.isNotEmpty)
-                _buildBlurWrapper(
-                  sectionKey: 'timing_analysis',
-                  child: _buildSectionCard(
-                    title: '시기 분석',
-                    icon: Icons.calendar_today,
-                    content: timingAnalysis,
-                    isDark: isDark,
-                  ),
-                ),
-              const SizedBox(height: 16),
+                  // 운세 점수 카드 (공개)
+                  _buildScoreCard(score, summaryKeyword, isDark),
+                  const SizedBox(height: 20),
 
-              // 주의사항
-              if (cautions.isNotEmpty)
-                _buildBlurWrapper(
-                  sectionKey: 'cautions',
-                  child: _buildListCard(
-                    title: '주의사항',
-                    icon: Icons.warning_amber_rounded,
-                    items: cautions,
-                    color: TossDesignSystem.warningYellow,
-                    isDark: isDark,
-                  ),
-                ),
-              const SizedBox(height: 16),
+                  // 전반적인 운세 (공개)
+                  if (overallFortune.isNotEmpty)
+                    _buildSectionCard(
+                      title: '전반적인 운세',
+                      icon: Icons.brightness_5,
+                      content: overallFortune,
+                      isDark: isDark,
+                    ),
+                  const SizedBox(height: 16),
 
-              // 추천사항
-              if (recommendations.isNotEmpty)
-                _buildListCard(
-                  title: '추천사항',
-                  icon: Icons.star_rounded,
-                  items: recommendations,
-                  color: TossDesignSystem.tossBlue,
-                  isDark: isDark,
-                ),
-              const SizedBox(height: 16),
+                  // 방위 분석 (블러)
+                  if (directionContent.isNotEmpty)
+                    UnifiedBlurWrapper(
+                      isBlurred: _isBlurred,
+                      blurredSections: _blurredSections,
+                      sectionKey: 'direction_analysis',
+                      child: _buildSectionCard(
+                        title: '방위 분석',
+                        icon: Icons.explore,
+                        content: directionContent,
+                        isDark: isDark,
+                      ),
+                    ),
+                  const SizedBox(height: 16),
 
-              // 행운의 날
-              if (luckyDates.isNotEmpty)
-                _buildLuckyDatesCard(luckyDates, isDark),
-              const SizedBox(height: 32),
+                  // 시기 분석 (블러)
+                  if (timingContent.isNotEmpty)
+                    UnifiedBlurWrapper(
+                      isBlurred: _isBlurred,
+                      blurredSections: _blurredSections,
+                      sectionKey: 'timing_analysis',
+                      child: _buildSectionCard(
+                        title: '시기 분석',
+                        icon: Icons.calendar_today,
+                        content: timingContent,
+                        isDark: isDark,
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+
+                  // 주의사항 (블러)
+                  if (cautions.isNotEmpty)
+                    UnifiedBlurWrapper(
+                      isBlurred: _isBlurred,
+                      blurredSections: _blurredSections,
+                      sectionKey: 'cautions',
+                      child: _buildListCard(
+                        title: '주의사항',
+                        icon: Icons.warning_amber_rounded,
+                        items: cautions,
+                        color: TossDesignSystem.warningYellow,
+                        isDark: isDark,
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+
+                  // 추천사항 (블러)
+                  if (recommendations.isNotEmpty)
+                    UnifiedBlurWrapper(
+                      isBlurred: _isBlurred,
+                      blurredSections: _blurredSections,
+                      sectionKey: 'recommendations',
+                      child: _buildListCard(
+                        title: '추천사항',
+                        icon: Icons.star_rounded,
+                        items: recommendations,
+                        color: TossDesignSystem.tossBlue,
+                        isDark: isDark,
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+
+                  // 행운의 날 (블러)
+                  if (luckyDates.isNotEmpty)
+                    UnifiedBlurWrapper(
+                      isBlurred: _isBlurred,
+                      blurredSections: _blurredSections,
+                      sectionKey: 'lucky_dates',
+                      child: _buildLuckyDatesCard(luckyDates, isDark),
+                    ),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),
 
-            // ✅ FloatingBottomButton
+            // ✅ FloatingBottomButton (블러 상태일 때만)
             if (_isBlurred)
               UnifiedButton.floating(
                 text: '광고 보고 전체 내용 확인하기',
                 onPressed: _showAdAndUnblur,
                 isEnabled: true,
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 116), // bottom: 100 효과
               ),
           ],
         );
@@ -196,52 +254,53 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
 
   /// 광고 보고 블러 제거
   Future<void> _showAdAndUnblur() async {
-    final adService = ref.read(adServiceProvider);
+    try {
+      final adService = AdService();
 
-    await adService.showRewardedAd(
-      onUserEarnedReward: (ad, rewardItem) {
+      // 광고 준비 확인
+      if (!adService.isRewardedAdReady) {
+        await adService.loadRewardedAd();
+
+        // 최대 5초 대기
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.')),
+            );
+          }
+          return;
+        }
+      }
+
+      // 광고 표시
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, rewardItem) {
+          if (mounted) {
+            setState(() {
+              _isBlurred = false;
+              _blurredSections = [];
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('이사운이 잠금 해제되었습니다!')),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      // 에러 발생 시에도 블러 해제 (사용자 경험 우선)
+      if (mounted) {
         setState(() {
           _isBlurred = false;
           _blurredSections = [];
         });
-      },
-    );
-  }
-
-  /// 블러 wrapper
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required String sectionKey,
-  }) {
-    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
-      return child;
+      }
     }
-
-    return Stack(
-      children: [
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   /// 운세 점수 카드
