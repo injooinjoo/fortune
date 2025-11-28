@@ -21,12 +21,14 @@ enum TalismanCategory {
 
 /// 부적 이미지 생성 결과
 class TalismanGenerationResult {
+  final String? id;
   final String imageUrl;
   final String category;
   final List<String> characters;
   final DateTime createdAt;
 
   TalismanGenerationResult({
+    this.id,
     required this.imageUrl,
     required this.category,
     required this.characters,
@@ -35,10 +37,13 @@ class TalismanGenerationResult {
 
   factory TalismanGenerationResult.fromJson(Map<String, dynamic> json) {
     return TalismanGenerationResult(
-      imageUrl: json['imageUrl'] as String,
+      id: json['id'] as String?,
+      imageUrl: (json['imageUrl'] ?? json['image_url']) as String,
       category: json['category'] as String,
       characters: (json['characters'] as List).cast<String>(),
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 }
@@ -58,13 +63,14 @@ class TalismanGenerationResult {
 class TalismanGenerationService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  /// 부적 이미지 생성 (최적화 시스템 적용 - API 비용 72% 절감)
+  /// 부적 이미지 생성 (최적화 시스템 적용 - API 비용 70-80% 절감)
   ///
   /// **프로세스**:
+  /// 0️⃣ 하루 1회 제한 확인 → 이미 오늘 생성했으면 캐시 반환
   /// 1️⃣ 개인 캐시 확인 → 오늘 동일 조건 이미 생성?
-  /// 2️⃣ DB 풀 크기 확인 → 동일 조건 ≥100개?
+  /// 2️⃣ DB 풀 크기 확인 → 공용 풀 ≥100개?
   /// 3️⃣ 30% 랜덤 선택 → Math.random() < 0.3?
-  /// 4️⃣ API 호출 (70% 확률)
+  /// 4️⃣ API 호출 (70% 확률) - Gemini 2.0 Flash Image
   ///
   /// [category] - 부적 카테고리 (질병 퇴치, 사랑 성취, 재물 운 등)
   /// [customCharacters] - 사용자 지정 한자 문구 (옵션)
@@ -87,38 +93,48 @@ class TalismanGenerationService {
       final characters = customCharacters ?? category.defaultCharacters;
       Logger.info('[TalismanGen] 📝 Characters: ${characters.join(", ")}');
 
-      // 1️⃣ 개인 캐시 확인
+      // 0️⃣ 하루 1회 제한 확인 - 이미 오늘 생성했으면 캐시에서 반환
+      final todaysTalisman = await getTodaysTalisman(category);
+      if (todaysTalisman != null) {
+        Logger.info('[TalismanGen] ✅ Already created today, returning cached result');
+        return todaysTalisman;
+      }
+
+      // 1️⃣ 개인 캐시 확인 (레거시 호환성)
       final cachedResult = await _checkPersonalCache(userId, category, characters);
       if (cachedResult != null) {
         Logger.info('[TalismanGen] ✅ Using cached talisman (personal cache)');
         return cachedResult;
       }
 
-      // 2️⃣ DB 풀 크기 확인
+      // 2️⃣ DB 공용 풀 크기 확인
       final poolSize = await _checkPoolSize(category, characters);
-      Logger.info('[TalismanGen] 📊 Pool size: $poolSize');
+      Logger.info('[TalismanGen] 📊 Public pool size: $poolSize');
 
       if (poolSize >= 100) {
-        Logger.info('[TalismanGen] ✅ Pool size ≥100, using random from DB');
+        Logger.info('[TalismanGen] ✅ Pool size ≥100, using random from public pool');
         final randomResult = await _getRandomFromDB(category, characters);
-        await _saveToPersonalCache(userId, randomResult);
-        await Future.delayed(Duration(seconds: 5)); // 5초 대기 (사용자 경험)
+        await _saveToPersonalCache(userId, category, randomResult);
+        await Future.delayed(const Duration(seconds: 5)); // 5초 대기 (사용자 경험)
         return randomResult;
       }
 
-      // 3️⃣ 30% 랜덤 선택
+      // 3️⃣ 30% 랜덤 선택 (풀에 이미지가 있을 경우)
       final random = math.Random().nextDouble();
       if (random < 0.3 && poolSize > 0) {
-        Logger.info('[TalismanGen] 🎲 30% random selection (${(random * 100).toInt()}%), using DB');
+        Logger.info('[TalismanGen] 🎲 30% random selection (${(random * 100).toInt()}%), using public pool');
         final randomResult = await _getRandomFromDB(category, characters);
-        await _saveToPersonalCache(userId, randomResult);
-        await Future.delayed(Duration(seconds: 5)); // 5초 대기
+        await _saveToPersonalCache(userId, category, randomResult);
+        await Future.delayed(const Duration(seconds: 5)); // 5초 대기
         return randomResult;
       }
 
-      // 4️⃣ API 호출 (70% 확률)
-      Logger.info('[TalismanGen] 🚀 API call (70% path)');
+      // 4️⃣ API 호출 (70% 확률) - Gemini 2.0 Flash Image 사용
+      Logger.info('[TalismanGen] 🚀 API call (70% path) - Gemini Image Generation');
       final result = await _callGeminiAPI(userId, category, characters, animal, pattern);
+
+      // 새로 생성된 이미지 캐시 저장
+      await _saveToPersonalCache(userId, category, result);
 
       return result;
     } catch (e, stackTrace) {
@@ -127,7 +143,7 @@ class TalismanGenerationService {
     }
   }
 
-  /// 1️⃣ 개인 캐시 확인 (오늘 동일 조건)
+  /// 1️⃣ 개인 캐시 확인 (레거시 - talisman_images 테이블에서 직접 조회)
   Future<TalismanGenerationResult?> _checkPersonalCache(
     String userId,
     TalismanCategory category,
@@ -149,6 +165,7 @@ class TalismanGenerationService {
       if (response == null) return null;
 
       return TalismanGenerationResult(
+        id: response['id'] as String?,
         imageUrl: response['image_url'] as String,
         category: response['category'] as String,
         characters: (response['characters'] as List).cast<String>(),
@@ -160,13 +177,14 @@ class TalismanGenerationService {
     }
   }
 
-  /// 2️⃣ DB 풀 크기 확인
+  /// 2️⃣ DB 풀 크기 확인 (공용 풀만 카운트)
   Future<int> _checkPoolSize(TalismanCategory category, List<String> characters) async {
     try {
       final response = await _supabase
           .from('talisman_images')
           .select('id')
           .eq('category', category.id)
+          .eq('is_public', true)  // 공용 풀만 카운트
           .count();
 
       return response.count;
@@ -176,7 +194,7 @@ class TalismanGenerationService {
     }
   }
 
-  /// 3️⃣ DB에서 랜덤 선택
+  /// 3️⃣ DB에서 랜덤 선택 (공용 풀에서만)
   Future<TalismanGenerationResult> _getRandomFromDB(
     TalismanCategory category,
     List<String> characters,
@@ -185,6 +203,7 @@ class TalismanGenerationService {
         .from('talisman_images')
         .select()
         .eq('category', category.id)
+        .eq('is_public', true)  // 공용 풀에서만 선택
         .order('created_at', ascending: false)
         .limit(100); // 최근 100개 중 랜덤
 
@@ -196,12 +215,25 @@ class TalismanGenerationService {
     final randomIndex = random.nextInt(response.length);
     final item = response[randomIndex];
 
+    // 사용 횟수 증가 (비동기, 에러 무시)
+    _incrementUsageCount(item['id'] as String);
+
     return TalismanGenerationResult(
+      id: item['id'] as String,
       imageUrl: item['image_url'] as String,
       category: item['category'] as String,
       characters: (item['characters'] as List).cast<String>(),
       createdAt: DateTime.parse(item['created_at'] as String),
     );
+  }
+
+  /// 사용 횟수 증가 (fire-and-forget)
+  Future<void> _incrementUsageCount(String imageId) async {
+    try {
+      await _supabase.rpc('increment_talisman_usage', params: {'p_image_id': imageId});
+    } catch (e) {
+      Logger.error('[TalismanGen] ⚠️ Failed to increment usage: $e', e);
+    }
   }
 
   /// 4️⃣ Gemini API 호출
@@ -238,13 +270,90 @@ class TalismanGenerationService {
     );
   }
 
-  /// 개인 캐시 저장 (DB 재활용용)
-  Future<void> _saveToPersonalCache(String userId, TalismanGenerationResult result) async {
+  /// 개인 캐시 저장 (하루 1회 제한 관리)
+  Future<void> _saveToPersonalCache(
+    String userId,
+    TalismanCategory category,
+    TalismanGenerationResult result,
+  ) async {
     try {
-      // DB에서 가져온 이미지를 개인 캐시에 추가 (참조용)
+      if (result.id == null) {
+        Logger.error('[TalismanGen] ⚠️ Cannot save cache without image id');
+        return;
+      }
+
+      await _supabase.from('talisman_user_cache').upsert({
+        'user_id': userId,
+        'category': category.id,
+        'image_id': result.id,
+        'cache_date': DateTime.now().toIso8601String().split('T')[0],
+      });
+
       Logger.info('[TalismanGen] 💾 Saved to personal cache for user: $userId');
     } catch (e) {
       Logger.error('[TalismanGen] ❌ Failed to save to personal cache: $e', e);
+    }
+  }
+
+  /// 오늘 부적 생성 가능 여부 확인 (하루 1회 제한)
+  Future<bool> canCreateTalisman(TalismanCategory category) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) return false;
+
+      final today = DateTime.now().toIso8601String().split('T')[0];
+
+      final response = await _supabase
+          .from('talisman_user_cache')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('category', category.id)
+          .eq('cache_date', today)
+          .maybeSingle();
+
+      return response == null; // null이면 오늘 생성 안 함 → 생성 가능
+    } catch (e) {
+      Logger.error('[TalismanGen] ❌ Failed to check daily limit: $e', e);
+      return true; // 에러 시 생성 허용
+    }
+  }
+
+  /// 오늘 생성한 부적 조회 (캐시에서)
+  Future<TalismanGenerationResult?> getTodaysTalisman(TalismanCategory category) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) return null;
+
+      final today = DateTime.now().toIso8601String().split('T')[0];
+
+      final cacheResponse = await _supabase
+          .from('talisman_user_cache')
+          .select('image_id')
+          .eq('user_id', userId)
+          .eq('category', category.id)
+          .eq('cache_date', today)
+          .maybeSingle();
+
+      if (cacheResponse == null) return null;
+
+      final imageId = cacheResponse['image_id'] as String;
+
+      final imageResponse = await _supabase
+          .from('talisman_images')
+          .select()
+          .eq('id', imageId)
+          .single();
+
+      return TalismanGenerationResult(
+        id: imageResponse['id'] as String,
+        imageUrl: imageResponse['image_url'] as String,
+        category: imageResponse['category'] as String,
+        characters: (imageResponse['characters'] as List).cast<String>(),
+        createdAt: DateTime.parse(imageResponse['created_at'] as String),
+      );
+    } catch (e) {
+      Logger.error('[TalismanGen] ❌ Failed to get todays talisman: $e', e);
+      return null;
     }
   }
 
@@ -269,6 +378,7 @@ class TalismanGenerationService {
 
       final talismans = (response as List)
           .map((json) => TalismanGenerationResult(
+                id: json['id'] as String?,
                 imageUrl: json['image_url'] as String,
                 category: json['category'] as String,
                 characters: (json['characters'] as List).cast<String>(),
@@ -308,6 +418,7 @@ class TalismanGenerationService {
 
       final talismans = (response as List)
           .map((json) => TalismanGenerationResult(
+                id: json['id'] as String?,
                 imageUrl: json['image_url'] as String,
                 category: json['category'] as String,
                 characters: (json['characters'] as List).cast<String>(),

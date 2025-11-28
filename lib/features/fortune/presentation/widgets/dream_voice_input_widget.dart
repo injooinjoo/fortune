@@ -145,14 +145,20 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final bottomSafeArea = MediaQuery.of(context).padding.bottom;
 
     // 버튼 표시 여부
     final hasButton = _hasText || _isRecording;
 
+    // ChatGPT 스타일: SafeArea + 여유 패딩 (키보드 없을 때 더 위로)
+    final bottomPadding = keyboardHeight > 0
+        ? keyboardHeight + 8
+        : bottomSafeArea + 24;
+
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-      bottom: keyboardHeight > 0 ? keyboardHeight : 16,
+      bottom: bottomPadding,
       left: TossTheme.spacingM,
       right: TossTheme.spacingM,
       child: Row(

@@ -1,0 +1,55 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+/// Haptic patterns
+@immutable
+class HapticPatterns {
+  final HapticType buttonTap;
+  final HapticType success;
+  final HapticType warning;
+  final HapticType error;
+  final HapticType selection;
+
+  const HapticPatterns({
+    required this.buttonTap,
+    required this.success,
+    required this.warning,
+    required this.error,
+    required this.selection});
+
+  factory HapticPatterns.standard() => const HapticPatterns(
+        buttonTap: HapticType.light,
+        success: HapticType.medium,
+        warning: HapticType.medium,
+        error: HapticType.heavy,
+        selection: HapticType.selection);
+
+  static HapticPatterns lerp(HapticPatterns a, HapticPatterns b, double t) {
+    return t < 0.5 ? a : b;
+  }
+
+  /// Execute haptic feedback
+  static Future<void> execute(HapticType type) async {
+    switch (type) {
+      case HapticType.light:
+        await HapticFeedback.lightImpact();
+        break;
+      case HapticType.medium:
+        await HapticFeedback.mediumImpact();
+        break;
+      case HapticType.heavy:
+        await HapticFeedback.heavyImpact();
+        break;
+      case HapticType.selection:
+        await HapticFeedback.selectionClick();
+        break;
+    }
+  }
+}
+
+/// Haptic feedback types
+enum HapticType {
+  light,
+  medium,
+  heavy,
+  selection}

@@ -4,6 +4,7 @@ import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/theme/font_size_system.dart';
+import '../../../../../core/constants/tarot/tarot_helper.dart';
 
 class TarotSpreadSelector extends StatefulWidget {
   final Function(TarotSpreadType) onSpreadSelected;
@@ -336,147 +337,101 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
   Widget _buildSpreadPreview(TarotSpreadType spread, Color color, bool isDark) {
     Widget preview;
 
+    // 3카드 스프레드 미리보기용 카드 인덱스 (바보, 마법사, 여사제)
+    const threeCardIndices = [0, 1, 2];
+    // 관계 스프레드용 카드 인덱스 (연인, 여황제, 황제, 운명의 수레바퀴, 태양)
+    const relationshipIndices = [6, 3, 4, 10, 19];
+
     switch (spread) {
       case TarotSpreadType.threeCard:
-        preview = Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(3, (index) {
-            final labels = ['과거', '현재', '미래'];
-            final emojis = ['⏮️', '⏸️', '⏭️'];
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            color.withValues(alpha: 0.2),
-                            color.withValues(alpha: 0.1),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: color.withValues(alpha: 0.4),
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: color.withValues(alpha: 0.1),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '${index + 1}',
-                              style: TextStyle(
-                                color: color,
-                                fontSize: FontSizeSystem.heading3,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Text(
-                              emojis[index],
-                              style: TextStyle(fontSize: FontSizeSystem.buttonMedium),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      labels[index],
-                      style: TypographyUnified.labelMedium.copyWith(
-                        fontWeight: FontWeight.w600,
+        preview = SizedBox(
+          height: 95, // 고정 높이로 오버플로우 방지
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(3, (index) {
+              final labels = ['과거', '현재', '미래'];
+              return Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildTarotImageCard(
+                        cardIndex: threeCardIndices[index],
                         color: color,
+                        width: 45,
+                        height: 68,
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        labels[index],
+                        style: TypographyUnified.labelSmall.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: color,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+          ),
         );
         break;
 
       case TarotSpreadType.relationship:
+        // 관계 스프레드: 5장 가로 정렬
+        final labels = ['나', '상대', '현재', '조언', '미래'];
         preview = SizedBox(
-          height: 120,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // 중앙 카드 (현재 관계) - 더 크게
-              Positioned(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildMiniCard('3', color, size: 36),
-                    SizedBox(height: 4),
-                    Text('현재', style: TypographyUnified.labelTiny.copyWith(color: color, fontWeight: FontWeight.w600)),
-                  ],
+          height: 95,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(5, (index) {
+              return Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildTarotImageCard(
+                        cardIndex: relationshipIndices[index],
+                        color: color,
+                        width: 38,
+                        height: 57,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        labels[index],
+                        style: TypographyUnified.labelTiny.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: color,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              // 왼쪽 카드 (나)
-              Positioned(
-                left: 30,
-                top: 35,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildMiniCard('1', color),
-                    SizedBox(height: 4),
-                    Text('나', style: TypographyUnified.labelTiny.copyWith(color: color, fontWeight: FontWeight.w600)),
-                  ],
-                ),
-              ),
-              // 오른쪽 카드 (상대)
-              Positioned(
-                right: 30,
-                top: 35,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildMiniCard('2', color),
-                    SizedBox(height: 4),
-                    Text('상대', style: TypographyUnified.labelTiny.copyWith(color: color, fontWeight: FontWeight.w600)),
-                  ],
-                ),
-              ),
-              // 위 카드 (과거)
-              Positioned(
-                top: 0,
-                left: 0,
-                child: _buildMiniCard('4', color),
-              ),
-              // 아래 카드 (미래)
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: _buildMiniCard('5', color),
-              ),
-            ],
+              );
+            }),
           ),
         );
         break;
 
       case TarotSpreadType.celticCross:
         preview = Container(
-          padding: EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Wrap(
             alignment: WrapAlignment.center,
             spacing: 6,
             runSpacing: 6,
             children: List.generate(10, (index) {
-              return _buildMiniCard('${index + 1}', color, showShadow: false);
+              return _buildTarotImageCard(
+                cardIndex: index, // 0~9 카드 순서대로
+                color: color,
+                width: 24,
+                height: 36,
+              );
             }),
           ),
         );
@@ -489,40 +444,61 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
     return preview;
   }
 
-  Widget _buildMiniCard(String number, Color color, {double size = 28, bool showShadow = true}) {
+  /// 실제 타로 카드 이미지를 표시하는 미리보기 카드
+  Widget _buildTarotImageCard({
+    required int cardIndex,
+    required Color color,
+    required double width,
+    required double height,
+  }) {
+    // TarotHelper를 사용하여 카드 이미지 경로 생성
+    final cardFileName = TarotHelper.getMajorArcanaFileName(cardIndex);
+    final imagePath = 'assets/images/tarot/decks/rider_waite/major/$cardFileName';
+
     return Container(
-      width: size,
-      height: size * 1.4,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: 0.2),
-            color.withValues(alpha: 0.1),
-          ],
-        ),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: color.withValues(alpha: 0.5),
+          color: color.withValues(alpha: 0.4),
           width: 1.5,
         ),
-        boxShadow: showShadow ? [
+        boxShadow: [
           BoxShadow(
             color: color.withValues(alpha: 0.15),
-            blurRadius: 6,
+            blurRadius: 4,
             offset: const Offset(0, 2),
           ),
-        ] : null,
+        ],
       ),
-      child: Center(
-        child: Text(
-          number,
-          style: TextStyle(
-            color: color,
-            fontSize: FontSizeSystem.scale(size * 0.5),
-            fontWeight: FontWeight.w700,
-          ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(3),
+        child: Image.asset(
+          imagePath,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            // 폴백: 색상 그라데이션 박스
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    color.withValues(alpha: 0.3),
+                    color.withValues(alpha: 0.15),
+                  ],
+                ),
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.auto_awesome,
+                  color: color,
+                  size: width * 0.5,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

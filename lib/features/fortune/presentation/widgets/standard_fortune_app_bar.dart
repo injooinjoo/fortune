@@ -13,6 +13,7 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
   final VoidCallback? onBackPressed;
   final List<Widget>? actions;
   final bool centerTitle;
+  final bool showBackButton;
 
   const StandardFortuneAppBar({
     super.key,
@@ -20,6 +21,7 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
     this.onBackPressed,
     this.actions,
     this.centerTitle = true,
+    this.showBackButton = true,
   });
 
   @override
@@ -30,13 +32,16 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       elevation: 0,
       scrolledUnderElevation: 0,
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios,
-          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-        ),
-        onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
-      ),
+      automaticallyImplyLeading: false,
+      leading: showBackButton
+          ? IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              ),
+              onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
+            )
+          : null,
       iconTheme: IconThemeData(
         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
       ),

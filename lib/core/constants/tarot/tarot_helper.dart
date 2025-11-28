@@ -4,6 +4,47 @@ import 'tarot_metadata_data.dart';
 
 // TarotHelper utility class
 class TarotHelper {
+  // 메이저 아르카나 파일 이름 매핑
+  static const List<String> _majorArcanaFileNames = [
+    '00_fool.jpg',
+    '01_magician.jpg',
+    '02_high_priestess.jpg',
+    '03_empress.jpg',
+    '04_emperor.jpg',
+    '05_hierophant.jpg',
+    '06_lovers.jpg',
+    '07_chariot.jpg',
+    '08_strength.jpg',
+    '09_hermit.jpg',
+    '10_wheel_of_fortune.jpg',
+    '11_justice.jpg',
+    '12_hanged_man.jpg',
+    '13_death.jpg',
+    '14_temperance.jpg',
+    '15_devil.jpg',
+    '16_tower.jpg',
+    '17_star.jpg',
+    '18_moon.jpg',
+    '19_sun.jpg',
+    '20_judgement.jpg',
+    '21_world.jpg',
+  ];
+
+  /// 카드 인덱스에 해당하는 메이저 아르카나 파일 이름 반환
+  static String getMajorArcanaFileName(int cardIndex) {
+    if (cardIndex >= 0 && cardIndex < _majorArcanaFileNames.length) {
+      return _majorArcanaFileNames[cardIndex];
+    }
+    // 범위 밖이면 모듈로 연산으로 순환
+    return _majorArcanaFileNames[cardIndex % _majorArcanaFileNames.length];
+  }
+
+  /// 덱과 카드 인덱스로 전체 이미지 경로 반환
+  static String getMajorArcanaImagePath(String deckId, int cardIndex) {
+    final fileName = getMajorArcanaFileName(cardIndex);
+    return 'assets/images/tarot/decks/$deckId/major/$fileName';
+  }
+
   static String getCardImagePath(int cardId) {
     return 'assets/images/tarot/card_$cardId.png';
   }

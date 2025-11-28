@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../../../core/constants/tarot_deck_metadata.dart';
+import '../../../../../core/constants/tarot/tarot_helper.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:fortune/core/theme/app_animations.dart';
@@ -90,11 +91,6 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('[TarotCard] === Card Widget Build ===');
-    debugPrint('[TarotCard] cardIndex: ${widget.cardIndex}');
-    debugPrint('[TarotCard] isHovered: ${widget.isHovered}, isSelected: ${widget.isSelected}');
-    debugPrint('[TarotCard] showFront: ${widget.showFront}');
-    
     return GestureDetector(
       onTap: widget.onTap,
       child: AnimatedContainer(
@@ -134,9 +130,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
   }
 
   List<BoxShadow> _buildBoxShadow() {
-    debugPrint('[TarotCard] Building box shadow - isSelected: ${widget.isSelected}, isHovered: ${widget.isHovered}');
     if (widget.isSelected) {
-      debugPrint('alpha: 0.6');
       return [
         BoxShadow(
           color: widget.deck.primaryColor.withValues(alpha: 0.6),
@@ -145,7 +139,6 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         ),
       ];
     } else if (widget.isHovered) {
-      debugPrint('alpha: 0.4');
       return [
         BoxShadow(
           color: widget.deck.primaryColor.withValues(alpha: 0.4),
@@ -154,7 +147,6 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         ),
       ];
     } else {
-      debugPrint('alpha: 0.3');
       return [
         BoxShadow(
           color: TossDesignSystem.black.withValues(alpha: 0.3),
@@ -246,58 +238,68 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
   }
 
   Widget _buildCardFront() {
-    // Simplified front display - can be expanded based on actual card data
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            TossDesignSystem.white,
-            TossDesignSystem.gray100,
-          ],
-        ),
-      ),
-      child: Stack(
-        children: [
-          // Card content area
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.auto_awesome,
-                  size: widget.width * 0.5,
-                  color: widget.deck.primaryColor),
-                const SizedBox(height: AppSpacing.spacing4),
-                Text(
-                  'Card ${widget.cardIndex + 1}',
-                  style: TextStyle(
-                    fontSize: widget.width * 0.15,
-                    fontWeight: FontWeight.bold,
-                    color: widget.deck.primaryColor,
+    // 실제 타로 카드 이미지 표시
+    final imagePath = TarotHelper.getMajorArcanaImagePath(widget.deck.id, widget.cardIndex);
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // 타로 카드 이미지
+        ClipRRect(
+          borderRadius: AppDimensions.borderRadiusMedium,
+          child: Image.asset(
+            imagePath,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              // 폴백: 기존 플레이스홀더 디자인
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      TossDesignSystem.white,
+                      TossDesignSystem.gray100,
+                    ],
                   ),
                 ),
-              ],
-            ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.auto_awesome,
+                        size: widget.width * 0.5,
+                        color: widget.deck.primaryColor,
+                      ),
+                      const SizedBox(height: AppSpacing.spacing4),
+                      Text(
+                        'Card ${widget.cardIndex + 1}',
+                        style: TextStyle(
+                          fontSize: widget.width * 0.15,
+                          fontWeight: FontWeight.bold,
+                          color: widget.deck.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
-          // Card number
-          Positioned(
-            top: 8,
-            left: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
-              decoration: BoxDecoration(
-                color: widget.deck.primaryColor.withValues(alpha: 0.1),
-                borderRadius: AppDimensions.borderRadiusMedium),
-              child: Text(
-                '${widget.cardIndex + 1}',
-                style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        // 선택 시 하이라이트 오버레이
+        if (widget.isSelected)
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: AppDimensions.borderRadiusMedium,
+              border: Border.all(
+                color: widget.deck.primaryColor,
+                width: 3,
               ),
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 }

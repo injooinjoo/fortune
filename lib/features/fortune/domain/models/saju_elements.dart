@@ -14,7 +14,7 @@ enum WuxingType {
   wood('목', '木', Color(0xFF4CAF50), '성장', '봄', '동쪽'),
   fire('화', '火', Color(0xFFF44336), '열정', '여름', '남쪽'),
   earth('토', '土', Color(0xFFFF9800), '안정', '환절기', '중앙'),
-  metal('금', '金', Color(0xFF9E9E9E), '결단', '가을', '서쪽'),
+  metal('금', '金', Color(0xFFC0C0C0), '결단', '가을', '서쪽'),
   water('수', '水', Color(0xFF2196F3), '지혜', '겨울', '북쪽');
 
   final String korean;

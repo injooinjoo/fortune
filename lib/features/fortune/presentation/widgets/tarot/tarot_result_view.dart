@@ -8,6 +8,7 @@ import '../../../../../core/providers/user_settings_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/loading_states.dart';
 import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 import 'tarot_card_widget.dart';
 
 /// Simplified tarot reading result view
@@ -61,8 +62,6 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
   }
 
   void _flipCard(int index) {
-    debugPrint('Fortune cached');
-    debugPrint('state: ${_flippedCards[index] ?? false}');
     setState(() {
       _flippedCards[index] = !(_flippedCards[index] ?? false);
     });
@@ -81,12 +80,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
     return AnimatedBuilder(
       animation: _entranceAnimation,
       builder: (context, child) {
-        debugPrint('value: ${_entranceAnimation.value}');
         final opacityValue = _entranceAnimation.value;
-        debugPrint('Fortune cached');
-        if (opacityValue < 0.0 || opacityValue > 1.0) {
-          debugPrint('Fortune cached');
-        }
         return Opacity(
           opacity: opacityValue.clamp(0.0, 1.0),
           child: Transform.translate(
@@ -215,68 +209,175 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           ),
           const SizedBox(height: 24),
           
-          // Individual card interpretations
-          Text(
-            '카드별 상세 해석',
-            style: context.heading4.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+          // Individual card interpretations - 스토리텔링 스타일
+          Row(
+            children: [
+              Icon(Icons.auto_stories, color: theme.colorScheme.primary, size: 24),
+              const SizedBox(width: 8),
+              Text(
+                '카드별 상세 해석',
+                style: context.heading4.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           ...List.generate(widget.selectedCards.length, (index) {
-            final interpretation = result != null && result['cardInterpretations'] != null 
+            final cardIndex = widget.selectedCards[index];
+            final interpretation = result != null && result['cardInterpretations'] != null
                 ? result['cardInterpretations'][index]
-                : _generateCardInterpretation(widget.selectedCards[index], index);
+                : _generateCardInterpretation(cardIndex, index);
             if (interpretation == null) return const SizedBox.shrink();
-              
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: GlassContainer(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                              shape: BoxShape.circle),
-                            child: Center(
-                              child: Text(
-                                '${index + 1}',
-                                style: TextStyle(
+
+            final cardInfo = TarotMetadata.majorArcana[cardIndex % 22];
+            final imagePath = TarotHelper.getMajorArcanaImagePath(widget.selectedDeck.id, cardIndex);
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: GlassContainer(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 카드 헤더: 이미지 + 카드 이름 + 위치
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 카드 이미지 미니 썸네일
+                        Container(
+                          width: 60,
+                          height: 90,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: TossDesignSystem.black.withValues(alpha: 0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              imagePath,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        widget.selectedDeck.primaryColor.withValues(alpha: 0.3),
+                                        widget.selectedDeck.secondaryColor.withValues(alpha: 0.3),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Icon(Icons.auto_awesome, color: widget.selectedDeck.primaryColor),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // 카드 정보
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // 순서 배지 + 위치
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      _getPositionLabel(index),
+                                      style: context.labelMedium.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: theme.colorScheme.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              // 카드 이름
+                              Text(
+                                cardInfo?.name ?? 'Card ${cardIndex + 1}',
+                                style: context.heading4.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: theme.colorScheme.primary,
                                 ),
                               ),
-                            ),
+                              // 키워드
+                              if (cardInfo?.keywords.isNotEmpty ?? false) ...[
+                                const SizedBox(height: 4),
+                                Text(
+                                  cardInfo!.keywords.join(' • '),
+                                  style: context.labelSmall.copyWith(
+                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              _getPositionLabel(index),
-                              style: context.buttonMedium.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        interpretation['meaning'] ?? '',
-                        style: context.bodySmall.copyWith(
-                          height: 1.4,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    // 구분선
+                    Container(
+                      height: 1,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.colorScheme.primary.withValues(alpha: 0.0),
+                            theme.colorScheme.primary.withValues(alpha: 0.3),
+                            theme.colorScheme.primary.withValues(alpha: 0.0),
+                          ],
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 20),
+                    // 해석 내용 - 스토리텔링 포맷
+                    Text(
+                      interpretation['interpretation'] ?? interpretation['meaning'] ?? '',
+                      style: context.bodyMedium.copyWith(
+                        height: 1.8,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                    // 추가 인사이트 (원소, 점성술)
+                    if (cardInfo != null) ...[
+                      const SizedBox(height: 16),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          if (cardInfo.element.isNotEmpty)
+                            _buildInfoChip(
+                              icon: TarotHelper.getElementIcon(cardInfo.element),
+                              label: cardInfo.element,
+                              color: TarotHelper.getElementColor(cardInfo.element),
+                            ),
+                          if (cardInfo.astrology != null && cardInfo.astrology!.isNotEmpty)
+                            _buildInfoChip(
+                              icon: Icons.stars,
+                              label: cardInfo.astrology!,
+                              color: theme.colorScheme.secondary,
+                            ),
+                        ],
+                      ),
                     ],
-                  ),
+                  ],
                 ),
-              );
-            }),
+              ),
+            );
+          }),
           
           // Advice
           if (result != null && result['advice'] != null) ...[
@@ -422,24 +523,76 @@ $interpretation''';
     if (cardInfo == null) {
       return {
         'cardName': '알 수 없는 카드',
-        'interpretation': '이 카드의 의미를 해석 중입니다...'
+        'interpretation': '이 카드의 의미를 해석 중입니다...',
       };
     }
 
     final positionMeaning = _getPositionLabel(position);
-    
+
+    // 스토리텔링 스타일의 해석 생성
+    final buffer = StringBuffer();
+
+    // 위치별 맥락 설명
+    buffer.writeln('$positionMeaning의 자리에 ${cardInfo.name}가 나타났습니다.');
+    buffer.writeln();
+
+    // 카드의 핵심 의미
+    buffer.writeln('✨ 이 카드가 전하는 의미');
+    buffer.writeln(cardInfo.uprightMeaning);
+    buffer.writeln();
+
+    // 상황별 조언
+    buffer.writeln('💫 당신을 위한 메시지');
+    buffer.writeln(cardInfo.advice);
+
+    // 스토리가 있으면 일부 추가
+    if (cardInfo.story != null && cardInfo.story!.isNotEmpty) {
+      buffer.writeln();
+      buffer.writeln('📖 카드의 이야기');
+      final storyPreview = cardInfo.story!.length > 150
+          ? '${cardInfo.story!.substring(0, 150)}...'
+          : cardInfo.story!;
+      buffer.writeln(storyPreview);
+    }
+
     return {
       'cardName': cardInfo.name,
       'keywords': cardInfo.keywords,
-      'interpretation': '''$positionMeaning 위치의 ${cardInfo.name}:
-      
-${cardInfo.uprightMeaning}
-
-이 카드가 전하는 메시지: ${cardInfo.advice}
-
-${cardInfo.story != null ? '\n이야기: ${cardInfo.story!.substring(0, 200)}...' : ''}''',
+      'interpretation': buffer.toString(),
       'element': cardInfo.element,
       'astrology': cardInfo.astrology,
     };
+  }
+
+  Widget _buildInfoChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: color.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: context.labelSmall.copyWith(
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

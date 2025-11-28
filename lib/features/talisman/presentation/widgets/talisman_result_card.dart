@@ -4,7 +4,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../domain/models/talisman_design.dart';
 import '../../domain/models/talisman_wish.dart';
-import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -66,20 +65,20 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: TossTheme.success.withValues(alpha: 0.2),
+                  color: TossDesignSystem.successGreen.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check,
-                  color: TossTheme.success,
+                  color: TossDesignSystem.successGreen,
                   size: 20,
                 ),
               ),
               SizedBox(width: 12),
               Text(
                 '부적이 완성되었어요!',
-                style: TossTheme.heading3.copyWith(
-                  color: TossTheme.success,
+                style: TypographyUnified.heading3.copyWith(
+                  color: TossDesignSystem.successGreen,
                 ),
               ),
             ],
@@ -142,7 +141,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                       SizedBox(width: 6),
                       Text(
                         widget.talismanDesign.category.displayName,
-                        style: TossTheme.caption.copyWith(
+                        style: TypographyUnified.labelSmall.copyWith(
                           color: _categoryColor,
                           fontWeight: FontWeight.w600,
                         ),
@@ -209,8 +208,8 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                   ),
                   child: Text(
                     widget.talismanDesign.mantraText,
-                    style: TossTheme.body3.copyWith(
-                      color: TossTheme.textBlack,
+                    style: TypographyUnified.bodyMedium.copyWith(
+                      color: TossDesignSystem.textPrimaryLight,
                       fontWeight: FontWeight.w500,
                       height: 1.4,
                     ),
@@ -230,7 +229,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
           if (widget.talismanDesign.blessings.isNotEmpty) ...[
             Text(
               '부적의 축복',
-              style: TossTheme.heading3.copyWith(
+              style: TypographyUnified.heading3.copyWith(
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
             ),
@@ -259,7 +258,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                     Expanded(
                       child: Text(
                         blessing,
-                        style: TossTheme.body3.copyWith(
+                        style: TypographyUnified.bodyMedium.copyWith(
                           height: 1.5,
                           color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                         ),
@@ -365,7 +364,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
           SizedBox(height: 8),
           Text(
             widget.talismanDesign.category.displayName,
-            style: TossTheme.caption.copyWith(
+            style: TypographyUnified.labelSmall.copyWith(
               color: _categoryColor,
               fontWeight: FontWeight.w600,
             ),
