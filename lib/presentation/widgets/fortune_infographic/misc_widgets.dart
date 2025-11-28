@@ -1,0 +1,421 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import '../../../core/theme/toss_design_system.dart';
+import '../../../core/theme/typography_unified.dart';
+
+/// Miscellaneous widgets for fortune infographic
+class MiscWidgets {
+  MiscWidgets._();
+
+  /// Action checklist (placeholder implementation)
+  static Widget buildActionChecklist(
+    List<Map<String, dynamic>>? actions, {
+    required bool isDarkMode,
+  }) {
+    return Container(
+      height: 120,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          '액션 체크리스트 준비 중...',
+          style: TextStyle(
+            color: isDarkMode ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Weather fortune widget
+  static Widget buildWeatherFortune(
+    Map<String, dynamic>? weatherSummary,
+    int score,
+  ) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: TossDesignSystem.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(
+                    Icons.wb_sunny,
+                    color: TossDesignSystem.warningOrange,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '날씨 운세',
+                    style: TypographyUnified.heading4.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                weatherSummary?['description'] ?? '오늘의 날씨와 함께하는 운세를 확인해보세요.',
+                style: TypographyUnified.bodySmall.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
+                  height: 1.5,
+                ),
+              ),
+              if (weatherSummary?['temperature'] != null) ...[
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '온도: ${weatherSummary!['temperature']}°C',
+                    style: TypographyUnified.labelMedium.copyWith(
+                      color: TossDesignSystem.tossBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ).animate()
+          .fadeIn(duration: 600.ms)
+          .slideY(begin: 0.1, curve: Curves.easeOut);
+      },
+    );
+  }
+
+  /// Shareable card (placeholder implementation)
+  static Widget buildShareableCard(Map<String, dynamic>? shareCard) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          height: 180,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              '공유 카드 준비 중...',
+              style: TextStyle(
+                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Celebrity list (placeholder implementation)
+  static Widget buildTossStyleCelebrityList({
+    required String title,
+    required String subtitle,
+    required List<Map<String, dynamic>> celebrities,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          height: 140,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header section
+              Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFf59e0b), Color(0xFFef4444)],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.star,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Celebrity avatars placeholder
+              Expanded(
+                child: celebrities.isEmpty
+                  ? Center(
+                      child: Text(
+                        '유사 사주 연예인 준비 중...',
+                        style: TextStyle(
+                          color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        ),
+                      ),
+                    )
+                  : Row(
+                      children: celebrities.take(4).map((celeb) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: CircleAvatar(
+                            radius: 20,
+                            backgroundColor: isDark
+                                ? TossDesignSystem.grayDark300
+                                : TossDesignSystem.gray200,
+                            child: Text(
+                              (celeb['name'] as String?)?.substring(0, 1) ?? '?',
+                              style: TextStyle(
+                                color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Age fortune card (placeholder implementation)
+  static Widget buildTossStyleAgeFortuneCard({
+    required int userAge,
+    String? ageDescription,
+    int? ageScore,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.cake,
+                    size: 20,
+                    color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '$userAge세 운세',
+                    style: TypographyUnified.buttonMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                    ),
+                  ),
+                  if (ageScore != null) ...[
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '$ageScore점',
+                        style: TypographyUnified.labelMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: TossDesignSystem.tossBlue,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                ageDescription ?? '나이별 운세 정보를 준비 중입니다.',
+                style: TypographyUnified.bodySmall.copyWith(
+                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Share section (placeholder implementation)
+  static Widget buildTossStyleShareSection({
+    VoidCallback? onShare,
+    VoidCallback? onSaveImage,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            ),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.share,
+                    size: 20,
+                    color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '운세 공유하기',
+                    style: TypographyUnified.buttonMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildShareButton(
+                      icon: Icons.share,
+                      label: '공유',
+                      onTap: onShare,
+                      isDark: isDark,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildShareButton(
+                      icon: Icons.save_alt,
+                      label: '이미지 저장',
+                      onTap: onSaveImage,
+                      isDark: isDark,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static Widget _buildShareButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback? onTap,
+    required bool isDark,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: TossDesignSystem.tossBlue,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TypographyUnified.buttonSmall.copyWith(
+                color: TossDesignSystem.tossBlue,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
