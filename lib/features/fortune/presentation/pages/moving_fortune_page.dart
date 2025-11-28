@@ -11,6 +11,7 @@ import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/widgets/gpt_style_typing_text.dart';
 
 /// 토스 스타일 이사운 페이지 (UnifiedFortuneBaseWidget 사용)
 class MovingFortunePage extends ConsumerStatefulWidget {
@@ -29,6 +30,9 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
   // ✅ Blur 상태 관리
   bool _isBlurred = false;
   List<String> _blurredSections = [];
+
+  // ✅ GPT 스타일 타이핑 효과
+  int _currentTypingSection = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +75,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               setState(() {
                 _isBlurred = result.isBlurred;
                 _blurredSections = List<String>.from(result.blurredSections);
+                // 결과가 바뀌면 타이핑 섹션 리셋
+                _currentTypingSection = 0;
               });
             }
           });
@@ -154,17 +160,21 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   _buildScoreCard(score, summaryKeyword, isDark),
                   const SizedBox(height: 20),
 
-                  // 전반적인 운세 (공개)
+                  // 전반적인 운세 (공개) - 타이핑 섹션 0
                   if (overallFortune.isNotEmpty)
                     _buildSectionCard(
                       title: '전반적인 운세',
                       icon: Icons.brightness_5,
                       content: overallFortune,
                       isDark: isDark,
+                      sectionIndex: 0,
+                      onTypingComplete: () {
+                        if (mounted) setState(() => _currentTypingSection = 1);
+                      },
                     ),
                   const SizedBox(height: 16),
 
-                  // 방위 분석 (블러)
+                  // 방위 분석 (블러) - 타이핑 섹션 1
                   if (directionContent.isNotEmpty)
                     UnifiedBlurWrapper(
                       isBlurred: _isBlurred,
@@ -175,11 +185,15 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                         icon: Icons.explore,
                         content: directionContent,
                         isDark: isDark,
+                        sectionIndex: 1,
+                        onTypingComplete: () {
+                          if (mounted) setState(() => _currentTypingSection = 2);
+                        },
                       ),
                     ),
                   const SizedBox(height: 16),
 
-                  // 시기 분석 (블러)
+                  // 시기 분석 (블러) - 타이핑 섹션 2
                   if (timingContent.isNotEmpty)
                     UnifiedBlurWrapper(
                       isBlurred: _isBlurred,
@@ -190,6 +204,11 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                         icon: Icons.calendar_today,
                         content: timingContent,
                         isDark: isDark,
+                        sectionIndex: 2,
+                        onTypingComplete: () {
+                          // 마지막 섹션 완료
+                          if (mounted) setState(() => _currentTypingSection = 3);
+                        },
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -394,6 +413,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
     required IconData icon,
     required String content,
     required bool isDark,
+    int? sectionIndex,
+    VoidCallback? onTypingComplete,
   }) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
@@ -424,13 +445,25 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             ],
           ),
           const SizedBox(height: 16),
-          Text(
-            content,
-            style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-              height: 1.6,
-            ),
-          ),
+          // ✅ GPT 스타일 타이핑 효과 적용
+          sectionIndex != null
+              ? GptStyleTypingText(
+                  text: content,
+                  style: TypographyUnified.bodyMedium.copyWith(
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    height: 1.6,
+                  ),
+                  startTyping: _currentTypingSection >= sectionIndex,
+                  showGhostText: true,
+                  onComplete: onTypingComplete,
+                )
+              : Text(
+                  content,
+                  style: TypographyUnified.bodyMedium.copyWith(
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    height: 1.6,
+                  ),
+                ),
         ],
       ),
     );

@@ -24,6 +24,7 @@ import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../core/services/unified_calendar_service.dart';
 import '../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../../core/widgets/unified_button.dart';
+import '../../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../widgets/event_category_selector.dart';
 import '../../widgets/event_detail_input_form.dart';
@@ -70,12 +71,16 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
   // 운세 결과 상태
   bool _isLoading = false;
+  bool _showResultView = false;  // 결과 화면 표시 여부 (API 완료 전에도 true)
   FortuneResult? _fortuneResult;
   String? _error;
 
   // ✅ Blur 상태 관리
   bool _isBlurred = false;
   List<String> _blurredSections = [];
+
+  // ✅ 타이핑 효과 상태 관리
+  int _currentTypingSection = 0;  // 0: AI 인사이트, 1: 카테고리, 2: 조언, 3: AI 팁, 4: 주의사항
 
   // 캘린더 연동 상태 (통합 서비스)
   final UnifiedCalendarService _calendarService = UnifiedCalendarService();
@@ -119,23 +124,15 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         if (mounted) {
           setState(() {
             _isCalendarSynced = true;
+            _showCalendarBanner = false;  // 권한 허용 시 항상 배너 숨김
           });
         }
         await _syncAllCalendars();
 
+        // 이벤트가 없어도 Google Calendar 배너를 바로 보여주지 않음
+        // 사용자 경험 개선: 권한 허용 후 바로 다른 배너가 뜨면 혼란스러움
         if (_deviceEvents.isEmpty) {
-          debugPrint('[Calendar] ⚠️ 디바이스 캘린더 이벤트 없음 - Google Calendar 연동 제안');
-          if (mounted) {
-            setState(() {
-              _showGoogleCalendarOption = true;
-            });
-          }
-        } else {
-          if (mounted) {
-            setState(() {
-              _showCalendarBanner = false;
-            });
-          }
+          debugPrint('[Calendar] ℹ️ 오늘 날짜에 디바이스 캘린더 이벤트 없음');
         }
       } else {
         debugPrint('[Calendar] ⚠️ 캘린더 권한 없음 - 배너 표시');
@@ -347,7 +344,10 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     if (mounted) {
       setState(() {
         _isLoading = true;
+        _showResultView = true;  // 즉시 결과 화면으로 전환 (커서 깜빡임 표시)
         _error = null;
+        _fortuneResult = null;  // 이전 결과 초기화
+        _currentTypingSection = 0;  // 타이핑 섹션 초기화
       });
     }
 
@@ -435,6 +435,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           _isLoading = false;
           _isBlurred = fortuneResult.isBlurred;
           _blurredSections = List<String>.from(fortuneResult.blurredSections);
+          // 타이핑 효과 초기화 (새 운세 결과가 로드될 때)
+          _currentTypingSection = 0;
         });
 
         debugPrint('');
@@ -548,6 +550,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
             setState(() {
               _isBlurred = false;
               _blurredSections = [];
+              // 블러 해제 후 블러 섹션(조언)부터 타이핑 시작
+              _currentTypingSection = 2;
             });
 
             ScaffoldMessenger.of(context).showSnackBar(
@@ -732,8 +736,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // ✅ 운세 결과가 있고 로딩 중이 아닐 때만 결과 화면 표시
-    if (_fortuneResult != null && !_isLoading) {
+    // ✅ 결과 화면 표시 (로딩 중이거나 결과가 있을 때)
+    if (_showResultView) {
       return _buildResultScaffold(isDark);
     }
 
@@ -775,9 +779,11 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         children: [
           SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-            child: _buildFortuneResultContent(isDark),
+            child: _isLoading && _fortuneResult == null
+                ? _buildLoadingContent(isDark)  // API 대기 중: 커서 깜빡임
+                : _buildFortuneResultContent(isDark),  // 결과 수신: 타이핑 시작
           ),
-          if (_isBlurred)
+          if (_isBlurred && _fortuneResult != null)
             UnifiedButton.floating(
               text: '광고 보고 전체 내용 확인하기',
               onPressed: _showAdAndUnblur,
@@ -789,95 +795,173 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     );
   }
 
+  /// API 대기 중 커서 깜빡임 표시
+  Widget _buildLoadingContent(bool isDark) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 100),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '운세를 불러오는 중...',
+              style: context.buttonMedium.copyWith(
+                color: isDark
+                    ? TossDesignSystem.textSecondaryDark
+                    : TossDesignSystem.textSecondaryLight,
+              ),
+            ),
+            const SizedBox(height: 24),
+            TypingLoadingIndicator(
+              style: context.heading3.copyWith(
+                color: isDark
+                    ? TossDesignSystem.textPrimaryDark
+                    : TossDesignSystem.textPrimaryLight,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFortuneResultContent(bool isDark) {
     final fortuneData = _fortuneResult!.data['fortune'] as Map<String, dynamic>? ?? {};
-    final score = fortuneData['total']?['score'] as int?;
+    final categories = fortuneData['categories'] as Map<String, dynamic>? ?? {};
+    final totalFortune = categories['total'] as Map<String, dynamic>?;
+    final score = totalFortune?['score'] as int?;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 점수
-        if (score != null) ...[
+        // 1. 총운 (점수 + 내용) - 맨 처음
+        if (totalFortune != null) ...[
           Center(
             child: Column(
               children: [
-                Text(
-                  '$score점',
-                  style: context.displayLarge.copyWith(
-                    color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold,
+                if (score != null) ...[
+                  Text(
+                    '$score점',
+                    style: context.displayLarge.copyWith(
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
+                  const SizedBox(height: 8),
+                ],
                 Text(
-                  fortuneData['total']?['title'] as String? ?? '전체 운세',
+                  totalFortune['title'] as String? ?? '오늘의 총운',
                   style: context.heading3,
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
+          // 총운 내용 (타이핑 효과)
+          TypingTotalFortuneSection(
+            total: totalFortune,
+            isDark: isDark,
+            startTyping: _currentTypingSection >= 0,
+            onTypingComplete: () {
+              if (mounted) {
+                setState(() => _currentTypingSection = 1);
+              }
+            },
+          ),
+          const SizedBox(height: 24),
         ],
 
-        // AI 인사이트
+        // 2. AI 인사이트 (타이핑 효과)
         if (fortuneData['ai_insight'] != null) ...[
-          FortuneSectionCard(
+          TypingFortuneSectionCard(
             icon: Icons.lightbulb_outline,
             title: 'AI 인사이트',
-            content: FortuneTextCleaner.cleanAndTruncate(fortuneData['ai_insight'] as String),
+            content: FortuneTextCleaner.clean(fortuneData['ai_insight'] as String),
             isDark: isDark,
+            startTyping: _currentTypingSection >= 1,
+            onTypingComplete: () {
+              if (mounted) {
+                setState(() => _currentTypingSection = 2);
+              }
+            },
           ),
           const SizedBox(height: 16),
         ],
 
-        // 카테고리별 운세
-        if (fortuneData['categories'] != null) ...[
-          CategoriesSection(
-            categories: fortuneData['categories'] as Map<String, dynamic>,
+        // 3. 카테고리별 운세 (타이핑 효과) - 총운 제외
+        if (categories.isNotEmpty) ...[
+          TypingCategoriesSection(
+            categories: categories,
             isDark: isDark,
+            showTotal: false,  // 총운은 위에서 이미 표시
+            startTyping: _currentTypingSection >= 2,
+            onTypingComplete: () {
+              if (mounted) {
+                setState(() => _currentTypingSection = 3);
+              }
+            },
           ),
           const SizedBox(height: 16),
         ],
 
-        // 조언 (블러 대상)
+        // 4. 조언 (블러 대상 + 타이핑 효과)
         if (fortuneData['advice'] != null) ...[
           UnifiedBlurWrapper(
             isBlurred: _isBlurred,
             blurredSections: _blurredSections,
             sectionKey: 'advice',
-            child: FortuneSectionCard(
+            child: TypingFortuneSectionCard(
               icon: Icons.tips_and_updates,
               title: '조언',
-              content: FortuneTextCleaner.cleanAndTruncate(fortuneData['advice'] as String),
+              content: FortuneTextCleaner.clean(fortuneData['advice'] as String),
               isDark: isDark,
+              startTyping: !_isBlurred && _currentTypingSection >= 3,
+              onTypingComplete: () {
+                if (mounted) {
+                  setState(() => _currentTypingSection = 4);
+                }
+              },
             ),
           ),
           const SizedBox(height: 16),
         ],
 
-        // AI 팁 (블러 대상)
+        // 5. AI 팁 (블러 대상 + 타이핑 효과)
         if (fortuneData['ai_tips'] != null) ...[
           UnifiedBlurWrapper(
             isBlurred: _isBlurred,
             blurredSections: _blurredSections,
             sectionKey: 'ai_tips',
-            child: AITipsList(tips: fortuneData['ai_tips'] as List, isDark: isDark),
+            child: TypingAITipsList(
+              tips: fortuneData['ai_tips'] as List,
+              isDark: isDark,
+              startTyping: !_isBlurred && _currentTypingSection >= 4,
+              onTypingComplete: () {
+                if (mounted) {
+                  setState(() => _currentTypingSection = 5);
+                }
+              },
+            ),
           ),
           const SizedBox(height: 16),
         ],
 
-        // 주의사항 (블러 대상)
+        // 6. 주의사항 (블러 대상 + 타이핑 효과)
         if (fortuneData['caution'] != null) ...[
           UnifiedBlurWrapper(
             isBlurred: _isBlurred,
             blurredSections: _blurredSections,
             sectionKey: 'caution',
-            child: FortuneSectionCard(
+            child: TypingFortuneSectionCard(
               icon: Icons.warning_amber_rounded,
               title: '주의사항',
-              content: FortuneTextCleaner.cleanAndTruncate(fortuneData['caution'] as String),
+              content: FortuneTextCleaner.clean(fortuneData['caution'] as String),
               isDark: isDark,
               isWarning: true,
+              startTyping: !_isBlurred && _currentTypingSection >= 5,
+              onTypingComplete: () {
+                debugPrint('✅ 모든 섹션 타이핑 완료');
+              },
             ),
           ),
           const SizedBox(height: 16),

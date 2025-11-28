@@ -212,14 +212,15 @@ class StepFloatingButton extends StatelessWidget {
         break;
     }
 
+    // isLoading은 결과 화면에서 커서 깜빡임으로 대체 (버튼 로딩 제거)
     return UnifiedButton.progress(
       text: buttonText,
       currentStep: currentStep + 1,
       totalSteps: 3,
-      onPressed: onPressed,
-      isEnabled: canProceed,
+      onPressed: isLoading ? null : onPressed,  // 로딩 중 버튼 비활성화
+      isEnabled: canProceed && !isLoading,
       isFloating: true,
-      isLoading: isLoading,
+      isLoading: false,  // 버튼 로딩 애니메이션 제거
     );
   }
 }

@@ -23,6 +23,7 @@ import '../../../../../services/ad_service.dart';
 import '../../../../../services/vision_api_service.dart';
 import '../../widgets/fortune_loading_skeleton.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
+import '../../../../../core/widgets/gpt_style_typing_text.dart';
 
 // 분리된 위젯들
 import 'constants/blind_date_options.dart';
@@ -53,6 +54,9 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   // Blur 상태 관리
   bool _isBlurred = false;
   List<String> _blurredSections = [];
+
+  // ✅ GPT 스타일 타이핑 효과
+  int _currentTypingSection = 0;
 
   // Meeting Info
   DateTime? _meetingDate;
@@ -344,6 +348,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       setState(() {
         _fortuneResult = fortuneResult;
         _isLoading = false;
+        _currentTypingSection = 0;  // 타이핑 섹션 리셋
       });
     } catch (e, stackTrace) {
       Logger.error('[BlindDateFortunePage] 운세 생성 실패', e, stackTrace);
@@ -1147,13 +1152,19 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
             ),
           ],
           const SizedBox(height: 16),
-          Text(
-            content,
+          // ✅ GPT 스타일 타이핑 효과 적용
+          GptStyleTypingText(
+            text: content,
             style: theme.textTheme.bodyLarge?.copyWith(
               color: isDark
                   ? TossDesignSystem.textPrimaryDark
                   : TossDesignSystem.textPrimaryLight,
             ),
+            startTyping: _currentTypingSection >= 0,
+            showGhostText: true,
+            onComplete: () {
+              if (mounted) setState(() => _currentTypingSection = 1);
+            },
           ),
         ],
       ),

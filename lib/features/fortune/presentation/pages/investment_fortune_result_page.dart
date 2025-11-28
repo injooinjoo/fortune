@@ -10,6 +10,7 @@ import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/gpt_style_typing_text.dart';
 
 /// 투자운세 결과 페이지 (프리미엄/블러 시스템 적용)
 ///
@@ -34,6 +35,9 @@ class InvestmentFortuneResultPage extends ConsumerStatefulWidget {
 
 class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneResultPage> {
   late FortuneResult _fortuneResult;
+
+  // 타이핑 효과 상태
+  int _currentTypingSection = 0;
 
   @override
   void initState() {
@@ -336,16 +340,23 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             ],
           ),
           const SizedBox(height: 16),
-          Text(
-            content,
+          GptStyleTypingText(
+            text: content,
             style: context.bodyMedium.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
               height: 1.6,
             ),
+            startTyping: _currentTypingSection >= 0,
+            showGhostText: true,
+            onComplete: () {
+              if (mounted) {
+                setState(() => _currentTypingSection = 1);
+              }
+            },
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 600.ms, delay: 200.ms).slideY(begin: 0.2, end: 0);
+    ).animate().fadeIn(duration: 400.ms, delay: 200.ms).slideY(begin: 0.1, end: 0);
   }
 
   // ===== 블러 섹션 빌더 =====

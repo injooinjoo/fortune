@@ -8,6 +8,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
+import '../../../../core/widgets/gpt_style_typing_text.dart';
 
 class TalismanResultCard extends StatefulWidget {
   final TalismanDesign talismanDesign;
@@ -29,6 +30,9 @@ class TalismanResultCard extends StatefulWidget {
 
 class _TalismanResultCardState extends State<TalismanResultCard> {
   bool _isSaved = false;
+
+  // ✅ GPT 스타일 타이핑 효과
+  int _currentTypingSection = 0;
 
   Color get _categoryColor {
     switch (widget.talismanDesign.category) {
@@ -196,7 +200,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                 
                 const SizedBox(height: 20),
                 
-                // Mantra Text
+                // Mantra Text - GPT 스타일 타이핑 효과
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
@@ -206,14 +210,18 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                       color: _categoryColor.withValues(alpha: 0.2),
                     ),
                   ),
-                  child: Text(
-                    widget.talismanDesign.mantraText,
+                  child: GptStyleTypingText(
+                    text: widget.talismanDesign.mantraText,
                     style: TypographyUnified.bodyMedium.copyWith(
                       color: TossDesignSystem.textPrimaryLight,
                       fontWeight: FontWeight.w500,
                       height: 1.4,
                     ),
-                    textAlign: TextAlign.center,
+                    startTyping: _currentTypingSection >= 0,
+                    showGhostText: true,
+                    onComplete: () {
+                      if (mounted) setState(() => _currentTypingSection = 1);
+                    },
                   ),
                 ),
               ],
@@ -225,7 +233,7 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
           
           const SizedBox(height: 32),
           
-          // Blessings
+          // Blessings - GPT 스타일 타이핑 효과
           if (widget.talismanDesign.blessings.isNotEmpty) ...[
             Text(
               '부적의 축복',
@@ -234,7 +242,10 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
               ),
             ),
             const SizedBox(height: 16),
-            ...widget.talismanDesign.blessings.map((blessing) {
+            ...widget.talismanDesign.blessings.asMap().entries.map((entry) {
+              final index = entry.key;
+              final blessing = entry.value;
+              final blessingIndex = index + 1;  // mantraText가 0번
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Row(
@@ -256,12 +267,19 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                     ),
                     SizedBox(width: 12),
                     Expanded(
-                      child: Text(
-                        blessing,
+                      child: GptStyleTypingText(
+                        text: blessing,
                         style: TypographyUnified.bodyMedium.copyWith(
                           height: 1.5,
                           color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                         ),
+                        startTyping: _currentTypingSection >= blessingIndex,
+                        showGhostText: true,
+                        onComplete: () {
+                          if (mounted && index < widget.talismanDesign.blessings.length - 1) {
+                            setState(() => _currentTypingSection = blessingIndex + 1);
+                          }
+                        },
                       ),
                     ),
                   ],
