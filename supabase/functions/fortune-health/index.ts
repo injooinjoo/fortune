@@ -19,11 +19,31 @@ async function createHash(text: string): Promise<string> {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 50)
 }
 
+interface HealthAppData {
+  average_daily_steps?: number | null
+  today_steps?: number | null
+  average_daily_calories?: number | null
+  today_calories?: number | null
+  average_daily_distance_km?: string | null
+  workout_count_week?: number | null
+  average_sleep_hours?: string | null
+  last_night_sleep_hours?: string | null
+  average_heart_rate?: number | null
+  resting_heart_rate?: number | null
+  weight_kg?: string | null
+  systolic_bp?: number | null
+  diastolic_bp?: number | null
+  blood_glucose?: string | null
+  blood_oxygen?: string | null
+  data_period?: string | null
+}
+
 interface HealthFortuneRequest {
   fortune_type?: string
   current_condition: string
   concerned_body_parts: string[]
   isPremium?: boolean // ✅ 프리미엄 사용자 여부
+  health_app_data?: HealthAppData | null // ✅ 프리미엄 건강앱 데이터
 }
 
 serve(async (req) => {
@@ -42,17 +62,22 @@ serve(async (req) => {
     const {
       current_condition = '',
       concerned_body_parts = [],
-      isPremium = false // ✅ 프리미엄 사용자 여부
+      isPremium = false, // ✅ 프리미엄 사용자 여부
+      health_app_data = null // ✅ 건강앱 데이터 (프리미엄 전용)
     } = requestData
 
     if (!current_condition) {
       throw new Error('현재 건강 상태를 입력해주세요.')
     }
 
+    const hasHealthAppData = isPremium && health_app_data !== null
     console.log('💎 [Health] Premium 상태:', isPremium)
+    console.log('📱 [Health] 건강앱 데이터:', hasHealthAppData ? '있음' : '없음')
     console.log('Health fortune request:', { current_condition, concerned_body_parts })
 
-    const hash = await createHash(`${current_condition}_${concerned_body_parts.join(',')}`)
+    // 건강앱 데이터가 있으면 캐시 키에 포함 (개인화된 결과)
+    const healthDataHash = hasHealthAppData ? `_healthapp_${JSON.stringify(health_app_data).slice(0, 50)}` : ''
+    const hash = await createHash(`${current_condition}_${concerned_body_parts.join(',')}${healthDataHash}`)
     const cacheKey = `health_fortune_${hash}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
@@ -71,65 +96,102 @@ serve(async (req) => {
       // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
       const llm = await LLMFactory.createFromConfigAsync('health')
 
-      const systemPrompt = `당신은 30년 경력의 전문 한의사이자 건강 컨설턴트입니다.
-동양의학과 현대 의학을 결합하여 실용적이고 구체적인 건강 조언을 제공합니다.
-응답은 반드시 유효한 JSON 형식이어야 하며, 한국의 건강 문화와 생활 패턴을 깊이 이해하고 있습니다.`
+      const systemPrompt = `당신은 **현대의학 + 한의학 통합 건강코치**입니다.
+삼성서울병원 가정의학과 15년, 한방내과 10년 경력을 보유하고 있습니다.
 
-      const userPrompt = `당신은 30년 경력의 전문 한의사이자 건강 컨설턴트입니다.
-다음 정보를 바탕으로 전문적이고 구체적인 건강운세를 JSON 형식으로 제공해주세요.
+🎯 **핵심 원칙**:
+1. **구체적 수치와 시간 제시**: "운동하세요" ❌ → "오후 3시, 15분간 걷기" ✅
+2. **이유 설명 필수**: 모든 조언에 "왜"를 포함
+3. **실천 가능한 액션**: 바로 따라할 수 있는 구체적 방법
+4. **경고와 격려 균형**: 무서운 경고만 ❌, 희망적 조언과 함께
 
-**현재 건강 상태:**
-- 전반적 컨디션: ${current_condition}
-- 관심/우려 부위: ${concerned_body_parts.length > 0 ? concerned_body_parts.join(', ') : '특별한 우려 사항 없음'}
+⚠️ **절대 금지**: "건강하십니다", "좋습니다", "주의하세요" 같은 막연한 표현`
 
-**요청 사항:**
+      // 건강앱 데이터 섹션 생성
+      const healthAppSection = hasHealthAppData ? `
+## 📱 건강앱 연동 데이터 (실측치)
+${health_app_data!.average_daily_steps ? `- **일평균 걸음 수**: ${health_app_data!.average_daily_steps.toLocaleString()}보` : ''}
+${health_app_data!.today_steps ? `- **오늘 걸음 수**: ${health_app_data!.today_steps.toLocaleString()}보` : ''}
+${health_app_data!.average_sleep_hours ? `- **일평균 수면**: ${health_app_data!.average_sleep_hours}시간` : ''}
+${health_app_data!.last_night_sleep_hours ? `- **어젯밤 수면**: ${health_app_data!.last_night_sleep_hours}시간` : ''}
+${health_app_data!.average_heart_rate ? `- **평균 심박수**: ${health_app_data!.average_heart_rate}bpm` : ''}
+${health_app_data!.resting_heart_rate ? `- **안정시 심박수**: ${health_app_data!.resting_heart_rate}bpm` : ''}
+${health_app_data!.weight_kg ? `- **체중**: ${health_app_data!.weight_kg}kg` : ''}
+${health_app_data!.systolic_bp && health_app_data!.diastolic_bp ? `- **혈압**: ${health_app_data!.systolic_bp}/${health_app_data!.diastolic_bp}mmHg` : ''}
+${health_app_data!.blood_glucose ? `- **혈당**: ${health_app_data!.blood_glucose}mg/dL` : ''}
+${health_app_data!.blood_oxygen ? `- **산소포화도**: ${health_app_data!.blood_oxygen}%` : ''}
+${health_app_data!.workout_count_week ? `- **주간 운동 횟수**: ${health_app_data!.workout_count_week}회` : ''}
+${health_app_data!.average_daily_calories ? `- **일평균 소모 칼로리**: ${health_app_data!.average_daily_calories}kcal` : ''}
+${health_app_data!.data_period ? `- **데이터 기간**: ${health_app_data!.data_period}` : ''}
 
-1. **전반적인 건강운 (overall_health):**
-   - 현재 건강 상태에 대한 종합 평가 (3-4문장)
-   - 체질적 특징과 계절/시기와의 관련성
-   - 전반적인 에너지 레벨과 면역력 상태
-   - 긍정적 측면과 주의가 필요한 측면 균형있게 서술
+⚠️ **중요**: 위 실측 데이터를 반드시 분석에 반영하세요. 일반적인 조언이 아닌, 이 사용자의 실제 건강 지표에 맞춤화된 조언을 제공해야 합니다.
+` : ''
 
-2. **부위별 건강 조언 (body_part_advice):**
-   - 관심 부위에 대한 상세한 분석 (각 부위당 2-3문장)
-   - 증상 예방 및 관리 방법
-   - 일상생활에서 실천 가능한 셀프케어 방법
-   - 관련 경혈(ツボ) 또는 스트레칭 제안
+      const userPrompt = `## 사용자 건강 프로필
+- **현재 컨디션**: ${current_condition}
+- **관심 부위**: ${concerned_body_parts.length > 0 ? concerned_body_parts.join(', ') : '전신 컨디션'}
+- **분석 날짜**: ${new Date().toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'long' })}
+${healthAppSection}
 
-3. **주의사항 (cautions):**
-   - 피해야 할 생활습관 3가지 (구체적으로)
-   - 특정 음식이나 활동에 대한 경고
-   - 스트레스 관리 포인트
-   - 각 항목은 "이유"와 함께 명확하게 설명
+---
 
-4. **추천 활동 (recommended_activities):**
-   - 현재 건강 상태에 최적화된 활동 3-5가지
-   - 활동의 효과와 실천 방법 구체적으로 기술
-   - 시간대별 추천 (아침/점심/저녁)
-   - 초보자도 쉽게 시작할 수 있는 수준
+## 요청 JSON 형식
 
-5. **식습관 조언 (diet_advice):**
-   - 현재 상태에 좋은 음식 5가지 (효능과 함께)
-   - 피해야 할 음식 3가지 (이유와 함께)
-   - 식사 시간과 양에 대한 조언
-   - 계절/체질에 맞는 식단 팁
-   - 최소 5-6문장의 상세한 설명
+\`\`\`json
+{
+  "overall_health": "구체적인 전반 건강 분석 (5-7문장)",
+  "body_part_advice": "부위별 맞춤 조언 (각 부위 3-4문장)",
+  "cautions": ["주의사항1 (이유 포함)", "주의사항2", "주의사항3"],
+  "recommended_activities": ["활동1 (시간+방법)", "활동2", "활동3"],
+  "diet_advice": "식습관 조언 (좋은 음식 + 피할 음식 + 시간대별 팁, 5-6문장)",
+  "exercise_advice": "운동 조언 (종류 + 강도 + 횟수 + 주의점, 5-6문장)",
+  "health_keyword": "오늘의 건강 키워드 2-3단어"
+}
+\`\`\`
 
-6. **운동 조언 (exercise_advice):**
-   - 체력 수준별 맞춤 운동 프로그램
-   - 주차별 운동 강도 조절 방법
-   - 부상 예방을 위한 주의사항
-   - 운동 시간대와 빈도 권장사항
-   - 최소 5-6문장의 구체적인 가이드
+---
 
-7. **건강 키워드 (health_keyword):**
-   - 오늘의 건강운을 상징하는 2-3단어
-   - 긍정적이고 기억하기 쉬운 표현
+## 각 필드 작성 기준
 
-**응답 형식:**
-반드시 JSON 형태로 응답하되, 한국의 건강 문화와 현대인의 생활 패턴을 반영하여 작성해주세요.
-의학적으로 근거가 있으면서도 실천 가능한 조언을 제공하되, 과도한 낙관론이나 의료적 진단은 피해주세요.
-각 섹션은 충분히 상세하게 작성하여 사용자가 실질적인 도움을 받을 수 있도록 해주세요.`
+### 1. overall_health (전반적인 건강운)
+**예시**: "현재 ${current_condition} 상태로, 교감신경이 다소 항진되어 있는 패턴입니다. 특히 오후 2-4시 사이에 집중력 저하와 가벼운 피로감이 나타날 수 있습니다. 이는 코르티솔 분비 리듬과 관련이 있어, 이 시간대에 5분간 눈을 감고 호흡에 집중하면 효과적입니다. 면역력은 양호한 편이나, 수면의 질을 개선하면 20% 이상 에너지 레벨이 상승할 수 있습니다."
+
+### 2. body_part_advice (부위별 건강 조언)
+- **머리**: "두통이 잦다면 후두부 '풍지혈'을 3초간 5회 지압하세요"
+- **어깨**: "승모근 뭉침은 매시간 어깨 돌리기 10회로 예방됩니다"
+- **허리**: "요추 4-5번 디스크 부담 완화를 위해 고양이 자세 30초×3세트 권장"
+- 구체적 **지압점, 스트레칭, 횟수, 시간**을 포함
+
+### 3. cautions (주의사항) - 배열 3개
+❌ "야식을 피하세요"
+✅ "밤 9시 이후 탄수화물 섭취 자제 (인슐린 스파이크로 수면호르몬 멜라토닌 분비 방해)"
+
+### 4. recommended_activities (추천 활동) - 배열 3-5개
+❌ "산책"
+✅ "오전 7-8시 공복 걷기 20분 (지방 연소 효율 40% 증가, 세로토닌 분비 촉진)"
+
+### 5. diet_advice (식습관 조언)
+**좋은 음식 + 이유**: "연어(오메가3로 염증 감소), 브로콜리(설포라판으로 해독 강화)"
+**피할 음식 + 이유**: "밀가루(장 투과성 증가), 가공육(아질산나트륨으로 산화 스트레스)"
+**시간대별 팁**: "아침 공복에 레몬물, 점심 후 15분 걷기, 저녁 7시 이전 식사 마무리"
+
+### 6. exercise_advice (운동 조언)
+**종류**: "유산소(걷기/자전거) + 근력(플랭크/스쿼트)"
+**강도**: "심박수 110-130bpm 유지 (말하면서 할 수 있는 정도)"
+**횟수**: "주 3-4회, 회당 30-45분"
+**주의점**: "무릎 통증 시 런지 대신 벽 스쿼트로 대체"
+
+### 7. health_keyword
+2-3단어의 긍정적이고 기억하기 쉬운 표현
+예: "균형 회복", "활력 충전", "면역 강화"
+
+---
+
+## 중요 지침
+- 모든 조언에 **구체적 숫자/시간/횟수** 포함
+- **"왜"**를 반드시 설명 (의학적 근거 간단히)
+- 막연한 표현 사용 금지: "좋습니다", "주의하세요", "건강합니다"
+- JSON만 반환 (마크다운 코드블록 없이)`
 
       const response = await llm.generate([
         { role: 'system', content: systemPrompt },
@@ -151,7 +213,8 @@ serve(async (req) => {
         metadata: {
           current_condition,
           concerned_body_parts,
-          isPremium
+          isPremium,
+          hasHealthAppData
         }
       })
 
@@ -180,7 +243,14 @@ serve(async (req) => {
         health_keyword: parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강', // 블러 대상
         timestamp: new Date().toISOString(),
         isBlurred, // ✅ 블러 상태
-        blurredSections // ✅ 블러된 섹션 목록
+        blurredSections, // ✅ 블러된 섹션 목록
+        hasHealthAppData, // ✅ 건강앱 데이터 사용 여부
+        healthAppDataSummary: hasHealthAppData ? {
+          steps: health_app_data!.today_steps,
+          sleep: health_app_data!.average_sleep_hours,
+          heartRate: health_app_data!.average_heart_rate,
+          weight: health_app_data!.weight_kg
+        } : null
       }
 
       await supabase.from('fortune_cache').insert({

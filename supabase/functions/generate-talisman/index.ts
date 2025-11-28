@@ -1,128 +1,154 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { OpenAIProvider } from '../_shared/llm/providers/openai.ts'
+import { GeminiProvider } from '../_shared/llm/providers/gemini.ts'
 
-const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')!
+const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')!
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
 interface TalismanRequest {
   userId: string
   category: string
-  characters: string[]
-  animal: string
-  pattern: string
+  characters?: string[] // 선택적 - 없으면 카테고리 기본값 사용
 }
 
 interface TalismanPromptConfig {
   purpose: string
+  purposeKr: string
   mood: string
   colorIntensity: string
-  animalDescription: string
-  patternDescription: string
+  animalSymbol: string
+  geometricPattern: string
+  specialElements: string
+  defaultCharacters: string[]
 }
 
+// 카테고리별 전문적 부적 설정
 const CATEGORY_CONFIGS: Record<string, TalismanPromptConfig> = {
   disease_prevention: {
-    purpose: 'disease prevention and healing',
-    mood: 'powerful and protective',
-    colorIntensity: 'bright cinnabar red (#D32F2F)',
-    animalDescription: 'fierce tiger with three claws facing forward',
-    patternDescription: 'spiral patterns representing life energy circulation',
+    purpose: 'disease prevention and healing (질병 퇴치)',
+    purposeKr: '질병 퇴치',
+    mood: 'powerful protective energy, fierce guardian spirit',
+    colorIntensity: 'deep cinnabar red (#D32F2F) with bold, confident strokes',
+    animalSymbol: 'a fierce tiger (호랑이) with exaggerated claws and intense eyes, facing forward in guardian stance',
+    geometricPattern: 'spiral vortex patterns (와문형) representing life energy circulation, radiating from center',
+    specialElements: 'protective barrier circles, healing energy symbols',
+    defaultCharacters: ['病退散', '藥神降臨'],
   },
   love_relationship: {
-    purpose: 'love and harmonious relationships',
-    mood: 'gentle and romantic',
-    colorIntensity: 'soft red (#EF5350)',
-    animalDescription: 'mandarin ducks or butterflies symbolizing love',
-    patternDescription: 'decorative knot patterns and heart shapes',
+    purpose: 'love and harmonious relationships (부부화합)',
+    purposeKr: '사랑 성취',
+    mood: 'gentle romantic energy, tender connection',
+    colorIntensity: 'soft rose-tinted red (#EF5350) with graceful, flowing strokes',
+    animalSymbol: 'a pair of mandarin ducks (원앙) or butterflies facing each other, symbolizing eternal love',
+    geometricPattern: 'decorative Korean knot patterns (매듭), intertwining circles representing union',
+    specialElements: 'heart motifs, flower decorations, clouds',
+    defaultCharacters: ['夫婦和合', '百年好合'],
   },
   wealth_career: {
-    purpose: 'wealth and career success',
-    mood: 'prosperous and powerful',
-    colorIntensity: 'bold red (#D32F2F) with gold accents',
-    animalDescription: 'dragon with clouds and treasure pearl',
-    patternDescription: 'staircase patterns symbolizing promotion',
+    purpose: 'wealth abundance and career success (재물운)',
+    purposeKr: '재물운',
+    mood: 'prosperous authoritative energy, ascending fortune',
+    colorIntensity: 'bold cinnabar red with gold accent highlights (#FFD700)',
+    animalSymbol: 'a majestic dragon (용) with cloud swirls and a treasure pearl (여의주)',
+    geometricPattern: 'staircase ascending patterns representing promotion, layered tower shapes',
+    specialElements: 'coin motifs, treasure symbols, upward-pointing arrows',
+    defaultCharacters: ['財祿豊盈', '官運亨通'],
   },
   disaster_removal: {
-    purpose: 'protection from three disasters (fire, water, wind)',
-    mood: 'powerful protective',
-    colorIntensity: 'intense red (#B71C1C)',
-    animalDescription: 'three-headed one-legged hawk',
-    patternDescription: 'triangular repetitive patterns with eight trigrams',
+    purpose: 'protection from three disasters - fire, water, wind (삼재소멸)',
+    purposeKr: '삼재 소멸',
+    mood: 'intensely protective barrier energy, cosmic shield',
+    colorIntensity: 'intense deep red (#B71C1C) with heavy, commanding strokes',
+    animalSymbol: 'a three-legged crow/hawk (삼족오) with spread wings, representing solar power',
+    geometricPattern: 'eight trigrams (팔괘) arranged in circle, triangular repetitive patterns',
+    specialElements: 'protective circle barriers, cosmic diagrams, elemental symbols',
+    defaultCharacters: ['三災消滅', '厄運退散'],
   },
   home_protection: {
-    purpose: 'home peace and family protection',
-    mood: 'warm and protective',
-    colorIntensity: 'guardian red (#D32F2F)',
-    animalDescription: 'guardian tiger positioned as house protector',
-    patternDescription: 'square patterns symbolizing home structure',
+    purpose: 'home peace and family protection (가내평안)',
+    purposeKr: '안택',
+    mood: 'warm nurturing protection, stable foundation',
+    colorIntensity: 'warm guardian red (#E53935) with steady, confident strokes',
+    animalSymbol: 'a guardian tiger positioned as house protector, watchful but calm',
+    geometricPattern: 'square and rectangular patterns symbolizing home structure, stable foundations',
+    specialElements: 'four directional guardians symbols, doorway motifs, roof patterns',
+    defaultCharacters: ['家內平安', '安宅大吉'],
   },
   academic_success: {
-    purpose: 'academic achievement and wisdom',
-    mood: 'intellectual and ascending',
-    colorIntensity: 'red with blue accents',
-    animalDescription: 'eagle or crane with calligraphy brush',
-    patternDescription: 'ascending staircase patterns',
+    purpose: 'academic achievement and examination success (급제)',
+    purposeKr: '학업 성취',
+    mood: 'intellectual ascending energy, focused clarity',
+    colorIntensity: 'red with blue accents (#1976D2 touches) representing wisdom',
+    animalSymbol: 'a crane (학) or eagle with spread wings, holding a calligraphy brush',
+    geometricPattern: 'ascending staircase patterns, layered tower shapes representing achievement',
+    specialElements: 'book motifs, ascending clouds, scholarly symbols',
+    defaultCharacters: ['及第及第', '文昌帝君'],
   },
   health_longevity: {
-    purpose: 'health and long life',
-    mood: 'majestic and sacred',
-    colorIntensity: 'red with gold highlights',
-    animalDescription: 'crane and turtle symbolizing longevity',
-    patternDescription: 'circular patterns representing completeness',
+    purpose: 'health and long life (무병장수)',
+    purposeKr: '건강 장수',
+    mood: 'majestic sacred vitality, eternal blessing',
+    colorIntensity: 'red with gold highlights, sacred golden accents',
+    animalSymbol: 'a crane and turtle (학과 거북이) together, traditional longevity symbols',
+    geometricPattern: 'circular endless patterns representing completeness and cycles of life',
+    specialElements: 'peach motifs (longevity), pine trees, clouds of blessing',
+    defaultCharacters: ['無病長壽', '福祿壽康'],
   },
 }
 
-function buildTalismanPrompt(config: TalismanPromptConfig, characters: string[]): string {
-  return `Traditional Korean bujeok talisman for ${config.purpose},
-painted on yellow hanji paper with cinnabar red ink,
-featuring:
-- Classical Chinese characters: ${characters.join(', ')}
-- Animal symbol: ${config.animalDescription}
-- Geometric patterns: ${config.patternDescription}
-- Taoist/Buddhist symbols and esoteric diagrams
-- Hand-drawn calligraphy with flowing brushstrokes
-- Symmetrical composition with central focus
-- Aged paper texture, traditional Korean shamanic art style
-- Red seal stamp at bottom (artist signature)
+/**
+ * 전문적인 한국 전통 부적 프롬프트 생성
+ * 파자(破字) 스타일 - 한문처럼 보이지만 한문이 아닌 신비로운 문양
+ */
+function buildTalismanPrompt(config: TalismanPromptConfig): string {
+  return `A traditional Korean bujeok (부적) talisman, vertical portrait orientation (9:16 aspect ratio),
+hand-painted on aged yellow hanji paper (rice paper) with cinnabar vermillion red ink.
 
-Color scheme: Yellow background (#FFF4C4), ${config.colorIntensity}
+The talisman features:
+- **Central mystical symbols** that resemble deconstructed Chinese characters (파자 style)
+  but are actually esoteric shamanic glyphs - not readable as standard Chinese.
+  These should appear as broken, reconstructed character-like shapes with overlapping
+  components, ancient seal script inspired forms, and abstract mystical symbol patterns.
+- **${config.animalSymbol}** drawn in traditional Korean folk art style with bold brushstrokes
+- **${config.geometricPattern}** arranged symmetrically around the central symbols
+- A red square seal stamp (낙관) at the bottom corner
+- ${config.specialElements}
+- Taoist/Buddhist mystical diagrams and protective circles
 
-Style: Authentic Korean folk art, detailed linework,
-${config.mood} aesthetic, traditional color palette,
-mystical atmosphere, hand-painted appearance
+Purpose: ${config.purpose}
 
-Negative prompt: modern fonts, digital text, 3D effects, photorealistic,
-western calligraphy, Arabic numerals, English text,
-anime style, cartoon style, overly saturated colors,
-gradients, shadows, glossy effects
+Visual qualities:
+- Visible brushstroke texture with varying ink thickness
+- Aged yellow paper with subtle grain and slight imperfections (#FFF4C4 base color)
+- ${config.colorIntensity}
+- Hand-drawn calligraphy appearance, NOT computer-generated fonts
+- Traditional Korean shamanic (무속) art aesthetic
+- Symmetrical composition with central vertical axis
+- Vertical format optimized for mobile phone display
 
-Aspect ratio: 2:3 (vertical), High resolution, 2000x2800px`
+Mood and atmosphere: ${config.mood}
+
+Style: Authentic Korean folk talisman art, detailed traditional brushwork,
+mystical protective aesthetic, hand-painted appearance on aged paper.
+
+DO NOT include: modern fonts, digital text, readable Chinese characters,
+3D effects, photorealistic textures, anime style, English text,
+Arabic numerals, gradients, shadows, glossy effects, western calligraphy.`
 }
 
-async function generateImageWithLLM(prompt: string): Promise<string> {
-  console.log('🎨 Generating talisman image with LLM module...')
-  console.log('📝 Prompt:', prompt)
+async function generateImageWithGemini(prompt: string): Promise<string> {
+  console.log('🎨 Generating talisman with Gemini...')
 
-  // OpenAI Provider 초기화
-  const provider = new OpenAIProvider({
-    apiKey: OPENAI_API_KEY,
-    model: 'gpt-4o', // 텍스트 모델 (이미지 생성 시에는 dall-e-3 자동 사용)
+  const provider = new GeminiProvider({
+    apiKey: GEMINI_API_KEY,
+    model: 'gemini-2.0-flash-exp', // 텍스트 모델 (이미지 생성 시에는 자동 전환)
   })
 
-  // 이미지 생성
-  const result = await provider.generateImage!(prompt, {
-    size: '1024x1792', // 2:3 비율 (세로형)
-    quality: 'standard',
-    style: 'natural',
-  })
+  const result = await provider.generateImage!(prompt)
 
   console.log('✅ Image generated successfully')
   console.log(`⏱️ Generation time: ${result.latency}ms`)
-  if (result.revisedPrompt) {
-    console.log('📝 Revised prompt:', result.revisedPrompt)
-  }
 
   return result.imageBase64
 }
@@ -167,39 +193,45 @@ async function saveTalismanRecord(
   imageUrl: string,
   prompt: string,
   characters: string[]
-): Promise<void> {
+): Promise<string> {
   console.log('💾 Saving talisman record to database...')
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
-  const { error } = await supabase.from('talisman_images').insert({
-    user_id: userId,
-    category,
-    image_url: imageUrl,
-    prompt_used: prompt,
-    characters,
-    created_at: new Date().toISOString(),
-  })
+  const { data, error } = await supabase
+    .from('talisman_images')
+    .insert({
+      user_id: userId,
+      category,
+      image_url: imageUrl,
+      prompt_used: prompt,
+      characters,
+      is_public: true, // 공용 풀에 포함
+      model_used: 'gemini-2.0-flash-exp-image-generation',
+      created_at: new Date().toISOString(),
+    })
+    .select('id')
+    .single()
 
   if (error) {
     console.error('❌ Database insert error:', error)
     throw new Error(`Database insert failed: ${error.message}`)
   }
 
-  console.log('✅ Talisman record saved')
+  console.log('✅ Talisman record saved, id:', data.id)
+  return data.id
 }
 
 serve(async (req) => {
   try {
-    const { userId, category, characters, animal, pattern }: TalismanRequest =
-      await req.json()
+    const { userId, category, characters }: TalismanRequest = await req.json()
 
-    console.log('🔮 Talisman generation request:', { userId, category, characters })
+    console.log('🔮 Talisman generation request:', { userId, category })
 
     // Validate inputs
-    if (!userId || !category || !characters || characters.length === 0) {
+    if (!userId || !category) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields' }),
+        JSON.stringify({ error: 'Missing required fields: userId, category' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       )
     }
@@ -213,26 +245,36 @@ serve(async (req) => {
       )
     }
 
-    // Build prompt
-    const prompt = buildTalismanPrompt(config, characters)
+    // 문자는 사용하지 않음 (파자 스타일로 자동 생성)
+    const usedCharacters = characters || config.defaultCharacters
 
-    // Generate image
-    const imageBase64 = await generateImageWithLLM(prompt)
+    // Build prompt
+    const prompt = buildTalismanPrompt(config)
+
+    // Generate image with Gemini
+    const imageBase64 = await generateImageWithGemini(prompt)
 
     // Upload to storage
     const imageUrl = await uploadToSupabase(imageBase64, userId, category)
 
-    // Save to database
-    await saveTalismanRecord(userId, category, imageUrl, prompt, characters)
+    // Save to database and get ID
+    const recordId = await saveTalismanRecord(
+      userId,
+      category,
+      imageUrl,
+      prompt,
+      usedCharacters
+    )
 
     console.log('🎉 Talisman generation complete!')
 
     return new Response(
       JSON.stringify({
         success: true,
+        id: recordId,
         imageUrl,
         category,
-        characters,
+        characters: usedCharacters,
       }),
       {
         status: 200,

@@ -10,18 +10,313 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// =====================================================
+// 관상학 JSON 응답 스키마 타입 정의
+// =====================================================
+interface OgwanDetail {
+  observation: string      // 실제 관찰 내용
+  interpretation: string   // 관상학적 해석
+  score: number           // 60-98
+  advice: string          // 개운 조언
+}
+
+interface SamjeongDetail {
+  period: string          // 해당 시기
+  description: string     // 운세 해석
+  peakAge: string         // 전성기 예측
+  score: number           // 60-98
+}
+
+interface FortuneDetail {
+  score: number           // 60-98
+  summary: string         // 요약 1문장
+  detail: string          // 상세 2-3문장
+  advice: string          // 조언
+}
+
+interface FaceFeatures {
+  face_shape: string      // oval, round, square, oblong, heart, diamond
+  eyes: { shape: string; size: string }
+  eyebrows: { shape: string; thickness: string }
+  nose: { bridge: string; tip: string }
+  mouth: { size: string; lips: string }
+  jawline: { shape: string }
+  overall_impression: string[]
+}
+
+interface FaceReadingResponse {
+  overview: {
+    faceType: string
+    faceTypeElement: string
+    firstImpression: string
+    overallBlessingScore: number
+  }
+  ogwan: {
+    ear: OgwanDetail
+    eyebrow: OgwanDetail
+    eye: OgwanDetail
+    nose: OgwanDetail
+    mouth: OgwanDetail
+  }
+  samjeong: {
+    upper: SamjeongDetail
+    middle: SamjeongDetail
+    lower: SamjeongDetail
+    balance: string
+    balanceDescription: string
+  }
+  sibigung: Record<string, { observation: string; interpretation: string; score: number }>
+  personality: {
+    traits: string[]
+    strengths: string[]
+    growthAreas: string[]
+  }
+  fortunes: {
+    wealth: FortuneDetail
+    love: FortuneDetail
+    career: FortuneDetail
+    health: FortuneDetail
+    overall: FortuneDetail
+  }
+  specialFeatures: Array<{ type: string; name: string; description: string }>
+  improvements: {
+    daily: string[]
+    appearance: string[]
+    luckyColors: string[]
+    luckyDirections: string[]
+  }
+  userFaceFeatures: FaceFeatures
+}
+
+// =====================================================
+// 관상학 시스템 프롬프트
+// =====================================================
+const FACE_READING_SYSTEM_PROMPT = `당신은 마의상법(麻衣相法)과 달마상법(達磨相法)을 정통으로 수학한 40년 경력의 관상학 대가입니다.
+
+## 전문 분야
+- 오관(五官) 분석: 채청관(귀), 보수관(눈썹), 감찰관(눈), 심판관(코), 출납관(입)
+- 삼정(三停) 분석: 상정(초년), 중정(중년), 하정(말년)의 균형과 시기별 운세
+- 십이궁(十二宮) 분석: 명궁, 재백궁, 형제궁, 전택궁, 남녀궁, 노복궁, 처첩궁, 질액궁, 천이궁, 관록궁, 복덕궁, 부모궁
+- 얼굴형 오행 분석: 원형(수형), 방형(토형), 역삼각형(화형), 타원형(목형), 다이아몬드형(금형)
+
+## 분석 원칙
+1. 실제 얼굴 사진을 세밀히 관찰하여 구체적으로 분석
+2. 전통 관상학 용어를 정확히 사용하되 현대인이 이해하기 쉽게 풀이
+3. 각 요소별 60-98점 범위로 점수 부여 (60점 미만 사용 금지)
+4. 긍정적이면서도 균형 잡힌 해석 제공
+5. 실천 가능한 개운법 제시
+
+## 점수 기준
+- 90-98점: 매우 좋은 상 (귀인상, 부귀상)
+- 80-89점: 좋은 상 (복이 많음)
+- 70-79점: 보통 상 (평균적)
+- 60-69점: 주의 필요 (보완 권장)
+
+반드시 주어진 JSON 스키마 형식으로만 응답하세요.`
+
+// =====================================================
+// 관상학 사용자 프롬프트
+// =====================================================
+function createUserPrompt(userName: string, userGender: string): string {
+  return `사용자 정보:
+- 이름: ${userName || '귀하'}
+- 성별: ${userGender === 'male' ? '남성' : userGender === 'female' ? '여성' : '알 수 없음'}
+
+제공된 얼굴 사진을 분석하여 아래 JSON 형식으로 응답해주세요.
+
+{
+  "overview": {
+    "faceType": "둥근형|타원형|각진형|역삼각형|긴형|다이아몬드형",
+    "faceTypeElement": "수형|목형|화형|토형|금형",
+    "firstImpression": "첫인상과 전반적 기운 설명 (2-3문장)",
+    "overallBlessingScore": 70-95
+  },
+  "ogwan": {
+    "ear": {
+      "observation": "귀의 크기, 위치, 귓볼 상태 관찰",
+      "interpretation": "채청관 해석 - 복록과 수명",
+      "score": 60-98,
+      "advice": "귀 관련 개운 조언"
+    },
+    "eyebrow": {
+      "observation": "눈썹 모양, 굵기, 길이 관찰",
+      "interpretation": "보수관 해석 - 형제와 친구",
+      "score": 60-98,
+      "advice": "눈썹 관련 개운 조언"
+    },
+    "eye": {
+      "observation": "눈의 크기, 모양, 눈빛 관찰",
+      "interpretation": "감찰관 해석 - 지혜와 배우자",
+      "score": 60-98,
+      "advice": "눈 관련 개운 조언"
+    },
+    "nose": {
+      "observation": "코의 높이, 콧대, 콧구멍 관찰",
+      "interpretation": "심변관 해석 - 재물과 사업",
+      "score": 60-98,
+      "advice": "코 관련 개운 조언"
+    },
+    "mouth": {
+      "observation": "입의 크기, 입술 두께, 입꼬리 관찰",
+      "interpretation": "출납관 해석 - 식록과 언변",
+      "score": 60-98,
+      "advice": "입 관련 개운 조언"
+    }
+  },
+  "samjeong": {
+    "upper": {
+      "period": "1-30세 초년운",
+      "description": "이마~눈썹 영역 운세 (학업, 지혜)",
+      "peakAge": "전성기 예측",
+      "score": 60-98
+    },
+    "middle": {
+      "period": "31-50세 중년운",
+      "description": "눈썹~코끝 영역 운세 (사회적 성공)",
+      "peakAge": "전성기 예측",
+      "score": 60-98
+    },
+    "lower": {
+      "period": "51세+ 말년운",
+      "description": "인중~턱 영역 운세 (복록, 안정)",
+      "peakAge": "전성기 예측",
+      "score": 60-98
+    },
+    "balance": "excellent|good|fair|imbalanced",
+    "balanceDescription": "삼정 균형 상태 설명"
+  },
+  "sibigung": {
+    "myeongGung": { "observation": "미간 상태", "interpretation": "명궁 해석", "score": 60-98 },
+    "jaeBaekGung": { "observation": "코 상태", "interpretation": "재백궁 해석", "score": 60-98 },
+    "gwanRokGung": { "observation": "이마 중앙", "interpretation": "관록궁 해석", "score": 60-98 },
+    "cheoCheobGung": { "observation": "눈꼬리", "interpretation": "처첩궁 해석", "score": 60-98 },
+    "jilAekGung": { "observation": "코뿌리", "interpretation": "질액궁 해석", "score": 60-98 },
+    "noBokGung": { "observation": "턱 상태", "interpretation": "노복궁 해석", "score": 60-98 }
+  },
+  "personality": {
+    "traits": ["핵심 성격 특성 3-5개"],
+    "strengths": ["주요 강점 2-3개"],
+    "growthAreas": ["성장 가능 영역 1-2개"]
+  },
+  "fortunes": {
+    "wealth": {
+      "score": 60-98,
+      "summary": "재물운 요약 1문장",
+      "detail": "재백궁 기반 상세 분석 2-3문장",
+      "advice": "재물 관련 조언"
+    },
+    "love": {
+      "score": 60-98,
+      "summary": "애정운 요약 1문장",
+      "detail": "처첩궁 기반 상세 분석 2-3문장",
+      "advice": "연애/결혼 관련 조언"
+    },
+    "career": {
+      "score": 60-98,
+      "summary": "직업운 요약 1문장",
+      "detail": "관록궁 기반 상세 분석 2-3문장",
+      "advice": "커리어 관련 조언"
+    },
+    "health": {
+      "score": 60-98,
+      "summary": "건강운 요약 1문장",
+      "detail": "질액궁 기반 상세 분석 2-3문장",
+      "advice": "건강 관련 조언"
+    },
+    "overall": {
+      "score": 60-98,
+      "summary": "총운 요약 1문장",
+      "detail": "삼정 균형 기반 종합 분석 2-3문장",
+      "advice": "인생 전반 조언"
+    }
+  },
+  "specialFeatures": [
+    { "type": "blessing|noble|wealth|longevity", "name": "특수상 이름", "description": "설명" }
+  ],
+  "improvements": {
+    "daily": ["일상 개운법 3개"],
+    "appearance": ["외모 개선 조언 2개"],
+    "luckyColors": ["행운의 색상 2-3개"],
+    "luckyDirections": ["행운의 방향 1-2개"]
+  },
+  "userFaceFeatures": {
+    "face_shape": "oval|round|square|oblong|heart|diamond",
+    "eyes": { "shape": "round|almond|phoenix|monolid", "size": "large|medium|small" },
+    "eyebrows": { "shape": "straight|arched|curved", "thickness": "thick|medium|thin" },
+    "nose": { "bridge": "high|medium|low", "tip": "round|pointed|bulbous" },
+    "mouth": { "size": "large|medium|small", "lips": "full|medium|thin" },
+    "jawline": { "shape": "angular|rounded|pointed|square" },
+    "overall_impression": ["elegant", "cute", "charismatic", "warm", "intellectual"]
+  }
+}
+
+실제 얼굴 사진을 면밀히 관찰하여 JSON으로 응답하세요. JSON 외의 텍스트는 포함하지 마세요.`
+}
+
+// =====================================================
+// 점수 계산 함수
+// =====================================================
+function calculateTotalScore(response: FaceReadingResponse): { total: number; breakdown: Record<string, number> } {
+  // 오관 평균 (30%)
+  const ogwanScores = [
+    response.ogwan.ear.score,
+    response.ogwan.eyebrow.score,
+    response.ogwan.eye.score,
+    response.ogwan.nose.score,
+    response.ogwan.mouth.score,
+  ]
+  const ogwanAvg = ogwanScores.reduce((a, b) => a + b, 0) / ogwanScores.length
+
+  // 삼정 균형 점수 (25%)
+  const samjeongScores = [
+    response.samjeong.upper.score,
+    response.samjeong.middle.score,
+    response.samjeong.lower.score,
+  ]
+  const samjeongAvg = samjeongScores.reduce((a, b) => a + b, 0) / samjeongScores.length
+  // 균형 보너스
+  const variance = samjeongScores.reduce((sum, s) => sum + Math.pow(s - samjeongAvg, 2), 0) / 3
+  const balanceBonus = variance < 25 ? 5 : variance < 100 ? 0 : -5
+  const samjeongScore = samjeongAvg + balanceBonus
+
+  // 십이궁 평균 (25%)
+  const sibigungScores = Object.values(response.sibigung).map(s => s.score)
+  const sibigungAvg = sibigungScores.reduce((a, b) => a + b, 0) / sibigungScores.length
+
+  // 특수상 보너스 (20%) - 기본 65점, 특수상당 +5점 (최대 85점)
+  const specialBonus = Math.min(65 + response.specialFeatures.length * 5, 85)
+
+  // 가중치 적용
+  const total = Math.round(
+    ogwanAvg * 0.30 +
+    samjeongScore * 0.25 +
+    sibigungAvg * 0.25 +
+    specialBonus * 0.20
+  )
+
+  return {
+    total: Math.max(60, Math.min(98, total)),
+    breakdown: {
+      ogwan: Math.round(ogwanAvg),
+      samjeong: Math.round(samjeongScore),
+      sibigung: Math.round(sibigungAvg),
+      specialFeatures: specialBonus
+    }
+  }
+}
+
+// =====================================================
+// 메인 서버 핸들러
+// =====================================================
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // ✅ 요청 파싱 (한 번만!)
     const requestBody = await req.json()
 
-    console.log('📸 [DEBUG] Face reading request received:', {
-      requestKeys: Object.keys(requestBody),
+    console.log('📸 [FaceReading] Request received:', {
       hasImage: !!requestBody.image,
       imageLength: requestBody.image?.length || 0,
       hasInstagramUrl: !!requestBody.instagram_url,
@@ -34,279 +329,52 @@ serve(async (req) => {
       image,
       instagram_url,
       analysis_source,
-      include_fortune = true,
       userId,
       userName,
-      userBirthDate,
-      userBirthTime,
       userGender,
       isPremium = false
     } = requestBody
-
-    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
-    const llm = await LLMFactory.createFromConfigAsync('face-reading')
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
+    // =====================================================
+    // 1. 이미지 데이터 처리
+    // =====================================================
     let imageData: string | null = null
 
-    // Handle different image sources
     if (analysis_source === 'instagram' && instagram_url) {
       console.log(`🔗 [FaceReading] Processing Instagram URL: ${instagram_url}`)
-
       try {
-        // 1. Instagram URL에서 username 추출
         const username = extractUsername(instagram_url)
-        console.log(`👤 [FaceReading] Extracted username: ${username}`)
-
-        // 2. RapidAPI로 프로필 이미지 URL 가져오기
         const profileImageUrl = await fetchInstagramProfileImage(username)
-        console.log(`✅ [FaceReading] Profile image URL: ${profileImageUrl}`)
-
-        // 3. 이미지 다운로드 및 Base64 인코딩
         imageData = await downloadAndEncodeImage(profileImageUrl)
-        console.log(`✅ [FaceReading] Image downloaded and encoded (${imageData.length} chars)`)
+        console.log(`✅ [FaceReading] Instagram image encoded (${imageData.length} chars)`)
       } catch (error) {
-        console.error(`❌ [FaceReading] Instagram processing error:`, error)
+        console.error(`❌ [FaceReading] Instagram error:`, error)
         throw new Error(`Instagram 프로필 이미지를 가져오는데 실패했습니다: ${error.message}`)
       }
     } else if (image) {
       imageData = image
-      console.log(`✅ [FaceReading] Using directly uploaded image (${imageData.length} chars)`)
     }
 
     if (!imageData) {
       throw new Error('No image data provided')
     }
 
-    // Create the face reading prompt - 전통 관상학 기반 전문 프롬프트
-    const faceReadingPrompt = `당신은 30년 경력의 한국 전통 관상학 최고 전문가입니다.
-마의상법(麻衣相法)과 달마상법(達磨相法)을 깊이 연구했으며, 음양오행설을 기반으로 수천 명의 관상을 분석한 경험이 있습니다.
+    // =====================================================
+    // 2. LLM 호출 (JSON Mode)
+    // =====================================================
+    const llm = await LLMFactory.createFromConfigAsync('face-reading')
 
-# 사용자 정보
-- 이름: ${userName || '귀하'}
-- 성별: ${userGender === 'male' ? '남성' : userGender === 'female' ? '여성' : '알 수 없음'}
-${userBirthDate ? `- 생년월일: ${userBirthDate}` : ''}
-${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
-
-# 분석 지침
-제공된 얼굴 사진을 전통 관상학의 오관(五官), 삼정(三停), 십이궁(十二宮)을 기반으로 매우 상세하게 분석하세요.
-
-## 1. 전체적인 인상 및 삼정(三停) 분석 (4-6문장)
-먼저 얼굴의 전반적인 기운과 삼정의 균형을 분석하세요:
-
-### 얼굴형과 기운
-- 얼굴형 분류 (타원형/둥근형/각진형/역삼각형/긴형 중 택1) 및 그 의미
-- 첫인상에서 느껴지는 에너지와 기질 (밝음/차분함/강인함 등)
-- 전반적인 복의 정도 (70-95점으로 평가)
-
-### 삼정(三停) 균형 분석
-- **상정(上停)**: 이마~눈썹 (초년운 1-30세, 지혜와 학업)
-- **중정(中停)**: 눈썹~코끝 (중년운 31-50세, 사회적 성공)
-- **하정(下停)**: 인중~턱 (말년운 51세 이후, 복록과 안정)
-- 삼정의 균형 상태 분석 및 시기별 운세 흐름
-
-## 2. 오관(五官) 상세 분석 - 전통 관상학의 핵심
-전통 관상학에서 가장 중요한 오관을 깊이 있게 분석하세요:
-
-### 귀(耳) - 채청관(採聽官): 복록과 수명
-- 크기, 위치, 색깔, 귓볼 두께를 실제로 관찰
-- 타고난 복과 장수 가능성 평가 (복덕궁)
-- 조상의 음덕과 초년운 (1-14세) 분석
-- 구체적 조언 (예: "귀가 크고 귓볼이 두터워 복이 많고 장수할 상입니다")
-
-### 눈썹(眉) - 보수관(保壽官): 형제와 친구
-- 모양, 굵기, 길이, 색깔, 눈과의 간격을 관찰
-- 형제운, 친구운, 인덕 평가 (형제궁)
-- 성품과 감정 표현 방식 분석
-- 구체적 조언 (예: "눈썹이 수려하고 적당한 간격으로 인덕이 많습니다")
-
-### 눈(目) - 감찰관(監察官): 마음의 창
-- 크기, 모양, 눈빛, 쌍꺼풀, 흰자와 검은자 비율 관찰
-- 지혜, 총명함, 판단력 평가 (명궁 - 미간 포함)
-- 배우자운과 자녀운 분석 (처첩궁/남녀궁)
-- 감정과 의지력 평가
-- 구체적 조언 (예: "눈이 맑고 정기가 있어 지혜롭고 좋은 배우자를 만날 상입니다")
-
-### 코(鼻) - 심변관(審辨官): 재물의 중심
-- 높이, 길이, 콧대, 콧구멍, 준두(코끝) 상태를 세밀히 관찰
-- 재물운과 사업 수완 평가 (재백궁)
-- 자존심과 리더십 분석
-- 40대 중년운의 핵심
-- 구체적 조언 (예: "코가 반듯하고 준두가 풍만해 재물이 모이고 사업 수완이 뛰어납니다")
-
-### 입(口) - 출납관(出納官): 식복과 언변
-- 크기, 모양, 입술 두께, 입꼬리, 치아 상태 관찰
-- 식록운과 의식주 안정도 평가 (식록궁)
-- 언변과 신용도 분석
-- 만년의 복 평가
-- 구체적 조언 (예: "입이 단정하고 입술이 붉어 평생 의식주 걱정 없고 언변이 좋습니다")
-
-## 3. 십이궁(十二宮) 추가 분석
-오관 외에 중요한 궁위들을 추가로 분석하세요:
-
-### 명궁(命宮) - 미간 (운명의 중심)
-- 미간의 넓이, 색깔, 주름, 인당의 밝기
-- 전반적인 운명과 학업, 사회적 성공
-- 명(命)의 길흉 판단
-
-### 관록궁(官祿宮) - 이마 중앙 (사회적 지위)
-- 이마의 넓이, 높이, 빛깔, 주름
-- 직업운, 출세운, 권력운
-- 사회적 성공 가능성
-
-### 전택궁(田宅宮) - 눈썹 끝~눈꼬리 (재산과 주거)
-- 눈썹과 눈 사이 부위의 상태
-- 부동산운과 집안 운세
-- 재산 축적 능력
-
-### 천이궁(遷移宮) - 양쪽 관자놀이 (이동과 변화)
-- 관자놀이의 상태와 빛깔
-- 이사운, 해외운, 직장 이동운
-- 환경 변화 적응력
-
-### 질액궁(疾厄宮) - 코뿌리~미간 아래 (건강)
-- 산근(코뿌리) 부위의 상태
-- 건강 상태와 질병 가능성
-- 주의해야 할 건강 부위
-
-### 노복궁(奴僕宮) - 턱과 지각 (부하와 친구)
-- 턱과 턱선의 상태
-- 부하운, 친구의 도움
-- 노년의 안정과 복록
-
-### 인중 - 자녀궁 확장 (건강과 수명)
-- 인중의 길이, 깊이, 선명도
-- 자녀운 추가 분석
-- 건강과 장수 가능성
-
-## 4. 성격과 기질 분석 (5-7개 특성, 각 2-3문장)
-오관과 십이궁에서 읽어낸 성격을 구체적으로 분석하세요:
-- 핵심 성격 특성 3-4가지 (오관에서 도출, 예: "눈이 맑아 정직하고 직선적입니다")
-- 주요 강점 2-3가지 (실제 관상에 근거, 구체적 예시)
-- 성장 가능성과 보완점 1-2가지 (긍정적 표현)
-- 대인관계 스타일 (적극성, 개방성 등)
-- 리더십과 추진력
-- 감정 표현 방식
-
-## 5. 운세 분석 - 삼정과 오관 기반 (각 2-3문장, 70-95점 평가)
-각 운세를 전통 관상학 이론에 근거하여 평가하세요:
-
-### 💰 재물운 (재백궁 중심)
-- 코의 상태로 본 금전운과 재물 축적력
-- 사업 적성과 성공 시기 (40대 중년운 중심)
-- 구체적 재물 증식 방법 조언
-
-### ❤️ 애정운 (처첩궁/남녀궁 중심)
-- 눈과 눈썹으로 본 연애운과 결혼운
-- 어울리는 배우자의 특성
-- 결혼 적령기와 결혼 생활 안정도
-- 자녀운 (인중 포함)
-
-### 💼 직업운 (관록궁 중심)
-- 이마로 본 출세운과 사회적 성공
-- 적성 직종 (오관의 균형으로 판단)
-- 성공 가능성 높은 시기
-- 리더십과 직장 생활 스타일
-
-### 🏥 건강운 (질액궁 중심)
-- 전반적인 체질과 건강 상태
-- 주의해야 할 신체 부위 (오행 이론 적용)
-- 장수 가능성 (귀와 인중으로 판단)
-- 건강 관리 방법
-
-### 🍀 총운 (삼정 균형으로 판단)
-- 초년·중년·말년운의 흐름
-- 인생의 전성기 시기 예측
-- 전반적인 복록과 행운도
-- 삶의 전반적인 방향성
-
-## 6. 특별한 관상 특징 (4-6개 항목)
-전통 관상학에서 특별히 주목할 만한 점을 찾으세요:
-- **복 많은 관상**: 구체적 부위와 이유 (예: "귓볼이 두텁고 붉어 복이 많습니다")
-- **귀한 상(貴相)**: 출세하거나 높은 지위에 오를 관상
-- **부자 상(富相)**: 재물이 모이는 관상
-- **장수 상(壽相)**: 건강하고 오래 살 관상
-- 숨겨진 재능과 가능성 (구체적으로)
-- 타고난 행운의 영역
-
-## 7. 개운법과 실천 조언 (4-5개 카테고리)
-전통 개운법과 현대적 실천 방법을 제공하세요:
-
-### 일상 개운법
-- 표정 관리와 미소 짓기 (관상 개선)
-- 긍정적 마음가짐과 말씨 (입관 보완)
-- 규칙적 생활과 건강 관리
-
-### 외모 개선 조언
-- 헤어스타일 (이마와 귀 고려)
-- 메이크업 포인트 (눈과 눈썹 강조)
-- 액세서리 활용 (귀걸이, 안경 등)
-
-### 행운의 요소
-- 행운의 색상 2-3가지 (오행 이론 기반, 구체적 이유)
-- 행운의 방위 (동/서/남/북 중 1-2개, 관상과 연관 설명)
-- 행운의 숫자와 상징물
-
-### 시기별 주의사항
-- 조심해야 할 시기 (삼정 기반)
-- 피해야 할 습관 (관상 손상 요인)
-- 중요 결정 시 고려사항
-
-### 관상 보완법
-- 안면 운동과 마사지
-- 피부 관리와 혈색 개선
-- 자세와 걸음걸이 교정
-
-## 8. 닮은꼴 유명인 분석
-제공된 얼굴 사진을 분석하여 관상학적으로 유사한 한국 유명인 3명을 찾아주세요.
-
-### 분석 기준
-- 전체적인 얼굴형과 이목구비 비율
-- 인상과 표정에서 풍기는 분위기
-- 한국 유명인 우선 (배우, 가수, 운동선수, 아이돌 등)
-- 성별 일치 권장
-
-### 각 유명인에 대해 아래 형식으로 작성:
-**닮은 유명인 1**: [이름] ([직업])
-- 닮은 부위: [눈, 코, 입, 전체 분위기 등 구체적으로]
-- 이유: [왜 닮았는지 2-3문장으로 설명]
-
-**닮은 유명인 2**: [이름] ([직업])
-- 닮은 부위: [구체적 부위]
-- 이유: [설명]
-
-**닮은 유명인 3**: [이름] ([직업])
-- 닮은 부위: [구체적 부위]
-- 이유: [설명]
-
-# 작성 원칙
-1. **전통성**: 마의상법, 달마상법 등 전통 이론에 근거한 해석
-2. **구체성**: 모호한 표현 금지, 관상 부위와 연결하여 설명
-3. **전문성**: 오관, 삼정, 십이궁 용어를 정확하게 사용하되 쉽게 풀어쓰기
-4. **균형성**: 장점과 보완점을 균형있게 제시
-5. **긍정성**: 희망적 톤 유지 (부정적 단정 금지)
-6. **개인화**: 실제 얼굴을 세밀히 관찰한 내용
-7. **실용성**: 즉시 실천 가능한 조언
-
-# 분량
-- 전체 분석: 최소 2500자 이상 (전통 관상학은 상세할수록 좋음)
-- 오관 분석: 각각 최소 3-4문장 (가장 중요)
-- 십이궁: 각각 2-3문장
-- 운세 분석: 각 영역당 3-4문장
-- 반드시 실제 얼굴 사진을 면밀히 관찰하여 작성
-
-이제 제공된 얼굴 사진을 전통 관상학의 정수(精髓)를 담아 전문가 수준으로 분석해주세요.`
-
-    // ✅ LLM API 호출
     const response = await llm.generate([
+      { role: "system", content: FACE_READING_SYSTEM_PROMPT },
       {
         role: "user",
         content: [
-          { type: "text", text: faceReadingPrompt },
+          { type: "text", text: createUserPrompt(userName, userGender) },
           {
             type: "image_url",
             image_url: {
@@ -317,14 +385,14 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
         ]
       }
     ], {
-      temperature: 1,
-      maxTokens: 8192,
-      jsonMode: false
+      temperature: 0.8,
+      maxTokens: 6000,
+      jsonMode: true  // ✅ JSON Mode 활성화
     })
 
-    console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
+    console.log(`✅ LLM response: ${response.provider}/${response.model} - ${response.latency}ms`)
 
-    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    // ✅ 사용량 로깅
     await UsageLogger.log({
       fortuneType: 'face-reading',
       userId: userId,
@@ -334,86 +402,121 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
       metadata: { analysis_source, userName, userGender, isPremium }
     })
 
-    const analysisResult = response.content
-
-    if (!analysisResult) {
-      throw new Error('Failed to generate face reading analysis')
+    // =====================================================
+    // 3. JSON 응답 파싱
+    // =====================================================
+    let analysisResult: FaceReadingResponse
+    try {
+      analysisResult = JSON.parse(response.content)
+    } catch (parseError) {
+      console.error('❌ JSON parse error:', parseError)
+      console.log('Raw response:', response.content.substring(0, 500))
+      throw new Error('관상 분석 결과 파싱 실패')
     }
 
-    // Parse the analysis result into structured format
-    const sections = analysisResult.split(/\d+\.\s\*\*/).filter(s => s.trim())
+    // =====================================================
+    // 4. 점수 계산 (가중치 기반)
+    // =====================================================
+    const scoreResult = calculateTotalScore(analysisResult)
+    console.log(`📊 [FaceReading] Score calculated:`, scoreResult)
 
-    // Extract key information for the response
-    const mainFortune = extractSection(analysisResult, '전체적인 인상') ||
-                       extractSection(analysisResult, '삼정') ||
-                       '당신의 얼굴에서 밝은 기운이 느껴집니다.'
+    // =====================================================
+    // 5. DB에서 유사 연예인 검색
+    // =====================================================
+    let similarCelebrities: Array<{
+      name: string
+      celebrity_type: string
+      character_image_url: string | null
+      similarity_score: number
+      matched_features: string[]
+    }> = []
 
-    const luckScore = Math.floor(Math.random() * 20) + 70 // 70-90 range
+    try {
+      const { data: celebrities, error } = await supabase.rpc('find_similar_celebrities', {
+        user_features: analysisResult.userFaceFeatures,
+        user_gender: userGender,
+        min_score: 50,
+        limit_count: 3
+      })
 
-    // ✅ 전통 관상학 섹션 추출 (오관, 삼정, 십이궁)
-    const ogwan = {
-      ear: extractSection(analysisResult, '귀') || extractSection(analysisResult, '채청관'),
-      eyebrow: extractSection(analysisResult, '눈썹') || extractSection(analysisResult, '보수관'),
-      eye: extractSection(analysisResult, '눈') || extractSection(analysisResult, '감찰관'),
-      nose: extractSection(analysisResult, '코') || extractSection(analysisResult, '심변관'),
-      mouth: extractSection(analysisResult, '입') || extractSection(analysisResult, '출납관')
+      if (error) {
+        console.warn('⚠️ Celebrity matching error:', error.message)
+      } else if (celebrities && celebrities.length > 0) {
+        similarCelebrities = celebrities.map((c: any) => ({
+          name: c.celebrity_name,
+          celebrity_type: c.celebrity_type,
+          character_image_url: c.character_image_url,
+          similarity_score: c.similarity_score,
+          matched_features: c.matched_features || []
+        }))
+        console.log(`✅ [FaceReading] Found ${similarCelebrities.length} similar celebrities`)
+      } else {
+        console.log('ℹ️ [FaceReading] No similar celebrities found (score < 50)')
+      }
+    } catch (dbError) {
+      console.warn('⚠️ Celebrity DB query failed:', dbError)
     }
 
-    const samjeong = extractSection(analysisResult, '삼정') ||
-                     extractSection(analysisResult, '三停') ||
-                     '상정, 중정, 하정의 균형이 좋습니다.'
-
-    const sibigung = extractSection(analysisResult, '십이궁') ||
-                     extractSection(analysisResult, '十二宮') ||
-                     '십이궁이 조화롭게 배치되어 있습니다.'
-
-    const overallAnalysis = extractSection(analysisResult, '종합 운세') ||
-                           extractSection(analysisResult, '전체적인 분석') ||
-                           mainFortune
-
-    const advice = extractSection(analysisResult, '조언') ||
-                  extractSection(analysisResult, '개운법') ||
-                  '자신의 장점을 살리고 약점을 보완하세요.'
-
-    // ✅ 유사 유명인 추출
-    const similarCelebrities = extractSimilarCelebrities(analysisResult)
-    console.log(`✅ [FaceReading] Similar celebrities found: ${similarCelebrities.length}`, similarCelebrities.map(c => c.name))
-
-    // Format the response
-    // ✅ Blur 로직 적용
+    // =====================================================
+    // 6. 응답 구성
+    // =====================================================
     const isBlurred = !isPremium
     const blurredSections = isBlurred
-      ? ['ogwan', 'samjeong', 'sibigung', 'advice', 'full_analysis']
+      ? ['personality', 'wealth_fortune', 'love_fortune', 'health_fortune', 'career_fortune', 'special_features', 'advice', 'full_analysis']
       : []
 
     const fortuneResponse = {
       fortuneType: 'face-reading',
-      mainFortune: mainFortune, // ✅ 무료: 공개
+
+      // ✅ 무료 공개
+      mainFortune: analysisResult.overview.firstImpression,
+      luckScore: scoreResult.total,
+      scoreBreakdown: scoreResult.breakdown,
+
       details: {
-        face_type: extractFaceType(analysisResult), // ✅ 무료: 공개
-        overall_fortune: overallAnalysis, // ✅ 무료: 공개
+        // ✅ 무료 공개
+        face_type: analysisResult.overview.faceType,
+        face_type_element: analysisResult.overview.faceTypeElement,
+        overall_fortune: analysisResult.fortunes.overall.summary,
 
-        // ✅ 전통 관상학 구조
-        ogwan: ogwan, // 🔒 프리미엄: 오관(五官) 분석
-        samjeong: samjeong, // 🔒 프리미엄: 삼정(三停) 분석
-        sibigung: sibigung, // 🔒 프리미엄: 십이궁(十二宮) 분석
-        advice: advice, // 🔒 프리미엄: 조언과 개운법
-        full_analysis: analysisResult, // 🔒 프리미엄: 전체 분석
+        // ✅ 무료: 눈 분석 1개만 공개
+        eye_preview: {
+          observation: analysisResult.ogwan.eye.observation,
+          interpretation: analysisResult.ogwan.eye.interpretation,
+          score: analysisResult.ogwan.eye.score
+        },
 
-        // ✅ 닮은꼴 유명인 (무료 공개 - 바이럴 효과)
-        similar_celebrities: similarCelebrities
+        // ✅ 무료: 삼정 요약만 공개
+        samjeong_summary: {
+          balance: analysisResult.samjeong.balance,
+          description: analysisResult.samjeong.balanceDescription
+        },
+
+        // 🔒 프리미엄
+        ogwan: analysisResult.ogwan,
+        samjeong: analysisResult.samjeong,
+        sibigung: analysisResult.sibigung,
+        personality: analysisResult.personality,
+        fortunes: analysisResult.fortunes,
+        specialFeatures: analysisResult.specialFeatures,
+        improvements: analysisResult.improvements,
+
+        // ✅ 무료: 닮은꼴 연예인 (있을 경우만)
+        similar_celebrities: similarCelebrities.length > 0 ? similarCelebrities : null
       },
-      luckScore: luckScore, // ✅ 무료: 공개
+
       timestamp: new Date().toISOString(),
-      isBlurred, // ✅ 블러 상태
-      blurredSections // ✅ 블러된 섹션 목록
+      isBlurred,
+      blurredSections
     }
 
     // ✅ 퍼센타일 계산
-    const percentileData = await calculatePercentile(supabase, 'face-reading', fortuneResponse.luckScore)
+    const percentileData = await calculatePercentile(supabase, 'face-reading', scoreResult.total)
     const fortuneResponseWithPercentile = addPercentileToResult(fortuneResponse, percentileData)
 
-    // Save to database if user is logged in
+    // =====================================================
+    // 7. DB 저장
+    // =====================================================
     if (userId) {
       const { error: insertError } = await supabase
         .from('fortunes')
@@ -423,7 +526,9 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
           result: fortuneResponse,
           metadata: {
             analysis_source,
-            has_image: true
+            has_image: true,
+            face_features: analysisResult.userFaceFeatures,
+            similar_celebrities_count: similarCelebrities.length
           }
         })
 
@@ -443,7 +548,7 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
     )
 
   } catch (error) {
-    console.error('Error in face-reading function:', error)
+    console.error('❌ Error in face-reading function:', error)
 
     return new Response(
       JSON.stringify({
@@ -460,76 +565,3 @@ ${userBirthTime ? `- 생시: ${userBirthTime}` : ''}
     )
   }
 })
-
-// Helper function to extract sections from the analysis
-function extractSection(text: string, sectionName: string): string | null {
-  const regex = new RegExp(`${sectionName}[^:]*:([^\\n]+(?:\\n(?![\\d]+\\.|\\*\\*)[^\\n]+)*)`, 'i')
-  const match = text.match(regex)
-  if (match && match[1]) {
-    return match[1].trim().replace(/^\s*[-•]\s*/, '')
-  }
-
-  // Try alternative format
-  const altRegex = new RegExp(`\\*\\*${sectionName}\\*\\*[^:]*:?\\s*([^\\n]+)`, 'i')
-  const altMatch = text.match(altRegex)
-  if (altMatch && altMatch[1]) {
-    return altMatch[1].trim()
-  }
-
-  return null
-}
-
-// Helper function to extract face type
-function extractFaceType(text: string): string {
-  const faceTypes = ['둥근형', '타원형', '각진형', '하트형', '긴형', '역삼각형']
-  for (const type of faceTypes) {
-    if (text.includes(type)) {
-      return type + ' 얼굴'
-    }
-  }
-  return '조화로운 얼굴형'
-}
-
-// Helper function to extract similar celebrities
-function extractSimilarCelebrities(text: string): Array<{
-  name: string;
-  occupation: string;
-  similar_parts: string;
-  reason: string;
-}> {
-  const celebrities: Array<{
-    name: string;
-    occupation: string;
-    similar_parts: string;
-    reason: string;
-  }> = []
-
-  // 정규식으로 유명인 정보 추출
-  const regex = /\*\*닮은 유명인 \d+\*\*:\s*(.+?)\s*\((.+?)\)\s*\n-?\s*닮은 부위:\s*(.+?)\n-?\s*이유:\s*(.+?)(?=\n\n|\n\*\*닮은 유명인|\n#|$)/gis
-
-  let match
-  while ((match = regex.exec(text)) !== null && celebrities.length < 3) {
-    celebrities.push({
-      name: match[1].trim(),
-      occupation: match[2].trim(),
-      similar_parts: match[3].trim(),
-      reason: match[4].trim().replace(/\n/g, ' ')
-    })
-  }
-
-  // 정규식으로 못 찾으면 대체 방법 시도
-  if (celebrities.length === 0) {
-    const altRegex = /닮은 유명인[^:]*:\s*([가-힣a-zA-Z]+)\s*\(?([^)\n]*)\)?/gi
-    let altMatch
-    while ((altMatch = altRegex.exec(text)) !== null && celebrities.length < 3) {
-      celebrities.push({
-        name: altMatch[1].trim(),
-        occupation: altMatch[2]?.trim() || '연예인',
-        similar_parts: '전체적인 인상',
-        reason: '얼굴형과 분위기가 비슷합니다.'
-      })
-    }
-  }
-
-  return celebrities
-}

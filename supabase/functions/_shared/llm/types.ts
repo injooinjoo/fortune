@@ -33,6 +33,13 @@ export interface ImageGenerateOptions {
   style?: 'vivid' | 'natural'
 }
 
+// Gemini 이미지 생성 옵션
+export interface GeminiImageGenerateOptions {
+  aspectRatio?: '1:1' | '9:16' | '16:9' | '3:4' | '4:3' | '2:3' | '3:2'
+  numberOfImages?: number // 1-4
+  outputMimeType?: 'image/png' | 'image/jpeg'
+}
+
 // 이미지 생성 응답
 export interface ImageResponse {
   imageBase64: string

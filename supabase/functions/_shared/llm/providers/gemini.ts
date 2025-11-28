@@ -1,6 +1,13 @@
 // Google Gemini Provider 구현
 
-import { ILLMProvider, LLMMessage, LLMResponse, GenerateOptions } from '../types.ts'
+import {
+  ILLMProvider,
+  LLMMessage,
+  LLMResponse,
+  GenerateOptions,
+  ImageResponse,
+  GeminiImageGenerateOptions,
+} from '../types.ts'
 
 export class GeminiProvider implements ILLMProvider {
   constructor(private config: { apiKey: string; model: string }) {}
@@ -177,7 +184,84 @@ export class GeminiProvider implements ILLMProvider {
     return {
       provider: 'gemini',
       model: this.config.model,
-      capabilities: ['text', 'json', 'fast'],
+      capabilities: ['text', 'json', 'fast', 'image'],
+    }
+  }
+
+  /**
+   * Gemini 2.0 Flash 이미지 생성
+   * 부적 생성용 9:16 세로 비율 지원
+   */
+  async generateImage(
+    prompt: string,
+    options?: GeminiImageGenerateOptions
+  ): Promise<ImageResponse> {
+    const startTime = Date.now()
+
+    try {
+      console.log('🎨 [Gemini] Generating image...')
+      console.log('📝 [Gemini] Prompt length:', prompt.length)
+
+      // Gemini 이미지 생성 모델 사용
+      const imageModel = 'gemini-2.0-flash-exp-image-generation'
+
+      const requestBody = {
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: prompt }],
+          },
+        ],
+        generationConfig: {
+          responseModalities: ['TEXT', 'IMAGE'],
+        },
+      }
+
+      console.log('🔄 [Gemini] Calling Image Generation API...')
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:generateContent?key=${this.config.apiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+          },
+          body: JSON.stringify(requestBody),
+        }
+      )
+
+      console.log('✅ [Gemini] API call completed, status:', response.status)
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Gemini Image API error: ${response.status} - ${errorText}`)
+      }
+
+      const data = await response.json()
+
+      if (!data.candidates || data.candidates.length === 0) {
+        throw new Error('No candidates in Gemini Image response')
+      }
+
+      // 이미지 데이터 추출
+      const parts = data.candidates[0].content?.parts || []
+      const imagePart = parts.find((p: any) => p.inlineData?.mimeType?.startsWith('image/'))
+
+      if (!imagePart || !imagePart.inlineData) {
+        throw new Error('No image data in Gemini response')
+      }
+
+      const latency = Date.now() - startTime
+      console.log(`✅ [Gemini] Image generated in ${latency}ms`)
+
+      return {
+        imageBase64: imagePart.inlineData.data,
+        provider: 'gemini',
+        model: imageModel,
+        latency,
+      }
+    } catch (error) {
+      console.error('❌ [Gemini] Image generation failed:', error)
+      throw error
     }
   }
 }
