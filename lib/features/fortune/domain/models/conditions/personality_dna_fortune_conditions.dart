@@ -18,12 +18,13 @@ class PersonalityDnaFortuneConditions extends FortuneConditions {
 
   @override
   String generateHash() {
+    // 날짜 제거로 DB 풀 누적 가능 → API 비용 절감
+    // 개인 캐시는 date 컬럼에서 오늘 날짜 체크
     final parts = <String>[
       if (mbti != null) 'mbti:${mbti!.hashCode}',
       if (bloodType != null) 'blood:${bloodType!.hashCode}',
       if (zodiac != null) 'zodiac:${zodiac!.hashCode}',
       if (animal != null) 'animal:${animal!.hashCode}',
-      'date:${_formatDate(date)}',
     ];
     return parts.join('|');
   }

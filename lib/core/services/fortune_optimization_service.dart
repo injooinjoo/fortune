@@ -9,7 +9,7 @@ import '../utils/logger.dart';
 ///
 /// 6단계 프로세스:
 /// 1️⃣ 개인 캐시 확인 (오늘 이미 조회?)
-/// 2️⃣ DB 풀 크기 확인 (1000개 이상?)
+/// 2️⃣ DB 풀 크기 확인 (300개 이상?)
 /// 3️⃣ 30% 랜덤 선택
 /// 4️⃣ API 호출 준비
 /// 5️⃣ 광고 표시
@@ -18,7 +18,7 @@ class FortuneOptimizationService {
   final SupabaseClient _supabase;
 
   // 상수
-  static const int dbPoolThreshold = 1000; // DB 풀 최소 크기
+  static const int dbPoolThreshold = 300; // DB 풀 최소 크기 (1000 → 300 최적화)
   static const double randomSelectionProbability = 0.3; // 30% 확률
   static const double personalCacheAdProbability = 0.5; // 개인 캐시 50% 광고 확률
   static const Duration delayDuration = Duration(seconds: 5); // 5초 대기

@@ -16,7 +16,9 @@ class MbtiFortuneConditions extends FortuneConditions {
 
   @override
   String generateHash() {
-    return 'mbti:${mbtiType.hashCode}|date:${_formatDate(date)}';
+    // MBTI 타입만 사용 (날짜는 개인 캐시의 date 컬럼에서 체크)
+    // 날짜 제거로 DB 풀 누적 가능 → API 비용 절감
+    return 'mbti:${mbtiType.hashCode}';
   }
 
   @override

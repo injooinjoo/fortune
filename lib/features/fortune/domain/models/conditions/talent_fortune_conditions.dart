@@ -62,9 +62,9 @@ class TalentFortuneConditions extends FortuneConditions {
 
   @override
   String generateHash() {
-    // 핵심 조건만 해시에 포함 (같은 날 동일 조건이면 재사용)
+    // 날짜 제거로 DB 풀 누적 가능 → API 비용 절감
+    // 개인 캐시는 date 컬럼에서 오늘 날짜 체크
     final parts = <String>[
-      'date:${formatDate(date)}',
       'birth:${formatDate(birthDate)}',
       'gender:$gender',
       'concerns:${sha256Hash(concernAreas..sort())}',
