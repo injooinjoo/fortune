@@ -16,6 +16,7 @@
 | "UI", "위젯", "화면", "디자인", "색상", "폰트" | `toss-design-guardian` | TossDesignSystem, TypographyUnified, 다크모드 |
 | "운세", "Fortune", "블러", "프리미엄", "토큰" | `fortune-domain-expert` | 6단계 프로세스, UnifiedFortuneService, 블러 시스템 |
 | "테스트", "Test", "검증", "커버리지" | `testing-architect` | Widget/Provider 테스트 패턴, Mock |
+| "QA", "E2E", "Playwright", "실제 테스트", "동작 확인" | `playwright-qa-agent` | Playwright MCP, 브라우저 테스트, 스크린샷 |
 | "에러", "버그", "오류", "안돼", "크래시" | `error-resolver` | 근본원인 분석, 전체 검색, 패턴 적용 |
 | "위젯", "Widget", "홈화면", "즐겨찾기 위젯" | `widget-specialist` | iOS WidgetKit, Android AppWidget, home_widget, App Group |
 
@@ -51,7 +52,9 @@
     ↓
 4️⃣ 작업 실행 (Agent 원칙 + Skill 템플릿 준수)
     ↓
-5️⃣ 체크리스트 검증 → 완료
+5️⃣ 체크리스트 검증
+    ↓
+6️⃣ 🎭 자동 QA 제안 (페이지/위젯 수정 시) → 최종 완료
 ```
 
 ### 예시
@@ -70,6 +73,14 @@
 → Skill: /sc:analyze-error 실행
 → 참조: 01-core-rules.md (근본원인 분석), 05-fortune-system.md
 → 출력: 에러 원인 분석 + 동일 패턴 검색 + 수정 방안
+```
+
+**사용자**: "일일운세 페이지 버튼 색상 파란색으로 바꿔줘"
+```
+→ Agent: toss-design-guardian 활성화
+→ 수정: daily_fortune_page.dart 버튼 색상 변경
+→ 검증: TossDesignSystem 색상 사용 확인
+→ 🎭 QA 제안: "수정 완료! localhost:3000 실행 중이면 QA 테스트할까요?"
 ```
 
 ---
@@ -191,6 +202,7 @@ fetch('https://api.openai.com/...')  // WRONG!
 | `toss-design-guardian` | UI/UX 표준 수호 |
 | `fortune-domain-expert` | 운세 도메인 |
 | `testing-architect` | 테스트 설계 |
+| `playwright-qa-agent` | E2E 자동 QA |
 | `error-resolver` | 버그 헌터 |
 
 ---
@@ -209,6 +221,89 @@ fetch('https://api.openai.com/...')  // WRONG!
 | `/sc:analyze-error` | 에러 근본원인 분석 |
 | `/sc:toss-widget` | Toss 스타일 위젯 생성 |
 | `/sc:go-route` | GoRouter 라우트 추가 |
+| `/sc:auto-qa` | E2E 자동 QA 테스트 |
+
+---
+
+## 🎭 자동 QA 시스템 (Playwright MCP) - CRITICAL
+
+**개발 작업 완료 후 반드시 자동 QA를 실행합니다.**
+
+### 🔴 자동 실행 규칙 (MANDATORY)
+
+다음 파일을 수정한 후에는 **반드시** QA를 실행하거나 제안합니다:
+
+| 수정 대상 | 자동 동작 |
+|----------|----------|
+| `*_fortune_page.dart` | 해당 운세 페이지 QA 실행 |
+| `*_page.dart` | 해당 페이지 QA 실행 |
+| `presentation/widgets/` | 관련 페이지 QA 실행 |
+| Edge Function 배포 후 | API 연동 QA 실행 |
+| 프리미엄/블러 코드 | 프리미엄 플로우 QA |
+
+### 개발 완료 후 프로세스
+
+```
+코드 수정 완료
+    ↓
+"수정 완료했습니다. QA 테스트 실행할까요?" (서버 실행 중이면)
+    ↓
+또는 "서버(localhost:3000)가 실행 중이면 QA 테스트해보세요"
+```
+
+### 사전 조건
+
+```bash
+# 1. Flutter Web 서버 실행 필요
+flutter run -d chrome --web-port=3000
+
+# 2. Playwright 설치 (최초 1회)
+npx playwright install chromium
+```
+
+### 사용 방법
+
+```bash
+# 특정 페이지 테스트
+/sc:auto-qa /fortune/daily
+
+# 전체 E2E 테스트
+/sc:auto-qa all
+
+# CLI 직접 실행
+npx playwright test --headed
+```
+
+### 자동 QA 트리거 조건
+
+다음 작업 완료 시 **자동으로 QA 제안**합니다:
+
+| 작업 완료 | 테스트 범위 |
+|----------|------------|
+| 운세 페이지 수정 (`*_fortune_page.dart`) | 해당 운세 페이지 |
+| UI 위젯 수정 (`presentation/widgets/`) | 관련 페이지들 |
+| Edge Function 배포 | API 연동 테스트 |
+| 프리미엄/블러 코드 수정 | 프리미엄 플로우 |
+
+### 결과 리포트
+
+```
+🎭 자동 QA 테스트 결과
+━━━━━━━━━━━━━━━━━━━━━━━
+✅ 페이지 로딩 (2.3s)
+✅ Flutter 초기화
+✅ 메인 콘텐츠
+✅ 인터랙션 테스트
+✅ 스크린샷 캡처
+
+📸 playwright/screenshots/fortune-daily.png
+━━━━━━━━━━━━━━━━━━━━━━━
+총 결과: ✅ PASS
+```
+
+### 관련 문서
+
+- [16-auto-qa-system.md](.claude/docs/16-auto-qa-system.md)
 
 ---
 
