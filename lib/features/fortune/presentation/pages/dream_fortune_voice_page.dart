@@ -12,8 +12,8 @@ import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../services/ad_service.dart';
 import '../widgets/dream_voice_input_widget.dart';
-import '../widgets/dream_input_tip_card.dart';
 import '../widgets/dream_result_widget.dart';
+import '../widgets/floating_dream_topics_widget.dart';
 import '../providers/dream_voice_provider.dart';
 
 import '../../../../core/widgets/unified_button.dart';
@@ -111,40 +111,53 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
     }
   }
 
-  /// 초기 화면 (Tip 표시)
+  /// 초기 화면 (플로팅 꿈 주제)
   Widget _buildInitialScreen(bool isDark, DreamVoiceState voiceState) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
-      child: Column(
-        children: [
-          const SizedBox(height: TossTheme.spacingXL),
+    return Column(
+      children: [
+        const SizedBox(height: 20),
 
-          // 제목
-          Text(
-            '💭 당신의 꿈을 들려주세요',
+        // 제목
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingM),
+          child: Text(
+            '🌙 어떤 꿈을 꾸셨나요?',
             style: TossTheme.heading2.copyWith(
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
             textAlign: TextAlign.center,
           ),
+        ),
 
-          const SizedBox(height: TossTheme.spacingXL * 2),
+        const SizedBox(height: 8),
 
-          // 스피커 아이콘
-          Icon(
-            Icons.speaker,
-            size: 80,
-            color: isDark ? Colors.grey[600] : Colors.grey[400],
+        // 서브 타이틀
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingM),
+          child: Text(
+            '터치하거나 직접 입력해보세요',
+            style: TypographyUnified.bodyMedium.copyWith(
+              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+            ),
+            textAlign: TextAlign.center,
           ),
+        ),
 
-          const SizedBox(height: TossTheme.spacingXL * 2),
+        const SizedBox(height: 32),
 
-          // 도움말 카드
-          const DreamInputTipCard(),
+        // 플로팅 꿈 주제들
+        Expanded(
+          child: FloatingDreamTopicsWidget(
+            onTopicSelected: (topic) {
+              // 선택된 주제를 텍스트 입력에 반영하고 바로 해몽 시작
+              _handleTextRecognized(topic);
+            },
+          ),
+        ),
 
-          const SizedBox(height: 100), // 하단 입력 영역 여유 공간
-        ],
-      ),
+        // 하단 입력 영역 여유 공간 (입력창 높이 48 + SafeArea + 패딩)
+        SizedBox(height: 48 + MediaQuery.of(context).padding.bottom + 40),
+      ],
     );
   }
 

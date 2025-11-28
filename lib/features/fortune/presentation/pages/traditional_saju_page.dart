@@ -14,8 +14,9 @@ import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../providers/saju_provider.dart';
 import '../widgets/saju_element_chart.dart';
-import '../widgets/manseryeok_display.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+// 전문가 사주 위젯들
+import '../widgets/saju/saju_widgets.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 // ✅ Phase 19-2
@@ -28,11 +29,15 @@ class TraditionalSajuPage extends ConsumerStatefulWidget {
   ConsumerState<TraditionalSajuPage> createState() => _TraditionalSajuPageState();
 }
 
-class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage> 
+class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     with TickerProviderStateMixin {
   // 애니메이션 컨트롤러
   late AnimationController _resultAnimationController;
-  
+
+  // 페이지 컨트롤러 (스냅 스크롤용)
+  late PageController _pageController;
+  int _currentPage = 0;
+
   // 질문 선택 및 운세보기 상태 관리
   String? _selectedQuestion;
   final TextEditingController _customQuestionController = TextEditingController();
@@ -54,6 +59,11 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
       vsync: this,
     );
 
+    // 페이지 컨트롤러 초기화
+    _pageController = PageController(
+      viewportFraction: 0.92, // 다음 페이지 살짝 보이게
+    );
+
     // 애니메이션 즉시 시작 - 오행 차트 표시를 위해
     _resultAnimationController.forward();
 
@@ -67,6 +77,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   void dispose() {
     // 애니메이션 컨트롤러 먼저 해제
     _resultAnimationController.dispose();
+    _pageController.dispose();
     _customQuestionController.dispose();
     super.dispose();
   }
@@ -82,9 +93,23 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: StandardFortuneAppBar(
         title: '전통 사주팔자',
+        showBackButton: !_showResults,
         onBackPressed: () {
           Navigator.pop(context);
         },
+        actions: _showResults
+            ? [
+                IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ]
+            : null,
       ),
       body: _buildBody(sajuState),
     );
@@ -171,24 +196,63 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     }
 
     final hasQuestion = _selectedQuestion != null && _selectedQuestion!.isNotEmpty;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // 오행 균형 데이터 생성
+    final sajuState = ref.watch(sajuProvider);
+    final providerElements = sajuState.sajuData?['elements'] as Map<String, dynamic>?;
+    final elementBalance = {
+      '목': providerElements?['목'] ?? sajuData['elementBalance']?['목'] ?? 0,
+      '화': providerElements?['화'] ?? sajuData['elementBalance']?['화'] ?? 0,
+      '토': providerElements?['토'] ?? sajuData['elementBalance']?['토'] ?? 0,
+      '금': providerElements?['금'] ?? sajuData['elementBalance']?['금'] ?? 0,
+      '수': providerElements?['수'] ?? sajuData['elementBalance']?['수'] ?? 0,
+    };
+
+    // 페이지 목록
+    final pages = <Widget>[
+      // 1. 사주 명식
+      _buildPageItem(SajuPillarTablePro(sajuData: sajuData)),
+      // 2. 오행 차트
+      _buildPageItem(SajuElementChart(
+        elementBalance: elementBalance,
+        animationController: _resultAnimationController,
+      )),
+      // 3. 지장간 분석
+      _buildPageItem(SajuJijangganWidget(sajuData: sajuData)),
+      // 4. 12운성 분석
+      _buildPageItem(SajuTwelveStagesWidget(sajuData: sajuData)),
+      // 5. 신살 분석
+      _buildPageItem(SajuSinsalWidget(sajuData: sajuData)),
+      // 6. 합충형파해 분석
+      _buildPageItem(SajuHapchungWidget(sajuData: sajuData)),
+      // 7. 질문 선택 섹션
+      _buildPageItem(_buildQuestionSelectionSection()),
+    ];
 
     return Stack(
       children: [
-        SingleChildScrollView(
-          padding: const EdgeInsets.all(TossTheme.spacingM),
-          child: Column(
-            children: [
-              // 기본 사주 정보만 표시
-              _buildBasicSajuInfo(sajuData),
-              const SizedBox(height: TossTheme.spacingL),
-
-              // 질문 선택 섹션
-              _buildQuestionSelectionSection(),
-              const SizedBox(height: TossTheme.spacingL),
-
-              const BottomButtonSpacing(),
-            ],
-          ),
+        Column(
+          children: [
+            // 페이지 인디케이터
+            _buildPageIndicator(pages.length, isDark),
+            // 스냅 스크롤 PageView
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                scrollDirection: Axis.vertical,
+                itemCount: pages.length,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  return pages[index];
+                },
+              ),
+            ),
+          ],
         ),
         if (hasQuestion)
           UnifiedButton.floating(
@@ -199,6 +263,71 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
             isLoading: _isFortuneLoading,
           ),
       ],
+    );
+  }
+
+  /// 페이지 아이템 래퍼
+  Widget _buildPageItem(Widget child) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: TossTheme.spacingS,
+        vertical: TossTheme.spacingS,
+      ),
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: child,
+      ),
+    );
+  }
+
+  /// 페이지 인디케이터
+  Widget _buildPageIndicator(int pageCount, bool isDark) {
+    final sectionNames = ['명식', '오행', '지장간', '12운성', '신살', '합충', '질문'];
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: TossTheme.spacingM,
+        vertical: TossTheme.spacingS,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(pageCount, (index) {
+          final isActive = index == _currentPage;
+          return GestureDetector(
+            onTap: () {
+              _pageController.animateToPage(
+                index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              padding: EdgeInsets.symmetric(
+                horizontal: isActive ? 10 : 6,
+                vertical: 4,
+              ),
+              decoration: BoxDecoration(
+                color: isActive
+                    ? TossTheme.brandBlue
+                    : (isDark ? TossDesignSystem.gray700 : TossDesignSystem.gray200),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                sectionNames[index],
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+                  color: isActive
+                      ? Colors.white
+                      : (isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray600),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
     );
   }
 
@@ -235,7 +364,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     // 오행 균형 데이터 생성 - sajuProvider에서 가져오기
     final sajuState = ref.watch(sajuProvider);
     final providerElements = sajuState.sajuData?['elements'] as Map<String, dynamic>?;
-    
+
     final elementBalance = {
       '목': providerElements?['목'] ?? sajuData['elementBalance']?['목'] ?? 0,
       '화': providerElements?['화'] ?? sajuData['elementBalance']?['화'] ?? 0,
@@ -243,18 +372,34 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
       '금': providerElements?['금'] ?? sajuData['elementBalance']?['금'] ?? 0,
       '수': providerElements?['수'] ?? sajuData['elementBalance']?['수'] ?? 0,
     };
-    
+
     return Column(
       children: [
-        // 사주 명식 표시 (만세력 스타일)
-        ManseryeokDisplay(sajuData: sajuData),
+        // 사주 명식 표시 (전문가 스타일 4주 테이블)
+        SajuPillarTablePro(sajuData: sajuData),
         const SizedBox(height: TossTheme.spacingL),
-        
+
         // 오행 차트
         SajuElementChart(
           elementBalance: elementBalance,
           animationController: _resultAnimationController,
         ),
+        const SizedBox(height: TossTheme.spacingL),
+
+        // 지장간 분석
+        SajuJijangganWidget(sajuData: sajuData),
+        const SizedBox(height: TossTheme.spacingL),
+
+        // 12운성 분석
+        SajuTwelveStagesWidget(sajuData: sajuData),
+        const SizedBox(height: TossTheme.spacingL),
+
+        // 신살 분석
+        SajuSinsalWidget(sajuData: sajuData),
+        const SizedBox(height: TossTheme.spacingL),
+
+        // 합충형파해 분석
+        SajuHapchungWidget(sajuData: sajuData),
       ],
     );
   }
@@ -478,7 +623,15 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           ),
         ),
 
+        const SizedBox(height: TossTheme.spacingL),
+
+        // 사주 명식 (전문가 스타일)
+        SajuPillarTablePro(sajuData: sajuData, showTitle: false),
         const SizedBox(height: TossTheme.spacingM),
+
+        // 합충형파해 (간결 버전)
+        SajuHapchungWidget(sajuData: sajuData, showTitle: false),
+        const SizedBox(height: TossTheme.spacingL),
 
         // 사주 분석 (항상 표시)
         _buildSection(

@@ -40,6 +40,7 @@ import '../features/fortune/presentation/pages/ex_lover_fortune_simple_page.dart
 import '../features/fortune/presentation/pages/ex_lover_emotional_result_page.dart';
 import '../features/fortune/presentation/pages/blind_date_fortune_page.dart';
 import '../features/fortune/presentation/pages/investment_fortune_page.dart';
+import '../features/fortune/presentation/pages/investment_fortune_result_page.dart';
 import '../screens/subscription/subscription_page.dart';
 
 // Import page classes for routes outside shell
@@ -476,9 +477,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: '/investment-enhanced',
-        name: 'fortune-investment-enhanced',
-        builder: (context, state) => const InvestmentFortuneEnhancedPage(),
+        path: '/investment',
+        name: 'fortune-investment',
+        builder: (context, state) => const InvestmentFortunePage(),
+      ),
+      // Investment Fortune Result
+      GoRoute(
+        path: '/fortune/investment/result',
+        name: 'fortune-investment-result',
+        builder: (context, state) {
+          final fortuneResult = state.extra as FortuneResult?;
+          if (fortuneResult == null) {
+            return const FortuneListPage();
+          }
+          return InvestmentFortuneResultPage(fortuneResult: fortuneResult);
+        },
       ),
       
       // Blind Date Fortune (with Edge Function)

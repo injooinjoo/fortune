@@ -8,6 +8,7 @@ import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/models/fortune_result.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/investment_category_grid.dart';
 import '../widgets/ticker_search_widget.dart';
@@ -61,17 +62,20 @@ final investmentDataProvider = StateProvider<InvestmentFortuneData>((ref) {
   return InvestmentFortuneData();
 });
 
-class InvestmentFortuneEnhancedPage extends ConsumerStatefulWidget {
-  const InvestmentFortuneEnhancedPage({super.key});
+class InvestmentFortunePage extends ConsumerStatefulWidget {
+  const InvestmentFortunePage({super.key});
 
   @override
-  ConsumerState<InvestmentFortuneEnhancedPage> createState() =>
-      _InvestmentFortuneEnhancedPageState();
+  ConsumerState<InvestmentFortunePage> createState() =>
+      _InvestmentFortunePageState();
 }
 
-class _InvestmentFortuneEnhancedPageState
-    extends ConsumerState<InvestmentFortuneEnhancedPage> {
+class _InvestmentFortunePageState
+    extends ConsumerState<InvestmentFortunePage> {
   final PageController _pageController = PageController();
+
+  // 로딩 상태 관리
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -166,10 +170,10 @@ class _InvestmentFortuneEnhancedPageState
       text: buttonText,
       currentStep: currentStep + 1,
       totalSteps: 4,
-      onPressed: onPressed,
-      isEnabled: isValid,
+      onPressed: _isLoading ? null : onPressed,
+      isEnabled: isValid && !_isLoading,
       isFloating: true,
-      isLoading: false,
+      isLoading: _isLoading,
     );
   }
 
@@ -787,30 +791,10 @@ class _InvestmentFortuneEnhancedPageState
   }
 
   void _proceedWithFortune(InvestmentFortuneData data) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Center(
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              Text(
-                '투자 운세를 분석하고 있습니다...',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    // 로딩 상태 시작 (버튼에서 표시)
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       // Supabase Edge Function 직접 호출
@@ -847,21 +831,42 @@ class _InvestmentFortuneEnhancedPageState
       final responseData = response.data as Map<String, dynamic>;
       final fortune = responseData['fortune'] as Map<String, dynamic>;
 
+      // FortuneResult 생성
+      final fortuneResult = FortuneResult(
+        id: fortune['id'] as String?,
+        type: 'investment',
+        title: '투자 운세',
+        summary: {
+          'ticker_name': data.selectedTicker?.name ?? '',
+          'ticker_symbol': data.selectedTicker?.symbol ?? '',
+          'category': data.selectedCategory?.label ?? '',
+          'risk_tolerance': data.riskTolerance ?? '',
+          'investment_goal': data.investmentGoal ?? '',
+        },
+        data: fortune,
+        score: fortune['overallScore'] as int? ?? fortune['overall_score'] as int?,
+        isBlurred: true, // 기본적으로 블러 처리
+        blurredSections: ['description', 'recommendations', 'warnings', 'detailed_analysis'],
+        percentile: fortune['percentile'] as int?,
+        isPercentileValid: fortune['is_percentile_valid'] as bool? ?? false,
+      );
+
       if (mounted) {
-        Navigator.of(context).pop();
+        setState(() {
+          _isLoading = false;
+        });
 
         context.pushReplacement(
-          '/fortune/investment-enhanced/result',
-          extra: {
-            'fortune': fortune,
-            'investmentData': data,
-          },
+          '/fortune/investment/result',
+          extra: fortuneResult,
         );
       }
     } catch (e) {
       debugPrint('❌ [Investment] Error: $e');
       if (mounted) {
-        Navigator.of(context).pop();
+        setState(() {
+          _isLoading = false;
+        });
 
         Toast.show(
           context,

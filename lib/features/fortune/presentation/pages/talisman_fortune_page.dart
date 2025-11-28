@@ -8,8 +8,8 @@ import '../../../talisman/presentation/widgets/talisman_wish_input.dart';
 import '../../../talisman/presentation/widgets/talisman_generation_animation.dart';
 import '../../../talisman/presentation/widgets/talisman_result_card.dart';
 import '../../../talisman/presentation/providers/talisman_provider.dart';
-import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/theme/typography_unified.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../talisman/presentation/widgets/talisman_premium_bottom_sheet.dart';
 
@@ -35,40 +35,18 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         leading: _buildBackButton(context, ref, talismanState.step, userId, isDark),
         title: Text(
           '부적',
-          style: TossTheme.heading3.copyWith(
-            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+          style: TypographyUnified.heading3.copyWith(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
         ),
         centerTitle: true,
-        actions: [
-          // Premium Badge
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'BASIC',
-                  style: TossTheme.caption.copyWith(
-                    color: TossTheme.primaryBlue,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
       body: _buildContent(context, ref, talismanState, userId, isDark),
     );
@@ -92,7 +70,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
 
     return IconButton(
       icon: const Icon(Icons.arrow_back_ios),
-      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
       onPressed: onTap,
     );
   }
@@ -225,12 +203,12 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
           Icon(
             Icons.error_outline,
             size: 64,
-            color: TossTheme.error,
+            color: TossDesignSystem.errorRed,
           ),
           const SizedBox(height: 24),
           Text(
             '오류가 발생했습니다',
-            style: TossTheme.heading3.copyWith(
+            style: TypographyUnified.heading3.copyWith(
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
             ),
             textAlign: TextAlign.center,
@@ -238,7 +216,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
           const SizedBox(height: 12),
           Text(
             error,
-            style: TossTheme.body3.copyWith(
+            style: TypographyUnified.bodyMedium.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
             ),
             textAlign: TextAlign.center,

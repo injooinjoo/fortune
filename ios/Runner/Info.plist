@@ -98,6 +98,10 @@
 		<string>Fortune AI가 일정을 분석하여 맞춤형 운세를 제공하고, 중요한 운세 날짜를 저장하기 위해 캘린더 접근 권한이 필요합니다.</string>
 		<key>NSCalendarsUsageDescription</key>
 		<string>Fortune AI가 중요한 운세 날짜를 캘린더에 저장하기 위해 접근 권한이 필요합니다.</string>
+		<key>NSHealthShareUsageDescription</key>
+		<string>Fortune AI가 걸음 수, 수면, 심박수 등 건강 데이터를 분석하여 맞춤형 건강운세를 제공하기 위해 건강 앱 접근 권한이 필요합니다. (프리미엄 기능)</string>
+		<key>NSHealthUpdateUsageDescription</key>
+		<string>Fortune AI가 건강 목표 달성 현황을 기록하기 위해 건강 앱 쓰기 권한이 필요합니다.</string>
 		<key>NSSupportsLiveActivities</key>
 		<true/>
 		<key>NSSupportsLiveActivitiesFrequentUpdates</key>

@@ -27,7 +27,7 @@ class CalendarSyncBanner extends StatelessWidget {
   }
 }
 
-/// Google Calendar 연동 배너 위젯
+/// Google Calendar 연동 배너 위젯 (이벤트 없을 때 표시)
 class GoogleCalendarBanner extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onClose;
@@ -43,8 +43,8 @@ class GoogleCalendarBanner extends StatelessWidget {
     return InfoBanner(
       icon: Icons.calendar_month,
       iconColor: const Color(0xFF4285F4), // Google Blue
-      title: 'Google Calendar 연동하기',
-      subtitle: 'Google 캘린더에서 직접 일정을 가져옵니다',
+      title: '일정이 없네요',
+      subtitle: 'Google 캘린더를 연결해서 일정을 가져올까요?',
       onTap: onTap,
       onClose: onClose,
       backgroundColor: Colors.transparent,

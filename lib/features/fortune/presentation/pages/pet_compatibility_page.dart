@@ -1,20 +1,23 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'dart:ui';  // ✅ ImageFilter.blur 사용
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../data/models/pet_profile.dart';
 import '../../../../providers/pet_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
-import '../../../../presentation/providers/token_provider.dart';  // ✅ Premium 체크용
+import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
+import '../../../../presentation/widgets/hexagon_chart.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
-import '../../../../services/ad_service.dart';  // ✅ RewardedAd용
+import '../../../../services/ad_service.dart';
 import '../constants/fortune_button_spacing.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/standard_fortune_page_layout.dart';
@@ -658,9 +661,18 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         params: params,
       );
 
-      // ✅ 블러 로직 추가
+      // ✅ 블러 로직 - API와 일치하는 섹션 목록
       final isBlurred = !isPremium;
-      final blurredSections = isBlurred ? ['detailed_content'] : <String>[];
+      final blurredSections = isBlurred ? [
+        'health_fortune',
+        'activity_fortune',
+        'emotional_state',
+        'special_events',
+        'care_points',
+        'recommendations',
+        'warnings',
+        'special_tip',
+      ] : <String>[];
 
       debugPrint('🔒 [PetCompatibilityPage] isBlurred: $isBlurred, blurredSections: $blurredSections');
 

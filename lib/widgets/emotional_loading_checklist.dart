@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,15 +28,10 @@ class EmotionalLoadingChecklist extends ConsumerStatefulWidget {
   ConsumerState<EmotionalLoadingChecklist> createState() => _EmotionalLoadingChecklistState();
 }
 
-class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChecklist> 
-    with TickerProviderStateMixin {
-  
-  // 애니메이션 컨트롤러 최소화
-  late AnimationController _checkController;
-  late Animation<double> _checkAnimation;
-  
-  // 전체 50개 감성적 로딩 메시지 (픽셀 깨짐 방지 최적화 적용)
-  static const List<LoadingStep> _emotionalLoadingMessages = [
+class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChecklist> {
+
+  // 전체 50개 감성적 로딩 메시지
+  static const List<LoadingStep> _allMessages = [
     LoadingStep('오늘의 날씨 확인 중', '하늘의 기운을 읽고 있어요'),
     LoadingStep('사주팔자 분석 중', '당신의 운명을 해석하고 있어요'),
     LoadingStep('우주의 기운 해석 중', '별들의 메시지를 받고 있어요'),
@@ -86,44 +84,34 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
     LoadingStep('바람운 변화 흐름 분석 중', '바람이 가져올 변화를 읽고 있어요'),
     LoadingStep('마지막 총운 조합 중', '모든 운세를 하나로 엮고 있어요'),
   ];
-  
-  int _currentStep = 0;
+
+  // 랜덤 셔플된 메시지 리스트
+  late List<LoadingStep> _shuffledMessages;
   bool _isCompleted = false;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
+    // 메시지 랜덤 셔플
+    _shuffledMessages = List.from(_allMessages)..shuffle(Random());
+
     // 네비게이션 바 숨기기
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(navigationVisibilityProvider.notifier).hide();
     });
-    
-    // 애니메이션 컨트롤러 초기화 (하나만 사용)
-    _checkController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-    
-    // 부드러운 애니메이션 설정
-    _checkAnimation = CurvedAnimation(
-      parent: _checkController,
-      curve: Curves.elasticOut,
-    );
-    
-    _startAnimation();
   }
 
   @override
   void didUpdateWidget(covariant EmotionalLoadingChecklist oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // API 완료 신호가 오면 로딩 완료 처리
     if (widget.isApiComplete && !oldWidget.isApiComplete && !_isCompleted) {
       _completeLoading();
     }
   }
-  
+
   void _completeLoading() async {
     if (_isCompleted || !mounted) return;
 
@@ -142,85 +130,42 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
       widget.onPreviewComplete?.call();
     }
   }
-  
-  void _startAnimation() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+
+  void _onTextNext(int index, bool isLast) async {
+    if (_isCompleted || !mounted) return;
+
+    // 각 텍스트 변경 시 햅틱 피드백
     final haptic = ref.read(fortuneHapticServiceProvider);
+    await haptic.loadingStep();
 
-    while (!_isCompleted && mounted && !widget.isApiComplete) {
-      for (int i = 0; i < _emotionalLoadingMessages.length; i++) {
-        if (_isCompleted || !mounted || widget.isApiComplete) {
-          if (widget.isApiComplete && !_isCompleted) {
-            _completeLoading();
-          }
-          return;
-        }
-
-        // 현재 단계 업데이트 (부드럽게)
-        if (mounted) {
-          setState(() {
-            _currentStep = i;
-          });
-
-          // 각 스텝마다 햅틱 피드백
-          await haptic.loadingStep();
-
-          // 체크 애니메이션 실행
-          _checkController.forward();
-        }
-
-        // 적절한 대기 시간
-        await Future.delayed(const Duration(milliseconds: 1800));
-
-        // API 완료 체크
-        if (_isCompleted || !mounted || widget.isApiComplete) {
-          if (widget.isApiComplete && !_isCompleted) {
-            _completeLoading();
-          }
-          return;
-        }
-
-        // 다음 스텝 준비
-        if (i < _emotionalLoadingMessages.length - 1) {
-          _checkController.reset();
-        }
-      }
-
-      // 한 사이클 완료 후 초기화
-      if (!_isCompleted && mounted && !widget.isApiComplete) {
-        setState(() {
-          _currentStep = 0;
-        });
-        _checkController.reset();
-        await Future.delayed(const Duration(milliseconds: 500));
-      }
+    // API 완료 체크
+    if (widget.isApiComplete && !_isCompleted) {
+      _completeLoading();
     }
   }
-  
+
   @override
   void dispose() {
-    _checkController.dispose();
-    
     // 네비게이션 바 복원
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ref.read(navigationVisibilityProvider.notifier).show();
-      }
+      ref.read(navigationVisibilityProvider.notifier).show();
     });
-    
+
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    final textColor = isDark ? TossDesignSystem.white : TossDesignSystem.black;
+    final subtitleColor = textColor.withValues(alpha: 0.6);
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: isDark 
+          colors: isDark
             ? [
                 const Color(0xFF1a1a2e),
                 const Color(0xFF0f1624),
@@ -235,204 +180,72 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: _OptimizedLoadingList(
-              steps: _emotionalLoadingMessages,
-              currentStep: _currentStep,
-              checkAnimation: _checkAnimation,
-              isDark: isDark,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// 최적화된 로딩 리스트 위젯 (별도 위젯으로 분리하여 리빌드 최소화)
-class _OptimizedLoadingList extends StatelessWidget {
-  final List<LoadingStep> steps;
-  final int currentStep;
-  final Animation<double> checkAnimation;
-  final bool isDark;
-  
-  const _OptimizedLoadingList({
-    required this.steps,
-    required this.currentStep,
-    required this.checkAnimation,
-    required this.isDark,
-  });
-  
-  @override
-  Widget build(BuildContext context) {
-    // Stack을 사용하여 항목들을 화면 중앙에 고정
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // 현재 스텝 주변 5개 항목만 렌더링 (성능 최적화)
-        for (int i = -2; i <= 2; i++)
-          if (currentStep + i >= 0 && currentStep + i < steps.length)
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 600),
-              curve: Curves.easeInOutCubic,
-              // 중앙(0)을 기준으로 위아래로 배치
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Center(
-                child: Transform.translate(
-                  offset: Offset(0, i * 90.0), // 각 항목을 90픽셀씩 간격으로 배치
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 600),
-                    opacity: _getOpacity(i),
-                    curve: Curves.easeInOutCubic,
-                    child: SizedBox(
-                      height: 80,
-                      child: _OptimizedStepItem(
-                        step: steps[currentStep + i],
-                        isCompleted: (currentStep + i) < currentStep,
-                        isActive: i == 0,
-                        isDark: isDark,
-                        checkAnimation: i == 0 ? checkAnimation : null,
-                      ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 로딩 인디케이터
+                SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isDark
+                        ? TossDesignSystem.white.withValues(alpha: 0.7)
+                        : TossDesignSystem.primaryBlue,
                     ),
                   ),
                 ),
-              ),
-            ),
-      ],
-    );
-  }
-  
-  // 위치에 따른 투명도 계산
-  double _getOpacity(int offset) {
-    switch (offset.abs()) {
-      case 0:
-        return 1.0;
-      case 1:
-        return 0.4;
-      case 2:
-        return 0.1;
-      default:
-        return 0.0;
-    }
-  }
-}
-
-/// 최적화된 스텝 아이템 (StatelessWidget으로 변경하여 성능 향상)
-class _OptimizedStepItem extends StatelessWidget {
-  final LoadingStep step;
-  final bool isCompleted;
-  final bool isActive;
-  final bool isDark;
-  final Animation<double>? checkAnimation;
-  
-  const _OptimizedStepItem({
-    required this.step,
-    required this.isCompleted,
-    required this.isActive,
-    required this.isDark,
-    this.checkAnimation,
-  });
-  
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        // 최적화된 체크박스 (픽셀 완벽 정렬)
-        Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isCompleted 
-              ? const Color(0xFF52C41A).withValues(alpha: 0.15)
-              : TossDesignSystem.transparent,
-            border: Border.all(
-              color: isCompleted
-                ? const Color(0xFF52C41A)
-                : isActive
-                  ? (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.6)
-                  : (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.3),
-              width: isCompleted ? 2.5 : isActive ? 2.2 : 1.8,
-            ),
-          ),
-          child: checkAnimation != null
-            ? AnimatedBuilder(
-                animation: checkAnimation!,
-                builder: (context, child) {
-                  return Transform.scale(
-                    scale: checkAnimation!.value,
-                    child: isCompleted || checkAnimation!.value > 0.5
-                      ? Icon(
-                          Icons.check,
-                          size: 18,
-                          color: const Color(0xFF52C41A),
-                        )
-                      : (isActive 
-                          ? SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  isDark ? TossDesignSystem.white.withValues(alpha: 0.7) : TossDesignSystem.black.withValues(alpha: 0.6)
-                                ),
-                              ),
-                            )
-                          : null),
-                  );
-                },
-              )
-            : (isCompleted
-                ? Icon(
-                    Icons.check,
-                    size: 18,
-                    color: const Color(0xFF52C41A),
-                  )
-                : null),
-        ),
-        
-        const SizedBox(width: 20),
-        
-        // 최적화된 텍스트 (픽셀 완벽 정렬)
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                step.title,
-                style: (isActive ? TypographyUnified.heading4 : TypographyUnified.buttonMedium).copyWith(
-                  fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
-                  color: isCompleted || isActive
-                    ? (isDark ? TossDesignSystem.white : TossDesignSystem.black)
-                    : (isDark ? TossDesignSystem.white : TossDesignSystem.black).withValues(alpha: 0.5),
-                  height: 1.3, // 라인 높이 고정으로 픽셀 깨짐 방지
+                const SizedBox(height: 32),
+                // 제목 (RotateAnimatedText)
+                SizedBox(
+                  height: 32,
+                  child: DefaultTextStyle(
+                    style: TypographyUnified.heading4.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: textColor,
+                    ),
+                    child: AnimatedTextKit(
+                      repeatForever: true,
+                      pause: const Duration(milliseconds: 300),
+                      onNext: _onTextNext,
+                      animatedTexts: _shuffledMessages.map((step) =>
+                        RotateAnimatedText(
+                          step.title,
+                          duration: const Duration(milliseconds: 2000),
+                          rotateOut: true,
+                        ),
+                      ).toList(),
+                    ),
+                  ),
                 ),
-              ),
-              if (isActive) ...[
-                const SizedBox(height: 4),
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 400),
-                  opacity: 1.0,
-                  child: Text(
-                    step.subtitle,
+                const SizedBox(height: 8),
+                // 부제목 (RotateAnimatedText)
+                SizedBox(
+                  height: 24,
+                  child: DefaultTextStyle(
                     style: TypographyUnified.bodySmall.copyWith(
                       fontWeight: FontWeight.w300,
-                      color: (isDark ? TossDesignSystem.white : TossDesignSystem.black)
-                          .withValues(alpha: 0.6),
-                      height: 1.3, // 라인 높이 고정으로 픽셀 깨짐 방지
+                      color: subtitleColor,
+                    ),
+                    child: AnimatedTextKit(
+                      repeatForever: true,
+                      pause: const Duration(milliseconds: 300),
+                      animatedTexts: _shuffledMessages.map((step) =>
+                        RotateAnimatedText(
+                          step.subtitle,
+                          duration: const Duration(milliseconds: 2000),
+                          rotateOut: true,
+                        ),
+                      ).toList(),
                     ),
                   ),
                 ),
               ],
-            ],
+            ),
           ),
         ),
-      ],
+      ),
     );
   }
 }

@@ -287,7 +287,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     // ==================== Talisman ====================
     FortuneCategory(
       title: '부적',
-      route: '/talisman',
+      route: '/lucky-talisman',
       type: 'talisman',
       icon: Icons.shield_rounded,
       gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
@@ -390,7 +390,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     // ==================== Investment/Money Fortunes (통합) ====================
     FortuneCategory(
       title: '투자 운세',
-      route: '/investment-enhanced',
+      route: '/investment',
       type: 'investment',
       icon: Icons.trending_up_rounded,
       gradientColors: [Color(0xFF16A34A), Color(0xFF15803D)],

@@ -87,7 +87,6 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
       backgroundColor: isDark ? TossDesignSystem.backgroundDark : const Color(0xFFF8F9FA),
@@ -135,7 +134,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
             top: MediaQuery.of(context).padding.top + 16,
             right: 20,
             child: GestureDetector(
-              onTap: () => context.pop(),
+              onTap: () => context.go('/fortune'),
               child: Container(
                 width: 36,
                 height: 36,
@@ -152,44 +151,12 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
             ),
           ),
 
-          // 페이지 인디케이터 (중앙 하단)
-          Positioned(
-            bottom: bottomPadding + 24,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(5, (index) {
-                  final isActive = index == _currentPage;
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: isActive ? 24 : 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: isActive
-                          ? TossDesignSystem.tossBlue
-                          : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  );
-                }),
-              ),
-            ),
-          ),
-
           // ✅ FloatingBottomButton (블러 상태일 때만 표시)
           if (_isBlurred)
-            Positioned(
-              bottom: bottomPadding + 60,
-              left: 20,
-              right: 20,
-              child: UnifiedButton.floating(
-                text: '광고 보고 전체 내용 확인하기',
-                onPressed: _showAdAndUnblur,
-                isEnabled: true,
-              ),
+            UnifiedButton.floating(
+              text: '광고 보고 전체 내용 확인하기',
+              onPressed: _showAdAndUnblur,
+              isEnabled: true,
             ),
         ],
       ),
@@ -284,7 +251,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
           '당신의 마음이 느껴져요',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            
+            fontSize: 28,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -298,7 +265,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
           textAlign: TextAlign.center,
           style: TextStyle(
             color: isDark ? Colors.white70 : Colors.black54,
-            
+            fontSize: 18,
             height: 1.7,
             fontWeight: FontWeight.w400,
           ),
@@ -333,7 +300,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
           '당신은 할 수 있어요',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            
+            fontSize: 28,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -347,7 +314,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
           textAlign: TextAlign.center,
           style: TextStyle(
             color: isDark ? Colors.white70 : Colors.black54,
-            
+            fontSize: 18,
             height: 1.7,
             fontWeight: FontWeight.w400,
           ),
@@ -382,7 +349,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
           '이렇게 해보세요',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            
+            fontSize: 28,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -417,7 +384,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
                       '${index + 1}',
                       style: const TextStyle(
                         color: Colors.white,
-                        
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -429,7 +396,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
                     advice,
                     style: TextStyle(
                       color: isDark ? Colors.white70 : Colors.black87,
-                      
+                      fontSize: 17,
                       height: 1.6,
                       fontWeight: FontWeight.w400,
                     ),
@@ -469,7 +436,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
           '힘내세요!',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            
+            fontSize: 28,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
@@ -483,7 +450,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
           textAlign: TextAlign.center,
           style: TextStyle(
             color: isDark ? Colors.white70 : Colors.black54,
-            
+            fontSize: 18,
             height: 1.7,
             fontWeight: FontWeight.w400,
           ),
@@ -530,7 +497,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
             '신이 전하는 한마디',
             style: TextStyle(
               color: Colors.white,
-              
+              fontSize: 24,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.3,
             ),
@@ -546,7 +513,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.white,
-                
+                fontSize: 22,
                 height: 1.6,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.5,
