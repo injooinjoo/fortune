@@ -1,6 +1,7 @@
 // ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_theme.dart';
 import '../widgets/biorhythm_widgets.dart';
@@ -165,7 +166,7 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
               Icons.close,
               color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
             ),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.go('/fortune'),
           ),
         ],
       ),

@@ -1,25 +1,23 @@
 import 'dart:convert';
-import 'dart:ui';  // ✅ ImageFilter.blur 사용
 import 'package:flutter/material.dart';
 import '../../../../core/utils/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../shared/components/image_upload_selector.dart';
-import '../../../../core/components/app_card.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart' as core_models;
 import '../../domain/models/conditions/face_reading_fortune_conditions.dart';
 import 'package:crypto/crypto.dart';
 import '../../../../presentation/providers/token_provider.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
-
 import '../../../../core/widgets/unified_button.dart';
+
+// Import modular widgets
+import 'face_reading_fortune/index.dart';
+
 class FaceReadingFortunePage extends ConsumerStatefulWidget {
   const FaceReadingFortunePage({super.key});
 
@@ -61,8 +59,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               )
-            : null, // 결과 화면에서는 백버튼 숨김
-        automaticallyImplyLeading: _fortuneResult == null, // 결과 화면에서는 자동 백버튼도 숨김
+            : null,
+        automaticallyImplyLeading: _fortuneResult == null,
         title: Text(
           '관상',
           style: TypographyUnified.heading4.copyWith(
@@ -74,7 +72,6 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         centerTitle: true,
         actions: _fortuneResult != null
             ? [
-                // 결과 화면에서는 오른쪽에 X 버튼
                 IconButton(
                   icon: Icon(
                     Icons.close,
@@ -93,10 +90,14 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             _fortuneResult != null
                 ? SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
-                    child: _buildTossStyleResult(context, _fortuneResult!, isDark),
+                    child: ResultWidget(
+                      result: _fortuneResult!,
+                      isDark: isDark,
+                      onUnlockRequested: _showAdAndUnblur,
+                    ),
                   )
-                : _buildTossStyleInputSection(context, isDark),
-            // ✅ FloatingBottomButton - 결과 화면에서 블러 상태일 때만 표시
+                : _buildInputSection(context, isDark),
+            // Floating Bottom Button - 결과 화면에서 블러 상태일 때만 표시
             if (_fortuneResult != null && _fortuneResult!.isBlurred)
               UnifiedButton.floating(
                 text: '남은 운세 모두 보기',
@@ -109,248 +110,36 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
       ),
     );
   }
-  
-  Widget _buildTossStyleInputSection(BuildContext context, bool isDark) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              _buildStep1(context, isDark),
-              _buildStep2(context, isDark),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildStep1(BuildContext context, bool isDark) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title
-          Text(
-            'AI가 당신의\n관상을 분석합니다',
-            style: TossDesignSystem.heading2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-            ),
-          ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
-          
-          const SizedBox(height: 8),
-          
-          Text(
-            '사진이나 인스타그램 프로필로\n숨겨진 운명과 성격을 알아보세요',
-            style: TossDesignSystem.body2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-            ),
-          ).animate().fadeIn(duration: 600.ms, delay: 100.ms),
-          
-          const SizedBox(height: 32),
-          
-          // Image Upload Selector
-          ImageUploadSelector(
-            title: '분석 방법 선택',
-            description: '원하는 방법으로 사진을 제공해주세요',
-            onImageSelected: (result) {
-              setState(() {
-                _uploadResult = result;
-                if (result.imageFile != null || result.instagramUrl != null) {
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                }
-              });
-            },
-            showInstagramOption: true,
-            guidelines: const [
-              '정면을 바라보는 사진을 사용해주세요',
-              '밝은 조명에서 촬영된 사진이 좋습니다',
-              '선글라스나 마스크는 제거해주세요',
-              '한 명만 나온 사진을 사용해주세요',
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-  
-  Widget _buildStep2(BuildContext context, bool isDark) {
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-          // Title
-          Text(
-            '분석을 시작할\n준비가 되었습니다',
-            style: TossDesignSystem.heading2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-            ),
-          ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
-          
-          const SizedBox(height: 8),
-          
-          Text(
-            'AI가 당신의 관상을 상세하게 분석합니다',
-            style: TossDesignSystem.body2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-            ),
-          ).animate().fadeIn(duration: 600.ms, delay: 100.ms),
-          
-          const SizedBox(height: 32),
-          
-          // Preview Card
-          if (_uploadResult != null)
-            AppCard(
-              style: AppCardStyle.filled,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        _uploadResult!.type == ImageUploadType.instagram
-                            ? Icons.link
-                            : Icons.check_circle,
-                        color: TossDesignSystem.successGreen,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        _uploadResult!.type == ImageUploadType.instagram
-                            ? '인스타그램 프로필 준비됨'
-                            : '사진 준비됨',
-                        style: TossDesignSystem.body1.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  if (_uploadResult!.imageFile != null)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.file(
-                        _uploadResult!.imageFile!,
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  else if (_uploadResult!.instagramUrl != null)
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [TossDesignSystem.purple, TossDesignSystem.pinkPrimary, TossDesignSystem.warningOrange],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.camera_alt,
-                            color: TossDesignSystem.white,
-                            size: 40,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            _uploadResult!.instagramUrl!,
-                            style: TossDesignSystem.body2.copyWith(
-                              color: TossDesignSystem.white,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
-            ).animate().fadeIn(duration: 500.ms, delay: 200.ms),
-          
-          const SizedBox(height: 24),
-          
-          // Analysis Features
-          AppCard(
-            style: AppCardStyle.outlined,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'AI가 분석할 내용',
-                  style: TossDesignSystem.heading4.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _buildFeatureItem('얼굴형과 이목구비 특징', Icons.face, isDark),
-                _buildFeatureItem('성격과 기질 분석', Icons.psychology, isDark),
-                _buildFeatureItem('재물운과 사업운', Icons.attach_money, isDark),
-                _buildFeatureItem('연애운과 결혼운', Icons.favorite, isDark),
-                _buildFeatureItem('종합 운세와 조언', Icons.auto_awesome, isDark),
-              ],
-            ),
-          ).animate().fadeIn(duration: 500.ms, delay: 300.ms),
 
-              const SizedBox(height: 100), // Bottom spacing for floating button
-            ],
-          ),
-        ),
-
-        // Floating Bottom Button
-        UnifiedButton.floating(
-          text: _isAnalyzing ? 'AI가 분석 중...' : 'AI 관상 분석 시작',
-          isEnabled: !_isAnalyzing,
-          onPressed: _isAnalyzing ? null : () async {
-            // ✅ InterstitialAd 제거: 바로 분석 시작
-            await _startAnalysis();
+  Widget _buildInputSection(BuildContext context, bool isDark) {
+    return PageView(
+      controller: _pageController,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        InputStep1Widget(
+          isDark: isDark,
+          onImageSelected: (result) {
+            setState(() {
+              _uploadResult = result;
+              if (result.imageFile != null || result.instagramUrl != null) {
+                _pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              }
+            });
           },
-          isLoading: _isAnalyzing,
-          icon: _isAnalyzing ? null : const Icon(Icons.psychology, size: 20, color: TossDesignSystem.white),
+        ),
+        InputStep2Widget(
+          isDark: isDark,
+          uploadResult: _uploadResult,
+          isAnalyzing: _isAnalyzing,
+          onStartAnalysis: _startAnalysis,
         ),
       ],
     );
   }
-  
-  Widget _buildFeatureItem(String text, IconData icon, bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: TossDesignSystem.purple.withValues(alpha:0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: TossDesignSystem.purple,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            text,
-            style: TossDesignSystem.body2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  
+
   Future<void> _startAnalysis() async {
     debugPrint('🎯 [FaceReadingFortunePage] _startAnalysis started');
     setState(() {
@@ -358,11 +147,10 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     });
 
     try {
-      // ✅ Premium 상태 확인
-      // ⚠️ 관상 테스트용: Debug Premium 무시, 실제 토큰만 체크
+      // Premium 상태 확인
       final tokenState = ref.read(tokenProvider);
       final realPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
-      final isPremium = realPremium;  // Debug Premium 무시
+      final isPremium = realPremium;
 
       debugPrint('💎 [FaceReadingFortunePage] Premium 상태: $isPremium (real: $realPremium)');
 
@@ -370,7 +158,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         'analysis_type': 'comprehensive',
         'include_character': true,
         'include_fortune': true,
-        'isPremium': isPremium, // ✅ isPremium 추가
+        'isPremium': isPremium,
       };
 
       debugPrint('📸 [FaceReadingFortunePage] Upload result type: ${_uploadResult?.type}');
@@ -443,43 +231,39 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
   }
 
   FortuneResult _convertToFortuneResult(core_models.FortuneResult coreResult, bool isPremium) {
-    // ✅ Edge Function 응답 구조에 맞게 수정
     final detailsData = coreResult.data['details'] as Map<String, dynamic>?;
 
-    // details를 sections 형식으로 변환 (UI 호환성)
     final Map<String, String>? sections = detailsData?.map(
       (key, value) => MapEntry(key, value?.toString() ?? '')
     );
 
-    // ✅ 블러 처리 로직
     final isBlurred = !isPremium;
     final blurredSections = isBlurred
         ? [
-            'personality',        // 성격과 기질
-            'wealth_fortune',     // 재물운
-            'love_fortune',       // 애정운
-            'health_fortune',     // 건강운
-            'career_fortune',     // 직업운
-            'special_features',   // 특별한 관상 특징
-            'advice',             // 조언과 개운법
-            'full_analysis',      // 전체 분석
+            'personality',
+            'wealth_fortune',
+            'love_fortune',
+            'health_fortune',
+            'career_fortune',
+            'special_features',
+            'advice',
+            'full_analysis',
           ]
         : <String>[];
 
     debugPrint('🔒 [FaceReadingFortunePage] isBlurred: $isBlurred, blurredSections: $blurredSections');
 
     return FortuneResult(
-      mainFortune: coreResult.data['mainFortune'] as String?,  // ✅ 무료: 전체적인 인상
-      sections: sections,  // 🔒 프리미엄: 상세 분석
-      overallScore: coreResult.data['luckScore'] as int?,  // ✅ 무료: 운세 점수
+      mainFortune: coreResult.data['mainFortune'] as String?,
+      sections: sections,
+      overallScore: coreResult.data['luckScore'] as int?,
       recommendations: (coreResult.data['recommendations'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
       details: coreResult.data,
-      isBlurred: isBlurred,  // ✅ 블러 상태
-      blurredSections: blurredSections,  // ✅ 블러 섹션
+      isBlurred: isBlurred,
+      blurredSections: blurredSections,
     );
   }
 
-  // ✅ 광고 시청 후 블러 해제 메서드
   Future<void> _showAdAndUnblur() async {
     if (_fortuneResult == null) return;
 
@@ -488,7 +272,6 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     try {
       final adService = AdService();
 
-      // 광고가 준비 안됐으면 로드 (두 번 클릭 방지)
       if (!adService.isRewardedAdReady) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -499,17 +282,14 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
           );
         }
 
-        // 광고 로드 시작
         await adService.loadRewardedAd();
 
-        // 로딩 완료 대기 (최대 5초)
         int waitCount = 0;
         while (!adService.isRewardedAdReady && waitCount < 10) {
           await Future.delayed(const Duration(milliseconds: 500));
           waitCount++;
         }
 
-        // 타임아웃 처리
         if (!adService.isRewardedAdReady) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -523,13 +303,11 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         }
       }
 
-      // 2. 광고 표시
       debugPrint('[FaceReadingFortunePage] 광고 표시 시작');
       await adService.showRewardedAd(
         onUserEarnedReward: (ad, reward) {
           debugPrint('[FaceReadingFortunePage] 광고 보상 획득, 블러 해제');
 
-          // ✅ 블러 해제 - copyWith로 isBlurred를 false로 변경
           if (mounted) {
             setState(() {
               _fortuneResult = _fortuneResult!.copyWith(
@@ -549,7 +327,6 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
     } catch (e, stackTrace) {
       debugPrint('[FaceReadingFortunePage] 광고 표시 실패: $e\n$stackTrace');
 
-      // 에러 발생 시에도 블러 해제 (사용자 경험 우선)
       if (_fortuneResult != null && mounted) {
         setState(() {
           _fortuneResult = _fortuneResult!.copyWith(
@@ -565,1155 +342,5 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         );
       }
     }
-  }
-
-  // 🌟 운세 섹션 빌더 (점수바 + 블러 지원)
-  Widget _buildFortuneSection({
-    required IconData icon,
-    required String title,
-    required String content,
-    required int score,
-    required Color color,
-    required bool isDark,
-    required FortuneResult result,
-    required String sectionKey,
-    required int delay,
-  }) {
-    Widget cardContent = AppCard(
-      style: AppCardStyle.outlined,
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: color, size: 24),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TossDesignSystem.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    // 점수 바
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: LinearProgressIndicator(
-                              value: score / 100,
-                              minHeight: 6,
-                              backgroundColor: isDark
-                                  ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
-                                  : TossDesignSystem.gray300.withValues(alpha: 0.3),
-                              valueColor: AlwaysStoppedAnimation(color),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '$score점',
-                          style: TossDesignSystem.body2.copyWith(
-                            color: color,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            content,
-            style: TossDesignSystem.body1.copyWith(
-              color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-              height: 1.6,
-            ),
-          ),
-        ],
-      ),
-    );
-
-    // 블러가 필요 없거나, 해당 섹션이 블러 대상이 아니면 그대로 반환
-    if (!result.isBlurred || !result.blurredSections.contains(sectionKey)) {
-      return cardContent.animate().fadeIn(duration: 500.ms, delay: delay.ms).slideY(begin: 0.1);
-    }
-
-    // ✅ MBTI 스타일 블러 적용
-    return Stack(
-      children: [
-        // 원본 콘텐츠 (블러 처리)
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: cardContent,
-        ),
-
-        // 반투명 오버레이
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  (isDark
-                      ? TossDesignSystem.backgroundDark
-                      : TossDesignSystem.backgroundLight)
-                      .withValues(alpha: 0.3),
-                  (isDark
-                      ? TossDesignSystem.backgroundDark
-                      : TossDesignSystem.backgroundLight)
-                      .withValues(alpha: 0.8),
-                ],
-              ),
-            ),
-          ),
-        ),
-
-        // 중앙 잠금 아이콘만 표시
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 40,
-              color: (isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight)
-                  .withValues(alpha: 0.4),
-            ).animate(onPlay: (controller) => controller.repeat())
-                .shimmer(duration: 2000.ms, color: TossDesignSystem.tossBlue.withValues(alpha: 0.2)),
-          ),
-        ),
-      ],
-    ).animate().fadeIn(duration: 500.ms, delay: delay.ms).slideY(begin: 0.1);
-  }
-
-  // ✅ _buildBlurWrapper 제거 - UnifiedBlurWrapper 사용
-
-  Widget _buildTossStyleResult(BuildContext context, FortuneResult result, bool isDark) {
-    // ✅ 실제 데이터는 result.details.details에 있음!
-    final rawData = result.details ?? {};
-    final data = (rawData['details'] as Map<String, dynamic>?) ?? rawData;
-    final luckScore = ((rawData['luckScore'] ?? result.overallScore) ?? 75).toInt();
-
-    // 🔍 디버그: 데이터 구조 확인
-    Logger.debug('[FaceReading] rawData keys: ${rawData.keys.toList()}');
-    Logger.debug('[FaceReading] data keys: ${data.keys.toList()}');
-    Logger.debug('[FaceReading] ogwan: ${data['ogwan']}');
-    Logger.debug('[FaceReading] wealth_fortune: ${data['wealth_fortune']}');
-    Logger.debug('[FaceReading] overall_fortune: ${data['overall_fortune']}');
-
-    return Column(
-      children: [
-        // 🎯 관상 점수 게이지
-        Container(
-          padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                TossDesignSystem.purple.withValues(alpha:0.15),
-                TossDesignSystem.tossBlue.withValues(alpha:0.15),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: TossDesignSystem.purple.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              // 얼굴 아이콘
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [TossDesignSystem.purple, TossDesignSystem.tossBlue],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: TossDesignSystem.purple.withValues(alpha: 0.3),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.face,
-                  size: 48,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 20),
-              // 관상 타입
-              Text(
-                data['face_type'] ?? '관상 분석 완료',
-                style: TossDesignSystem.heading2.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 12),
-              // 점수 표시
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    '$luckScore',
-                    style: TypographyUnified.displayLarge.copyWith(
-                      fontWeight: FontWeight.w800,
-                      foreground: Paint()
-                        ..shader = LinearGradient(
-                          colors: [TossDesignSystem.purple, TossDesignSystem.tossBlue],
-                        ).createShader(const Rect.fromLTWH(0, 0, 200, 70)),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '점',
-                    style: TossDesignSystem.heading4.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // 점수 게이지 바
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: LinearProgressIndicator(
-                  value: luckScore / 100,
-                  minHeight: 12,
-                  backgroundColor: isDark
-                    ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
-                    : TossDesignSystem.gray300.withValues(alpha: 0.3),
-                  valueColor: AlwaysStoppedAnimation(
-                    luckScore >= 80 ? TossDesignSystem.purple : TossDesignSystem.tossBlue,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              // 전체적인 인상
-              if (data['overall_fortune'] != null)
-                Text(
-                  FortuneTextCleaner.clean(data['overall_fortune']),
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-                    height: 1.6,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-            ],
-          ),
-        ).animate().fadeIn(duration: 600.ms).scale(begin: const Offset(0.9, 0.9)),
-
-        const SizedBox(height: 24),
-
-        // 🌟 닮은꼴 유명인 섹션 (무료 공개 - 바이럴 효과)
-        if (data['similar_celebrities'] != null &&
-            (data['similar_celebrities'] as List).isNotEmpty) ...[
-          _buildSimilarCelebritiesSection(
-            celebrities: data['similar_celebrities'] as List,
-            isDark: isDark,
-          ),
-          const SizedBox(height: 24),
-        ],
-
-        // 🌟 전통 관상학: 오관(五官) 분석
-        if (data['ogwan'] != null) ...[
-          _buildOgwanSection(
-            data: data,
-            result: result,
-            isDark: isDark,
-          ),
-          const SizedBox(height: 24),
-        ],
-
-        // 🌟 구버전 하위 호환: 4대 운세 (기존 DB 데이터용)
-        if (data['ogwan'] == null && data['wealth_fortune'] != null) ...[
-          _buildFortuneSection(
-            icon: Icons.monetization_on,
-            title: '재물운',
-            content: FortuneTextCleaner.clean(data['wealth_fortune']?.toString() ?? '재물운이 상승하는 시기입니다.'),
-            score: 85,
-            color: Colors.amber,
-            isDark: isDark,
-            result: result,
-            sectionKey: 'wealth_fortune',
-            delay: 100,
-          ),
-          const SizedBox(height: 16),
-
-          _buildFortuneSection(
-            icon: Icons.favorite,
-            title: '애정운',
-            content: FortuneTextCleaner.clean(data['love_fortune']?.toString() ?? '인연이 다가오고 있습니다.'),
-            score: 78,
-            color: Colors.pink,
-            isDark: isDark,
-            result: result,
-            sectionKey: 'love_fortune',
-            delay: 200,
-          ),
-          const SizedBox(height: 16),
-
-          _buildFortuneSection(
-            icon: Icons.health_and_safety,
-            title: '건강운',
-            content: FortuneTextCleaner.clean(data['health_fortune']?.toString() ?? '건강 관리에 신경쓰면 좋은 결과가 있을 것입니다.'),
-            score: 72,
-            color: Colors.green,
-            isDark: isDark,
-            result: result,
-            sectionKey: 'health_fortune',
-            delay: 300,
-          ),
-          const SizedBox(height: 16),
-
-          _buildFortuneSection(
-            icon: Icons.work,
-            title: '직업운',
-            content: FortuneTextCleaner.clean(data['career_fortune']?.toString() ?? '새로운 기회가 찾아올 것입니다.'),
-            score: 80,
-            color: TossDesignSystem.tossBlue,
-            isDark: isDark,
-            result: result,
-            sectionKey: 'career_fortune',
-            delay: 400,
-          ),
-          const SizedBox(height: 24),
-        ],
-
-        // 🌟 전통 관상학: 삼정(三停) 분석
-        if (data['samjeong'] != null) ...[
-          UnifiedBlurWrapper(
-            isBlurred: result.isBlurred,
-            blurredSections: result.blurredSections,
-            sectionKey: 'samjeong',
-            child: AppCard(
-              style: AppCardStyle.filled,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.linear_scale, color: TossDesignSystem.tossBlue, size: 28),
-                      const SizedBox(width: 8),
-                      Text(
-                        '삼정(三停) 분석',
-                        style: TossDesignSystem.heading3.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '상정(초년운), 중정(중년운), 하정(말년운)',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    FortuneTextCleaner.clean(data['samjeong'].toString()),
-                    style: TossDesignSystem.body1.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-                      height: 1.7,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
-
-        // 🌟 전통 관상학: 십이궁(十二宮) 분석
-        if (data['sibigung'] != null) ...[
-          UnifiedBlurWrapper(
-            isBlurred: result.isBlurred,
-            blurredSections: result.blurredSections,
-            sectionKey: 'sibigung',
-            child: AppCard(
-              style: AppCardStyle.filled,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.grid_view, color: TossDesignSystem.purple, size: 28),
-                      const SizedBox(width: 8),
-                      Text(
-                        '십이궁(十二宮) 분석',
-                        style: TossDesignSystem.heading3.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '얼굴 12개 영역의 상세 분석',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    FortuneTextCleaner.clean(data['sibigung'].toString()),
-                    style: TossDesignSystem.body1.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-                      height: 1.7,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
-
-        // 🧠 성격과 기질 (🔒 프리미엄)
-        if (data['personality'] != null) ...[
-          UnifiedBlurWrapper(
-            isBlurred: result.isBlurred,
-            blurredSections: result.blurredSections,
-            sectionKey: 'personality',
-            child: AppCard(
-              style: AppCardStyle.filled,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.psychology, color: TossDesignSystem.purple),
-                      const SizedBox(width: 8),
-                      Text(
-                        '성격과 기질',
-                        style: TossDesignSystem.heading4.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: TossDesignSystem.purple.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.lock, size: 12, color: TossDesignSystem.purple),
-                            const SizedBox(width: 4),
-                            Text(
-                              '프리미엄',
-                              style: TossDesignSystem.caption.copyWith(
-                                color: TossDesignSystem.purple,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    FortuneTextCleaner.clean(data['personality'].toString()),
-                    style: TossDesignSystem.body1.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-                      height: 1.7,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ).animate().fadeIn(duration: 500.ms, delay: 500.ms),
-          const SizedBox(height: 16),
-        ],
-
-        // ✨ 특별한 관상 특징 (🔒 프리미엄)
-        if (data['special_features'] != null) ...[
-          UnifiedBlurWrapper(
-            isBlurred: result.isBlurred,
-            blurredSections: result.blurredSections,
-            sectionKey: 'special_features',
-            child: AppCard(
-              style: AppCardStyle.filled,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.auto_awesome, color: TossDesignSystem.tossBlue),
-                      const SizedBox(width: 8),
-                      Text(
-                        '특별한 관상 특징',
-                        style: TossDesignSystem.heading4.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.lock, size: 12, color: TossDesignSystem.tossBlue),
-                            const SizedBox(width: 4),
-                            Text(
-                              '프리미엄',
-                              style: TossDesignSystem.caption.copyWith(
-                                color: TossDesignSystem.tossBlue,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    FortuneTextCleaner.clean(data['special_features'].toString()),
-                    style: TossDesignSystem.body1.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-                      height: 1.7,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ).animate().fadeIn(duration: 500.ms, delay: 600.ms),
-          const SizedBox(height: 16),
-        ],
-
-        // 💡 조언과 개운법 (🔒 프리미엄)
-        if (data['advice'] != null) ...[
-          UnifiedBlurWrapper(
-            isBlurred: result.isBlurred,
-            blurredSections: result.blurredSections,
-            sectionKey: 'advice',
-            child: AppCard(
-              style: AppCardStyle.filled,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.lightbulb, color: Colors.amber),
-                      const SizedBox(width: 8),
-                      Text(
-                        '조언과 개운법',
-                        style: TossDesignSystem.heading4.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.amber.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.lock, size: 12, color: Colors.amber.shade700),
-                            const SizedBox(width: 4),
-                            Text(
-                              '프리미엄',
-                              style: TossDesignSystem.caption.copyWith(
-                                color: Colors.amber.shade700,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    FortuneTextCleaner.clean(data['advice'].toString()),
-                    style: TossDesignSystem.body1.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-                      height: 1.7,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ).animate().fadeIn(duration: 500.ms, delay: 700.ms),
-          const SizedBox(height: 16),
-        ],
-
-        // 📖 전체 분석 (🔒 프리미엄)
-        if (data['full_analysis'] != null) ...[
-          UnifiedBlurWrapper(
-            isBlurred: result.isBlurred,
-            blurredSections: result.blurredSections,
-            sectionKey: 'full_analysis',
-            child: AppCard(
-              style: AppCardStyle.filled,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.description, color: TossDesignSystem.gray700),
-                      const SizedBox(width: 8),
-                      Text(
-                        '전체 분석',
-                        style: TossDesignSystem.heading4.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: TossDesignSystem.gray700.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.lock, size: 12, color: TossDesignSystem.gray700),
-                            const SizedBox(width: 4),
-                            Text(
-                              '프리미엄',
-                              style: TossDesignSystem.caption.copyWith(
-                                color: TossDesignSystem.gray700,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    data['full_analysis'].toString(),
-                    style: TossDesignSystem.body1.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-                      height: 1.7,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ).animate().fadeIn(duration: 500.ms, delay: 800.ms),
-          const SizedBox(height: 20),
-        ],
-        
-        // Character Analysis
-        if (data['character_traits'] != null) ...[
-          AppCard(
-            style: AppCardStyle.filled,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.psychology, color: TossDesignSystem.warningOrange),
-                    const SizedBox(width: 8),
-                    Text(
-                      '성격 분석',
-                      style: TossDesignSystem.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: (data['character_traits'] as List<dynamic>).map((trait) => 
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: TossDesignSystem.warningOrange.withValues(alpha:0.3),
-                        ),
-                      ),
-                      child: Text(
-                        trait.toString(),
-                        style: TossDesignSystem.body3.copyWith(
-                          color: TossDesignSystem.warningOrange,
-                        ),
-                      ),
-                    )
-                  ).toList(),
-                ),
-              ],
-            ),
-          ).animate().fadeIn(duration: 500.ms, delay: 300.ms),
-          const SizedBox(height: 20),
-        ],
-        
-        // Recommendations
-        if (result.recommendations != null && result.recommendations!.isNotEmpty) ...[
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  TossDesignSystem.successGreen.withValues(alpha:0.1),
-                  TossDesignSystem.tossBlue.withValues(alpha:0.1),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.tips_and_updates, color: TossDesignSystem.successGreen),
-                    const SizedBox(width: 8),
-                    Text(
-                      '운세 개선 조언',
-                      style: TossDesignSystem.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ...result.recommendations!.map((rec) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.check_circle,
-                        size: 20,
-                        color: TossDesignSystem.successGreen,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          rec,
-                          style: TossDesignSystem.body2.copyWith(
-                            color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-              ],
-            ),
-          ).animate().fadeIn(duration: 500.ms, delay: 400.ms),
-        ],
-      ],
-    );
-  }
-  
-
-  // 🌟 오관(五官) 섹션 빌더
-  Widget _buildOgwanSection({
-    required Map<String, dynamic> data,
-    required FortuneResult result,
-    required bool isDark,
-  }) {
-    final ogwan = data['ogwan'] as Map<String, dynamic>?;
-    if (ogwan == null) return const SizedBox.shrink();
-
-    final ogwanItems = [
-      {
-        'key': 'ear',
-        'title': '귀(耳) - 채청관',
-        'subtitle': '복록과 수명',
-        'icon': Icons.hearing,
-        'color': TossDesignSystem.purple,
-      },
-      {
-        'key': 'eyebrow',
-        'title': '눈썹(眉) - 보수관',
-        'subtitle': '형제와 친구',
-        'icon': Icons.remove_red_eye_outlined,
-        'color': TossDesignSystem.tossBlue,
-      },
-      {
-        'key': 'eye',
-        'title': '눈(目) - 감찰관',
-        'subtitle': '마음의 창',
-        'icon': Icons.remove_red_eye,
-        'color': TossDesignSystem.successGreen,
-      },
-      {
-        'key': 'nose',
-        'title': '코(鼻) - 심변관',
-        'subtitle': '재물의 중심',
-        'icon': Icons.air,
-        'color': Colors.amber,
-      },
-      {
-        'key': 'mouth',
-        'title': '입(口) - 출납관',
-        'subtitle': '식복과 언변',
-        'icon': Icons.sentiment_satisfied,
-        'color': Colors.pink,
-      },
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 오관 헤더
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            children: [
-              Icon(Icons.face_retouching_natural, color: TossDesignSystem.purple, size: 32),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '오관(五官) 분석',
-                    style: TossDesignSystem.heading2.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '전통 관상학의 핵심 - 얼굴 5대 관문',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // 오관 카드들
-        ...ogwanItems.asMap().entries.map((entry) {
-          final index = entry.key;
-          final item = entry.value;
-          final key = item['key'] as String;
-          final content = ogwan[key]?.toString();
-
-          if (content == null || content.isEmpty) return const SizedBox.shrink();
-
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: UnifiedBlurWrapper(
-              isBlurred: result.isBlurred,
-              blurredSections: result.blurredSections,
-              sectionKey: 'ogwan',
-              child: AppCard(
-                style: AppCardStyle.filled,
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: (item['color'] as Color).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            item['icon'] as IconData,
-                            color: item['color'] as Color,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                item['title'] as String,
-                                style: TossDesignSystem.heading4.copyWith(
-                                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                item['subtitle'] as String,
-                                style: TossDesignSystem.caption.copyWith(
-                                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      content,
-                      style: TossDesignSystem.body1.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-                        height: 1.7,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ).animate().fadeIn(duration: 500.ms, delay: (100 * index).ms),
-          );
-        }),
-      ],
-    );
-  }
-
-  // 🌟 닮은꼴 유명인 섹션 빌더
-  Widget _buildSimilarCelebritiesSection({
-    required List celebrities,
-    required bool isDark,
-  }) {
-    return AppCard(
-      style: AppCardStyle.filled,
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 헤더
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [TossDesignSystem.warningOrange, Colors.amber],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.star_rounded,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '닮은꼴 유명인',
-                    style: TossDesignSystem.heading3.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '당신의 관상과 비슷한 유명인',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // 유명인 카드 목록
-          ...celebrities.asMap().entries.map((entry) {
-            final index = entry.key;
-            final celeb = entry.value as Map<String, dynamic>;
-            return _buildCelebrityCard(celeb, index, isDark);
-          }),
-        ],
-      ),
-    ).animate().fadeIn(duration: 500.ms, delay: 300.ms).slideY(begin: 0.1);
-  }
-
-  // 🌟 개별 유명인 카드 빌더
-  Widget _buildCelebrityCard(Map<String, dynamic> celeb, int index, bool isDark) {
-    final name = celeb['name']?.toString() ?? '유명인';
-    final occupation = celeb['occupation']?.toString() ?? '연예인';
-    final similarParts = celeb['similar_parts']?.toString() ?? '전체적인 인상';
-    final reason = celeb['reason']?.toString() ?? '비슷한 인상을 가지고 있습니다.';
-
-    // 직업별 색상 지정
-    final Color avatarColor;
-    if (occupation.contains('배우')) {
-      avatarColor = TossDesignSystem.purple;
-    } else if (occupation.contains('가수') || occupation.contains('아이돌')) {
-      avatarColor = TossDesignSystem.tossBlue;
-    } else if (occupation.contains('운동선수') || occupation.contains('스포츠')) {
-      avatarColor = TossDesignSystem.successGreen;
-    } else if (occupation.contains('MC') || occupation.contains('방송인')) {
-      avatarColor = TossDesignSystem.warningOrange;
-    } else {
-      avatarColor = Colors.pink;
-    }
-
-    return Container(
-      margin: EdgeInsets.only(bottom: index < 2 ? 12 : 0),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Notion 스타일 아바타 (이니셜)
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [avatarColor, avatarColor.withValues(alpha: 0.7)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color: avatarColor.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                name.isNotEmpty ? name[0] : '?',
-                style: TossDesignSystem.heading2.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-
-          // 정보
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 이름 & 직업
-                Row(
-                  children: [
-                    Text(
-                      name,
-                      style: TossDesignSystem.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: avatarColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        occupation,
-                        style: TossDesignSystem.caption.copyWith(
-                          color: avatarColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-
-                // 닮은 부위
-                Row(
-                  children: [
-                    Icon(
-                      Icons.compare_arrows,
-                      size: 14,
-                      color: TossDesignSystem.purple,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        '닮은 부위: $similarParts',
-                        style: TossDesignSystem.body3.copyWith(
-                          color: TossDesignSystem.purple,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-
-                // 이유
-                Text(
-                  reason,
-                  style: TossDesignSystem.body3.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
-                    height: 1.4,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 400.ms, delay: (100 + index * 80).ms).slideX(begin: 0.1);
   }
 }

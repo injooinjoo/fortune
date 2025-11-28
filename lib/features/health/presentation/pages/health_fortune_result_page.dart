@@ -7,7 +7,6 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
-import '../../../../core/widgets/unified_button.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
@@ -146,13 +145,11 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
               ),
             ),
 
-            // 🎯 Floating Button
+            // 🎯 Floating Button (프리미엄 사용자는 자동 숨김)
             if (_fortuneResult.isBlurred)
-              UnifiedButton.floating(
-                text: '건강 조언 모두 보기',
+              UnifiedAdUnlockButton(
                 onPressed: _showAdAndUnblur,
-                isLoading: false,
-                isEnabled: true,
+                customText: '🎁 건강 조언 모두 보기',
               ),
           ],
         ),
@@ -324,11 +321,15 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
             ],
           ),
           const SizedBox(height: 16),
+          // 블러 콘텐츠에 최소 높이 적용 (잠금 아이콘 일관성 확보)
           UnifiedBlurWrapper(
             isBlurred: _fortuneResult.isBlurred,
             blurredSections: _fortuneResult.blurredSections,
             sectionKey: sectionKey,
-            child: contentBuilder(),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 80),
+              child: contentBuilder(),
+            ),
           ),
         ],
       ),
@@ -546,10 +547,17 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
     try {
       final adService = AdService.instance;
 
-      // RewardedAd 로딩 확인 (최대 10초 대기)
+      // RewardedAd 로딩 확인 (최대 5초 대기)
       if (!adService.isRewardedAdReady) {
-        Logger.warning('[건강운] ⏳ RewardedAd 로딩 중... 10초 대기');
-        await Future.delayed(const Duration(seconds: 10));
+        Logger.info('[건강운] RewardedAd 로딩 시작');
+        await adService.loadRewardedAd();
+
+        // 최대 5초 대기 (500ms × 10회 폴링)
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
 
         if (!adService.isRewardedAdReady) {
           Logger.warning('[건강운] ❌ RewardedAd 로드 타임아웃');
