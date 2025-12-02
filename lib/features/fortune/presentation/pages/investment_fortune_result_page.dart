@@ -12,15 +12,17 @@ import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 
-/// 투자운세 결과 페이지 (프리미엄/블러 시스템 적용)
+/// 투자운세 결과 페이지 v2 (리서치 기반 새 구조)
 ///
-/// **블러 섹션** (4개):
-/// - description: 상세 분석
-/// - recommendations: 추천사항
-/// - warnings: 주의사항
-/// - detailed_analysis: 심층 분석
+/// **무료 공개**:
+/// - 메인 점수, 종목 정보, 요약, 행운 아이템
 ///
-/// **Floating Button**: "투자 분석 모두 보기"
+/// **프리미엄 (블러)**:
+/// - timing: 타이밍 운세
+/// - outlook: 전망 운세
+/// - risks: 리스크 경고
+/// - marketMood: 시장 기운
+/// - advice, psychologyTip: 투자 조언
 class InvestmentFortuneResultPage extends ConsumerStatefulWidget {
   final FortuneResult fortuneResult;
 
@@ -35,15 +37,13 @@ class InvestmentFortuneResultPage extends ConsumerStatefulWidget {
 
 class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneResultPage> {
   late FortuneResult _fortuneResult;
-
-  // 타이핑 효과 상태
   int _currentTypingSection = 0;
 
   @override
   void initState() {
     super.initState();
     _fortuneResult = widget.fortuneResult;
-    Logger.info('[투자운] 결과 페이지 초기화 - isBlurred: ${_fortuneResult.isBlurred}');
+    Logger.info('[투자운 v2] 결과 페이지 초기화 - isBlurred: ${_fortuneResult.isBlurred}');
   }
 
   @override
@@ -87,7 +87,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // 1. 메인 점수 카드 (공개)
+                  // 1. 메인 점수 (공개)
                   _buildMainScoreCard(),
                   const SizedBox(height: 24),
 
@@ -95,60 +95,33 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   _buildTickerInfoSection(),
                   const SizedBox(height: 16),
 
-                  // 3. 투자 요약 (공개)
+                  // 3. 요약 (공개)
                   _buildContentSection(),
 
-                  // 4. 행운 아이템 (블러)
-                  _buildBlurredSection(
-                    title: '행운 아이템',
-                    icon: Icons.auto_awesome_rounded,
-                    color: const Color(0xFFFFB300),
-                    contentBuilder: () => _buildLuckyItemsContent(),
-                    sectionKey: 'lucky_items',
-                  ),
+                  // 4. 행운 아이템 (공개)
+                  _buildLuckyItemsSection(),
 
-                  // 5. 상세 분석 (블러)
-                  _buildBlurredSection(
-                    title: '상세 분석',
-                    icon: Icons.analytics_rounded,
-                    color: const Color(0xFF2196F3),
-                    contentBuilder: () => _buildDescriptionContent(),
-                    sectionKey: 'description',
-                  ),
+                  // 5. 타이밍 운세 (블러) - NEW
+                  _buildTimingSection(),
 
-                  // 6. 추천사항 (블러)
-                  _buildBlurredSection(
-                    title: '추천사항',
-                    icon: Icons.lightbulb_rounded,
-                    color: const Color(0xFF4CAF50),
-                    contentBuilder: () => _buildRecommendationsContent(),
-                    sectionKey: 'recommendations',
-                  ),
+                  // 6. 전망 운세 (블러) - NEW
+                  _buildOutlookSection(),
 
-                  // 7. 주의사항 (블러)
-                  _buildBlurredSection(
-                    title: '⚠️ 주의사항',
-                    icon: Icons.warning_rounded,
-                    color: TossTheme.error,
-                    contentBuilder: () => _buildWarningsContent(),
-                    sectionKey: 'warnings',
-                  ),
+                  // 7. 리스크 경고 (블러) - NEW
+                  _buildRisksSection(),
 
-                  // 8. 육각형 점수 (블러)
-                  _buildBlurredSection(
-                    title: '투자 분석 차트',
-                    icon: Icons.hexagon_rounded,
-                    color: const Color(0xFF9C27B0),
-                    contentBuilder: () => _buildHexagonScoresContent(),
-                    sectionKey: 'detailed_analysis',
-                  ),
+                  // 8. 시장 기운 (블러) - NEW
+                  _buildMarketMoodSection(),
 
-                  const SizedBox(height: 80), // Floating Button 공간
+                  // 9. 투자 조언 (블러)
+                  _buildAdviceSection(),
+
+                  const SizedBox(height: 80),
                 ],
               ),
             ),
 
-            // Floating Button (프리미엄 사용자는 자동 숨김)
+            // Floating Button
             if (_fortuneResult.isBlurred)
               UnifiedAdUnlockButton(
                 onPressed: _showAdAndUnblur,
@@ -160,7 +133,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
     );
   }
 
-  // ===== 공개 섹션 빌더 =====
+  // ===== 공개 섹션 =====
 
   Widget _buildMainScoreCard() {
     final data = _fortuneResult.data;
@@ -185,33 +158,19 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       ),
       child: Column(
         children: [
-          const Icon(
-            Icons.trending_up_rounded,
-            color: TossDesignSystem.white,
-            size: 48,
-          ),
+          const Icon(Icons.trending_up_rounded, color: TossDesignSystem.white, size: 48),
           const SizedBox(height: 16),
           Text(
             '투자 운세 점수',
-            style: context.bodyMedium.copyWith(
-              color: TossDesignSystem.white.withValues(alpha: 0.9),
-            ),
+            style: context.bodyMedium.copyWith(color: TossDesignSystem.white.withValues(alpha: 0.9)),
           ),
           const SizedBox(height: 8),
           Text(
             '$score점',
-            style: context.displayLarge.copyWith(
-              color: TossDesignSystem.white,
-              fontWeight: FontWeight.w700,
-            ),
+            style: context.displayLarge.copyWith(color: TossDesignSystem.white, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
-          Text(
-            _getScoreEmoji(score),
-            style: context.bodyLarge.copyWith(
-              color: TossDesignSystem.white,
-            ),
-          ),
+          Text(_getScoreEmoji(score), style: context.bodyLarge.copyWith(color: TossDesignSystem.white)),
           if (_fortuneResult.percentile != null && _fortuneResult.isPercentileValid) ...[
             const SizedBox(height: 8),
             Container(
@@ -222,10 +181,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               ),
               child: Text(
                 '상위 ${_fortuneResult.percentile}%',
-                style: context.bodySmall.copyWith(
-                  color: TossDesignSystem.white,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: context.bodySmall.copyWith(color: TossDesignSystem.white, fontWeight: FontWeight.w600),
               ),
             ),
           ],
@@ -237,9 +193,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
   Widget _buildTickerInfoSection() {
     final data = _fortuneResult.data;
     final ticker = data['ticker'] as Map<String, dynamic>? ?? {};
-    final tickerName = ticker['name'] as String? ?? data['targetName'] as String? ?? '종목';
+    final tickerName = ticker['name'] as String? ?? '종목';
     final tickerSymbol = ticker['symbol'] as String? ?? '';
-    final category = ticker['category'] as String? ?? data['investmentType'] as String? ?? '';
+    final category = ticker['category'] as String? ?? '';
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -247,15 +203,12 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       decoration: BoxDecoration(
         color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
-        ),
+        border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
       ),
       child: Row(
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: 48, height: 48,
             decoration: BoxDecoration(
               color: TossDesignSystem.primaryBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
@@ -263,9 +216,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             child: Center(
               child: Text(
                 tickerSymbol.isNotEmpty ? tickerSymbol.substring(0, tickerSymbol.length > 2 ? 2 : tickerSymbol.length) : '📈',
-                style: context.heading4.copyWith(
-                  color: TossDesignSystem.primaryBlue,
-                ),
+                style: context.heading4.copyWith(color: TossDesignSystem.primaryBlue),
               ),
             ),
           ),
@@ -274,19 +225,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  tickerName,
-                  style: context.heading4.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                  ),
-                ),
+                Text(tickerName, style: context.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
                 const SizedBox(height: 4),
-                Text(
-                  '${_getCategoryLabel(category)} • $tickerSymbol',
-                  style: context.bodySmall.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-                  ),
-                ),
+                Text('${_getCategoryLabel(category)} • $tickerSymbol', style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600)),
               ],
             ),
           ),
@@ -297,77 +238,386 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
 
   Widget _buildContentSection() {
     final data = _fortuneResult.data;
-    final contentRaw = data['content'];
-    final content = FortuneTextCleaner.clean(
-      contentRaw is String ? contentRaw : '투자 분석 결과입니다.',
-    );
+    final content = FortuneTextCleaner.clean(data['content'] as String? ?? '투자 분석 결과입니다.');
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
+    return _buildSectionCard(
+      title: '투자 요약',
+      icon: Icons.summarize_rounded,
+      color: TossDesignSystem.primaryBlue,
+      child: GptStyleTypingText(
+        text: content,
+        style: context.bodyMedium.copyWith(
+          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+          height: 1.6,
         ),
+        startTyping: _currentTypingSection >= 0,
+        showGhostText: true,
+        onComplete: () {
+          if (mounted) setState(() => _currentTypingSection = 1);
+        },
       ),
+    );
+  }
+
+  Widget _buildLuckyItemsSection() {
+    final data = _fortuneResult.data;
+    final luckyItems = data['luckyItems'] as Map<String, dynamic>? ?? data['lucky_items'] as Map<String, dynamic>? ?? {};
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (luckyItems.isEmpty) return const SizedBox.shrink();
+
+    return _buildSectionCard(
+      title: '행운 요소',
+      icon: Icons.auto_awesome_rounded,
+      color: const Color(0xFFFFB300),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          if (luckyItems['color'] != null) _buildLuckyChip('🎨', '색상', luckyItems['color'].toString(), isDark),
+          if (luckyItems['number'] != null) _buildLuckyChip('🔢', '숫자', luckyItems['number'].toString(), isDark),
+          if (luckyItems['direction'] != null) _buildLuckyChip('🧭', '방향', luckyItems['direction'].toString(), isDark),
+          if (luckyItems['timing'] != null) _buildLuckyChip('⏰', '시간', luckyItems['timing'].toString(), isDark),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLuckyChip(String emoji, String label, String value, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFB300).withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 16)),
+          const SizedBox(width: 6),
+          Text(value, style: context.bodySmall.copyWith(fontWeight: FontWeight.w600, color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+        ],
+      ),
+    );
+  }
+
+  // ===== 프리미엄 섹션 (블러) =====
+
+  Widget _buildTimingSection() {
+    final data = _fortuneResult.data;
+    final timing = data['timing'] as Map<String, dynamic>? ?? {};
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return _buildBlurredSectionCard(
+      title: '🎯 타이밍 운세',
+      icon: Icons.access_time_rounded,
+      color: const Color(0xFF00BCD4),
+      sectionKey: 'timing',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 매수 시그널
+          _buildSignalBadge(timing['buySignal'] as String? ?? 'moderate', isDark),
+          const SizedBox(height: 12),
+          Text(
+            timing['buySignalText'] as String? ?? '매수 타이밍을 분석 중입니다.',
+            style: context.bodyMedium.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, height: 1.5),
+          ),
+          const SizedBox(height: 16),
+
+          // 최적 시간대
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: TossDesignSystem.primaryBlue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.summarize_rounded,
-                  color: TossDesignSystem.primaryBlue,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                '투자 요약',
-                style: context.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              const Icon(Icons.schedule_rounded, size: 18, color: Color(0xFF00BCD4)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '최적 시간: ${timing['bestTimeSlotText'] ?? '오후 시간대'}',
+                  style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          GptStyleTypingText(
-            text: content,
-            style: context.bodyMedium.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-              height: 1.6,
-            ),
-            startTyping: _currentTypingSection >= 0,
-            showGhostText: true,
-            onComplete: () {
-              if (mounted) {
-                setState(() => _currentTypingSection = 1);
-              }
-            },
+          const SizedBox(height: 8),
+
+          // 홀딩 조언
+          Row(
+            children: [
+              const Icon(Icons.pause_circle_outline_rounded, size: 18, color: Color(0xFF00BCD4)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  timing['holdAdvice'] as String? ?? '상황을 지켜보세요.',
+                  style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
+                ),
+              ),
+            ],
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 400.ms, delay: 200.ms).slideY(begin: 0.1, end: 0);
+    );
   }
 
-  // ===== 블러 섹션 빌더 =====
+  Widget _buildSignalBadge(String signal, bool isDark) {
+    final config = {
+      'strong': {'label': '매수 추천', 'color': const Color(0xFF4CAF50), 'icon': Icons.arrow_upward_rounded},
+      'moderate': {'label': '관망 추천', 'color': const Color(0xFF2196F3), 'icon': Icons.remove_rounded},
+      'weak': {'label': '신중히', 'color': const Color(0xFFFF9800), 'icon': Icons.priority_high_rounded},
+      'avoid': {'label': '매수 자제', 'color': const Color(0xFFF44336), 'icon': Icons.close_rounded},
+    };
+    final c = config[signal] ?? config['moderate']!;
 
-  Widget _buildBlurredSection({
-    required String title,
-    required IconData icon,
-    required Color color,
-    required Widget Function() contentBuilder,
-    required String sectionKey,
-  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: (c['color'] as Color).withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(c['icon'] as IconData, color: c['color'] as Color, size: 20),
+          const SizedBox(width: 8),
+          Text(c['label'] as String, style: context.bodyMedium.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w700)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOutlookSection() {
+    final data = _fortuneResult.data;
+    final outlook = data['outlook'] as Map<String, dynamic>? ?? {};
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return _buildBlurredSectionCard(
+      title: '📈 전망 운세',
+      icon: Icons.trending_up_rounded,
+      color: const Color(0xFF9C27B0),
+      sectionKey: 'outlook',
+      child: Column(
+        children: [
+          _buildOutlookRow('1주일', outlook['shortTerm'] as Map<String, dynamic>? ?? {}, isDark),
+          const SizedBox(height: 12),
+          _buildOutlookRow('1개월', outlook['midTerm'] as Map<String, dynamic>? ?? {}, isDark),
+          const SizedBox(height: 12),
+          _buildOutlookRow('3개월+', outlook['longTerm'] as Map<String, dynamic>? ?? {}, isDark),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOutlookRow(String label, Map<String, dynamic> data, bool isDark) {
+    final score = (data['score'] as num?)?.toInt() ?? 50;
+    final trend = data['trend'] as String? ?? 'neutral';
+    final text = data['text'] as String? ?? '분석 중...';
+
+    final trendIcon = trend == 'up' ? Icons.arrow_upward_rounded : (trend == 'down' ? Icons.arrow_downward_rounded : Icons.remove_rounded);
+    final trendColor = trend == 'up' ? const Color(0xFF4CAF50) : (trend == 'down' ? const Color(0xFFF44336) : const Color(0xFF9E9E9E));
+
+    return Row(
+      children: [
+        SizedBox(
+          width: 60,
+          child: Text(label, style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, fontWeight: FontWeight.w600)),
+        ),
+        Icon(trendIcon, size: 18, color: trendColor),
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(color: trendColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+          child: Text('$score점', style: context.bodySmall.copyWith(color: trendColor, fontWeight: FontWeight.w600)),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(text, style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600), overflow: TextOverflow.ellipsis),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRisksSection() {
+    final data = _fortuneResult.data;
+    final risks = data['risks'] as Map<String, dynamic>? ?? {};
+    final warnings = risks['warnings'] as List? ?? [];
+    final avoidActions = risks['avoidActions'] as List? ?? [];
+    final volatilityLevel = risks['volatilityLevel'] as String? ?? 'medium';
+    final volatilityText = risks['volatilityText'] as String? ?? '';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return _buildBlurredSectionCard(
+      title: '⚠️ 리스크 경고',
+      icon: Icons.warning_rounded,
+      color: const Color(0xFFF44336),
+      sectionKey: 'risks',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 변동성 수준
+          _buildVolatilityBadge(volatilityLevel, volatilityText, isDark),
+          const SizedBox(height: 16),
+
+          // 주의사항
+          if (warnings.isNotEmpty) ...[
+            Text('주의사항', style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            ...warnings.map((w) => Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('• ', style: TextStyle(color: Color(0xFFF44336))),
+                  Expanded(child: Text(w.toString(), style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, height: 1.4))),
+                ],
+              ),
+            )),
+          ],
+
+          // 피해야 할 행동
+          if (avoidActions.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text('피해야 할 행동', style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            ...avoidActions.map((a) => Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('❌ '),
+                  Expanded(child: Text(a.toString(), style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, height: 1.4))),
+                ],
+              ),
+            )),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVolatilityBadge(String level, String text, bool isDark) {
+    final config = {
+      'low': {'label': '낮음', 'color': const Color(0xFF4CAF50)},
+      'medium': {'label': '보통', 'color': const Color(0xFFFF9800)},
+      'high': {'label': '높음', 'color': const Color(0xFFF44336)},
+      'extreme': {'label': '매우 높음', 'color': const Color(0xFF9C27B0)},
+    };
+    final c = config[level] ?? config['medium']!;
+
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(color: (c['color'] as Color).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(8)),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.show_chart_rounded, size: 16, color: Color(0xFFF44336)),
+              const SizedBox(width: 6),
+              Text('변동성 ${c['label']}', style: context.bodySmall.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w600)),
+            ],
+          ),
+        ),
+        if (text.isNotEmpty) ...[
+          const SizedBox(width: 12),
+          Expanded(child: Text(text, style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600))),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildMarketMoodSection() {
+    final data = _fortuneResult.data;
+    final marketMood = data['marketMood'] as Map<String, dynamic>? ?? {};
+    final categoryMood = marketMood['categoryMood'] as String? ?? 'neutral';
+    final categoryMoodText = marketMood['categoryMoodText'] as String? ?? '';
+    final investorSentiment = marketMood['investorSentiment'] as String? ?? '';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return _buildBlurredSectionCard(
+      title: '🌊 시장 기운',
+      icon: Icons.waves_rounded,
+      color: const Color(0xFF3F51B5),
+      sectionKey: 'marketMood',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildMoodBadge(categoryMood),
+          const SizedBox(height: 12),
+          if (categoryMoodText.isNotEmpty)
+            Text(categoryMoodText, style: context.bodyMedium.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, height: 1.5)),
+          if (investorSentiment.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.people_outline_rounded, size: 18, color: Color(0xFF3F51B5)),
+                const SizedBox(width: 8),
+                Expanded(child: Text(investorSentiment, style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600))),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMoodBadge(String mood) {
+    final config = {
+      'bullish': {'label': '📈 상승 기운', 'color': const Color(0xFF4CAF50)},
+      'neutral': {'label': '➡️ 보합 기운', 'color': const Color(0xFF9E9E9E)},
+      'bearish': {'label': '📉 하락 기운', 'color': const Color(0xFFF44336)},
+    };
+    final c = config[mood] ?? config['neutral']!;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(color: (c['color'] as Color).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
+      child: Text(c['label'] as String, style: context.bodyMedium.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w700)),
+    );
+  }
+
+  Widget _buildAdviceSection() {
+    final data = _fortuneResult.data;
+    final advice = data['advice'] as String? ?? '';
+    final psychologyTip = data['psychologyTip'] as String? ?? '';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (advice.isEmpty && psychologyTip.isEmpty) return const SizedBox.shrink();
+
+    return _buildBlurredSectionCard(
+      title: '💡 투자 조언',
+      icon: Icons.lightbulb_rounded,
+      color: const Color(0xFF4CAF50),
+      sectionKey: 'advice',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (advice.isNotEmpty) ...[
+            Text(FortuneTextCleaner.clean(advice), style: context.bodyMedium.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, height: 1.6)),
+          ],
+          if (psychologyTip.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: const Color(0xFF9C27B0).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
+              child: Row(
+                children: [
+                  const Icon(Icons.psychology_rounded, size: 20, color: Color(0xFF9C27B0)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(FortuneTextCleaner.clean(psychologyTip), style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600)),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // ===== 공통 빌더 =====
+
+  Widget _buildSectionCard({required String title, required IconData icon, required Color color, required Widget child}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -376,9 +626,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       decoration: BoxDecoration(
         color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
-        ),
+        border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -387,23 +635,43 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 24,
-                ),
+                decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+                child: Icon(icon, color: color, size: 24),
               ),
               const SizedBox(width: 12),
-              Text(
-                title,
-                style: context.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                ),
+              Text(title, style: context.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          child,
+        ],
+      ),
+    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0);
+  }
+
+  Widget _buildBlurredSectionCard({required String title, required IconData icon, required Color color, required String sectionKey, required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+                child: Icon(icon, color: color, size: 24),
               ),
+              const SizedBox(width: 12),
+              Text(title, style: context.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
             ],
           ),
           const SizedBox(height: 16),
@@ -411,275 +679,14 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             isBlurred: _fortuneResult.isBlurred,
             blurredSections: _fortuneResult.blurredSections,
             sectionKey: sectionKey,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 80),
-              child: contentBuilder(),
-            ),
+            child: ConstrainedBox(constraints: const BoxConstraints(minHeight: 60), child: child),
           ),
         ],
       ),
     ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, end: 0);
   }
 
-  Widget _buildLuckyItemsContent() {
-    final data = _fortuneResult.data;
-    final luckyItems = data['luckyItems'] as Map<String, dynamic>? ??
-                       data['lucky_items'] as Map<String, dynamic>? ?? {};
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    if (luckyItems.isEmpty) {
-      return Text(
-        '행운 아이템 정보가 없습니다.',
-        style: context.bodyMedium.copyWith(
-          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-        ),
-      );
-    }
-
-    final items = <Widget>[];
-    final iconMap = {
-      'color': Icons.palette_rounded,
-      'number': Icons.numbers_rounded,
-      'direction': Icons.explore_rounded,
-      'timing': Icons.schedule_rounded,
-    };
-    final labelMap = {
-      'color': '행운의 색',
-      'number': '행운의 숫자',
-      'direction': '행운의 방향',
-      'timing': '행운의 시간',
-    };
-
-    luckyItems.forEach((key, value) {
-      if (value != null) {
-        items.add(
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFB300).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  iconMap[key] ?? Icons.star_rounded,
-                  color: const Color(0xFFFFB300),
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      labelMap[key] ?? key,
-                      style: context.bodySmall.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-                      ),
-                    ),
-                    Text(
-                      value.toString(),
-                      style: context.bodyMedium.copyWith(
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      }
-    });
-
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: items,
-    );
-  }
-
-  Widget _buildDescriptionContent() {
-    final data = _fortuneResult.data;
-    final descriptionRaw = data['description'];
-    final description = FortuneTextCleaner.clean(
-      descriptionRaw is String ? descriptionRaw : '상세 분석 정보가 없습니다.',
-    );
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Text(
-      description,
-      style: context.bodyMedium.copyWith(
-        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-        height: 1.6,
-      ),
-    );
-  }
-
-  Widget _buildRecommendationsContent() {
-    final data = _fortuneResult.data;
-    final recommendations = data['recommendations'] as List? ??
-                           data['advice'] as List? ??
-                           ['분산 투자를 권장합니다.', '장기적 관점에서 접근하세요.'];
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // String인 경우 처리
-    if (data['recommendations'] is String || data['advice'] is String) {
-      final text = (data['recommendations'] ?? data['advice']) as String;
-      return Text(
-        FortuneTextCleaner.clean(text),
-        style: context.bodyMedium.copyWith(
-          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-          height: 1.6,
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: recommendations.map((rec) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('💡 '),
-              Expanded(
-                child: Text(
-                  FortuneTextCleaner.clean(rec.toString()),
-                  style: context.bodyMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-                    height: 1.5,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildWarningsContent() {
-    final data = _fortuneResult.data;
-    final warnings = data['warnings'] as List? ??
-                    ['투자에는 항상 위험이 따릅니다.', '본 결과는 참고용이며 투자 결정은 본인의 판단에 따라야 합니다.'];
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // String인 경우 처리
-    if (data['warnings'] is String) {
-      return Text(
-        FortuneTextCleaner.clean(data['warnings'] as String),
-        style: context.bodyMedium.copyWith(
-          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-          height: 1.6,
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: warnings.map((warning) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('⚠️ '),
-              Expanded(
-                child: Text(
-                  FortuneTextCleaner.clean(warning.toString()),
-                  style: context.bodyMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-                    height: 1.5,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildHexagonScoresContent() {
-    final data = _fortuneResult.data;
-    final hexagonScores = data['hexagonScores'] as Map<String, dynamic>? ??
-                         data['hexagon_scores'] as Map<String, dynamic>? ?? {};
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    if (hexagonScores.isEmpty) {
-      return Text(
-        '분석 차트 정보가 없습니다.',
-        style: context.bodyMedium.copyWith(
-          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-        ),
-      );
-    }
-
-    final labelMap = {
-      'timing': '타이밍',
-      'value': '가치',
-      'risk': '리스크',
-      'trend': '트렌드',
-      'emotion': '심리',
-      'knowledge': '정보력',
-    };
-
-    return Column(
-      children: hexagonScores.entries.map((entry) {
-        final score = (entry.value as num?)?.toDouble() ?? 0.0;
-        final normalizedScore = score > 100 ? score / 100 : score;
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 70,
-                child: Text(
-                  labelMap[entry.key] ?? entry.key,
-                  style: context.bodySmall.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: normalizedScore / 100,
-                    backgroundColor: isDark
-                        ? TossDesignSystem.borderDark
-                        : TossTheme.borderGray200,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      _getProgressColor(normalizedScore),
-                    ),
-                    minHeight: 8,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              SizedBox(
-                width: 40,
-                child: Text(
-                  '${normalizedScore.toInt()}',
-                  style: context.bodySmall.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  // ===== 헬퍼 메서드 =====
+  // ===== 헬퍼 =====
 
   List<Color> _getScoreGradient(int score) {
     if (score >= 80) return [const Color(0xFF4CAF50), const Color(0xFF81C784)];
@@ -703,38 +710,19 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
   }
 
   String _getCategoryLabel(String category) {
-    final labelMap = {
-      'crypto': '암호화폐',
-      'krStock': '국내주식',
-      'usStock': '해외주식',
-      'etf': 'ETF',
-      'commodity': '원자재',
-      'realEstate': '부동산',
-    };
-    return labelMap[category] ?? category;
+    return {'crypto': '암호화폐', 'krStock': '국내주식', 'usStock': '해외주식', 'etf': 'ETF', 'commodity': '원자재', 'realEstate': '부동산'}[category] ?? category;
   }
 
-  Color _getProgressColor(double score) {
-    if (score >= 80) return const Color(0xFF4CAF50);
-    if (score >= 60) return const Color(0xFF2196F3);
-    if (score >= 40) return const Color(0xFFFF9800);
-    return const Color(0xFFF44336);
-  }
-
-  // ===== 광고 & 블러 해제 =====
+  // ===== 광고 =====
 
   Future<void> _showAdAndUnblur() async {
-    Logger.info('[투자운] 광고 시청 시작');
+    Logger.info('[투자운 v2] 광고 시청 시작');
 
     try {
       final adService = AdService.instance;
 
-      // RewardedAd 로딩 확인 (최대 5초 대기)
       if (!adService.isRewardedAdReady) {
-        Logger.info('[투자운] RewardedAd 로딩 시작');
         await adService.loadRewardedAd();
-
-        // 최대 5초 대기 (500ms × 10회 폴링)
         int waitCount = 0;
         while (!adService.isRewardedAdReady && waitCount < 10) {
           await Future.delayed(const Duration(milliseconds: 500));
@@ -742,13 +730,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         }
 
         if (!adService.isRewardedAdReady) {
-          Logger.warning('[투자운] ❌ RewardedAd 로드 타임아웃');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
-                backgroundColor: TossDesignSystem.errorRed,
-              ),
+              const SnackBar(content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'), backgroundColor: TossDesignSystem.errorRed),
             );
           }
           return;
@@ -757,34 +741,22 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
 
       await adService.showRewardedAd(
         onUserEarnedReward: (ad, reward) {
-          Logger.info('[투자운] ✅ 광고 시청 완료, 블러 해제');
+          Logger.info('[투자운 v2] ✅ 광고 시청 완료, 블러 해제');
           if (mounted) {
             setState(() {
-              _fortuneResult = _fortuneResult.copyWith(
-                isBlurred: false,
-                blurredSections: [],
-              );
+              _fortuneResult = _fortuneResult.copyWith(isBlurred: false, blurredSections: []);
             });
           }
         },
       );
     } catch (e, stackTrace) {
-      Logger.error('[투자운] 광고 표시 실패', e, stackTrace);
-
-      // UX 개선: 에러 발생해도 블러 해제
+      Logger.error('[투자운 v2] 광고 표시 실패', e, stackTrace);
       if (mounted) {
         setState(() {
-          _fortuneResult = _fortuneResult.copyWith(
-            isBlurred: false,
-            blurredSections: [],
-          );
+          _fortuneResult = _fortuneResult.copyWith(isBlurred: false, blurredSections: []);
         });
-
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
-            backgroundColor: TossDesignSystem.warningOrange,
-          ),
+          const SnackBar(content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'), backgroundColor: TossDesignSystem.warningOrange),
         );
       }
     }

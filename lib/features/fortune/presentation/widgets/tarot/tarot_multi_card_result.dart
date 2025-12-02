@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/widgets/gpt_style_typing_text.dart';
 import 'tarot_card_detail_modal.dart';
 import '../../../../../core/theme/typography_unified.dart';
 
@@ -25,6 +26,9 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+
+  // GPT 스타일 타이핑 효과 섹션 관리
+  int _currentTypingSection = 0;
 
   @override
   void initState() {
@@ -52,6 +56,15 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
     ));
 
     _animationController.forward();
+  }
+
+  @override
+  void didUpdateWidget(covariant TarotMultiCardResult oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // result가 변경되면 타이핑 섹션 리셋
+    if (widget.result != oldWidget.result) {
+      setState(() => _currentTypingSection = 0);
+    }
   }
 
   @override
@@ -466,46 +479,23 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                         ),
                       ),
 
-                    // 카드 이름 오버레이
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              TossDesignSystem.white.withValues(alpha: 0.0),
-                              TossDesignSystem.black.withValues(alpha: 0.85),
-                            ],
-                          ),
-                        ),
-                        child: Text(
-                          card.cardNameKr,
-                          style: TypographyUnified.buttonMedium.copyWith(
-                            color: TossDesignSystem.white,
-                            fontWeight: FontWeight.w700,
-                            shadows: [
-                              Shadow(
-                                color: TossDesignSystem.black.withValues(alpha: 0.5),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
+
+          // 카드 이름 (이미지 아래에 별도 표시)
+          Text(
+            card.cardNameKr,
+            style: TypographyUnified.buttonMedium.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
 
           // 해석 텍스트
           if (interpretation.isNotEmpty)
@@ -558,7 +548,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
     double width = large ? 220 : (small ? 90 : 120);
     double height = large ? 320 : (small ? 135 : 180);
 
-    return GestureDetector(
+    final cardWidget = GestureDetector(
       onTap: () {
         // 카드 상세 모달 열기
         showModalBottomSheet(
@@ -684,44 +674,6 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                     ),
                   ),
 
-                // 카드 이름 (작은 카드가 아닐 때만)
-                if (!small)
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      padding: EdgeInsets.all(large ? 12 : 10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            TossDesignSystem.white.withValues(alpha: 0.0),
-                            TossDesignSystem.black.withValues(alpha: 0.85),
-                          ],
-                        ),
-                      ),
-                      child: Text(
-                        card.cardNameKr,
-                        style: TextStyle(
-                          color: TossDesignSystem.white,
-                          fontSize: large ? 16 : 13,
-                          fontWeight: FontWeight.w700,
-                          shadows: [
-                            Shadow(
-                              color: TossDesignSystem.black.withValues(alpha: 0.5),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -729,6 +681,33 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
         ),
       ),
     );
+
+    // 카드 이름을 이미지 아래에 별도로 표시 (small이 아닐 때만)
+    if (!small) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          cardWidget,
+          const SizedBox(height: 8),
+          SizedBox(
+            width: width,
+            child: Text(
+              card.cardNameKr,
+              style: TextStyle(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                fontSize: large ? 15 : 12,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      );
+    }
+
+    return cardWidget;
   }
 
   Widget _buildOverallInterpretation(bool isDark) {
@@ -768,13 +747,18 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
             ],
           ),
           SizedBox(height: 12),
-          Text(
-            widget.result.overallInterpretation,
+          GptStyleTypingText(
+            text: widget.result.overallInterpretation,
             style: TypographyUnified.bodySmall.copyWith(
               fontWeight: FontWeight.w400,
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               height: 1.6,
             ),
+            startTyping: _currentTypingSection >= 0,
+            showGhostText: true,
+            onComplete: () {
+              if (mounted) setState(() => _currentTypingSection = 1);
+            },
           ),
         ],
       ),

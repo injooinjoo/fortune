@@ -46,17 +46,18 @@ class SajuHapchungWidget extends StatelessWidget {
     final inauspiciousRelations = StemBranchRelations.filterInauspicious(relations);
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(TossTheme.spacingM),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
             _buildTitle(isDark),
-            const SizedBox(height: TossTheme.spacingL),
+            const SizedBox(height: TossTheme.spacingS),
           ],
           // 관계 요약 시각화
           _buildRelationSummary(relations, isDark),
-          const SizedBox(height: TossTheme.spacingL),
+          const SizedBox(height: TossTheme.spacingS),
           // 합(合) 섹션
           if (combinationRelations.isNotEmpty) ...[
             _buildSectionHeader(RelationType.combination, isDark),
@@ -72,7 +73,7 @@ class SajuHapchungWidget extends StatelessWidget {
           ],
           // 종합 해석
           if (relations.isNotEmpty) ...[
-            const SizedBox(height: TossTheme.spacingL),
+            const SizedBox(height: TossTheme.spacingS),
             _buildSummary(
               combinationRelations.length,
               inauspiciousRelations.length,
@@ -90,37 +91,25 @@ class SajuHapchungWidget extends StatelessWidget {
         Icon(
           Icons.swap_horizontal_circle_outlined,
           color: TossTheme.brandBlue,
-          size: 24,
+          size: 20,
         ),
-        const SizedBox(width: TossTheme.spacingS),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        const SizedBox(width: TossTheme.spacingXS),
+        Row(
           children: [
-            Row(
-              children: [
-                Text(
-                  '합충형파해',
-                  style: TossTheme.heading2.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '合沖刑破害',
-                  style: TossTheme.body2.copyWith(
-                    color: isDark
-                        ? TossTheme.textGray400
-                        : TossDesignSystem.gray600,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 2),
             Text(
-              '천간과 지지 간의 상호 관계',
+              '합충형파해',
+              style: TossTheme.heading3.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '合沖刑破害',
               style: TossTheme.caption.copyWith(
-                color: isDark ? TossTheme.textGray400 : TossDesignSystem.gray600,
+                color: isDark
+                    ? TossTheme.textGray400
+                    : TossDesignSystem.gray600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -136,12 +125,15 @@ class SajuHapchungWidget extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.symmetric(
+        horizontal: TossTheme.spacingS,
+        vertical: TossTheme.spacingXS,
+      ),
       decoration: BoxDecoration(
         color: isDark
             ? TossDesignSystem.cardBackgroundDark
             : TossTheme.backgroundSecondary,
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        borderRadius: BorderRadius.circular(TossTheme.radiusS),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -155,46 +147,49 @@ class SajuHapchungWidget extends StatelessWidget {
               Text(
                 type.hanja,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: count > 0 ? color : (isDark ? TossDesignSystem.gray600 : TossTheme.textGray400),
                 ),
               ),
-              const SizedBox(height: 2),
-              // 한글
-              Text(
-                type.korean,
-                style: TossTheme.caption.copyWith(
-                  color: count > 0
-                      ? (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700)
-                      : (isDark ? TossDesignSystem.gray600 : TossTheme.textGray400),
-                  fontWeight: FontWeight.w500,
-                  fontSize: 11,
-                ),
-              ),
-              const SizedBox(height: 4),
-              // 개수 배지
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: count > 0
-                      ? color.withValues(alpha: 0.2)
-                      : (isDark ? Colors.grey.shade800 : Colors.grey.shade200),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    '$count',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+              // 한글 + 개수
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    type.korean,
+                    style: TossTheme.caption.copyWith(
                       color: count > 0
-                          ? color
+                          ? (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700)
                           : (isDark ? TossDesignSystem.gray600 : TossTheme.textGray400),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 10,
                     ),
                   ),
-                ),
+                  const SizedBox(width: 2),
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: count > 0
+                          ? color.withValues(alpha: 0.2)
+                          : (isDark ? Colors.grey.shade800 : Colors.grey.shade200),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$count',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: count > 0
+                              ? color
+                              : (isDark ? TossDesignSystem.gray600 : TossTheme.textGray400),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           );
@@ -271,13 +266,13 @@ class SajuHapchungWidget extends StatelessWidget {
     final color = relation.type.getColor(isDark: isDark);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: TossTheme.spacingS),
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      margin: const EdgeInsets.only(bottom: TossTheme.spacingXS),
+      padding: const EdgeInsets.all(TossTheme.spacingS),
       decoration: BoxDecoration(
         color: isDark
             ? TossDesignSystem.cardBackgroundDark
             : TossTheme.backgroundPrimary,
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        borderRadius: BorderRadius.circular(TossTheme.radiusS),
         border: Border.all(
           color: color.withValues(alpha: 0.3),
           width: 1,
@@ -290,7 +285,10 @@ class SajuHapchungWidget extends StatelessWidget {
             children: [
               // 관계 한자 표시
               Container(
-                padding: const EdgeInsets.all(TossTheme.spacingS),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: TossTheme.spacingS,
+                  vertical: TossTheme.spacingXS,
+                ),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(TossTheme.radiusS),
@@ -302,7 +300,7 @@ class SajuHapchungWidget extends StatelessWidget {
                       return Text(
                         char,
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: color,
                         ),
@@ -311,7 +309,7 @@ class SajuHapchungWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: TossTheme.spacingM),
+              const SizedBox(width: TossTheme.spacingS),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,7 +318,7 @@ class SajuHapchungWidget extends StatelessWidget {
                       children: [
                         Text(
                           relation.name,
-                          style: TossTheme.body1.copyWith(
+                          style: TossTheme.body2.copyWith(
                             fontWeight: FontWeight.bold,
                             color: color,
                           ),
@@ -328,17 +326,17 @@ class SajuHapchungWidget extends StatelessWidget {
                         const SizedBox(width: 4),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
+                            horizontal: 4,
+                            vertical: 1,
                           ),
                           decoration: BoxDecoration(
                             color: color.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
                             relation.type.hanja,
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 9,
                               fontWeight: FontWeight.bold,
                               color: color,
                             ),
@@ -347,8 +345,7 @@ class SajuHapchungWidget extends StatelessWidget {
                       ],
                     ),
                     if (relation.positions != null &&
-                        relation.positions!.isNotEmpty) ...[
-                      const SizedBox(height: 2),
+                        relation.positions!.isNotEmpty)
                       Text(
                         relation.positions!.join(' - '),
                         style: TossTheme.caption.copyWith(
@@ -356,9 +353,9 @@ class SajuHapchungWidget extends StatelessWidget {
                               ? TossTheme.textGray400
                               : TossDesignSystem.gray600,
                           fontWeight: FontWeight.w500,
+                          fontSize: 10,
                         ),
                       ),
-                    ],
                   ],
                 ),
               ),
@@ -411,10 +408,13 @@ class SajuHapchungWidget extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: TossTheme.spacingXS),
           // 설명
           Container(
-            padding: const EdgeInsets.all(TossTheme.spacingS),
+            padding: const EdgeInsets.symmetric(
+              horizontal: TossTheme.spacingS,
+              vertical: TossTheme.spacingXS,
+            ),
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.black.withValues(alpha: 0.2)
@@ -425,7 +425,7 @@ class SajuHapchungWidget extends StatelessWidget {
               relation.description,
               style: TossTheme.caption.copyWith(
                 color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
-                fontSize: 12,
+                fontSize: 11,
               ),
             ),
           ),
@@ -462,7 +462,10 @@ class SajuHapchungWidget extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.symmetric(
+        horizontal: TossTheme.spacingS,
+        vertical: TossTheme.spacingXS,
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -472,7 +475,7 @@ class SajuHapchungWidget extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        borderRadius: BorderRadius.circular(TossTheme.radiusS),
         border: Border.all(
           color: summaryColor.withValues(alpha: 0.3),
           width: 1,
@@ -480,28 +483,16 @@ class SajuHapchungWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(summaryIcon, color: summaryColor, size: 24),
-          const SizedBox(width: TossTheme.spacingM),
+          Icon(summaryIcon, color: summaryColor, size: 18),
+          const SizedBox(width: TossTheme.spacingS),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '관계 종합',
-                  style: TossTheme.body2.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: summaryColor,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  summaryText,
-                  style: TossTheme.caption.copyWith(
-                    color:
-                        isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
-                  ),
-                ),
-              ],
+            child: Text(
+              summaryText,
+              style: TossTheme.caption.copyWith(
+                color:
+                    isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                fontSize: 11,
+              ),
             ),
           ),
         ],

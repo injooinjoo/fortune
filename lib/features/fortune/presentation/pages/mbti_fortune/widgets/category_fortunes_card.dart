@@ -4,10 +4,13 @@ import 'package:fortune/core/models/fortune_result.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/typography_unified.dart';
 import 'package:fortune/core/utils/fortune_text_cleaner.dart';
+import 'package:fortune/core/widgets/gpt_style_typing_text.dart';
 
-class CategoryFortunesCard extends StatelessWidget {
+class CategoryFortunesCard extends StatefulWidget {
   final FortuneResult fortuneResult;
   final List<String> selectedCategories;
+  final bool startTyping;
+  final VoidCallback? onTypingComplete;
 
   static const List<Map<String, dynamic>> categories = [
     {'label': '연애운', 'icon': Icons.favorite, 'color': Color(0xFFEC4899)},
@@ -22,7 +25,16 @@ class CategoryFortunesCard extends StatelessWidget {
     super.key,
     required this.fortuneResult,
     required this.selectedCategories,
+    this.startTyping = true,
+    this.onTypingComplete,
   });
+
+  @override
+  State<CategoryFortunesCard> createState() => _CategoryFortunesCardState();
+}
+
+class _CategoryFortunesCardState extends State<CategoryFortunesCard> {
+  int _currentTypingIndex = 0;
 
   String _getCategoryFortune(String category) {
     const fortunes = {
@@ -37,13 +49,24 @@ class CategoryFortunesCard extends StatelessWidget {
   }
 
   @override
+  void didUpdateWidget(covariant CategoryFortunesCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // fortuneResult가 변경되면 타이핑 인덱스 리셋
+    if (widget.fortuneResult != oldWidget.fortuneResult) {
+      setState(() => _currentTypingIndex = 0);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final data = fortuneResult.data as Map<String, dynamic>? ?? {};
+    final data = widget.fortuneResult.data as Map<String, dynamic>? ?? {};
 
     return Column(
-      children: selectedCategories.map((category) {
-        final categoryInfo = categories.firstWhere(
+      children: widget.selectedCategories.asMap().entries.map((entry) {
+        final index = entry.key;
+        final category = entry.value;
+        final categoryInfo = CategoryFortunesCard.categories.firstWhere(
           (c) => c['label'] == category,
         );
 
@@ -64,6 +87,8 @@ class CategoryFortunesCard extends StatelessWidget {
           default:
             categoryText = FortuneTextCleaner.clean(_getCategoryFortune(category));
         }
+
+        final isLastCategory = index == widget.selectedCategories.length - 1;
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
@@ -90,12 +115,21 @@ class CategoryFortunesCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  categoryText,
+                GptStyleTypingText(
+                  text: categoryText,
                   style: TypographyUnified.bodySmall.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                     height: 1.5,
                   ),
+                  startTyping: widget.startTyping && _currentTypingIndex >= index,
+                  showGhostText: true,
+                  onComplete: () {
+                    if (isLastCategory) {
+                      widget.onTypingComplete?.call();
+                    } else {
+                      if (mounted) setState(() => _currentTypingIndex = index + 1);
+                    }
+                  },
                 ),
               ],
             ),

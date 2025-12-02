@@ -29,6 +29,8 @@ class EmotionalLoadingChecklist extends ConsumerStatefulWidget {
 }
 
 class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChecklist> {
+  // dispose에서 사용할 notifier 참조 저장
+  NavigationVisibilityNotifier? _navigationNotifier;
 
   // 전체 50개 감성적 로딩 메시지
   static const List<LoadingStep> _allMessages = [
@@ -96,9 +98,11 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
     // 메시지 랜덤 셔플
     _shuffledMessages = List.from(_allMessages)..shuffle(Random());
 
-    // 네비게이션 바 숨기기
+    // 네비게이션 바 숨기기 + dispose용 참조 저장
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(navigationVisibilityProvider.notifier).hide();
+      if (!mounted) return;
+      _navigationNotifier = ref.read(navigationVisibilityProvider.notifier);
+      _navigationNotifier?.hide();
     });
   }
 
@@ -146,11 +150,11 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
 
   @override
   void dispose() {
-    // 네비게이션 바 복원
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(navigationVisibilityProvider.notifier).show();
-    });
-
+    // 네비게이션 바 복원 - Future로 지연 실행 (dispose 시점에 widget tree가 빌드 중일 수 있음)
+    final notifier = _navigationNotifier;
+    if (notifier != null) {
+      Future(() => notifier.show());
+    }
     super.dispose();
   }
 
@@ -183,20 +187,6 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // 로딩 인디케이터
-                SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      isDark
-                        ? TossDesignSystem.white.withValues(alpha: 0.7)
-                        : TossDesignSystem.primaryBlue,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 32),
                 // 제목 (RotateAnimatedText)
                 SizedBox(
                   height: 32,

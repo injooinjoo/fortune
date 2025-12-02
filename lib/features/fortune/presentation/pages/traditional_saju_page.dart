@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
+import '../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -34,9 +35,9 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   // 애니메이션 컨트롤러
   late AnimationController _resultAnimationController;
 
-  // 페이지 컨트롤러 (스냅 스크롤용)
-  late PageController _pageController;
-  int _currentPage = 0;
+  // 탭 컨트롤러 (세그먼트 네비게이션)
+  late TabController _tabController;
+  static const List<String> _tabNames = ['명식', '오행', '지장간', '12운성', '신살', '합충', '질문'];
 
   // 질문 선택 및 운세보기 상태 관리
   String? _selectedQuestion;
@@ -47,6 +48,9 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   // ✅ Phase 19-3: Blur 상태 관리
   bool _isBlurred = false;
   List<String> _blurredSections = [];
+
+  // GPT 스타일 타이핑 효과 섹션 관리
+  int _currentTypingSection = 0;
 
   // API 응답 저장
   FortuneResult? _fortuneResult;
@@ -59,9 +63,10 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
       vsync: this,
     );
 
-    // 페이지 컨트롤러 초기화
-    _pageController = PageController(
-      viewportFraction: 0.92, // 다음 페이지 살짝 보이게
+    // 탭 컨트롤러 초기화
+    _tabController = TabController(
+      length: _tabNames.length,
+      vsync: this,
     );
 
     // 애니메이션 즉시 시작 - 오행 차트 표시를 위해
@@ -77,7 +82,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   void dispose() {
     // 애니메이션 컨트롤러 먼저 해제
     _resultAnimationController.dispose();
-    _pageController.dispose();
+    _tabController.dispose();
     _customQuestionController.dispose();
     super.dispose();
   }
@@ -209,47 +214,35 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
       '수': providerElements?['수'] ?? sajuData['elementBalance']?['수'] ?? 0,
     };
 
-    // 페이지 목록
-    final pages = <Widget>[
-      // 1. 사주 명식
-      _buildPageItem(SajuPillarTablePro(sajuData: sajuData)),
-      // 2. 오행 차트
-      _buildPageItem(SajuElementChart(
-        elementBalance: elementBalance,
-        animationController: _resultAnimationController,
-      )),
-      // 3. 지장간 분석
-      _buildPageItem(SajuJijangganWidget(sajuData: sajuData)),
-      // 4. 12운성 분석
-      _buildPageItem(SajuTwelveStagesWidget(sajuData: sajuData)),
-      // 5. 신살 분석
-      _buildPageItem(SajuSinsalWidget(sajuData: sajuData)),
-      // 6. 합충형파해 분석
-      _buildPageItem(SajuHapchungWidget(sajuData: sajuData)),
-      // 7. 질문 선택 섹션
-      _buildPageItem(_buildQuestionSelectionSection()),
-    ];
-
     return Stack(
       children: [
         Column(
           children: [
-            // 페이지 인디케이터
-            _buildPageIndicator(pages.length, isDark),
-            // 스냅 스크롤 PageView
+            // 탭바
+            _buildTabBar(isDark),
+            // 탭뷰
             Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                scrollDirection: Axis.vertical,
-                itemCount: pages.length,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
-                },
-                itemBuilder: (context, index) {
-                  return pages[index];
-                },
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  // 1. 사주 명식
+                  _buildTabContent(SajuPillarTablePro(sajuData: sajuData)),
+                  // 2. 오행 차트
+                  _buildTabContent(SajuElementChart(
+                    elementBalance: elementBalance,
+                    animationController: _resultAnimationController,
+                  )),
+                  // 3. 지장간 분석
+                  _buildTabContent(SajuJijangganWidget(sajuData: sajuData)),
+                  // 4. 12운성 분석
+                  _buildTabContent(SajuTwelveStagesWidget(sajuData: sajuData)),
+                  // 5. 신살 분석
+                  _buildTabContent(SajuSinsalWidget(sajuData: sajuData)),
+                  // 6. 합충형파해 분석
+                  _buildTabContent(SajuHapchungWidget(sajuData: sajuData)),
+                  // 7. 질문 선택 섹션
+                  _buildTabContent(_buildQuestionSelectionSection()),
+                ],
               ),
             ),
           ],
@@ -266,67 +259,47 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     );
   }
 
-  /// 페이지 아이템 래퍼
-  Widget _buildPageItem(Widget child) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingS,
-        vertical: TossTheme.spacingS,
-      ),
-      child: SingleChildScrollView(
-        physics: const ClampingScrollPhysics(),
-        child: child,
-      ),
+  /// 탭 컨텐츠 래퍼
+  Widget _buildTabContent(Widget child) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(TossTheme.spacingM),
+      physics: const ClampingScrollPhysics(),
+      child: child,
     );
   }
 
-  /// 페이지 인디케이터
-  Widget _buildPageIndicator(int pageCount, bool isDark) {
-    final sectionNames = ['명식', '오행', '지장간', '12운성', '신살', '합충', '질문'];
-
+  /// 탭바
+  Widget _buildTabBar(bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingM,
-        vertical: TossTheme.spacingS,
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.cardBackgroundDark : Colors.white,
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
+            width: 1,
+          ),
+        ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(pageCount, (index) {
-          final isActive = index == _currentPage;
-          return GestureDetector(
-            onTap: () {
-              _pageController.animateToPage(
-                index,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.symmetric(horizontal: 3),
-              padding: EdgeInsets.symmetric(
-                horizontal: isActive ? 10 : 6,
-                vertical: 4,
-              ),
-              decoration: BoxDecoration(
-                color: isActive
-                    ? TossTheme.brandBlue
-                    : (isDark ? TossDesignSystem.gray700 : TossDesignSystem.gray200),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                sectionNames[index],
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-                  color: isActive
-                      ? Colors.white
-                      : (isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray600),
-                ),
-              ),
-            ),
-          );
-        }),
+      child: TabBar(
+        controller: _tabController,
+        isScrollable: true,
+        tabAlignment: TabAlignment.start,
+        labelColor: TossTheme.brandBlue,
+        unselectedLabelColor: isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray600,
+        labelStyle: const TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
+        indicatorColor: TossTheme.brandBlue,
+        indicatorWeight: 2,
+        dividerColor: Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingS),
+        labelPadding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingM),
+        tabs: _tabNames.map((name) => Tab(text: name)).toList(),
       ),
     );
   }
@@ -553,6 +526,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
         _blurredSections = result.blurredSections;
         _isFortuneLoading = false;
         _showResults = true;
+        _currentTypingSection = 0; // 타이핑 효과 리셋
       });
     } catch (e) {
       if (!mounted) return;
@@ -639,6 +613,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           content: analysis,
           isDark: isDark,
           sectionKey: 'analysis',
+          sectionIndex: 0,
         ),
 
         const SizedBox(height: TossTheme.spacingM),
@@ -649,6 +624,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           content: answer,
           isDark: isDark,
           sectionKey: 'answer',
+          sectionIndex: 1,
         ),
 
         const SizedBox(height: TossTheme.spacingM),
@@ -659,6 +635,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           content: advice,
           isDark: isDark,
           sectionKey: 'advice',
+          sectionIndex: 2,
         ),
 
         const SizedBox(height: TossTheme.spacingM),
@@ -669,6 +646,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           content: supplement,
           isDark: isDark,
           sectionKey: 'supplement',
+          sectionIndex: 3,
         ),
       ],
     );
@@ -680,7 +658,10 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     required String content,
     required bool isDark,
     required String sectionKey,
+    required int sectionIndex,
   }) {
+    final isLastSection = sectionIndex == 3; // supplement가 마지막
+
     return AppCard(
       padding: const EdgeInsets.all(TossTheme.spacingL),
       child: Column(
@@ -700,12 +681,19 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
             isBlurred: _isBlurred,
             blurredSections: _blurredSections,
             sectionKey: sectionKey,
-            child: Text(
-              content,
+            child: GptStyleTypingText(
+              text: content,
               style: TossTheme.body3.copyWith(
                 height: 1.6,
                 color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               ),
+              startTyping: _currentTypingSection >= sectionIndex,
+              showGhostText: true,
+              onComplete: () {
+                if (!isLastSection && mounted) {
+                  setState(() => _currentTypingSection = sectionIndex + 1);
+                }
+              },
             ),
           ),
         ],

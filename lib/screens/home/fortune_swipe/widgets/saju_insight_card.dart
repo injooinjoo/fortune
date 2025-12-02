@@ -22,24 +22,24 @@ class SajuInsightCard extends StatelessWidget {
           '사주 인사이트',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Text(
           '당신의 사주가 말하는 오늘',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 14,
+            fontSize: 13,
           ),
         ),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 16),
 
         // 사주 기둥 표시
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -49,7 +49,7 @@ class SajuInsightCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             children: [
@@ -62,19 +62,20 @@ class SajuInsightCard extends StatelessWidget {
                   _SajuPillar(label: '년', value: sajuData['year_pillar'] ?? '○○', color: Colors.white),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   FortuneTextCleaner.clean(sajuData['insight']?.toString() ??
                   '당신의 사주는 균형잡힌 에너지를 가지고 있습니다. 오늘은 본래의 성향을 잘 활용하면 좋은 결과를 얻을 수 있습니다.'),
                   style: TypographyUnified.bodySmall.copyWith(
                     color: Colors.white,
-                    height: 1.6,
+                    height: 1.5,
+                    fontSize: 13,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -106,22 +107,22 @@ class _SajuPillar extends StatelessWidget {
           label,
           style: TextStyle(
             color: color.withValues(alpha: 0.8),
-            fontSize: 14,
+            fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
             value,
             style: TextStyle(
               color: color,
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
           ),

@@ -38,20 +38,21 @@ class SajuTwelveStagesWidget extends StatelessWidget {
     final strengthLevel = _getStrengthLevel(totalStrength);
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(TossTheme.spacingM),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
             _buildTitle(isDark),
-            const SizedBox(height: TossTheme.spacingL),
+            const SizedBox(height: TossTheme.spacingM),
           ],
           // 12운성 테이블
           _buildStagesTable(stages, isDark),
-          const SizedBox(height: TossTheme.spacingL),
+          const SizedBox(height: TossTheme.spacingM),
           // 신강/신약 판단
           _buildStrengthIndicator(totalStrength, strengthLevel, isDark),
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: TossTheme.spacingS),
           // 각 운성 설명
           _buildStageDescriptions(stages, isDark),
         ],
@@ -65,40 +66,43 @@ class SajuTwelveStagesWidget extends StatelessWidget {
         Icon(
           Icons.loop_outlined,
           color: TossTheme.brandBlue,
-          size: 24,
+          size: 20,
         ),
-        const SizedBox(width: TossTheme.spacingS),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  '12운성',
-                  style: TossTheme.heading2.copyWith(
-                    fontWeight: FontWeight.bold,
+        const SizedBox(width: 6),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    '12운성',
+                    style: TossTheme.heading3.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '十二運星',
-                  style: TossTheme.body2.copyWith(
-                    color: isDark
-                        ? TossTheme.textGray400
-                        : TossTheme.textGray600,
-                    fontWeight: FontWeight.w500,
+                  const SizedBox(width: 4),
+                  Text(
+                    '十二運星',
+                    style: TossTheme.caption.copyWith(
+                      color: isDark
+                          ? TossTheme.textGray400
+                          : TossTheme.textGray600,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 2),
-            Text(
-              '일간의 생명력 주기를 나타내는 12단계',
-              style: TossTheme.caption.copyWith(
-                color: isDark ? TossTheme.textGray400 : TossTheme.textGray600,
+                ],
               ),
-            ),
-          ],
+              Text(
+                '일간의 생명력 주기를 나타내는 12단계',
+                style: TossTheme.caption.copyWith(
+                  fontSize: 11,
+                  color: isDark ? TossTheme.textGray400 : TossTheme.textGray600,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -144,7 +148,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                 return Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      vertical: TossTheme.spacingM,
+                      vertical: 8,
                     ),
                     decoration: BoxDecoration(
                       border: Border(
@@ -162,6 +166,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                           : null,
                     ),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           pillar['hanja']!,
@@ -169,12 +174,12 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                             color: isDark
                                 ? TossTheme.textGray400
                                 : TossTheme.textGray600,
-                            fontSize: 10,
+                            fontSize: 9,
                           ),
                         ),
                         Text(
                           pillar['title']!,
-                          style: TossTheme.body2.copyWith(
+                          style: TossTheme.caption.copyWith(
                             fontWeight: isDay ? FontWeight.bold : FontWeight.w600,
                             color: isDay ? TossTheme.brandBlue : null,
                           ),
@@ -196,7 +201,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
 
               return Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(TossTheme.spacingM),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   decoration: BoxDecoration(
                     border: Border(
                       right: index < pillars.length - 1
@@ -241,28 +246,35 @@ class SajuTwelveStagesWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // 한자 크게
-        Text(
-          stage.hanja,
-          style: TextStyle(
-            fontSize: isDay ? 28 : 24,
-            fontWeight: FontWeight.bold,
-            color: isDay ? TossTheme.brandBlue : color,
+        // 한자 - 컴팩트 사이즈
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            stage.hanja,
+            style: TextStyle(
+              fontSize: isDay ? 22 : 18,
+              fontWeight: FontWeight.bold,
+              color: isDay ? TossTheme.brandBlue : color,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
+        ),
+        // 한글
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            stage.korean,
+            style: TossTheme.caption.copyWith(
+              fontSize: 10,
+              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ),
         const SizedBox(height: 2),
-        // 한글 작게
-        Text(
-          stage.korean,
-          style: TossTheme.caption.copyWith(
-            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
-            fontWeight: FontWeight.w500,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 4),
         // 강도 표시 (세련된 도트 스타일)
         _buildStrengthBadge(stage.strength, color),
       ],
@@ -272,20 +284,20 @@ class SajuTwelveStagesWidget extends StatelessWidget {
   Widget _buildStrengthBadge(int strength, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: 6,
-        vertical: 3,
+        horizontal: 3,
+        vertical: 2,
       ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: List.generate(5, (index) {
           return Container(
-            width: 6,
-            height: 6,
-            margin: EdgeInsets.only(left: index > 0 ? 2 : 0),
+            width: 4,
+            height: 4,
+            margin: EdgeInsets.only(left: index > 0 ? 1.5 : 0),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: index < strength ? color : color.withValues(alpha: 0.2),
@@ -323,7 +335,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -342,8 +354,8 @@ class SajuTwelveStagesWidget extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               color: levelColor.withValues(alpha: 0.2),
               shape: BoxShape.circle,
@@ -354,12 +366,12 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                 Icon(
                   levelIcon,
                   color: levelColor,
-                  size: 20,
+                  size: 14,
                 ),
                 Text(
                   '$totalStrength',
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 9,
                     fontWeight: FontWeight.bold,
                     color: levelColor,
                   ),
@@ -367,16 +379,17 @@ class SajuTwelveStagesWidget extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: TossTheme.spacingM),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   children: [
                     Text(
                       strengthLevel,
-                      style: TossTheme.body1.copyWith(
+                      style: TossTheme.caption.copyWith(
                         fontWeight: FontWeight.bold,
                         color: levelColor,
                       ),
@@ -389,6 +402,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                               ? '身弱'
                               : '中和',
                       style: TossTheme.caption.copyWith(
+                        fontSize: 10,
                         color: isDark
                             ? TossTheme.textGray400
                             : TossTheme.textGray600,
@@ -396,13 +410,16 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   levelDescription,
                   style: TossTheme.caption.copyWith(
+                    fontSize: 10,
                     color:
                         isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -417,107 +434,121 @@ class SajuTwelveStagesWidget extends StatelessWidget {
     bool isDark,
   ) {
     final pillars = ['year', 'month', 'day', 'hour'];
-    final pillarNames = {'year': '년주', 'month': '월주', 'day': '일주', 'hour': '시주'};
+    final pillarNames = {'year': '년', 'month': '월', 'day': '일', 'hour': '시'};
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           '운성별 의미',
-          style: TossTheme.body2.copyWith(
+          style: TossTheme.caption.copyWith(
             fontWeight: FontWeight.bold,
             color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray900,
           ),
         ),
-        const SizedBox(height: TossTheme.spacingS),
-        ...pillars.map((key) {
-          final stage = stages[key];
-          if (stage == null) return const SizedBox.shrink();
+        const SizedBox(height: 6),
+        // 그리드 형태로 2x2 배치
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final itemWidth = (constraints.maxWidth - 6) / 2;
+            return Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: pillars.map((key) {
+                final stage = stages[key];
+                if (stage == null) return const SizedBox.shrink();
 
-          return Container(
-            margin: const EdgeInsets.only(bottom: TossTheme.spacingS),
-            padding: const EdgeInsets.all(TossTheme.spacingS),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? TossDesignSystem.cardBackgroundDark
-                  : Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(TossTheme.radiusS),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: TossTheme.spacingS,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: stage.color.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    pillarNames[key]!,
-                    style: TossTheme.caption.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: stage.color,
-                      fontSize: 10,
+                return Container(
+                  width: itemWidth,
+                  padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? TossDesignSystem.cardBackgroundDark
+                    : Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(TossTheme.radiusS),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: stage.color.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      pillarNames[key]!,
+                      style: TossTheme.caption.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: stage.color,
+                        fontSize: 9,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: TossTheme.spacingS),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            '${stage.korean}(${stage.hanja})',
-                            style: TossTheme.caption.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: isDark
-                                  ? TossDesignSystem.grayDark700
-                                  : TossDesignSystem.gray900,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 1,
-                            ),
-                            decoration: BoxDecoration(
-                              color: stage.color.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              stage.fortune,
-                              style: TextStyle(
-                                fontSize: 9,
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              stage.korean,
+                              style: TossTheme.caption.copyWith(
+                                fontSize: 10,
                                 fontWeight: FontWeight.bold,
-                                color: stage.color,
+                                color: isDark
+                                    ? TossDesignSystem.grayDark700
+                                    : TossDesignSystem.gray900,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        stage.meaning,
-                        style: TossTheme.caption.copyWith(
-                          color: isDark
-                              ? TossTheme.textGray400
-                              : TossTheme.textGray600,
-                          fontSize: 11,
+                            const SizedBox(width: 2),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 3,
+                                vertical: 1,
+                              ),
+                              decoration: BoxDecoration(
+                                color: stage.color.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                              child: Text(
+                                stage.fortune,
+                                style: TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: stage.color,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        Text(
+                          stage.meaning,
+                          style: TossTheme.caption.copyWith(
+                            color: isDark
+                                ? TossTheme.textGray400
+                                : TossTheme.textGray600,
+                            fontSize: 9,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        }),
+                ],
+              ),
+            );
+              }).toList(),
+            );
+          },
+        ),
       ],
     );
   }

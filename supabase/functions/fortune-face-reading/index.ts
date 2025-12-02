@@ -86,6 +86,26 @@ interface FaceReadingResponse {
     luckyDirections: string[]
   }
   userFaceFeatures: FaceFeatures
+  // 새로 추가된 분석 항목
+  compatibility: {
+    idealPartnerType: string
+    idealPartnerDescription: string
+    compatibilityScore: number
+  }
+  marriagePrediction: {
+    earlyAge: string
+    optimalAge: string
+    lateAge: string
+    prediction: string
+  }
+  firstImpression: {
+    trustScore: number
+    trustDescription: string
+    approachabilityScore: number
+    approachabilityDescription: string
+    charismaScore: number
+    charismaDescription: string
+  }
 }
 
 // =====================================================
@@ -128,7 +148,7 @@ function createUserPrompt(userName: string, userGender: string): string {
   "overview": {
     "faceType": "둥근형|타원형|각진형|역삼각형|긴형|다이아몬드형",
     "faceTypeElement": "수형|목형|화형|토형|금형",
-    "firstImpression": "첫인상과 전반적 기운 설명 (2-3문장)",
+    "firstImpression": "첫인상과 전반적 기운 (100자 이내)",
     "overallBlessingScore": 70-95
   },
   "ogwan": {
@@ -186,12 +206,18 @@ function createUserPrompt(userName: string, userGender: string): string {
     "balanceDescription": "삼정 균형 상태 설명"
   },
   "sibigung": {
-    "myeongGung": { "observation": "미간 상태", "interpretation": "명궁 해석", "score": 60-98 },
-    "jaeBaekGung": { "observation": "코 상태", "interpretation": "재백궁 해석", "score": 60-98 },
-    "gwanRokGung": { "observation": "이마 중앙", "interpretation": "관록궁 해석", "score": 60-98 },
-    "cheoCheobGung": { "observation": "눈꼬리", "interpretation": "처첩궁 해석", "score": 60-98 },
-    "jilAekGung": { "observation": "코뿌리", "interpretation": "질액궁 해석", "score": 60-98 },
-    "noBokGung": { "observation": "턱 상태", "interpretation": "노복궁 해석", "score": 60-98 }
+    "myeongGung": { "observation": "미간 상태 관찰", "interpretation": "명궁(命宮) - 운명과 의지력", "score": 60-98 },
+    "jaeBaekGung": { "observation": "코 전체 형태 관찰", "interpretation": "재백궁(財帛宮) - 재물운", "score": 60-98 },
+    "hyeongJeGung": { "observation": "눈썹 형태와 간격", "interpretation": "형제궁(兄弟宮) - 형제자매운", "score": 60-98 },
+    "jeonTaekGung": { "observation": "눈과 눈썹 사이 공간", "interpretation": "전택궁(田宅宮) - 가정/부동산운", "score": 60-98 },
+    "namNyeoGung": { "observation": "눈 아래 누당 상태", "interpretation": "남녀궁(男女宮) - 자녀운", "score": 60-98 },
+    "noBokGung": { "observation": "볼과 턱 형태", "interpretation": "노복궁(奴僕宮) - 부하/직원운", "score": 60-98 },
+    "cheoCheobGung": { "observation": "눈꼬리 모양과 방향", "interpretation": "처첩궁(妻妾宮) - 배우자운", "score": 60-98 },
+    "jilAekGung": { "observation": "코 시작부(산근) 상태", "interpretation": "질액궁(疾厄宮) - 건강운", "score": 60-98 },
+    "cheonIGung": { "observation": "이마 양쪽 상태", "interpretation": "천이궁(遷移宮) - 이사/여행운", "score": 60-98 },
+    "gwanRokGung": { "observation": "이마 중앙 상태", "interpretation": "관록궁(官祿宮) - 직업운/명예", "score": 60-98 },
+    "bokDeokGung": { "observation": "이마 상단 상태", "interpretation": "복덕궁(福德宮) - 복덕/행복", "score": 60-98 },
+    "buMoGung": { "observation": "일월각(이마 양쪽 상단)", "interpretation": "부모궁(父母宮) - 부모/조상운", "score": 60-98 }
   },
   "personality": {
     "traits": ["핵심 성격 특성 3-5개"],
@@ -201,32 +227,32 @@ function createUserPrompt(userName: string, userGender: string): string {
   "fortunes": {
     "wealth": {
       "score": 60-98,
-      "summary": "재물운 요약 1문장",
-      "detail": "재백궁 기반 상세 분석 2-3문장",
+      "summary": "재물운 요약 (50자 이내)",
+      "detail": "재백궁 기반 분석 (100자 이내)",
       "advice": "재물 관련 조언"
     },
     "love": {
       "score": 60-98,
-      "summary": "애정운 요약 1문장",
-      "detail": "처첩궁 기반 상세 분석 2-3문장",
+      "summary": "애정운 요약 (50자 이내)",
+      "detail": "처첩궁 기반 분석 (100자 이내)",
       "advice": "연애/결혼 관련 조언"
     },
     "career": {
       "score": 60-98,
-      "summary": "직업운 요약 1문장",
-      "detail": "관록궁 기반 상세 분석 2-3문장",
+      "summary": "직업운 요약 (50자 이내)",
+      "detail": "관록궁 기반 분석 (100자 이내)",
       "advice": "커리어 관련 조언"
     },
     "health": {
       "score": 60-98,
-      "summary": "건강운 요약 1문장",
-      "detail": "질액궁 기반 상세 분석 2-3문장",
+      "summary": "건강운 요약 (50자 이내)",
+      "detail": "질액궁 기반 분석 (100자 이내)",
       "advice": "건강 관련 조언"
     },
     "overall": {
       "score": 60-98,
-      "summary": "총운 요약 1문장",
-      "detail": "삼정 균형 기반 종합 분석 2-3문장",
+      "summary": "총운 요약 (50자 이내)",
+      "detail": "삼정 균형 기반 종합 분석 (100자 이내)",
       "advice": "인생 전반 조언"
     }
   },
@@ -247,6 +273,25 @@ function createUserPrompt(userName: string, userGender: string): string {
     "mouth": { "size": "large|medium|small", "lips": "full|medium|thin" },
     "jawline": { "shape": "angular|rounded|pointed|square" },
     "overall_impression": ["elegant", "cute", "charismatic", "warm", "intellectual"]
+  },
+  "compatibility": {
+    "idealPartnerType": "이상형 관상 특징 (눈, 코, 입, 얼굴형 중심)",
+    "idealPartnerDescription": "어울리는 상대의 성격과 외모 특징 설명 (100자 이내)",
+    "compatibilityScore": 60-98
+  },
+  "marriagePrediction": {
+    "earlyAge": "20대 초중반 결혼 가능성 설명",
+    "optimalAge": "최적 결혼 시기와 이유",
+    "lateAge": "30대 중반 이후 결혼 시 특징",
+    "prediction": "삼정 균형 기반 결혼 운세 종합 (80자 이내)"
+  },
+  "firstImpression": {
+    "trustScore": 60-98,
+    "trustDescription": "신뢰감/믿음직함 분석 (50자 이내)",
+    "approachabilityScore": 60-98,
+    "approachabilityDescription": "친근감/다가가기 쉬움 분석 (50자 이내)",
+    "charismaScore": 60-98,
+    "charismaDescription": "카리스마/존재감 분석 (50자 이내)"
   }
 }
 
@@ -442,13 +487,46 @@ serve(async (req) => {
       if (error) {
         console.warn('⚠️ Celebrity matching error:', error.message)
       } else if (celebrities && celebrities.length > 0) {
-        similarCelebrities = celebrities.map((c: any) => ({
-          name: c.celebrity_name,
-          celebrity_type: c.celebrity_type,
-          character_image_url: c.character_image_url,
-          similarity_score: c.similarity_score,
-          matched_features: c.matched_features || []
-        }))
+        // 연예인 매칭 결과 처리
+        for (const c of celebrities) {
+          let characterImageUrl = c.character_image_url
+
+          // 캐릭터 이미지가 없으면 생성 요청
+          if (!characterImageUrl && c.face_features) {
+            console.log(`🎨 [FaceReading] Generating character for ${c.celebrity_name}...`)
+            try {
+              const genResponse = await fetch(`${supabaseUrl}/functions/v1/generate-celebrity-character`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${supabaseServiceKey}`
+                },
+                body: JSON.stringify({
+                  celebrityId: c.celebrity_id,
+                  celebrityName: c.celebrity_name,
+                  gender: c.gender || userGender,
+                  faceFeatures: c.face_features
+                })
+              })
+
+              if (genResponse.ok) {
+                const genResult = await genResponse.json()
+                characterImageUrl = genResult.characterImageUrl
+                console.log(`✅ [FaceReading] Character generated: ${characterImageUrl}`)
+              }
+            } catch (genError) {
+              console.warn(`⚠️ [FaceReading] Character generation failed:`, genError)
+            }
+          }
+
+          similarCelebrities.push({
+            name: c.celebrity_name,
+            celebrity_type: c.celebrity_type,
+            character_image_url: characterImageUrl,
+            similarity_score: c.similarity_score,
+            matched_features: c.matched_features || []
+          })
+        }
         console.log(`✅ [FaceReading] Found ${similarCelebrities.length} similar celebrities`)
       } else {
         console.log('ℹ️ [FaceReading] No similar celebrities found (score < 50)')
@@ -462,7 +540,7 @@ serve(async (req) => {
     // =====================================================
     const isBlurred = !isPremium
     const blurredSections = isBlurred
-      ? ['personality', 'wealth_fortune', 'love_fortune', 'health_fortune', 'career_fortune', 'special_features', 'advice', 'full_analysis']
+      ? ['personality', 'wealth_fortune', 'love_fortune', 'health_fortune', 'career_fortune', 'special_features', 'advice', 'full_analysis', 'first_impression_detail', 'compatibility', 'marriage_prediction']
       : []
 
     const fortuneResponse = {
@@ -502,7 +580,23 @@ serve(async (req) => {
         improvements: analysisResult.improvements,
 
         // ✅ 무료: 닮은꼴 연예인 (있을 경우만)
-        similar_celebrities: similarCelebrities.length > 0 ? similarCelebrities : null
+        similar_celebrities: similarCelebrities.length > 0 ? similarCelebrities : null,
+
+        // ✅ 무료: 첫인상 점수 (점수만 공개, 설명은 프리미엄)
+        first_impression_preview: {
+          trustScore: analysisResult.firstImpression?.trustScore || 75,
+          approachabilityScore: analysisResult.firstImpression?.approachabilityScore || 75,
+          charismaScore: analysisResult.firstImpression?.charismaScore || 75
+        },
+
+        // 🔒 프리미엄: 첫인상 상세
+        firstImpression: analysisResult.firstImpression,
+
+        // 🔒 프리미엄: 궁합운 (이상형 관상)
+        compatibility: analysisResult.compatibility,
+
+        // 🔒 프리미엄: 결혼 적령기 예측
+        marriagePrediction: analysisResult.marriagePrediction
       },
 
       timestamp: new Date().toISOString(),

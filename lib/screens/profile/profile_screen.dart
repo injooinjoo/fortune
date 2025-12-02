@@ -648,6 +648,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         },
                       ),
                       SettingsListTile(
+                        icon: Icons.auto_awesome,
+                        title: '사주 종합',
+                        subtitle: '한 장의 인포그래픽으로 보기',
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: _getSecondaryTextColor(context),
+                        ),
+                        onTap: () {
+                          context.push('/profile/saju-summary');
+                        },
+                      ),
+                      SettingsListTile(
                         icon: Icons.wb_sunny_outlined,
                         title: '오행 분석',
                         trailing: Icon(

@@ -1,0 +1,142 @@
+{
+  "onboarding": {
+    "name": "Onboarding Flow",
+    "nameKo": "온보딩 플로우",
+    "description": "신규 사용자 가입부터 홈 화면까지",
+    "steps": [
+      {
+        "screen": "landing",
+        "action": "tap_social_login"
+      },
+      {
+        "screen": "signup",
+        "action": "agree_terms"
+      },
+      {
+        "screen": "onboarding",
+        "action": "complete_steps"
+      },
+      {
+        "screen": "home",
+        "action": null
+      }
+    ]
+  },
+  "fortuneReading": {
+    "name": "Fortune Reading Flow",
+    "nameKo": "운세 조회 플로우",
+    "description": "운세 선택부터 결과 확인까지",
+    "variants": [
+      {
+        "name": "Free User",
+        "steps": [
+          {
+            "screen": "fortune_list",
+            "action": "tap_fortune_card"
+          },
+          {
+            "screen": "fortune_input",
+            "action": "submit_input"
+          },
+          {
+            "screen": "fortune_loading",
+            "action": "wait"
+          },
+          {
+            "screen": "fortune_result_blurred",
+            "action": "tap_unlock"
+          },
+          {
+            "screen": "ad_interstitial",
+            "action": "watch_ad"
+          },
+          {
+            "screen": "fortune_result",
+            "action": null
+          }
+        ]
+      },
+      {
+        "name": "Premium User",
+        "steps": [
+          {
+            "screen": "fortune_list",
+            "action": "tap_fortune_card"
+          },
+          {
+            "screen": "fortune_input",
+            "action": "submit_input"
+          },
+          {
+            "screen": "fortune_loading",
+            "action": "wait"
+          },
+          {
+            "screen": "fortune_result",
+            "action": null
+          }
+        ]
+      }
+    ]
+  },
+  "tarotReading": {
+    "name": "Tarot Reading Flow",
+    "nameKo": "타로 리딩 플로우",
+    "description": "타로 카드 선택부터 해석까지",
+    "steps": [
+      {
+        "screen": "tarot",
+        "step": "question",
+        "action": "enter_question"
+      },
+      {
+        "screen": "tarot",
+        "step": "spread_selection",
+        "action": "select_spread"
+      },
+      {
+        "screen": "tarot_deck_selection",
+        "action": "select_deck"
+      },
+      {
+        "screen": "tarot_animated_flow",
+        "action": "select_cards"
+      },
+      {
+        "screen": "tarot_storytelling",
+        "action": "view_interpretation"
+      },
+      {
+        "screen": "tarot_summary",
+        "action": null
+      }
+    ]
+  },
+  "premiumConversion": {
+    "name": "Premium Conversion Flow",
+    "nameKo": "프리미엄 전환 플로우",
+    "description": "무료 사용자의 프리미엄 전환",
+    "steps": [
+      {
+        "screen": "fortune_result_blurred",
+        "action": "tap_unlock"
+      },
+      {
+        "screen": "premium",
+        "action": "select_plan"
+      },
+      {
+        "screen": "subscription",
+        "action": "confirm_purchase"
+      },
+      {
+        "screen": "payment_success",
+        "action": "return"
+      },
+      {
+        "screen": "fortune_result",
+        "action": null
+      }
+    ]
+  }
+}

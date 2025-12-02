@@ -99,9 +99,20 @@ class OgwanSectionWidget extends StatelessWidget {
           final index = entry.key;
           final item = entry.value;
           final key = item['key'] as String;
-          final content = ogwan[key]?.toString();
 
-          if (content == null || content.isEmpty) return const SizedBox.shrink();
+          // Map 객체로 파싱 (JSON 버그 수정)
+          final ogwanData = ogwan[key] as Map<String, dynamic>?;
+          if (ogwanData == null) return const SizedBox.shrink();
+
+          final observation = ogwanData['observation'] as String? ?? '';
+          final interpretation = ogwanData['interpretation'] as String? ?? '';
+          final score = (ogwanData['score'] as num?)?.toInt() ?? 0;
+          final advice = ogwanData['advice'] as String? ?? '';
+
+          // 모든 필드가 비어있으면 표시하지 않음
+          if (observation.isEmpty && interpretation.isEmpty && advice.isEmpty) {
+            return const SizedBox.shrink();
+          }
 
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -115,6 +126,7 @@ class OgwanSectionWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // 헤더: 아이콘 + 제목 + 점수
                     Row(
                       children: [
                         Container(
@@ -152,22 +164,129 @@ class OgwanSectionWidget extends StatelessWidget {
                             ],
                           ),
                         ),
+                        // 점수 배지
+                        if (score > 0)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: (item['color'] as Color).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '$score점',
+                              style: TossDesignSystem.caption.copyWith(
+                                color: item['color'] as Color,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      content,
-                      style: TossDesignSystem.body1.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
-                        height: 1.7,
+
+                    // 점수 게이지 바
+                    if (score > 0) ...[
+                      const SizedBox(height: 16),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: score / 100,
+                          backgroundColor: (item['color'] as Color).withValues(alpha: 0.1),
+                          valueColor: AlwaysStoppedAnimation<Color>(item['color'] as Color),
+                          minHeight: 6,
+                        ),
                       ),
-                    ),
+                    ],
+
+                    // 관찰 내용
+                    if (observation.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      _buildDetailSection(
+                        title: '관찰',
+                        content: observation,
+                        color: item['color'] as Color,
+                        isDark: isDark,
+                      ),
+                    ],
+
+                    // 관상학적 해석
+                    if (interpretation.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      _buildDetailSection(
+                        title: '해석',
+                        content: interpretation,
+                        color: item['color'] as Color,
+                        isDark: isDark,
+                      ),
+                    ],
+
+                    // 개운 조언
+                    if (advice.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: (item['color'] as Color).withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: (item['color'] as Color).withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.tips_and_updates_outlined,
+                              color: item['color'] as Color,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                advice,
+                                style: TossDesignSystem.body2.copyWith(
+                                  color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                                  height: 1.6,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
             ).animate().fadeIn(duration: 500.ms, delay: (100 * index).ms),
           );
         }),
+      ],
+    );
+  }
+
+  Widget _buildDetailSection({
+    required String title,
+    required String content,
+    required Color color,
+    required bool isDark,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TossDesignSystem.caption.copyWith(
+            color: color,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          content,
+          style: TossDesignSystem.body2.copyWith(
+            color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+            height: 1.6,
+          ),
+        ),
       ],
     );
   }

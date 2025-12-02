@@ -33,13 +33,14 @@ class SajuJijangganWidget extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(TossTheme.spacingM),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
             _buildTitle(isDark),
-            const SizedBox(height: TossTheme.spacingL),
+            const SizedBox(height: TossTheme.spacingS),
           ],
           _buildJijangganTable(isDark),
         ],
@@ -53,37 +54,25 @@ class SajuJijangganWidget extends StatelessWidget {
         Icon(
           Icons.layers_outlined,
           color: TossTheme.brandBlue,
-          size: 24,
+          size: 20,
         ),
-        const SizedBox(width: TossTheme.spacingS),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        const SizedBox(width: TossTheme.spacingXS),
+        Row(
           children: [
-            Row(
-              children: [
-                Text(
-                  '지장간',
-                  style: TossTheme.heading2.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '支藏干',
-                  style: TossTheme.body2.copyWith(
-                    color: isDark
-                        ? TossTheme.textGray400
-                        : TossTheme.textGray600,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 2),
             Text(
-              '지지 속에 숨어있는 천간의 기운',
+              '지장간',
+              style: TossTheme.heading3.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '支藏干',
               style: TossTheme.caption.copyWith(
-                color: isDark ? TossTheme.textGray400 : TossTheme.textGray600,
+                color: isDark
+                    ? TossTheme.textGray400
+                    : TossTheme.textGray600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -131,7 +120,7 @@ class SajuJijangganWidget extends StatelessWidget {
                 return Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      vertical: TossTheme.spacingM,
+                      vertical: TossTheme.spacingS,
                     ),
                     decoration: BoxDecoration(
                       border: Border(
@@ -156,10 +145,10 @@ class SajuJijangganWidget extends StatelessWidget {
                             color: isDark
                                 ? TossTheme.textGray400
                                 : TossTheme.textGray600,
-                            fontSize: 11,
+                            fontSize: 10,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 2),
                         _buildBranchCell(branchData, isDay, isDark),
                       ],
                     ),
@@ -182,7 +171,7 @@ class SajuJijangganWidget extends StatelessWidget {
 
               return Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(TossTheme.spacingM),
+                  padding: const EdgeInsets.all(TossTheme.spacingS),
                   decoration: BoxDecoration(
                     border: Border(
                       right: index < pillars.length - 1
@@ -239,7 +228,7 @@ class SajuJijangganWidget extends StatelessWidget {
         Text(
           hanja,
           style: TextStyle(
-            fontSize: isDay ? 28 : 24,
+            fontSize: isDay ? 22 : 18,
             fontWeight: FontWeight.bold,
             color: isDay ? TossTheme.brandBlue : color,
           ),
@@ -251,6 +240,7 @@ class SajuJijangganWidget extends StatelessWidget {
           style: TossTheme.caption.copyWith(
             color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
             fontWeight: FontWeight.w500,
+            fontSize: 10,
           ),
           textAlign: TextAlign.center,
         ),
@@ -277,31 +267,32 @@ class SajuJijangganWidget extends StatelessWidget {
             SajuColors.getWuxingBackgroundColor(stem.wuxing, isDark: isDark);
 
         return Container(
-          margin: const EdgeInsets.only(bottom: TossTheme.spacingXS),
+          margin: const EdgeInsets.only(bottom: 2),
           padding: const EdgeInsets.symmetric(
-            horizontal: 6,
-            vertical: 4,
+            horizontal: 4,
+            vertical: 2,
           ),
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(6),
           ),
-          child: Column(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // 한자 + 한글 (세로 배치)
               Text(
                 stem.stemHanja,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
               ),
+              const SizedBox(width: 2),
               Text(
-                '${stem.stem} ${stem.ratio}%',
+                '${stem.ratio}%',
                 style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 9,
                   fontWeight: FontWeight.w500,
                   color: color.withValues(alpha: 0.8),
                 ),

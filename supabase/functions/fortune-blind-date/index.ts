@@ -328,11 +328,11 @@ ${chatAnalysisResult.redFlags && Array.isArray(chatAnalysisResult.redFlags) && c
 다음 JSON 형식으로 응답해주세요:
 {
   "overallScore": 0-100 사이의 점수 (소개팅 성공 확률),
-  "content": "전체 분석 (300자 내외)",
+  "content": "전체 분석 (100자 이내)",
   "successPrediction": {
     "score": 0-100,
-    "message": "예측 메시지 (50자 내외)",
-    "advice": "성공을 위한 조언 (150자 내외)"
+    "message": "예측 메시지 (30자 이내)",
+    "advice": "성공을 위한 조언 (80자 이내)"
   },
   "firstImpressionTips": ["첫인상 팁1", "첫인상 팁2", "첫인상 팁3"],
   "conversationTopics": {

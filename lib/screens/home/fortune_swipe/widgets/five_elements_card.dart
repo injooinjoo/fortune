@@ -45,32 +45,32 @@ class FiveElementsCard extends StatelessWidget {
           '오행 밸런스',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Text(
           '당신의 오행 에너지 분석',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 14,
+            fontSize: 13,
           ),
         ),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 16),
 
         // 사주 4주 표시
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                blurRadius: 15,
-                offset: const Offset(0, 3),
+                blurRadius: 12,
+                offset: const Offset(0, 2),
               ),
             ],
           ),
@@ -85,19 +85,19 @@ class FiveElementsCard extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: 14),
 
         // 오행 그래프
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
+                blurRadius: 15,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -105,7 +105,7 @@ class FiveElementsCard extends StatelessWidget {
             children: elements.entries.map((entry) {
               final color = _getElementColor(entry.key);
               return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.only(bottom: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -129,11 +129,11 @@ class FiveElementsCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Stack(
                       children: [
                         Container(
-                          height: 8,
+                          height: 6,
                           decoration: BoxDecoration(
                             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
                             borderRadius: BorderRadius.circular(4),
@@ -142,7 +142,7 @@ class FiveElementsCard extends StatelessWidget {
                         FractionallySizedBox(
                           widthFactor: entry.value / 100,
                           child: Container(
-                            height: 8,
+                            height: 6,
                             decoration: BoxDecoration(
                               color: color,
                               borderRadius: BorderRadius.circular(4),
@@ -159,14 +159,14 @@ class FiveElementsCard extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
         // 균형 설명
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: const Color(0xFF3B82F6).withValues(alpha: 0.2),
               width: 1,
@@ -180,35 +180,35 @@ class FiveElementsCard extends StatelessWidget {
                   const Icon(
                     Icons.insights,
                     color: Color(0xFF3B82F6),
-                    size: 18,
+                    size: 16,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   Text(
                     '오행 분석',
                     style: TextStyle(
                       color: isDark ? Colors.white : Colors.black87,
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Text(
                 balance,
                 style: TextStyle(
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
-                  fontSize: 13,
-                  height: 1.5,
+                  fontSize: 12,
+                  height: 1.4,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Text(
                 explanation,
                 style: TextStyle(
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                  fontSize: 12,
-                  height: 1.5,
+                  fontSize: 11,
+                  height: 1.4,
                 ),
               ),
             ],
@@ -238,16 +238,16 @@ class _PillarItem extends StatelessWidget {
           label,
           style: TextStyle(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 3),
         Text(
           value,
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
         ),

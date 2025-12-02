@@ -49,16 +49,17 @@ class SajuPillarTablePro extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(TossTheme.spacingM),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
             _buildTitle(isDark),
-            const SizedBox(height: TossTheme.spacingL),
+            const SizedBox(height: TossTheme.spacingM),
           ],
           _buildProTable(isDark),
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: TossTheme.spacingS),
           _buildDayMasterInfo(isDark),
         ],
       ),
@@ -71,37 +72,25 @@ class SajuPillarTablePro extends StatelessWidget {
         Icon(
           Icons.grid_view_rounded,
           color: TossTheme.brandBlue,
-          size: 24,
+          size: 20,
         ),
-        const SizedBox(width: TossTheme.spacingS),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        const SizedBox(width: TossTheme.spacingXS),
+        Row(
           children: [
-            Row(
-              children: [
-                Text(
-                  '사주명식',
-                  style: TossTheme.heading2.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '四柱命式',
-                  style: TossTheme.body2.copyWith(
-                    color: isDark
-                        ? TossTheme.textGray400
-                        : TossTheme.textGray600,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 2),
             Text(
-              '당신의 타고난 운명을 담은 네 기둥',
+              '사주명식',
+              style: TossTheme.heading3.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '四柱命式',
               style: TossTheme.caption.copyWith(
-                color: isDark ? TossTheme.textGray400 : TossTheme.textGray600,
+                color: isDark
+                    ? TossTheme.textGray400
+                    : TossTheme.textGray600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -247,7 +236,7 @@ class SajuPillarTablePro extends StatelessWidget {
           return Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(
-                vertical: TossTheme.spacingM,
+                vertical: TossTheme.spacingS,
               ),
               decoration: BoxDecoration(
                 border: Border(
@@ -304,7 +293,7 @@ class SajuPillarTablePro extends StatelessWidget {
           return Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(
-                vertical: TossTheme.spacingM,
+                vertical: TossTheme.spacingS,
               ),
               decoration: BoxDecoration(
                 border: Border(
@@ -467,7 +456,7 @@ class SajuPillarTablePro extends StatelessWidget {
         Text(
           hanja,
           style: TextStyle(
-            fontSize: isDay ? 36 : 32,
+            fontSize: isDay ? 28 : 24,
             fontWeight: FontWeight.bold,
             color: isDay ? TossTheme.brandBlue : color,
           ),
@@ -479,22 +468,22 @@ class SajuPillarTablePro extends StatelessWidget {
           style: TossTheme.caption.copyWith(
             color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
             fontWeight: FontWeight.w500,
-            fontSize: 11,
+            fontSize: 10,
           ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
         // 오행 태그
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             element,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 9,
               fontWeight: FontWeight.w600,
               color: color,
             ),
@@ -531,43 +520,34 @@ class SajuPillarTablePro extends StatelessWidget {
             Text(
               hanja,
               style: TextStyle(
-                fontSize: isDay ? 36 : 32,
+                fontSize: isDay ? 28 : 24,
                 fontWeight: FontWeight.bold,
                 color: isDay ? TossTheme.brandBlue : color,
               ),
               textAlign: TextAlign.center,
             ),
-            // 한글 작게
+            // 한글 + 띠 한줄로
             Text(
-              name,
+              '$name $animal',
               style: TossTheme.caption.copyWith(
                 color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
                 fontWeight: FontWeight.w500,
-                fontSize: 11,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            // 띠
-            Text(
-              animal,
-              style: TossTheme.caption.copyWith(
-                color: isDark ? TossTheme.textGray400 : TossTheme.textGray600,
-                fontSize: 10,
+                fontSize: 9,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 2),
             // 오행 태그
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 element,
                 style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 9,
                   fontWeight: FontWeight.w600,
                   color: color,
                 ),
@@ -579,17 +559,17 @@ class SajuPillarTablePro extends StatelessWidget {
         if (isGongMang)
           Positioned(
             top: 0,
-            right: 4,
+            right: 2,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+              padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
               decoration: BoxDecoration(
                 color: SajuColors.emptinessLight,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(3),
               ),
               child: const Text(
                 '空',
                 style: TextStyle(
-                  fontSize: 9,
+                  fontSize: 8,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -693,27 +673,30 @@ class SajuPillarTablePro extends StatelessWidget {
     final color = SajuColors.getStemColor(stemName, isDark: isDark);
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.symmetric(
+        horizontal: TossTheme.spacingS,
+        vertical: TossTheme.spacingXS,
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            color.withValues(alpha: 0.15),
-            color.withValues(alpha: 0.05),
+            color.withValues(alpha: 0.12),
+            color.withValues(alpha: 0.04),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        borderRadius: BorderRadius.circular(TossTheme.radiusS),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withValues(alpha: 0.25),
           width: 1,
         ),
       ),
       child: Row(
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.2),
               shape: BoxShape.circle,
@@ -722,78 +705,51 @@ class SajuPillarTablePro extends StatelessWidget {
               child: Text(
                 stemHanja,
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
               ),
             ),
           ),
-          const SizedBox(width: TossTheme.spacingM),
+          const SizedBox(width: TossTheme.spacingS),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    Text(
-                      '일간',
-                      style: TossTheme.caption.copyWith(
-                        color: isDark
-                            ? TossTheme.textGray400
-                            : TossTheme.textGray600,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '日干',
-                      style: TossTheme.caption.copyWith(
-                        color: isDark
-                            ? TossTheme.textGray500
-                            : TossTheme.textGray500,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      '$stemName($stemHanja)',
-                      style: TossTheme.body1.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '$element 오행',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
                 Text(
-                  '당신의 본질을 나타내는 핵심 요소입니다',
+                  '일간 日干',
                   style: TossTheme.caption.copyWith(
-                    color:
-                        isDark ? TossTheme.textGray400 : TossTheme.textGray600,
-                    fontSize: 11,
+                    color: isDark
+                        ? TossTheme.textGray400
+                        : TossTheme.textGray600,
+                    fontSize: 10,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '$stemName($stemHanja)',
+                  style: TossTheme.body2.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 1,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '$element 오행',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
                   ),
                 ),
               ],

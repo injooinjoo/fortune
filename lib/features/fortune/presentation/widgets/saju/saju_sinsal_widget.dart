@@ -47,13 +47,14 @@ class SajuSinsalWidget extends StatelessWidget {
         sinsals.where((s) => s.category == SinsalCategory.neutral).toList();
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(TossTheme.spacingM),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
             _buildTitle(isDark),
-            const SizedBox(height: TossTheme.spacingL),
+            const SizedBox(height: TossTheme.spacingS),
           ],
           // 길신 섹션
           if (luckySinsals.isNotEmpty) ...[
@@ -77,7 +78,7 @@ class SajuSinsalWidget extends StatelessWidget {
           ],
           // 종합 해석
           if (sinsals.isNotEmpty) ...[
-            const SizedBox(height: TossTheme.spacingL),
+            const SizedBox(height: TossTheme.spacingS),
             _buildSummary(luckySinsals.length, unluckySinsals.length, isDark),
           ],
         ],
@@ -91,37 +92,25 @@ class SajuSinsalWidget extends StatelessWidget {
         Icon(
           Icons.stars_outlined,
           color: TossTheme.brandBlue,
-          size: 24,
+          size: 20,
         ),
-        const SizedBox(width: TossTheme.spacingS),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        const SizedBox(width: TossTheme.spacingXS),
+        Row(
           children: [
-            Row(
-              children: [
-                Text(
-                  '신살',
-                  style: TossTheme.heading2.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '神殺',
-                  style: TossTheme.body2.copyWith(
-                    color: isDark
-                        ? TossTheme.textGray400
-                        : TossTheme.textGray600,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 2),
             Text(
-              '사주에서 발견된 특별한 기운',
+              '신살',
+              style: TossTheme.heading3.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '神殺',
               style: TossTheme.caption.copyWith(
-                color: isDark ? TossTheme.textGray400 : TossTheme.textGray600,
+                color: isDark
+                    ? TossTheme.textGray400
+                    : TossTheme.textGray600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -188,13 +177,13 @@ class SajuSinsalWidget extends StatelessWidget {
     final color = sinsal.getColor(isDark: isDark);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: TossTheme.spacingS),
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      margin: const EdgeInsets.only(bottom: TossTheme.spacingXS),
+      padding: const EdgeInsets.all(TossTheme.spacingS),
       decoration: BoxDecoration(
         color: isDark
             ? TossDesignSystem.cardBackgroundDark
             : TossTheme.backgroundPrimary,
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        borderRadius: BorderRadius.circular(TossTheme.radiusS),
         border: Border.all(
           color: color.withValues(alpha: 0.3),
           width: 1,
@@ -207,8 +196,8 @@ class SajuSinsalWidget extends StatelessWidget {
             children: [
               // 한자 크게
               Container(
-                width: 44,
-                height: 44,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(TossTheme.radiusS),
@@ -219,14 +208,14 @@ class SajuSinsalWidget extends StatelessWidget {
                         ? sinsal.hanja.substring(0, 2)
                         : sinsal.hanja,
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: color,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: TossTheme.spacingM),
+              const SizedBox(width: TossTheme.spacingS),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,7 +224,7 @@ class SajuSinsalWidget extends StatelessWidget {
                       children: [
                         Text(
                           sinsal.name,
-                          style: TossTheme.body1.copyWith(
+                          style: TossTheme.body2.copyWith(
                             fontWeight: FontWeight.bold,
                             color: color,
                           ),
@@ -247,11 +236,11 @@ class SajuSinsalWidget extends StatelessWidget {
                             color: isDark
                                 ? TossTheme.textGray400
                                 : TossTheme.textGray600,
+                            fontSize: 10,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 2),
                     Text(
                       sinsal.meaning,
                       style: TossTheme.caption.copyWith(
@@ -259,6 +248,7 @@ class SajuSinsalWidget extends StatelessWidget {
                             ? TossDesignSystem.grayDark600
                             : TossDesignSystem.gray700,
                         fontWeight: FontWeight.w500,
+                        fontSize: 11,
                       ),
                     ),
                   ],
@@ -268,37 +258,41 @@ class SajuSinsalWidget extends StatelessWidget {
               if (sinsal.position != null)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: TossTheme.spacingS,
-                    vertical: TossTheme.spacingXS,
+                    horizontal: 6,
+                    vertical: 2,
                   ),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     sinsal.position!,
                     style: TossTheme.caption.copyWith(
                       color: color,
                       fontWeight: FontWeight.bold,
-                      fontSize: 11,
+                      fontSize: 10,
                     ),
                   ),
                 ),
             ],
           ),
           if (showDetails) ...[
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: TossTheme.spacingXS),
             // 상세 설명
             Text(
               sinsal.description,
               style: TossTheme.caption.copyWith(
                 color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                fontSize: 11,
               ),
             ),
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: TossTheme.spacingXS),
             // 해소/활용법
             Container(
-              padding: const EdgeInsets.all(TossTheme.spacingS),
+              padding: const EdgeInsets.symmetric(
+                horizontal: TossTheme.spacingS,
+                vertical: TossTheme.spacingXS,
+              ),
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.black.withValues(alpha: 0.2)
@@ -311,9 +305,9 @@ class SajuSinsalWidget extends StatelessWidget {
                   Icon(
                     Icons.lightbulb_outline,
                     color: TossTheme.warning,
-                    size: 14,
+                    size: 12,
                   ),
-                  const SizedBox(width: TossTheme.spacingXS),
+                  const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       sinsal.remedy,
@@ -321,7 +315,7 @@ class SajuSinsalWidget extends StatelessWidget {
                         color: isDark
                             ? TossDesignSystem.grayDark600
                             : TossDesignSystem.gray700,
-                        fontSize: 11,
+                        fontSize: 10,
                       ),
                     ),
                   ),
@@ -358,7 +352,10 @@ class SajuSinsalWidget extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.symmetric(
+        horizontal: TossTheme.spacingS,
+        vertical: TossTheme.spacingXS,
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -368,7 +365,7 @@ class SajuSinsalWidget extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        borderRadius: BorderRadius.circular(TossTheme.radiusS),
         border: Border.all(
           color: summaryColor.withValues(alpha: 0.3),
           width: 1,
@@ -379,29 +376,17 @@ class SajuSinsalWidget extends StatelessWidget {
           Icon(
             summaryIcon,
             color: summaryColor,
-            size: 24,
+            size: 18,
           ),
-          const SizedBox(width: TossTheme.spacingM),
+          const SizedBox(width: TossTheme.spacingS),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '신살 종합',
-                  style: TossTheme.body2.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: summaryColor,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  summaryText,
-                  style: TossTheme.caption.copyWith(
-                    color:
-                        isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
-                  ),
-                ),
-              ],
+            child: Text(
+              summaryText,
+              style: TossTheme.caption.copyWith(
+                color:
+                    isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                fontSize: 11,
+              ),
             ),
           ),
         ],

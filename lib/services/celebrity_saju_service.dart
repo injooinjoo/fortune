@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/models/celebrity_saju.dart';
 
@@ -98,28 +99,50 @@ class CelebritySajuService {
     }
   }
 
-  /// 랜덤 유명인사 추천
+  /// 랜덤 유명인사 추천 (개인 멤버만)
   Future<List<CelebritySaju>> getRandomCelebrities([int limit = 5]) async {
     try {
-      final response = await _supabase
-          .rpc('get_random_celebrities', params: {'limit_count': limit});
-
-      return (response as List)
-          .map((data) => CelebritySaju.fromJson(data))
-          .toList();
-    } catch (e) {
-      // RPC 함수가 없는 경우 대안
+      // 개인 멤버만 가져오기 (is_group_member = true)
       final response = await _supabase
           .from('celebrities')
           .select()
-          .limit(limit * 3);
+          .eq('is_group_member', true)  // 개인 멤버만
+          .eq('is_active', true)
+          .limit(limit * 5);
 
-      final allCelebrities = (response as List)
-          .map((data) => CelebritySaju.fromJson(data))
+      debugPrint('🎭 [CELEBRITY] 개인 멤버 쿼리 응답: ${(response as List).length}개');
+
+      if ((response as List).isEmpty) {
+        // is_group_member 컬럼이 없거나 데이터가 없는 경우 fallback
+        debugPrint('🎭 [CELEBRITY] 개인 멤버 없음, 전체 쿼리 시도');
+        final fallbackResponse = await _supabase
+            .from('celebrities')
+            .select()
+            .limit(limit * 3);
+
+        final allCelebrities = (fallbackResponse as List)
+            .map((data) {
+              debugPrint('🎭 [CELEBRITY] 데이터: name=${data['name']}, is_group_member=${data['is_group_member']}, birth_date=${data['birth_date']}');
+              return CelebritySaju.fromJson(data);
+            })
+            .toList();
+
+        allCelebrities.shuffle();
+        return allCelebrities.take(limit).toList();
+      }
+
+      final celebrities = (response as List)
+          .map((data) {
+            debugPrint('🎭 [CELEBRITY] 개인 멤버: name=${data['name']}, group=${data['group_name']}, birth_date=${data['birth_date']}');
+            return CelebritySaju.fromJson(data);
+          })
           .toList();
 
-      allCelebrities.shuffle();
-      return allCelebrities.take(limit).toList();
+      celebrities.shuffle();
+      return celebrities.take(limit).toList();
+    } catch (e) {
+      debugPrint('🎭 [CELEBRITY] 쿼리 실패: $e');
+      return [];
     }
   }
 }

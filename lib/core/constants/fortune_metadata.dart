@@ -83,6 +83,10 @@ enum FortuneType {
   luckyLottery('lucky-lottery', '로또 운세'),
   realEstate('real-estate', '부동산 운세'),
   
+  // Feng Shui (풍수지리)
+  moving('moving', '이사 풍수'),
+  homeFengshui('home-fengshui', '집 풍수'),
+
   // Special
   biorhythm('biorhythm', '바이오리듬'),
   tarot('tarot', '타로'),
@@ -255,6 +259,33 @@ class FortuneMetadataRepository {
       description: '오늘 당신에게 행운을 가져다 줄 색상을 알아봅니다.'
     ),
     
+    // Feng Shui (풍수지리)
+    FortuneType.moving: FortuneMetadata(
+      type: FortuneType.moving,
+      title: '이사 풍수',
+      subtitle: '새로운 보금자리의 풍수를 분석합니다',
+      icon: Icons.home_work,
+      primaryColor: Color(0xFF8B7355),
+      secondaryColor: Color(0xFF9B8365),
+      tokenCost: 3,
+      requiresBirthInfo: false,
+      inputFields: ['currentArea', 'targetArea', 'period', 'purpose'],
+      description: '이사할 지역의 방위와 시기를 분석하여 길한 이사운을 알려드립니다.',
+    ),
+
+    FortuneType.homeFengshui: FortuneMetadata(
+      type: FortuneType.homeFengshui,
+      title: '집 풍수',
+      subtitle: '현재 집의 풍수 기운을 진단합니다',
+      icon: Icons.landscape,
+      primaryColor: Color(0xFF8B7355),
+      secondaryColor: Color(0xFF9B8365),
+      tokenCost: 3,
+      requiresBirthInfo: false,
+      inputFields: ['address', 'homeType', 'floor', 'doorDirection'],
+      description: '배산임수와 양택풍수를 기반으로 현재 집의 기운을 분석합니다.',
+    ),
+
     // Add more metadata for all fortune types...
     // This is a simplified version. In production, add all 80+ types
   };
@@ -301,7 +332,13 @@ class FortuneMetadataRepository {
           _metadata[FortuneType.career]!,
           _metadata[FortuneType.wealth]!,
           _metadata[FortuneType.business]!];
-      
+
+      case FortuneCategory.fengshui:
+        return [
+          _metadata[FortuneType.moving]!,
+          _metadata[FortuneType.homeFengshui]!,
+        ];
+
       default:
         return [];
     }
@@ -317,8 +354,9 @@ enum FortuneCategory {
   lucky('행운 아이템'),
   sports('스포츠/활동'),
   investment('투자/재테크'),
+  fengshui('풍수지리'),
   special('특별');
-  
+
   final String displayName;
   const FortuneCategory(this.displayName);
 }

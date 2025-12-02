@@ -53,7 +53,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
       animation: widget.animationController,
       builder: (context, child) {
         return AppCard(
-          padding: const EdgeInsets.all(TossTheme.spacingL),
+          padding: const EdgeInsets.all(TossTheme.spacingM),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -65,12 +65,12 @@ class _SajuElementChartState extends State<SajuElementChart> {
                     Icon(
                       Icons.donut_large_outlined,
                       color: TossTheme.brandBlue,
-                      size: 24,
+                      size: 20,
                     ),
-                    const SizedBox(width: TossTheme.spacingS),
+                    const SizedBox(width: TossTheme.spacingXS),
                     Text(
                       '오행 균형',
-                      style: TossTheme.heading2.copyWith(
+                      style: TossTheme.heading3.copyWith(
                         fontWeight: FontWeight.bold,
                         color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                       ),
@@ -79,7 +79,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                 ),
               ),
 
-              const SizedBox(height: TossTheme.spacingS),
+              const SizedBox(height: 4),
 
               FadeTransition(
                 opacity: _titleAnimation,
@@ -87,13 +87,14 @@ class _SajuElementChartState extends State<SajuElementChart> {
                   '천간지지의 오행 분포를 확인해보세요',
                   style: TossTheme.caption.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                    fontSize: 12,
                   ),
                 ),
               ),
 
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: TossTheme.spacingM),
 
-              // 차트와 범례
+              // 차트와 범례 - 더 컴팩트하게
               Row(
                 children: [
                   // 파이 차트
@@ -102,7 +103,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                     child: _buildPieChart(isDark),
                   ),
 
-                  const SizedBox(width: TossTheme.spacingL),
+                  const SizedBox(width: TossTheme.spacingM),
 
                   // 범례
                   Expanded(
@@ -112,7 +113,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                 ],
               ),
 
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: TossTheme.spacingM),
 
               // 오행 해석
               _buildElementInterpretation(isDark),
@@ -128,7 +129,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
 
     if (totalCount == 0) {
       return SizedBox(
-        height: 150,
+        height: 120,
         child: Center(
           child: Text(
             '오행 데이터가 없습니다',
@@ -141,7 +142,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
     }
 
     return SizedBox(
-      height: 150,
+      height: 120,
       child: PieChart(
         PieChartData(
           pieTouchData: PieTouchData(
@@ -158,8 +159,8 @@ class _SajuElementChartState extends State<SajuElementChart> {
             },
           ),
           borderData: FlBorderData(show: false),
-          sectionsSpace: 4,
-          centerSpaceRadius: 50 * _chartAnimation.value,
+          sectionsSpace: 3,
+          centerSpaceRadius: 35 * _chartAnimation.value,
           sections: _buildPieChartSections(),
         ),
       ),
@@ -169,17 +170,17 @@ class _SajuElementChartState extends State<SajuElementChart> {
   List<PieChartSectionData> _buildPieChartSections() {
     final elements = ['목', '화', '토', '금', '수'];
     final totalCount = widget.elementBalance.values.fold<int>(0, (sum, count) => sum + (count as int));
-    
+
     return elements.asMap().entries.map((entry) {
       final index = entry.key;
       final element = entry.value;
       final count = widget.elementBalance[element] as int? ?? 0;
       final percentage = totalCount > 0 ? count / totalCount * 100 : 0.0;
       final isTouched = index == _touchedIndex;
-      
-      final radius = (isTouched ? 65.0 : 55.0) * _chartAnimation.value;
+
+      final radius = (isTouched ? 50.0 : 42.0) * _chartAnimation.value;
       final color = _getElementColor(element);
-      
+
       return PieChartSectionData(
         color: color,
         value: count.toDouble(),
@@ -188,11 +189,11 @@ class _SajuElementChartState extends State<SajuElementChart> {
         titleStyle: TossTheme.caption.copyWith(
           color: TossDesignSystem.white,
           fontWeight: FontWeight.bold,
-          fontSize: isTouched ? 14 : 12,
+          fontSize: isTouched ? 12 : 10,
         ),
-        titlePositionPercentageOffset: 0.6,
+        titlePositionPercentageOffset: 0.55,
         badgeWidget: isTouched ? _buildBadge(element, count) : null,
-        badgePositionPercentageOffset: 1.3,
+        badgePositionPercentageOffset: 1.2,
       );
     }).toList();
   }
@@ -227,6 +228,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
       opacity: _chartAnimation,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: widget.elementBalance.entries.map((entry) {
           final element = entry.key;
           final count = entry.value as int;
@@ -234,48 +236,39 @@ class _SajuElementChartState extends State<SajuElementChart> {
           final strength = _getElementStrength(count);
 
           return Padding(
-            padding: const EdgeInsets.only(bottom: TossTheme.spacingS),
+            padding: const EdgeInsets.only(bottom: 6),
             child: Row(
               children: [
                 Container(
-                  width: 12,
-                  height: 12,
+                  width: 8,
+                  height: 8,
                   decoration: BoxDecoration(
                     color: color,
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: TossTheme.spacingS),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            element,
-                            style: TossTheme.body2.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                            ),
-                          ),
-                          Text(
-                            '$count',
-                            style: TossTheme.body2.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: color,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        strength,
-                        style: TossTheme.caption.copyWith(
-                          color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-                        ),
-                      ),
-                    ],
+                const SizedBox(width: 6),
+                Text(
+                  element,
+                  style: TossTheme.caption.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  strength,
+                  style: TossTheme.caption.copyWith(
+                    fontSize: 10,
+                    color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '$count',
+                  style: TossTheme.caption.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: color,
                   ),
                 ),
               ],
@@ -293,7 +286,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
     return FadeTransition(
       opacity: _chartAnimation,
       child: Container(
-        padding: const EdgeInsets.all(TossTheme.spacingM),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isDark
               ? TossDesignSystem.cardBackgroundDark.withValues(alpha: 0.3)
@@ -302,18 +295,19 @@ class _SajuElementChartState extends State<SajuElementChart> {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               children: [
                 Icon(
                   Icons.analytics_outlined,
                   color: TossTheme.brandBlue,
-                  size: 20,
+                  size: 16,
                 ),
-                const SizedBox(width: TossTheme.spacingS),
+                const SizedBox(width: 6),
                 Text(
                   '오행 분석',
-                  style: TossTheme.body2.copyWith(
+                  style: TossTheme.caption.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
                   ),
@@ -321,7 +315,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
               ],
             ),
 
-            const SizedBox(height: TossTheme.spacingM),
+            const SizedBox(height: 10),
 
             // 강한 오행
             _buildAnalysisItem(
@@ -333,7 +327,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
               isDark,
             ),
 
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: 8),
 
             // 부족한 오행
             _buildAnalysisItem(
@@ -355,55 +349,60 @@ class _SajuElementChartState extends State<SajuElementChart> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.all(6),
+          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: Icon(
             icon,
             color: color,
-            size: 16,
+            size: 12,
           ),
         ),
-        const SizedBox(width: TossTheme.spacingM),
+        const SizedBox(width: 8),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Row(
                 children: [
                   Text(
                     title,
                     style: TossTheme.caption.copyWith(
+                      fontSize: 11,
                       color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(width: TossTheme.spacingS),
+                  const SizedBox(width: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                     decoration: BoxDecoration(
                       color: color,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
                       element,
                       style: TossTheme.caption.copyWith(
+                        fontSize: 10,
                         color: TossDesignSystem.white,
                         fontWeight: FontWeight.bold,
-                        
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 1),
               Text(
                 interpretation,
                 style: TossTheme.caption.copyWith(
+                  fontSize: 11,
                   color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

@@ -641,53 +641,56 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
+      isScrollControlled: true,
       builder: (context) => Container(
         padding: const EdgeInsets.symmetric(vertical: 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // 제목
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                '정렬 방식',
-                style: typography.headingSmall.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 제목
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  '정렬 방식',
+                  style: typography.headingSmall.copyWith(
+                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // 정렬 옵션들
-            _buildSortOption(
-              context,
-              '최근 조회순',
-              '최근에 본 운세가 위로',
-              SortOption.recentlyViewed,
-              currentSort == SortOption.recentlyViewed,
-            ),
-            _buildSortOption(
-              context,
-              '조회 가능순',
-              '오늘 아직 안 본 운세가 위로',
-              SortOption.availableFirst,
-              currentSort == SortOption.availableFirst,
-            ),
-            _buildSortOption(
-              context,
-              '⭐',
-              '즐겨찾기한 운세를 상단에 고정',
-              SortOption.favoriteFirst,
-              currentSort == SortOption.favoriteFirst,
-            ),
-            _buildSortOption(
-              context,
-              '사용자 지정',
-              '드래그하여 순서 변경',
-              SortOption.custom,
-              currentSort == SortOption.custom,
-            ),
-          ],
+              // 정렬 옵션들
+              _buildSortOption(
+                context,
+                '최근 조회순',
+                '최근에 본 운세가 위로',
+                SortOption.recentlyViewed,
+                currentSort == SortOption.recentlyViewed,
+              ),
+              _buildSortOption(
+                context,
+                '조회 가능순',
+                '오늘 아직 안 본 운세가 위로',
+                SortOption.availableFirst,
+                currentSort == SortOption.availableFirst,
+              ),
+              _buildSortOption(
+                context,
+                '⭐',
+                '즐겨찾기한 운세를 상단에 고정',
+                SortOption.favoriteFirst,
+                currentSort == SortOption.favoriteFirst,
+              ),
+              _buildSortOption(
+                context,
+                '사용자 지정',
+                '드래그하여 순서 변경',
+                SortOption.custom,
+                currentSort == SortOption.custom,
+              ),
+            ],
+          ),
         ),
       ),
     );

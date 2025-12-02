@@ -34,29 +34,35 @@ class EventCategorySelector extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppCard(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      padding: const EdgeInsets.all(20),
+      margin: EdgeInsets.zero,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '이벤트 유형 선택',
-            style: TossDesignSystem.heading3.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-              fontWeight: FontWeight.w700,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              '이벤트 유형 선택',
+              style: TossDesignSystem.heading3.copyWith(
+                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            '운세를 확인하고 싶은 일의 종류를 선택해주세요',
-            style: TossDesignSystem.body2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              '운세를 확인하고 싶은 일의 종류를 선택해주세요',
+              style: TossDesignSystem.body2.copyWith(
+                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           ...EventCategory.values.map((category) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.only(bottom: 10),
               child: _CategoryCard(
                 category: category,
                 isSelected: selectedCategory == category,
@@ -87,37 +93,37 @@ class _CategoryCard extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: isSelected
-              ? category.color.withValues(alpha: 0.1)
-              : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100),
-          borderRadius: BorderRadius.circular(12),
+              ? category.color.withValues(alpha: 0.08)
+              : (isDark ? TossDesignSystem.grayDark100.withValues(alpha: 0.5) : TossDesignSystem.gray50),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
                 ? category.color
-                : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
-            width: isSelected ? 2 : 1,
+                : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray200),
+            width: isSelected ? 1.5 : 1,
           ),
         ),
         child: Row(
           children: [
             Container(
-              width: 48,
-              height: 48,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
-                color: category.color.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
+                color: category.color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
                 category.icon,
                 color: category.color,
-                size: 24,
+                size: 26,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,21 +135,30 @@ class _CategoryCard extends StatelessWidget {
                       fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 3),
                   Text(
                     category.description,
                     style: TossDesignSystem.body3.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+                      height: 1.3,
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              Icon(
-                Icons.check_circle,
-                color: category.color,
-                size: 24,
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: category.color,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 16,
+                ),
               ),
           ],
         ),

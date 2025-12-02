@@ -1,0 +1,444 @@
+{
+  "color": {
+    "brand": {
+      "tossBlue": { "value": "#1F4EF5", "type": "color", "description": "토스 시그니처 블루 (메인)" },
+      "tossBlueDark": { "value": "#1E5EDB", "type": "color", "description": "다크모드용 블루" },
+      "tossBlueLight": { "value": "#4A9EFF", "type": "color", "description": "라이트 블루" }
+    },
+    "gray": {
+      "900": { "value": "#191F28", "type": "color", "description": "가장 진한 회색 (주 텍스트)" },
+      "800": { "value": "#333D4B", "type": "color" },
+      "700": { "value": "#4E5968", "type": "color" },
+      "600": { "value": "#6B7684", "type": "color" },
+      "500": { "value": "#8B95A1", "type": "color" },
+      "400": { "value": "#B0B8C1", "type": "color" },
+      "300": { "value": "#D1D6DB", "type": "color" },
+      "200": { "value": "#E5E8EB", "type": "color" },
+      "100": { "value": "#F2F4F6", "type": "color" },
+      "50": { "value": "#F9FAFB", "type": "color", "description": "가장 밝은 회색" }
+    },
+    "grayDark": {
+      "900": { "value": "#FFFFFF", "type": "color", "description": "다크모드 주 텍스트" },
+      "800": { "value": "#F9FAFB", "type": "color" },
+      "700": { "value": "#F2F4F6", "type": "color" },
+      "600": { "value": "#E5E8EB", "type": "color" },
+      "500": { "value": "#D1D6DB", "type": "color" },
+      "400": { "value": "#9CA3AF", "type": "color", "description": "다크모드 보조 텍스트" },
+      "300": { "value": "#404048", "type": "color", "description": "다크모드 테두리" },
+      "200": { "value": "#3A3A42", "type": "color", "description": "다크모드 표면" },
+      "100": { "value": "#26262E", "type": "color", "description": "다크모드 카드" },
+      "50": { "value": "#17171C", "type": "color", "description": "다크모드 배경" }
+    },
+    "semantic": {
+      "success": { "value": "#10B981", "type": "color", "description": "성공, 긍정" },
+      "successDark": { "value": "#34D399", "type": "color", "description": "다크모드 성공" },
+      "warning": { "value": "#F59E0B", "type": "color", "description": "경고, 주의" },
+      "warningDark": { "value": "#FBBF24", "type": "color", "description": "다크모드 경고" },
+      "error": { "value": "#EF4444", "type": "color", "description": "에러, 실패" },
+      "errorDark": { "value": "#F87171", "type": "color", "description": "다크모드 에러" },
+      "info": { "value": "#3182F6", "type": "color", "description": "정보" },
+      "infoDark": { "value": "#60A5FA", "type": "color", "description": "다크모드 정보" },
+      "purple": { "value": "#8B5CF6", "type": "color" },
+      "teal": { "value": "#06B6D4", "type": "color" },
+      "orange": { "value": "#F97316", "type": "color" },
+      "pink": { "value": "#EC4899", "type": "color" }
+    },
+    "background": {
+      "light": {
+        "primary": { "value": "#FFFFFF", "type": "color" },
+        "secondary": { "value": "#F9FAFB", "type": "color" },
+        "tertiary": { "value": "#F2F4F6", "type": "color" },
+        "card": { "value": "#FFFFFF", "type": "color" },
+        "surface": { "value": "#F7F8FA", "type": "color" }
+      },
+      "dark": {
+        "primary": { "value": "#17171C", "type": "color" },
+        "secondary": { "value": "#1D1D24", "type": "color" },
+        "tertiary": { "value": "#26262E", "type": "color" },
+        "card": { "value": "#26262E", "type": "color" },
+        "surface": { "value": "#3A3A42", "type": "color" }
+      }
+    },
+    "text": {
+      "light": {
+        "primary": { "value": "#191F28", "type": "color" },
+        "secondary": { "value": "#8B95A1", "type": "color" },
+        "tertiary": { "value": "#B0B8C1", "type": "color" }
+      },
+      "dark": {
+        "primary": { "value": "#FFFFFF", "type": "color" },
+        "secondary": { "value": "#9CA3AF", "type": "color" },
+        "tertiary": { "value": "#D1D6DB", "type": "color" }
+      }
+    },
+    "border": {
+      "light": { "value": "#D1D6DB", "type": "color" },
+      "dark": { "value": "#404048", "type": "color" }
+    },
+    "divider": {
+      "light": { "value": "#E5E8EB", "type": "color" },
+      "dark": { "value": "#404048", "type": "color" }
+    }
+  },
+  "spacing": {
+    "xxs": { "value": "2", "type": "spacing", "description": "2px" },
+    "xs": { "value": "4", "type": "spacing", "description": "4px" },
+    "s": { "value": "8", "type": "spacing", "description": "8px" },
+    "m": { "value": "16", "type": "spacing", "description": "16px (기본)" },
+    "l": { "value": "24", "type": "spacing", "description": "24px" },
+    "xl": { "value": "32", "type": "spacing", "description": "32px" },
+    "xxl": { "value": "40", "type": "spacing", "description": "40px" },
+    "3xl": { "value": "48", "type": "spacing", "description": "48px" },
+    "4xl": { "value": "64", "type": "spacing", "description": "64px" },
+    "marginHorizontal": { "value": "20", "type": "spacing", "description": "페이지 좌우 여백" },
+    "marginVertical": { "value": "16", "type": "spacing", "description": "페이지 상하 여백" }
+  },
+  "borderRadius": {
+    "xs": { "value": "4", "type": "borderRadius" },
+    "s": { "value": "8", "type": "borderRadius" },
+    "m": { "value": "12", "type": "borderRadius", "description": "기본 카드, 버튼" },
+    "l": { "value": "16", "type": "borderRadius" },
+    "xl": { "value": "20", "type": "borderRadius" },
+    "xxl": { "value": "24", "type": "borderRadius" },
+    "full": { "value": "9999", "type": "borderRadius", "description": "원형" }
+  },
+  "boxShadow": {
+    "xs": {
+      "value": {
+        "x": "0",
+        "y": "1",
+        "blur": "3",
+        "spread": "0",
+        "color": "rgba(25, 31, 40, 0.04)",
+        "type": "dropShadow"
+      },
+      "type": "boxShadow"
+    },
+    "s": {
+      "value": {
+        "x": "0",
+        "y": "2",
+        "blur": "8",
+        "spread": "0",
+        "color": "rgba(25, 31, 40, 0.04)",
+        "type": "dropShadow"
+      },
+      "type": "boxShadow"
+    },
+    "m": {
+      "value": {
+        "x": "0",
+        "y": "4",
+        "blur": "16",
+        "spread": "0",
+        "color": "rgba(25, 31, 40, 0.08)",
+        "type": "dropShadow"
+      },
+      "type": "boxShadow"
+    },
+    "l": {
+      "value": {
+        "x": "0",
+        "y": "8",
+        "blur": "24",
+        "spread": "0",
+        "color": "rgba(25, 31, 40, 0.12)",
+        "type": "dropShadow"
+      },
+      "type": "boxShadow"
+    },
+    "xl": {
+      "value": {
+        "x": "0",
+        "y": "12",
+        "blur": "32",
+        "spread": "0",
+        "color": "rgba(25, 31, 40, 0.16)",
+        "type": "dropShadow"
+      },
+      "type": "boxShadow"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "korean": { "value": "Pretendard", "type": "fontFamilies" },
+      "english": { "value": "SF Pro Display", "type": "fontFamilies" },
+      "number": { "value": "TossFace", "type": "fontFamilies" }
+    },
+    "display": {
+      "large": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "50",
+          "fontWeight": "Bold",
+          "lineHeight": "117%",
+          "letterSpacing": "-2%"
+        },
+        "type": "typography",
+        "description": "가장 큰 헤드라인 (스플래시, 온보딩)"
+      },
+      "medium": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "42",
+          "fontWeight": "Bold",
+          "lineHeight": "120%",
+          "letterSpacing": "-2%"
+        },
+        "type": "typography"
+      },
+      "small": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "34",
+          "fontWeight": "Bold",
+          "lineHeight": "125%",
+          "letterSpacing": "-1%"
+        },
+        "type": "typography"
+      }
+    },
+    "heading": {
+      "h1": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "30",
+          "fontWeight": "Bold",
+          "lineHeight": "129%",
+          "letterSpacing": "-1%"
+        },
+        "type": "typography",
+        "description": "메인 페이지 제목"
+      },
+      "h2": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "26",
+          "fontWeight": "Bold",
+          "lineHeight": "133%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography",
+        "description": "섹션 제목"
+      },
+      "h3": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "22",
+          "fontWeight": "SemiBold",
+          "lineHeight": "140%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography",
+        "description": "서브 섹션 제목"
+      },
+      "h4": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "20",
+          "fontWeight": "SemiBold",
+          "lineHeight": "140%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography",
+        "description": "작은 섹션 제목"
+      }
+    },
+    "body": {
+      "large": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "19",
+          "fontWeight": "Regular",
+          "lineHeight": "153%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography",
+        "description": "큰 본문"
+      },
+      "medium": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "17",
+          "fontWeight": "Regular",
+          "lineHeight": "160%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography",
+        "description": "기본 본문"
+      },
+      "small": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "16",
+          "fontWeight": "Regular",
+          "lineHeight": "157%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography",
+        "description": "작은 본문"
+      }
+    },
+    "label": {
+      "large": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "15",
+          "fontWeight": "Regular",
+          "lineHeight": "154%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography"
+      },
+      "medium": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "14",
+          "fontWeight": "Regular",
+          "lineHeight": "150%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography"
+      },
+      "small": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "13",
+          "fontWeight": "Regular",
+          "lineHeight": "146%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography"
+      },
+      "tiny": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "12",
+          "fontWeight": "Medium",
+          "lineHeight": "140%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography",
+        "description": "배지, NEW 표시"
+      }
+    },
+    "button": {
+      "large": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "19",
+          "fontWeight": "SemiBold",
+          "lineHeight": "150%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography"
+      },
+      "medium": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "18",
+          "fontWeight": "SemiBold",
+          "lineHeight": "150%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography"
+      },
+      "small": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "17",
+          "fontWeight": "SemiBold",
+          "lineHeight": "147%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography"
+      },
+      "tiny": {
+        "value": {
+          "fontFamily": "Pretendard",
+          "fontSize": "16",
+          "fontWeight": "SemiBold",
+          "lineHeight": "143%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography"
+      }
+    },
+    "number": {
+      "xlarge": {
+        "value": {
+          "fontFamily": "TossFace",
+          "fontSize": "42",
+          "fontWeight": "Bold",
+          "lineHeight": "120%",
+          "letterSpacing": "-2%"
+        },
+        "type": "typography",
+        "description": "매우 큰 숫자"
+      },
+      "large": {
+        "value": {
+          "fontFamily": "TossFace",
+          "fontSize": "34",
+          "fontWeight": "Bold",
+          "lineHeight": "125%",
+          "letterSpacing": "-2%"
+        },
+        "type": "typography",
+        "description": "금액, 점수"
+      },
+      "medium": {
+        "value": {
+          "fontFamily": "TossFace",
+          "fontSize": "26",
+          "fontWeight": "SemiBold",
+          "lineHeight": "133%",
+          "letterSpacing": "-1%"
+        },
+        "type": "typography"
+      },
+      "small": {
+        "value": {
+          "fontFamily": "TossFace",
+          "fontSize": "20",
+          "fontWeight": "SemiBold",
+          "lineHeight": "140%",
+          "letterSpacing": "0%"
+        },
+        "type": "typography"
+      }
+    }
+  },
+  "sizing": {
+    "button": {
+      "heightLarge": { "value": "56", "type": "sizing" },
+      "heightMedium": { "value": "48", "type": "sizing" },
+      "heightSmall": { "value": "48", "type": "sizing", "description": "최소 터치 영역 보장" }
+    },
+    "input": {
+      "heightDefault": { "value": "48", "type": "sizing" },
+      "heightLarge": { "value": "56", "type": "sizing" }
+    },
+    "icon": {
+      "small": { "value": "20", "type": "sizing" },
+      "medium": { "value": "24", "type": "sizing" },
+      "large": { "value": "28", "type": "sizing" }
+    },
+    "touchTarget": {
+      "min": { "value": "48", "type": "sizing", "description": "WCAG 2.1 AA 최소" }
+    },
+    "breakpoint": {
+      "mobile": { "value": "360", "type": "sizing" },
+      "tablet": { "value": "768", "type": "sizing" },
+      "desktop": { "value": "1024", "type": "sizing" },
+      "maxContent": { "value": "640", "type": "sizing" }
+    }
+  },
+  "duration": {
+    "micro": { "value": "100ms", "type": "duration" },
+    "short": { "value": "200ms", "type": "duration" },
+    "medium": { "value": "300ms", "type": "duration" },
+    "long": { "value": "500ms", "type": "duration" },
+    "xlong": { "value": "800ms", "type": "duration" }
+  }
+}

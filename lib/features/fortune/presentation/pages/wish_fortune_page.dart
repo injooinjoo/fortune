@@ -45,6 +45,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   // Speech Recognition
   final SpeechRecognitionService _speechService = SpeechRecognitionService();
   bool _isRecording = false;
+  String _partialResult = ''; // 실시간 음성 인식 결과
 
   // Selection state
   WishCategory? _selectedCategory;
@@ -77,6 +78,10 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
 
   @override
   void dispose() {
+    // 리스너 제거 (녹음 중 위젯이 dispose되는 경우 대비)
+    if (_isRecording) {
+      _speechService.isListeningNotifier.removeListener(_onListeningStateChanged);
+    }
     _wishController.dispose();
     _speechService.dispose();
     super.dispose();
@@ -469,7 +474,9 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
                 maxLines: 4,
                 minLines: 3,
                 decoration: InputDecoration(
-                  hintText: _isRecording ? '듣고 있어요...' : '소원을 말하거나 적어주세요',
+                  hintText: _isRecording
+                      ? (_partialResult.isNotEmpty ? _partialResult : '듣고 있어요...')
+                      : '소원을 말하거나 적어주세요',
                   filled: false,
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
@@ -542,25 +549,31 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   /// 음성 녹음 토글
   void _toggleRecording() async {
     if (_isRecording) {
-      // 녹음 중지
+      // 녹음 중지 - 리스너 제거 먼저
+      _speechService.isListeningNotifier.removeListener(_onListeningStateChanged);
       await _speechService.stopListening();
       setState(() {
         _isRecording = false;
+        _partialResult = ''; // 부분 결과 초기화
       });
+      debugPrint('🎤 [WishPage] Recording stopped manually');
     } else {
       // 녹음 시작
       setState(() {
         _isRecording = true;
+        _partialResult = '';
       });
 
       TossDesignSystem.hapticMedium();
+      debugPrint('🎤 [WishPage] Recording started');
 
       // 상태 변경 리스너 등록 (자동 종료 감지)
       _speechService.isListeningNotifier.addListener(_onListeningStateChanged);
 
       await _speechService.startListening(
         onResult: (result) {
-          if (mounted) {
+          debugPrint('🎤 [WishPage] Final result: $result');
+          if (mounted && result.isNotEmpty) {
             setState(() {
               // 기존 텍스트에 음성 인식 결과 추가
               final currentText = _wishController.text;
@@ -573,6 +586,8 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
               _wishController.selection = TextSelection.fromPosition(
                 TextPosition(offset: _wishController.text.length),
               );
+              // 부분 결과 초기화 (최종 결과가 반영됨)
+              _partialResult = '';
 
               _updateAccordionSection(
                 'wish',
@@ -586,8 +601,11 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
         },
         onPartialResult: (partial) {
           // 부분 결과 업데이트 (실시간 UI 갱신)
+          debugPrint('🎤 [WishPage] Partial result: $partial');
           if (mounted) {
-            setState(() {});
+            setState(() {
+              _partialResult = partial;
+            });
           }
         },
       );
@@ -598,9 +616,11 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   void _onListeningStateChanged() {
     if (!_speechService.isListeningNotifier.value && _isRecording) {
       // 음성 인식이 자동으로 종료된 경우
+      debugPrint('🎤 [WishPage] Recording auto-stopped detected');
       if (mounted) {
         setState(() {
           _isRecording = false;
+          _partialResult = ''; // 부분 결과 초기화
         });
       }
       _speechService.isListeningNotifier.removeListener(_onListeningStateChanged);

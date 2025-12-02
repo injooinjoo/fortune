@@ -8,7 +8,6 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../data/models/pet_profile.dart';
 import '../../../../providers/pet_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
@@ -26,7 +25,7 @@ class PetCompatibilityPage extends ConsumerStatefulWidget {
   final String fortuneType;
   final String title;
   final String description;
-  
+
   const PetCompatibilityPage({
     super.key,
     required this.fortuneType,
@@ -49,7 +48,13 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
   PetSpecies _selectedSpecies = PetSpecies.dog;
-  
+
+  // ✅ 새로운 필드들
+  PetGender _selectedGender = PetGender.unknown;
+  String? _selectedBreed;
+  PetPersonality? _selectedPersonality;
+  bool? _isNeutered;
+
   @override
   void initState() {
     super.initState();
@@ -117,22 +122,25 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           const SizedBox(width: 16),
         ],
       ),
-      // ✅ Phase 5-1: Scaffold body를 Stack으로 감쌈
       body: Stack(
         children: [
-          // 기존 body 컨텐츠
           _fortune != null
               ? _buildFortuneResult()
               : _buildPetSelection(petState),
 
-          // ✅ Phase 5-2: UnifiedButton.floating 추가 (블러 상태일 때만 표시)
           if (_fortune != null && _fortune!.isBlurred)
-            UnifiedButton.floating(
-              text: '광고 보고 전체 내용 확인하기',
-              onPressed: _showAdAndUnblur,
-              style: UnifiedButtonStyle.primary,
-              size: UnifiedButtonSize.large,
-              icon: Icon(Icons.play_arrow, color: TossDesignSystem.white),
+            Positioned(
+              left: 20,
+              right: 20,
+              bottom: MediaQuery.of(context).padding.bottom + 20,
+              child: UnifiedButton(
+                text: '광고 보고 전체 내용 확인하기',
+                onPressed: _showAdAndUnblur,
+                style: UnifiedButtonStyle.primary,
+                size: UnifiedButtonSize.large,
+                icon: Icon(Icons.play_arrow, color: TossDesignSystem.white),
+                width: double.infinity,
+              ),
             ),
         ],
       ),
@@ -141,9 +149,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
 
   Widget _buildPetSelection(PetState petState) {
     if (!_isInitialized) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
+      return Center(child: CircularProgressIndicator());
     }
 
     return AnimatedBuilder(
@@ -180,7 +186,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       direction: DismissDirection.endToStart,
       confirmDismiss: (direction) async {
         if (petId.isEmpty) return false;
-        return await showDialog<bool>(
+
+        final confirmed = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('반려동물 삭제'),
@@ -198,12 +205,13 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             ],
           ),
         ) ?? false;
-      },
-      onDismissed: (direction) {
-        if (petId.isNotEmpty) {
-          ref.read(petProvider.notifier).deletePet(petId);
+
+        if (confirmed) {
+          await ref.read(petProvider.notifier).deletePet(petId);
         }
+        return confirmed;
       },
+      onDismissed: (direction) {},
       background: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
@@ -212,11 +220,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         ),
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 24),
-        child: const Icon(
-          Icons.delete_outline,
-          color: TossDesignSystem.white,
-          size: 28,
-        ),
+        child: const Icon(Icons.delete_outline, color: TossDesignSystem.white, size: 28),
       ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
@@ -245,10 +249,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: Center(
-                    child: Text(
-                      species.emoji,
-                      style: TypographyUnified.displaySmall,
-                    ),
+                    child: Text(species.emoji, style: TypographyUnified.displaySmall),
                   ),
                 ),
                 const SizedBox(width: 20),
@@ -256,19 +257,48 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        pet.name,
-                        style: TypographyUnified.heading3.copyWith(
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            pet.name,
+                            style: TypographyUnified.heading3.copyWith(
+                              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                            ),
+                          ),
+                          if (pet.gender != '모름') ...[
+                            const SizedBox(width: 6),
+                            Text(
+                              PetGender.fromString(pet.gender).symbol,
+                              style: TypographyUnified.bodyMedium.copyWith(
+                                color: pet.gender == '수컷' ? TossTheme.primaryBlue : TossDesignSystem.errorRed,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                       SizedBox(height: 6),
                       Text(
-                        '${species.displayName} • ${pet.age}세',
+                        '${species.displayName} • ${pet.age}세${pet.breed != null ? ' • ${pet.breed}' : ''}',
                         style: TypographyUnified.bodyMedium.copyWith(
                           color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                         ),
                       ),
+                      if (pet.personality != null) ...[
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '${PetPersonality.fromString(pet.personality)?.emoji ?? ''} ${pet.personality}',
+                            style: TypographyUnified.labelSmall.copyWith(
+                              color: TossTheme.primaryBlue,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -278,11 +308,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16,
-                    color: TossTheme.primaryBlue,
-                  ),
+                  child: Icon(Icons.arrow_forward_ios, size: 16, color: TossTheme.primaryBlue),
                 ),
               ],
             ),
@@ -321,11 +347,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                 color: TossTheme.primaryBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(24),
               ),
-              child: Icon(
-                Icons.pets,
-                size: 40,
-                color: TossTheme.primaryBlue,
-              ),
+              child: Icon(Icons.pets, size: 40, color: TossTheme.primaryBlue),
             ),
             SizedBox(height: 24),
             Text(
@@ -362,7 +384,11 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     _nameController.clear();
     _ageController.text = '1';
     _selectedSpecies = PetSpecies.dog;
-    
+    _selectedGender = PetGender.unknown;
+    _selectedBreed = null;
+    _selectedPersonality = null;
+    _isNeutered = null;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -374,7 +400,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
   Widget _buildAddPetForm() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      height: MediaQuery.of(context).size.height * 0.85,
+      height: MediaQuery.of(context).size.height * 0.9,
       decoration: BoxDecoration(
         color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
@@ -418,96 +444,76 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
 
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Species selection
-                        Text(
-                          '종류',
-                          style: TypographyUnified.bodyLarge.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                          ),
-                        ),
+                        // === 필수 정보 섹션 ===
+                        _buildSectionTitle('필수 정보', isDark),
                         const SizedBox(height: 12),
+
+                        // Species selection
+                        _buildFieldLabel('종류', isDark),
+                        const SizedBox(height: 8),
                         _buildSpeciesSelector(setModalState),
-                        SizedBox(height: 24),
+                        SizedBox(height: 20),
 
                         // Name input
-                        Text(
-                          '이름',
-                          style: TypographyUnified.bodyLarge.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        TextField(
+                        _buildFieldLabel('이름', isDark),
+                        const SizedBox(height: 8),
+                        _buildTextField(
                           controller: _nameController,
-                          style: TextStyle(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
-                          decoration: InputDecoration(
-                            hintText: '반려동물의 이름을 입력하세요',
-                            hintStyle: TextStyle(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400),
-                            filled: true,
-                            fillColor: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: TossTheme.primaryBlue, width: 2),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                          ),
-                          onChanged: (value) => setModalState(() {}),
+                          hint: '반려동물의 이름을 입력하세요',
+                          isDark: isDark,
+                          onChanged: (_) => setModalState(() {}),
                         ),
-                        SizedBox(height: 24),
+                        SizedBox(height: 20),
 
                         // Age input
-                        Text(
-                          '나이',
-                          style: TypographyUnified.bodyLarge.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        TextField(
+                        _buildFieldLabel('나이', isDark),
+                        const SizedBox(height: 8),
+                        _buildTextField(
                           controller: _ageController,
+                          hint: '나이를 입력하세요',
+                          isDark: isDark,
                           keyboardType: TextInputType.number,
-                          style: TextStyle(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
-                          decoration: InputDecoration(
-                            hintText: '나이를 입력하세요',
-                            hintStyle: TextStyle(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400),
-                            suffixText: '세',
-                            suffixStyle: TextStyle(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
-                            filled: true,
-                            fillColor: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: TossTheme.primaryBlue, width: 2),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                          ),
-                          onChanged: (value) => setModalState(() {}),
+                          suffix: '세',
+                          onChanged: (_) => setModalState(() {}),
                         ),
+                        SizedBox(height: 20),
+
+                        // Gender selection
+                        _buildFieldLabel('성별', isDark),
+                        const SizedBox(height: 8),
+                        _buildGenderSelector(setModalState, isDark),
+
+                        const SizedBox(height: 32),
+
+                        // === 선택 정보 섹션 ===
+                        _buildSectionTitle('선택 정보', isDark, subtitle: '더 정확한 운세를 위해'),
+                        const SizedBox(height: 12),
+
+                        // Breed selection
+                        _buildFieldLabel('품종', isDark, isOptional: true),
+                        const SizedBox(height: 8),
+                        _buildBreedSelector(setModalState, isDark),
+                        SizedBox(height: 20),
+
+                        // Personality selection
+                        _buildFieldLabel('성격', isDark, isOptional: true),
+                        const SizedBox(height: 8),
+                        _buildPersonalitySelector(setModalState, isDark),
+                        SizedBox(height: 20),
+
+                        // Neutered selection
+                        _buildFieldLabel('중성화 여부', isDark, isOptional: true),
+                        const SizedBox(height: 8),
+                        _buildNeuteredSelector(setModalState, isDark),
+
+                        const SizedBox(height: 40),
                       ],
                     ),
                   ),
@@ -534,17 +540,104 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     );
   }
 
+  Widget _buildSectionTitle(String title, bool isDark, {String? subtitle}) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: TypographyUnified.heading4.copyWith(
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+          ),
+        ),
+        if (subtitle != null) ...[
+          const SizedBox(width: 8),
+          Text(
+            subtitle,
+            style: TypographyUnified.bodySmall.copyWith(
+              color: TossTheme.textGray400,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildFieldLabel(String label, bool isDark, {bool isOptional = false}) {
+    return Row(
+      children: [
+        Text(
+          label,
+          style: TypographyUnified.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+          ),
+        ),
+        if (isOptional) ...[
+          const SizedBox(width: 4),
+          Text(
+            '(선택)',
+            style: TypographyUnified.bodySmall.copyWith(
+              color: TossTheme.textGray400,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hint,
+    required bool isDark,
+    TextInputType? keyboardType,
+    String? suffix,
+    Function(String)? onChanged,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      style: TextStyle(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400),
+        suffixText: suffix,
+        suffixStyle: TextStyle(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+        filled: true,
+        fillColor: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: TossTheme.primaryBlue, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      ),
+      onChanged: onChanged,
+    );
+  }
+
   Widget _buildSpeciesSelector(StateSetter setModalState) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final mainSpecies = [PetSpecies.dog, PetSpecies.cat, PetSpecies.rabbit, PetSpecies.hamster, PetSpecies.bird, PetSpecies.other];
+
     return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: PetSpecies.values.map((species) {
+      spacing: 10,
+      runSpacing: 10,
+      children: mainSpecies.map((species) {
         final isSelected = _selectedSpecies == species;
         return GestureDetector(
-          onTap: () => setModalState(() => _selectedSpecies = species),
+          onTap: () => setModalState(() {
+            _selectedSpecies = species;
+            _selectedBreed = null; // 종류 변경 시 품종 초기화
+          }),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               color: isSelected
                 ? TossTheme.primaryBlue.withValues(alpha: 0.1)
@@ -553,16 +646,13 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
                 color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
                 width: isSelected ? 2 : 1,
               ),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  species.emoji,
-                  style: TypographyUnified.heading3,
-                ),
-                SizedBox(width: 8),
+                Text(species.emoji, style: TypographyUnified.bodyLarge),
+                SizedBox(width: 6),
                 Text(
                   species.displayName,
                   style: TypographyUnified.bodyMedium.copyWith(
@@ -578,6 +668,173 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     );
   }
 
+  Widget _buildGenderSelector(StateSetter setModalState, bool isDark) {
+    return Row(
+      children: PetGender.values.map((gender) {
+        final isSelected = _selectedGender == gender;
+        return Expanded(
+          child: GestureDetector(
+            onTap: () => setModalState(() => _selectedGender = gender),
+            child: Container(
+              margin: EdgeInsets.only(right: gender != PetGender.unknown ? 10 : 0),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                color: isSelected
+                  ? TossTheme.primaryBlue.withValues(alpha: 0.1)
+                  : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50),
+                border: Border.all(
+                  color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                  width: isSelected ? 2 : 1,
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    gender.symbol,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: isSelected
+                        ? (gender == PetGender.male ? TossTheme.primaryBlue : gender == PetGender.female ? TossDesignSystem.errorRed : TossTheme.textGray400)
+                        : TossTheme.textGray400,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    gender.displayName,
+                    style: TypographyUnified.bodySmall.copyWith(
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildBreedSelector(StateSetter setModalState, bool isDark) {
+    final breeds = PetBreeds.getBreedsForSpecies(_selectedSpecies.displayName);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedBreed,
+          hint: Text(
+            '품종을 선택하세요',
+            style: TextStyle(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400),
+          ),
+          isExpanded: true,
+          dropdownColor: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+          items: breeds.map((breed) {
+            return DropdownMenuItem<String>(
+              value: breed,
+              child: Text(
+                breed,
+                style: TextStyle(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+              ),
+            );
+          }).toList(),
+          onChanged: (value) => setModalState(() => _selectedBreed = value),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPersonalitySelector(StateSetter setModalState, bool isDark) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: PetPersonality.values.map((personality) {
+        final isSelected = _selectedPersonality == personality;
+        return GestureDetector(
+          onTap: () => setModalState(() {
+            _selectedPersonality = isSelected ? null : personality;
+          }),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: isSelected
+                ? TossTheme.primaryBlue.withValues(alpha: 0.1)
+                : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50),
+              border: Border.all(
+                color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                width: isSelected ? 2 : 1,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(personality.emoji, style: TypographyUnified.bodySmall),
+                SizedBox(width: 4),
+                Text(
+                  personality.displayName,
+                  style: TypographyUnified.bodySmall.copyWith(
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildNeuteredSelector(StateSetter setModalState, bool isDark) {
+    return Row(
+      children: [
+        _buildNeuteredOption(setModalState, isDark, true, '완료'),
+        const SizedBox(width: 10),
+        _buildNeuteredOption(setModalState, isDark, false, '미완료'),
+        const SizedBox(width: 10),
+        _buildNeuteredOption(setModalState, isDark, null, '모름'),
+      ],
+    );
+  }
+
+  Widget _buildNeuteredOption(StateSetter setModalState, bool isDark, bool? value, String label) {
+    final isSelected = _isNeutered == value;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setModalState(() => _isNeutered = value),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected
+              ? TossTheme.primaryBlue.withValues(alpha: 0.1)
+              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray50),
+            border: Border.all(
+              color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+              width: isSelected ? 2 : 1,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TypographyUnified.bodySmall.copyWith(
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   bool _canRegisterPet() {
     return _nameController.text.trim().isNotEmpty &&
            _ageController.text.trim().isNotEmpty &&
@@ -586,7 +843,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
 
   Future<void> _registerPet(BuildContext bottomSheetContext) async {
     Logger.info('🐾 Starting pet registration process');
-    
+
     final user = ref.read(userProvider).value;
     if (user == null) {
       Logger.error('❌ User is null, cannot register pet');
@@ -594,39 +851,35 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     }
 
     final age = int.tryParse(_ageController.text) ?? 1;
-    Logger.info('📝 Pet info - Name: ${_nameController.text.trim()}, Species: ${_selectedSpecies.displayName}, Age: $age, UserId: ${user.id}');
-    
+    Logger.info('📝 Pet info - Name: ${_nameController.text.trim()}, Species: ${_selectedSpecies.displayName}, Age: $age');
+
     final pet = await ref.read(petProvider.notifier).createPet(
       userId: user.id,
       species: _selectedSpecies.displayName,
       name: _nameController.text.trim(),
       age: age,
+      gender: _selectedGender.displayName,
+      breed: _selectedBreed,
+      personality: _selectedPersonality?.displayName,
+      isNeutered: _isNeutered,
     );
 
     if (!mounted) return;
 
     if (pet != null) {
-      Logger.info('✅ Pet registration successful, closing bottom sheet');
+      Logger.info('✅ Pet registration successful');
       if (bottomSheetContext.mounted) Navigator.of(bottomSheetContext).pop();
       _selectPetAndGenerateFortune(pet);
     } else {
       Logger.error('❌ Pet registration failed');
       final petState = ref.read(petProvider);
       if (petState.hasError) {
-        Logger.error('🔥 Pet state error: ${petState.error}');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(petState.error!),
-            backgroundColor: TossDesignSystem.errorRed,
-          ),
+          SnackBar(content: Text(petState.error!), backgroundColor: TossDesignSystem.errorRed),
         );
       } else {
-        // Generic error message if no specific error
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('반려동물 등록에 실패했습니다. 다시 시도해주세요.'),
-            backgroundColor: TossDesignSystem.errorRed,
-          ),
+          const SnackBar(content: Text('반려동물 등록에 실패했습니다. 다시 시도해주세요.'), backgroundColor: TossDesignSystem.errorRed),
         );
       }
     }
@@ -637,21 +890,25 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     await _generateFortune(pet);
   }
 
-
   Future<void> _generateFortune(PetProfile pet) async {
     try {
       final user = ref.read(userProvider).value;
       if (user == null) return;
 
-      // ✅ Premium 체크
       final tokenState = ref.read(tokenProvider);
       final isPremium = (tokenState.balance?.remainingTokens ?? 0) > 0;
       debugPrint('💎 [PetCompatibilityPage] Premium 상태: $isPremium');
 
+      // ✅ 확장된 파라미터 전송
       final params = {
         'pet_name': pet.name,
         'pet_species': pet.species,
         'pet_age': pet.age,
+        'pet_gender': pet.gender,
+        'pet_breed': pet.breed ?? '',
+        'pet_personality': pet.personality ?? '',
+        'pet_health_notes': pet.healthNotes ?? '',
+        'pet_neutered': pet.isNeutered,
       };
 
       final fortuneService = ref.read(fortuneServiceProvider);
@@ -661,20 +918,15 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         params: params,
       );
 
-      // ✅ 블러 로직 - API와 일치하는 섹션 목록
+      // ✅ 새로운 블러 섹션 목록
       final isBlurred = !isPremium;
       final blurredSections = isBlurred ? [
-        'health_fortune',
-        'activity_fortune',
-        'emotional_state',
-        'special_events',
-        'care_points',
-        'recommendations',
-        'warnings',
-        'special_tip',
+        'pets_voice',
+        'health_insight',
+        'activity_recommendation',
+        'emotional_care',
+        'special_tips',
       ] : <String>[];
-
-      debugPrint('🔒 [PetCompatibilityPage] isBlurred: $isBlurred, blurredSections: $blurredSections');
 
       final fortuneWithBlur = fortune.copyWith(
         isBlurred: isBlurred,
@@ -688,29 +940,20 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       Logger.error('Failed to generate pet fortune', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('운세 생성에 실패했습니다. 다시 시도해주세요.'),
-            backgroundColor: TossDesignSystem.errorRed,
-          ),
+          const SnackBar(content: Text('운세 생성에 실패했습니다. 다시 시도해주세요.'), backgroundColor: TossDesignSystem.errorRed),
         );
       }
     }
   }
 
-  // ✅ Phase 3-1: RewardedAd 시청 후 블러 해제
   Future<void> _showAdAndUnblur() async {
     if (_fortune == null) return;
-
-    debugPrint('[PetCompatibilityPage] 광고 시청 후 블러 해제 시작');
 
     try {
       final adService = AdService.instance;
 
-      // 광고가 준비 안됐으면 로드
       if (!adService.isRewardedAdReady) {
-        debugPrint('[PetCompatibilityPage] ⏳ RewardedAd 로드 중...');
         await adService.loadRewardedAd();
-
         int waitCount = 0;
         while (!adService.isRewardedAdReady && waitCount < 10) {
           await Future.delayed(const Duration(milliseconds: 500));
@@ -718,13 +961,9 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         }
 
         if (!adService.isRewardedAdReady) {
-          debugPrint('[PetCompatibilityPage] ❌ RewardedAd 로드 타임아웃');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
-                backgroundColor: TossDesignSystem.errorRed,
-              ),
+              const SnackBar(content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'), backgroundColor: TossDesignSystem.errorRed),
             );
           }
           return;
@@ -733,54 +972,34 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
 
       await adService.showRewardedAd(
         onUserEarnedReward: (ad, reward) {
-          debugPrint('[PetCompatibilityPage] ✅ 광고 시청 완료, 블러 해제');
           if (mounted) {
             setState(() {
-              _fortune = _fortune!.copyWith(
-                isBlurred: false,
-                blurredSections: [],
-              );
+              _fortune = _fortune!.copyWith(isBlurred: false, blurredSections: []);
             });
           }
         },
       );
     } catch (e, stackTrace) {
       Logger.error('[PetCompatibilityPage] 광고 표시 실패', e, stackTrace);
-
-      // UX 개선: 에러 발생해도 블러 해제해서 콘텐츠 볼 수 있게 함
       if (mounted) {
         setState(() {
-          _fortune = _fortune!.copyWith(
-            isBlurred: false,
-            blurredSections: [],
-          );
+          _fortune = _fortune!.copyWith(isBlurred: false, blurredSections: []);
         });
-
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
-            backgroundColor: TossDesignSystem.warningOrange,
-          ),
+          const SnackBar(content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'), backgroundColor: TossDesignSystem.warningOrange),
         );
       }
     }
   }
 
-  // ✅ Phase 3-2: 블러 래퍼 헬퍼
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required String sectionKey,
-  }) {
+  Widget _buildBlurWrapper({required Widget child, required String sectionKey}) {
     if (_fortune == null || !_fortune!.isBlurred || !_fortune!.blurredSections.contains(sectionKey)) {
       return child;
     }
 
     return Stack(
       children: [
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
+        ImageFiltered(imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), child: child),
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
@@ -791,10 +1010,16 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
         ),
         Positioned.fill(
           child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.lock_outline, size: 32, color: Colors.white.withValues(alpha: 0.9)),
+                const SizedBox(height: 8),
+                Text(
+                  '프리미엄 콘텐츠',
+                  style: TypographyUnified.bodySmall.copyWith(color: Colors.white),
+                ),
+              ],
             ),
           ),
         ),
@@ -812,169 +1037,720 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     }
 
     final species = PetSpecies.fromString(selectedPet.species);
+    final data = _fortune!.metadata ?? {};
 
     return StandardFortuneResultLayout(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Pet info card
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  TossTheme.primaryBlue.withValues(alpha: 0.1),
-                  isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+          // ✅ Pet info card
+          _buildPetInfoHeader(selectedPet, species, isDark),
+          const SizedBox(height: 20),
+
+          // ✅ 육각형 차트
+          if (data['hexagonScores'] != null)
+            _buildHexagonChart(data, isDark),
+          const SizedBox(height: 20),
+
+          // ✅ 무료 섹션: 오늘의 컨디션
+          _buildDailyConditionCard(data, isDark),
+          const SizedBox(height: 16),
+
+          // ✅ 무료 섹션: 주인과의 궁합
+          _buildOwnerBondCard(data, isDark),
+          const SizedBox(height: 16),
+
+          // ✅ 무료 섹션: 행운 아이템
+          _buildLuckyItemsCard(data, isDark),
+          const SizedBox(height: 20),
+
+          // ✅ 프리미엄 섹션: Pet's Voice (킬러 피처!)
+          _buildBlurWrapper(
+            sectionKey: 'pets_voice',
+            child: _buildPetsVoiceCard(data, species, isDark),
+          ),
+          const SizedBox(height: 16),
+
+          // ✅ 프리미엄 섹션: 건강 인사이트
+          _buildBlurWrapper(
+            sectionKey: 'health_insight',
+            child: _buildHealthInsightCard(data, isDark),
+          ),
+          const SizedBox(height: 16),
+
+          // ✅ 프리미엄 섹션: 활동 추천
+          _buildBlurWrapper(
+            sectionKey: 'activity_recommendation',
+            child: _buildActivityCard(data, isDark),
+          ),
+          const SizedBox(height: 16),
+
+          // ✅ 프리미엄 섹션: 감정 케어
+          _buildBlurWrapper(
+            sectionKey: 'emotional_care',
+            child: _buildEmotionalCareCard(data, isDark),
+          ),
+          const SizedBox(height: 16),
+
+          // ✅ 프리미엄 섹션: 특별 조언
+          _buildBlurWrapper(
+            sectionKey: 'special_tips',
+            child: _buildSpecialTipsCard(data, isDark),
+          ),
+
+          // Action buttons
+          if (!_fortune!.isBlurred) ...[
+            const SizedBox(height: FortuneButtonSpacing.buttonTopSpacing),
+            FortuneButtonPositionHelper.parallel(
+              leftButton: UnifiedButton(
+                text: '다른 반려동물',
+                style: UnifiedButtonStyle.secondary,
+                size: UnifiedButtonSize.large,
+                onPressed: () {
+                  setState(() => _fortune = null);
+                  ref.read(petProvider.notifier).clearSelectedPet();
+                },
               ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: TossTheme.primaryBlue.withValues(alpha: 0.2),
-                width: 1,
+              rightButton: UnifiedButton(
+                text: '공유하기',
+                style: UnifiedButtonStyle.primary,
+                size: UnifiedButtonSize.large,
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('공유 기능이 곧 추가될 예정입니다')),
+                  );
+                },
               ),
             ),
-            child: Row(
+          ] else
+            const SizedBox(height: 100),
+        ],
+      ),
+    ).animate().fadeIn(duration: 800.ms);
+  }
+
+  Widget _buildPetInfoHeader(PetProfile pet, PetSpecies species, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            TossTheme.primaryBlue.withValues(alpha: 0.1),
+            isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: TossTheme.primaryBlue.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              color: TossTheme.primaryBlue.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Center(child: Text(species.emoji, style: TypographyUnified.displayMedium)),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(
-                    child: Text(
-                      species.emoji,
-                      style: TypographyUnified.displayLarge,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        selectedPet.name,
-                        style: TypographyUnified.displaySmall.copyWith(
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                        ),
+                Row(
+                  children: [
+                    Text(
+                      pet.name,
+                      style: TypographyUnified.heading2.copyWith(
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                       ),
-                      SizedBox(height: 4),
+                    ),
+                    if (pet.gender != '모름') ...[
+                      const SizedBox(width: 6),
                       Text(
-                        '${species.displayName} • ${selectedPet.age}세',
-                        style: TypographyUnified.bodyLarge.copyWith(
-                          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                        PetGender.fromString(pet.gender).symbol,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: pet.gender == '수컷' ? TossTheme.primaryBlue : TossDesignSystem.errorRed,
                         ),
                       ),
                     ],
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${species.displayName} • ${pet.age}세${pet.breed != null ? ' • ${pet.breed}' : ''}',
+                  style: TypographyUnified.bodyMedium.copyWith(
+                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
 
-          // ✅ Phase 4-1 & 4-2: Fortune card (블러 + 프리미엄 배지)
-          _buildBlurWrapper(
-            sectionKey: 'detailed_content',
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: TossDesignSystem.black.withValues(alpha: 0.06),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.auto_awesome,
-                        color: TossTheme.primaryBlue,
-                        size: 24,
-                      ),
-                      SizedBox(width: 12),
-                      Text(
-                        '궁합 운세',
-                        style: TypographyUnified.heading3.copyWith(
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                        ),
-                      ),
-                      const Spacer(),
-                      // ✅ 프리미엄 배지
-                      if (_fortune!.isBlurred && _fortune!.blurredSections.contains('detailed_content'))
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.lock, size: 12, color: TossTheme.primaryBlue),
-                              const SizedBox(width: 4),
-                              Text(
-                                '프리미엄',
-                                style: TypographyUnified.labelSmall.copyWith(
-                                  color: TossTheme.primaryBlue,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    _fortune!.content,
-                    style: TypographyUnified.bodyLarge.copyWith(
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                      height: 1.6,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: FortuneButtonSpacing.buttonTopSpacing),
+  Widget _buildHexagonChart(Map<String, dynamic> data, bool isDark) {
+    final hexagonData = data['hexagonScores'] as Map<String, dynamic>?;
+    if (hexagonData == null) return const SizedBox.shrink();
 
-          // Action buttons
-          FortuneButtonPositionHelper.parallel(
-            leftButton: UnifiedButton(
-              text: '다른 반려동물',
-              style: UnifiedButtonStyle.secondary,
-              size: UnifiedButtonSize.large,
-              onPressed: () {
-                setState(() => _fortune = null);
-                ref.read(petProvider.notifier).clearSelectedPet();
-              },
-            ),
-            rightButton: UnifiedButton(
-              text: '공유하기',
-              style: UnifiedButtonStyle.primary,
-              size: UnifiedButtonSize.large,
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('공유 기능이 곧 추가될 예정입니다'),
-                  ),
-                );
-              },
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: TossDesignSystem.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        children: [
+          Text('오늘의 운세 지수', style: TypographyUnified.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 200,
+            child: HexagonChart(
+              scores: hexagonData.map((k, v) => MapEntry(k, (v as num).toInt())),
             ),
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 800.ms);
+    );
+  }
+
+  Widget _buildDailyConditionCard(Map<String, dynamic> data, bool isDark) {
+    final condition = data['daily_condition'] as Map<String, dynamic>?;
+    if (condition == null) return const SizedBox.shrink();
+
+    final score = condition['overall_score'] as int? ?? 0;
+    final energyLevel = condition['energy_level'] as String? ?? 'medium';
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: TossDesignSystem.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.favorite, color: TossDesignSystem.successGreen, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text('오늘의 컨디션', style: TypographyUnified.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text('$score점', style: TypographyUnified.heading4.copyWith(color: TossTheme.primaryBlue)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            condition['mood_prediction'] as String? ?? '',
+            style: TypographyUnified.bodyLarge.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              _buildEnergyBadge(energyLevel),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  condition['energy_description'] as String? ?? '',
+                  style: TypographyUnified.bodySmall.copyWith(color: TossTheme.textGray600),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEnergyBadge(String level) {
+    final color = level == 'high' ? TossDesignSystem.successGreen : level == 'medium' ? TossDesignSystem.warningOrange : TossTheme.textGray400;
+    final label = level == 'high' ? '활발' : level == 'medium' ? '보통' : '차분';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.bolt, color: color, size: 14),
+          const SizedBox(width: 4),
+          Text(label, style: TypographyUnified.labelSmall.copyWith(color: color, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOwnerBondCard(Map<String, dynamic> data, bool isDark) {
+    final bond = data['owner_bond'] as Map<String, dynamic>?;
+    if (bond == null) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: TossDesignSystem.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.errorRed.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.favorite_border, color: TossDesignSystem.errorRed, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text('주인과의 궁합', style: TypographyUnified.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+              const Spacer(),
+              Text('${bond['bond_score'] ?? 0}점', style: TypographyUnified.heading4.copyWith(color: TossDesignSystem.errorRed)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            bond['bonding_tip'] as String? ?? '',
+            style: TypographyUnified.bodyLarge.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack, height: 1.5),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(Icons.access_time, color: TossTheme.primaryBlue, size: 16),
+              const SizedBox(width: 6),
+              Text('최적 시간: ${bond['best_time'] ?? ''}', style: TypographyUnified.bodySmall.copyWith(color: TossTheme.primaryBlue)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLuckyItemsCard(Map<String, dynamic> data, bool isDark) {
+    final items = data['lucky_items'] as Map<String, dynamic>?;
+    if (items == null) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: TossDesignSystem.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.stars, color: TossDesignSystem.warningOrange, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text('행운 아이템', style: TypographyUnified.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildLuckyChip('🎨', items['color'] ?? ''),
+              _buildLuckyChip('🍖', items['snack'] ?? ''),
+              _buildLuckyChip('🎯', items['activity'] ?? ''),
+              _buildLuckyChip('⏰', items['time'] ?? ''),
+              _buildLuckyChip('📍', items['spot'] ?? ''),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLuckyChip(String emoji, String text) {
+    if (text.isEmpty) return const SizedBox.shrink();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(emoji, style: TypographyUnified.bodySmall),
+          const SizedBox(width: 6),
+          Text(text, style: TypographyUnified.bodySmall.copyWith(fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPetsVoiceCard(Map<String, dynamic> data, PetSpecies species, bool isDark) {
+    final voice = data['pets_voice'] as Map<String, dynamic>?;
+    if (voice == null) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            TossTheme.primaryBlue.withValues(alpha: 0.05),
+            TossDesignSystem.purple.withValues(alpha: 0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: TossTheme.primaryBlue.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.purple.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(species.emoji, style: TypographyUnified.heading3),
+              ),
+              const SizedBox(width: 12),
+              Text("Pet's Voice", style: TypographyUnified.heading4.copyWith(color: TossDesignSystem.purple)),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.purple.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.mic, size: 12, color: TossDesignSystem.purple),
+                    const SizedBox(width: 4),
+                    Text('프리미엄', style: TypographyUnified.labelSmall.copyWith(color: TossDesignSystem.purple, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildVoiceBubble('☀️ 아침 인사', voice['morning_message'] ?? '', isDark),
+          const SizedBox(height: 12),
+          _buildVoiceBubble('💕 전하고 싶은 말', voice['to_owner'] ?? '', isDark),
+          const SizedBox(height: 12),
+          _buildVoiceBubble('🤫 비밀 소원', voice['secret_wish'] ?? '', isDark),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVoiceBubble(String label, String message, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TypographyUnified.labelSmall.copyWith(color: TossTheme.textGray400)),
+        const SizedBox(height: 6),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [BoxShadow(color: TossDesignSystem.black.withValues(alpha: 0.04), blurRadius: 8)],
+          ),
+          child: Text(
+            '"$message"',
+            style: TypographyUnified.bodyMedium.copyWith(
+              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              fontStyle: FontStyle.italic,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHealthInsightCard(Map<String, dynamic> data, bool isDark) {
+    final health = data['health_insight'] as Map<String, dynamic>?;
+    if (health == null) return const SizedBox.shrink();
+
+    final checkPoints = (health['check_points'] as List<dynamic>?)?.cast<String>() ?? [];
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: TossDesignSystem.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.health_and_safety, color: TossDesignSystem.successGreen, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text('건강 인사이트', style: TypographyUnified.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(health['overall'] ?? '', style: TypographyUnified.bodyMedium.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack, height: 1.5)),
+          const SizedBox(height: 12),
+          ...checkPoints.map((point) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.check_circle_outline, color: TossDesignSystem.successGreen, size: 16),
+                const SizedBox(width: 8),
+                Expanded(child: Text(point, style: TypographyUnified.bodySmall.copyWith(color: TossTheme.textGray600))),
+              ],
+            ),
+          )),
+          if (health['seasonal_tip'] != null) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.wb_sunny, color: TossDesignSystem.warningOrange, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(health['seasonal_tip'], style: TypographyUnified.bodySmall.copyWith(color: TossDesignSystem.warningOrange))),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActivityCard(Map<String, dynamic> data, bool isDark) {
+    final activity = data['activity_recommendation'] as Map<String, dynamic>?;
+    if (activity == null) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: TossDesignSystem.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.directions_run, color: TossTheme.primaryBlue, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text('활동 추천', style: TypographyUnified.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildActivityRow('🌅 아침', activity['morning'] ?? '', isDark),
+          _buildActivityRow('☀️ 오후', activity['afternoon'] ?? '', isDark),
+          _buildActivityRow('🌙 저녁', activity['evening'] ?? '', isDark),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.star, color: TossTheme.primaryBlue, size: 16),
+                const SizedBox(width: 8),
+                Expanded(child: Text(activity['special_activity'] ?? '', style: TypographyUnified.bodySmall.copyWith(color: TossTheme.primaryBlue, fontWeight: FontWeight.w500))),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActivityRow(String time, String activity, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(time, style: TypographyUnified.bodySmall),
+          const SizedBox(width: 12),
+          Expanded(child: Text(activity, style: TypographyUnified.bodySmall.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmotionalCareCard(Map<String, dynamic> data, bool isDark) {
+    final emotion = data['emotional_care'] as Map<String, dynamic>?;
+    if (emotion == null) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: TossDesignSystem.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.errorRed.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.psychology, color: TossDesignSystem.errorRed, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text('감정 케어', style: TypographyUnified.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.purple.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(emotion['primary_emotion'] ?? '', style: TypographyUnified.labelSmall.copyWith(color: TossDesignSystem.purple, fontWeight: FontWeight.w600)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(emotion['bonding_tip'] ?? '', style: TypographyUnified.bodyMedium.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack, height: 1.5)),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: TossDesignSystem.errorRed.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: TossDesignSystem.errorRed.withValues(alpha: 0.2)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.warning_amber, color: TossDesignSystem.errorRed, size: 16),
+                const SizedBox(width: 8),
+                Expanded(child: Text('스트레스 신호: ${emotion['stress_indicator'] ?? ''}', style: TypographyUnified.bodySmall.copyWith(color: TossDesignSystem.errorRed))),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpecialTipsCard(Map<String, dynamic> data, bool isDark) {
+    final tips = (data['special_tips'] as List<dynamic>?)?.cast<String>() ?? [];
+    if (tips.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [BoxShadow(color: TossDesignSystem.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.lightbulb_outline, color: TossDesignSystem.warningOrange, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text('특별 조언', style: TypographyUnified.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...tips.asMap().entries.map((entry) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: TossDesignSystem.warningOrange.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(child: Text('${entry.key + 1}', style: TypographyUnified.labelSmall.copyWith(color: TossDesignSystem.warningOrange, fontWeight: FontWeight.w700))),
+                ),
+                const SizedBox(width: 12),
+                Expanded(child: Text(entry.value, style: TypographyUnified.bodyMedium.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack, height: 1.4))),
+              ],
+            ),
+          )),
+        ],
+      ),
+    );
   }
 }

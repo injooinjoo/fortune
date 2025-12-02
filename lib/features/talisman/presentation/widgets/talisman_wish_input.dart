@@ -4,8 +4,6 @@ import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../core/widgets/unified_button.dart';
-import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/services/talisman_generation_service.dart' as ai_talisman;
 import '../../../../core/utils/logger.dart';
 
@@ -13,23 +11,34 @@ class TalismanWishInput extends StatefulWidget {
   final TalismanCategory selectedCategory;
   final Function(String) onWishSubmitted;
   final Function(String, bool)? onAIWishSubmitted; // AI 생성용 콜백
+  final Function(bool isValid, bool isLoading)? onValidationChanged;
 
   const TalismanWishInput({
     super.key,
     required this.selectedCategory,
     required this.onWishSubmitted,
     this.onAIWishSubmitted,
+    this.onValidationChanged,
   });
 
   @override
-  State<TalismanWishInput> createState() => _TalismanWishInputState();
+  State<TalismanWishInput> createState() => TalismanWishInputState();
 }
 
-class _TalismanWishInputState extends State<TalismanWishInput> {
+class TalismanWishInputState extends State<TalismanWishInput> {
   final TextEditingController _wishController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _isValid = false;
   bool _isGeneratingAI = false;
+
+  /// Public getter for wish text
+  String get wishText => _wishController.text.trim();
+
+  /// Public getter for valid state
+  bool get isValid => _isValid;
+
+  /// Public getter for loading state
+  bool get isGeneratingAI => _isGeneratingAI;
 
   @override
   void initState() {
@@ -52,9 +61,13 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
   }
 
   void _validateInput() {
-    setState(() {
-      _isValid = _wishController.text.trim().length >= 5;
-    });
+    final newIsValid = _wishController.text.trim().length >= 5;
+    if (_isValid != newIsValid) {
+      setState(() {
+        _isValid = newIsValid;
+      });
+      widget.onValidationChanged?.call(_isValid, _isGeneratingAI);
+    }
   }
 
   String get _placeholderText {
@@ -150,7 +163,7 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
           maxLines: 3,
           maxLength: 100,
           textInputAction: TextInputAction.done,
-          onFieldSubmitted: _isValid ? (value) => _handleSubmit() : null,
+          onFieldSubmitted: _isValid ? (value) => handleAISubmit() : null,
         ).animate(delay: 200.ms)
           .fadeIn(duration: 400.ms)
           .slideY(begin: 0.1, end: 0),
@@ -176,43 +189,19 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
         ).animate(delay: 250.ms)
           .fadeIn(duration: 400.ms),
         
-        const SizedBox(height: 40),
-
-        // AI Submit Button
-        SizedBox(
-          width: double.infinity,
-          child: UnifiedButton(
-            text: _isGeneratingAI ? 'AI가 부적을 만들고 있어요...' : '🎨 AI 맞춤 부적 만들기',
-            onPressed: _isValid && !_isGeneratingAI ? _handleAISubmit : null,
-            size: UnifiedButtonSize.large,
-            style: UnifiedButtonStyle.primary,
-          ),
-        ).animate(delay: 300.ms)
-          .fadeIn(duration: 400.ms)
-          .slideY(begin: 0.2, end: 0),
-
-        const SizedBox(height: 16),
-
-        // Basic Submit Button
-        SizedBox(
-          width: double.infinity,
-          child: UnifiedButton.secondary(
-            text: '기본 부적 만들기',
-            onPressed: _isValid && !_isGeneratingAI ? _handleSubmit : null,
-            size: UnifiedButtonSize.large,
-          ),
-        ).animate(delay: 350.ms)
-          .fadeIn(duration: 400.ms)
-          .slideY(begin: 0.2, end: 0),
+        // 하단 플로팅 버튼을 위한 여백
+        const SizedBox(height: 100),
       ],
     );
   }
 
-  Future<void> _handleAISubmit() async {
+  /// Public method to trigger AI submit (called from parent)
+  Future<void> handleAISubmit() async {
     final wish = _wishController.text.trim();
     if (wish.length < 5) return;
 
     setState(() => _isGeneratingAI = true);
+    widget.onValidationChanged?.call(_isValid, _isGeneratingAI);
 
     try {
       final talismanService = ai_talisman.TalismanGenerationService();
@@ -247,14 +236,8 @@ class _TalismanWishInputState extends State<TalismanWishInput> {
     } finally {
       if (mounted) {
         setState(() => _isGeneratingAI = false);
+        widget.onValidationChanged?.call(_isValid, _isGeneratingAI);
       }
-    }
-  }
-
-  void _handleSubmit() {
-    final wish = _wishController.text.trim();
-    if (wish.length >= 5) {
-      widget.onWishSubmitted(wish);
     }
   }
 

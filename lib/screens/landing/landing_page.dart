@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/utils/profile_validation.dart';
 import 'landing_page_state.dart';
 import 'landing_page_handlers.dart';
@@ -63,20 +64,26 @@ class _LandingPageState extends ConsumerState<LandingPage>
     // Handle navigation after auth state check
     if (!mounted) return;
 
+    // 실제 세션 확인 (Supabase에서 가져오기)
     final session = isSupabaseAvailable
-        ? await Future.value(null) // Get session if needed
+        ? Supabase.instance.client.auth.currentSession
         : null;
+
+    debugPrint('🔍 [LandingPage] checkAuthState: session=${session != null}');
 
     if (session != null) {
       final needsOnboarding = await ProfileValidation.needsOnboarding();
+      debugPrint('🔍 [LandingPage] needsOnboarding=$needsOnboarding');
 
       if (!needsOnboarding && mounted) {
         final uri = Uri.base;
         final returnUrl = uri.queryParameters['returnUrl'];
 
         if (returnUrl != null) {
+          debugPrint('🔍 [LandingPage] Navigating to returnUrl: $returnUrl');
           context.go(Uri.decodeComponent(returnUrl));
         } else {
+          debugPrint('🔍 [LandingPage] Navigating to /home');
           context.go('/home');
         }
       }

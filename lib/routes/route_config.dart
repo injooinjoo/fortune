@@ -10,6 +10,7 @@ import '../screens/profile/profile_edit_page.dart';
 import '../screens/profile/saju_detail_page.dart';
 import '../screens/profile/elements_detail_page.dart';
 import '../screens/profile/profile_verification_page.dart';
+import '../screens/profile/saju_summary_page.dart';
 import '../features/history/presentation/pages/fortune_history_page.dart';
 import '../features/history/presentation/pages/fortune_history_detail_page.dart';
 import '../features/history/domain/models/fortune_history.dart';
@@ -32,6 +33,7 @@ import '../features/settings/presentation/pages/font_settings_page.dart';
 
 // Import pages that need to hide navigation bar
 import '../features/fortune/presentation/pages/moving_fortune_page.dart';
+import '../features/fortune/presentation/pages/home_fengshui_fortune_page.dart';
 import '../features/fortune/presentation/pages/traditional_saju_page.dart';
 import '../features/fortune/presentation/pages/talisman_fortune_page.dart';
 import '../features/fortune/presentation/pages/biorhythm_fortune_page.dart';
@@ -152,6 +154,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   context,
                   state,
                   const SajuDetailPage(),
+                ),
+              ),
+              GoRoute(
+                path: 'saju-summary',
+                name: 'profile-saju-summary',
+                pageBuilder: (context, state) => PageTransitions.slideTransition(
+                  context,
+                  state,
+                  const SajuSummaryPage(),
                 ),
               ),
               GoRoute(
@@ -430,6 +441,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/moving',
         name: 'fortune-moving',
         builder: (context, state) => const MovingFortunePage(),
+      ),
+      GoRoute(
+        path: '/home-fengshui',
+        name: 'fortune-home-fengshui',
+        builder: (context, state) => const HomeFengshuiFortunePage(),
       ),
       GoRoute(
         path: '/daily-calendar',

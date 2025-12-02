@@ -1,0 +1,177 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Test type'
+        required: false
+        default: 'smoke'
+        type: choice
+        options:
+          - smoke
+          - all
+          - comprehensive
+
+env:
+  FLUTTER_VERSION: '3.24.0'
+  NODE_VERSION: '20.x'
+
+jobs:
+  # =====================================================
+  # Job 1: 스모크 테스트 (모든 라우트 기본 검증)
+  # =====================================================
+  smoke-tests:
+    name: Smoke Tests (50+ Routes)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        run: flutter build web --release --web-renderer html
+
+      - name: Run Smoke Tests
+        run: |
+          # 빌드된 웹앱 서빙
+          npx serve build/web -l 3000 &
+          SERVER_PID=$!
+
+          # 서버 준비 대기
+          echo "Waiting for server to be ready..."
+          npx wait-on http://localhost:3000 --timeout 60000
+
+          # 테스트 실행
+          npx playwright test playwright/tests/smoke.spec.js \
+            --project=chromium \
+            --reporter=html,json,github
+
+          TEST_EXIT_CODE=$?
+
+          # 서버 종료
+          kill $SERVER_PID 2>/dev/null || true
+
+          exit $TEST_EXIT_CODE
+        env:
+          CI: true
+          BASE_URL: http://localhost:3000
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-screenshots-${{ github.run_id }}
+          path: test-results/smoke/
+          retention-days: 7
+
+  # =====================================================
+  # Job 2: PR 실패 시 코멘트 추가
+  # =====================================================
+  comment-on-failure:
+    name: Comment on PR (if failed)
+    runs-on: ubuntu-latest
+    needs: smoke-tests
+    if: failure() && github.event_name == 'pull_request'
+
+    steps:
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## ❌ E2E 테스트 실패
+
+스모크 테스트에서 실패가 감지되었습니다.
+
+**상세 정보:**
+- 실행 ID: \`${context.runId}\`
+- 커밋: \`${context.sha.substring(0, 7)}\`
+
+[🔍 테스트 결과 확인](${runUrl})
+
+---
+*이 코멘트는 자동으로 생성되었습니다.*`
+            });
+
+  # =====================================================
+  # Job 3: 테스트 결과 요약
+  # =====================================================
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: smoke-tests
+    if: always()
+
+    steps:
+      - name: Download test results
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: ./report
+        continue-on-error: true
+
+      - name: Generate summary
+        run: |
+          echo "## 🧪 E2E Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "./report/results.json" ]; then
+            PASSED=$(jq '.stats.expected // 0' ./report/results.json 2>/dev/null || echo "0")
+            FAILED=$(jq '.stats.unexpected // 0' ./report/results.json 2>/dev/null || echo "0")
+            TOTAL=$((PASSED + FAILED))
+
+            echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| ✅ Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
+            echo "| ❌ Failed | $FAILED |" >> $GITHUB_STEP_SUMMARY
+            echo "| 📊 Total | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ 테스트 결과 파일을 찾을 수 없습니다." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Generated by E2E Tests workflow*" >> $GITHUB_STEP_SUMMARY

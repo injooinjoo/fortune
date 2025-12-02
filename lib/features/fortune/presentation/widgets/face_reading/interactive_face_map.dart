@@ -342,7 +342,14 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
     final zone = _faceZones[_selectedZone];
     if (zone == null) return const SizedBox.shrink();
 
-    final content = widget.ogwanData?[_selectedZone]?.toString();
+    // Map 객체로 파싱 (JSON 버그 수정)
+    final ogwanData = widget.ogwanData?[_selectedZone] as Map<String, dynamic>?;
+    final observation = ogwanData?['observation'] as String? ?? '';
+    final interpretation = ogwanData?['interpretation'] as String? ?? '';
+    final score = (ogwanData?['score'] as num?)?.toInt();
+    final advice = ogwanData?['advice'] as String? ?? '';
+
+    final hasData = observation.isNotEmpty || interpretation.isNotEmpty || advice.isNotEmpty;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -357,6 +364,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 헤더: 아이콘 + 제목 + 점수 + 닫기 버튼
           Row(
             children: [
               Container(
@@ -392,6 +400,24 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                   ],
                 ),
               ),
+              // 점수 배지
+              if (score != null && score > 0) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: zone.color.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    '$score점',
+                    style: TypographyUnified.caption.copyWith(
+                      color: zone.color,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
               IconButton(
                 icon: const Icon(Icons.close, size: 20),
                 color: isDark
@@ -401,17 +427,99 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               ),
             ],
           ),
-          if (content != null && content.isNotEmpty) ...[
+
+          // 점수 게이지 바
+          if (score != null && score > 0) ...[
             const SizedBox(height: 12),
-            Text(
-              content,
-              style: TypographyUnified.body2.copyWith(
-                color: isDark
-                    ? TossDesignSystem.grayDark800
-                    : TossDesignSystem.gray800,
-                height: 1.6,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(3),
+              child: LinearProgressIndicator(
+                value: score / 100,
+                backgroundColor: zone.color.withValues(alpha: 0.1),
+                valueColor: AlwaysStoppedAnimation<Color>(zone.color),
+                minHeight: 4,
               ),
             ),
+          ],
+
+          if (hasData) ...[
+            // 관찰 내용
+            if (observation.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                '관찰',
+                style: TypographyUnified.caption.copyWith(
+                  color: zone.color,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                observation,
+                style: TypographyUnified.body2.copyWith(
+                  color: isDark
+                      ? TossDesignSystem.grayDark800
+                      : TossDesignSystem.gray800,
+                  height: 1.5,
+                ),
+              ),
+            ],
+
+            // 관상학적 해석
+            if (interpretation.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Text(
+                '해석',
+                style: TypographyUnified.caption.copyWith(
+                  color: zone.color,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                interpretation,
+                style: TypographyUnified.body2.copyWith(
+                  color: isDark
+                      ? TossDesignSystem.grayDark800
+                      : TossDesignSystem.gray800,
+                  height: 1.5,
+                ),
+              ),
+            ],
+
+            // 개운 조언
+            if (advice.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: zone.color.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.tips_and_updates_outlined,
+                      color: zone.color,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        advice,
+                        style: TypographyUnified.body2.copyWith(
+                          color: isDark
+                              ? TossDesignSystem.grayDark800
+                              : TossDesignSystem.gray800,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ] else ...[
             const SizedBox(height: 12),
             Text(

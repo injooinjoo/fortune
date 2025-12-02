@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/typography_unified.dart';
@@ -24,22 +25,22 @@ class CelebrityCard extends ConsumerWidget {
           '나와 비슷한 사주',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(
           '유명인과의 사주 궁합',
           style: TextStyle(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
 
         celebrities.when(
           data: (celebList) {
@@ -48,12 +49,32 @@ class CelebrityCard extends ConsumerWidget {
             }
             return Column(
               children: celebList.take(3).map((celeb) {
-                // 사주 문자열로 간단한 설명 생성
-                final description = '${celeb.category} · ${celeb.sajuString}';
-                // 오행 기반 궁합도 계산 (간단 버전)
-                final compatibility = ((celeb.woodCount + celeb.fireCount + celeb.earthCount + celeb.metalCount + celeb.waterCount) * 10).clamp(50, 95);
+                // 설명 생성 (그룹명 또는 카테고리)
+                final description = celeb.category.isNotEmpty
+                    ? celeb.category
+                    : (celeb.birthDate.isNotEmpty ? '${celeb.birthDate.substring(0, 4)}년생' : '');
+
+                // 생년월일 기반 궁합도 계산 (오행 데이터 없을 때)
+                int compatibility = 50;
+                if (celeb.birthDate.isNotEmpty) {
+                  try {
+                    final birthYear = int.parse(celeb.birthDate.substring(0, 4));
+                    final monthDay = celeb.birthDate.length >= 10
+                        ? int.parse(celeb.birthDate.substring(5, 7)) + int.parse(celeb.birthDate.substring(8, 10))
+                        : 15;
+                    // 생년 + 월일 조합으로 55-95% 범위의 궁합도 생성
+                    compatibility = ((birthYear % 40) + monthDay).clamp(55, 95);
+                  } catch (e) {
+                    compatibility = 65 + (celeb.name.hashCode % 30); // fallback
+                  }
+                } else {
+                  compatibility = 60 + (celeb.name.hashCode.abs() % 35); // 이름 기반 fallback
+                }
+                compatibility = compatibility.clamp(55, 95);
+
+                debugPrint('🎭 [CELEBRITY_CARD] ${celeb.name}: birthDate=${celeb.birthDate} → compatibility=$compatibility%');
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.only(bottom: 10),
                   child: _CelebrityCardItem(
                     name: celeb.name,
                     description: description,
@@ -87,7 +108,7 @@ class CelebrityCard extends ConsumerWidget {
     return Column(
       children: fallbackData.map((data) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: 10),
           child: _CelebrityCardItem(
             name: data['name'] as String,
             description: data['desc'] as String,
@@ -126,15 +147,15 @@ class _CelebrityCardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-            blurRadius: 15,
-            offset: const Offset(0, 3),
+            blurRadius: 12,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -142,32 +163,32 @@ class _CelebrityCardItem extends StatelessWidget {
         children: [
           // 프로필 이미지
           Container(
-            width: 56,
-            height: 56,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: imageUrl != null
                 ? ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                     child: Image.network(
                       imageUrl!,
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => Icon(
                         Icons.person,
                         color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
-                        size: 28,
+                        size: 22,
                       ),
                     ),
                   )
                 : Icon(
                     Icons.person,
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
-                    size: 28,
+                    size: 22,
                   ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,33 +198,35 @@ class _CelebrityCardItem extends StatelessWidget {
                   style: TypographyUnified.bodyMedium.copyWith(
                     color: isDark ? Colors.white : Colors.black87,
                     fontWeight: FontWeight.w600,
+                    fontSize: 14,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   description,
                   style: TypographyUnified.bodySmall.copyWith(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+                    fontSize: 12,
                   ),
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           // 궁합도
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: _compatibilityColor.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               '$compatibility%',
               style: TextStyle(
                 color: _compatibilityColor,
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
             ),

@@ -1,0 +1,252 @@
+{
+  "colors": {
+    "semantic": {
+      "background": {
+        "primary": {
+          "light": "#FFFFFF",
+          "dark": "#17171C"
+        },
+        "secondary": {
+          "light": "#F9FAFB",
+          "dark": "#1D1D24"
+        },
+        "tertiary": {
+          "light": "#F2F4F6",
+          "dark": "#26262E"
+        }
+      },
+      "text": {
+        "primary": {
+          "light": "#191F28",
+          "dark": "#FFFFFF"
+        },
+        "secondary": {
+          "light": "#4E5968",
+          "dark": "#8B95A1"
+        },
+        "tertiary": {
+          "light": "#8B95A1",
+          "dark": "#6B7684"
+        },
+        "disabled": {
+          "light": "#B0B8C1",
+          "dark": "#4E5968"
+        }
+      },
+      "border": {
+        "default": {
+          "light": "#E5E8EB",
+          "dark": "#3A3D46"
+        },
+        "strong": {
+          "light": "#D1D6DB",
+          "dark": "#4E5968"
+        }
+      },
+      "brand": {
+        "primary": {
+          "light": "#1F4EF5",
+          "dark": "#1E5EDB"
+        },
+        "secondary": {
+          "light": "#3182F6",
+          "dark": "#4593FC"
+        }
+      },
+      "status": {
+        "success": {
+          "light": "#10B981",
+          "dark": "#34D399"
+        },
+        "warning": {
+          "light": "#F59E0B",
+          "dark": "#FBBF24"
+        },
+        "error": {
+          "light": "#EF4444",
+          "dark": "#F87171"
+        },
+        "info": {
+          "light": "#3B82F6",
+          "dark": "#60A5FA"
+        }
+      }
+    },
+    "saju": {
+      "wuxing": {
+        "wood": {
+          "light": "#10B981",
+          "dark": "#34D399",
+          "label": "목(木)"
+        },
+        "fire": {
+          "light": "#F43F5E",
+          "dark": "#FB7185",
+          "label": "화(火)"
+        },
+        "earth": {
+          "light": "#FBBF24",
+          "dark": "#FCD34D",
+          "label": "토(土)"
+        },
+        "metal": {
+          "light": "#94A3B8",
+          "dark": "#CBD5E1",
+          "label": "금(金)"
+        },
+        "water": {
+          "light": "#3B82F6",
+          "dark": "#60A5FA",
+          "label": "수(水)"
+        }
+      },
+      "zodiac": {
+        "rat": "#6366F1",
+        "ox": "#8B5CF6",
+        "tiger": "#F97316",
+        "rabbit": "#10B981",
+        "dragon": "#EAB308",
+        "snake": "#EC4899",
+        "horse": "#EF4444",
+        "sheep": "#84CC16",
+        "monkey": "#F59E0B",
+        "rooster": "#06B6D4",
+        "dog": "#8B5CF6",
+        "pig": "#F472B6"
+      }
+    }
+  },
+  "typography": {
+    "display": {
+      "large": {
+        "size": 48,
+        "weight": 700,
+        "lineHeight": 1.17,
+        "letterSpacing": -0.02
+      },
+      "medium": {
+        "size": 40,
+        "weight": 700,
+        "lineHeight": 1.2,
+        "letterSpacing": -0.02
+      },
+      "small": {
+        "size": 32,
+        "weight": 700,
+        "lineHeight": 1.25,
+        "letterSpacing": -0.02
+      }
+    },
+    "heading": {
+      "h1": {
+        "size": 28,
+        "weight": 700,
+        "lineHeight": 1.29,
+        "letterSpacing": -0.01
+      },
+      "h2": {
+        "size": 24,
+        "weight": 700,
+        "lineHeight": 1.33,
+        "letterSpacing": -0.01
+      },
+      "h3": {
+        "size": 20,
+        "weight": 600,
+        "lineHeight": 1.4,
+        "letterSpacing": 0
+      },
+      "h4": {
+        "size": 18,
+        "weight": 600,
+        "lineHeight": 1.44,
+        "letterSpacing": 0
+      }
+    },
+    "body": {
+      "large": {
+        "size": 17,
+        "weight": 400,
+        "lineHeight": 1.65,
+        "letterSpacing": 0
+      },
+      "medium": {
+        "size": 15,
+        "weight": 400,
+        "lineHeight": 1.6,
+        "letterSpacing": 0
+      },
+      "small": {
+        "size": 13,
+        "weight": 400,
+        "lineHeight": 1.54,
+        "letterSpacing": 0
+      }
+    },
+    "label": {
+      "large": {
+        "size": 14,
+        "weight": 500,
+        "lineHeight": 1.43,
+        "letterSpacing": 0
+      },
+      "medium": {
+        "size": 12,
+        "weight": 500,
+        "lineHeight": 1.5,
+        "letterSpacing": 0
+      },
+      "small": {
+        "size": 11,
+        "weight": 500,
+        "lineHeight": 1.45,
+        "letterSpacing": 0
+      }
+    },
+    "button": {
+      "large": {
+        "size": 18,
+        "weight": 600,
+        "lineHeight": 1.33,
+        "letterSpacing": 0
+      },
+      "medium": {
+        "size": 16,
+        "weight": 600,
+        "lineHeight": 1.5,
+        "letterSpacing": 0
+      },
+      "small": {
+        "size": 14,
+        "weight": 600,
+        "lineHeight": 1.43,
+        "letterSpacing": 0
+      }
+    }
+  },
+  "spacing": {
+    "xxs": 2,
+    "xs": 4,
+    "s": 8,
+    "m": 16,
+    "l": 24,
+    "xl": 32,
+    "xxl": 48,
+    "xxxl": 64
+  },
+  "radius": {
+    "xs": 4,
+    "s": 8,
+    "m": 12,
+    "l": 16,
+    "xl": 24,
+    "full": 9999
+  },
+  "shadow": {
+    "xs": "0 1px 2px rgba(0,0,0,0.05)",
+    "s": "0 2px 8px rgba(0,0,0,0.04)",
+    "m": "0 4px 16px rgba(0,0,0,0.08)",
+    "l": "0 8px 24px rgba(0,0,0,0.12)",
+    "xl": "0 16px 48px rgba(0,0,0,0.16)"
+  }
+}

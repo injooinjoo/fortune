@@ -125,31 +125,6 @@ class InputStep2Widget extends StatelessWidget {
                   ),
                 ).animate().fadeIn(duration: 500.ms, delay: 200.ms),
 
-              const SizedBox(height: 24),
-
-              // Analysis Features
-              AppCard(
-                style: AppCardStyle.outlined,
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'AI가 분석할 내용',
-                      style: TossDesignSystem.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildFeatureItem('얼굴형과 이목구비 특징', Icons.face, isDark),
-                    _buildFeatureItem('성격과 기질 분석', Icons.psychology, isDark),
-                    _buildFeatureItem('재물운과 사업운', Icons.attach_money, isDark),
-                    _buildFeatureItem('연애운과 결혼운', Icons.favorite, isDark),
-                    _buildFeatureItem('종합 운세와 조언', Icons.auto_awesome, isDark),
-                  ],
-                ),
-              ).animate().fadeIn(duration: 500.ms, delay: 300.ms),
-
               const SizedBox(height: 100), // Bottom spacing for floating button
             ],
           ),

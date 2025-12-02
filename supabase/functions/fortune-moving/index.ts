@@ -97,6 +97,8 @@ serve(async (req) => {
 - 풍수지리학: 양택풍수(陽宅風水), 음택풍수(陰宅風水), 지리오결(地理五訣)
 - 택일학(擇日學): 이사길일 선정, 오행배합(五行配合), 십이신살(十二神殺)
 - 방위학: 팔방위(八方位), 동사택/서사택(東四宅/西四宅), 구궁비성(九宮飛星)
+- 양택풍수(陽宅風水): 배산임수(背山臨水), 사신사(四神砂) - 좌청룡/우백호/전주작/후현무
+- 지형학: 명당(明堂) 판별, 생기/살기 흐름, 수구(水口) 분석
 - 공간배치: 현관, 부엌, 침실 위치와 기운 흐름
 
 # 분석 철학
@@ -104,12 +106,14 @@ serve(async (req) => {
 2. **균형성**: 긍정적이되 현실적인 조언
 3. **실용성**: 즉시 적용 가능한 구체적 방법
 4. **맞춤형**: 이사 목적과 시기에 맞는 개인화된 분석
+5. **지형 중시**: 배산임수, 사신사 등 실제 지형 특성을 반영한 풍수 분석
+6. **자연 조화**: 자연 환경과의 조화를 강조
 
 # 출력 형식 (반드시 JSON 형식으로)
 {
   "title": "희망적인 제목 (예: '서쪽으로의 이사, 재물운이 열립니다')",
   "score": 70-95 사이 정수 (이사운 종합 점수),
-  "overall_fortune": "전반적인 이사운 분석 (최소 200자, 길흉 판단과 종합적 해석)",
+  "overall_fortune": "전반적인 이사운 분석 (100자 이내, 핵심만 간결하게)",
   "direction_analysis": {
     "direction": "방위 (동/서/남/북/동북/동남/서북/서남 중 택1)",
     "direction_meaning": "해당 방위의 풍수적 의미 (100자 이상)",
@@ -151,6 +155,21 @@ serve(async (req) => {
     "colors": ["새 집에 어울리는 행운의 색상 2가지"],
     "plants": ["집안에 두면 좋은 식물 2가지"]
   },
+  "terrain_analysis": {
+    "terrain_type": "지형 유형 (배산임수/평지/고지/저지/해안가 등)",
+    "feng_shui_quality": 0-100 사이 정수 (지형 풍수 점수),
+    "quality_description": "해당 지형의 풍수적 장단점 (100자 이상)",
+    "four_guardians": {
+      "left_azure_dragon": "좌청룡(동쪽) 분석 - 해당 방향의 지형/건물/산 평가 (50자 이상)",
+      "right_white_tiger": "우백호(서쪽) 분석 - 해당 방향의 지형/건물/산 평가 (50자 이상)",
+      "front_red_phoenix": "전주작(남쪽) 분석 - 앞쪽 시야와 명당 평가 (50자 이상)",
+      "back_black_turtle": "후현무(북쪽) 분석 - 뒤쪽 산/건물의 지지력 평가 (50자 이상)"
+    },
+    "water_energy": "수기(물의 흐름) 분석 - 하천, 강, 바다 등 (80자 이상)",
+    "mountain_energy": "산기(산의 기운) 분석 - 산, 언덕, 고층건물 등 (80자 이상)",
+    "energy_flow": "생기/살기 흐름 평가 - 기운의 순환과 정체 여부 (80자 이상)",
+    "recommendations": ["지형 보완 방법 3가지 (구체적인 풍수 비보 방법)"]
+  },
   "summary": {
     "one_line": "이사운을 한 문장으로 요약",
     "keywords": ["핵심 키워드 3개"],
@@ -158,11 +177,11 @@ serve(async (req) => {
   }
 }
 
-# 분량 요구사항
-- 전체: 최소 1500자 이상
-- 각 주요 섹션: 최소 100자 이상
-- overall_fortune: 200자 이상
-- 구체적 상황에 맞춘 맞춤형 분석 (일반적 표현 금지)
+# 분량 요구사항 (카드 UI 스크롤 방지)
+- 각 항목: 반드시 100자 이내
+- overall_fortune: 100자 이내 (핵심만)
+- 각 주요 섹션: 80자 이내
+- 간결하고 핵심적인 내용만 작성
 
 # 주의사항
 - 현재 지역과 이사 지역을 기반으로 실제 방위 분석
@@ -220,7 +239,7 @@ serve(async (req) => {
       // ✅ Blur 로직 적용 (프리미엄이 아니면 상세 분석 블러 처리)
       const isBlurred = !isPremium
       const blurredSections = isBlurred
-        ? ['direction_analysis', 'timing_analysis', 'lucky_dates', 'feng_shui_tips', 'cautions', 'recommendations', 'lucky_items']
+        ? ['direction_analysis', 'timing_analysis', 'lucky_dates', 'feng_shui_tips', 'cautions', 'recommendations', 'lucky_items', 'terrain_analysis']
         : []
 
       // ✅ 응답 데이터 구조화 (항상 실제 데이터 반환, 클라이언트에서 블러 처리)
@@ -288,6 +307,23 @@ serve(async (req) => {
           items: ['분석 중'],
           colors: ['분석 중'],
           plants: ['분석 중']
+        },
+
+        // 지형 분석 (배산임수, 사신사)
+        terrain_analysis: parsedResponse.terrain_analysis || {
+          terrain_type: '분석 중',
+          feng_shui_quality: 75,
+          quality_description: '지형 분석 중입니다.',
+          four_guardians: {
+            left_azure_dragon: '좌청룡 분석 중',
+            right_white_tiger: '우백호 분석 중',
+            front_red_phoenix: '전주작 분석 중',
+            back_black_turtle: '후현무 분석 중'
+          },
+          water_energy: '수기 분석 중',
+          mountain_energy: '산기 분석 중',
+          energy_flow: '기의 흐름 분석 중',
+          recommendations: ['분석 중']
         },
 
         // 요약

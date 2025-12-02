@@ -33,15 +33,15 @@ class CategoryDetailCard extends StatelessWidget {
           children: [
             Text(
               emoji,
-              style: TypographyUnified.heading1,
+              style: const TextStyle(fontSize: 28),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: Text(
                 title,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black87,
-                  fontSize: 24,
+                  fontSize: 22,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.5,
                 ),
@@ -50,18 +50,18 @@ class CategoryDetailCard extends StatelessWidget {
           ],
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
 
         // 카드 (Pulse 스타일)
         Container(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                blurRadius: 20,
+                blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
             ],
@@ -77,18 +77,18 @@ class CategoryDetailCard extends StatelessWidget {
                   Text(
                     '$score',
                     style: TextStyle(
-                      fontSize: 56,
+                      fontSize: 48,
                       color: scoreColor,
                       fontWeight: FontWeight.w200,
                       letterSpacing: -2,
                       height: 1.0,
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 4),
                   Text(
                     '점',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
                       fontWeight: FontWeight.w500,
                     ),
@@ -96,25 +96,25 @@ class CategoryDetailCard extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 14),
 
               // 프로그레스 바
               Stack(
                 children: [
                   Container(
-                    height: 6,
+                    height: 4,
                     decoration: BoxDecoration(
                       color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
-                      borderRadius: BorderRadius.circular(3),
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                   FractionallySizedBox(
                     widthFactor: score / 100,
                     child: Container(
-                      height: 6,
+                      height: 4,
                       decoration: BoxDecoration(
                         color: scoreColor,
-                        borderRadius: BorderRadius.circular(3),
+                        borderRadius: BorderRadius.circular(2),
                       ),
                     ).animate()
                       .scaleX(begin: 0, duration: 800.ms, curve: Curves.easeOutCubic, alignment: Alignment.centerLeft),
@@ -122,14 +122,15 @@ class CategoryDetailCard extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // 조언 텍스트
               Text(
                 advice,
                 style: TextStyle(
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
-                  height: 1.6,
+                  fontSize: 14,
+                  height: 1.5,
                 ),
               ),
             ],

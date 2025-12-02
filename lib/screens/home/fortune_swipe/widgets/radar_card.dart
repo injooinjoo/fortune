@@ -25,33 +25,33 @@ class RadarCard extends StatelessWidget {
           '5대 영역별 운세',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(
           '오늘의 각 분야별 운세를 한눈에',
           style: TextStyle(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
 
         // 카드 컨테이너 (Pulse 스타일)
         Container(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                blurRadius: 20,
+                blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
             ],
@@ -60,22 +60,22 @@ class RadarCard extends StatelessWidget {
             children: [
               // 레이더 차트
               SizedBox(
-                height: 240,
+                height: 180,
                 child: FortuneInfographicWidgets.buildRadarChart(
                   scores: radarData.map((k, v) => MapEntry(k, v.round())),
-                  size: 240,
+                  size: 180,
                 ),
               ).animate()
                 .fadeIn(duration: 600.ms)
                 .scale(begin: const Offset(0.95, 0.95), duration: 600.ms, curve: Curves.easeOut),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
 
               // 영역별 점수 리스트 (심플하게)
               ...radarData.entries.map((entry) {
                 final areaColor = FortuneSwipeHelpers.getPulseScoreColor(entry.value.round());
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: Row(
                     children: [
                       // 영역 이름

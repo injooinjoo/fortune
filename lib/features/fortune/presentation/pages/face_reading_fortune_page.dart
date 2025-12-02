@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../../../../core/utils/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/fortune_result.dart';
@@ -17,6 +16,7 @@ import '../../../../core/widgets/unified_button.dart';
 
 // Import modular widgets
 import 'face_reading_fortune/index.dart';
+import 'face_reading_fortune/face_reading_result_page.dart';
 
 class FaceReadingFortunePage extends ConsumerStatefulWidget {
   const FaceReadingFortunePage({super.key});
@@ -88,13 +88,10 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         child: Stack(
           children: [
             _fortuneResult != null
-                ? SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: ResultWidget(
-                      result: _fortuneResult!,
-                      isDark: isDark,
-                      onUnlockRequested: _showAdAndUnblur,
-                    ),
+                ? FaceReadingResultPage(
+                    result: _fortuneResult!,
+                    onUnlockRequested: _showAdAndUnblur,
+                    uploadedImageFile: _uploadResult?.imageFile,
                   )
                 : _buildInputSection(context, isDark),
             // Floating Bottom Button - 결과 화면에서 블러 상태일 때만 표시

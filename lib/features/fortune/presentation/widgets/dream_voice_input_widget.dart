@@ -31,7 +31,7 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
   @override
   void initState() {
     super.initState();
-    _initializeSpeechService();
+    // 마이크 버튼 클릭 시 권한 확인하므로 initState에서는 초기화하지 않음
 
     // 텍스트 변화 감지
     _textController.addListener(() {
@@ -42,10 +42,6 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
         });
       }
     });
-  }
-
-  Future<void> _initializeSpeechService() async {
-    await _speechService.initialize();
   }
 
   @override
@@ -59,6 +55,17 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
   Future<void> _startRecording() async {
     HapticUtils.lightImpact();
 
+    // 1. 권한 상태 확인
+    final permissionStatus = await _speechService.checkPermissionStatus();
+
+    if (permissionStatus != MicrophonePermissionStatus.granted) {
+      // 권한이 없으면 다이얼로그 표시
+      if (!mounted) return;
+      await _showPermissionDialog(permissionStatus);
+      return;
+    }
+
+    // 2. 권한이 있으면 녹음 시작
     setState(() {
       _isRecording = true;
       _textController.clear();
@@ -86,10 +93,95 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
           _textController.selection = TextSelection.fromPosition(
             TextPosition(offset: text.length),
           );
-          
+
           ref.read(dreamVoiceProvider.notifier).updateRecognizedText(text);
         }
       },
+    );
+  }
+
+  /// 권한 요청 다이얼로그 표시
+  Future<void> _showPermissionDialog(MicrophonePermissionStatus status) async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(Icons.mic, color: isDark ? Colors.white : Colors.black),
+            const SizedBox(width: 8),
+            Text(
+              '마이크 권한 필요',
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          '음성으로 꿈을 입력하려면 마이크 권한이 필요합니다.',
+          style: TextStyle(
+            color: isDark ? Colors.grey[300] : Colors.grey[700],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              '취소',
+              style: TextStyle(
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+
+              if (status == MicrophonePermissionStatus.permanentlyDenied) {
+                // 설정으로 이동
+                await _speechService.openSettings();
+              } else {
+                // 권한 요청
+                final result = await _speechService.requestPermission();
+                if (result == MicrophonePermissionStatus.granted) {
+                  // 권한 획득 성공 - 녹음 시작
+                  _startRecording();
+                } else if (result == MicrophonePermissionStatus.permanentlyDenied) {
+                  // 영구 거부됨 - 설정으로 안내
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('설정에서 마이크 권한을 허용해주세요'),
+                        action: SnackBarAction(
+                          label: '설정 열기',
+                          onPressed: () => _speechService.openSettings(),
+                        ),
+                      ),
+                    );
+                  }
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isDark ? Colors.white : Colors.black,
+              foregroundColor: isDark ? Colors.black : Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(
+              status == MicrophonePermissionStatus.permanentlyDenied
+                  ? '설정으로 이동'
+                  : '권한 허용하기',
+            ),
+          ),
+        ],
+      ),
     );
   }
 

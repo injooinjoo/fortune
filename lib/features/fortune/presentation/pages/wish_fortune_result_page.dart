@@ -187,8 +187,8 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(28),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(28),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
           child: _buildCardContent(context, index, isDark),
         ),
       ),
@@ -231,47 +231,51 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildEmpathyCard(bool isDark) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
       children: [
-        const SizedBox(height: 60),
+        const Spacer(flex: 2),
 
         // 하트 이모지
         Text(
           '💝',
-          style: TypographyUnified.displayLarge,
+          style: const TextStyle(fontSize: 56),
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
             .then()
             .shimmer(duration: 1500.ms),
 
-        const SizedBox(height: 40),
+        const Spacer(flex: 1),
 
         // 제목
         Text(
           '당신의 마음이 느껴져요',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            fontSize: 24,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
         ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.3, end: 0),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 20),
 
         // 공감 메시지
-        Text(
-          widget.result.empathyMessage,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: isDark ? Colors.white70 : Colors.black54,
-            fontSize: 18,
-            height: 1.7,
-            fontWeight: FontWeight.w400,
-          ),
-        ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
+        Flexible(
+          flex: 3,
+          child: Text(
+            widget.result.empathyMessage,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isDark ? Colors.white70 : Colors.black54,
+              fontSize: 16,
+              height: 1.6,
+              fontWeight: FontWeight.w400,
+            ),
+          ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
+        ),
 
-        const SizedBox(height: 60),
+        const Spacer(flex: 2),
       ],
     );
   }
@@ -280,47 +284,51 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildHopeCard(bool isDark) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
       children: [
-        const SizedBox(height: 60),
+        const Spacer(flex: 2),
 
         // 별 이모지
         Text(
           '✨',
-          style: TypographyUnified.displayLarge,
+          style: const TextStyle(fontSize: 56),
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
             .then()
             .shimmer(duration: 1500.ms),
 
-        const SizedBox(height: 40),
+        const Spacer(flex: 1),
 
         // 제목
         Text(
           '당신은 할 수 있어요',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            fontSize: 24,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
         ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.3, end: 0),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 20),
 
         // 희망 메시지
-        Text(
-          widget.result.hopeMessage,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: isDark ? Colors.white70 : Colors.black54,
-            fontSize: 18,
-            height: 1.7,
-            fontWeight: FontWeight.w400,
-          ),
-        ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
+        Flexible(
+          flex: 3,
+          child: Text(
+            widget.result.hopeMessage,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isDark ? Colors.white70 : Colors.black54,
+              fontSize: 16,
+              height: 1.6,
+              fontWeight: FontWeight.w400,
+            ),
+          ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
+        ),
 
-        const SizedBox(height: 60),
+        const Spacer(flex: 2),
       ],
     );
   }
@@ -329,85 +337,96 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildAdviceCard(bool isDark) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
       children: [
-        const SizedBox(height: 40),
+        const Spacer(flex: 1),
 
         // 전구 이모지
         Text(
           '💡',
-          style: TypographyUnified.displayLarge,
+          style: const TextStyle(fontSize: 48),
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
             .then()
             .shimmer(duration: 1500.ms),
 
-        const SizedBox(height: 40),
+        const SizedBox(height: 16),
 
         // 제목
         Text(
           '이렇게 해보세요',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            fontSize: 22,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
         ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.3, end: 0),
 
-        const SizedBox(height: 40),
+        const SizedBox(height: 20),
 
         // 조언 3개
-        ...widget.result.advice.asMap().entries.map((entry) {
-          final index = entry.key;
-          final advice = entry.value;
+        Flexible(
+          flex: 5,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: widget.result.advice.asMap().entries.map((entry) {
+              final index = entry.key;
+              final advice = entry.value;
 
-          return Container(
-            margin: const EdgeInsets.only(bottom: 20),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 28,
-                  height: 28,
+              return Flexible(
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue,
-                    shape: BoxShape.circle,
+                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Center(
-                    child: Text(
-                      '${index + 1}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: TossDesignSystem.tossBlue,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${index + 1}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          advice,
+                          style: TextStyle(
+                            color: isDark ? Colors.white70 : Colors.black87,
+                            fontSize: 14,
+                            height: 1.5,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    advice,
-                    style: TextStyle(
-                      color: isDark ? Colors.white70 : Colors.black87,
-                      fontSize: 17,
-                      height: 1.6,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ).animate().fadeIn(delay: (300 + index * 100).ms).slideX(begin: 0.3, end: 0);
-        }),
+                ).animate().fadeIn(delay: (300 + index * 100).ms).slideX(begin: 0.3, end: 0),
+              );
+            }).toList(),
+          ),
+        ),
 
-        const SizedBox(height: 40),
+        const Spacer(flex: 1),
       ],
     );
   }
@@ -416,47 +435,51 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
   Widget _buildEncouragementCard(bool isDark) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
       children: [
-        const SizedBox(height: 60),
+        const Spacer(flex: 2),
 
         // 응원 이모지
         Text(
           '🙌',
-          style: TypographyUnified.displayLarge,
+          style: const TextStyle(fontSize: 56),
         )
             .animate()
             .scale(duration: 600.ms, curve: Curves.easeOutBack)
             .then()
             .shimmer(duration: 1500.ms),
 
-        const SizedBox(height: 40),
+        const Spacer(flex: 1),
 
         // 제목
         Text(
           '힘내세요!',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 28,
+            fontSize: 24,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
         ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.3, end: 0),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 20),
 
         // 응원 메시지
-        Text(
-          widget.result.encouragement,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: isDark ? Colors.white70 : Colors.black54,
-            fontSize: 18,
-            height: 1.7,
-            fontWeight: FontWeight.w400,
-          ),
-        ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
+        Flexible(
+          flex: 3,
+          child: Text(
+            widget.result.encouragement,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isDark ? Colors.white70 : Colors.black54,
+              fontSize: 16,
+              height: 1.6,
+              fontWeight: FontWeight.w400,
+            ),
+          ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
+        ),
 
-        const SizedBox(height: 60),
+        const Spacer(flex: 2),
       ],
     );
   }
@@ -477,51 +500,55 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
         children: [
-          const SizedBox(height: 60),
+          const Spacer(flex: 2),
 
           // 신비로운 이모지
           Text(
             '🔮',
-            style: TypographyUnified.displayLarge,
+            style: const TextStyle(fontSize: 56),
           )
               .animate()
               .scale(duration: 600.ms, curve: Curves.easeOutBack)
               .then()
               .shimmer(duration: 1500.ms),
 
-          const SizedBox(height: 40),
+          const Spacer(flex: 1),
 
           // 제목
           const Text(
             '신이 전하는 한마디',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 24,
+              fontSize: 22,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.3,
             ),
           ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.3, end: 0),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 20),
 
           // 특별한 한마디
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Text(
-              '"${widget.result.specialWords}"',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                height: 1.6,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.5,
+          Flexible(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Text(
+                '"${widget.result.specialWords}"',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  height: 1.5,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.5,
+                ),
               ),
-            ),
-          ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
+            ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.3, end: 0),
+          ),
 
-          const SizedBox(height: 60),
+          const Spacer(flex: 2),
         ],
       ),
     );

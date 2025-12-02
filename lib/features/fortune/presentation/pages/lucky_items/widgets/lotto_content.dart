@@ -4,7 +4,7 @@ import '../../../../../../core/theme/toss_design_system.dart';
 import '../../../../../../core/theme/typography_unified.dart';
 import 'info_item.dart';
 
-/// 로또/복권 컨텐츠
+/// 로또/복권 컨텐츠 - ChatGPT 스타일 미니멀 디자인
 class LottoContent extends StatelessWidget {
   final List<int> numbers;
   final bool isBlurred;
@@ -17,82 +17,95 @@ class LottoContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '오늘의 행운 번호',
-              style: TypographyUnified.heading4.copyWith(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 20),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: numbers.asMap().entries.map((entry) {
-                final index = entry.key;
-                final number = entry.value;
-                final isLastNumber = index == numbers.length - 1;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-                // ✅ 마지막 번호만 블러 처리
-                Widget numberWidget = Container(
-                  width: 52,
-                  height: 52,
-                  decoration: const BoxDecoration(
-                    color: TossDesignSystem.tossBlue,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$number',
-                      style: TypographyUnified.heading3.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.gray900 : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray200,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 타이틀
+          Text(
+            '오늘의 행운 번호',
+            style: TypographyUnified.bodyMedium.copyWith(
+              fontWeight: FontWeight.w600,
+              color: isDark ? TossDesignSystem.gray300 : TossDesignSystem.gray700,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // 번호 그리드 - 미니멀 스타일
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: numbers.asMap().entries.map((entry) {
+              final index = entry.key;
+              final number = entry.value;
+              final isLastNumber = index == numbers.length - 1;
+
+              Widget numberWidget = Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    '$number',
+                    style: TypographyUnified.heading4.copyWith(
+                      color: isDark ? TossDesignSystem.gray100 : TossDesignSystem.gray900,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
+                ),
+              );
+
+              // 마지막 번호 블러 처리
+              if (isLastNumber && isBlurred) {
+                numberWidget = Stack(
+                  children: [
+                    ImageFiltered(
+                      imageFilter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                      child: numberWidget,
+                    ),
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.lock_outline_rounded,
+                        size: 20,
+                        color: isDark ? TossDesignSystem.gray500 : TossDesignSystem.gray400,
+                      ),
+                    ),
+                  ],
                 );
+              }
 
-                // 마지막 번호이고 블러 상태면 블러 처리
-                if (isLastNumber && isBlurred) {
-                  numberWidget = Stack(
-                    children: [
-                      ImageFiltered(
-                        imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                        child: numberWidget,
-                      ),
-                      Container(
-                        width: 52,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.lock_outline,
-                            size: 24,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }
+              return numberWidget;
+            }).toList(),
+          ),
 
-                return numberWidget;
-              }).toList(),
-            ),
-            const SizedBox(height: 24),
-            const InfoItem(label: '구매 시간', value: '오후 2시~4시'),
-            const InfoItem(label: '구매 장소', value: '집 근처 편의점'),
-            const InfoItem(label: '행운 번호', value: '1, 7, 21번'),
-          ],
-        ),
+          const SizedBox(height: 20),
+          Divider(color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray200),
+          const SizedBox(height: 16),
+
+          // 추가 정보
+          const InfoItem(label: '구매 시간', value: '오후 2시~4시'),
+          const InfoItem(label: '구매 장소', value: '집 근처 편의점'),
+          const InfoItem(label: '행운 번호', value: '1, 7, 21번'),
+        ],
       ),
     );
   }

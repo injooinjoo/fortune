@@ -1,9 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../../../../../../core/theme/toss_design_system.dart';
 import '../../../../../../core/theme/typography_unified.dart';
 import 'info_item.dart';
 
-/// 오늘의 색상 컨텐츠
+/// 오늘의 색상 컨텐츠 - ChatGPT 스타일
 class TodayColorContent extends StatelessWidget {
   final DateTime birthDate;
 
@@ -48,6 +49,7 @@ class TodayColorContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorData = _generateTodayColor();
     final color = colorData['color'] as Color;
     final hex = colorData['hex'] as String;
@@ -55,59 +57,49 @@ class TodayColorContent extends StatelessWidget {
     final g = colorData['g'] as int;
     final b = colorData['b'] as int;
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            // 큰 색상 프리뷰
-            Container(
-              height: 200,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.5),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Text(
-                  hex,
-                  style: TypographyUnified.heading2.copyWith(
-                    color: (r + g + b) > 382 ? Colors.black : Colors.white,
-                    fontWeight: FontWeight.w700,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black.withValues(alpha: 0.3),
-                        blurRadius: 4,
-                      ),
-                    ],
-                  ),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? TossDesignSystem.gray900 : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray200,
+        ),
+      ),
+      child: Column(
+        children: [
+          // 큰 색상 프리뷰 - 미니멀 스타일
+          Container(
+            height: 160,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(
+              child: Text(
+                hex,
+                style: TypographyUnified.heading3.copyWith(
+                  color: (r + g + b) > 382 ? Colors.black87 : Colors.white,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+          ),
+          const SizedBox(height: 20),
 
-            // 색상 정보
-            InfoItem(label: 'HEX 코드', value: hex),
-            InfoItem(label: 'RGB', value: 'R:$r, G:$g, B:$b'),
-            InfoItem(label: '색상 의미', value: _getColorMeaning(r, g, b)),
-            const InfoItem(
-              label: '활용 팁',
-              value: '오늘 이 색상의 옷이나 소품을 착용하면 행운이 따릅니다',
-            ),
-            const InfoItem(
-              label: '추천 아이템',
-              value: '액세서리, 가방, 양말, 스마트폰 케이스',
-            ),
-          ],
-        ),
+          // 색상 정보
+          InfoItem(label: 'HEX 코드', value: hex),
+          InfoItem(label: 'RGB', value: 'R:$r, G:$g, B:$b'),
+          InfoItem(label: '색상 의미', value: _getColorMeaning(r, g, b)),
+          const InfoItem(
+            label: '활용 팁',
+            value: '오늘 이 색상의 옷이나 소품을 착용하면 행운이 따릅니다',
+          ),
+          const InfoItem(
+            label: '추천 아이템',
+            value: '액세서리, 가방, 양말, 스마트폰 케이스',
+          ),
+        ],
       ),
     );
   }

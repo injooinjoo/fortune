@@ -22,28 +22,28 @@ class ZodiacFortuneCard extends StatelessWidget {
           '띠별 운세',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Text(
           '나와 주변 사람들의 오늘 운세',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 14,
+            fontSize: 13,
           ),
         ),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 16),
 
         ...zodiacFortunes.map((fortune) => Padding(
-          padding: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.only(bottom: 10),
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               border: fortune['isUser'] == true
                   ? Border.all(color: const Color(0xFF3B82F6).withValues(alpha: 0.5), width: 2)
                   : null,
@@ -61,17 +61,17 @@ class ZodiacFortuneCard extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         fortune['emoji'] as String? ?? '✨',
-                        style: const TextStyle(fontSize: 24),
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,28 +109,29 @@ class ZodiacFortuneCard extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: FortuneSwipeHelpers.getZodiacScoreColor(fortune['score'] as int).withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         '${fortune['score']}점',
                         style: TextStyle(
                           color: FortuneSwipeHelpers.getZodiacScoreColor(fortune['score'] as int),
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Text(
                   fortune['description'] as String,
                   style: TypographyUnified.bodySmall.copyWith(
                     color: isDark ? Colors.white.withValues(alpha: 0.87) : Colors.black.withValues(alpha: 0.87),
-                    height: 1.6,
+                    height: 1.5,
+                    fontSize: 12,
                   ),
                 ),
               ],

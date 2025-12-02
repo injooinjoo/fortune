@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
@@ -124,10 +125,10 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
 
     if (needsOnboarding) {
       debugPrint('Profile incomplete, redirecting to onboarding...');
-      // Note: Navigation should be handled by the widget
+      context.go('/onboarding');
     } else {
       debugPrint('Profile complete, redirecting to home...');
-      // Note: Navigation should be handled by the widget
+      context.go('/home');
     }
   }
 

@@ -20,23 +20,23 @@ class ActionPlanCard extends StatelessWidget {
           '오늘의 액션 플랜',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Text(
           '오늘 꼭 실천할 것들',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 14,
+            fontSize: 13,
           ),
         ),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 16),
 
         ...actions.map((action) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: 10),
           child: _ActionItem(
             title: action['title'] ?? '',
             description: action['description'] ?? '',
@@ -78,10 +78,10 @@ class _ActionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: _priorityColor.withValues(alpha: 0.3),
           width: 1,
@@ -98,14 +98,14 @@ class _ActionItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 4,
-            height: 40,
+            width: 3,
+            height: 36,
             decoration: BoxDecoration(
               color: _priorityColor,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,16 +114,16 @@ class _ActionItem extends StatelessWidget {
                   title,
                   style: TextStyle(
                     color: isDark ? Colors.white : Colors.black87,
-                    fontSize: 15,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
                 Text(
                   description,
                   style: TextStyle(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                    fontSize: 13,
+                    fontSize: 12,
                     height: 1.4,
                   ),
                 ),

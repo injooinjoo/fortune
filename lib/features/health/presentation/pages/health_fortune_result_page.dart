@@ -10,6 +10,7 @@ import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/gpt_style_typing_text.dart';
 
 /// 건강운세 결과 페이지 (프리미엄/블러 시스템 적용)
 ///
@@ -37,10 +38,14 @@ class HealthFortuneResultPage extends ConsumerStatefulWidget {
 class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPage> {
   late FortuneResult _fortuneResult;
 
+  // GPT 스타일 타이핑 효과 섹션 관리
+  int _currentTypingSection = 0;
+
   @override
   void initState() {
     super.initState();
     _fortuneResult = widget.fortuneResult;
+    _currentTypingSection = 0;
     Logger.info('[건강운] 결과 페이지 초기화 - isBlurred: ${_fortuneResult.isBlurred}');
   }
 
@@ -261,12 +266,17 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
             ],
           ),
           const SizedBox(height: 16),
-          Text(
-            overallHealth,
+          GptStyleTypingText(
+            text: overallHealth,
             style: context.bodyMedium.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
               height: 1.5,
             ),
+            startTyping: _currentTypingSection >= 0,
+            showGhostText: true,
+            onComplete: () {
+              if (mounted) setState(() => _currentTypingSection = 1);
+            },
           ),
         ],
       ),

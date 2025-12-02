@@ -8,7 +8,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// 저장된 사주 데이터 조회 함수
+// 저장된 사주 데이터 조회 함수 (v1.0/v2.0 스키마 모두 지원)
 async function getSavedSajuData(supabase: any, userId: string) {
   try {
     const { data: sajuData, error } = await supabase
@@ -16,40 +16,118 @@ async function getSavedSajuData(supabase: any, userId: string) {
       .select('*')
       .eq('user_id', userId)
       .maybeSingle()
-    
+
     if (error) {
       console.log('⚠️ Error fetching saju data:', error)
       return null
     }
-    
+
     if (!sajuData) {
       console.log('ℹ️ No saju data found for user')
       return null
     }
-    
-    // 사주 데이터를 기존 analyzeSaju 형식으로 변환
+
+    const version = sajuData.calculation_version || 'v1.0'
+    console.log('✅ Saju data found, version:', version)
+
+    // 기존 스키마 컬럼명 사용 (year_stem, year_branch, etc.)
+    // v2.0에서도 같은 컬럼명 사용하도록 통일
+    const dayCheongan = sajuData.day_stem
+    const dayJiji = sajuData.day_branch
+    const yearCheongan = sajuData.year_stem
+    const yearJiji = sajuData.year_branch
+    const monthCheongan = sajuData.month_stem
+    const monthJiji = sajuData.month_branch
+    const hourCheongan = sajuData.hour_stem
+    const hourJiji = sajuData.hour_branch
+
+    // element_balance에서 오행 추출 (기존 스키마)
+    const elementBalance = sajuData.element_balance || {}
+    const 목 = sajuData.element_wood ?? elementBalance?.목 ?? elementBalance?.['목'] ?? 0
+    const 화 = sajuData.element_fire ?? elementBalance?.화 ?? elementBalance?.['화'] ?? 0
+    const 토 = sajuData.element_earth ?? elementBalance?.토 ?? elementBalance?.['토'] ?? 0
+    const 금 = sajuData.element_metal ?? elementBalance?.금 ?? elementBalance?.['금'] ?? 0
+    const 수 = sajuData.element_water ?? elementBalance?.수 ?? elementBalance?.['수'] ?? 0
+
+    // 부족/강한 오행 (신규 컬럼 또는 기존 컬럼에서)
+    const weakElement = sajuData.weak_element || sajuData.lacking_element
+    const strongElement = sajuData.strong_element || sajuData.dominant_element
+
+    // ten_gods에서 십신 추출 (기존 스키마)
+    const tenGods = sajuData.ten_gods || {}
+    const 십신 = {
+      년주: sajuData.tenshin_year || (tenGods.year ? { cheongan: tenGods.year[0] } : null),
+      월주: sajuData.tenshin_month || (tenGods.month ? { cheongan: tenGods.month[0] } : null),
+      일주: sajuData.tenshin_day || null,
+      시주: sajuData.tenshin_hour || (tenGods.hour ? { cheongan: tenGods.hour[0] } : null)
+    }
+
+    // spirits에서 신살 추출 (기존 스키마)
+    const spirits = sajuData.spirits || []
+    const 길신 = sajuData.sinsal_gilsin || spirits.filter((s: string) => !s.includes('살'))
+    const 흉신 = sajuData.sinsal_hyungsin || spirits.filter((s: string) => s.includes('살'))
+
     return {
-      천간: sajuData.year_cheongan,
-      지지: sajuData.year_jiji,
-      오행: {
-        목: sajuData.element_wood,
-        화: sajuData.element_fire,
-        토: sajuData.element_earth,
-        금: sajuData.element_metal,
-        수: sajuData.element_water
-      },
-      간지: `${sajuData.year_cheongan}${sajuData.year_jiji}`,
-      부족한오행: sajuData.weak_element,
+      // 기본 정보
+      천간: dayCheongan,
+      지지: dayJiji,
+      일간: dayCheongan,
+
+      // 오행 균형
+      오행: { 목, 화, 토, 금, 수 },
+
+      // 사주팔자
+      간지: `${dayCheongan}${dayJiji}`,
+      부족한오행: weakElement,
+      강한오행: strongElement,
       보충방법: sajuData.enhancement_method,
+
+      // 상세 사주 (4주8자)
       상세사주: {
-        년주: { 천간: sajuData.year_cheongan, 지지: sajuData.year_jiji },
-        월주: { 천간: sajuData.month_cheongan, 지지: sajuData.month_jiji },
-        일주: { 천간: sajuData.day_cheongan, 지지: sajuData.day_jiji },
-        시주: { 천간: sajuData.hour_cheongan, 지지: sajuData.hour_jiji }
+        년주: { 천간: yearCheongan, 지지: yearJiji, 한자: `${sajuData.year_stem_hanja || ''}${sajuData.year_branch_hanja || ''}` },
+        월주: { 천간: monthCheongan, 지지: monthJiji, 한자: `${sajuData.month_stem_hanja || ''}${sajuData.month_branch_hanja || ''}` },
+        일주: { 천간: dayCheongan, 지지: dayJiji, 한자: `${sajuData.day_stem_hanja || ''}${sajuData.day_branch_hanja || ''}` },
+        시주: hourCheongan ? { 천간: hourCheongan, 지지: hourJiji, 한자: `${sajuData.hour_stem_hanja || ''}${sajuData.hour_branch_hanja || ''}` } : null
       },
-      성격: sajuData.personality_traits,
-      운세요약: sajuData.fortune_summary,
-      전체분석: sajuData.gpt_analysis
+
+      // 십신
+      십신,
+
+      // 지장간 (v2.0)
+      지장간: {
+        년주: sajuData.jijanggan_year,
+        월주: sajuData.jijanggan_month,
+        일주: sajuData.jijanggan_day,
+        시주: sajuData.jijanggan_hour
+      },
+
+      // 12운성 (v2.0)
+      운성: sajuData.twelve_stages,
+
+      // 합충형파해 (v2.0)
+      관계: sajuData.relations,
+
+      // 신살
+      길신,
+      흉신,
+
+      // 공망 (v2.0)
+      공망: sajuData.gongmang,
+
+      // 대운 정보 (기존)
+      대운: sajuData.daeun_info || sajuData.current_daewoon,
+
+      // LLM 분석 (v2.0 우선, 기존 fallback)
+      성격: sajuData.personality_traits || sajuData.personality_analysis,
+      운세요약: sajuData.fortune_summary || sajuData.interpretation,
+      직업운: sajuData.career_fortune || sajuData.career_guidance,
+      재물운: sajuData.wealth_fortune,
+      애정운: sajuData.love_fortune || sajuData.relationship_advice,
+      건강운: sajuData.health_fortune,
+      전체분석: sajuData.gpt_analysis,
+
+      // 버전 정보
+      version
     }
   } catch (e) {
     console.log('❌ Exception fetching saju data:', e)
@@ -308,22 +386,44 @@ ${userProfile ? `- 생년월일: ${userProfile.birthDate}
 - 행운의 시간: ${fortune.luckyTime || ''}
 - 조언: ${fortune.advice || ''}
 사주 분석:
-${sajuAnalysis ? `- 천간: ${sajuAnalysis.천간}
-- 지지: ${sajuAnalysis.지지}
-- 간지: ${sajuAnalysis.간지}
-- 오행 균형: 목(${sajuAnalysis.오행.목}), 화(${sajuAnalysis.오행.화}), 토(${sajuAnalysis.오행.토}), 금(${sajuAnalysis.오행.금}), 수(${sajuAnalysis.오행.수})
-- 부족한 오행: ${sajuAnalysis.부족한오행}
-- 보충 방법: ${sajuAnalysis.보충방법}
-- 성격 분석: ${sajuAnalysis.성격 || '없음'}
-- 운세 요약: ${sajuAnalysis.운세요약 || '없음'}` : `상세 사주 정보는 아직 분석되지 않았습니다.
-하지만 사용자의 기본 정보를 활용하세요:
-${userProfile?.zodiacAnimal ? `- 띠: ${userProfile.zodiacAnimal}띠 (이 정보를 활용하여 운세를 구성하세요)` : ''}
-${userProfile?.zodiacSign ? `- 별자리: ${userProfile.zodiacSign} (이 정보를 활용하여 운세를 구성하세요)` : ''}
-${userProfile?.birthDate ? `- 생년월일: ${userProfile.birthDate} (이 정보를 기반으로 일반적인 운세를 작성하세요)` : ''}
+${sajuAnalysis ? `📊 사주팔자 (v${sajuAnalysis.version || '2.0'}):
+- 일간(나): ${sajuAnalysis.일간 || sajuAnalysis.천간} (${sajuAnalysis.강한오행 || ''}의 기운)
+- 년주: ${sajuAnalysis.상세사주?.년주?.천간}${sajuAnalysis.상세사주?.년주?.지지}
+- 월주: ${sajuAnalysis.상세사주?.월주?.천간}${sajuAnalysis.상세사주?.월주?.지지}
+- 일주: ${sajuAnalysis.상세사주?.일주?.천간}${sajuAnalysis.상세사주?.일주?.지지}
+- 시주: ${sajuAnalysis.상세사주?.시주 ? `${sajuAnalysis.상세사주.시주.천간}${sajuAnalysis.상세사주.시주.지지}` : '미상'}
 
-⚠️ 중요: 사주 간지나 오행 정보가 없으므로, "사주 간지는 알 수 없습니다" 같은 표현을 사용하지 마세요.
-대신 띠와 별자리 정보를 활용하여 긍정적이고 구체적인 운세를 작성하세요.
-예: "용띠인 당신은 리더십이 강한 편입니다", "처녀자리 특유의 꼼꼼함이 오늘 빛을 발할 것입니다"`}
+🔥 오행 균형:
+- 목: ${sajuAnalysis.오행?.목?.toFixed?.(1) || sajuAnalysis.오행?.목 || 0}
+- 화: ${sajuAnalysis.오행?.화?.toFixed?.(1) || sajuAnalysis.오행?.화 || 0}
+- 토: ${sajuAnalysis.오행?.토?.toFixed?.(1) || sajuAnalysis.오행?.토 || 0}
+- 금: ${sajuAnalysis.오행?.금?.toFixed?.(1) || sajuAnalysis.오행?.금 || 0}
+- 수: ${sajuAnalysis.오행?.수?.toFixed?.(1) || sajuAnalysis.오행?.수 || 0}
+- 부족한 오행: ${sajuAnalysis.부족한오행} → 보충: ${sajuAnalysis.보충방법}
+
+⭐ 십신 분석:
+- 년주 십신: ${JSON.stringify(sajuAnalysis.십신?.년주 || {})}
+- 월주 십신: ${JSON.stringify(sajuAnalysis.십신?.월주 || {})}
+- 일지 십신: ${JSON.stringify(sajuAnalysis.십신?.일주 || {})}
+
+🔄 12운성: ${JSON.stringify(sajuAnalysis.운성 || {})}
+
+🎯 신살:
+- 길신: ${sajuAnalysis.길신?.join(', ') || '없음'}
+- 흉신: ${sajuAnalysis.흉신?.join(', ') || '없음'}
+
+⚡ 공망: ${sajuAnalysis.공망?.join(', ') || '없음'}
+
+💡 성격 분석: ${sajuAnalysis.성격 || '분석 대기'}
+📝 운세 요약: ${sajuAnalysis.운세요약 || '분석 대기'}` : `⚠️ 사주 데이터 없음 - 기본 정보로 운세 생성
+
+✅ 반드시 사용자 정보를 기반으로 구체적인 운세를 작성하세요:
+${userProfile?.zodiacAnimal ? `- 띠: ${userProfile.zodiacAnimal}띠` : '- 띠: 용띠 (기본값)'}
+${userProfile?.zodiacSign ? `- 별자리: ${userProfile.zodiacSign}` : '- 별자리: 처녀자리 (기본값)'}
+${userProfile?.birthDate ? `- 생년월일: ${userProfile.birthDate}` : ''}
+
+🚫 절대 사용 금지 표현: "분석 중", "알 수 없음", "확인 중", "정보가 없습니다"
+✅ 반드시 긍정적이고 구체적인 내용으로 작성하세요!`}
 
 10페이지 분량의 운세 스토리를 만들어주세요.
 반드시 segments 키 안에 10개의 페이지 배열을 포함하세요.

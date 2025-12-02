@@ -17,20 +17,9 @@ interface TickerInfo {
   exchange?: string;   // BINANCE, NASDAQ, KRX 등
 }
 
+// v2: 간소화된 요청 (투자 프로필 제거)
 interface InvestmentRequest {
-  // 새로운 티커 기반 요청
-  ticker?: TickerInfo;
-
-  // 기존 호환성 유지
-  investmentType?: 'stock' | 'crypto' | 'real_estate' | 'startup' | 'fund' | 'krStock' | 'usStock' | 'etf' | 'commodity' | 'realEstate';
-  targetName?: string;
-
-  // 투자 프로필
-  amount?: number;
-  timeframe: string; // '단기 (1개월 이내)', '중기 (3-6개월)', '장기 (1년 이상)'
-  riskTolerance: 'conservative' | 'moderate' | 'aggressive';
-  purpose: string; // '수익 창출', '자산 증식', '노후 대비' 등
-  experience: 'beginner' | 'intermediate' | 'expert';
+  ticker: TickerInfo;
   userId?: string;
   isPremium?: boolean;
 }
@@ -47,24 +36,13 @@ serve(async (req) => {
     )
 
     const requestData: InvestmentRequest = await req.json()
-    const {
-      ticker,
-      investmentType: legacyType,
-      targetName: legacyTargetName,
-      amount,
-      timeframe,
-      riskTolerance,
-      purpose,
-      experience,
-      userId,
-      isPremium = false
-    } = requestData
+    const { ticker, userId, isPremium = false } = requestData
 
-    // 티커 정보 추출 (새 방식 우선, 기존 방식 호환)
-    const tickerSymbol = ticker?.symbol || legacyTargetName || 'Unknown'
-    const tickerName = ticker?.name || legacyTargetName || '알 수 없는 종목'
-    const tickerCategory = ticker?.category || legacyType || 'stock'
-    const tickerExchange = ticker?.exchange || ''
+    if (!ticker || !ticker.symbol || !ticker.name || !ticker.category) {
+      throw new Error('ticker 정보가 필요합니다 (symbol, name, category)')
+    }
+
+    const { symbol: tickerSymbol, name: tickerName, category: tickerCategory, exchange: tickerExchange } = ticker
 
     // 카테고리 레이블 매핑
     const categoryLabels: Record<string, string> = {
@@ -74,18 +52,14 @@ serve(async (req) => {
       etf: 'ETF',
       commodity: '원자재',
       realEstate: '부동산',
-      stock: '주식',
-      real_estate: '부동산',
-      startup: '스타트업',
-      fund: '펀드'
     }
     const categoryLabel = categoryLabels[tickerCategory] || '투자'
 
-    console.log('💎 [Investment] Premium:', isPremium, '| Ticker:', tickerSymbol, tickerName, tickerCategory)
+    console.log('💎 [Investment v2] Premium:', isPremium, '| Ticker:', tickerSymbol, tickerName, tickerCategory)
 
-    // 캐시 확인
+    // 캐시 확인 (간소화된 키 - 프로필 정보 없음)
     const today = new Date().toISOString().split('T')[0]
-    const cacheKey = `${userId || 'anonymous'}_investment_${today}_${tickerSymbol}_${tickerCategory}`
+    const cacheKey = `${userId || 'anonymous'}_investment_v2_${today}_${tickerSymbol}_${tickerCategory}`
 
     const { data: cachedResult } = await supabaseClient
       .from('fortune_cache')
@@ -95,9 +69,15 @@ serve(async (req) => {
       .single()
 
     if (cachedResult) {
+      // 캐시된 결과도 블러 상태 업데이트
+      const cachedFortune = { ...cachedResult.result }
+      if (isPremium && cachedFortune.isBlurred) {
+        cachedFortune.isBlurred = false
+        cachedFortune.blurredSections = []
+      }
       return new Response(
         JSON.stringify({
-          fortune: cachedResult.result,
+          fortune: cachedFortune,
           cached: true,
           tokensUsed: 0
         }),
@@ -105,76 +85,97 @@ serve(async (req) => {
       )
     }
 
-    // OpenAI API 호출
-    // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
+    // LLM 호출
     const llm = await LLMFactory.createFromConfigAsync('investment')
 
-    const systemPrompt = `당신은 ${categoryLabel} 투자 운세 전문가입니다. 사용자가 선택한 종목(${tickerName})에 대한 투자 운세와 실용적인 조언을 제공합니다.
+    const systemPrompt = `당신은 ${categoryLabel} 투자 운세 전문가입니다.
+사용자가 선택한 종목(${tickerName})에 대해 투자자들이 가장 궁금해하는 정보를 운세 형식으로 제공합니다.
 
-해당 종목의 특성과 시장 상황을 고려하여 분석해주세요.
+## 투자자들이 가장 궁금해하는 것 (리서치 기반)
+1. 타이밍: 지금 살 때인가? 팔 때인가? 최적 시점은?
+2. 전망: 단기/중기/장기 방향은?
+3. 리스크: 주의해야 할 점은?
+4. 시장 분위기: 다른 투자자들은 어떻게 생각하나?
+5. 행운 요소: 좋은 기운을 받을 수 있는 요소
 
 다음 JSON 형식으로 응답해주세요:
 {
-  "overallScore": 0-100 사이의 점수 (투자 운세 점수),
-  "content": "투자 운세 분석 (300자 내외, ${tickerName}(${tickerSymbol})의 현재 상황과 투자자 상태를 고려한 종합 분석)",
-  "description": "상세 분석 (500자 내외, 투자 시점, 예상 시나리오, 위험 요소 등)",
+  "overallScore": 0-100 (오늘의 투자 운세 점수),
+  "content": "핵심 운세 요약 (80자 내외, 오늘 이 종목에 대한 전체적인 기운)",
+
+  "timing": {
+    "buySignal": "strong" | "moderate" | "weak" | "avoid",
+    "buySignalText": "매수 타이밍 설명 (50자 내외)",
+    "bestTimeSlot": "morning" | "afternoon" | "evening",
+    "bestTimeSlotText": "최적 시간대 설명 (30자 내외)",
+    "holdAdvice": "홀딩/관망 조언 (40자 내외)"
+  },
+
+  "outlook": {
+    "shortTerm": {
+      "score": 0-100,
+      "trend": "up" | "neutral" | "down",
+      "text": "1주일 전망 (40자 내외)"
+    },
+    "midTerm": {
+      "score": 0-100,
+      "trend": "up" | "neutral" | "down",
+      "text": "1개월 전망 (40자 내외)"
+    },
+    "longTerm": {
+      "score": 0-100,
+      "trend": "up" | "neutral" | "down",
+      "text": "3개월+ 전망 (40자 내외)"
+    }
+  },
+
+  "risks": {
+    "warnings": ["주의사항 3가지 (각 30자 내외)"],
+    "avoidActions": ["피해야 할 행동 2가지 (각 30자 내외)"],
+    "volatilityLevel": "low" | "medium" | "high" | "extreme",
+    "volatilityText": "변동성 설명 (30자 내외)"
+  },
+
+  "marketMood": {
+    "categoryMood": "bullish" | "neutral" | "bearish",
+    "categoryMoodText": "${categoryLabel} 시장 전체 기운 (40자 내외)",
+    "investorSentiment": "투자자들의 심리 상태 (40자 내외)"
+  },
+
   "luckyItems": {
     "color": "행운의 색상",
     "number": 행운의 숫자,
     "direction": "행운의 방향",
-    "timing": "최적 투자 시점"
+    "timing": "최적 투자 시점 (예: 오후 2-4시)"
   },
-  "hexagonScores": {
-    "timing": 0-100 (투자 타이밍 점수),
-    "value": 0-100 (가치 평가 점수),
-    "risk": 0-100 (리스크 관리 점수),
-    "trend": 0-100 (시장 트렌드 점수),
-    "emotion": 0-100 (감정 통제 점수),
-    "knowledge": 0-100 (정보력 점수)
-  },
-  "recommendations": [
-    "긍정적인 추천 사항 3가지"
-  ],
-  "warnings": [
-    "주의해야 할 사항 3가지"
-  ],
-  "advice": "종합 투자 조언 (200자 내외)"
-}`
 
-    // 투자금액 표시 (없으면 생략) - 타입 안전 처리
-    const amountText = (amount !== undefined && amount !== null && typeof amount === 'number')
-      ? `투자 예정 금액: ${amount.toLocaleString()}원`
-      : ''
+  "advice": "종합 투자 조언 (80자 내외)",
+  "psychologyTip": "투자 심리 조언 (60자 내외, 감정 조절, 냉정함 유지 등)"
+}`
 
     const userPrompt = `[투자 종목 정보]
 종목명: ${tickerName}
 티커/심볼: ${tickerSymbol}
 카테고리: ${categoryLabel}${tickerExchange ? `\n거래소: ${tickerExchange}` : ''}
 
-[투자자 프로필]
-${amountText ? amountText + '\n' : ''}투자 기간: ${timeframe}
-위험 감수도: ${riskTolerance === 'conservative' ? '안정형' : riskTolerance === 'moderate' ? '중립형' : '공격형'}
-투자 목적: ${purpose}
-투자 경험: ${experience === 'beginner' ? '초보' : experience === 'intermediate' ? '중급' : '전문가'}
-
 [분석 요청일]
 ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
 
-위 정보를 바탕으로 ${tickerName}(${tickerSymbol}) 투자 운세를 JSON 형식으로 분석해주세요.
-해당 종목의 특성과 카테고리(${categoryLabel})를 고려하여 긍정적이면서도 현실적인 조언을 제공해주세요.`
+위 종목에 대해 투자자들이 가장 궁금해하는 정보를 운세 형식으로 JSON 응답해주세요.
+특히 매수/매도 타이밍, 단기/중기/장기 전망, 주의사항을 구체적으로 알려주세요.`
 
     const response = await llm.generate([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt }
     ], {
       temperature: 1,
-      maxTokens: 8192,
+      maxTokens: 4096,
       jsonMode: true
     })
 
     console.log(`✅ LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
 
-    // ✅ LLM 사용량 로깅 (비용/성능 분석용)
+    // 사용량 로깅
     await UsageLogger.log({
       fortuneType: 'investment',
       userId: userId,
@@ -184,7 +185,8 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       metadata: {
         tickerSymbol,
         tickerCategory,
-        isPremium
+        isPremium,
+        version: 'v2'
       }
     })
 
@@ -194,68 +196,102 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
 
     const fortuneData = JSON.parse(response.content)
 
-    // ✅ Blur 로직 적용
+    // 블러 로직 (프리미엄 아니면 주요 섹션 블러)
     const isBlurred = !isPremium
     const blurredSections = isBlurred
-      ? ['description', 'hexagonScores', 'recommendations', 'warnings', 'advice']
+      ? ['timing', 'outlook', 'risks', 'marketMood', 'advice', 'psychologyTip']
       : []
+
+    // 블러 처리된 데이터
+    const blurredTiming = {
+      buySignal: 'moderate',
+      buySignalText: '🔒 프리미엄 구독으로 확인하세요',
+      bestTimeSlot: 'afternoon',
+      bestTimeSlotText: '🔒 프리미엄 구독으로 확인하세요',
+      holdAdvice: '🔒 프리미엄 구독으로 확인하세요'
+    }
+
+    const blurredOutlook = {
+      shortTerm: { score: 0, trend: 'neutral', text: '🔒 프리미엄 구독으로 확인하세요' },
+      midTerm: { score: 0, trend: 'neutral', text: '🔒 프리미엄 구독으로 확인하세요' },
+      longTerm: { score: 0, trend: 'neutral', text: '🔒 프리미엄 구독으로 확인하세요' }
+    }
+
+    const blurredRisks = {
+      warnings: ['🔒 프리미엄 구독으로 확인하세요'],
+      avoidActions: ['🔒 프리미엄 구독으로 확인하세요'],
+      volatilityLevel: 'medium',
+      volatilityText: '🔒 프리미엄 구독으로 확인하세요'
+    }
+
+    const blurredMarketMood = {
+      categoryMood: 'neutral',
+      categoryMoodText: '🔒 프리미엄 구독으로 확인하세요',
+      investorSentiment: '🔒 프리미엄 구독으로 확인하세요'
+    }
 
     const result = {
       id: `investment-${Date.now()}`,
       type: 'investment',
+      version: 'v2',
       userId: userId,
-      // 새 티커 정보
       ticker: {
         symbol: tickerSymbol,
         name: tickerName,
         category: tickerCategory,
         exchange: tickerExchange || null
       },
-      // 기존 호환성 유지
-      targetName: tickerName,
-      investmentType: tickerCategory,
-      amount: amount || null,
       overallScore: fortuneData.overallScore,
       overall_score: fortuneData.overallScore,
       content: fortuneData.content,
-      description: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : fortuneData.description,
+
+      // 새로운 구조 (블러 적용)
+      timing: isBlurred ? blurredTiming : fortuneData.timing,
+      outlook: isBlurred ? blurredOutlook : fortuneData.outlook,
+      risks: isBlurred ? blurredRisks : fortuneData.risks,
+      marketMood: isBlurred ? blurredMarketMood : fortuneData.marketMood,
+
+      // 기존 유지 (무료 공개)
       luckyItems: fortuneData.luckyItems,
       lucky_items: fortuneData.luckyItems,
-      hexagonScores: isBlurred ? {
-        timing: 0,
-        value: 0,
-        risk: 0,
-        trend: 0,
-        emotion: 0,
-        knowledge: 0
-      } : fortuneData.hexagonScores,
-      recommendations: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.recommendations,
-      warnings: isBlurred ? ['🔒 프리미엄 결제 후 확인 가능합니다'] : fortuneData.warnings,
-      advice: isBlurred ? '🔒 프리미엄 결제 후 확인 가능합니다' : fortuneData.advice,
+
+      // 조언 (블러 적용)
+      advice: isBlurred ? '🔒 프리미엄 구독으로 확인하세요' : fortuneData.advice,
+      psychologyTip: isBlurred ? '🔒 프리미엄 구독으로 확인하세요' : fortuneData.psychologyTip,
+
       created_at: new Date().toISOString(),
       metadata: {
-        timeframe,
-        riskTolerance,
-        purpose,
-        experience,
         categoryLabel
       },
       isBlurred,
       blurredSections
     }
 
-    // ✅ Percentile 계산 추가
+    // Percentile 계산
     const percentileData = await calculatePercentile(supabaseClient, 'investment', result.overallScore)
     const resultWithPercentile = addPercentileToResult(result, percentileData)
 
-    // 결과 캐싱
+    // 캐싱 (원본 데이터 저장 - 블러 해제용)
+    const cacheData = {
+      ...result,
+      // 원본 데이터도 저장 (프리미엄 전환 시 사용)
+      _originalData: {
+        timing: fortuneData.timing,
+        outlook: fortuneData.outlook,
+        risks: fortuneData.risks,
+        marketMood: fortuneData.marketMood,
+        advice: fortuneData.advice,
+        psychologyTip: fortuneData.psychologyTip
+      }
+    }
+
     await supabaseClient
       .from('fortune_cache')
       .insert({
         cache_key: cacheKey,
         fortune_type: 'investment',
         user_id: userId || null,
-        result: resultWithPercentile,
+        result: cacheData,
         created_at: new Date().toISOString()
       })
 

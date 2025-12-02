@@ -52,15 +52,25 @@ class PetService {
     required String species,
     required String name,
     required int age,
+    String? gender,
+    String? breed,
+    String? personality,
+    String? healthNotes,
+    bool? isNeutered,
   }) async {
     try {
-      Logger.info('Creating pet: name=$name, species=$species, age=$age, userId=$userId');
-      
+      Logger.info('Creating pet: name=$name, species=$species, age=$age, gender=$gender, userId=$userId');
+
       final petData = {
         'user_id': userId,
         'species': species,
         'name': name,
         'age': age,
+        if (gender != null) 'gender': gender,
+        if (breed != null) 'breed': breed,
+        if (personality != null) 'personality': personality,
+        if (healthNotes != null) 'health_notes': healthNotes,
+        if (isNeutered != null) 'is_neutered': isNeutered,
         'created_at': DateTime.now().toIso8601String(),
       };
 
@@ -85,6 +95,11 @@ class PetService {
     String? species,
     String? name,
     int? age,
+    String? gender,
+    String? breed,
+    String? personality,
+    String? healthNotes,
+    bool? isNeutered,
   }) async {
     try {
       final updateData = <String, dynamic>{
@@ -94,6 +109,11 @@ class PetService {
       if (species != null) updateData['species'] = species;
       if (name != null) updateData['name'] = name;
       if (age != null) updateData['age'] = age;
+      if (gender != null) updateData['gender'] = gender;
+      if (breed != null) updateData['breed'] = breed;
+      if (personality != null) updateData['personality'] = personality;
+      if (healthNotes != null) updateData['health_notes'] = healthNotes;
+      if (isNeutered != null) updateData['is_neutered'] = isNeutered;
 
       final response = await _client
           .from(_tableName)

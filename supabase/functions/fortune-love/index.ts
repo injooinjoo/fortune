@@ -143,10 +143,10 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
   },
   "detailedAnalysis": {
     "loveStyle": {
-      "description": "연애 스타일 상세 분석 (200자 이상)",
-      "strengths": ["강점 3가지 (각 30자 이상)"],
-      "tendencies": ["연애 경향 3가지 (각 30자 이상)"],
-      "psychologyInsight": "심리학적 해석 (100자 이상)"
+      "description": "연애 스타일 상세 분석 (100자 이내)",
+      "strengths": ["강점 3가지 (각 20자 이내)"],
+      "tendencies": ["연애 경향 3가지 (각 20자 이내)"],
+      "psychologyInsight": "심리학적 해석 (50자 이내)"
     },
     "charmPoints": {
       "primary": "주된 매력 포인트 (50자 이상)",
@@ -190,11 +190,11 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
   }
 }
 
-# 분량 요구사항
-- 전체: 최소 2000자 이상
-- mainMessage, general: 최소 50-100자
-- description, psychologyInsight: 최소 100-200자
-- 구체적 상황에 맞춘 맞춤형 분석 (일반적 표현 금지)
+# 분량 요구사항 (카드 UI 스크롤 방지)
+- 각 항목: 반드시 100자 이내
+- mainMessage, general: 50자 이내
+- description, psychologyInsight: 100자 이내 (초과 금지)
+- 핵심만 간결하게 작성
 
 # 주의사항
 - 상담자의 나이, 성별, 연애 상태를 고려한 맞춤형 분석

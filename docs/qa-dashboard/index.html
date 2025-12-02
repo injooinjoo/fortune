@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fortune App - QA Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-green: #22c55e;
+      --accent-red: #ef4444;
+      --accent-yellow: #eab308;
+      --accent-blue: #3b82f6;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-secondary);
+    }
+
+    .health-score {
+      background: var(--bg-secondary);
+      border-radius: 1rem;
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .health-score .score {
+      font-size: 5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .health-score .label {
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background: var(--bg-secondary);
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
+
+    .metric-card h3 {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .metric-value .unit {
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .metric-status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    .status-good {
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--accent-green);
+    }
+
+    .status-warning {
+      background: rgba(234, 179, 8, 0.2);
+      color: var(--accent-yellow);
+    }
+
+    .status-error {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--accent-red);
+    }
+
+    .chart-container {
+      background: var(--bg-secondary);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-container h3 {
+      margin-bottom: 1rem;
+    }
+
+    .routes-table {
+      background: var(--bg-secondary);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+
+    .routes-table h3 {
+      margin-bottom: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--bg-card);
+    }
+
+    th {
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    tr:hover {
+      background: var(--bg-card);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 0.5rem;
+    }
+
+    .dot-green { background: var(--accent-green); }
+    .dot-red { background: var(--accent-red); }
+    .dot-yellow { background: var(--accent-yellow); }
+
+    footer {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--bg-card);
+    }
+
+    .last-updated {
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      header h1 {
+        font-size: 1.75rem;
+      }
+
+      .health-score .score {
+        font-size: 3rem;
+      }
+
+      .metric-value {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Fortune App QA Dashboard</h1>
+      <p>자동화된 품질 모니터링 현황판</p>
+    </header>
+
+    <div class="health-score">
+      <div class="score" id="healthScore">--</div>
+      <div class="label">Overall Health Score</div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h3>Smoke Tests</h3>
+        <div class="metric-value">
+          <span id="smokeTestsPassed">--</span>
+          <span class="unit">/ <span id="smokeTestsTotal">--</span></span>
+        </div>
+        <span class="metric-status status-good" id="smokeStatus">Loading...</span>
+      </div>
+
+      <div class="metric-card">
+        <h3>Performance Score</h3>
+        <div class="metric-value">
+          <span id="perfScore">--</span>
+          <span class="unit">/ 100</span>
+        </div>
+        <span class="metric-status status-good" id="perfStatus">Loading...</span>
+      </div>
+
+      <div class="metric-card">
+        <h3>Edge Functions</h3>
+        <div class="metric-value">
+          <span id="edgeHealthy">--</span>
+          <span class="unit">/ <span id="edgeTotal">--</span></span>
+        </div>
+        <span class="metric-status status-good" id="edgeStatus">Loading...</span>
+      </div>
+
+      <div class="metric-card">
+        <h3>LCP (Largest Contentful Paint)</h3>
+        <div class="metric-value">
+          <span id="lcpValue">--</span>
+          <span class="unit">ms</span>
+        </div>
+        <span class="metric-status status-good" id="lcpStatus">Loading...</span>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <h3>7-Day Trend</h3>
+      <canvas id="trendChart" height="100"></canvas>
+    </div>
+
+    <div class="routes-table">
+      <h3>Route Status (50+ Routes)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Route</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Last Check</th>
+          </tr>
+        </thead>
+        <tbody id="routesTableBody">
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--text-secondary);">
+              Loading route data...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <footer>
+      <p class="last-updated">Last updated: <span id="lastUpdated">--</span></p>
+      <p>Auto-refreshes every 5 minutes | <a href="https://github.com" style="color: var(--accent-blue);">View on GitHub</a></p>
+    </footer>
+  </div>
+
+  <script>
+    // Sample data (replace with actual API calls in production)
+    const mockData = {
+      healthScore: 92,
+      smokeTests: { passed: 48, total: 50 },
+      performance: { score: 78, lcp: 2450 },
+      edgeFunctions: { healthy: 11, total: 11 },
+      lastUpdated: new Date().toLocaleString('ko-KR'),
+      trend: [
+        { date: 'Mon', score: 88 },
+        { date: 'Tue', score: 91 },
+        { date: 'Wed', score: 85 },
+        { date: 'Thu', score: 89 },
+        { date: 'Fri', score: 92 },
+        { date: 'Sat', score: 90 },
+        { date: 'Sun', score: 92 }
+      ],
+      routes: [
+        { path: '/home', name: 'Home', category: 'core', status: 'pass', lastCheck: '5m ago' },
+        { path: '/fortune', name: 'Fortune List', category: 'core', status: 'pass', lastCheck: '5m ago' },
+        { path: '/mbti', name: 'MBTI Fortune', category: 'fortune', status: 'pass', lastCheck: '5m ago' },
+        { path: '/tarot', name: 'Tarot', category: 'fortune', status: 'pass', lastCheck: '5m ago' },
+        { path: '/compatibility', name: 'Compatibility', category: 'fortune', status: 'pass', lastCheck: '5m ago' },
+        { path: '/daily-calendar', name: 'Daily Calendar', category: 'fortune', status: 'fail', lastCheck: '5m ago' },
+        { path: '/dream', name: 'Dream', category: 'fortune', status: 'pass', lastCheck: '5m ago' },
+        { path: '/investment', name: 'Investment', category: 'fortune', status: 'pass', lastCheck: '5m ago' },
+      ]
+    };
+
+    // Update UI with data
+    function updateDashboard(data) {
+      // Health Score
+      document.getElementById('healthScore').textContent = data.healthScore;
+
+      // Smoke Tests
+      document.getElementById('smokeTestsPassed').textContent = data.smokeTests.passed;
+      document.getElementById('smokeTestsTotal').textContent = data.smokeTests.total;
+      updateStatus('smokeStatus', data.smokeTests.passed, data.smokeTests.total);
+
+      // Performance
+      document.getElementById('perfScore').textContent = data.performance.score;
+      updatePerfStatus('perfStatus', data.performance.score);
+
+      // Edge Functions
+      document.getElementById('edgeHealthy').textContent = data.edgeFunctions.healthy;
+      document.getElementById('edgeTotal').textContent = data.edgeFunctions.total;
+      updateStatus('edgeStatus', data.edgeFunctions.healthy, data.edgeFunctions.total);
+
+      // LCP
+      document.getElementById('lcpValue').textContent = data.performance.lcp;
+      updateLCPStatus('lcpStatus', data.performance.lcp);
+
+      // Last Updated
+      document.getElementById('lastUpdated').textContent = data.lastUpdated;
+
+      // Routes Table
+      updateRoutesTable(data.routes);
+
+      // Trend Chart
+      updateTrendChart(data.trend);
+    }
+
+    function updateStatus(elementId, current, total) {
+      const element = document.getElementById(elementId);
+      const percentage = (current / total) * 100;
+
+      if (percentage >= 95) {
+        element.textContent = 'Excellent';
+        element.className = 'metric-status status-good';
+      } else if (percentage >= 80) {
+        element.textContent = 'Good';
+        element.className = 'metric-status status-warning';
+      } else {
+        element.textContent = 'Needs Attention';
+        element.className = 'metric-status status-error';
+      }
+    }
+
+    function updatePerfStatus(elementId, score) {
+      const element = document.getElementById(elementId);
+
+      if (score >= 90) {
+        element.textContent = 'Excellent';
+        element.className = 'metric-status status-good';
+      } else if (score >= 50) {
+        element.textContent = 'Needs Improvement';
+        element.className = 'metric-status status-warning';
+      } else {
+        element.textContent = 'Poor';
+        element.className = 'metric-status status-error';
+      }
+    }
+
+    function updateLCPStatus(elementId, lcp) {
+      const element = document.getElementById(elementId);
+
+      if (lcp <= 2500) {
+        element.textContent = 'Good';
+        element.className = 'metric-status status-good';
+      } else if (lcp <= 4000) {
+        element.textContent = 'Needs Improvement';
+        element.className = 'metric-status status-warning';
+      } else {
+        element.textContent = 'Poor';
+        element.className = 'metric-status status-error';
+      }
+    }
+
+    function updateRoutesTable(routes) {
+      const tbody = document.getElementById('routesTableBody');
+      tbody.innerHTML = routes.map(route => `
+        <tr>
+          <td><code>${route.path}</code></td>
+          <td>${route.name}</td>
+          <td>${route.category}</td>
+          <td>
+            <span class="status-dot ${route.status === 'pass' ? 'dot-green' : 'dot-red'}"></span>
+            ${route.status === 'pass' ? 'Pass' : 'Fail'}
+          </td>
+          <td>${route.lastCheck}</td>
+        </tr>
+      `).join('');
+    }
+
+    function updateTrendChart(trend) {
+      const ctx = document.getElementById('trendChart').getContext('2d');
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: trend.map(d => d.date),
+          datasets: [{
+            label: 'Health Score',
+            data: trend.map(d => d.score),
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#3b82f6',
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 100,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              ticks: {
+                color: '#94a3b8'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: '#94a3b8'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Initialize dashboard
+    updateDashboard(mockData);
+
+    // Auto-refresh every 5 minutes
+    setInterval(() => {
+      // In production, fetch real data from API
+      // fetch('/api/qa-status').then(r => r.json()).then(updateDashboard);
+      console.log('Dashboard would refresh here...');
+    }, 300000);
+  </script>
+</body>
+</html>

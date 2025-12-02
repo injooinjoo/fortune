@@ -4,15 +4,13 @@ import 'package:flutter/material.dart';
 class CategoryModel {
   final String id;
   final String title;
-  final String icon;
+  final IconData icon;
   final String description;
-  final Color color;
 
   const CategoryModel({
     required this.id,
     required this.title,
     required this.icon,
     required this.description,
-    required this.color,
   });
 }

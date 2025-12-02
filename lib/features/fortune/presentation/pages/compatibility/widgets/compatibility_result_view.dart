@@ -14,7 +14,7 @@ import 'emotional_compatibility_card.dart';
 import 'compatibility_analysis_card.dart';
 import 'relationship_advice_card.dart';
 
-class CompatibilityResultView extends StatelessWidget {
+class CompatibilityResultView extends StatefulWidget {
   final Fortune fortune;
   final Map<String, double> scores;
   final String person1Name;
@@ -35,8 +35,25 @@ class CompatibilityResultView extends StatelessWidget {
   });
 
   @override
+  State<CompatibilityResultView> createState() => _CompatibilityResultViewState();
+}
+
+class _CompatibilityResultViewState extends State<CompatibilityResultView> {
+  // GPT 스타일 타이핑 효과 섹션 관리
+  int _currentTypingSection = 0;
+
+  @override
+  void didUpdateWidget(covariant CompatibilityResultView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // fortune이 변경되면 타이핑 섹션 리셋
+    if (widget.fortune != oldWidget.fortune) {
+      setState(() => _currentTypingSection = 0);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final overallScore = scores['전체 궁합'] ?? 0.85;
+    final overallScore = widget.scores['전체 궁합'] ?? 0.85;
 
     return Stack(
       fit: StackFit.expand,
@@ -47,64 +64,73 @@ class CompatibilityResultView extends StatelessWidget {
             children: [
               // 전체 궁합 점수
               OverallScoreCard(
-                person1Name: person1Name,
-                person2Name: person2Name,
+                person1Name: widget.person1Name,
+                person2Name: widget.person2Name,
                 overallScore: overallScore,
-                fortune: fortune,
+                fortune: widget.fortune,
               ).animate().fadeIn().slideY(begin: -0.3),
 
               const SizedBox(height: 24),
 
               // 세부 궁합 점수 (블러 처리)
               DetailedScoresCard(
-                scores: scores,
-                isBlurred: isBlurred,
-                blurredSections: blurredSections,
+                scores: widget.scores,
+                isBlurred: widget.isBlurred,
+                blurredSections: widget.blurredSections,
               ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.3),
 
               const SizedBox(height: 16),
 
               // 전통 궁합 (띠 + 별자리)
-              if (fortune.metadata?['zodiac_animal'] != null || fortune.metadata?['star_sign'] != null)
+              if (widget.fortune.metadata?['zodiac_animal'] != null || widget.fortune.metadata?['star_sign'] != null)
                 TraditionalCompatibilityCard(
-                  fortune: fortune,
+                  fortune: widget.fortune,
                 ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.3),
 
               const SizedBox(height: 16),
 
               // 숫자 궁합 (이름 + 운명수)
-              if (fortune.metadata?['name_compatibility'] != null || fortune.metadata?['destiny_number'] != null)
+              if (widget.fortune.metadata?['name_compatibility'] != null || widget.fortune.metadata?['destiny_number'] != null)
                 NumericCompatibilityCard(
-                  fortune: fortune,
-                  person1Name: person1Name,
-                  person2Name: person2Name,
+                  fortune: widget.fortune,
+                  person1Name: widget.person1Name,
+                  person2Name: widget.person2Name,
                 ).animate(delay: 350.ms).fadeIn().slideY(begin: 0.3),
 
               const SizedBox(height: 16),
 
               // 감성 궁합 (계절 + 나이차)
-              if (fortune.metadata?['season'] != null || fortune.metadata?['age_difference'] != null)
+              if (widget.fortune.metadata?['season'] != null || widget.fortune.metadata?['age_difference'] != null)
                 EmotionalCompatibilityCard(
-                  fortune: fortune,
+                  fortune: widget.fortune,
                 ).animate(delay: 400.ms).fadeIn().slideY(begin: 0.3),
 
               const SizedBox(height: 16),
 
-              // 궁합 분석 결과 (블러 처리)
+              // 궁합 분석 결과 (블러 처리) - 타이핑 섹션 0
               CompatibilityAnalysisCard(
-                fortune: fortune,
-                isBlurred: isBlurred,
-                blurredSections: blurredSections,
+                fortune: widget.fortune,
+                isBlurred: widget.isBlurred,
+                blurredSections: widget.blurredSections,
+                startTyping: _currentTypingSection >= 0,
+                onTypingComplete: () {
+                  if (mounted) setState(() => _currentTypingSection = 1);
+                },
               ).animate(delay: 450.ms).fadeIn().slideY(begin: 0.3),
 
-              if (fortune.advice?.isNotEmpty == true) ...[
+              if (widget.fortune.advice?.isNotEmpty == true) ...[
                 const SizedBox(height: 16),
 
-                // 관계 개선 조언 (블러 처리)
+                // 관계 개선 조언 (블러 처리) - 타이핑 섹션 1
                 RelationshipAdviceCard(
-                  fortune: fortune,
-                  isBlurred: isBlurred,
-                  blurredSections: blurredSections,
+                  fortune: widget.fortune,
+                  isBlurred: widget.isBlurred,
+                  blurredSections: widget.blurredSections,
+                  startTyping: _currentTypingSection >= 1,
+                  onTypingComplete: () {
+                    // 마지막 섹션 완료
+                    if (mounted) setState(() => _currentTypingSection = 2);
+                  },
                 ).animate(delay: 600.ms).fadeIn().slideY(begin: 0.3),
               ],
 
@@ -114,10 +140,10 @@ class CompatibilityResultView extends StatelessWidget {
         ),
 
         // 블러 해제 버튼 (블러 상태일 때만 표시)
-        if (isBlurred)
+        if (widget.isBlurred)
           UnifiedButton.floating(
             text: '🎁 광고 보고 전체 내용 보기',
-            onPressed: onShowAdAndUnblur,
+            onPressed: widget.onShowAdAndUnblur,
             isEnabled: true,
           ),
       ],

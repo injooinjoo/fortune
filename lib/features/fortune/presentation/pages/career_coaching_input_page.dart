@@ -256,7 +256,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
-      childAspectRatio: 2.2,
+      childAspectRatio: 1.8,
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
       children: roleOptions.map((role) =>

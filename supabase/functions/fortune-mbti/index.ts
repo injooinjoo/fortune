@@ -211,16 +211,16 @@ serve(async (req) => {
 
 다음 JSON 형식으로 응답해주세요:
 {
-  "todayFortune": "오늘의 전체적인 운세 (200자 내외)",
-  "loveFortune": "연애/사랑 운세 (150자 내외)",
-  "careerFortune": "직장/학업 운세 (150자 내외)",
-  "moneyFortune": "금전/재물 운세 (150자 내외)",
-  "healthFortune": "건강 운세 (150자 내외)",
+  "todayFortune": "오늘의 전체적인 운세 (100자 이내, 핵심만)",
+  "loveFortune": "연애/사랑 운세 (80자 이내)",
+  "careerFortune": "직장/학업 운세 (80자 이내)",
+  "moneyFortune": "금전/재물 운세 (80자 이내)",
+  "healthFortune": "건강 운세 (80자 이내)",
   "luckyColor": "오늘의 행운 색상",
   "luckyNumber": 행운 숫자 (1-99),
-  "advice": "MBTI 특성 기반 조언 (200자 내외)",
+  "advice": "MBTI 특성 기반 조언 (100자 이내)",
   "energyLevel": 오늘의 에너지 레벨 (0-100),
-  "mbtiDescription": "해당 MBTI의 간단한 설명 (100자 내외)"
+  "mbtiDescription": "해당 MBTI의 간단한 설명 (50자 이내)"
 }
 
 모든 내용은 따뜻하고 긍정적이며 실용적인 조언을 포함해야 합니다.`

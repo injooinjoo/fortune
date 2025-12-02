@@ -1,0 +1,420 @@
+name: QA Monitoring Pipeline
+
+on:
+  # 정기 실행 스케줄 (매일 3회)
+  schedule:
+    - cron: '0 0 * * *'   # 오전 9시 KST (UTC 0:00)
+    - cron: '0 6 * * *'   # 오후 3시 KST (UTC 6:00)
+    - cron: '0 12 * * *'  # 오후 9시 KST (UTC 12:00)
+
+  # 수동 실행 지원
+  workflow_dispatch:
+    inputs:
+      run_performance:
+        description: 'Run performance tests'
+        required: false
+        default: true
+        type: boolean
+      run_edge_functions:
+        description: 'Run Edge Function health check'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  FLUTTER_VERSION: '3.24.0'
+  NODE_VERSION: '20.x'
+
+jobs:
+  # =====================================================
+  # Job 1: 스모크 테스트
+  # =====================================================
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      passed: ${{ steps.results.outputs.passed }}
+      failed: ${{ steps.results.outputs.failed }}
+      total: ${{ steps.results.outputs.total }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          flutter pub get
+
+      - name: Build Flutter Web
+        run: flutter build web --release --web-renderer html
+
+      - name: Run Smoke Tests
+        id: test
+        run: |
+          npx serve build/web -l 3000 &
+          npx wait-on http://localhost:3000 --timeout 60000
+
+          npx playwright test playwright/tests/smoke.spec.js \
+            --project=chromium \
+            --reporter=json \
+            --output=test-results.json || true
+
+          pkill -f "serve build/web" || true
+        env:
+          CI: true
+
+      - name: Parse test results
+        id: results
+        run: |
+          if [ -f "test-results.json" ]; then
+            PASSED=$(jq '.stats.expected // 0' test-results.json)
+            FAILED=$(jq '.stats.unexpected // 0' test-results.json)
+            TOTAL=$((PASSED + FAILED))
+          else
+            PASSED=0
+            FAILED=1
+            TOTAL=1
+          fi
+
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-results-${{ github.run_id }}
+          path: |
+            test-results/
+            test-results.json
+          retention-days: 30
+
+  # =====================================================
+  # Job 2: 성능 테스트 (Lighthouse)
+  # =====================================================
+  performance-tests:
+    name: Performance Tests (Lighthouse)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: ${{ github.event.inputs.run_performance != 'false' }}
+    outputs:
+      performance_score: ${{ steps.lighthouse.outputs.performance }}
+      lcp: ${{ steps.lighthouse.outputs.lcp }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Build Flutter Web
+        run: |
+          flutter pub get
+          flutter build web --release --web-renderer html
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install serve
+        run: npm install -g serve
+
+      - name: Run Lighthouse
+        id: lighthouse
+        run: |
+          # 서버 시작
+          serve build/web -l 3000 &
+          sleep 5
+
+          # Lighthouse 실행
+          npm install -g lighthouse
+
+          lighthouse http://localhost:3000 \
+            --output=json \
+            --output-path=./lighthouse-report.json \
+            --chrome-flags="--headless --no-sandbox" \
+            --only-categories=performance,accessibility,best-practices \
+            --preset=mobile || true
+
+          # 결과 파싱
+          if [ -f "lighthouse-report.json" ]; then
+            PERF=$(jq '.categories.performance.score * 100 | floor' lighthouse-report.json)
+            LCP=$(jq '.audits["largest-contentful-paint"].numericValue | floor' lighthouse-report.json)
+            echo "performance=$PERF" >> $GITHUB_OUTPUT
+            echo "lcp=$LCP" >> $GITHUB_OUTPUT
+          else
+            echo "performance=0" >> $GITHUB_OUTPUT
+            echo "lcp=0" >> $GITHUB_OUTPUT
+          fi
+
+          pkill -f "serve build/web" || true
+
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report-${{ github.run_id }}
+          path: lighthouse-report.json
+          retention-days: 30
+
+  # =====================================================
+  # Job 3: Edge Function 헬스체크
+  # =====================================================
+  edge-function-health:
+    name: Edge Function Health Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ github.event.inputs.run_edge_functions != 'false' }}
+    outputs:
+      healthy: ${{ steps.health.outputs.healthy }}
+      total: ${{ steps.health.outputs.total }}
+      failed_functions: ${{ steps.health.outputs.failed_functions }}
+
+    steps:
+      - name: Health check Edge Functions
+        id: health
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          FUNCTIONS=(
+            "fortune-daily"
+            "fortune-love"
+            "fortune-compatibility"
+            "fortune-blind-date"
+            "fortune-career"
+            "fortune-mbti"
+            "fortune-dream"
+            "fortune-biorhythm"
+            "fortune-investment"
+            "fortune-moving"
+            "calculate-saju"
+          )
+
+          HEALTHY=0
+          FAILED_LIST=""
+          TOTAL=${#FUNCTIONS[@]}
+
+          # Supabase URL이 설정되지 않은 경우 기본값 사용
+          if [ -z "$SUPABASE_URL" ]; then
+            SUPABASE_URL="https://hayjukwfcsdmppairazc.supabase.co"
+          fi
+
+          for func in "${FUNCTIONS[@]}"; do
+            echo "Checking $func..."
+
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              -X POST "$SUPABASE_URL/functions/v1/$func" \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer ${SUPABASE_ANON_KEY:-anonymous}" \
+              -d '{"healthCheck": true}' \
+              --max-time 30 || echo "000")
+
+            if [ "$STATUS" = "200" ] || [ "$STATUS" = "400" ] || [ "$STATUS" = "401" ]; then
+              echo "✅ $func: $STATUS"
+              ((HEALTHY++))
+            else
+              echo "❌ $func: $STATUS"
+              FAILED_LIST="$FAILED_LIST $func"
+            fi
+          done
+
+          echo "healthy=$HEALTHY" >> $GITHUB_OUTPUT
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+          echo "failed_functions=$FAILED_LIST" >> $GITHUB_OUTPUT
+
+  # =====================================================
+  # Job 4: 결과 집계 및 알림
+  # =====================================================
+  aggregate-and-notify:
+    name: Aggregate Results & Notify
+    runs-on: ubuntu-latest
+    needs: [smoke-tests, performance-tests, edge-function-health]
+    if: always()
+
+    steps:
+      - name: Calculate overall status
+        id: status
+        run: |
+          SMOKE_FAILED="${{ needs.smoke-tests.outputs.failed }}"
+          PERF_SCORE="${{ needs.performance-tests.outputs.performance_score }}"
+          EDGE_HEALTHY="${{ needs.edge-function-health.outputs.healthy }}"
+          EDGE_TOTAL="${{ needs.edge-function-health.outputs.total }}"
+
+          # 실패 조건 체크
+          FAILED=false
+
+          if [ "$SMOKE_FAILED" != "0" ] && [ -n "$SMOKE_FAILED" ]; then
+            FAILED=true
+            echo "❌ Smoke tests failed: $SMOKE_FAILED failures"
+          fi
+
+          if [ -n "$PERF_SCORE" ] && [ "$PERF_SCORE" -lt 50 ] 2>/dev/null; then
+            FAILED=true
+            echo "❌ Performance score too low: $PERF_SCORE"
+          fi
+
+          if [ -n "$EDGE_HEALTHY" ] && [ -n "$EDGE_TOTAL" ]; then
+            if [ "$EDGE_HEALTHY" -lt "$EDGE_TOTAL" ]; then
+              echo "⚠️ Some Edge Functions unhealthy: $EDGE_HEALTHY/$EDGE_TOTAL"
+            fi
+          fi
+
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+
+      - name: Generate summary
+        run: |
+          echo "## 📊 QA Monitoring Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**실행 시간:** $(date '+%Y-%m-%d %H:%M:%S KST')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 테스트 결과" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 항목 | 결과 |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔥 Smoke Tests | ${{ needs.smoke-tests.outputs.passed }}/${{ needs.smoke-tests.outputs.total }} passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| ⚡ Performance | ${{ needs.performance-tests.outputs.performance_score }}/100 |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔌 Edge Functions | ${{ needs.edge-function-health.outputs.healthy }}/${{ needs.edge-function-health.outputs.total }} healthy |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.status.outputs.failed }}" = "true" ]; then
+            echo "### ❌ 실패 감지" >> $GITHUB_STEP_SUMMARY
+            echo "자동으로 GitHub Issue가 생성됩니다." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ✅ 모든 테스트 통과" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # =====================================================
+  # Job 5: 실패 시 GitHub Issue 생성
+  # =====================================================
+  create-issue-on-failure:
+    name: Create Issue on Failure
+    runs-on: ubuntu-latest
+    needs: [smoke-tests, performance-tests, edge-function-health, aggregate-and-notify]
+    if: |
+      always() &&
+      (needs.smoke-tests.outputs.failed != '0' ||
+       needs.performance-tests.outputs.performance_score < 50 ||
+       needs.edge-function-health.outputs.healthy != needs.edge-function-health.outputs.total)
+
+    steps:
+      - name: Create GitHub Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const date = new Date().toISOString().split('T')[0];
+
+            const smokeResults = {
+              passed: '${{ needs.smoke-tests.outputs.passed }}',
+              failed: '${{ needs.smoke-tests.outputs.failed }}',
+              total: '${{ needs.smoke-tests.outputs.total }}'
+            };
+
+            const perfScore = '${{ needs.performance-tests.outputs.performance_score }}';
+            const edgeHealthy = '${{ needs.edge-function-health.outputs.healthy }}';
+            const edgeTotal = '${{ needs.edge-function-health.outputs.total }}';
+            const failedFunctions = '${{ needs.edge-function-health.outputs.failed_functions }}';
+
+            let body = `## 🚨 QA 모니터링 실패 보고서
+
+**일시:** ${date}
+**실행 ID:** \`${context.runId}\`
+
+### 테스트 결과
+
+| 항목 | 결과 | 상태 |
+|------|------|------|
+| Smoke Tests | ${smokeResults.passed}/${smokeResults.total} passed | ${smokeResults.failed === '0' ? '✅' : '❌'} |
+| Performance | ${perfScore}/100 | ${parseInt(perfScore) >= 50 ? '✅' : '❌'} |
+| Edge Functions | ${edgeHealthy}/${edgeTotal} healthy | ${edgeHealthy === edgeTotal ? '✅' : '⚠️'} |
+
+`;
+
+            if (smokeResults.failed !== '0') {
+              body += `### ❌ Smoke Test 실패
+${smokeResults.failed}개의 라우트 테스트가 실패했습니다.
+
+`;
+            }
+
+            if (parseInt(perfScore) < 50) {
+              body += `### ❌ 성능 저하
+Performance score가 ${perfScore}점으로 기준(50점) 미달입니다.
+
+`;
+            }
+
+            if (failedFunctions && failedFunctions.trim()) {
+              body += `### ⚠️ Edge Function 이상
+다음 함수들이 응답하지 않습니다:
+\`\`\`
+${failedFunctions}
+\`\`\`
+
+`;
+            }
+
+            body += `### 조치 방법
+1. [워크플로우 로그 확인](${runUrl})
+2. 실패한 테스트 분석
+3. 문제 수정 후 재테스트
+
+---
+*이 이슈는 QA 모니터링 파이프라인에서 자동 생성되었습니다.*`;
+
+            // 동일한 날짜의 이슈가 이미 있는지 확인
+            const existingIssues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'qa-failure',
+              state: 'open'
+            });
+
+            const todayIssue = existingIssues.data.find(issue =>
+              issue.title.includes(date)
+            );
+
+            if (todayIssue) {
+              // 기존 이슈에 코멘트 추가
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: todayIssue.number,
+                body: `## 📝 추가 실패 보고\n\n${body}`
+              });
+              console.log(`Updated existing issue #${todayIssue.number}`);
+            } else {
+              // 새 이슈 생성
+              const issue = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 QA 테스트 실패 - ${date}`,
+                body: body,
+                labels: ['bug', 'qa-failure', 'automated']
+              });
+              console.log(`Created new issue #${issue.data.number}`);
+            }

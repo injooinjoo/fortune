@@ -125,7 +125,7 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
   "places": ["장소 1", "장소 2", "장소 3"],
   "relationships": ["궁합 좋은 사람 특징 1", "궁합 좋은 사람 특징 2", "궁합 좋은 사람 특징 3"],
   "score": 행운지수 (1-100),
-  "advice": "종합 조언 (3-5문장)"
+  "advice": "종합 조언 (100자 이내)"
 }
 \`\`\`
 

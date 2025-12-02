@@ -95,14 +95,19 @@ module.exports = defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: [
-    {
-      command: 'flutter run -d chrome --web-port=3000',
-      url: 'http://localhost:3000',
-      reuseExistingServer: !process.env.CI,
-      timeout: 120 * 1000, // 2 minutes for Flutter to build and start
-    }
-  ],
+  webServer: process.env.CI ? {
+    // CI: 빌드된 정적 파일 서빙 (빠름)
+    command: 'npx serve build/web -l 3000',
+    url: 'http://localhost:3000',
+    reuseExistingServer: false,
+    timeout: 30 * 1000,
+  } : {
+    // Local: Flutter 개발 서버 (핫 리로드)
+    command: 'flutter run -d chrome --web-port=3000',
+    url: 'http://localhost:3000',
+    reuseExistingServer: true,
+    timeout: 120 * 1000,
+  },
 
   /* Global setup */
   globalSetup: require.resolve('./playwright/global-setup.js'),

@@ -34,22 +34,22 @@ class TimeSlotCard extends StatelessWidget {
           '시간대별 조언',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(
           '오늘 하루를 시간대별로 준비하세요',
           style: TextStyle(
             color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
 
         // 오전
         if (timeSlots['morning']?.isNotEmpty == true)
@@ -63,7 +63,7 @@ class TimeSlotCard extends StatelessWidget {
 
         if (timeSlots['morning']?.isNotEmpty == true &&
             timeSlots['afternoon']?.isNotEmpty == true)
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
 
         // 오후
         if (timeSlots['afternoon']?.isNotEmpty == true)
@@ -77,7 +77,7 @@ class TimeSlotCard extends StatelessWidget {
 
         if (timeSlots['afternoon']?.isNotEmpty == true &&
             timeSlots['evening']?.isNotEmpty == true)
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
 
         // 저녁
         if (timeSlots['evening']?.isNotEmpty == true)
@@ -113,17 +113,17 @@ class _TimeSlotItem extends StatelessWidget {
     const accentColor = Color(0xFF3B82F6);
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: isActive
             ? Border.all(color: accentColor.withValues(alpha: 0.3), width: 1.5)
             : Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08), width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-            blurRadius: 20,
+            blurRadius: 16,
             offset: const Offset(0, 4),
           ),
         ],
@@ -133,7 +133,7 @@ class _TimeSlotItem extends StatelessWidget {
         children: [
           // 아이콘 (Pulse 스타일)
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: isActive
                   ? accentColor.withValues(alpha: 0.1)
@@ -152,7 +152,7 @@ class _TimeSlotItem extends StatelessWidget {
               size: 20,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,12 +167,12 @@ class _TimeSlotItem extends StatelessWidget {
                       ),
                     ),
                     if (isActive) ...[
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: accentColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                             color: accentColor.withValues(alpha: 0.2),
                             width: 1,
@@ -182,7 +182,7 @@ class _TimeSlotItem extends StatelessWidget {
                           '지금',
                           style: TextStyle(
                             color: accentColor,
-                            fontSize: 12,
+                            fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -190,13 +190,13 @@ class _TimeSlotItem extends StatelessWidget {
                     ],
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
                   advice,
                   style: TextStyle(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
-                    fontSize: 14,
-                    height: 1.5,
+                    fontSize: 13,
+                    height: 1.4,
                   ),
                 ),
               ],

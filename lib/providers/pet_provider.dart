@@ -83,6 +83,11 @@ class PetNotifier extends StateNotifier<PetState> {
     required String species,
     required String name,
     required int age,
+    String? gender,
+    String? breed,
+    String? personality,
+    String? healthNotes,
+    bool? isNeutered,
   }) async {
     if (state.isCreating) return null;
 
@@ -104,6 +109,11 @@ class PetNotifier extends StateNotifier<PetState> {
         species: species,
         name: name,
         age: age,
+        gender: gender,
+        breed: breed,
+        personality: personality,
+        healthNotes: healthNotes,
+        isNeutered: isNeutered,
       );
 
       if (newPet != null) {
@@ -151,6 +161,11 @@ class PetNotifier extends StateNotifier<PetState> {
     String? species,
     String? name,
     int? age,
+    String? gender,
+    String? breed,
+    String? personality,
+    String? healthNotes,
+    bool? isNeutered,
   }) async {
     if (state.isUpdating) return false;
 
@@ -162,8 +177,8 @@ class PetNotifier extends StateNotifier<PetState> {
         final currentPet = state.pets.firstWhere((p) => p.id == petId);
         if (currentPet.name != name) {
           final nameExists = await PetService.isPetNameExists(
-            currentPet.userId, 
-            name, 
+            currentPet.userId,
+            name,
             excludePetId: petId,
           );
           if (nameExists) {
@@ -181,6 +196,11 @@ class PetNotifier extends StateNotifier<PetState> {
         species: species,
         name: name,
         age: age,
+        gender: gender,
+        breed: breed,
+        personality: personality,
+        healthNotes: healthNotes,
+        isNeutered: isNeutered,
       );
 
       if (updatedPet != null) {

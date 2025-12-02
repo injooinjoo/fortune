@@ -136,6 +136,30 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
         final luckyDatesData = data['lucky_dates'] as Map<String, dynamic>?;
         final luckyDates = (luckyDatesData?['recommended_dates'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
 
+        // 풍수 조언 (객체 안의 문자열)
+        final fengShuiTipsData = data['feng_shui_tips'] as Map<String, dynamic>?;
+        final fengShuiEntrance = FortuneTextCleaner.cleanNullable(fengShuiTipsData?['entrance'] as String?);
+        final fengShuiLivingRoom = FortuneTextCleaner.cleanNullable(fengShuiTipsData?['living_room'] as String?);
+        final fengShuiBedroom = FortuneTextCleaner.cleanNullable(fengShuiTipsData?['bedroom'] as String?);
+        final fengShuiKitchen = FortuneTextCleaner.cleanNullable(fengShuiTipsData?['kitchen'] as String?);
+
+        // 행운 아이템 (객체 안의 배열)
+        final luckyItemsData = data['lucky_items'] as Map<String, dynamic>?;
+        final luckyItems = (luckyItemsData?['items'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+        final luckyColors = (luckyItemsData?['colors'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+        final luckyPlants = (luckyItemsData?['plants'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+
+        // 지형 분석 (배산임수, 사신사)
+        final terrainAnalysis = data['terrain_analysis'] as Map<String, dynamic>?;
+        final terrainType = FortuneTextCleaner.cleanNullable(terrainAnalysis?['terrain_type'] as String?);
+        final fengShuiQuality = terrainAnalysis?['feng_shui_quality'] as int? ?? 75;
+        final qualityDescription = FortuneTextCleaner.cleanNullable(terrainAnalysis?['quality_description'] as String?);
+        final fourGuardians = terrainAnalysis?['four_guardians'] as Map<String, dynamic>?;
+        final waterEnergy = FortuneTextCleaner.cleanNullable(terrainAnalysis?['water_energy'] as String?);
+        final mountainEnergy = FortuneTextCleaner.cleanNullable(terrainAnalysis?['mountain_energy'] as String?);
+        final energyFlow = FortuneTextCleaner.cleanNullable(terrainAnalysis?['energy_flow'] as String?);
+        final terrainRecommendations = (terrainAnalysis?['recommendations'] as List<dynamic>?)?.map((e) => FortuneTextCleaner.clean(e.toString())).toList() ?? [];
+
         // 요약 키워드
         final summaryData = data['summary'] as Map<String, dynamic>?;
         final summaryKeyword = summaryData?['one_line'] as String? ?? '';
@@ -252,6 +276,57 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                       blurredSections: _blurredSections,
                       sectionKey: 'lucky_dates',
                       child: _buildLuckyDatesCard(luckyDates, isDark),
+                    ),
+                  const SizedBox(height: 16),
+
+                  // 풍수 조언 (블러)
+                  if (fengShuiTipsData != null && (fengShuiEntrance.isNotEmpty || fengShuiLivingRoom.isNotEmpty))
+                    UnifiedBlurWrapper(
+                      isBlurred: _isBlurred,
+                      blurredSections: _blurredSections,
+                      sectionKey: 'feng_shui_tips',
+                      child: _buildFengShuiTipsCard(
+                        entrance: fengShuiEntrance,
+                        livingRoom: fengShuiLivingRoom,
+                        bedroom: fengShuiBedroom,
+                        kitchen: fengShuiKitchen,
+                        isDark: isDark,
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+
+                  // 행운 아이템 (블러)
+                  if (luckyItemsData != null && (luckyItems.isNotEmpty || luckyColors.isNotEmpty))
+                    UnifiedBlurWrapper(
+                      isBlurred: _isBlurred,
+                      blurredSections: _blurredSections,
+                      sectionKey: 'lucky_items',
+                      child: _buildLuckyItemsCard(
+                        items: luckyItems,
+                        colors: luckyColors,
+                        plants: luckyPlants,
+                        isDark: isDark,
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+
+                  // 지형 분석 (블러)
+                  if (terrainAnalysis != null && terrainType.isNotEmpty)
+                    UnifiedBlurWrapper(
+                      isBlurred: _isBlurred,
+                      blurredSections: _blurredSections,
+                      sectionKey: 'terrain_analysis',
+                      child: _buildTerrainAnalysisCard(
+                        terrainType: terrainType,
+                        quality: fengShuiQuality,
+                        qualityDescription: qualityDescription,
+                        fourGuardians: fourGuardians,
+                        waterEnergy: waterEnergy,
+                        mountainEnergy: mountainEnergy,
+                        energyFlow: energyFlow,
+                        recommendations: terrainRecommendations,
+                        isDark: isDark,
+                      ),
                     ),
                   const SizedBox(height: 32),
                 ],
@@ -606,6 +681,514 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             }).toList(),
           ),
         ],
+      ),
+    );
+  }
+
+  /// 풍수 조언 카드
+  Widget _buildFengShuiTipsCard({
+    required String entrance,
+    required String livingRoom,
+    required String bedroom,
+    required String kitchen,
+    required bool isDark,
+  }) {
+    final tips = [
+      {'icon': '🚪', 'title': '현관', 'content': entrance},
+      {'icon': '🛋️', 'title': '거실', 'content': livingRoom},
+      {'icon': '🛏️', 'title': '침실', 'content': bedroom},
+      {'icon': '🍳', 'title': '부엌', 'content': kitchen},
+    ].where((tip) => (tip['content'] as String).isNotEmpty).toList();
+
+    if (tips.isEmpty) return const SizedBox.shrink();
+
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.home_rounded,
+                  color: TossDesignSystem.successGreen,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '공간별 풍수 조언',
+                style: TypographyUnified.heading4.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          ...tips.asMap().entries.map((entry) {
+            final index = entry.key;
+            final tip = entry.value;
+            return Padding(
+              padding: EdgeInsets.only(bottom: index < tips.length - 1 ? 16 : 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        tip['icon'] as String,
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        tip['title'] as String,
+                        style: TypographyUnified.bodyLarge.copyWith(
+                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    tip['content'] as String,
+                    style: TypographyUnified.bodyMedium.copyWith(
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      height: 1.6,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// 행운 아이템 카드
+  Widget _buildLuckyItemsCard({
+    required List<String> items,
+    required List<String> colors,
+    required List<String> plants,
+    required bool isDark,
+  }) {
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      gradient: LinearGradient(
+        colors: [
+          TossDesignSystem.warningYellow.withValues(alpha: 0.1),
+          TossDesignSystem.warningYellow.withValues(alpha: 0.05),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.warningYellow.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: TossDesignSystem.warningYellow,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '행운 아이템',
+                style: TypographyUnified.heading4.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+            ],
+          ),
+
+          // 행운의 물건
+          if (items.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            Text(
+              '🎁 행운의 물건',
+              style: TypographyUnified.bodyLarge.copyWith(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...items.map((item) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 6),
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: TossDesignSystem.warningYellow,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: TypographyUnified.bodyMedium.copyWith(
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        height: 1.6,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ],
+
+          // 행운의 색상
+          if (colors.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text(
+              '🎨 행운의 색상',
+              style: TypographyUnified.bodyLarge.copyWith(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: colors.map((color) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.warningYellow.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: TossDesignSystem.warningYellow.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  color,
+                  style: TypographyUnified.bodyMedium.copyWith(
+                    color: TossDesignSystem.warningYellow,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              )).toList(),
+            ),
+          ],
+
+          // 행운의 식물
+          if (plants.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text(
+              '🌿 행운의 식물',
+              style: TypographyUnified.bodyLarge.copyWith(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: plants.map((plant) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: TossDesignSystem.successGreen.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: TossDesignSystem.successGreen.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  plant,
+                  style: TypographyUnified.bodyMedium.copyWith(
+                    color: TossDesignSystem.successGreen,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              )).toList(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 지형 분석 카드 (배산임수, 사신사)
+  Widget _buildTerrainAnalysisCard({
+    required String terrainType,
+    required int quality,
+    required String qualityDescription,
+    required Map<String, dynamic>? fourGuardians,
+    required String waterEnergy,
+    required String mountainEnergy,
+    required String energyFlow,
+    required List<String> recommendations,
+    required bool isDark,
+  }) {
+    // 지형 점수 색상
+    Color qualityColor;
+    if (quality >= 80) {
+      qualityColor = TossDesignSystem.successGreen;
+    } else if (quality >= 60) {
+      qualityColor = TossDesignSystem.tossBlue;
+    } else if (quality >= 40) {
+      qualityColor = TossDesignSystem.warningYellow;
+    } else {
+      qualityColor = TossDesignSystem.errorRed;
+    }
+
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8B7355).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.landscape_rounded,
+                  color: Color(0xFF8B7355),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '지형 풍수 분석',
+                style: TypographyUnified.heading4.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // 지형 유형 및 품질
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: qualityColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        terrainType,
+                        style: TypographyUnified.heading4.copyWith(
+                          color: qualityColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '$quality점',
+                      style: TypographyUnified.heading3.copyWith(
+                        color: qualityColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+                if (qualityDescription.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    qualityDescription,
+                    style: TypographyUnified.bodyMedium.copyWith(
+                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      height: 1.6,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+
+          // 사신사 (四神砂)
+          if (fourGuardians != null) ...[
+            const SizedBox(height: 20),
+            Text(
+              '🐉 사신사(四神砂)',
+              style: TypographyUnified.bodyLarge.copyWith(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildGuardianItem('🐉', '좌청룡', FortuneTextCleaner.cleanNullable(fourGuardians['left_azure_dragon'] as String?), const Color(0xFF2196F3), isDark),
+            _buildGuardianItem('🐯', '우백호', FortuneTextCleaner.cleanNullable(fourGuardians['right_white_tiger'] as String?), const Color(0xFF9E9E9E), isDark),
+            _buildGuardianItem('🦅', '전주작', FortuneTextCleaner.cleanNullable(fourGuardians['front_red_phoenix'] as String?), const Color(0xFFF44336), isDark),
+            _buildGuardianItem('🐢', '후현무', FortuneTextCleaner.cleanNullable(fourGuardians['back_black_turtle'] as String?), const Color(0xFF424242), isDark),
+          ],
+
+          // 수기/산기/기의 흐름
+          if (waterEnergy.isNotEmpty || mountainEnergy.isNotEmpty || energyFlow.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            if (waterEnergy.isNotEmpty)
+              _buildEnergySection('💧', '수기(水氣)', waterEnergy, const Color(0xFF2196F3), isDark),
+            if (mountainEnergy.isNotEmpty)
+              _buildEnergySection('⛰️', '산기(山氣)', mountainEnergy, const Color(0xFF66BB6A), isDark),
+            if (energyFlow.isNotEmpty)
+              _buildEnergySection('🌀', '기의 흐름', energyFlow, const Color(0xFFAB47BC), isDark),
+          ],
+
+          // 지형 보완 방법
+          if (recommendations.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            Text(
+              '✨ 지형 보완 방법',
+              style: TypographyUnified.bodyLarge.copyWith(
+                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...recommendations.map((rec) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 6),
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF8B7355),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      rec,
+                      style: TypographyUnified.bodyMedium.copyWith(
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        height: 1.6,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 사신사 개별 항목
+  Widget _buildGuardianItem(String emoji, String title, String description, Color color, bool isDark) {
+    if (description.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: color.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(emoji, style: const TextStyle(fontSize: 20)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TypographyUnified.bodyMedium.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: TypographyUnified.bodySmall.copyWith(
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 에너지 섹션 (수기/산기/기의 흐름)
+  Widget _buildEnergySection(String emoji, String title, String content, Color color, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(emoji, style: const TextStyle(fontSize: 20)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TypographyUnified.bodyLarge.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    content,
+                    style: TypographyUnified.bodyMedium.copyWith(
+                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      height: 1.6,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

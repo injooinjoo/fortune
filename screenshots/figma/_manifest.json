@@ -1,0 +1,213 @@
+{
+  "timestamp": "2025-11-28T12:40:09.299Z",
+  "results": {
+    "success": 17,
+    "failed": 13,
+    "errors": [
+      {
+        "page": "05_fortune_list",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/fortune\", waiting until \"load\"\n"
+      },
+      {
+        "page": "06_trend",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/trend\", waiting until \"load\"\n"
+      },
+      {
+        "page": "10_tarot",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/tarot\", waiting until \"load\"\n"
+      },
+      {
+        "page": "12_mbti",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/mbti\", waiting until \"load\"\n"
+      },
+      {
+        "page": "14_love",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/love\", waiting until \"load\"\n"
+      },
+      {
+        "page": "17_biorhythm",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/biorhythm\", waiting until \"load\"\n"
+      },
+      {
+        "page": "18_face_reading",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/face-reading\", waiting until \"load\"\n"
+      },
+      {
+        "page": "21_daily_calendar",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/daily-calendar\", waiting until \"load\"\n"
+      },
+      {
+        "page": "22_moving",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/moving\", waiting until \"load\"\n"
+      },
+      {
+        "page": "24_wish",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/wish\", waiting until \"load\"\n"
+      },
+      {
+        "page": "30_profile",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/profile\", waiting until \"load\"\n"
+      },
+      {
+        "page": "31_settings",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/settings\", waiting until \"load\"\n"
+      },
+      {
+        "page": "41_dream_chat",
+        "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:3000/interactive/dream\", waiting until \"load\"\n"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "path": "/",
+      "name": "01_landing",
+      "category": "core"
+    },
+    {
+      "path": "/signup",
+      "name": "02_signup",
+      "category": "auth"
+    },
+    {
+      "path": "/onboarding",
+      "name": "03_onboarding",
+      "category": "auth"
+    },
+    {
+      "path": "/home",
+      "name": "04_home",
+      "category": "core"
+    },
+    {
+      "path": "/fortune",
+      "name": "05_fortune_list",
+      "category": "core"
+    },
+    {
+      "path": "/trend",
+      "name": "06_trend",
+      "category": "core"
+    },
+    {
+      "path": "/premium",
+      "name": "07_premium",
+      "category": "core"
+    },
+    {
+      "path": "/tarot",
+      "name": "10_tarot",
+      "category": "fortune"
+    },
+    {
+      "path": "/compatibility",
+      "name": "11_compatibility",
+      "category": "fortune"
+    },
+    {
+      "path": "/mbti",
+      "name": "12_mbti",
+      "category": "fortune"
+    },
+    {
+      "path": "/dream",
+      "name": "13_dream",
+      "category": "fortune"
+    },
+    {
+      "path": "/love",
+      "name": "14_love",
+      "category": "fortune"
+    },
+    {
+      "path": "/career",
+      "name": "15_career",
+      "category": "fortune"
+    },
+    {
+      "path": "/health-toss",
+      "name": "16_health",
+      "category": "fortune"
+    },
+    {
+      "path": "/biorhythm",
+      "name": "17_biorhythm",
+      "category": "fortune"
+    },
+    {
+      "path": "/face-reading",
+      "name": "18_face_reading",
+      "category": "fortune"
+    },
+    {
+      "path": "/traditional-saju",
+      "name": "19_traditional_saju",
+      "category": "fortune"
+    },
+    {
+      "path": "/lucky-items",
+      "name": "20_lucky_items",
+      "category": "fortune"
+    },
+    {
+      "path": "/daily-calendar",
+      "name": "21_daily_calendar",
+      "category": "fortune"
+    },
+    {
+      "path": "/moving",
+      "name": "22_moving",
+      "category": "fortune"
+    },
+    {
+      "path": "/personality-dna",
+      "name": "23_personality_dna",
+      "category": "fortune"
+    },
+    {
+      "path": "/wish",
+      "name": "24_wish",
+      "category": "fortune"
+    },
+    {
+      "path": "/celebrity",
+      "name": "25_celebrity",
+      "category": "fortune"
+    },
+    {
+      "path": "/profile",
+      "name": "30_profile",
+      "category": "profile"
+    },
+    {
+      "path": "/settings",
+      "name": "31_settings",
+      "category": "profile"
+    },
+    {
+      "path": "/subscription",
+      "name": "32_subscription",
+      "category": "profile"
+    },
+    {
+      "path": "/token-purchase",
+      "name": "33_token_purchase",
+      "category": "profile"
+    },
+    {
+      "path": "/interactive",
+      "name": "40_interactive",
+      "category": "interactive"
+    },
+    {
+      "path": "/interactive/dream",
+      "name": "41_dream_chat",
+      "category": "interactive"
+    },
+    {
+      "path": "/interactive/tarot",
+      "name": "42_tarot_chat",
+      "category": "interactive"
+    }
+  ]
+}

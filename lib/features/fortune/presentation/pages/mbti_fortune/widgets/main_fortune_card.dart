@@ -4,18 +4,23 @@ import 'package:fortune/core/models/fortune_result.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/typography_unified.dart';
 import 'package:fortune/core/utils/fortune_text_cleaner.dart';
+import 'package:fortune/core/widgets/gpt_style_typing_text.dart';
 import 'lucky_items.dart';
 
 class MainFortuneCard extends StatelessWidget {
   final FortuneResult fortuneResult;
   final String selectedMbti;
   final List<Color> colors;
+  final bool startTyping;
+  final VoidCallback? onTypingComplete;
 
   const MainFortuneCard({
     super.key,
     required this.fortuneResult,
     required this.selectedMbti,
     required this.colors,
+    this.startTyping = true,
+    this.onTypingComplete,
   });
 
   @override
@@ -48,12 +53,15 @@ class MainFortuneCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            todayFortune,
+          GptStyleTypingText(
+            text: todayFortune,
             style: TypographyUnified.bodySmall.copyWith(
               color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
               height: 1.6,
             ),
+            startTyping: startTyping,
+            showGhostText: true,
+            onComplete: onTypingComplete,
           ),
           if (luckyItems.isNotEmpty) ...[
             const SizedBox(height: 20),

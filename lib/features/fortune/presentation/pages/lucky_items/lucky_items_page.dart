@@ -47,70 +47,61 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
     _loadUserProfile();
   }
 
-  // 9개 메인 카테고리
+  // 9개 메인 카테고리 - ChatGPT 미니멀 스타일 (Material Icons)
   static const List<CategoryModel> _categories = [
     CategoryModel(
       id: 'lotto',
       title: '로또/복권',
-      icon: '🎰',
+      icon: Icons.casino_outlined,
       description: '행운의 번호와 구매 장소',
-      color: Color(0xFFFF6B6B),
     ),
     CategoryModel(
       id: 'shopping',
       title: '쇼핑/구매',
-      icon: '🛍️',
+      icon: Icons.shopping_bag_outlined,
       description: '쇼핑 운과 구매 타이밍',
-      color: Color(0xFFAB47BC),
     ),
     CategoryModel(
       id: 'game',
       title: '게임/엔터',
-      icon: '🎮',
+      icon: Icons.videogame_asset_outlined,
       description: '게임과 엔터테인먼트',
-      color: Color(0xFF45B7D1),
     ),
     CategoryModel(
       id: 'food',
       title: '음식/맛집',
-      icon: '🍜',
+      icon: Icons.restaurant_outlined,
       description: '행운의 음식과 맛집',
-      color: Color(0xFF66BB6A),
     ),
     CategoryModel(
       id: 'travel',
       title: '여행/장소',
-      icon: '✈️',
+      icon: Icons.flight_outlined,
       description: '행운의 장소와 여행지',
-      color: Color(0xFF4ECDC4),
     ),
     CategoryModel(
       id: 'health',
       title: '운동/건강',
-      icon: '💪',
+      icon: Icons.fitness_center_outlined,
       description: '건강 운과 운동 가이드',
-      color: Color(0xFF42A5F5),
     ),
     CategoryModel(
       id: 'fashion',
       title: '패션/뷰티',
-      icon: '👗',
+      icon: Icons.checkroom_outlined,
       description: '오늘의 스타일링',
-      color: Color(0xFFEC407A),
     ),
     CategoryModel(
       id: 'lifestyle',
       title: '라이프',
-      icon: '🌟',
+      icon: Icons.auto_awesome_outlined,
       description: '일상 속 행운 가이드',
-      color: Color(0xFF26A69A),
     ),
     CategoryModel(
       id: 'today_color',
       title: '오늘의 색상',
-      icon: '🎨',
+      icon: Icons.palette_outlined,
       description: '행운을 부르는 오늘의 컬러',
-      color: Color(0xFFE91E63),
     ),
   ];
 

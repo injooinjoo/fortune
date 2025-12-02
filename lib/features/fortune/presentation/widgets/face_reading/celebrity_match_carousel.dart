@@ -409,6 +409,27 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
           child: Image.network(
             imageUrl,
             fit: BoxFit.cover,
+            // 로딩 상태 표시
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Container(
+                color: accentColor.withValues(alpha: 0.1),
+                child: Center(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                      valueColor: AlwaysStoppedAnimation(accentColor),
+                    ),
+                  ),
+                ),
+              );
+            },
             errorBuilder: (context, error, stackTrace) {
               return _buildInitialAvatar(name, accentColor);
             },

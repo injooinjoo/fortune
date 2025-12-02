@@ -49,6 +49,9 @@ class _MbtiFortunePageState
   double _energyLevel = 0.75;
   Map<String, dynamic>? _cognitiveFunctions;
 
+  // GPT 스타일 타이핑 효과 섹션 관리
+  int _currentTypingSection = 0;
+
 
   // ==================== MBTI Data ====================
 
@@ -235,6 +238,7 @@ class _MbtiFortunePageState
           _showResult = true;
           _isLoading = false;
           _energyLevel = (energyLevelValue / 100).clamp(0.0, 1.0);
+          _currentTypingSection = 0; // 타이핑 섹션 리셋
         });
       }
     } catch (error, stackTrace) {
@@ -406,11 +410,15 @@ class _MbtiFortunePageState
           ),
           const SizedBox(height: 16),
 
-          // Main Fortune Card
+          // Main Fortune Card - 타이핑 섹션 0
           MainFortuneCard(
             fortuneResult: result,
             selectedMbti: _selectedMbti!,
             colors: _mbtiColors[_selectedMbti!]!,
+            startTyping: _currentTypingSection >= 0,
+            onTypingComplete: () {
+              if (mounted) setState(() => _currentTypingSection = 1);
+            },
           ),
           const SizedBox(height: 16),
 
@@ -420,13 +428,17 @@ class _MbtiFortunePageState
             const SizedBox(height: 16),
           ],
 
-          // Category Fortunes (블러 대상)
+          // Category Fortunes (블러 대상) - 타이핑 섹션 1
           if (_selectedCategories.isNotEmpty) ...[
             BlurredFortuneContent(
               fortuneResult: result,
               child: CategoryFortunesCard(
                 fortuneResult: result,
                 selectedCategories: _selectedCategories,
+                startTyping: _currentTypingSection >= 1,
+                onTypingComplete: () {
+                  if (mounted) setState(() => _currentTypingSection = 2);
+                },
               ),
             ),
             const SizedBox(height: 16),

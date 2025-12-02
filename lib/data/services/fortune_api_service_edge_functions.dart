@@ -80,7 +80,21 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
           .select('name, birth_date, birth_time, gender, mbti, blood_type, zodiac_sign, chinese_zodiac, saju_calculated')
           .eq('id', userId)
           .maybeSingle();
-      
+
+      // 프로필 데이터 로깅
+      debugPrint('👤 [PROFILE] user_profiles 데이터:');
+      if (userProfileResponse != null) {
+        debugPrint('👤 [PROFILE] - name: ${userProfileResponse['name']}');
+        debugPrint('👤 [PROFILE] - birth_date: ${userProfileResponse['birth_date']}');
+        debugPrint('👤 [PROFILE] - birth_time: ${userProfileResponse['birth_time']}');
+        debugPrint('👤 [PROFILE] - gender: ${userProfileResponse['gender']}');
+        debugPrint('👤 [PROFILE] - saju_calculated: ${userProfileResponse['saju_calculated']}');
+        debugPrint('👤 [PROFILE] - zodiac_sign: ${userProfileResponse['zodiac_sign']}');
+        debugPrint('👤 [PROFILE] - chinese_zodiac: ${userProfileResponse['chinese_zodiac']}');
+      } else {
+        debugPrint('👤 [PROFILE] ❌ user_profiles 데이터가 없습니다!');
+      }
+
       // Get saju data if available
       Map<String, dynamic>? sajuData;
       try {
@@ -89,12 +103,19 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
             .select('*')
             .eq('user_id', userId)
             .maybeSingle();
-        
+
         if (sajuResponse != null) {
           sajuData = sajuResponse;
           debugPrint('✅ Saju data found for user');
+          debugPrint('🔮 [SAJU] user_saju 테이블 데이터:');
+          debugPrint('🔮 [SAJU] - year_pillar: ${sajuResponse['year_pillar']}');
+          debugPrint('🔮 [SAJU] - month_pillar: ${sajuResponse['month_pillar']}');
+          debugPrint('🔮 [SAJU] - day_pillar: ${sajuResponse['day_pillar']}');
+          debugPrint('🔮 [SAJU] - hour_pillar: ${sajuResponse['hour_pillar']}');
+          debugPrint('🔮 [SAJU] - day_master: ${sajuResponse['day_master']}');
+          debugPrint('🔮 [SAJU] - five_elements: ${sajuResponse['five_elements']}');
         } else {
-          debugPrint('⚠️ No saju data found for user');
+          debugPrint('⚠️ No saju data found in user_saju table for user: $userId');
         }
       } catch (e) {
         debugPrint('⚠️ Error fetching saju data: $e');
@@ -131,10 +152,24 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
           'sajuCalculated': userProfileResponse['saju_calculated'] ?? false},
         if (sajuData != null) 'sajuData': sajuData,
         if (userLocation != null) 'location': userLocation};
-      // Debug info
-      debugPrint('keys: ${requestData.keys.toList()}');
-      debugPrint('request period: ${requestData['period']}');
-      debugPrint('request date: ${requestData['date']}');
+
+      // 📤 API 요청 데이터 상세 로깅
+      debugPrint('📤 [API REQUEST] Edge Function으로 전송할 데이터:');
+      debugPrint('📤 [API REQUEST] - keys: ${requestData.keys.toList()}');
+      debugPrint('📤 [API REQUEST] - name: ${requestData['name']}');
+      debugPrint('📤 [API REQUEST] - birthDate: ${requestData['birthDate']}');
+      debugPrint('📤 [API REQUEST] - birthTime: ${requestData['birthTime']}');
+      debugPrint('📤 [API REQUEST] - gender: ${requestData['gender']}');
+      debugPrint('📤 [API REQUEST] - sajuCalculated: ${requestData['sajuCalculated']}');
+      debugPrint('📤 [API REQUEST] - sajuData 존재: ${requestData['sajuData'] != null}');
+      if (requestData['sajuData'] != null) {
+        final saju = requestData['sajuData'] as Map<String, dynamic>;
+        debugPrint('📤 [API REQUEST] - sajuData.year_pillar: ${saju['year_pillar']}');
+        debugPrint('📤 [API REQUEST] - sajuData.day_pillar: ${saju['day_pillar']}');
+        debugPrint('📤 [API REQUEST] - sajuData.hour_pillar: ${saju['hour_pillar']}');
+      }
+      debugPrint('📤 [API REQUEST] - date: ${requestData['date']}');
+      debugPrint('📤 [API REQUEST] - period: ${requestData['period']}');
 
       // Create a custom Dio instance for Edge Functions
       debugPrint('URL: ${EdgeFunctionsEndpoints.currentBaseUrl}');
@@ -186,8 +221,9 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         endpoint,
         data: requestData);
       stopwatch.stop();
-      
-      // Response received in ${stopwatch.elapsedMilliseconds}ms
+
+      debugPrint('📥 [API RESPONSE] Edge Function 응답 받음 (${stopwatch.elapsedMilliseconds}ms)');
+      debugPrint('📥 [API RESPONSE] - status: ${response.statusCode}');
 
       // Edge Functions return a slightly different format
       // Extracting fortune data from response...
@@ -217,7 +253,21 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         debugPrint('❌ [_getFortuneFromEdgeFunction] Fortune data is null!');
         throw Exception('No fortune data in response');
       }
-      
+
+      // 📥 운세 응답 데이터 상세 로깅
+      debugPrint('📥 [API RESPONSE] 운세 데이터 상세:');
+      debugPrint('📥 [API RESPONSE] - score: ${fortuneData['score'] ?? fortuneData['overall_score'] ?? fortuneData['overallScore']}');
+      debugPrint('📥 [API RESPONSE] - content 길이: ${(fortuneData['content'] ?? fortuneData['description'] ?? '').toString().length}');
+      debugPrint('📥 [API RESPONSE] - sajuPillars 존재: ${fortuneData['sajuPillars'] != null}');
+      debugPrint('📥 [API RESPONSE] - todaySaju 존재: ${fortuneData['todaySaju'] != null}');
+      debugPrint('📥 [API RESPONSE] - fiveElements 존재: ${fortuneData['fiveElements'] != null}');
+      if (fortuneData['sajuPillars'] != null) {
+        debugPrint('📥 [API RESPONSE] - sajuPillars: ${fortuneData['sajuPillars']}');
+      }
+      if (fortuneData['todaySaju'] != null) {
+        debugPrint('📥 [API RESPONSE] - todaySaju: ${fortuneData['todaySaju']}');
+      }
+
       // Fortune data extracted and validated
       
       final fortuneDataModel = FortuneData(

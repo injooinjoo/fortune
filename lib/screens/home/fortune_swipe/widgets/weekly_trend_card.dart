@@ -21,23 +21,23 @@ class WeeklyTrendCard extends StatelessWidget {
           '주간 운세 트렌드',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Text(
           '이번 주 당신의 운세 흐름',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 14,
+            fontSize: 13,
           ),
         ),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: 16),
 
         Container(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -47,37 +47,38 @@ class WeeklyTrendCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(14),
           ),
           child: Column(
             children: [
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.trending_up, color: Colors.white, size: 40),
-                  SizedBox(width: 12),
+                  Icon(Icons.trending_up, color: Colors.white, size: 32),
+                  SizedBox(width: 10),
                   Text(
                     '상승세',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 14),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   '이번 주는 전반적으로 상승세를 타고 있습니다. 특히 수요일부터 금요일까지가 가장 좋은 시기입니다. 새로운 도전이나 중요한 결정을 내리기에 최적의 타이밍입니다.',
                   style: TypographyUnified.bodySmall.copyWith(
                     color: Colors.white,
-                    height: 1.6,
+                    height: 1.5,
+                    fontSize: 12,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -86,7 +87,7 @@ class WeeklyTrendCard extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 14),
 
         // 요일별 간단 정보
         LayoutBuilder(
@@ -101,14 +102,14 @@ class WeeklyTrendCard extends StatelessWidget {
                 final day = ['월', '화', '수', '목', '금', '토', '일'][index];
                 return Container(
                   width: itemWidth,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
                     color: score >= 80
                         ? const Color(0xFF10B981).withValues(alpha: 0.2)
                         : (isDark ? Colors.white10 : Colors.black12),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(6),
                     border: score >= 80
-                        ? Border.all(color: const Color(0xFF10B981), width: 1.5)
+                        ? Border.all(color: const Color(0xFF10B981), width: 1)
                         : null,
                   ),
                   child: Column(
@@ -117,18 +118,18 @@ class WeeklyTrendCard extends StatelessWidget {
                         day,
                         style: TextStyle(
                           color: isDark ? Colors.white : Colors.black87,
-                          fontSize: 12,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         '$score',
                         style: TextStyle(
                           color: score >= 80
                               ? const Color(0xFF10B981)
                               : (isDark ? Colors.white60 : Colors.black54),
-                          fontSize: 12,
+                          fontSize: 11,
                         ),
                       ),
                     ],

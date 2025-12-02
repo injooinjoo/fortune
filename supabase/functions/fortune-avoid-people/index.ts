@@ -79,7 +79,7 @@ serve(async (req) => {
 다음 JSON 형식으로 응답해주세요:
 {
   "overallScore": 0-100 사이의 점수 (오늘의 대인관계 운세),
-  "content": "오늘의 대인관계 운세 요약 (200자 내외)",
+  "content": "오늘의 대인관계 운세 요약 (100자 이내)",
   "criticalAvoidTypes": [
     {
       "type": "유형명",

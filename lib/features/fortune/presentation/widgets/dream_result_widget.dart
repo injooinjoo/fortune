@@ -6,6 +6,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/theme/font_size_system.dart';
 import '../../../../core/models/fortune_result.dart';
+import '../../../../core/widgets/gpt_style_typing_text.dart';
 
 /// ChatGPT 스타일 대화형 꿈 해몽 결과 위젯
 class DreamResultWidget extends StatefulWidget {
@@ -169,6 +170,8 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
     String? title,
     bool isTitle = false,
     bool isBlurred = false,
+    bool startTyping = true,
+    VoidCallback? onTypingComplete,
   }) {
     return Align(
       alignment: Alignment.centerLeft,
@@ -223,12 +226,15 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                             ),
                             const SizedBox(height: 8),
                           ],
-                          Text(
-                            content,
+                          GptStyleTypingText(
+                            text: content,
                             style: (isTitle ? TypographyUnified.heading2 : TypographyUnified.bodyMedium).copyWith(
                               color: isDark ? Colors.white.withValues(alpha: 0.87) : Colors.black.withValues(alpha: 0.87),
                               height: 1.6,
                             ),
+                            startTyping: startTyping,
+                            showGhostText: true,
+                            onComplete: onTypingComplete,
                           ),
                         ],
                       ),

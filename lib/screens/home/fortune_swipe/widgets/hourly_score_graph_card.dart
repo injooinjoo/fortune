@@ -26,35 +26,35 @@ class HourlyScoreGraphCard extends StatelessWidget {
           '시간대별 운세 그래프',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         Text(
           '하루 24시간 운세 흐름과 추천 시간대',
           style: TextStyle(
             color: isDark ? Colors.white60 : Colors.black54,
-            fontSize: 14,
+            fontSize: 13,
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
         // 베스트/워스트 시간대 요약
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF2D2D2D).withValues(alpha: 0.5) : const Color(0xFFF8F9FA),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.arrow_upward, color: Color(0xFF10B981), size: 20),
-                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_upward, color: Color(0xFF10B981), size: 18),
+                  const SizedBox(width: 6),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -83,13 +83,13 @@ class HourlyScoreGraphCard extends StatelessWidget {
               ),
               Container(
                 width: 1,
-                height: 40,
+                height: 32,
                 color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
               ),
               Row(
                 children: [
-                  const Icon(Icons.arrow_downward, color: Color(0xFFEF4444), size: 20),
-                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_downward, color: Color(0xFFEF4444), size: 18),
+                  const SizedBox(width: 6),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -120,14 +120,14 @@ class HourlyScoreGraphCard extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
         Container(
-          height: 200,
-          padding: const EdgeInsets.all(16),
+          height: 160,
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF2D2D2D).withValues(alpha: 0.5) : const Color(0xFFF8F9FA),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: LineChart(
             LineChartData(
