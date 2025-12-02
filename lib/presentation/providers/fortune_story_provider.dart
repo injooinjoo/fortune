@@ -9,7 +9,6 @@ import '../../core/utils/logger.dart';
 // Import the split files
 import 'fortune_story/story_state.dart';
 import 'fortune_story/story_generator.dart';
-import 'fortune_story/story_template.dart';
 
 /// 운세 스토리 생성 Provider
 class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
@@ -45,17 +44,15 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
         userProfile: userProfile,
       );
 
-      // GPT 실패 시 segments가 비어있음 -> fallback 사용
-      List<StorySegment> finalSegments;
+      // GPT 실패 시 segments가 비어있음 -> 에러 처리
       if (segments.isEmpty) {
-        Logger.info('🎭 Using extended default story due to GPT failure');
-        finalSegments = StoryTemplate.createExtendedDefaultStory(
-          userName: userName,
-          fortune: fortune,
-          userProfile: userProfile,
+        Logger.error('❌ GPT returned empty segments');
+        state = state.copyWith(
+          isLoading: false,
+          segments: null,
+          error: 'GPT 스토리 생성 실패',
         );
-      } else {
-        finalSegments = segments;
+        return;
       }
 
       // Edge Function에서 확장된 데이터 추출
@@ -84,7 +81,7 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
 
       state = state.copyWith(
         isLoading: false,
-        segments: finalSegments,
+        segments: segments,
         sajuAnalysis: sajuAnalysis,
         meta: meta,
         weatherSummary: weatherSummary,
@@ -97,22 +94,14 @@ class FortuneStoryNotifier extends StateNotifier<FortuneStoryState> {
       );
 
       Logger.info('✅ Fortune story generated successfully');
-      Logger.info('📦 Final segments count: ${finalSegments.length}');
+      Logger.info('📦 Final segments count: ${segments.length}');
     } catch (e) {
       Logger.error('❌ Error generating fortune story: $e');
 
-      // 에러 발생 시 기본 스토리 생성
-      final defaultSegments = StoryTemplate.createDefaultStory(
-        userName: userName,
-        fortune: fortune,
-        userProfile: userProfile,
-      );
-
-      Logger.info('🔄 Using default story with ${defaultSegments.length} segments');
-
+      // 에러 발생 시 에러 상태로 설정 (fallback 없음)
       state = state.copyWith(
         isLoading: false,
-        segments: defaultSegments,
+        segments: null,
         error: e.toString(),
       );
     }

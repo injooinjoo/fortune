@@ -161,6 +161,9 @@ class Celebrity {
   // General fields
   final String? notes;
 
+  // Avatar image URL (Notion-style character)
+  final String? characterImageUrl;
+
   // System fields
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -183,6 +186,7 @@ class Celebrity {
     this.externalIds,
     this.professionData,
     this.notes,
+    this.characterImageUrl,
     this.createdAt,
     this.updatedAt,
   });
@@ -250,6 +254,7 @@ class Celebrity {
       externalIds: json['external_ids'] != null ? ExternalIds.fromJson(json['external_ids'] as Map<String, dynamic>) : null,
       professionData: json['profession_data'] as Map<String, dynamic>?,
       notes: json['notes'] as String?,
+      characterImageUrl: json['character_image_url'] as String?,
       createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : null,
       updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : null,
     );
