@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
 /// ❤️ 카테고리 상세 카드 (연애/금전/직장/학업/건강)

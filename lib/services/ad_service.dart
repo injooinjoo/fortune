@@ -128,9 +128,30 @@ class AdService {
   }
 
   /// Get the appropriate ad unit ID based on environment
+  /// .env 파일의 값 사용 (디버그/프로덕션 모두)
   String _getAdUnitId(String type) {
-    // Always use test ads in debug mode
-    if (kDebugMode) {
+    final String adUnitId;
+
+    switch (type) {
+      case 'banner':
+        adUnitId = Environment.admobBannerAdUnitId;
+        break;
+      case 'interstitial':
+        adUnitId = Environment.admobInterstitialAdUnitId;
+        break;
+      case 'rewarded':
+        adUnitId = Environment.admobRewardedAdUnitId;
+        break;
+      case 'native':
+        adUnitId = _testNativeAdUnitId; // Native는 아직 Environment 미설정
+        break;
+      default:
+        adUnitId = Environment.admobBannerAdUnitId;
+    }
+
+    // .env에 값이 없으면 테스트 ID fallback
+    if (adUnitId.isEmpty || adUnitId.contains('XXXXXXXXXX')) {
+      Logger.warning('[AdMob] $type ad unit ID not configured, using test ID');
       switch (type) {
         case 'banner':
           return _testBannerAdUnitId;
@@ -138,27 +159,13 @@ class AdService {
           return _testInterstitialAdUnitId;
         case 'rewarded':
           return _testRewardedAdUnitId;
-        case 'native':
-          return _testNativeAdUnitId;
         default:
           return _testBannerAdUnitId;
       }
     }
 
-    // Use production ad unit IDs
-    switch (type) {
-      case 'banner':
-        return Environment.admobBannerAdUnitId;
-      case 'interstitial':
-        return Environment.admobInterstitialAdUnitId;
-      case 'rewarded':
-        return Environment.admobRewardedAdUnitId;
-      case 'native':
-        // TODO: Add native ad unit ID to Environment
-        return _testNativeAdUnitId;
-      default:
-        return Environment.admobBannerAdUnitId;
-    }
+    Logger.info('[AdMob] Using $type ad unit ID: $adUnitId');
+    return adUnitId;
   }
 
   /// Load a banner ad

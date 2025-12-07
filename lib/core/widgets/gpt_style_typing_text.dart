@@ -59,6 +59,9 @@ class _GptStyleTypingTextState extends State<GptStyleTypingText>
   bool _isComplete = false;
   bool _hasStarted = false;
 
+  /// Grapheme clusters for proper Unicode handling (emoji, Korean, etc.)
+  late List<String> _graphemes;
+
   // 커서 깜빡임 애니메이션
   late AnimationController _cursorController;
   late Animation<double> _cursorAnimation;
@@ -66,6 +69,9 @@ class _GptStyleTypingTextState extends State<GptStyleTypingText>
   @override
   void initState() {
     super.initState();
+
+    // UTF-16 안전한 grapheme cluster 분리
+    _graphemes = widget.text.characters.toList();
 
     // 커서 깜빡임 설정
     _cursorController = AnimationController(
@@ -91,6 +97,7 @@ class _GptStyleTypingTextState extends State<GptStyleTypingText>
 
     // 텍스트가 변경되면 리셋
     if (widget.text != oldWidget.text) {
+      _graphemes = widget.text.characters.toList();
       _reset();
       if (widget.startTyping) {
         _startTyping();
@@ -114,7 +121,8 @@ class _GptStyleTypingTextState extends State<GptStyleTypingText>
   }
 
   void _scheduleNextCharacter() {
-    if (_currentIndex >= widget.text.length) {
+    // grapheme cluster 단위로 길이 체크 (UTF-16 안전)
+    if (_currentIndex >= _graphemes.length) {
       _onTypingComplete();
       return;
     }
@@ -126,7 +134,8 @@ class _GptStyleTypingTextState extends State<GptStyleTypingText>
       if (!mounted) return;
 
       setState(() {
-        _displayedText += widget.text[_currentIndex];
+        // grapheme cluster 단위로 추가 (이모지, 한글 완성형 등 안전 처리)
+        _displayedText += _graphemes[_currentIndex];
         _currentIndex++;
       });
 

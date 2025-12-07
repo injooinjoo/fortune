@@ -111,6 +111,8 @@ class RouteObserverLogger extends RouteObserver<PageRoute<dynamic>> {
   }
 
   Future<void> _ensureLogFilePath() async {
+    if (kIsWeb) return; // Web does not support getApplicationDocumentsDirectory
+
     if (_logFilePath != null) return;
 
     try {

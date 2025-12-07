@@ -70,7 +70,7 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       Logger.securityCheckpoint('Apple: ${response.user?.id}');
 
       if (response.user != null && credential.givenName != null) {
-        AuthProviderUtils.updateUserProfile(
+        await AuthProviderUtils.updateUserProfile(
           supabase: supabase,
           profileCache: profileCache,
           userId: response.user!.id,

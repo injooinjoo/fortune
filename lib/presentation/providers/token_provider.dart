@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/token.dart';
 import '../../data/models/user_profile.dart';
@@ -517,8 +518,9 @@ class TokenNotifier extends StateNotifier<TokenState> {
 
       final balance = await _apiService.getTokenBalance(userId: user.id);
       state = state.copyWith(balance: balance);
-    } catch (e) {
-      // 조용히 실패
+    } catch (e, stackTrace) {
+      debugPrint('Token balance refresh failed: $e');
+      debugPrint('$stackTrace');
     }
   }
 }

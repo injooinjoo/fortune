@@ -31,7 +31,7 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  Color(0xFFE8B4FF).withValues(alpha: 0.5), // 보라색
+                  Color(0xFFE8B4FF).withValues(alpha: 0.6), // 보라색 (진하게)
                   Color(0xFFE8B4FF).withValues(alpha: 0.3),
                   TossDesignSystem.white.withValues(alpha: 0.0),
                 ],
@@ -39,15 +39,20 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
             ),
           )
               .animate(onPlay: (controller) => controller.repeat(reverse: true))
+              .scale(
+                  begin: Offset(1.0, 1.0),
+                  end: Offset(1.2, 1.2),
+                  duration: 4.seconds,
+                  curve: Curves.easeInOut)
               .moveX(
                   begin: 0,
-                  end: 50,
-                  duration: 15.seconds,
+                  end: 60,
+                  duration: 8.seconds,
                   curve: Curves.easeInOut)
               .moveY(
                   begin: 0,
-                  end: 30,
-                  duration: 20.seconds,
+                  end: 40,
+                  duration: 10.seconds,
                   curve: Curves.easeInOut),
         ),
         // Pink blur effect - bottom right
@@ -61,7 +66,7 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  Color(0xFFFFB4B4).withValues(alpha: 0.5), // 분홍색
+                  Color(0xFFFFB4B4).withValues(alpha: 0.6), // 분홍색 (진하게)
                   Color(0xFFFFB4B4).withValues(alpha: 0.3),
                   TossDesignSystem.white.withValues(alpha: 0.0),
                 ],
@@ -69,15 +74,20 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
             ),
           )
               .animate(onPlay: (controller) => controller.repeat(reverse: true))
+              .scale(
+                  begin: Offset(1.0, 1.0),
+                  end: Offset(1.1, 1.1),
+                  duration: 5.seconds,
+                  curve: Curves.easeInOut)
               .moveX(
                   begin: 0,
-                  end: -40,
-                  duration: 18.seconds,
+                  end: -50,
+                  duration: 9.seconds,
                   curve: Curves.easeInOut)
               .moveY(
                   begin: 0,
-                  end: -40,
-                  duration: 22.seconds,
+                  end: -50,
+                  duration: 11.seconds,
                   curve: Curves.easeInOut),
         ),
         // Yellow blur effect - center left
@@ -92,8 +102,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    Color(0xFFFFE4B4).withValues(alpha: 0.4), // 노란색
-                    Color(0xFFFFE4B4).withValues(alpha: 0.2),
+                    Color(0xFFFFE4B4).withValues(alpha: 0.5), // 노란색 (진하게)
+                    Color(0xFFFFE4B4).withValues(alpha: 0.25),
                     TossDesignSystem.white.withValues(alpha: 0.0),
                   ],
                 ),
@@ -101,15 +111,20 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
             )
                 .animate(
                     onPlay: (controller) => controller.repeat(reverse: true))
+                .scale(
+                    begin: Offset(1.0, 1.0),
+                    end: Offset(1.15, 1.15),
+                    duration: 6.seconds,
+                    curve: Curves.easeInOut)
                 .moveX(
                     begin: 0,
-                    end: 60,
-                    duration: 25.seconds,
+                    end: 70,
+                    duration: 12.seconds,
                     curve: Curves.easeInOut)
                 .moveY(
                     begin: 0,
-                    end: -30,
-                    duration: 20.seconds,
+                    end: -40,
+                    duration: 10.seconds,
                     curve: Curves.easeInOut);
           }),
         ),

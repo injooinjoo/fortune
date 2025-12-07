@@ -14,7 +14,7 @@ class AppHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title ?? 'Fortune'),
+      title: Text(title ?? '관상은 과학'),
       automaticallyImplyLeading: showBackButton,
       actions: actions
     );

@@ -27,11 +27,10 @@ class BirthDatePreview extends StatelessWidget {
 
     TimePeriod? selectedTimePeriod;
     if (birthTimePeriod != null) {
-      try {
-        selectedTimePeriod = timePeriods.firstWhere(
-          (period) => period.value == birthTimePeriod
-        );
-      } catch (_) {}
+      selectedTimePeriod = timePeriods.cast<TimePeriod?>().firstWhere(
+        (period) => period?.value == birthTimePeriod,
+        orElse: () => null,
+      );
     }
 
     return Container(

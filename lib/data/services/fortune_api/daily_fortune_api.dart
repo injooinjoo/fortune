@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/constants/edge_functions_endpoints.dart';
-import '../../../core/errors/exceptions.dart';
 import '../../../core/utils/logger.dart';
 import '../../../domain/entities/fortune.dart';
 import '../../models/fortune_response_model.dart';

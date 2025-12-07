@@ -84,9 +84,7 @@ class FontSizeSystem {
   ///
   /// [factor] 폰트 크기 배율 (0.8 ~ 1.2 권장)
   static void setScaleFactor(double factor) {
-    if (kDebugMode) {
-      print('FontSizeSystem: scaleFactor changed from $_scaleFactor to $factor');
-    }
+    debugPrint('FontSizeSystem: scaleFactor changed from $_scaleFactor to $factor');
     _scaleFactor = factor.clamp(0.5, 2.0); // 안전 범위 설정
   }
 
@@ -159,29 +157,27 @@ class FontSizeSystem {
 
   /// 시스템 정보 출력 (디버깅용)
   static void printInfo() {
-    if (kDebugMode) {
-      print('========================================');
-      print('FontSizeSystem Information');
-      print('========================================');
-      print('Scale Factor: $_scaleFactor');
-      print('');
-      print('Display Sizes:');
-      print('  Large: $displayLarge → $displayLargeScaled');
-      print('  Medium: $displayMedium → $displayMediumScaled');
-      print('  Small: $displaySmall → $displaySmallScaled');
-      print('');
-      print('Heading Sizes:');
-      print('  H1: $heading1 → $heading1Scaled');
-      print('  H2: $heading2 → $heading2Scaled');
-      print('  H3: $heading3 → $heading3Scaled');
-      print('  H4: $heading4 → $heading4Scaled');
-      print('');
-      print('Body Sizes:');
-      print('  Large: $bodyLarge → $bodyLargeScaled');
-      print('  Medium: $bodyMedium → $bodyMediumScaled');
-      print('  Small: $bodySmall → $bodySmallScaled');
-      print('========================================');
-    }
+    debugPrint('========================================');
+    debugPrint('FontSizeSystem Information');
+    debugPrint('========================================');
+    debugPrint('Scale Factor: $_scaleFactor');
+    debugPrint('');
+    debugPrint('Display Sizes:');
+    debugPrint('  Large: $displayLarge → $displayLargeScaled');
+    debugPrint('  Medium: $displayMedium → $displayMediumScaled');
+    debugPrint('  Small: $displaySmall → $displaySmallScaled');
+    debugPrint('');
+    debugPrint('Heading Sizes:');
+    debugPrint('  H1: $heading1 → $heading1Scaled');
+    debugPrint('  H2: $heading2 → $heading2Scaled');
+    debugPrint('  H3: $heading3 → $heading3Scaled');
+    debugPrint('  H4: $heading4 → $heading4Scaled');
+    debugPrint('');
+    debugPrint('Body Sizes:');
+    debugPrint('  Large: $bodyLarge → $bodyLargeScaled');
+    debugPrint('  Medium: $bodyMedium → $bodyMediumScaled');
+    debugPrint('  Small: $bodySmall → $bodySmallScaled');
+    debugPrint('========================================');
   }
 }
 

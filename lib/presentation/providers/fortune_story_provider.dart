@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/weather_service.dart';
-import '../../screens/home/fortune_story_viewer.dart';
 import '../../domain/entities/fortune.dart' as fortune_entity;
 import '../../domain/entities/user_profile.dart';
 import '../../core/utils/logger.dart';

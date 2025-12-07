@@ -1,5 +1,4 @@
 import '../../../domain/entities/fortune.dart';
-import '../../../core/utils/logger.dart';
 
 class CareerFortuneApi {
   // Career Fortune - delegates to generic getFortune

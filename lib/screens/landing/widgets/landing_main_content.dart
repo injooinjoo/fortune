@@ -36,7 +36,7 @@ class LandingMainContent extends StatelessWidget {
 
           // App Name
           Text(
-            'Fortune',
+            '관상은 과학',
             style: TypographyUnified.displaySmall.copyWith(
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).colorScheme.onSurface,

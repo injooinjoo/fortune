@@ -1,5 +1,4 @@
 import '../../../domain/entities/fortune.dart';
-import '../../../core/utils/logger.dart';
 
 class LuckyFortuneApi {
   // Lucky Color Fortune - delegates to generic getFortune

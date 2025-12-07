@@ -225,7 +225,29 @@ class Celebrity {
     return zodiacAnimals[birthDate.year % 12];
   }
 
-  String get displayName => stageName ?? name;
+  /// 한글 발음(본명) 형식으로 표시
+  /// e.g., "피넛(한왕호)", "김연아"
+  String get displayName {
+    // 한글 alias 찾기 (aliases에서 한글인 것 선택)
+    final koreanAlias = aliases.firstWhere(
+      (alias) => RegExp(r'^[\uac00-\ud7af]+$').hasMatch(alias),
+      orElse: () => '',
+    );
+
+    // 영어 이름인 경우 (한글이 아닌 경우)
+    final isEnglishName = !RegExp(r'^[\uac00-\ud7af]+$').hasMatch(name);
+
+    if (isEnglishName && koreanAlias.isNotEmpty && legalName != null) {
+      // e.g., "피넛(한왕호)"
+      return '$koreanAlias($legalName)';
+    } else if (isEnglishName && legalName != null) {
+      // 한글 alias가 없으면 영어이름(본명)
+      return '$name($legalName)';
+    } else if (stageName != null) {
+      return stageName!;
+    }
+    return name;
+  }
 
   List<String> get allNames => [
     name,
@@ -279,6 +301,7 @@ class Celebrity {
       if (externalIds != null) 'external_ids': externalIds!.toJson(),
       if (professionData != null) 'profession_data': professionData,
       if (notes != null) 'notes': notes,
+      if (characterImageUrl != null) 'character_image_url': characterImageUrl,
       if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
       if (updatedAt != null) 'updated_at': updatedAt!.toIso8601String(),
     };
@@ -316,6 +339,7 @@ class Celebrity {
     ExternalIds? externalIds,
     Map<String, dynamic>? professionData,
     String? notes,
+    String? characterImageUrl,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -337,6 +361,7 @@ class Celebrity {
       externalIds: externalIds ?? this.externalIds,
       professionData: professionData ?? this.professionData,
       notes: notes ?? this.notes,
+      characterImageUrl: characterImageUrl ?? this.characterImageUrl,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

@@ -637,17 +637,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: Column(
                     children: [
                       SettingsListTile(
-                        icon: Icons.auto_stories_outlined,
-                        title: '사주 정보',
-                        trailing: Icon(
-                          Icons.chevron_right,
-                          color: _getSecondaryTextColor(context),
-                        ),
-                        onTap: () {
-                          context.push('/profile/saju');
-                        },
-                      ),
-                      SettingsListTile(
                         icon: Icons.auto_awesome,
                         title: '사주 종합',
                         subtitle: '한 장의 인포그래픽으로 보기',

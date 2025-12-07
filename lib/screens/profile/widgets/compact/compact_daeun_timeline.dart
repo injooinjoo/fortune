@@ -98,7 +98,24 @@ class CompactDaeunTimeline extends StatelessWidget {
   List<Map<String, dynamic>> _extractDaeun() {
     final List<Map<String, dynamic>> daeunList = [];
 
-    final daeunData = sajuData['daeun'] as List<dynamic>?;
+    // sajuData['daeun']이 List 또는 Map일 수 있으므로 방어적으로 처리
+    final rawDaeun = sajuData['daeun'];
+    List<dynamic>? daeunData;
+
+    if (rawDaeun is List) {
+      daeunData = rawDaeun;
+    } else if (rawDaeun is Map) {
+      // Map인 경우 values나 특정 키에서 리스트 추출 시도
+      if (rawDaeun.containsKey('items') && rawDaeun['items'] is List) {
+        daeunData = rawDaeun['items'] as List;
+      } else if (rawDaeun.containsKey('list') && rawDaeun['list'] is List) {
+        daeunData = rawDaeun['list'] as List;
+      } else {
+        // Map의 values를 리스트로 변환 (fallback)
+        daeunData = rawDaeun.values.toList();
+      }
+    }
+
     if (daeunData == null) return daeunList;
 
     for (final item in daeunData) {

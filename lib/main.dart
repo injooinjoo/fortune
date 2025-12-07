@@ -225,7 +225,7 @@ class MyApp extends ConsumerWidget {
     FontSizeSystem.setScaleFactor(userSettings.fontScale);
 
     return MaterialApp.router(
-      title: 'Fortune - 운세 서비스',
+      title: '관상은 과학',
       theme: TossDesignSystem.lightTheme(fontScale: userSettings.fontScale),
       darkTheme: TossDesignSystem.darkTheme(fontScale: userSettings.fontScale),
       themeMode: themeMode,

@@ -33,6 +33,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
   DateTime? _birthDate;
   TimeOfDay? _birthTime;
 
+  bool _isLoadingProfile = true;
+
   @override
   void initState() {
     super.initState();
@@ -50,14 +52,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
       if (_currentUser != null) {
         try {
-          final dbProfile = await Supabase.instance.client
-              .from('user_profiles')
-              .select()
-              .eq('id', _currentUser!.id)
-              .maybeSingle();
+          // Retry logic to wait for profile creation (especially after Apple Sign In)
+          int retries = 0;
+          while (retries < 3) {
+            final dbProfile = await Supabase.instance.client
+                .from('user_profiles')
+                .select()
+                .eq('id', _currentUser!.id)
+                .maybeSingle();
 
-          if (dbProfile != null) {
-            existingProfile = dbProfile;
+            if (dbProfile != null) {
+              existingProfile = dbProfile;
+              break;
+            }
+            
+            // Wait before retrying
+            await Future.delayed(const Duration(milliseconds: 500));
+            retries++;
           }
         } catch (e) {
           debugPrint('Error loading profile from database: $e');
@@ -141,6 +152,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
       }
     } catch (e) {
       debugPrint('Error initializing user: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingProfile = false;
+        });
+      }
     }
   }
 
@@ -274,6 +291,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoadingProfile) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? TossDesignSystem.grayDark50
+            : TossDesignSystem.white,
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark
           ? TossDesignSystem.grayDark50

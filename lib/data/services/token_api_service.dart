@@ -157,48 +157,73 @@ class TokenApiService {
   Future<Map<String, int>> getTokenConsumptionRates() async {
     try {
       final response = await _apiClient.get('/token-consumption-rates');
-      
+
       return Map<String, int>.from(response.data['rates'] ?? {});
     } on DioException catch (e) {
-      // This is a public endpoint that should always work
-      // Return default rates if there's an error
-      if (e.type == DioExceptionType.connectionError || 
-          e.response?.statusCode == 0) {
+      // 404 또는 네트워크 에러 시 기본값 반환 (optional endpoint)
+      if (e.type == DioExceptionType.connectionError ||
+          e.response?.statusCode == 0 ||
+          e.response?.statusCode == 404) {
         // Return default token consumption rates
-        return {
-          'daily': 1,
-          'weekly': 2,
-          'monthly': 3,
-          'yearly': 5};
+        return _defaultConsumptionRates;
       }
       throw _handleDioError(e);
     }
   }
 
+  // 기본 토큰 소비량 (Edge Function 미구현 시 사용)
+  static const Map<String, int> _defaultConsumptionRates = {
+    'daily': 0,
+    'time': 0,
+    'dream': 1,
+    'tarot': 1,
+    'compatibility': 2,
+    'love': 1,
+    'career': 1,
+    'health': 1,
+    'mbti': 1,
+    'talent': 2,
+    'traditional-saju': 3,
+    'face-reading': 2,
+    'investment': 2,
+    'moving': 2,
+  };
+
   // 구독 정보 조회
   Future<UnlimitedSubscription?> getSubscription({required String userId}) async {
     try {
-      final response = await _apiClient.get('/subscription');
-      
-      if (response.data['subscription'] == null) {
+      final response = await _apiClient.get('/subscription-status');
+
+      // subscription-status Edge Function 응답 형식:
+      // { active: bool, expiresAt?: string, productId?: string, autoRenewing?: bool }
+      final isActive = response.data['active'] == true;
+
+      if (!isActive) {
         return null;
       }
 
-      final sub = response.data['subscription'];
+      // 활성 구독이 있는 경우
+      final expiresAt = response.data['expiresAt'];
+      final productId = response.data['productId'];
+
       return UnlimitedSubscription(
-        id: sub['id'],
-        userId: sub['userId'],
-        startDate: DateTime.parse(sub['startDate']),
-        endDate: DateTime.parse(sub['endDate']),
-        status: sub['status'],
-        plan: sub['plan'],
-        price: (sub['price'] as num).toDouble(),
-        currency: sub['currency'] ?? 'KRW');
+        id: productId ?? 'subscription',
+        userId: userId,
+        startDate: DateTime.now(), // 시작일은 정확히 알 수 없음
+        endDate: expiresAt != null ? DateTime.parse(expiresAt) : DateTime.now().add(const Duration(days: 30)),
+        status: 'active',
+        plan: productId ?? 'premium',
+        price: 0, // 가격 정보는 별도 조회 필요
+        currency: 'KRW');
     } on DioException catch (e) {
       // Handle CORS/network errors gracefully
-      if (e.type == DioExceptionType.connectionError || 
+      if (e.type == DioExceptionType.connectionError ||
           e.response?.statusCode == 0) {
         // Return null subscription for network errors
+        return null;
+      }
+      // 404는 구독 없음으로 처리 (정상)
+      if (e.response?.statusCode == 404) {
         return null;
       }
       throw _handleDioError(e);

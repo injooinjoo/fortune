@@ -137,6 +137,7 @@ class EdgeFunctionsEndpoints {
       'lucky-items': luckyItemsFortune,
       // 특별 운세
       'avoid-people': avoidPeopleFortune,
+      'celebrity': '/fortune-celebrity',
       // 반려동물
       'pet-compatibility': petCompatibilityFortune,
     };

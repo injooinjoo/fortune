@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/constants/api_endpoints.dart';
+import '../../../core/constants/edge_functions_endpoints.dart';
 import '../../../core/errors/exceptions.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/config/feature_flags.dart';
@@ -325,9 +326,8 @@ class FortuneApiService {
 
     // Make API call
     try {
-      final endpoint = fortuneType == 'pet-compatibility'
-          ? '/fortune-pet-compatibility'
-          : '/api/fortune/$fortuneType';
+      // Edge Function 엔드포인트 사용 (일관된 경로)
+      final endpoint = EdgeFunctionsEndpoints.getEndpointForType(fortuneType);
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': endpoint,
         'method': params != null ? 'POST' : 'GET',

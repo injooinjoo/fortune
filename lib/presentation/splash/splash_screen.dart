@@ -53,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const SizedBox(height: 40),
             // App name
             Text(
-              'Fortune',
+              '관상은 과학',
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? TossDesignSystem.white

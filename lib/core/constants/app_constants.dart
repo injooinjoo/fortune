@@ -1,6 +1,6 @@
 class AppConstants {
   // App Information
-  static const String appName = 'Fortune';
+  static const String appName = '관상은 과학';
   static const String appVersion = '1.0.0';
 
   // API Configuration

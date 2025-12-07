@@ -258,24 +258,9 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
     final heavenlyStem = pillarData['heavenly_stem'] ?? {};
     final earthlyBranch = pillarData['earthly_branch'] ?? {};
     
-    return GestureDetector(
-      onTap: () {
-        // TODO: Fix SajuElementExplanationBottomSheet syntax errors
-        // HapticFeedback.lightImpact();
-        // showModalBottomSheet(
-        //   context: context,
-        //   isScrollControlled: true,
-        //   backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-        //   builder: (context) => SajuElementExplanationBottomSheet(
-        //     element: heavenlyStem['name'] ?? '',
-        //     elementHanja: heavenlyStem['hanja'] ?? '',
-        //     isCheongan: true,
-        //     elementType: heavenlyStem['element'] ?? '',
-        //   ),
-        // );
-      },
-      child: Column(
-        children: [
+    // NOTE: SajuElementExplanationBottomSheet 기능은 향후 구현 예정 (saju_element_explanation_bottom_sheet.dart.skip 참조)
+    return Column(
+      children: [
           Text(
             title,
             style: theme.textTheme.labelMedium?.copyWith(
@@ -315,11 +300,10 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               ],
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
-  
+
   Widget _buildSummaryInfo(BuildContext context, Map<String, dynamic> sajuData) {
     final theme = Theme.of(context);
     
