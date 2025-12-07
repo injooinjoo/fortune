@@ -1,357 +1,122 @@
-# Fortune Flutter App - Claude Code 개발 가이드
+# Fortune Flutter App - Claude Code 가이드
 
-## 🧠 자동 활성화 시스템 (CRITICAL - 모든 요청에 적용)
+## 통합 매핑 테이블 (핵심)
 
-**모든 사용자 요청을 분석하여 적절한 Agent 페르소나를 채택하고, 필요한 Skill을 자동 실행합니다.**
+모든 요청은 이 테이블을 기준으로 MCP, Agent, Skill, 문서를 자동 활성화합니다.
 
-### Agent 자동 활성화 규칙
+| 작업 | MCP | Agent | Skill | 문서 |
+|------|-----|-------|-------|------|
+| UI/페이지 수정 | Playwright | toss-design-guardian | - | 03 |
+| 운세 기능 개발 | Supabase | fortune-domain-expert | /sc:fortune-page | 05 |
+| 모델 생성 | - | freezed-generator | /sc:freezed-model | 02 |
+| Provider 작성 | Context7 | riverpod-specialist | /sc:state-notifier | 04 |
+| Edge Function | Supabase | fortune-domain-expert | /sc:edge-function | 06 |
+| 버그/에러 분석 | Sequential | error-resolver | /sc:analyze-error | 01 |
+| 테스트 작성 | Playwright | testing-architect | /sc:generate-test | - |
+| 아키텍처 검토 | Sequential | flutter-architect | /sc:validate-arch | 02 |
+| E2E QA | Playwright | playwright-qa-agent | /sc:auto-qa | 16 |
+| JIRA 작업 | JIRA | - | - | 07 |
+| Figma 연동 | Figma | toss-design-guardian | - | 03 |
 
-사용자 요청을 분석하여 해당 Agent의 전문성과 원칙을 적용합니다:
-
-| 트리거 키워드 | 활성화 Agent | 적용 내용 |
-|--------------|-------------|----------|
-| "아키텍처", "구조", "레이어", "Feature 추가" | `flutter-architect` | Clean Architecture 원칙, 레이어 분리, 의존성 규칙 |
-| "Provider", "상태", "State", "Notifier" | `riverpod-specialist` | StateNotifier 패턴, @riverpod 금지, copyWith |
-| "모델", "Freezed", "DTO", "Entity" | `freezed-generator` | @freezed 패턴, @JsonKey, @Default |
-| "UI", "위젯", "화면", "디자인", "색상", "폰트" | `toss-design-guardian` | TossDesignSystem, TypographyUnified, 다크모드 |
-| "운세", "Fortune", "블러", "프리미엄", "토큰" | `fortune-domain-expert` | 6단계 프로세스, UnifiedFortuneService, 블러 시스템 |
-| "테스트", "Test", "검증", "커버리지" | `testing-architect` | Widget/Provider 테스트 패턴, Mock |
-| "QA", "E2E", "Playwright", "실제 테스트", "동작 확인" | `playwright-qa-agent` | Playwright MCP, 브라우저 테스트, 스크린샷 |
-| "에러", "버그", "오류", "안돼", "크래시" | `error-resolver` | 근본원인 분석, 전체 검색, 패턴 적용 |
-| "위젯", "Widget", "홈화면", "즐겨찾기 위젯" | `widget-specialist` | iOS WidgetKit, Android AppWidget, home_widget, App Group |
-
-**복합 요청 시**: 여러 Agent의 전문성을 조합하여 적용
-
-### Skill 자동 실행 규칙
-
-사용자 요청에 따라 해당 Skill의 템플릿과 체크리스트를 자동 적용합니다:
-
-| 트리거 패턴 | 자동 실행 Skill | 동작 |
-|------------|----------------|------|
-| "모델 만들어", "DTO 생성", "Entity 추가" | `/sc:freezed-model` | Freezed 모델 템플릿 생성, build_runner 안내 |
-| "Provider 만들어", "상태관리 추가", "Notifier 생성" | `/sc:state-notifier` | StateNotifier + State 클래스 템플릿 생성 |
-| "운세 페이지 만들어", "Fortune 화면 추가" | `/sc:fortune-page` | 운세 페이지 표준 템플릿 (블러, 프리미엄 포함) |
-| "Edge Function 만들어", "API 함수 추가" | `/sc:edge-function` | LLMFactory 기반 Edge Function 템플릿 |
-| "아키텍처 검사", "구조 확인", "규칙 검증" | `/sc:validate-arch` | 레이어 의존성, 금지 패턴 검사 |
-| "테스트 만들어", "테스트 코드 생성" | `/sc:generate-test` | Widget/Provider 테스트 템플릿 |
-| "품질 검사", "커밋 전 확인", "빌드 검증" | `/sc:quality-gate` | analyze + format + test + arch 검증 |
-| "에러 분석", "버그 원인", "왜 안돼" | `/sc:analyze-error` | 근본원인 분석 프로세스 실행 |
-| "위젯 만들어", "컴포넌트 추가", "UI 생성" | `/sc:toss-widget` | Toss 스타일 위젯 템플릿 |
-| "라우트 추가", "페이지 연결", "네비게이션" | `/sc:go-route` | GoRouter 라우트 추가 |
-
-### 자동 활성화 프로세스
-
-```
-사용자 요청 수신
-    ↓
-1️⃣ 키워드 분석 → Agent 페르소나 채택
-    ↓
-2️⃣ 작업 유형 판단 → Skill 템플릿 적용
-    ↓
-3️⃣ 관련 docs/ 문서 참조 → 상세 규칙 확인
-    ↓
-4️⃣ 작업 실행 (Agent 원칙 + Skill 템플릿 준수)
-    ↓
-5️⃣ 체크리스트 검증
-    ↓
-6️⃣ 🎭 자동 QA 제안 (페이지/위젯 수정 시) → 최종 완료
-```
-
-### 예시
-
-**사용자**: "유저 프로필 모델 만들어줘"
-```
-→ Agent: freezed-generator 활성화
-→ Skill: /sc:freezed-model 실행
-→ 참조: 02-architecture.md (Domain 모델 위치)
-→ 출력: @freezed UserProfile 모델 + build_runner 명령어
-```
-
-**사용자**: "일일운세 페이지에서 에러나"
-```
-→ Agent: error-resolver + fortune-domain-expert 활성화
-→ Skill: /sc:analyze-error 실행
-→ 참조: 01-core-rules.md (근본원인 분석), 05-fortune-system.md
-→ 출력: 에러 원인 분석 + 동일 패턴 검색 + 수정 방안
-```
-
-**사용자**: "일일운세 페이지 버튼 색상 파란색으로 바꿔줘"
-```
-→ Agent: toss-design-guardian 활성화
-→ 수정: daily_fortune_page.dart 버튼 색상 변경
-→ 검증: TossDesignSystem 색상 사용 확인
-→ 🎭 QA 제안: "수정 완료! localhost:3000 실행 중이면 QA 테스트할까요?"
-```
+**우선순위**: 사용자 명시적 요청 > 프로젝트 규칙 > 글로벌 SuperClaude
 
 ---
 
-## 📚 문서 구조
+## 절대 금지 (CRITICAL)
 
-모든 상세 규칙은 `.claude/docs/` 폴더에서 관리됩니다.
-
-| 문서 | 내용 | 핵심 키워드 |
-|------|------|-------------|
-| [01-core-rules.md](.claude/docs/01-core-rules.md) | 핵심 개발 규칙 | Flutter 실행 금지, 일괄수정 금지, 근본원인 분석 |
-| [02-architecture.md](.claude/docs/02-architecture.md) | Clean Architecture | Feature Slice, 레이어 규칙, 의존성 |
-| [03-ui-design-system.md](.claude/docs/03-ui-design-system.md) | UI 디자인 시스템 | TossDesignSystem, TypographyUnified, 다크모드 |
-| [04-state-management.md](.claude/docs/04-state-management.md) | 상태관리 | StateNotifier, Riverpod, copyWith |
-| [05-fortune-system.md](.claude/docs/05-fortune-system.md) | 운세 시스템 | 6단계 프로세스, 블러, 프리미엄 |
-| [06-llm-module.md](.claude/docs/06-llm-module.md) | LLM 모듈 | LLMFactory, PromptManager, Edge Function |
-| [07-jira-workflow.md](.claude/docs/07-jira-workflow.md) | JIRA 워크플로우 | 티켓 생성, Git 커밋 |
-| [08-agents-skills.md](.claude/docs/08-agents-skills.md) | Agents & Skills | 7 Agents, 10 Skills |
-| [10-widget-system.md](.claude/docs/10-widget-system.md) | 홈 화면 위젯 | iOS/Android 위젯, 즐겨찾기 롤링, App Group |
+| 금지 | 이유 | 대안 |
+|------|------|------|
+| `flutter run` 직접 실행 | 로그 확인 불가 | 사용자에게 실행 요청 |
+| 일괄 수정 (for, sed -i) | 프로젝트 망가짐 | 한 파일씩 Edit |
+| JIRA 없이 작업 | 추적 불가 | `./scripts/parse_ux_request.sh` 먼저 |
 
 ---
 
-## 🚫 절대 금지 사항 (CRITICAL)
+## 핵심 패턴 (4가지)
 
-### 1. Flutter 직접 실행 금지
-```bash
-# ❌ 금지
-flutter run
-
-# ✅ 올바른 방법
-# "Flutter를 실행해서 테스트해주세요" 요청
-```
-
-### 2. 일괄 수정 금지
-```bash
-# ❌ 금지
-for file in files: ...  # Python 일괄 처리
-sed -i ...              # Shell 일괄 치환
-
-# ✅ 올바른 방법
-# 한 파일씩 Edit 도구로 수정
-```
-
-### 3. JIRA 없이 작업 금지
-```bash
-# ❌ 금지
-# 바로 코드 수정 시작
-
-# ✅ 올바른 방법
-./scripts/parse_ux_request.sh  # 먼저 JIRA 생성
-# 코드 수정
-./scripts/git_jira_commit.sh "내용" "KAN-XX" "done"
-```
-
----
-
-## 🎯 핵심 패턴 요약
-
-### 상태관리 (Riverpod)
-
+### 1. StateNotifier (Riverpod)
 ```dart
-// ✅ StateNotifier 패턴 사용
-class FortuneNotifier extends StateNotifier<FortuneState> {
-  FortuneNotifier() : super(const FortuneState());
-}
-
-// ❌ @riverpod 어노테이션 금지
-@riverpod  // WRONG!
-class FortuneNotifier extends _$FortuneNotifier { }
+// ✅ StateNotifier 패턴 | ❌ @riverpod 금지
+class FortuneNotifier extends StateNotifier<FortuneState> { }
 ```
 
-### UI 스타일
-
+### 2. Typography
 ```dart
-// ✅ TypographyUnified 사용
+// ✅ context.heading1 | ❌ TossDesignSystem.heading1 금지
 Text('제목', style: context.heading1)
-
-// ❌ TossDesignSystem 폰트 금지
-Text('제목', style: TossDesignSystem.heading1)  // WRONG!
-
-// ✅ 다크모드 대응
-final isDark = Theme.of(context).brightness == Brightness.dark;
-color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight
 ```
 
-### 블러 처리
-
+### 3. 블러 처리
 ```dart
-// ✅ UnifiedBlurWrapper 사용
-UnifiedBlurWrapper(
-  isBlurred: fortuneResult.isBlurred,
-  sectionKey: 'advice',
-  child: content,
-)
-
-// ❌ ImageFilter.blur 직접 사용 금지
+// ✅ UnifiedBlurWrapper | ❌ ImageFilter.blur 금지
+UnifiedBlurWrapper(isBlurred: result.isBlurred, child: content)
 ```
 
-### LLM 호출 (Edge Function)
-
+### 4. Edge Function
 ```typescript
-// ✅ LLMFactory 사용
+// ✅ LLMFactory | ❌ OpenAI/Gemini 직접 호출 금지
 const llm = LLMFactory.createFromConfig('fortune-type')
-const response = await llm.generate(messages, { jsonMode: true })
-
-// ❌ OpenAI/Gemini API 직접 호출 금지
-fetch('https://api.openai.com/...')  // WRONG!
 ```
 
 ---
 
-## 🤖 Agents (가상 개발팀)
+## 문서 계층
 
-| Agent | 역할 |
-|-------|------|
-| `flutter-architect` | Clean Architecture 설계 |
-| `riverpod-specialist` | 상태관리 전문 |
-| `freezed-generator` | 모델 생성 |
-| `toss-design-guardian` | UI/UX 표준 수호 |
-| `fortune-domain-expert` | 운세 도메인 |
-| `testing-architect` | 테스트 설계 |
-| `playwright-qa-agent` | E2E 자동 QA |
-| `error-resolver` | 버그 헌터 |
+| Tier | 문서 | 로드 조건 |
+|------|------|----------|
+| **1 (항상)** | 이 파일 (CLAUDE.md) | 모든 요청 |
+| **2 (키워드)** | 01-06 | 개발 관련 키워드 시 |
+| **3 (요청)** | 07-16 | 명시적 요청 시만 |
 
----
-
-## ⚡ Skills (커스텀 커맨드)
-
-| 커맨드 | 용도 |
-|--------|------|
-| `/sc:freezed-model` | Freezed 모델 생성 |
-| `/sc:state-notifier` | StateNotifier 생성 |
-| `/sc:fortune-page` | 운세 페이지 생성 |
-| `/sc:edge-function` | Edge Function 생성 |
-| `/sc:validate-arch` | 아키텍처 검증 |
-| `/sc:generate-test` | 테스트 코드 생성 |
-| `/sc:quality-gate` | 품질 게이트 실행 |
-| `/sc:analyze-error` | 에러 근본원인 분석 |
-| `/sc:toss-widget` | Toss 스타일 위젯 생성 |
-| `/sc:go-route` | GoRouter 라우트 추가 |
-| `/sc:auto-qa` | E2E 자동 QA 테스트 |
+### 문서 참조
+| 문서 | 트리거 키워드 |
+|------|-------------|
+| [01-core-rules](.claude/docs/01-core-rules.md) | 에러, 버그, 금지, 규칙 |
+| [02-architecture](.claude/docs/02-architecture.md) | 아키텍처, Feature, 레이어 |
+| [03-ui-design-system](.claude/docs/03-ui-design-system.md) | UI, 색상, 폰트, 다크모드 |
+| [04-state-management](.claude/docs/04-state-management.md) | Provider, 상태, State |
+| [05-fortune-system](.claude/docs/05-fortune-system.md) | 운세, Fortune, 토큰 |
+| [06-llm-module](.claude/docs/06-llm-module.md) | Edge Function, LLM, API |
 
 ---
 
-## 🎭 자동 QA 시스템 (Playwright MCP) - CRITICAL
+## MCP 서버 (우선순위)
 
-**개발 작업 완료 후 반드시 자동 QA를 실행합니다.**
-
-### 🔴 자동 실행 규칙 (MANDATORY)
-
-다음 파일을 수정한 후에는 **반드시** QA를 실행하거나 제안합니다:
-
-| 수정 대상 | 자동 동작 |
-|----------|----------|
-| `*_fortune_page.dart` | 해당 운세 페이지 QA 실행 |
-| `*_page.dart` | 해당 페이지 QA 실행 |
-| `presentation/widgets/` | 관련 페이지 QA 실행 |
-| Edge Function 배포 후 | API 연동 QA 실행 |
-| 프리미엄/블러 코드 | 프리미엄 플로우 QA |
-
-### 개발 완료 후 프로세스
-
-```
-코드 수정 완료
-    ↓
-"수정 완료했습니다. QA 테스트 실행할까요?" (서버 실행 중이면)
-    ↓
-또는 "서버(localhost:3000)가 실행 중이면 QA 테스트해보세요"
-```
-
-### 사전 조건
-
-```bash
-# 1. Flutter Web 서버 실행 필요
-flutter run -d chrome --web-port=3000
-
-# 2. Playwright 설치 (최초 1회)
-npx playwright install chromium
-```
-
-### 사용 방법
-
-```bash
-# 특정 페이지 테스트
-/sc:auto-qa /fortune/daily
-
-# 전체 E2E 테스트
-/sc:auto-qa all
-
-# CLI 직접 실행
-npx playwright test --headed
-```
-
-### 자동 QA 트리거 조건
-
-다음 작업 완료 시 **자동으로 QA 제안**합니다:
-
-| 작업 완료 | 테스트 범위 |
-|----------|------------|
-| 운세 페이지 수정 (`*_fortune_page.dart`) | 해당 운세 페이지 |
-| UI 위젯 수정 (`presentation/widgets/`) | 관련 페이지들 |
-| Edge Function 배포 | API 연동 테스트 |
-| 프리미엄/블러 코드 수정 | 프리미엄 플로우 |
-
-### 결과 리포트
-
-```
-🎭 자동 QA 테스트 결과
-━━━━━━━━━━━━━━━━━━━━━━━
-✅ 페이지 로딩 (2.3s)
-✅ Flutter 초기화
-✅ 메인 콘텐츠
-✅ 인터랙션 테스트
-✅ 스크린샷 캡처
-
-📸 playwright/screenshots/fortune-daily.png
-━━━━━━━━━━━━━━━━━━━━━━━
-총 결과: ✅ PASS
-```
-
-### 관련 문서
-
-- [16-auto-qa-system.md](.claude/docs/16-auto-qa-system.md)
+| 순위 | MCP | 역할 |
+|------|-----|------|
+| 1 | Supabase | Edge Function, DB |
+| 2 | Playwright | E2E 자동 QA |
+| 3 | Context7 | Flutter/Riverpod 문서 |
+| 4 | Sequential | 복잡한 분석 |
+| 5 | JIRA | 티켓 관리 |
+| 6+ | Figma, GitHub, Brave | 선택적 |
 
 ---
 
-## 📱 배포 명령어
+## 자동 QA (페이지 수정 후)
 
-```bash
-# 실제 디바이스 릴리즈 배포
-flutter run --release -d 00008140-00120304260B001C 2>&1 | tee /tmp/flutter_release_logs.txt
+페이지 수정 완료 시 자동으로 QA 제안:
+```
+"수정 완료! QA 테스트할까요?" (localhost:3000 실행 중이면)
+```
+
+상세: [16-auto-qa-system.md](.claude/docs/16-auto-qa-system.md)
+
+---
+
+## 프로젝트 구조
+
+```
+lib/features/fortune/     # 운세 기능 (Clean Architecture)
+supabase/functions/       # Edge Functions (LLMFactory)
+.claude/agents/           # 8개 Agent
+.claude/commands/         # 13개 Skill (/sc:*)
+.claude/docs/             # 상세 문서 (01-16)
 ```
 
 ---
 
-## 📁 프로젝트 구조
+## 상세 참조
 
-```
-lib/
-├── core/           # 공유 인프라 (widgets, services, theme)
-├── features/       # Feature Slice 모듈
-│   └── fortune/    # 운세 기능
-│       ├── data/
-│       ├── domain/
-│       └── presentation/
-├── routes/         # GoRouter 네비게이션
-└── main.dart
-
-supabase/
-└── functions/      # Edge Functions
-    ├── _shared/    # 공유 모듈 (llm, prompts)
-    └── fortune-*/  # 운세별 함수
-```
-
----
-
-## 🔍 상세 문서 바로가기
-
-- **에러 발생 시**: [01-core-rules.md](.claude/docs/01-core-rules.md) → 근본원인 분석
-- **새 Feature 추가 시**: [02-architecture.md](.claude/docs/02-architecture.md) → Feature Slice 구조
-- **UI 개발 시**: [03-ui-design-system.md](.claude/docs/03-ui-design-system.md) → TossDesignSystem
-- **Provider 작성 시**: [04-state-management.md](.claude/docs/04-state-management.md) → StateNotifier
-- **운세 페이지 작성 시**: [05-fortune-system.md](.claude/docs/05-fortune-system.md) → 6단계 프로세스
-- **Edge Function 작성 시**: [06-llm-module.md](.claude/docs/06-llm-module.md) → LLMFactory
-- **작업 시작 전**: [07-jira-workflow.md](.claude/docs/07-jira-workflow.md) → JIRA 먼저!
-- **Agent/Skill 사용 시**: [08-agents-skills.md](.claude/docs/08-agents-skills.md) → 레퍼런스
-
----
-
-## 📖 기타 문서
-
-프로젝트 전체 문서는 `docs/` 폴더 참조:
-- [docs/README.md](docs/README.md) - 문서 색인
-
+- Agent/Skill 상세: [08-agents-skills.md](.claude/docs/08-agents-skills.md)
+- 전체 문서 색인: [docs/README.md](docs/README.md)

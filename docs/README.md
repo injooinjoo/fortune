@@ -17,6 +17,7 @@ docs/
 ├── testing/           # 테스팅
 ├── deployment/        # 배포 & 보안
 ├── development/       # 개발 도구 & 자동화
+├── features/          # 기능 기획 & 명세
 ├── legal/             # 법률 & 정책
 └── troubleshooting/   # 문제 해결
 ```
@@ -37,6 +38,7 @@ docs/
 - [UI/UX 마스터 정책](design/UI_UX_MASTER_POLICY.md) - UI/UX 개발 원칙 및 정책
 - [UI/UX 확장 로드맵](design/UI_UX_EXPANSION_ROADMAP.md) - 향후 UI/UX 개선 계획
 - [위젯 아키텍처](design/WIDGET_ARCHITECTURE_DESIGN.md) - Flutter 위젯 설계 패턴
+- [폰트 마이그레이션 가이드](design/FONT_MIGRATION_GUIDE.md) - 폰트 시스템 마이그레이션 절차
 
 ---
 
@@ -69,7 +71,8 @@ docs/
 
 ## 🚢 배포 & 보안 (deployment/)
 
-- [배포 완벽 가이드](deployment/DEPLOYMENT_COMPLETE_GUIDE.md) ⭐️ - Android/iOS 배포 전체 프로세스
+- [Android 배포 요약](deployment/ANDROID_DEPLOYMENT_SUMMARY.md) - 안드로이드 배포 체크리스트
+- [iOS 런칭 퀵스타트](deployment/IOS_LAUNCH_QUICKSTART.md) - iOS 런칭 핵심 요약
 - [앱 스토어 가이드](deployment/APP_STORE_GUIDE.md) ⭐️ - App Store Connect 및 Google Play Console
 - [보안 체크리스트](deployment/SECURITY_CHECKLIST.md) - 배포 전 보안 점검
 
@@ -90,6 +93,12 @@ docs/
 
 ---
 
+## ✨ 기능 기획 (features/)
+
+- [셀럽 아바타 시스템](features/CELEBRITY_AVATAR_SYSTEM_PLAN.md) - Notion 스타일 아바타 생성 시스템 기획 (구 plan.md)
+
+---
+
 ## ⚖️ 법률 & 정책 (legal/)
 
 - [개인정보 처리방침](legal/PRIVACY_POLICY_CONTENT.md) - 앱 개인정보 처리방침 전문
@@ -99,6 +108,8 @@ docs/
 ## 🛠 문제 해결 (troubleshooting/)
 
 - [406 에러 수정 가이드](troubleshooting/FIX_406_ERROR_GUIDE.md) - HTTP 406 에러 해결 방법
+- [MBTI 404 에러 수정](troubleshooting/FIX_MBTI_404_GUIDE.md) - MBTI 페이지 404 에러 해결 가이드
+- [DB 수정 가이드](troubleshooting/DB_FIX_INSTRUCTIONS.md) - 긴급 DB 수정 절차
 
 ---
 
@@ -148,6 +159,12 @@ docs/
 ---
 
 ## 📝 문서 정리 히스토리
+
+### 2025-12-07: 문서 정리 및 구조화
+- **루트 정리**: 루트에 흩어져 있던 `plan.md` 및 가이드 파일들을 관련 폴더로 이동
+- **Features 추가**: 기능 기획 문서 전용 `features/` 폴더 신설
+- **Troubleshooting 통합**: 에러 수정 가이드들을 `troubleshooting/` 폴더로 통합
+- **Deployment/Design 통합**: 관련 문서들을 각 카테고리로 정리
 
 ### 2025-09-30: 문서 구조 재정비
 - **주제별 폴더 분류**: 9개 카테고리로 체계화

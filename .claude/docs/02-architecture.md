@@ -206,6 +206,39 @@ Presentation → Domain ← Data
 
 ---
 
+## 파일 네이밍 규칙
+
+### 금지된 접미사 (CRITICAL)
+
+| 접미사 | 예시 (WRONG) | 올바른 접근 |
+|--------|-------------|------------|
+| `_v2`, `_v3` | `payment_service_v2.dart` | 원본 파일 교체 |
+| `_new` | `auth_service_new.dart` | 기존 삭제, 원본명 사용 |
+| `_old` | `cache_service_old.dart` | 삭제 또는 git 브랜치 |
+| `_enhanced` | `login_page_enhanced.dart` | 원본 수정 |
+| `_renewed` | `tarot_renewed_page.dart` | 목적 설명하는 이름 |
+
+**예외**: `typography_unified.dart`는 허용 ("unified"가 클래스명에 포함)
+
+### 표준 네이밍 패턴
+
+| 유형 | 패턴 | 예시 |
+|------|------|------|
+| Pages | `{feature}_{subtype}_page.dart` | `fortune_daily_page.dart` |
+| Services | `{domain}_service.dart` | `celebrity_service.dart` |
+| Widgets | `{name}_widget.dart` | `fortune_card_widget.dart` |
+| Providers | `{domain}_provider.dart` | `auth_provider.dart` |
+
+### 서비스 위치 규칙
+
+```
+여러 Feature에서 사용? → lib/services/
+├── YES → lib/services/{name}_service.dart
+└── NO → lib/features/{feature}/data/services/
+```
+
+---
+
 ## 관련 문서
 
 - [04-state-management.md](04-state-management.md) - Riverpod StateNotifier 패턴
