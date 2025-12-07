@@ -1,3 +1,55 @@
+/**
+ * 재능 운세 (Talent Fortune) Edge Function
+ *
+ * @description 사용자의 재능 분야, 현재 스킬, 목표를 기반으로 재능 개발 방향과 성장 전략을 분석합니다.
+ *
+ * @endpoint POST /fortune-talent
+ *
+ * @requestBody
+ * - talentArea: string - 재능 분야 ('예술', '스포츠', '학문', '비즈니스', '기술' 등)
+ * - currentSkills: string[] - 현재 보유 스킬 목록
+ * - goals: string - 목표
+ * - experience: string - 경험 수준
+ * - timeAvailable: string - 투자 가능한 시간
+ * - challenges: string[] - 현재 직면한 어려움
+ * - userId?: string - 사용자 ID
+ * - isPremium?: boolean - 프리미엄 사용자 여부
+ *
+ * @response TalentFortuneResponse
+ * - overallScore: number - 재능 운세 점수 (0-100)
+ * - talentProfile: object - 재능 프로필 분석
+ * - strengthAreas: string[] - 강점 영역
+ * - growthOpportunities: string[] - 성장 기회
+ * - skillRecommendations: object[] - 스킬 개발 추천
+ * - roadmap: object - 성장 로드맵
+ * - challenges: object[] - 도전 과제 분석
+ * - advice: string - 종합 조언
+ * - isBlurred: boolean - 블러 상태
+ * - blurredSections: string[] - 블러된 섹션 목록
+ *
+ * @example
+ * // Request
+ * {
+ *   "talentArea": "기술",
+ *   "currentSkills": ["JavaScript", "React"],
+ *   "goals": "풀스택 개발자 되기",
+ *   "experience": "주니어",
+ *   "timeAvailable": "주 10시간",
+ *   "challenges": ["백엔드 지식 부족"],
+ *   "isPremium": true
+ * }
+ *
+ * // Response
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "overallScore": 82,
+ *     "talentProfile": { "type": "분석형", "strength": "논리적 사고" },
+ *     "skillRecommendations": [{ "skill": "Node.js", "priority": "high" }],
+ *     ...
+ *   }
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

@@ -1,3 +1,31 @@
+/**
+ * 직업 운세 (Career Fortune) Edge Function
+ *
+ * @description 사주와 직업 정보를 기반으로 경력/취업 운세를 분석합니다.
+ *
+ * @endpoint POST /fortune-career
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - birthDate: string - 생년월일 (YYYY-MM-DD)
+ * - birthTime?: string - 출생 시간
+ * - gender: string - 성별
+ * - currentJob?: string - 현재 직업
+ * - careerGoal?: string - 희망 직종/목표
+ *
+ * @response CareerFortuneResponse
+ * - overall_score: number - 직업운 점수
+ * - career_aptitude: { strengths, suitable_fields } - 적성 분석
+ * - current_luck: { job, promotion, income } - 현재 운세
+ * - timing: { best_month, action_period } - 최적 시기
+ * - advice: string - 경력 조언
+ * - percentile: number - 상위 백분위
+ *
+ * @example
+ * curl -X POST https://xxx.supabase.co/functions/v1/fortune-career \
+ *   -H "Authorization: Bearer <token>" \
+ *   -d '{"userId":"xxx","birthDate":"1990-01-01","gender":"male"}'
+ */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'

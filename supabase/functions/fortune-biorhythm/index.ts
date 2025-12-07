@@ -1,3 +1,22 @@
+/**
+ * 바이오리듬 운세 (Biorhythm Fortune) Edge Function
+ *
+ * @description 생년월일 기반 바이오리듬(신체/감성/지성) 분석을 제공합니다.
+ *
+ * @endpoint POST /fortune-biorhythm
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - birthDate: string - 생년월일 (YYYY-MM-DD)
+ * - targetDate?: string - 분석 대상일 (기본: 오늘)
+ *
+ * @response BiorhythmResponse
+ * - physical: { value: number, status: string } - 신체 리듬
+ * - emotional: { value: number, status: string } - 감성 리듬
+ * - intellectual: { value: number, status: string } - 지성 리듬
+ * - critical_days: string[] - 주의 일자
+ * - advice: string - 오늘의 조언
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

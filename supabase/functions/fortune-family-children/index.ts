@@ -1,3 +1,47 @@
+/**
+ * 가족 자녀 운세 (Family Children Fortune) Edge Function
+ *
+ * @description 자녀 관련 운세와 양육 조언을 제공합니다.
+ *
+ * @endpoint POST /fortune-family-children
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - name?: string - 사용자 이름
+ * - birthDate?: string - 생년월일
+ * - birthTime?: string - 출생 시간
+ * - gender?: string - 성별
+ * - concern: string - 고민 내용
+ * - concern_label: string - 고민 레이블
+ * - detailed_questions: string[] - 상세 질문 목록
+ * - family_member_count: number - 가족 구성원 수
+ * - relationship: string - 관계
+ * - special_question?: string - 특별 질문
+ * - isPremium?: boolean - 프리미엄 사용자 여부
+ * - sajuData?: object - 사주 데이터 (년주, 월주, 일주, 시주)
+ *
+ * @response FamilyChildrenResponse
+ * - overallScore: number - 종합 점수 (0-100)
+ * - childAnalysis: object - 자녀 분석
+ * - parentingAdvice: object[] - 양육 조언
+ * - educationTips: string[] - 교육 팁
+ * - relationshipGuide: object - 관계 가이드
+ * - warnings: string[] - 주의사항
+ * - advice: string - 종합 조언
+ * - isBlurred: boolean - 블러 상태
+ * - blurredSections: string[] - 블러된 섹션 목록
+ *
+ * @example
+ * // Request
+ * {
+ *   "userId": "user123",
+ *   "concern": "자녀 교육",
+ *   "concern_label": "education",
+ *   "detailed_questions": ["자녀의 적성은 무엇일까요?"],
+ *   "family_member_count": 3,
+ *   "isPremium": false
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

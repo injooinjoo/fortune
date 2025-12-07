@@ -1,3 +1,46 @@
+/**
+ * 가족 변화 운세 (Family Change Fortune) Edge Function
+ *
+ * @description 가족 내 변화(이사, 결혼, 출산 등)에 대한 운세와 조언을 제공합니다.
+ *
+ * @endpoint POST /fortune-family-change
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - name?: string - 사용자 이름
+ * - birthDate?: string - 생년월일
+ * - birthTime?: string - 출생 시간
+ * - gender?: string - 성별
+ * - concern: string - 고민 내용
+ * - concern_label: string - 고민 레이블
+ * - detailed_questions: string[] - 상세 질문 목록
+ * - family_member_count: number - 가족 구성원 수
+ * - relationship: string - 관계
+ * - special_question?: string - 특별 질문
+ * - isPremium?: boolean - 프리미엄 사용자 여부
+ * - sajuData?: object - 사주 데이터 (년주, 월주, 일주, 시주)
+ *
+ * @response FamilyChangeResponse
+ * - overallScore: number - 종합 점수 (0-100)
+ * - changeAnalysis: object - 변화 분석
+ * - timing: object - 시기 분석
+ * - recommendations: string[] - 추천사항
+ * - warnings: string[] - 주의사항
+ * - advice: string - 종합 조언
+ * - isBlurred: boolean - 블러 상태
+ * - blurredSections: string[] - 블러된 섹션 목록
+ *
+ * @example
+ * // Request
+ * {
+ *   "userId": "user123",
+ *   "concern": "이사",
+ *   "concern_label": "moving",
+ *   "detailed_questions": ["이사 시기는 언제가 좋을까요?"],
+ *   "family_member_count": 4,
+ *   "isPremium": true
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

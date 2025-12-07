@@ -6,7 +6,7 @@
 TRUNCATE TABLE public.celebrities;
 
 -- Insert accurate celebrity data
-INSERT INTO public.celebrities (id, name, birth_date, gender, category, year_pillar, month_pillar, day_pillar, hour_pillar, saju_string, wood_count, fire_count, earth_count, metal_count, water_count, birth_time) VALUESINSERT INTO celebrities (
+INSERT INTO celebrities (
   id, name, name_en, birth_date, birth_time, gender, birth_place, category, agency,
   year_pillar, month_pillar, day_pillar, hour_pillar, saju_string,
   wood_count, fire_count, earth_count, metal_count, water_count,

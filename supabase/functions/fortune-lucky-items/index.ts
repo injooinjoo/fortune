@@ -1,3 +1,63 @@
+/**
+ * 행운의 아이템 운세 (Lucky Items Fortune) Edge Function
+ *
+ * @description 사용자의 사주와 관심사를 기반으로 오늘의 행운 아이템, 색상, 숫자, 방향 등을 분석합니다.
+ *
+ * @endpoint POST /fortune-lucky-items
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - name: string - 사용자 이름
+ * - birthDate: string - 생년월일 (ISO 8601)
+ * - birthTime?: string - 출생 시간 (HH:MM)
+ * - gender?: string - 성별 ("male" | "female")
+ * - interests?: string[] - 관심 분야 목록
+ * - isPremium?: boolean - 프리미엄 사용자 여부
+ *
+ * @response LuckyItemsResponse
+ * - title: string - 오늘의 행운 제목
+ * - summary: string - 행운 요약
+ * - keyword: string - 오늘의 키워드
+ * - color: string - 행운의 색상
+ * - fashion: string[] - 추천 패션 아이템
+ * - numbers: number[] - 행운의 숫자들
+ * - food: string[] - 행운의 음식
+ * - jewelry: string[] - 행운의 보석/액세서리
+ * - material: string[] - 행운의 소재
+ * - direction: string - 행운의 방향
+ * - places: string[] - 행운의 장소
+ * - relationships: string[] - 행운의 인연
+ * - element: string - 오행 (목, 화, 토, 금, 수)
+ * - score: number - 행운 점수 (0-100)
+ * - advice: string - 조언
+ * - isBlurred: boolean - 블러 상태
+ * - blurredSections: string[] - 블러된 섹션 목록
+ *
+ * @example
+ * // Request
+ * {
+ *   "userId": "user123",
+ *   "name": "홍길동",
+ *   "birthDate": "1990-05-15",
+ *   "birthTime": "14:30",
+ *   "gender": "male",
+ *   "interests": ["패션", "음식"],
+ *   "isPremium": true
+ * }
+ *
+ * // Response
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "title": "오늘의 행운",
+ *     "color": "파란색",
+ *     "numbers": [3, 7, 12],
+ *     "direction": "동쪽",
+ *     "score": 85,
+ *     ...
+ *   }
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

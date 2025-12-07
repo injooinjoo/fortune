@@ -1,7 +1,43 @@
-// Admin Edge Function: Update Celebrity Profile Images
-// 연예인 프로필 이미지 URL 일괄 업데이트
-// 보안: Service Role Key 필수
-
+/**
+ * 연예인 이미지 업데이트 (Admin Update Celebrity Images) Edge Function
+ *
+ * @description 연예인 프로필 이미지 URL을 일괄 업데이트합니다.
+ *              관리자 전용 함수로 Service Role Key 인증이 필요합니다.
+ *
+ * @endpoint POST /admin-update-celebrity-images
+ *
+ * @auth Service Role Key 필수 (Authorization: Bearer <service_role_key>)
+ *
+ * @requestBody
+ * - updates: CelebrityImageUpdate[] - 업데이트할 이미지 목록
+ *   - id: string - 연예인 ID
+ *   - profile_image_url: string - 새 프로필 이미지 URL
+ *
+ * @response AdminResponse
+ * - success: boolean - 성공 여부
+ * - updated_count: number - 업데이트된 레코드 수
+ * - errors: object[] - 실패한 업데이트 목록 (있는 경우)
+ *
+ * @example
+ * // Request
+ * {
+ *   "updates": [
+ *     { "id": "celebrity-001", "profile_image_url": "https://..." },
+ *     { "id": "celebrity-002", "profile_image_url": "https://..." }
+ *   ]
+ * }
+ *
+ * // Response
+ * {
+ *   "success": true,
+ *   "updated_count": 2,
+ *   "errors": []
+ * }
+ *
+ * @security
+ * - Service Role Key 인증 필수
+ * - 일반 사용자 접근 불가
+ */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 

@@ -1,3 +1,45 @@
+/**
+ * MBTI 에너지 트래커 (MBTI Energy Tracker) Edge Function
+ *
+ * @description MBTI 유형별 일일 에너지 흐름과 활동 추천을 생성합니다.
+ *
+ * @endpoint POST /mbti-energy-tracker
+ *
+ * @requestBody
+ * - mbti_type: string - MBTI 유형 (필수, 예: INTJ, ENFP)
+ * - user_id?: string - 사용자 ID
+ * - date?: string - 대상 날짜 (기본값: 오늘)
+ *
+ * @response MbtiEnergyResponse
+ * - mbti_type: string - MBTI 유형
+ * - date: string - 날짜
+ * - energy_flow: object - 시간대별 에너지 흐름
+ *   - morning: number - 아침 에너지 (0-100)
+ *   - afternoon: number - 오후 에너지 (0-100)
+ *   - evening: number - 저녁 에너지 (0-100)
+ * - peak_hours: string[] - 최고 에너지 시간대
+ * - recommended_activities: object - 추천 활동
+ *   - work: string[] - 업무 관련
+ *   - social: string[] - 사회적 활동
+ *   - self_care: string[] - 자기 관리
+ * - warnings: string[] - 주의사항
+ * - tips: string[] - 에너지 관리 팁
+ *
+ * @example
+ * // Request
+ * {
+ *   "mbti_type": "INTJ",
+ *   "date": "2024-01-15"
+ * }
+ *
+ * // Response
+ * {
+ *   "mbti_type": "INTJ",
+ *   "energy_flow": { "morning": 85, "afternoon": 70, "evening": 60 },
+ *   "peak_hours": ["09:00-11:00", "14:00-16:00"],
+ *   "recommended_activities": { "work": ["전략 수립", "분석 업무"] }
+ * }
+ */
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { corsHeaders } from '../_shared/cors.ts'
 

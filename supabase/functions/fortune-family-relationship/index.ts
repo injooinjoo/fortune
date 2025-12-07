@@ -1,3 +1,46 @@
+/**
+ * 가족 관계 운세 (Family Relationship Fortune) Edge Function
+ *
+ * @description 가족 구성원 간의 관계 운세와 소통 조언을 제공합니다.
+ *
+ * @endpoint POST /fortune-family-relationship
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - name?: string - 사용자 이름
+ * - birthDate?: string - 생년월일
+ * - birthTime?: string - 출생 시간
+ * - gender?: string - 성별
+ * - concern: string - 관계 고민 내용
+ * - concern_label: string - 고민 레이블
+ * - detailed_questions: string[] - 상세 질문 목록
+ * - family_member_count: number - 가족 구성원 수
+ * - relationship: string - 관계 유형
+ * - special_question?: string - 특별 질문
+ * - isPremium?: boolean - 프리미엄 사용자 여부
+ * - sajuData?: object - 사주 데이터
+ *
+ * @response FamilyRelationshipResponse
+ * - overallScore: number - 관계 운세 점수 (0-100)
+ * - relationshipAnalysis: object - 관계 분석
+ * - communicationTips: string[] - 소통 팁
+ * - conflictResolution: object - 갈등 해결 가이드
+ * - bondingActivities: string[] - 유대감 강화 활동
+ * - warnings: string[] - 주의사항
+ * - advice: string - 종합 조언
+ * - isBlurred: boolean - 블러 상태
+ * - blurredSections: string[] - 블러된 섹션 목록
+ *
+ * @example
+ * // Request
+ * {
+ *   "userId": "user123",
+ *   "concern": "부모님과의 관계",
+ *   "concern_label": "parent_relationship",
+ *   "relationship": "parent",
+ *   "isPremium": false
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

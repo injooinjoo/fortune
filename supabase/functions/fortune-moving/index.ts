@@ -1,3 +1,50 @@
+/**
+ * 이사 운세 (Moving Fortune) Edge Function
+ *
+ * @description 현재 거주지와 이사 예정지를 기반으로 이사 시기와 방향의 길흉을 분석합니다.
+ *
+ * @endpoint POST /fortune-moving
+ *
+ * @requestBody
+ * - fortune_type?: string - 운세 유형
+ * - currentArea/current_area: string - 현재 거주 지역
+ * - targetArea/target_area: string - 이사 예정 지역
+ * - movingPeriod/moving_period?: string - 이사 예정 시기
+ * - purpose: string - 이사 목적
+ * - isPremium?: boolean - 프리미엄 사용자 여부
+ *
+ * @response MovingFortuneResponse
+ * - overallScore: number - 이사 운세 종합 점수 (0-100)
+ * - directionAnalysis: object - 방향별 길흉 분석
+ * - timingAdvice: object - 시기별 추천 분석
+ * - areaCompatibility: object - 지역 궁합도
+ * - warnings: string[] - 주의사항
+ * - recommendations: string[] - 추천 사항
+ * - advice: string - 종합 조언
+ * - isBlurred: boolean - 블러 상태
+ * - blurredSections: string[] - 블러된 섹션 목록
+ *
+ * @example
+ * // Request
+ * {
+ *   "currentArea": "서울 강남구",
+ *   "targetArea": "경기도 분당",
+ *   "movingPeriod": "2024년 3월",
+ *   "purpose": "출퇴근 편의",
+ *   "isPremium": false
+ * }
+ *
+ * // Response
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "overallScore": 78,
+ *     "directionAnalysis": { "direction": "동남", "score": 85 },
+ *     "timingAdvice": { "bestMonth": "3월", "reason": "..." },
+ *     ...
+ *   }
+ * }
+ */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'

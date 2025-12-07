@@ -1,3 +1,24 @@
+/**
+ * 전 연인 운세 (Ex-Lover Fortune) Edge Function
+ *
+ * @description 전 연인과의 관계를 사주 기반으로 분석합니다.
+ *
+ * @endpoint POST /fortune-ex-lover
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - userBirthDate: string - 본인 생년월일
+ * - exBirthDate: string - 전 연인 생년월일
+ * - breakupReason?: string - 이별 사유
+ * - currentFeelings?: string - 현재 감정
+ *
+ * @response ExLoverResponse
+ * - reunion_probability: number - 재회 가능성
+ * - karma_analysis: string - 인연 분석
+ * - emotional_healing: string[] - 감정 치유 조언
+ * - future_outlook: string - 향후 전망
+ * - advice: string - 조언
+ */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'

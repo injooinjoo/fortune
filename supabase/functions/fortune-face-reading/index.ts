@@ -1,3 +1,23 @@
+/**
+ * 관상 운세 (Face Reading Fortune) Edge Function
+ *
+ * @description 사진 기반 AI 관상 분석을 제공합니다.
+ *
+ * @endpoint POST /fortune-face-reading
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - imageUrl?: string - 사진 URL
+ * - imageBase64?: string - 사진 Base64
+ * - instagramUsername?: string - 인스타그램 계정
+ *
+ * @response FaceReadingResponse
+ * - face_analysis: { forehead, eyes, nose, mouth, chin } - 부위별 분석
+ * - personality: string[] - 성격 특성
+ * - fortune_areas: { wealth, career, relationship } - 운세 영역
+ * - lucky_features: string[] - 복 있는 특징
+ * - advice: string - 조언
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 import { LLMFactory } from '../_shared/llm/factory.ts'

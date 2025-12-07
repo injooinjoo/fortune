@@ -1,3 +1,57 @@
+/**
+ * 사주 계산 (Calculate Saju) Edge Function
+ *
+ * @description 생년월일시를 기반으로 사주팔자(四柱八字)를 계산합니다.
+ *              천간(天干), 지지(地支), 오행(五行), 지장간(支藏干) 등을 분석합니다.
+ *
+ * @endpoint POST /calculate-saju
+ *
+ * @requestBody
+ * - birthDate: string - 생년월일 (YYYY-MM-DD)
+ * - birthTime?: string - 출생 시간 (HH:MM)
+ * - isLunar?: boolean - 음력 여부
+ * - gender?: string - 성별 ("male" | "female")
+ * - userId?: string - 사용자 ID
+ *
+ * @response SajuResponse
+ * - year_pillar: string - 년주 (年柱)
+ * - month_pillar: string - 월주 (月柱)
+ * - day_pillar: string - 일주 (日柱)
+ * - hour_pillar: string - 시주 (時柱)
+ * - day_master: string - 일간 (日干)
+ * - five_elements: object - 오행 분포
+ *   - wood: number - 목(木)
+ *   - fire: number - 화(火)
+ *   - earth: number - 토(土)
+ *   - metal: number - 금(金)
+ *   - water: number - 수(水)
+ * - zodiac_animal: string - 띠
+ * - ji_jang_gan: object - 지장간 분석
+ * - strength_analysis: object - 신강/신약 분석
+ *
+ * @example
+ * // Request
+ * {
+ *   "birthDate": "1990-05-15",
+ *   "birthTime": "14:30",
+ *   "isLunar": false,
+ *   "gender": "male"
+ * }
+ *
+ * // Response
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "year_pillar": "경오",
+ *     "month_pillar": "신사",
+ *     "day_pillar": "갑진",
+ *     "hour_pillar": "신미",
+ *     "day_master": "갑",
+ *     "five_elements": { "wood": 2, "fire": 3, "earth": 2, "metal": 2, "water": 1 },
+ *     "zodiac_animal": "말"
+ *   }
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

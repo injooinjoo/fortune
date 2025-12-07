@@ -1,3 +1,23 @@
+/**
+ * 피해야 할 사람 운세 (Avoid People Fortune) Edge Function
+ *
+ * @description 사주 기반으로 오늘 피해야 할 띠/유형의 사람을 분석합니다.
+ *
+ * @endpoint POST /fortune-avoid-people
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - birthDate: string - 생년월일 (YYYY-MM-DD)
+ * - birthTime?: string - 출생 시간
+ * - gender: string - 성별
+ *
+ * @response AvoidPeopleResponse
+ * - avoid_zodiac: string[] - 피해야 할 띠
+ * - avoid_types: string[] - 피해야 할 유형
+ * - reason: string - 이유
+ * - good_zodiac: string[] - 좋은 띠
+ * - advice: string - 조언
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

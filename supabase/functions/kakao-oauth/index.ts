@@ -1,3 +1,36 @@
+/**
+ * 카카오 OAuth (Kakao OAuth) Edge Function
+ *
+ * @description 카카오 소셜 로그인을 처리하고 Supabase 사용자를 생성/업데이트합니다.
+ *
+ * @endpoint POST /kakao-oauth
+ *
+ * @requestBody
+ * - access_token: string - 카카오 액세스 토큰 (필수)
+ * - refresh_token?: string - 카카오 리프레시 토큰
+ * - user_info: object - 카카오 사용자 정보 (필수)
+ *   - id: string - 카카오 사용자 ID
+ *   - email?: string - 이메일
+ *   - nickname?: string - 닉네임
+ *   - profile_image_url?: string - 프로필 이미지 URL
+ *
+ * @response OAuthResponse
+ * - user: object - Supabase 사용자 정보
+ * - session: object - Supabase 세션 정보
+ * - access_token: string - Supabase 액세스 토큰
+ * - refresh_token: string - Supabase 리프레시 토큰
+ *
+ * @example
+ * // Request
+ * {
+ *   "access_token": "kakao_access_token_xxx",
+ *   "user_info": {
+ *     "id": "123456789",
+ *     "email": "user@kakao.com",
+ *     "nickname": "홍길동"
+ *   }
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 

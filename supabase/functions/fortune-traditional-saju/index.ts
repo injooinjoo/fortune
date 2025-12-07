@@ -1,3 +1,33 @@
+/**
+ * 전통 사주팔자 (Traditional Saju) Edge Function
+ *
+ * @description 전통 사주팔자 해석을 기반으로 상세한 운세 분석을 제공합니다.
+ *
+ * @endpoint POST /fortune-traditional-saju
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - birthDate: string - 생년월일 (YYYY-MM-DD)
+ * - birthTime: string - 출생 시간 (필수, 예: "축시 (01:00 - 03:00)")
+ * - gender: string - 성별
+ * - isLunar?: boolean - 음력 여부
+ * - question?: string - 특정 질문 (선택)
+ *
+ * @response TraditionalSajuResponse
+ * - four_pillars: { year, month, day, hour } - 사주팔자 (년주, 월주, 일주, 시주)
+ * - ten_gods: object - 십신 분석
+ * - element_analysis: { distribution, dominant, weak } - 오행 분석
+ * - personality: { traits, strengths, weaknesses } - 성격 분석
+ * - life_path: { career, relationship, health, wealth } - 인생 운로
+ * - annual_fortune: object - 연운 분석
+ * - advice: string - 종합 조언
+ * - percentile: number - 상위 백분위
+ *
+ * @example
+ * curl -X POST https://xxx.supabase.co/functions/v1/fortune-traditional-saju \
+ *   -H "Authorization: Bearer <token>" \
+ *   -d '{"userId":"xxx","birthDate":"1990-01-01","birthTime":"축시","gender":"male"}'
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

@@ -1,3 +1,32 @@
+/**
+ * 연애 운세 (Love Fortune) Edge Function
+ *
+ * @description 사용자의 연애 상태와 성향을 분석하여 맞춤형 연애 운세를 제공합니다.
+ *
+ * @endpoint POST /fortune-love
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - age: number - 나이
+ * - gender: string - 성별
+ * - relationshipStatus: 'single' | 'dating' | 'breakup' | 'crush' - 연애 상태
+ * - datingStyles: string[] - 선호하는 연애 스타일
+ * - valueImportance: { 외모, 성격, 경제력, 가치관, 유머감각 } - 중요도 (1-5)
+ *
+ * @response LoveFortuneResponse
+ * - overall_score: number - 연애운 종합 점수
+ * - love_luck: { meeting, relationship, attraction } - 연애 운세
+ * - ideal_partner: { type, characteristics } - 이상형 분석
+ * - timing: { best_time, best_place } - 만남 시기/장소
+ * - advice: string - 연애 조언
+ * - action_tips: string[] - 실천 팁
+ * - percentile: number - 상위 백분위
+ *
+ * @example
+ * curl -X POST https://xxx.supabase.co/functions/v1/fortune-love \
+ *   -H "Authorization: Bearer <token>" \
+ *   -d '{"userId":"xxx","age":28,"gender":"female","relationshipStatus":"single"}'
+ */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 import { LLMFactory } from '../_shared/llm/factory.ts'

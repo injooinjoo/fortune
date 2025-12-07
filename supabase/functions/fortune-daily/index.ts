@@ -1,3 +1,33 @@
+/**
+ * 일일 운세 (Daily Fortune) Edge Function
+ *
+ * @description 사용자의 생년월일, 시간, 띠 정보를 바탕으로 AI 기반 일일 운세를 생성합니다.
+ *
+ * @endpoint POST /fortune-daily
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - birthDate: string - 생년월일 (YYYY-MM-DD)
+ * - birthTime?: string - 출생 시간 (예: "축시 (01:00 - 03:00)")
+ * - gender: 'male' | 'female' - 성별
+ * - isLunar?: boolean - 음력 여부
+ * - zodiacSign?: string - 별자리 (예: "처녀자리")
+ * - zodiacAnimal?: string - 띠 (예: "용")
+ *
+ * @response DailyFortuneResponse
+ * - overall_score: number (1-100) - 종합 운세 점수
+ * - summary: string - 오늘의 운세 요약
+ * - categories: { total, love, money, work, study, health } - 카테고리별 점수/조언
+ * - lucky_items: { time, color, number, direction, food, item } - 행운 요소
+ * - lucky_numbers: string[] - 행운의 숫자
+ * - personalActions: Array<{ title, why, priority }> - 추천 행동
+ * - sajuInsight: object - 사주 기반 인사이트
+ *
+ * @example
+ * curl -X POST https://xxx.supabase.co/functions/v1/fortune-daily \
+ *   -H "Authorization: Bearer <token>" \
+ *   -d '{"userId":"xxx","birthDate":"1990-01-01","gender":"male"}'
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

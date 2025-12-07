@@ -1,3 +1,30 @@
+/**
+ * 궁합 운세 (Compatibility Fortune) Edge Function
+ *
+ * @description 두 사람의 생년월일을 기반으로 사주 궁합을 분석합니다.
+ *
+ * @endpoint POST /fortune-compatibility
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - person1: { name: string, birthDate: string, gender: string, birthTime?: string }
+ * - person2: { name: string, birthDate: string, gender: string, birthTime?: string }
+ * - compatibilityType?: 'love' | 'friendship' | 'business' - 궁합 유형
+ *
+ * @response CompatibilityResponse
+ * - overall_score: number (1-100) - 종합 궁합 점수
+ * - compatibility_grade: string - 궁합 등급 (천생연분, 좋음, 보통, 노력필요)
+ * - categories: { emotion, values, lifestyle, future } - 카테고리별 점수
+ * - strengths: string[] - 장점
+ * - challenges: string[] - 과제
+ * - advice: string - 조언
+ * - percentile: number - 상위 백분위
+ *
+ * @example
+ * curl -X POST https://xxx.supabase.co/functions/v1/fortune-compatibility \
+ *   -H "Authorization: Bearer <token>" \
+ *   -d '{"userId":"xxx","person1":{...},"person2":{...}}'
+ */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'

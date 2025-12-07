@@ -1,3 +1,30 @@
+/**
+ * 꿈 해몽 (Dream Fortune) Edge Function
+ *
+ * @description 사용자가 꾼 꿈을 AI가 분석하여 심리학적/전통적 해석을 제공합니다.
+ *
+ * @endpoint POST /fortune-dream
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - dreamDescription: string - 꿈 내용 설명
+ * - dreamEmotion?: string - 꿈에서 느낀 감정
+ * - dreamTime?: string - 꿈을 꾼 시간대
+ *
+ * @response DreamInterpretationResponse
+ * - symbols: DreamSymbol[] - 꿈에 등장한 상징들
+ * - interpretation: string - 종합 해석
+ * - psychologicalMeaning: string - 심리학적 의미
+ * - traditionalMeaning: string - 전통적 해몽
+ * - fortuneImplication: string - 길흉 예측
+ * - advice: string - 조언
+ * - percentile: number - 상위 백분위
+ *
+ * @example
+ * curl -X POST https://xxx.supabase.co/functions/v1/fortune-dream \
+ *   -H "Authorization: Bearer <token>" \
+ *   -d '{"userId":"xxx","dreamDescription":"하늘을 나는 꿈을 꿨습니다"}'
+ */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

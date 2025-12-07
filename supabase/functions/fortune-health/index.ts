@@ -1,3 +1,31 @@
+/**
+ * 건강 운세 (Health Fortune) Edge Function
+ *
+ * @description 사주 오행을 기반으로 건강 운세와 양생법을 제공합니다.
+ *
+ * @endpoint POST /fortune-health
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - birthDate: string - 생년월일 (YYYY-MM-DD)
+ * - birthTime?: string - 출생 시간
+ * - gender: string - 성별
+ * - healthConcerns?: string[] - 관심 건강 분야
+ *
+ * @response HealthFortuneResponse
+ * - overall_score: number - 건강운 점수
+ * - element_balance: { wood, fire, earth, metal, water } - 오행 균형
+ * - weak_organs: string[] - 취약 장기
+ * - recommendations: { diet, exercise, lifestyle } - 양생 추천
+ * - cautions: string[] - 주의사항
+ * - seasonal_advice: string - 계절별 조언
+ * - percentile: number - 상위 백분위
+ *
+ * @example
+ * curl -X POST https://xxx.supabase.co/functions/v1/fortune-health \
+ *   -H "Authorization: Bearer <token>" \
+ *   -d '{"userId":"xxx","birthDate":"1990-01-01","gender":"female"}'
+ */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'

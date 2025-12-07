@@ -1,3 +1,46 @@
+/**
+ * 가족 재물 운세 (Family Wealth Fortune) Edge Function
+ *
+ * @description 가족의 재물 운세와 재정 관리 조언을 제공합니다.
+ *
+ * @endpoint POST /fortune-family-wealth
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - name?: string - 사용자 이름
+ * - birthDate?: string - 생년월일
+ * - birthTime?: string - 출생 시간
+ * - gender?: string - 성별
+ * - concern: string - 재물 고민 내용
+ * - concern_label: string - 고민 레이블
+ * - detailed_questions: string[] - 상세 질문 목록
+ * - family_member_count: number - 가족 구성원 수
+ * - relationship: string - 관계
+ * - special_question?: string - 특별 질문
+ * - isPremium?: boolean - 프리미엄 사용자 여부
+ * - sajuData?: object - 사주 데이터
+ *
+ * @response FamilyWealthResponse
+ * - overallScore: number - 재물 운세 점수 (0-100)
+ * - wealthAnalysis: object - 재물 분석
+ * - financialAdvice: object[] - 재정 조언
+ * - investmentTips: string[] - 투자 팁
+ * - savingStrategies: object - 저축 전략
+ * - warnings: string[] - 주의사항
+ * - advice: string - 종합 조언
+ * - isBlurred: boolean - 블러 상태
+ * - blurredSections: string[] - 블러된 섹션 목록
+ *
+ * @example
+ * // Request
+ * {
+ *   "userId": "user123",
+ *   "concern": "가족 재정관리",
+ *   "concern_label": "finance",
+ *   "family_member_count": 4,
+ *   "isPremium": true
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

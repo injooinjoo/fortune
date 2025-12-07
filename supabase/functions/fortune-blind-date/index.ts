@@ -1,3 +1,25 @@
+/**
+ * 소개팅 운세 (Blind Date Fortune) Edge Function
+ *
+ * @description 소개팅 상대와의 궁합을 사진/사주 기반으로 분석합니다.
+ *
+ * @endpoint POST /fortune-blind-date
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - userBirthDate: string - 본인 생년월일
+ * - partnerBirthDate?: string - 상대 생년월일
+ * - partnerPhoto?: string - 상대 사진 (base64)
+ * - meetingContext?: string - 만남 상황
+ *
+ * @response BlindDateResponse
+ * - compatibility_score: number - 궁합 점수
+ * - first_impression: string - 첫인상 분석
+ * - conversation_tips: string[] - 대화 팁
+ * - warning_signs: string[] - 주의점
+ * - success_probability: number - 성공 확률
+ * - advice: string - 조언
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

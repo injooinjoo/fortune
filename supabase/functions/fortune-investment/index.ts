@@ -1,3 +1,33 @@
+/**
+ * 투자 운세 (Investment Fortune) Edge Function
+ *
+ * @description 사주와 선택한 종목을 기반으로 투자 운세를 분석합니다.
+ *
+ * @endpoint POST /fortune-investment
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - birthDate: string - 생년월일 (YYYY-MM-DD)
+ * - birthTime?: string - 출생 시간
+ * - gender: string - 성별
+ * - tickers: TickerInfo[] - 분석할 종목 정보
+ *   - symbol: string - 종목 코드 (BTC, AAPL, 005930)
+ *   - name: string - 종목명
+ *   - type: 'crypto' | 'stock_us' | 'stock_kr' - 종목 유형
+ *
+ * @response InvestmentFortuneResponse
+ * - overall_score: number - 투자운 점수
+ * - market_luck: { timing, risk_tolerance } - 시장 운
+ * - ticker_analysis: Array<{ symbol, fortune_score, advice }> - 종목별 분석
+ * - best_investment_time: string - 투자 최적 시기
+ * - cautions: string[] - 투자 주의사항
+ * - percentile: number - 상위 백분위
+ *
+ * @example
+ * curl -X POST https://xxx.supabase.co/functions/v1/fortune-investment \
+ *   -H "Authorization: Bearer <token>" \
+ *   -d '{"userId":"xxx","tickers":[{"symbol":"BTC","name":"비트코인","type":"crypto"}]}'
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

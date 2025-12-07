@@ -1,3 +1,43 @@
+/**
+ * 소원 분석 (Analyze Wish) Edge Function
+ *
+ * @description 사용자의 소원을 AI가 분석하여 공감 메시지, 희망의 말, 조언을 제공합니다.
+ *
+ * @endpoint POST /analyze-wish
+ *
+ * @requestBody
+ * - wish_text: string - 소원 내용 (필수)
+ * - category: string - 소원 카테고리 (필수)
+ * - urgency?: number - 긴급도 (1-5, 기본값: 3)
+ * - user_profile?: object - 사용자 프로필 정보
+ *
+ * @response WishAnalysisResponse
+ * - empathy_message: string - 공감 메시지 (150자)
+ * - hope_message: string - 희망과 격려 (200자)
+ * - advice: string[] - 구체적 조언 3개
+ * - encouragement: string - 응원 메시지 (100자)
+ * - special_words: string - 신의 한마디 (50자)
+ *
+ * @example
+ * // Request
+ * {
+ *   "wish_text": "취업에 성공하고 싶어요",
+ *   "category": "career",
+ *   "urgency": 4
+ * }
+ *
+ * // Response
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "empathy_message": "취업 준비의 어려움을 잘 알고 있어요...",
+ *     "hope_message": "당신의 노력은 반드시 빛을 발할 거예요...",
+ *     "advice": ["이력서를 업데이트하세요", "네트워킹을 넓히세요", ...],
+ *     "encouragement": "포기하지 마세요!",
+ *     "special_words": "기회는 준비된 자에게 온다"
+ *   }
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 import { LLMFactory } from '../_shared/llm/factory.ts'

@@ -1,3 +1,47 @@
+/**
+ * 성격 DNA 분석 (Personality DNA) Edge Function
+ *
+ * @description MBTI, 혈액형, 별자리, 띠를 조합하여 개인의 고유한 성격 DNA를 분석합니다.
+ *
+ * @endpoint POST /personality-dna
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - name: string - 사용자 이름
+ * - mbti: string - MBTI 유형 (예: ENFP)
+ * - bloodType: string - 혈액형 (A, B, O, AB)
+ * - zodiac: string - 별자리
+ * - zodiacAnimal: string - 띠
+ *
+ * @response PersonalityDNAResponse
+ * - dnaCode: string - 고유 DNA 코드
+ * - title: string - 성격 타이틀
+ * - emoji: string - 대표 이모지
+ * - todayHighlight: string - 오늘의 하이라이트
+ * - loveStyle: object - 연애 스타일
+ *   - title: string - 연애 타이틀
+ *   - when_dating: string - 연애 중 특징
+ *   - after_breakup: string - 이별 후 특징
+ * - workStyle: object - 업무 스타일
+ *   - as_boss: string - 상사로서 특징
+ *   - at_company_dinner: string - 회식 때 특징
+ * - dailyMatching: object - 일상 매칭
+ *   - cafe_menu: string - 추천 카페 메뉴
+ *   - netflix_genre: string - 추천 넷플릭스 장르
+ *   - weekend_activity: string - 주말 활동 추천
+ * - compatibility: object - 궁합 정보
+ *
+ * @example
+ * // Request
+ * {
+ *   "userId": "user123",
+ *   "name": "홍길동",
+ *   "mbti": "ENFP",
+ *   "bloodType": "O",
+ *   "zodiac": "쌍둥이자리",
+ *   "zodiacAnimal": "토끼"
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const corsHeaders = {

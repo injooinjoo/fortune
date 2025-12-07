@@ -1,3 +1,48 @@
+/**
+ * 반려동물 궁합 운세 (Pet Compatibility Fortune) Edge Function
+ *
+ * @description 반려동물과 주인의 사주를 기반으로 궁합, 건강, 행운 아이템 등을 분석합니다.
+ *
+ * @endpoint POST /fortune-pet-compatibility
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - petName: string - 반려동물 이름
+ * - petType: string - 반려동물 종류 (dog, cat, etc.)
+ * - petBirthDate?: string - 반려동물 생년월일
+ * - petGender?: string - 반려동물 성별
+ * - ownerBirthDate: string - 주인 생년월일
+ * - isPremium?: boolean - 프리미엄 사용자 여부
+ *
+ * @response PetFortuneResponse
+ * - daily_condition: object - 오늘의 컨디션 (무료)
+ *   - overall_score: number - 종합 점수 (0-100)
+ *   - mood_prediction: string - 기분 예측
+ *   - energy_level: string - 에너지 레벨 (high/medium/low)
+ * - owner_bond: object - 주인과의 궁합 (무료)
+ *   - bond_score: number - 유대감 점수
+ *   - bonding_tip: string - 유대감 높이는 팁
+ *   - best_time: string - 최적의 시간
+ * - lucky_items: object - 행운 아이템 (무료)
+ *   - color: string - 행운의 색상
+ *   - snack: string - 행운의 간식
+ *   - activity: string - 행운의 활동
+ * - health_forecast: object - 건강 예보 (프리미엄)
+ * - activity_guide: object - 활동 가이드 (프리미엄)
+ * - isBlurred: boolean - 블러 상태
+ * - blurredSections: string[] - 블러된 섹션 목록
+ *
+ * @example
+ * // Request
+ * {
+ *   "userId": "user123",
+ *   "petName": "멍멍이",
+ *   "petType": "dog",
+ *   "petBirthDate": "2020-03-15",
+ *   "ownerBirthDate": "1990-05-20",
+ *   "isPremium": true
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

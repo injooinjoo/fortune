@@ -1,3 +1,41 @@
+/**
+ * 네이버 OAuth (Naver OAuth) Edge Function
+ *
+ * @description 네이버 소셜 로그인을 처리하고 Supabase 사용자를 생성/업데이트합니다.
+ *
+ * @endpoint POST /naver-oauth
+ *
+ * @requestBody
+ * - access_token: string - 네이버 액세스 토큰 (필수)
+ *
+ * @response OAuthResponse
+ * - user: object - Supabase 사용자 정보
+ * - session: object - Supabase 세션 정보
+ * - access_token: string - Supabase 액세스 토큰
+ * - refresh_token: string - Supabase 리프레시 토큰
+ * - naver_user: object - 네이버 사용자 정보
+ *   - id: string - 네이버 사용자 ID
+ *   - email?: string - 이메일
+ *   - nickname?: string - 닉네임
+ *   - name?: string - 이름
+ *   - gender?: string - 성별
+ *   - birthday?: string - 생일
+ *   - birthyear?: string - 출생연도
+ *   - profile_image?: string - 프로필 이미지
+ *
+ * @example
+ * // Request
+ * {
+ *   "access_token": "naver_access_token_xxx"
+ * }
+ *
+ * // Response
+ * {
+ *   "success": true,
+ *   "user": { "id": "...", "email": "..." },
+ *   "naver_user": { "id": "123", "nickname": "홍길동" }
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 

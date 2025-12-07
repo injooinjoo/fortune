@@ -1,3 +1,25 @@
+/**
+ * 집 풍수 운세 (Home Feng Shui Fortune) Edge Function
+ *
+ * @description 사주와 집 정보를 기반으로 풍수 분석을 제공합니다.
+ *
+ * @endpoint POST /fortune-home-fengshui
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - birthDate: string - 생년월일
+ * - homeDirection?: string - 집 방향
+ * - floorPlan?: string - 평면도 유형
+ * - concerns?: string[] - 관심 영역 (재물, 건강, 관계 등)
+ *
+ * @response HomeFengshuiResponse
+ * - overall_score: number - 풍수 점수
+ * - direction_analysis: object - 방향별 분석
+ * - room_tips: { bedroom, kitchen, living } - 방별 팁
+ * - lucky_items: string[] - 추천 아이템
+ * - avoid_items: string[] - 피해야 할 것
+ * - advice: string - 종합 조언
+ */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { crypto } from 'https://deno.land/std@0.168.0/crypto/mod.ts'

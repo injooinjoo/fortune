@@ -1,3 +1,42 @@
+/**
+ * 가족 화합 운세 (Family Harmony Fortune) Edge Function
+ *
+ * @description 가족 구성원 간의 관계와 화합 운세를 분석합니다.
+ *
+ * @endpoint POST /fortune-family-harmony
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - name: string - 사용자 이름
+ * - birthDate: string - 생년월일
+ * - family_type: string - 가족 유형
+ * - family_members: object[] - 가족 구성원 목록
+ * - relationship: string - 주요 관계
+ * - child_name?: string - 자녀 이름
+ * - child_age?: number - 자녀 나이
+ * - child_gender?: string - 자녀 성별
+ * - spouse_name?: string - 배우자 이름
+ * - parent_type?: string - 부모 유형
+ * - sibling_count?: number - 형제자매 수
+ *
+ * @response FamilyHarmonyResponse
+ * - overallScore: number - 가족 화합 점수 (0-100)
+ * - familyFortune: object - 가족 운세
+ * - relationshipAnalysis: object[] - 관계별 분석
+ * - harmonyTips: string[] - 화합 팁
+ * - warnings: string[] - 주의사항
+ * - advice: string - 종합 조언
+ *
+ * @example
+ * // Request
+ * {
+ *   "userId": "user123",
+ *   "name": "홍길동",
+ *   "birthDate": "1990-05-15",
+ *   "family_type": "nuclear",
+ *   "relationship": "spouse"
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'

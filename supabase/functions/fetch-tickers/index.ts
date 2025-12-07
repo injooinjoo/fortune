@@ -1,3 +1,46 @@
+/**
+ * 티커 조회 (Fetch Tickers) Edge Function
+ *
+ * @description 투자 운세에 사용되는 주식/암호화폐 티커 정보를 조회합니다.
+ *
+ * @endpoint POST /fetch-tickers
+ *
+ * @requestBody
+ * - category?: string - 특정 카테고리만 조회 (stock, crypto, etc.)
+ * - search?: string - 검색어 (이름, 심볼)
+ * - popularOnly?: boolean - 인기 종목만 조회
+ * - limit?: number - 조회 개수 제한
+ *
+ * @response TickerResponse
+ * - tickers: Ticker[] - 티커 목록
+ *   - id: string - 티커 ID
+ *   - symbol: string - 심볼 (BTC, AAPL, etc.)
+ *   - name: string - 종목명 (한글)
+ *   - name_en: string - 종목명 (영문)
+ *   - category: string - 카테고리
+ *   - exchange: string - 거래소
+ *   - logo_url: string - 로고 URL
+ *   - is_popular: boolean - 인기 종목 여부
+ *
+ * @example
+ * // Request
+ * {
+ *   "category": "crypto",
+ *   "popularOnly": true,
+ *   "limit": 10
+ * }
+ *
+ * // Response
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "tickers": [
+ *       { "symbol": "BTC", "name": "비트코인", "category": "crypto", "is_popular": true },
+ *       ...
+ *     ]
+ *   }
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 

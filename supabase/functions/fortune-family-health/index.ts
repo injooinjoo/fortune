@@ -1,3 +1,46 @@
+/**
+ * 가족 건강 운세 (Family Health Fortune) Edge Function
+ *
+ * @description 가족 구성원의 건강 운세와 건강 관리 조언을 제공합니다.
+ *
+ * @endpoint POST /fortune-family-health
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - name?: string - 사용자 이름
+ * - birthDate?: string - 생년월일
+ * - birthTime?: string - 출생 시간
+ * - gender?: string - 성별
+ * - concern: string - 건강 고민 내용
+ * - concern_label: string - 고민 레이블
+ * - detailed_questions: string[] - 상세 질문 목록
+ * - family_member_count: number - 가족 구성원 수
+ * - relationship: string - 관계
+ * - special_question?: string - 특별 질문
+ * - isPremium?: boolean - 프리미엄 사용자 여부
+ * - sajuData?: object - 사주 데이터
+ *
+ * @response FamilyHealthResponse
+ * - overallScore: number - 건강 운세 점수 (0-100)
+ * - healthAnalysis: object - 건강 분석
+ * - preventionTips: string[] - 예방 조언
+ * - dietRecommendations: object - 식단 추천
+ * - exerciseGuide: object - 운동 가이드
+ * - warnings: string[] - 주의사항
+ * - advice: string - 종합 조언
+ * - isBlurred: boolean - 블러 상태
+ * - blurredSections: string[] - 블러된 섹션 목록
+ *
+ * @example
+ * // Request
+ * {
+ *   "userId": "user123",
+ *   "concern": "가족 건강관리",
+ *   "concern_label": "health",
+ *   "family_member_count": 4,
+ *   "isPremium": true
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

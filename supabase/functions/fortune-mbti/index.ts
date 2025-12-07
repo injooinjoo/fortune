@@ -1,3 +1,30 @@
+/**
+ * MBTI 운세 (MBTI Fortune) Edge Function
+ *
+ * @description MBTI 유형과 생년월일을 기반으로 맞춤형 운세를 생성합니다.
+ *
+ * @endpoint POST /fortune-mbti
+ *
+ * @requestBody
+ * - mbti: string - MBTI 유형 (예: "INTJ", "ENFP")
+ * - name: string - 사용자 이름
+ * - birthDate: string - 생년월일 (YYYY-MM-DD)
+ * - userId?: string - 사용자 ID
+ * - isPremium?: boolean - 프리미엄 사용자 여부
+ *
+ * @response MbtiFortuneResponse
+ * - mbti_analysis: { type, characteristics, strengths, weaknesses }
+ * - today_fortune: { overall, work, relationship, health }
+ * - lucky_elements: { color, number, time, activity }
+ * - advice: string - 오늘의 조언
+ * - tips: string[] - MBTI별 맞춤 팁
+ * - percentile: number - 상위 백분위
+ *
+ * @example
+ * curl -X POST https://xxx.supabase.co/functions/v1/fortune-mbti \
+ *   -H "Authorization: Bearer <token>" \
+ *   -d '{"mbti":"INTJ","name":"홍길동","birthDate":"1990-01-01"}'
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

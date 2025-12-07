@@ -1,3 +1,48 @@
+/**
+ * 운세 스토리 생성 (Generate Fortune Story) Edge Function
+ *
+ * @description 사용자의 사주 데이터를 기반으로 개인화된 운세 스토리를 생성합니다.
+ *              저장된 사주 데이터(v1.0/v2.0)를 활용하여 일일/주간/월간 스토리를 만듭니다.
+ *
+ * @endpoint POST /generate-fortune-story
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID (필수)
+ * - storyType?: string - 스토리 유형 ('daily', 'weekly', 'monthly')
+ * - theme?: string - 테마 ('career', 'love', 'health', 'wealth')
+ * - includeAdvice?: boolean - 조언 포함 여부
+ *
+ * @response FortuneStoryResponse
+ * - story: object - 생성된 스토리
+ *   - title: string - 스토리 제목
+ *   - content: string - 스토리 내용
+ *   - highlights: string[] - 주요 포인트
+ *   - advice: string - 조언 (옵션)
+ * - sajuContext: object - 사주 컨텍스트 정보
+ *   - dayMaster: string - 일간
+ *   - elements: object - 오행 분포
+ *
+ * @example
+ * // Request
+ * {
+ *   "userId": "user123",
+ *   "storyType": "daily",
+ *   "theme": "career",
+ *   "includeAdvice": true
+ * }
+ *
+ * // Response
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "story": {
+ *       "title": "오늘의 커리어 운세",
+ *       "content": "오늘은 새로운 기회가...",
+ *       "highlights": ["회의에서 좋은 아이디어", "상사의 인정"]
+ *     }
+ *   }
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'

@@ -1,3 +1,60 @@
+/**
+ * 시간 운세 (Time Fortune) Edge Function
+ *
+ * @description 사용자의 위치와 사주 정보를 기반으로 시간대별 운세를 분석합니다.
+ *
+ * @endpoint POST /fortune-time
+ *
+ * @requestBody
+ * - userId: string - 사용자 ID
+ * - name: string - 사용자 이름
+ * - birthDate: string - 생년월일 (ISO 8601)
+ * - birthTime?: string - 출생 시간
+ * - gender: string - 성별
+ * - isLunar?: boolean - 음력 여부
+ * - mbtiType?: string - MBTI 유형
+ * - bloodType?: string - 혈액형
+ * - zodiacSign?: string - 별자리
+ * - zodiacAnimal?: string - 띠
+ * - userLocation?: object - 사용자 위치 정보 (LocationManager)
+ * - period?: string - 기간 ('today' 기본값)
+ * - date?: string - 특정 날짜
+ *
+ * @response TimeFortuneResponse
+ * - date: string - 날짜
+ * - dayOfWeek: string - 요일
+ * - timeSlots: object[] - 시간대별 운세
+ *   - period: string - 시간대 (아침/오전/점심/오후/저녁/밤)
+ *   - score: number - 점수 (0-100)
+ *   - description: string - 설명
+ *   - activities: string[] - 추천 활동
+ * - bestTime: object - 최고의 시간대
+ * - worstTime: object - 주의할 시간대
+ * - dailySummary: string - 하루 요약
+ *
+ * @example
+ * // Request
+ * {
+ *   "userId": "user123",
+ *   "name": "홍길동",
+ *   "birthDate": "1990-05-15",
+ *   "userLocation": { "latitude": 37.5665, "longitude": 126.9780 },
+ *   "period": "today"
+ * }
+ *
+ * // Response
+ * {
+ *   "success": true,
+ *   "data": {
+ *     "date": "2024-01-15",
+ *     "timeSlots": [
+ *       { "period": "오전", "score": 85, "activities": ["미팅", "계획수립"] },
+ *       ...
+ *     ],
+ *     "bestTime": { "period": "오전", "score": 85 }
+ *   }
+ * }
+ */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { calculatePercentile, addPercentileToResult } from '../_shared/percentile/calculator.ts'
