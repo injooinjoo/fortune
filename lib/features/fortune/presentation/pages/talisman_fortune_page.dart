@@ -113,73 +113,83 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
   }
 
   Widget _buildWishInput(BuildContext context, WidgetRef ref) {
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 100),
-          child: TalismanWishInput(
-            key: _wishInputKey,
-            selectedCategory: _selectedCategory!,
-            onWishSubmitted: (wish) async {
-              final authState = ref.read(authStateProvider).value;
-              final userId = authState?.session?.user.id;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    // 버튼 높이(58) + 상단 패딩(16) + 하단 Safe Area + 여유 공간
+    final scrollBottomPadding = 58 + 16 + bottomPadding + 20;
 
-              if (userId == null) {
-                _showLoginRequiredDialog(context);
-                return;
-              }
+    // Stack이 화면 전체를 채우도록 SizedBox.expand 사용
+    return SizedBox.expand(
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(24, 24, 24, scrollBottomPadding),
+            child: TalismanWishInput(
+              key: _wishInputKey,
+              selectedCategory: _selectedCategory!,
+              onWishSubmitted: (wish) async {
+                final authState = ref.read(authStateProvider).value;
+                final userId = authState?.session?.user.id;
 
-              // 하루 제한 체크
-              final canCreate = await ref.read(dailyTalismanLimitProvider(userId).future);
-              if (!mounted || !context.mounted) return;
-              if (canCreate) {
-                // 제한 초과 시 프리미엄 안내
-                await _showPremiumBottomSheet(context);
-                return;
-              }
+                if (userId == null) {
+                  _showLoginRequiredDialog(context);
+                  return;
+                }
 
-              setState(() {
-                _selectedWish = wish;
-              });
-              ref.read(talismanGenerationProvider(userId).notifier).generateTalisman(
-                category: _selectedCategory!,
-                specificWish: wish,
-              );
-            },
-            onAIWishSubmitted: (wish, isAIGenerated) async {
-              final authState = ref.read(authStateProvider).value;
-              final userId = authState?.session?.user.id;
+                // 하루 제한 체크
+                final canCreate = await ref.read(dailyTalismanLimitProvider(userId).future);
+                if (!mounted || !context.mounted) return;
+                if (canCreate) {
+                  // 제한 초과 시 프리미엄 안내
+                  await _showPremiumBottomSheet(context);
+                  return;
+                }
 
-              if (userId == null) {
-                _showLoginRequiredDialog(context);
-                return;
-              }
+                setState(() {
+                  _selectedWish = wish;
+                });
+                ref.read(talismanGenerationProvider(userId).notifier).generateTalisman(
+                  category: _selectedCategory!,
+                  specificWish: wish,
+                );
+              },
+              onAIWishSubmitted: (wish, isAIGenerated) async {
+                final authState = ref.read(authStateProvider).value;
+                final userId = authState?.session?.user.id;
 
-              // AI 생성은 제한 체크 없이 바로 진행
-              setState(() {
-                _selectedWish = wish;
-              });
-              ref.read(talismanGenerationProvider(userId).notifier).generateTalisman(
-                category: _selectedCategory!,
-                specificWish: wish,
-              );
-            },
-            onValidationChanged: (isValid, isLoading) {
-              setState(() {
-                _isValid = isValid;
-                _isGeneratingAI = isLoading;
-              });
-            },
+                if (userId == null) {
+                  _showLoginRequiredDialog(context);
+                  return;
+                }
+
+                // AI 생성은 제한 체크 없이 바로 진행
+                setState(() {
+                  _selectedWish = wish;
+                });
+                ref.read(talismanGenerationProvider(userId).notifier).generateTalisman(
+                  category: _selectedCategory!,
+                  specificWish: wish,
+                );
+              },
+              onValidationChanged: (isValid, isLoading) {
+                setState(() {
+                  _isValid = isValid;
+                  _isGeneratingAI = isLoading;
+                });
+              },
+            ),
           ),
-        ),
-        UnifiedButton.floating(
-          text: _isGeneratingAI ? 'AI가 부적을 만들고 있어요...' : '🎨 AI 맞춤 부적 만들기',
-          onPressed: _isValid && !_isGeneratingAI ? () {
-            _wishInputKey.currentState?.handleAISubmit();
-          } : null,
-          isLoading: _isGeneratingAI,
-        ),
-      ],
+          // 다른 페이지와 동일한 위치의 floating button
+          UnifiedButton.floating(
+            text: _isGeneratingAI ? 'AI가 부적을 만들고 있어요...' : '🎨 AI 맞춤 부적 만들기',
+            onPressed: _isValid && !_isGeneratingAI
+                ? () {
+                    _wishInputKey.currentState?.handleAISubmit();
+                  }
+                : null,
+            isLoading: _isGeneratingAI,
+          ),
+        ],
+      ),
     );
   }
 
