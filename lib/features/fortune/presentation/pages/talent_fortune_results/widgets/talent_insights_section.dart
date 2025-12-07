@@ -76,7 +76,7 @@ class TalentInsightsSection extends StatelessWidget {
                           '#${index + 1}',
                           style: TypographyUnified.labelSmall.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: TossDesignSystem.white,
                           ),
                         ),
                       ),

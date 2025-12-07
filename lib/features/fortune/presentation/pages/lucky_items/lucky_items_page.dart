@@ -7,8 +7,11 @@ import '../../../../../core/models/fortune_result.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../domain/models/conditions/lucky_items_fortune_conditions.dart';
 import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../presentation/providers/auth_provider.dart';
 import '../../../../../presentation/providers/ad_provider.dart';
+import '../../../../../presentation/providers/token_provider.dart';
+import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../core/widgets/accordion_input_section.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../core/widgets/date_picker/numeric_date_input.dart';
@@ -221,20 +224,20 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.stars, size: 64, color: Colors.white),
+                  Icon(Icons.stars, size: 64, color: TossDesignSystem.white),
                   const SizedBox(height: 16),
                   Text(
                     '행운 아이템',
                     style: TypographyUnified.heading2.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     '로또번호부터 오늘의 색상까지\n당신의 행운을 찾아보세요',
                     style: TypographyUnified.bodyMedium.copyWith(
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: TossDesignSystem.white.withValues(alpha: 0.9),
                       height: 1.5,
                     ),
                     textAlign: TextAlign.center,
@@ -557,11 +560,11 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
               _isBlurred = false;
               _blurredSections = [];
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('행운 아이템이 잠금 해제되었습니다!'),
-                duration: Duration(seconds: 2),
-              ),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
           }
         },

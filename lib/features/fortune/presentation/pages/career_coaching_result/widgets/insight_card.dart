@@ -4,17 +4,24 @@ import '../../../../../../core/theme/toss_design_system.dart';
 import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/components/app_card.dart';
+import '../../../../../../core/widgets/gpt_style_typing_text.dart';
 
 class InsightCard extends StatelessWidget {
   final Map<String, dynamic> insight;
   final int index;
   final bool isDark;
+  final bool enableTyping;
+  final bool startTyping;
+  final VoidCallback? onTypingComplete;
 
   const InsightCard({
     super.key,
     required this.insight,
     required this.index,
     required this.isDark,
+    this.enableTyping = false,
+    this.startTyping = true,
+    this.onTypingComplete,
   });
 
   @override
@@ -87,13 +94,24 @@ class InsightCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          Text(
-            description,
-            style: context.bodyMedium.copyWith(
-              height: 1.6,
-              color: TossDesignSystem.gray700,
-            ),
-          ),
+          enableTyping
+              ? GptStyleTypingText(
+                  text: description,
+                  style: context.bodyMedium.copyWith(
+                    height: 1.6,
+                    color: TossDesignSystem.gray700,
+                  ),
+                  showGhostText: true,
+                  startTyping: startTyping,
+                  onComplete: onTypingComplete,
+                )
+              : Text(
+                  description,
+                  style: context.bodyMedium.copyWith(
+                    height: 1.6,
+                    color: TossDesignSystem.gray700,
+                  ),
+                ),
         ],
       ),
     ).animate(delay: Duration(milliseconds: 100 * index))

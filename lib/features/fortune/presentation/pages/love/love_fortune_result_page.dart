@@ -10,6 +10,8 @@ import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../services/ad_service.dart'; // ✅ RewardedAd용
+import '../../../../../core/utils/subscription_snackbar.dart';
+import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../core/utils/logger.dart'; // ✅ 로그용
 
 /// 연애운 결과 페이지 (프리미엄/블러 시스템 적용)
@@ -522,6 +524,12 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
                 blurredSections: [],
               );
             });
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
+            );
           }
         },
       );

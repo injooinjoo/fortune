@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:ui';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/widgets/gpt_style_typing_text.dart';
+import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import 'tarot_card_detail_modal.dart';
 import '../../../../../core/theme/typography_unified.dart';
 
@@ -499,7 +499,10 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
 
           // 해석 텍스트
           if (interpretation.isNotEmpty)
-            _buildBlurWrapper(
+            UnifiedBlurWrapper(
+              isBlurred: widget.result.isBlurred,
+              blurredSections: widget.result.blurredSections,
+              sectionKey: 'card_${index + 1}',
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -518,7 +521,6 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                   textAlign: TextAlign.center,
                 ),
               ),
-              sectionKey: 'card_${index + 1}',
             ),
 
           // 구분선
@@ -764,49 +766,16 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
       ),
     );
 
-    // ✅ 블러 처리
-    return _buildBlurWrapper(
-      child: container,
+    // ✅ UnifiedBlurWrapper로 마이그레이션 완료 (2024-12-07)
+    return UnifiedBlurWrapper(
+      isBlurred: widget.result.isBlurred,
+      blurredSections: widget.result.blurredSections,
       sectionKey: 'overall_interpretation',
+      child: container,
     );
   }
 
-  /// 블러 래퍼 (블러 상태일 때만 블러 효과 적용)
-  Widget _buildBlurWrapper({required Widget child, required String sectionKey}) {
-    if (!widget.result.isBlurred || !widget.result.blurredSections.contains(sectionKey)) {
-      return child;  // 블러 불필요
-    }
-
-    // ✅ 블러 처리된 콘텐츠
-    return Stack(
-      children: [
-        // 원본 콘텐츠 (블러 처리)
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        // 반투명 오버레이
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-        ),
-        // 중앙 잠금 아이콘
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // ✅ _buildBlurWrapper 제거됨 - UnifiedBlurWrapper 사용
 
   Widget _buildIndividualInterpretations(bool isDark) {
     if (widget.result.spreadType == TarotSpreadType.single) {
@@ -885,9 +854,11 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
           );
 
           // ✅ 2번째(card_2), 3번째(card_3) 카드는 블러 처리
-          return _buildBlurWrapper(
-            child: container,
+          return UnifiedBlurWrapper(
+            isBlurred: widget.result.isBlurred,
+            blurredSections: widget.result.blurredSections,
             sectionKey: 'card_${index + 1}',  // card_1, card_2, card_3, ...
+            child: container,
           );
         }),
       ],

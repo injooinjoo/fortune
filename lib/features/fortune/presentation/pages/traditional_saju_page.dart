@@ -16,10 +16,12 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../providers/saju_provider.dart';
 import '../widgets/saju_element_chart.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+import '../widgets/fortune_loading_skeleton.dart';
 // 전문가 사주 위젯들
 import '../widgets/saju/saju_widgets.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
+import '../../../../core/utils/subscription_snackbar.dart';
 // ✅ Phase 19-2
 
 /// 토스 스타일 전통 사주팔자 페이지
@@ -124,20 +126,14 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (sajuState.isLoading) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text(
-              '사주 데이터를 불러오는 중...',
-              style: TextStyle(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-              ),
-            ),
-          ],
-        ),
+      return FortuneLoadingSkeleton(
+        itemCount: 3,
+        showHeader: true,
+        loadingMessages: const [
+          '사주 데이터를 불러오는 중...',
+          '오행의 균형을 분석하고 있어요',
+          '팔자를 해석하고 있어요...',
+        ],
       );
     }
 
@@ -272,7 +268,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   Widget _buildTabBar(bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : Colors.white,
+        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
         border: Border(
           bottom: BorderSide(
             color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
@@ -749,11 +745,11 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
               _blurredSections = [];
             });
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('운세가 잠금 해제되었습니다!'),
-                duration: Duration(seconds: 2),
-              ),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
           }
         },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/theme/toss_design_system.dart';
 
 class SelectedMbtiInfo extends StatelessWidget {
   final String selectedMbti;
@@ -44,7 +45,7 @@ class SelectedMbtiInfo extends StatelessWidget {
           Text(
             selectedMbti,
             style: TypographyUnified.heading2.copyWith(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -52,7 +53,7 @@ class SelectedMbtiInfo extends StatelessWidget {
           Text(
             mbtiDescriptions[selectedMbti] ?? '',
             style: TypographyUnified.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.9),
+              color: TossDesignSystem.white.withValues(alpha: 0.9),
             ),
           ),
         ],

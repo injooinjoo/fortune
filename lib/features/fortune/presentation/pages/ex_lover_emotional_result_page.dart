@@ -7,6 +7,8 @@ import '../../domain/models/ex_lover_simple_model.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/widgets/blurred_fortune_content.dart'; // ✅ BlurredFortuneContent
 import '../../../../services/ad_service.dart';
+import '../../../../core/utils/subscription_snackbar.dart';
+import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
 
 import '../../../../core/widgets/unified_button.dart';
@@ -937,11 +939,11 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 blurredSections: [],
               );
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('운세가 잠금 해제되었습니다!'),
-                duration: Duration(seconds: 2),
-              ),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
           }
         },

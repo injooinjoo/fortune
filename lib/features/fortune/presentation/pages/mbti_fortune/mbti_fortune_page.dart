@@ -11,6 +11,7 @@ import 'package:fortune/core/services/unified_fortune_service.dart';
 import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/shared/components/toast.dart';
 import 'package:fortune/services/ad_service.dart';
+import 'package:fortune/core/utils/subscription_snackbar.dart';
 // ✅ Phase 16-2
 import 'package:fortune/presentation/providers/user_profile_notifier.dart';
 import 'package:fortune/presentation/providers/token_provider.dart';
@@ -312,11 +313,11 @@ class _MbtiFortunePageState
                 blurredSections: [],
               );
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('운세가 잠금 해제되었습니다!'),
-                duration: Duration(seconds: 2),
-              ),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
           }
         },

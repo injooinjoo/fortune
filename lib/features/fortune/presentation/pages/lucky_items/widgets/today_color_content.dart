@@ -60,7 +60,7 @@ class TodayColorContent extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.gray900 : Colors.white,
+        color: isDark ? TossDesignSystem.gray900 : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray200,
@@ -79,7 +79,7 @@ class TodayColorContent extends StatelessWidget {
               child: Text(
                 hex,
                 style: TypographyUnified.heading3.copyWith(
-                  color: (r + g + b) > 382 ? Colors.black87 : Colors.white,
+                  color: (r + g + b) > 382 ? TossDesignSystem.gray900 : TossDesignSystem.white,
                   fontWeight: FontWeight.w600,
                 ),
               ),

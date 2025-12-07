@@ -1,5 +1,3 @@
-import 'dart:ui'; // ✅ ImageFilter.blur용
-
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,10 +5,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/models/wish_fortune_result.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
-// ✅ FloatingBottomButton용
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../services/ad_service.dart'; // ✅ RewardedAd용
+import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/utils/logger.dart'; // ✅ 로그용
 import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
 
@@ -113,7 +111,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
               height: 3,
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+                color: (isDark ? TossDesignSystem.white : TossDesignSystem.gray900).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(2),
               ),
               child: FractionallySizedBox(
@@ -139,12 +137,12 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.15),
+                  color: (isDark ? TossDesignSystem.white : TossDesignSystem.gray900).withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.close,
-                  color: isDark ? Colors.white : Colors.black87,
+                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                   size: 20,
                 ),
               ),
@@ -174,11 +172,11 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
       height: double.infinity,
       margin: EdgeInsets.fromLTRB(20, topPadding + 40, 20, bottomMargin),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+        color: isDark ? const Color(0xFF2D2D2D) : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+            color: TossDesignSystem.gray900.withValues(alpha: isDark ? 0.3 : 0.08),
             blurRadius: 32,
             offset: const Offset(0, 12),
             spreadRadius: 0,
@@ -206,19 +204,25 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         return _buildHopeCard(isDark);
       case 2:
         // Premium 섹션 3: 조언 카드
-        return _buildBlurWrapper(
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
           sectionKey: 'advice',
           child: _buildAdviceCard(isDark),
         );
       case 3:
         // Premium 섹션 4: 응원 카드
-        return _buildBlurWrapper(
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
           sectionKey: 'encouragement',
           child: _buildEncouragementCard(isDark),
         );
       case 4:
         // Premium 섹션 5: 신의 한마디 카드
-        return _buildBlurWrapper(
+        return UnifiedBlurWrapper(
+          isBlurred: _isBlurred,
+          blurredSections: _blurredSections,
           sectionKey: 'specialWords',
           child: _buildSpecialWordsCard(isDark),
         );
@@ -251,7 +255,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         Text(
           '당신의 마음이 느껴져요',
           style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
             fontSize: 24,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
@@ -267,7 +271,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
             widget.result.empathyMessage,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isDark ? Colors.white70 : Colors.black54,
+              color: isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray600,
               fontSize: 16,
               height: 1.6,
               fontWeight: FontWeight.w400,
@@ -304,7 +308,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         Text(
           '당신은 할 수 있어요',
           style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
             fontSize: 24,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
@@ -320,7 +324,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
             widget.result.hopeMessage,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isDark ? Colors.white70 : Colors.black54,
+              color: isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray600,
               fontSize: 16,
               height: 1.6,
               fontWeight: FontWeight.w400,
@@ -357,7 +361,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         Text(
           '이렇게 해보세요',
           style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
             fontSize: 22,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
@@ -396,8 +400,8 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
                         child: Center(
                           child: Text(
                             '${index + 1}',
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: TossDesignSystem.white,
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                             ),
@@ -409,7 +413,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
                         child: Text(
                           advice,
                           style: TextStyle(
-                            color: isDark ? Colors.white70 : Colors.black87,
+                            color: isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray900,
                             fontSize: 14,
                             height: 1.5,
                             fontWeight: FontWeight.w400,
@@ -455,7 +459,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
         Text(
           '힘내세요!',
           style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
+            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
             fontSize: 24,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
@@ -471,7 +475,7 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
             widget.result.encouragement,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isDark ? Colors.white70 : Colors.black54,
+              color: isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray600,
               fontSize: 16,
               height: 1.6,
               fontWeight: FontWeight.w400,
@@ -517,10 +521,10 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
           const Spacer(flex: 1),
 
           // 제목
-          const Text(
+          Text(
             '신이 전하는 한마디',
             style: TextStyle(
-              color: Colors.white,
+              color: TossDesignSystem.white,
               fontSize: 22,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.3,
@@ -537,8 +541,8 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
               child: Text(
                 '"${widget.result.specialWords}"',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: TossDesignSystem.white,
                   fontSize: 18,
                   height: 1.5,
                   fontWeight: FontWeight.w700,
@@ -594,6 +598,12 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
               _isBlurred = false;
               _blurredSections = [];
             });
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
+            );
           }
         },
       );
@@ -617,39 +627,5 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
     }
   }
 
-  // ✅ Blur wrapper helper
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required String sectionKey,
-  }) {
-    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
-      return child;
-    }
-
-    return Stack(
-      children: [
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(28),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // ✅ UnifiedBlurWrapper로 마이그레이션 완료 (2024-12-07)
 }

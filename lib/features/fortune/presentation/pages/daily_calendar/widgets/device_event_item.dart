@@ -31,12 +31,12 @@ class DeviceEventItem extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected
                 ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                : (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.03)),
+                : (isDark ? TossDesignSystem.white.withValues(alpha: 0.1) : TossDesignSystem.gray900.withValues(alpha: 0.03)),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isSelected
                   ? TossDesignSystem.tossBlue
-                  : (isDark ? Colors.white24 : Colors.black12),
+                  : (isDark ? TossDesignSystem.white.withValues(alpha: 0.24) : TossDesignSystem.gray900.withValues(alpha: 0.12)),
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -46,7 +46,7 @@ class DeviceEventItem extends StatelessWidget {
                 isSelected ? Icons.check_circle : Icons.circle_outlined,
                 color: isSelected
                     ? TossDesignSystem.tossBlue
-                    : (isDark ? Colors.white54 : Colors.black45),
+                    : (isDark ? TossDesignSystem.white.withValues(alpha: 0.54) : TossDesignSystem.gray900.withValues(alpha: 0.45)),
                 size: 20,
               ),
               const SizedBox(width: 12),

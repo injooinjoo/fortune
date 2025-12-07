@@ -22,7 +22,7 @@ class LottoContent extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.gray900 : Colors.white,
+        color: isDark ? TossDesignSystem.gray900 : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray200,
@@ -80,7 +80,7 @@ class LottoContent extends StatelessWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.5),
+                        color: (isDark ? TossDesignSystem.gray900 : TossDesignSystem.white).withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(

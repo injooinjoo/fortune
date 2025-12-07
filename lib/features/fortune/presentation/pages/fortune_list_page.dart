@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
@@ -610,10 +611,19 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   final categories = showFavoriteSection ? otherCategories : sortedCategories;
                   final category = categories[index];
 
-                  return FortuneListTile(
-                    key: ValueKey(category.type),
-                    category: category,
-                    onTap: () => _handleCategoryTap(category),
+                  return AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 375),
+                    child: SlideAnimation(
+                      verticalOffset: 50.0,
+                      child: FadeInAnimation(
+                        child: FortuneListTile(
+                          key: ValueKey(category.type),
+                          category: category,
+                          onTap: () => _handleCategoryTap(category),
+                        ),
+                      ),
+                    ),
                   );
                 },
                 childCount: showFavoriteSection ? otherCategories.length : sortedCategories.length,

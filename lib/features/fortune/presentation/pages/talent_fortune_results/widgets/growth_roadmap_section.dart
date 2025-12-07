@@ -67,7 +67,7 @@ class GrowthRoadmapSection extends StatelessWidget {
                     child: Text(
                       periodNames[period] ?? period,
                       style: TypographyUnified.labelSmall.copyWith(
-                        color: Colors.white,
+                        color: TossDesignSystem.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

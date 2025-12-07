@@ -11,6 +11,8 @@ import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/utils/subscription_snackbar.dart';
+import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 
 /// 토스 스타일 이사운 페이지 (UnifiedFortuneBaseWidget 사용)
@@ -380,8 +382,11 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               _isBlurred = false;
               _blurredSections = [];
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('이사운이 잠금 해제되었습니다!')),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
           }
         },

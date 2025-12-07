@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -9,7 +8,10 @@ import '../../../../../../domain/entities/fortune.dart';
 import '../../../../../../data/models/celebrity_simple.dart';
 import '../../../../../../core/widgets/unified_button.dart';
 import '../../../../../../core/widgets/unified_button_enums.dart';
+import '../../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../../presentation/providers/ad_provider.dart';
+import '../../../../../../presentation/providers/token_provider.dart';
+import '../../../../../../core/utils/subscription_snackbar.dart';
 
 class CelebrityResultScreen extends ConsumerStatefulWidget {
   final Fortune fortune;
@@ -60,44 +62,17 @@ class _CelebrityResultScreenState extends ConsumerState<CelebrityResultScreen> {
           _isBlurred = false;
           _blurredSections = [];
         });
+        // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+        final tokenState = ref.read(tokenProvider);
+        SubscriptionSnackbar.showAfterAd(
+          context,
+          hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
+        );
       },
     );
   }
 
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required String sectionKey,
-  }) {
-    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
-      return child;
-    }
-
-    return Stack(
-      children: [
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // ✅ UnifiedBlurWrapper로 마이그레이션 완료 (2024-12-07)
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +93,9 @@ class _CelebrityResultScreenState extends ConsumerState<CelebrityResultScreen> {
               const SizedBox(height: 20),
 
               // Main fortune message
-              _buildBlurWrapper(
+              UnifiedBlurWrapper(
+                isBlurred: _isBlurred,
+                blurredSections: _blurredSections,
                 sectionKey: 'fortune_message',
                 child: _FortuneMessage(message: widget.fortune.message),
               ),
@@ -126,7 +103,9 @@ class _CelebrityResultScreenState extends ConsumerState<CelebrityResultScreen> {
 
               // Recommendations
               if (widget.fortune.recommendations?.isNotEmpty ?? false) ...[
-                _buildBlurWrapper(
+                UnifiedBlurWrapper(
+                  isBlurred: _isBlurred,
+                  blurredSections: _blurredSections,
                   sectionKey: 'recommendations',
                   child: _Recommendations(recommendations: widget.fortune.recommendations!),
                 ),
@@ -223,18 +202,37 @@ class _CelebrityHeader extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: _getCelebrityColor(celebrity?.name ?? ''),
+              color: celebrity?.characterImageUrl != null
+                  ? (isDark ? TossDesignSystem.cardBackgroundDark : Colors.grey[100])
+                  : _getCelebrityColor(celebrity?.name ?? ''),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Center(
-              child: Text(
-                celebrity?.name.substring(0, 1) ?? '?',
-                style: TypographyUnified.displaySmall.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: TossDesignSystem.white,
-                ),
-              ),
-            ),
+            child: celebrity?.characterImageUrl != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: Image.network(
+                      celebrity!.characterImageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Center(
+                        child: Text(
+                          celebrity?.name.substring(0, 1) ?? '?',
+                          style: TypographyUnified.displaySmall.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: TossDesignSystem.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      celebrity?.name.substring(0, 1) ?? '?',
+                      style: TypographyUnified.displaySmall.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: TossDesignSystem.white,
+                      ),
+                    ),
+                  ),
           ),
           const SizedBox(width: 16),
           Expanded(

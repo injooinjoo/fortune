@@ -8,6 +8,8 @@ import 'package:fortune/features/fortune/domain/models/conditions/personality_dn
 import 'package:fortune/core/widgets/accordion_input_section.dart';
 import 'package:fortune/core/widgets/unified_button.dart';
 import 'package:fortune/services/ad_service.dart';
+import 'package:fortune/core/utils/subscription_snackbar.dart';
+import 'package:fortune/presentation/providers/token_provider.dart';
 import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/presentation/providers/auth_provider.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
@@ -20,7 +22,7 @@ import 'widgets/compatibility_section.dart';
 import 'widgets/celebrity_section.dart';
 import 'widgets/toss_section_widget.dart';
 import 'widgets/input_widgets.dart';
-import 'widgets/blur_wrapper_widget.dart';
+import 'package:fortune/core/widgets/unified_blur_wrapper.dart';
 import 'package:fortune/core/theme/typography_unified.dart';
 
 class PersonalityDNAPageImpl extends ConsumerStatefulWidget {
@@ -428,42 +430,54 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
                 const SizedBox(height: 8),
               ],
               if (_currentDNA!.loveStyle != null) ...[
-                _buildBlurWrapper(
+                UnifiedBlurWrapper(
+                  isBlurred: _isBlurred,
+                  blurredSections: _blurredSections,
                   sectionKey: 'loveStyle',
                   child: LoveStyleSection(loveStyle: _currentDNA!.loveStyle!),
                 ),
                 const SizedBox(height: 8),
               ],
               if (_currentDNA!.workStyle != null) ...[
-                _buildBlurWrapper(
+                UnifiedBlurWrapper(
+                  isBlurred: _isBlurred,
+                  blurredSections: _blurredSections,
                   sectionKey: 'workStyle',
                   child: WorkStyleSection(workStyle: _currentDNA!.workStyle!),
                 ),
                 const SizedBox(height: 8),
               ],
               if (_currentDNA!.dailyMatching != null) ...[
-                _buildBlurWrapper(
+                UnifiedBlurWrapper(
+                  isBlurred: _isBlurred,
+                  blurredSections: _blurredSections,
                   sectionKey: 'dailyMatching',
                   child: DailyMatchingSection(dailyMatching: _currentDNA!.dailyMatching!),
                 ),
                 const SizedBox(height: 8),
               ],
               if (_currentDNA!.compatibility != null) ...[
-                _buildBlurWrapper(
+                UnifiedBlurWrapper(
+                  isBlurred: _isBlurred,
+                  blurredSections: _blurredSections,
                   sectionKey: 'compatibility',
                   child: CompatibilitySection(compatibility: _currentDNA!.compatibility!),
                 ),
                 const SizedBox(height: 8),
               ],
               if (_currentDNA!.celebrity != null) ...[
-                _buildBlurWrapper(
+                UnifiedBlurWrapper(
+                  isBlurred: _isBlurred,
+                  blurredSections: _blurredSections,
                   sectionKey: 'celebrity',
                   child: CelebritySection(celebrity: _currentDNA!.celebrity!),
                 ),
                 const SizedBox(height: 8),
               ],
               if (_currentDNA!.funnyFact != null) ...[
-                _buildBlurWrapper(
+                UnifiedBlurWrapper(
+                  isBlurred: _isBlurred,
+                  blurredSections: _blurredSections,
                   sectionKey: 'funnyFact',
                   child: _buildFunnyFactSection(),
                 ),
@@ -556,6 +570,12 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
               _unlockedConditionsHash = _getCurrentConditionsHash();
               debugPrint('[성격DNA] 블러 해제된 조건: $_unlockedConditionsHash');
             });
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
+            );
           }
         },
       );
@@ -579,16 +599,5 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
     }
   }
 
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required String sectionKey,
-  }) {
-    debugPrint('🔐 [BlurWrapper] sectionKey: $sectionKey, _isBlurred: $_isBlurred, contains: ${_blurredSections.contains(sectionKey)}');
-
-    final shouldBlur = _isBlurred && _blurredSections.contains(sectionKey);
-    return BlurWrapperWidget(
-      child: child,
-      isBlurred: shouldBlur,
-    );
-  }
+  // ✅ UnifiedBlurWrapper로 마이그레이션 완료 (2024-12-07)
 }

@@ -12,8 +12,8 @@ import 'package:fortune/core/services/unified_fortune_service.dart';
 import 'package:fortune/core/models/fortune_result.dart';
 import 'package:fortune/features/fortune/domain/models/conditions/compatibility_fortune_conditions.dart';
 import 'package:fortune/services/ad_service.dart';
+import 'package:fortune/core/utils/subscription_snackbar.dart';
 import 'widgets/index.dart';
-import 'compatibility_utils.dart';
 
 class CompatibilityPage extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -367,9 +367,11 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
             debugPrint('      - 새 상태: _isBlurred=false');
             debugPrint('      - 새 상태: _blurredSections=[]');
 
-            // 성공 메시지 표시
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('궁합 운세가 잠금 해제되었습니다!')),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
 
             debugPrint('');

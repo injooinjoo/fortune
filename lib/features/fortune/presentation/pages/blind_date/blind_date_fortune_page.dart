@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/widgets/unified_button_enums.dart';
+import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
@@ -20,6 +20,7 @@ import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/toast.dart';
 import '../../../../../services/ad_service.dart';
+import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../services/vision_api_service.dart';
 import '../../widgets/fortune_loading_skeleton.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
@@ -183,7 +184,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
                     onAdFailed: () async => await _generateFortune(),
                   );
                 },
-                icon: const Icon(Icons.auto_awesome_rounded, color: Colors.white),
+                icon: Icon(Icons.auto_awesome_rounded, color: TossDesignSystem.white),
               ),
           ],
         ),
@@ -1070,27 +1071,39 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
               const SizedBox(height: 16),
               if (_photoAnalysis != null)
                 BlindDatePhotoAnalysisResult(analysis: _photoAnalysis!),
-              _buildBlurWrapper(
+              UnifiedBlurWrapper(
+                isBlurred: _isBlurred,
+                blurredSections: _blurredSections,
                 sectionKey: 'success_prediction',
                 child: BlindDateSuccessPrediction(successRate: successRate),
               ),
-              _buildBlurWrapper(
+              UnifiedBlurWrapper(
+                isBlurred: _isBlurred,
+                blurredSections: _blurredSections,
                 sectionKey: 'first_impression',
                 child: const BlindDateFirstImpression(),
               ),
-              _buildBlurWrapper(
+              UnifiedBlurWrapper(
+                isBlurred: _isBlurred,
+                blurredSections: _blurredSections,
                 sectionKey: 'conversation_topics',
                 child: const BlindDateConversationTopics(),
               ),
-              _buildBlurWrapper(
+              UnifiedBlurWrapper(
+                isBlurred: _isBlurred,
+                blurredSections: _blurredSections,
                 sectionKey: 'outfit',
                 child: BlindDateOutfitRecommendation(meetingType: _meetingType),
               ),
-              _buildBlurWrapper(
+              UnifiedBlurWrapper(
+                isBlurred: _isBlurred,
+                blurredSections: _blurredSections,
                 sectionKey: 'location',
                 child: BlindDateLocationAdvice(meetingType: _meetingType),
               ),
-              _buildBlurWrapper(
+              UnifiedBlurWrapper(
+                isBlurred: _isBlurred,
+                blurredSections: _blurredSections,
                 sectionKey: 'dos_donts',
                 child: const BlindDateDosDonts(),
               ),
@@ -1211,6 +1224,12 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
               _isBlurred = false;
               _blurredSections = [];
             });
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
+            );
           }
         },
       );
@@ -1233,38 +1252,5 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
     }
   }
 
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required String sectionKey,
-  }) {
-    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
-      return child;
-    }
-
-    return Stack(
-      children: [
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // ✅ UnifiedBlurWrapper로 마이그레이션 완료 (2024-12-07)
 }

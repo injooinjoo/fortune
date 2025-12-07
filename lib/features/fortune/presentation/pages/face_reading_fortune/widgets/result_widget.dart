@@ -230,10 +230,10 @@ class _ResultWidgetState extends State<ResultWidget> {
                 ),
               ],
             ),
-            child: const Icon(
+            child: Icon(
               Icons.face,
               size: 48,
-              color: Colors.white,
+              color: TossDesignSystem.white,
             ),
           ),
           const SizedBox(height: 20),
@@ -565,7 +565,7 @@ class _ResultWidgetState extends State<ResultWidget> {
       decoration: BoxDecoration(
         color: isDark
             ? TossDesignSystem.grayDark100.withValues(alpha: 0.5)
-            : Colors.white.withValues(alpha: 0.8),
+            : TossDesignSystem.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -595,7 +595,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                   child: Text(
                     '1위',
                     style: TossDesignSystem.caption.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 10,
                     ),
@@ -666,7 +666,7 @@ class _ResultWidgetState extends State<ResultWidget> {
       decoration: BoxDecoration(
         color: isDark
             ? TossDesignSystem.grayDark100.withValues(alpha: 0.3)
-            : Colors.white.withValues(alpha: 0.6),
+            : TossDesignSystem.white.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -686,7 +686,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                   child: Text(
                     '$rank위',
                     style: TossDesignSystem.caption.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 9,
                     ),
@@ -768,7 +768,7 @@ class _ResultWidgetState extends State<ResultWidget> {
         child: Text(
           initial,
           style: TossDesignSystem.heading4.copyWith(
-            color: Colors.white,
+            color: TossDesignSystem.white,
             fontWeight: FontWeight.w700,
             fontSize: size * 0.4,
           ),
@@ -1032,7 +1032,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                   child: Text(
                     '$compatibilityScore점',
                     style: TossDesignSystem.body3.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),

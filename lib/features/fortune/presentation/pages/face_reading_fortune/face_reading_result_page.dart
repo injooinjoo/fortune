@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../domain/models/fortune_result.dart';
@@ -46,9 +47,9 @@ class _FaceReadingResultPageState extends State<FaceReadingResultPage> {
     final overallFortune = data['overall_fortune'] as String? ?? '';
 
     // ChatGPT 스타일 색상
-    final bgColor = isDark ? const Color(0xFF1A1A1A) : Colors.white;
+    final bgColor = isDark ? const Color(0xFF1A1A1A) : TossDesignSystem.white;
     final cardColor = isDark ? const Color(0xFF2D2D2D) : const Color(0xFFF7F7F8);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF1A1A1A);
+    final textPrimary = isDark ? TossDesignSystem.white : const Color(0xFF1A1A1A);
     final textSecondary = isDark ? const Color(0xFF8E8E93) : const Color(0xFF6E6E73);
     final accentColor = const Color(0xFF10A37F);
 

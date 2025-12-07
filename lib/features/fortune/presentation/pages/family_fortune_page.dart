@@ -1,4 +1,3 @@
-import 'dart:ui'; // ✅ ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -7,7 +6,10 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../presentation/providers/ad_provider.dart';
+import '../../../../presentation/providers/token_provider.dart';
+import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
@@ -690,45 +692,17 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           _isBlurred = false;
           _blurredSections = [];
         });
+        // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+        final tokenState = ref.read(tokenProvider);
+        SubscriptionSnackbar.showAfterAd(
+          context,
+          hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
+        );
       },
     );
   }
 
-  /// 블러 wrapper
-  Widget _buildBlurWrapper({
-    required Widget child,
-    required String sectionKey,
-  }) {
-    if (!_isBlurred || !_blurredSections.contains(sectionKey)) {
-      return child;
-    }
-
-    return Stack(
-      children: [
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: Icon(
-              Icons.lock_outline,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // ✅ UnifiedBlurWrapper로 마이그레이션 완료 (2024-12-07)
 
   Widget _buildResultScreen() {
     if (_fortune == null || _selectedConcern == null) return const SizedBox.shrink();
@@ -815,7 +789,9 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           const SizedBox(height: 24),
 
           // Fortune content
-          _buildBlurWrapper(
+          UnifiedBlurWrapper(
+            isBlurred: _isBlurred,
+            blurredSections: _blurredSections,
             sectionKey: 'fortune_content',
             child: AppCard(
               padding: const EdgeInsets.all(24),

@@ -12,6 +12,8 @@ import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../services/ad_service.dart';
+import '../../../../../core/utils/subscription_snackbar.dart';
+import '../../widgets/fortune_loading_skeleton.dart';
 import 'widgets/index.dart';
 
 class CareerCoachingResultPage extends ConsumerStatefulWidget {
@@ -34,6 +36,9 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
   // ✅ Blur state management
   bool _isBlurred = false;
   List<String> _blurredSections = [];
+
+  // ✅ Typing effect state
+  int _currentTypingSection = 0;
 
   @override
   void initState() {
@@ -100,6 +105,9 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
           // ✅ Blur 상태 동기화
           _isBlurred = result.isBlurred;
           _blurredSections = List<String>.from(result.blurredSections);
+
+          // ✅ 타이핑 효과 초기화
+          _currentTypingSection = 0;
         });
 
         debugPrint('');
@@ -155,8 +163,11 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
               _blurredSections = [];
             });
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('운세가 잠금 해제되었습니다!')),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
           }
 
@@ -222,23 +233,9 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
             SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: _isLoading
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: 100),
-                          CircularProgressIndicator(
-                            color: TossDesignSystem.tossBlue,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            '커리어 분석 중...',
-                            style: context.bodyMedium.copyWith(
-                              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
-                            ),
-                          ),
-                        ],
-                      ),
+                  ? FortuneResultSkeleton(
+                      showScore: true,
+                      isDark: isDark,
                     )
                   : _fortuneResult == null
                       ? Center(
@@ -289,7 +286,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
           const SizedBox(height: 16),
         ],
 
-        // ✅ 3. 핵심 인사이트 (블러 처리)
+        // ✅ 3. 핵심 인사이트 (블러 처리 + 타이핑 효과)
         if (insights != null && insights.isNotEmpty) ...[
           UnifiedBlurWrapper(
             isBlurred: _isBlurred,
@@ -299,9 +296,21 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
               children: insights.asMap().entries.map((entry) {
                 final index = entry.key;
                 final insight = entry.value as Map<String, dynamic>;
+                final isLastInsight = index == insights.length - 1;
                 return Container(
                   margin: const EdgeInsets.only(bottom: 16),
-                  child: InsightCard(insight: insight, index: index, isDark: isDark),
+                  child: InsightCard(
+                    insight: insight,
+                    index: index,
+                    isDark: isDark,
+                    enableTyping: true,
+                    startTyping: _currentTypingSection >= index,
+                    onTypingComplete: () {
+                      if (mounted && !isLastInsight) {
+                        setState(() => _currentTypingSection = index + 1);
+                      }
+                    },
+                  ),
                 );
               }).toList(),
             ),

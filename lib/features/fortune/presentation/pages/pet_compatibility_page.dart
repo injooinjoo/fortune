@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -8,6 +6,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
+import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../data/models/pet_profile.dart';
 import '../../../../providers/pet_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
@@ -17,6 +16,7 @@ import '../../../../presentation/widgets/hexagon_chart.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/utils/subscription_snackbar.dart';
 import '../constants/fortune_button_spacing.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/standard_fortune_page_layout.dart';
@@ -976,6 +976,12 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
             setState(() {
               _fortune = _fortune!.copyWith(isBlurred: false, blurredSections: []);
             });
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
+            );
           }
         },
       );
@@ -992,40 +998,7 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
     }
   }
 
-  Widget _buildBlurWrapper({required Widget child, required String sectionKey}) {
-    if (_fortune == null || !_fortune!.isBlurred || !_fortune!.blurredSections.contains(sectionKey)) {
-      return child;
-    }
-
-    return Stack(
-      children: [
-        ImageFiltered(imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), child: child),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.lock_outline, size: 32, color: Colors.white.withValues(alpha: 0.9)),
-                const SizedBox(height: 8),
-                Text(
-                  '프리미엄 콘텐츠',
-                  style: TypographyUnified.bodySmall.copyWith(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // ✅ UnifiedBlurWrapper로 마이그레이션 완료 (2024-12-07)
 
   Widget _buildFortuneResult() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -1065,35 +1038,45 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
           const SizedBox(height: 20),
 
           // ✅ 프리미엄 섹션: Pet's Voice (킬러 피처!)
-          _buildBlurWrapper(
+          UnifiedBlurWrapper(
+            isBlurred: _fortune!.isBlurred,
+            blurredSections: _fortune!.blurredSections,
             sectionKey: 'pets_voice',
             child: _buildPetsVoiceCard(data, species, isDark),
           ),
           const SizedBox(height: 16),
 
           // ✅ 프리미엄 섹션: 건강 인사이트
-          _buildBlurWrapper(
+          UnifiedBlurWrapper(
+            isBlurred: _fortune!.isBlurred,
+            blurredSections: _fortune!.blurredSections,
             sectionKey: 'health_insight',
             child: _buildHealthInsightCard(data, isDark),
           ),
           const SizedBox(height: 16),
 
           // ✅ 프리미엄 섹션: 활동 추천
-          _buildBlurWrapper(
+          UnifiedBlurWrapper(
+            isBlurred: _fortune!.isBlurred,
+            blurredSections: _fortune!.blurredSections,
             sectionKey: 'activity_recommendation',
             child: _buildActivityCard(data, isDark),
           ),
           const SizedBox(height: 16),
 
           // ✅ 프리미엄 섹션: 감정 케어
-          _buildBlurWrapper(
+          UnifiedBlurWrapper(
+            isBlurred: _fortune!.isBlurred,
+            blurredSections: _fortune!.blurredSections,
             sectionKey: 'emotional_care',
             child: _buildEmotionalCareCard(data, isDark),
           ),
           const SizedBox(height: 16),
 
           // ✅ 프리미엄 섹션: 특별 조언
-          _buildBlurWrapper(
+          UnifiedBlurWrapper(
+            isBlurred: _fortune!.isBlurred,
+            blurredSections: _fortune!.blurredSections,
             sectionKey: 'special_tips',
             child: _buildSpecialTipsCard(data, isDark),
           ),

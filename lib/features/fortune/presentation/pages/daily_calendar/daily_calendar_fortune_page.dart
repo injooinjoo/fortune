@@ -21,6 +21,7 @@ import '../../../../../services/storage_service.dart';
 import '../../../../../services/user_statistics_service.dart';
 import '../../../../../services/ad_service.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../core/services/unified_calendar_service.dart';
 import '../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../../core/widgets/unified_button.dart';
@@ -554,8 +555,11 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
               _currentTypingSection = 2;
             });
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('운세가 잠금 해제되었습니다!')),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
           }
         },

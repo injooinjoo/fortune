@@ -108,10 +108,10 @@ class DateInfoWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.03),
+                  color: isDark ? TossDesignSystem.white.withValues(alpha: 0.1) : TossDesignSystem.gray900.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDark ? Colors.white24 : Colors.black12,
+                    color: isDark ? TossDesignSystem.white.withValues(alpha: 0.24) : TossDesignSystem.gray900.withValues(alpha: 0.12),
                   ),
                 ),
                 child: Row(

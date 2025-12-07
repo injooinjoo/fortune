@@ -8,11 +8,13 @@ import 'dart:math' as math;
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../core/utils/fortune_text_cleaner.dart';
+import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/models/fortune_result.dart';
 import '../../../../../presentation/providers/ad_provider.dart';
+import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../domain/entities/fortune.dart';
 import '../../../../../services/ad_service.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
@@ -325,6 +327,12 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           _isBlurred = false;
           _blurredSections = [];
         });
+        // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+        final tokenState = ref.read(tokenProvider);
+        SubscriptionSnackbar.showAfterAd(
+          context,
+          hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
+        );
       },
       onAdNotReady: () {
         if (mounted) {

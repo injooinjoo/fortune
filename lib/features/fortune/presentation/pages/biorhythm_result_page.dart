@@ -1,6 +1,7 @@
 // ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_theme.dart';
@@ -10,9 +11,11 @@ import '../../../../core/models/fortune_result.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/utils/subscription_snackbar.dart';
+import '../../../../presentation/providers/token_provider.dart';
 
 import '../../../../core/widgets/unified_button.dart';
-class BiorhythmResultPage extends StatefulWidget {
+class BiorhythmResultPage extends ConsumerStatefulWidget {
   final DateTime birthDate;
   final FortuneResult fortuneResult; // API 결과
 
@@ -23,10 +26,10 @@ class BiorhythmResultPage extends StatefulWidget {
   });
 
   @override
-  State<BiorhythmResultPage> createState() => _BiorhythmResultPageState();
+  ConsumerState<BiorhythmResultPage> createState() => _BiorhythmResultPageState();
 }
 
-class _BiorhythmResultPageState extends State<BiorhythmResultPage>
+class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
     with TickerProviderStateMixin {
 
   late PageController _pageController;
@@ -119,11 +122,11 @@ class _BiorhythmResultPageState extends State<BiorhythmResultPage>
                 blurredSections: [],
               );
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('운세가 잠금 해제되었습니다!'),
-                duration: Duration(seconds: 2),
-              ),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
           }
         },

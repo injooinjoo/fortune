@@ -4,15 +4,22 @@ import '../../../../../../core/components/app_card.dart';
 import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/models/fortune_result.dart';
 import '../../../../../../core/utils/fortune_text_cleaner.dart';
+import '../../../../../../core/widgets/gpt_style_typing_text.dart';
 
 class OverviewSection extends StatelessWidget {
   final FortuneResult? fortuneResult;
   final bool isDark;
+  final bool enableTyping;
+  final bool startTyping;
+  final VoidCallback? onTypingComplete;
 
   const OverviewSection({
     super.key,
     required this.fortuneResult,
     required this.isDark,
+    this.enableTyping = false,
+    this.startTyping = true,
+    this.onTypingComplete,
   });
 
   @override
@@ -81,13 +88,13 @@ class OverviewSection extends StatelessWidget {
                         '$score점',
                         style: TypographyUnified.heading2.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: TossDesignSystem.white,
                         ),
                       ),
                       Text(
                         '재능 점수',
                         style: TypographyUnified.labelSmall.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: TossDesignSystem.white.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -121,13 +128,24 @@ class OverviewSection extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      content,
-                      style: TypographyUnified.bodyMedium.copyWith(
-                        height: 1.7,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                      ),
-                    ),
+                    enableTyping
+                        ? GptStyleTypingText(
+                            text: content,
+                            style: TypographyUnified.bodyMedium.copyWith(
+                              height: 1.7,
+                              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                            ),
+                            showGhostText: true,
+                            startTyping: startTyping,
+                            onComplete: onTypingComplete,
+                          )
+                        : Text(
+                            content,
+                            style: TypographyUnified.bodyMedium.copyWith(
+                              height: 1.7,
+                              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                            ),
+                          ),
                   ],
                 ),
               ),

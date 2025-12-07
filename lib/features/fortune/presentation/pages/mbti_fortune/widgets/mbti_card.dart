@@ -57,7 +57,7 @@ class MbtiCard extends StatelessWidget {
             style: TypographyUnified.buttonSmall.copyWith(
               fontWeight: FontWeight.w600,
               color: isSelected
-                  ? Colors.white
+                  ? TossDesignSystem.white
                   : (isDark ? TossDesignSystem.white : TossDesignSystem.gray800),
             ),
           ),

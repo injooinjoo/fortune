@@ -266,7 +266,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   context.goNamed('interactive-tarot');
                 },
                 isEnabled: true,
-                icon: const Icon(Icons.refresh, color: Colors.white),
+                icon: Icon(Icons.refresh, color: TossDesignSystem.white),
               ),
             ],
           ),

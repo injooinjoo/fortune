@@ -12,6 +12,7 @@ import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/utils/logger.dart';
 import '../../../../../services/ad_service.dart';
+import '../../../../../core/utils/subscription_snackbar.dart';
 import 'widgets/widgets.dart';
 
 class TarotPage extends ConsumerStatefulWidget {
@@ -447,29 +448,21 @@ class _TarotPageState extends ConsumerState<TarotPage>
                 blurredSections: [],
               );
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('타로 운세가 잠금 해제되었습니다!'),
-                duration: Duration(seconds: 2),
-              ),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
           }
         },
       );
     } catch (e, stackTrace) {
       Logger.error('[TarotPage] 광고 표시 실패', e, stackTrace);
-
-      // 에러 발생 시에도 블러 해제 (사용자 경험 우선)
-      if (_tarotResult != null && mounted) {
-        setState(() {
-          _tarotResult = _tarotResult!.copyWith(
-            isBlurred: false,
-            blurredSections: [],
-          );
-        });
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('광고 표시에 실패했지만 운세를 확인할 수 있습니다.'),
+            content: Text('광고 표시에 실패했습니다. 다시 시도해주세요.'),
             duration: Duration(seconds: 2),
           ),
         );

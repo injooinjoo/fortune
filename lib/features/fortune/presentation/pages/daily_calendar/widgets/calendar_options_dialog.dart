@@ -41,7 +41,7 @@ class CalendarOptionsDialog extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white24 : Colors.black12,
+                  color: isDark ? TossDesignSystem.white.withValues(alpha: 0.24) : TossDesignSystem.gray900.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -149,10 +149,10 @@ class CalendarOptionTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.03),
+          color: isDark ? TossDesignSystem.white.withValues(alpha: 0.1) : TossDesignSystem.gray900.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark ? Colors.white24 : Colors.black12,
+            color: isDark ? TossDesignSystem.white.withValues(alpha: 0.24) : TossDesignSystem.gray900.withValues(alpha: 0.12),
           ),
         ),
         child: Row(
@@ -196,7 +196,7 @@ class CalendarOptionTile extends StatelessWidget {
             const SizedBox(width: 8),
             Icon(
               Icons.chevron_right,
-              color: isDark ? Colors.white38 : Colors.black38,
+              color: isDark ? TossDesignSystem.white.withValues(alpha: 0.38) : TossDesignSystem.gray900.withValues(alpha: 0.38),
             ),
           ],
         ),

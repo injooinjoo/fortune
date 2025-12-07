@@ -13,7 +13,7 @@ class GameContent extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.gray900 : Colors.white,
+        color: isDark ? TossDesignSystem.gray900 : TossDesignSystem.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray200,

@@ -31,95 +31,57 @@ class TickerNotifier extends StateNotifier<TickerState> {
   TickerNotifier(this._repository) : super(const TickerState());
 
   /// 카테고리 선택 및 해당 카테고리 티커 로드
-  Future<void> selectCategory(String category) async {
+  void selectCategory(String category) {
     state = state.copyWith(
-      isLoading: true,
       selectedCategory: category,
       searchQuery: null,
       errorMessage: null,
     );
 
-    try {
-      final tickers = await _repository.getTickersByCategory(category);
-      final popular = await _repository.getPopularTickers(category: category);
+    final tickers = _repository.getTickersByCategory(category);
+    final popular = _repository.getPopularTickers(category: category);
 
-      state = state.copyWith(
-        isLoading: false,
-        tickers: tickers,
-        popularTickers: popular,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString(),
-      );
-    }
+    state = state.copyWith(
+      tickers: tickers,
+      popularTickers: popular,
+    );
   }
 
   /// 티커 검색
-  Future<void> search(String query) async {
+  void search(String query) {
     state = state.copyWith(
-      isLoading: true,
       searchQuery: query,
       errorMessage: null,
     );
 
-    try {
-      final tickers = await _repository.searchTickers(
-        query,
-        category: state.selectedCategory,
-      );
+    final tickers = _repository.searchTickers(
+      query,
+      category: state.selectedCategory,
+    );
 
-      state = state.copyWith(
-        isLoading: false,
-        tickers: tickers,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString(),
-      );
-    }
+    state = state.copyWith(
+      tickers: tickers,
+    );
   }
 
   /// 인기 종목 로드
-  Future<void> loadPopularTickers({String? category}) async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
+  void loadPopularTickers({String? category}) {
+    final popular = _repository.getPopularTickers(category: category);
 
-    try {
-      final popular = await _repository.getPopularTickers(category: category);
-
-      state = state.copyWith(
-        isLoading: false,
-        popularTickers: popular,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString(),
-      );
-    }
+    state = state.copyWith(
+      popularTickers: popular,
+    );
   }
 
   /// 전체 티커 로드 (카테고리별)
-  Future<void> loadAllTickers() async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
+  void loadAllTickers() {
+    final tickersByCategory = _repository.getAllTickersByCategory();
+    final popular = _repository.getPopularTickers();
 
-    try {
-      final tickersByCategory = await _repository.getAllTickersByCategory();
-      final popular = await _repository.getPopularTickers();
-
-      state = state.copyWith(
-        isLoading: false,
-        tickersByCategory: tickersByCategory,
-        popularTickers: popular,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString(),
-      );
-    }
+    state = state.copyWith(
+      tickersByCategory: tickersByCategory,
+      popularTickers: popular,
+    );
   }
 
   /// 검색 초기화

@@ -192,9 +192,9 @@ class CalendarViewWidget extends StatelessWidget {
                   ),
                   child: Text(
                     '${eventInfo!.deviceEventCount}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 8,
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

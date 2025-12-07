@@ -7,6 +7,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/image_upload_selector.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart' as core_models;
 import '../../domain/models/conditions/face_reading_fortune_conditions.dart';
@@ -312,11 +313,11 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 blurredSections: [],
               );
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('관상 운세가 잠금 해제되었습니다!'),
-                duration: Duration(seconds: 2),
-              ),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
           }
         },

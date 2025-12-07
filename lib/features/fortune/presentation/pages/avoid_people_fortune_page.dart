@@ -7,6 +7,8 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/utils/subscription_snackbar.dart';
+import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
@@ -862,9 +864,11 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             Logger.info('      - 새 상태: _isBlurred=false');
             Logger.info('      - 새 상태: _blurredSections=[]');
 
-            // 성공 메시지 표시
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('운세가 잠금 해제되었습니다!')),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
 
             Logger.info('');

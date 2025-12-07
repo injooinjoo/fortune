@@ -78,8 +78,8 @@ class _CelebritySelectionStepState extends ConsumerState<CelebritySelectionStep>
   Widget _buildContent(List<Celebrity> celebrities) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final displayCelebrities = _searchResults.isNotEmpty
-        ? _searchResults.take(20).toList()
-        : celebrities.take(20).toList();
+        ? _searchResults
+        : celebrities;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -253,19 +253,36 @@ class CelebrityGridItem extends StatelessWidget {
               width: double.infinity,
               height: 120,
               decoration: BoxDecoration(
-                color: _getCelebrityColor(celebrity.name),
+                color: celebrity.characterImageUrl != null
+                    ? (isDark ? TossDesignSystem.cardBackgroundDark : Colors.grey[100])
+                    : _getCelebrityColor(celebrity.name),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
               ),
               child: Stack(
                 children: [
                   Center(
-                    child: Text(
-                      celebrity.name.substring(0, 1),
-                      style: TypographyUnified.displayLarge.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: TossDesignSystem.white,
-                      ),
-                    ),
+                    child: celebrity.characterImageUrl != null
+                        ? Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Image.network(
+                              celebrity.characterImageUrl!,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) => Text(
+                                celebrity.name.substring(0, 1),
+                                style: TypographyUnified.displayLarge.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: TossDesignSystem.white,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Text(
+                            celebrity.name.substring(0, 1),
+                            style: TypographyUnified.displayLarge.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: TossDesignSystem.white,
+                            ),
+                          ),
                   ),
                   if (isSelected)
                     Positioned(
@@ -296,7 +313,7 @@ class CelebrityGridItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      celebrity.name,
+                      celebrity.displayName,
                       style: TypographyUnified.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),

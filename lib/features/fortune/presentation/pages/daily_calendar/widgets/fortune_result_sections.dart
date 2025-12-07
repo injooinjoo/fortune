@@ -231,7 +231,7 @@ class CategoriesSection extends StatelessWidget {
                   child: Text(
                     '${categories['total']['score']}점',
                     style: context.labelLarge.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -778,7 +778,7 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
                   child: Text(
                     '${widget.total['score']}점',
                     style: context.labelLarge.copyWith(
-                      color: Colors.white,
+                      color: TossDesignSystem.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),

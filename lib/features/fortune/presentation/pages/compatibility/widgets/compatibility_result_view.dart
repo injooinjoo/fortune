@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fortune/core/theme/toss_theme.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/components/app_card.dart';
-import 'package:fortune/core/widgets/unified_blur_wrapper.dart';
 import 'package:fortune/core/widgets/unified_button.dart';
 import 'package:fortune/domain/entities/fortune.dart';
 import 'overall_score_card.dart';

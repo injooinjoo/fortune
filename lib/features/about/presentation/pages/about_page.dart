@@ -95,7 +95,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               color: TossDesignSystem.white)).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
           SizedBox(height: 24),
           Text(
-            'Fortune',
+            '관상은 과학',
             style: TypographyUnified.numberLarge.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.white)).animate().fadeIn(delay: 200.ms),

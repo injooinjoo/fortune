@@ -32,15 +32,15 @@ class DeckSelectionScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
 
-              // 헤더
+              // 헤더 (컴팩트)
               Center(
                 child: Column(
                   children: [
                     Container(
-                      width: 60,
-                      height: 60,
+                      width: 36,
+                      height: 36,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
@@ -53,21 +53,21 @@ class DeckSelectionScreen extends StatelessWidget {
                       child: const Icon(
                         Icons.style,
                         color: TossDesignSystem.white,
-                        size: 30,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      '타로 덱 선택',
-                      style: TypographyUnified.heading1.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        size: 18,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
+                      '타로 덱 선택',
+                      style: TypographyUnified.heading3.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
                       '당신에게 맞는 타로 덱을 선택하세요',
-                      style: TypographyUnified.buttonMedium.copyWith(
+                      style: TypographyUnified.labelMedium.copyWith(
                         color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
                       ),
                     ),
@@ -75,7 +75,7 @@ class DeckSelectionScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
 
               // 덱 리스트
               ...allDecks.map((deck) => _DeckCard(

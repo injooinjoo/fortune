@@ -11,9 +11,11 @@ import '../../../../core/models/fortune_result.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../services/ad_service.dart';
+import '../../../../core/utils/subscription_snackbar.dart';
 import '../widgets/dream_voice_input_widget.dart';
 import '../widgets/dream_result_widget.dart';
 import '../widgets/floating_dream_topics_widget.dart';
+import '../widgets/fortune_loading_skeleton.dart';
 import '../providers/dream_voice_provider.dart';
 
 import '../../../../core/widgets/unified_button.dart';
@@ -81,8 +83,8 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
           // 메인 콘텐츠
           _buildMainContent(isDark, voiceState),
 
-          // 하단 음성 입력 영역
-          if (voiceState.state != VoicePageState.result)
+          // 하단 음성 입력 영역 (초기/녹음 상태에서만 표시, 처리 중에는 숨김)
+          if (voiceState.state == VoicePageState.initial || voiceState.state == VoicePageState.recording)
             DreamVoiceInputWidget(
               onTextRecognized: _handleTextRecognized,
             ),
@@ -161,22 +163,16 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
     );
   }
 
-  /// 처리 중 화면
+  /// 처리 중 화면 (스켈레톤 로딩)
   Widget _buildProcessingScreen(bool isDark) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(),
-          const SizedBox(height: TossTheme.spacingM),
-          Text(
-            '꿈을 해몽하고 있어요...',
-            style: TossTheme.body3.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            ),
-          ),
-        ],
-      ),
+    return FortuneLoadingSkeleton(
+      itemCount: 3,
+      showHeader: true,
+      loadingMessages: const [
+        '꿈을 해몽하고 있어요...',
+        'AI가 꿈의 의미를 분석하고 있어요',
+        '심층적인 해석을 준비하고 있어요...',
+      ],
     );
   }
 
@@ -211,7 +207,7 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
                 child: Text(
                   _userMessage,
                   style: TypographyUnified.bodyMedium.copyWith(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
                 ),
               ),
@@ -352,11 +348,11 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
               _isShowingAd = false; // ✅ 광고 완료, 플래그 리셋
             });
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('운세가 잠금 해제되었습니다!'),
-                duration: Duration(seconds: 2),
-              ),
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
             );
           }
         },

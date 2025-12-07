@@ -531,7 +531,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
                           _isRecording ? Icons.stop_rounded : Icons.mic_none_rounded,
                           size: 20,
                           color: _isRecording
-                              ? Colors.white
+                              ? TossDesignSystem.white
                               : (isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray500),
                         ),
                       ),

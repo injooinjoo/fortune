@@ -210,26 +210,15 @@ class _LoadingMessageRotatorState extends State<LoadingMessageRotator>
         builder: (context, child) {
           return Opacity(
             opacity: _fadeAnimation.value,
-            child: Column(
-              children: [
-                CircularProgressIndicator(
-                  strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    TossDesignSystem.tossBlue,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  widget.messages[_currentIndex],
-                  style: TossDesignSystem.body2.copyWith(
-                    color: widget.isDark 
-                        ? TossDesignSystem.grayDark700 
-                        : TossDesignSystem.gray600,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+            child: Text(
+              widget.messages[_currentIndex],
+              style: TossDesignSystem.body2.copyWith(
+                color: widget.isDark
+                    ? TossDesignSystem.grayDark700
+                    : TossDesignSystem.gray600,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
             ),
           );
         },

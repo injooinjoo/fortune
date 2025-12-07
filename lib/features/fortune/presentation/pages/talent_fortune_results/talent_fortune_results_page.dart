@@ -18,9 +18,11 @@ import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../services/ad_service.dart';
+import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../core/utils/logger.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/models/fortune_result.dart';
+import '../../widgets/fortune_loading_skeleton.dart';
 
 // Import modular widgets
 import 'widgets/overview_section.dart';
@@ -59,6 +61,9 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
   bool _isBlurred = false;
   List<String> _blurredSections = [];
 
+  // ✅ 타이핑 효과 상태
+  int _currentTypingSection = 0;
+
   late UnifiedFortuneService _fortuneService;
 
   @override
@@ -81,6 +86,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
       _isBlurred = widget.fortuneResult!.isBlurred;
       _blurredSections = widget.fortuneResult!.blurredSections;
       _isLoading = false;
+      _currentTypingSection = 0; // ✅ 타이핑 효과 초기화
       _calculateLocalSaju();
     } else {
       Logger.warning('[TalentFortune] ⚠️ 전달받은 결과 없음 → API 직접 호출');
@@ -142,6 +148,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
         _isBlurred = fortuneResult.isBlurred;
         _blurredSections = fortuneResult.blurredSections;
         _isLoading = false;
+        _currentTypingSection = 0; // ✅ 타이핑 효과 초기화
       });
     } catch (e, stackTrace) {
       Logger.error('[TalentFortune] ❌ API 호출 실패', e, stackTrace);
@@ -207,6 +214,12 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
               _isBlurred = false;
               _blurredSections = [];
             });
+            // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
+            final tokenState = ref.read(tokenProvider);
+            SubscriptionSnackbar.showAfterAd(
+              context,
+              hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
+            );
           }
         },
       );
@@ -381,10 +394,17 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                     SingleChildScrollView(
                       child: Column(
                         children: [
-                          // Part 1: 종합 브리핑
+                          // Part 1: 종합 브리핑 (타이핑 효과 적용)
                           OverviewSection(
                             fortuneResult: _fortuneResult,
                             isDark: isDark,
+                            enableTyping: true,
+                            startTyping: _currentTypingSection >= 0,
+                            onTypingComplete: () {
+                              if (mounted) {
+                                setState(() => _currentTypingSection = 1);
+                              }
+                            },
                           ).animate().fadeIn(duration: 400.ms),
 
                           const SizedBox(height: 24),
@@ -512,29 +532,15 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
 
   /// 로딩 상태 UI
   Widget _buildLoadingState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(
-            color: TossDesignSystem.tossBlue,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            '재능을 분석하고 있어요...',
-            style: TypographyUnified.bodyMedium.copyWith(
-              color: TossDesignSystem.gray600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'LLM이 당신의 사주와 성향을 분석 중입니다',
-            style: TypographyUnified.labelMedium.copyWith(
-              color: TossDesignSystem.gray500,
-            ),
-          ),
-        ],
-      ),
+    return FortuneLoadingSkeleton(
+      itemCount: 4,
+      showHeader: true,
+      loadingMessages: const [
+        '재능을 분석하고 있어요...',
+        'LLM이 당신의 사주를 분석 중입니다',
+        '맞춤형 성장 로드맵을 작성하고 있어요',
+        '잠재된 재능을 찾고 있어요...',
+      ],
     );
   }
 
@@ -577,7 +583,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
               child: Text(
                 '다시 시도',
                 style: TypographyUnified.buttonMedium.copyWith(
-                  color: Colors.white,
+                  color: TossDesignSystem.white,
                 ),
               ),
             ),
