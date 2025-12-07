@@ -52,13 +52,13 @@
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Fortune">
+  <meta name="apple-mobile-web-app-title" content="관상은 과학">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <title>Fortune - AI 운세 서비스</title>
+  <title>관상은 과학</title>
   <link rel="manifest" href="manifest.json">
   
   <!-- Toss Product Sans Font -->
@@ -173,6 +173,11 @@
   <div id="loading">
     <div class="spinner"></div>
   </div>
+
+  <script>
+    // Force HTML renderer to avoid Wasm incompatibilities
+    window.flutterWebRenderer = "html";
+  </script>
   
   <script src="flutter_bootstrap.js" async=""></script>
   
