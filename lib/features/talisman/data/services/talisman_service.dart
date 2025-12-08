@@ -46,12 +46,18 @@ class TalismanService {
     required String specificWish,
     String? userId,
     bool isPremium = false,
+    String? aiImageUrl, // AI 생성 이미지 URL
   }) async {
     try {
       Logger.info('Generating talisman for category: ${category.name}, wish: $specificWish');
 
-      // AI API 호출을 시뮬레이션 (실제로는 Stable Diffusion이나 다른 AI 서비스 연동)
-      await Future.delayed(const Duration(seconds: 3)); // 생성 시간 시뮬레이션
+      // AI 이미지 URL 필수
+      if (aiImageUrl == null || aiImageUrl.isEmpty) {
+        throw Exception('AI 부적 이미지 생성에 실패했습니다. 다시 시도해주세요.');
+      }
+
+      Logger.info('Using AI generated image: $aiImageUrl');
+      final imageUrl = aiImageUrl;
 
       final talismanDesign = TalismanDesign(
         id: _generateId(),
@@ -59,7 +65,7 @@ class TalismanService {
         designType: _selectDesignType(category),
         category: category,
         title: _generateTitle(category, specificWish),
-        imageUrl: _generateImageUrl(category),
+        imageUrl: imageUrl,
         colors: _generateColors(category),
         symbols: _generateSymbols(category),
         mantraText: _generateMantraText(category, specificWish),
@@ -184,20 +190,7 @@ class TalismanService {
     return categoryTitles[random.nextInt(categoryTitles.length)];
   }
 
-  String _generateImageUrl(TalismanCategory category) {
-    // 로컬 에셋 경로 사용 - 전통 한국 부적 디자인
-    final assetPaths = {
-      TalismanCategory.wealth: 'assets/images/talismans/wealth.svg',
-      TalismanCategory.love: 'assets/images/talismans/love.svg',
-      TalismanCategory.career: 'assets/images/talismans/career.svg',
-      TalismanCategory.health: 'assets/images/talismans/health.svg',
-      TalismanCategory.study: 'assets/images/talismans/study.svg',
-      TalismanCategory.relationship: 'assets/images/talismans/relationship.svg',
-      TalismanCategory.goal: 'assets/images/talismans/goal.svg',
-    };
-    
-    return assetPaths[category] ?? 'assets/images/talismans/wealth.svg';
-  }
+  // _generateImageUrl 제거됨 - AI 이미지만 사용
 
   Map<String, dynamic> _generateColors(TalismanCategory category) {
     final colorSchemes = {

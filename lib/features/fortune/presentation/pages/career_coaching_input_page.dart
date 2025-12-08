@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/app_card.dart';
+import '../../../../core/widgets/app_widgets.dart';
 import '../../domain/models/career_coaching_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/widgets/unified_button.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 
 class CareerCoachingInputPage extends ConsumerStatefulWidget {
@@ -140,8 +139,12 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
     if (!_canGenerate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('필수 정보를 모두 입력해주세요'),
-          backgroundColor: TossDesignSystem.warningOrange,
+          content: const Text('필수 정보를 모두 입력해주세요'),
+          backgroundColor: Colors.orange,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       return;
@@ -178,8 +181,12 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('분석 중 오류가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: TossDesignSystem.errorRed,
+            content: const Text('분석 중 오류가 발생했습니다. 다시 시도해주세요.'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
       }
@@ -197,7 +204,9 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       appBar: const StandardFortuneAppBar(
         title: '직업 운세',
       ),
@@ -226,32 +235,18 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
   }
 
   Widget _buildTitleSection(bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '맞춤 직업 전략을\n제공해드릴게요',
-          style: TypographyUnified.heading1.copyWith(
-            fontWeight: FontWeight.w700,
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-            height: 1.3,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          '현재 상황과 목표를 분석해서\n최적의 성장 로드맵을 제시해드려요',
-          style: TypographyUnified.bodySmall.copyWith(
-            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
-            height: 1.4,
-          ),
-        ),
-      ],
+    return const PageHeaderSection(
+      emoji: '💼',
+      title: '맞춤 직업 전략',
+      subtitle: '현재 상황과 목표를 분석해서\n최적의 성장 로드맵을 제시해드려요',
     );
   }
 
   // ===== 입력 위젯들 =====
 
   Widget _buildCurrentRoleInput(Function(dynamic) onComplete) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -259,111 +254,79 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
       childAspectRatio: 1.8,
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
-      children: roleOptions.map((role) =>
-        GestureDetector(
+      children: roleOptions.map((role) {
+        final isSelected = _currentRole == role.id;
+        return GestureDetector(
           onTap: () {
             setState(() {
               _currentRole = role.id;
               _updateAccordionSection('currentRole', role.id, role.title);
             });
-            TossDesignSystem.hapticLight();
+            HapticFeedback.mediumImpact();
             onComplete(role.id);
           },
-          child: AppCard(
+          child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            style: _currentRole == role.id ? AppCardStyle.filled : AppCardStyle.outlined,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppColors.accentGreen.withValues(alpha: 0.1)
+                  : isDark
+                      ? AppColors.inputBackgroundDark
+                      : AppColors.inputBackgroundLight,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected
+                    ? AppColors.accentGreen
+                    : isDark
+                        ? AppColors.borderDark
+                        : AppColors.borderLight,
+                width: isSelected ? 2 : 1,
+              ),
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(role.emoji, style: TypographyUnified.heading3),
+                Text(role.emoji, style: const TextStyle(fontSize: 24)),
                 const SizedBox(height: 4),
                 Text(
                   role.title,
-                  style: TypographyUnified.labelMedium.copyWith(
-                    fontWeight: _currentRole == role.id
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                    color: _currentRole == role.id
-                      ? TossDesignSystem.tossBlue
-                      : null,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected
+                        ? AppColors.accentGreen
+                        : isDark
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimaryLight,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ],
             ),
           ),
-        ),
-      ).toList(),
+        );
+      }).toList(),
     );
   }
 
   Widget _buildPrimaryConcernInput(Function(dynamic) onComplete) {
     return Column(
       children: concernCards.map((concern) =>
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _primaryConcern = concern.id;
-              _updateAccordionSection('primaryConcern', concern.id, concern.title);
-            });
-            TossDesignSystem.hapticLight();
-            onComplete(concern.id);
-          },
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            child: AppCard(
-              padding: const EdgeInsets.all(16),
-              style: _primaryConcern == concern.id ? AppCardStyle.filled : AppCardStyle.outlined,
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: _primaryConcern == concern.id
-                        ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                        : TossDesignSystem.gray100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Text(concern.emoji, style: TypographyUnified.heading3),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          concern.title,
-                          style: TypographyUnified.bodyMedium.copyWith(
-                            fontWeight: _primaryConcern == concern.id
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                            color: _primaryConcern == concern.id
-                              ? TossDesignSystem.tossBlue
-                              : null,
-                          ),
-                        ),
-                        SizedBox(height: 2),
-                        Text(
-                          concern.description,
-                          style: TypographyUnified.labelSmall.copyWith(
-                            color: TossDesignSystem.gray600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (_primaryConcern == concern.id)
-                    Icon(
-                      Icons.check_circle,
-                      color: TossDesignSystem.tossBlue,
-                      size: 24,
-                    ),
-                ],
-              ),
-            ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: SelectionCard(
+            title: concern.title,
+            subtitle: concern.description,
+            emoji: concern.emoji,
+            isSelected: _primaryConcern == concern.id,
+            onTap: () {
+              setState(() {
+                _primaryConcern = concern.id;
+                _updateAccordionSection('primaryConcern', concern.id, concern.title);
+              });
+              HapticFeedback.mediumImpact();
+              onComplete(concern.id);
+            },
           ),
         ),
       ).toList(),
@@ -375,42 +338,17 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
       spacing: 8,
       runSpacing: 8,
       children: goalOptions.map((goal) =>
-        GestureDetector(
+        SelectionChip(
+          label: '${goal.emoji} ${goal.title}',
+          isSelected: _shortTermGoal == goal.id,
           onTap: () {
             setState(() {
               _shortTermGoal = goal.id;
               _updateAccordionSection('shortTermGoal', goal.id, goal.title);
             });
-            TossDesignSystem.hapticLight();
+            HapticFeedback.mediumImpact();
             onComplete(goal.id);
           },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: _shortTermGoal == goal.id
-                ? TossDesignSystem.tossBlue
-                : TossDesignSystem.gray100,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(goal.emoji, style: TypographyUnified.buttonSmall),
-                SizedBox(width: 6),
-                Text(
-                  goal.title,
-                  style: TypographyUnified.bodySmall.copyWith(
-                    color: _shortTermGoal == goal.id
-                      ? TossDesignSystem.white
-                      : TossDesignSystem.gray800,
-                    fontWeight: _shortTermGoal == goal.id
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       ).toList(),
     );
@@ -421,48 +359,35 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
       spacing: 8,
       runSpacing: 8,
       children: valueOptions.map((value) =>
-        GestureDetector(
+        SelectionChip(
+          label: value.title,
+          isSelected: _coreValue == value.id,
           onTap: () {
             setState(() {
               _coreValue = value.id;
               _updateAccordionSection('coreValue', value.id, value.title);
             });
-            TossDesignSystem.hapticLight();
+            HapticFeedback.mediumImpact();
             onComplete(value.id);
           },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: _coreValue == value.id
-                ? TossDesignSystem.tossBlue
-                : TossDesignSystem.gray100,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              value.title,
-              style: TypographyUnified.bodySmall.copyWith(
-                color: _coreValue == value.id
-                  ? TossDesignSystem.white
-                  : TossDesignSystem.gray800,
-                fontWeight: _coreValue == value.id
-                  ? FontWeight.bold
-                  : FontWeight.normal,
-              ),
-            ),
-          ),
         ),
       ).toList(),
     );
   }
 
   Widget _buildSkillsToImproveInput(Function(dynamic) onComplete) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '복수 선택 가능',
-          style: TypographyUnified.labelMedium.copyWith(
-            color: TossDesignSystem.gray600,
+          style: TextStyle(
+            fontSize: 13,
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondaryLight,
           ),
         ),
         const SizedBox(height: 12),
@@ -472,19 +397,15 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  category.key,
-                  style: TypographyUnified.labelMedium.copyWith(
-                    color: TossDesignSystem.gray600,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                FieldLabel(text: category.key),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
                   children: category.value.map((skill) =>
-                    GestureDetector(
+                    SelectionChip(
+                      label: skill,
+                      isSelected: _skillsToImprove.contains(skill),
                       onTap: () {
                         setState(() {
                           if (_skillsToImprove.contains(skill)) {
@@ -498,32 +419,9 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                             _skillsToImprove.join(', '),
                           );
                         });
-                        TossDesignSystem.hapticLight();
+                        HapticFeedback.mediumImpact();
                         onComplete(_skillsToImprove.toList());
                       },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: _skillsToImprove.contains(skill)
-                            ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                            : TossDesignSystem.gray100,
-                          borderRadius: BorderRadius.circular(16),
-                          border: _skillsToImprove.contains(skill)
-                            ? Border.all(color: TossDesignSystem.tossBlue, width: 1.5)
-                            : null,
-                        ),
-                        child: Text(
-                          skill,
-                          style: TypographyUnified.labelSmall.copyWith(
-                            color: _skillsToImprove.contains(skill)
-                              ? TossDesignSystem.tossBlue
-                              : TossDesignSystem.gray800,
-                            fontWeight: _skillsToImprove.contains(skill)
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          ),
-                        ),
-                      ),
                     ),
                   ).toList(),
                 ),

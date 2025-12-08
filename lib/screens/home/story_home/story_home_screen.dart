@@ -836,7 +836,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
       final storyState = ref.read(fortuneStoryProvider);
       List<StorySegment>? generatedSegments;
 
-      if (storyState.segments != null) {
+      if (storyState.segments != null && storyState.segments!.isNotEmpty) {
         generatedSegments = storyState.segments;
         // 사주 분석 데이터도 가져오기
         if (storyState.sajuAnalysis != null && mounted) { // ✅ mounted 체크
@@ -859,8 +859,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
           });
         }
       } else {
-        // GPT 실패시 기본 스토리 생성
-        generatedSegments = StoryHelpers.createDetailedStorySegments(userName, fortune);
+        // GPT 실패시 fallback 비활성화 - 스토리 없이 진행
+        debugPrint('⚠️ GPT story generation failed - skipping story viewer');
+        generatedSegments = null;
       }
 
       if (generatedSegments != null && mounted) { // ✅ mounted 체크
@@ -881,19 +882,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> with WidgetsB
       }
     } catch (e) {
       debugPrint('❌ Error generating story: $e');
-      // 에러 발생시에도 기본 스토리 생성
-      if (!mounted) return; // ✅ dispose 체크 추가
-
-      final userName = (userProfile?.name != null && userProfile!.name.isNotEmpty)
-          ? userProfile!.name
-          : '사용자';
-      final fallbackSegments = StoryHelpers.createDetailedStorySegments(userName, fortune);
-
-      if (mounted) { // ✅ setState 전 mounted 체크
-        setState(() {
-          storySegments = fallbackSegments;
-        });
-      }
+      // fallback 비활성화 - 스토리 없이 진행
+      debugPrint('⚠️ Story generation error - skipping story viewer');
+      // storySegments는 null로 유지되어 FortuneSwipePage로 바로 이동
     }
   }
 

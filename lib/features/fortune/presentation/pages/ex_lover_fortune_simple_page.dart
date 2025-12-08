@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/app_card.dart';
+import '../../../../core/widgets/app_widgets.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
 import '../../domain/models/conditions/ex_lover_fortune_conditions.dart';
 import '../../../../core/services/unified_fortune_service.dart';
@@ -195,9 +193,11 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       appBar: StandardFortuneAppBar(
         title: '헤어진 애인',
         onBackPressed: () {
@@ -244,100 +244,81 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 위로 메시지
-          AppCard(
-            style: AppCardStyle.elevated,
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        TossDesignSystem.purple.withValues(alpha: 0.8),
-                        const Color(0xFFEC4899).withValues(alpha: 0.8),
-                      ],
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.favorite_rounded,
-                    color: TossDesignSystem.white,
-                    size: 32,
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  '힘드셨죠?',
-                  style: TossDesignSystem.heading3.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '천천히 답해주세요. 당신의 마음을 읽어드릴게요.',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+          // 위로 메시지 - ChatGPT 스타일
+          const PageHeaderSection(
+            emoji: '💜',
+            title: '힘드셨죠?',
+            subtitle: '천천히 답해주세요. 당신의 마음을 읽어드릴게요.',
           ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
-          
-          SizedBox(height: 32),
-          
+
+          const SizedBox(height: 40),
+
           // 1. 이별 시기
-          Text(
-            '이별한 지 얼마나 되었나요?',
-            style: TossDesignSystem.body1.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 12),
-          
+          const FieldLabel(text: '이별한 지 얼마나 되었나요?'),
+
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildTimeChip('1개월 미만', 'recent', isDark),
-              _buildTimeChip('1-3개월', 'short', isDark),
-              _buildTimeChip('3-6개월', 'medium', isDark),
-              _buildTimeChip('6개월-1년', 'long', isDark),
-              _buildTimeChip('1년 이상', 'verylong', isDark),
+              SelectionChip(
+                label: '1개월 미만',
+                isSelected: _timeSinceBreakup == 'recent',
+                onTap: () => setState(() => _timeSinceBreakup = 'recent'),
+              ),
+              SelectionChip(
+                label: '1-3개월',
+                isSelected: _timeSinceBreakup == 'short',
+                onTap: () => setState(() => _timeSinceBreakup = 'short'),
+              ),
+              SelectionChip(
+                label: '3-6개월',
+                isSelected: _timeSinceBreakup == 'medium',
+                onTap: () => setState(() => _timeSinceBreakup = 'medium'),
+              ),
+              SelectionChip(
+                label: '6개월-1년',
+                isSelected: _timeSinceBreakup == 'long',
+                onTap: () => setState(() => _timeSinceBreakup = 'long'),
+              ),
+              SelectionChip(
+                label: '1년 이상',
+                isSelected: _timeSinceBreakup == 'verylong',
+                onTap: () => setState(() => _timeSinceBreakup = 'verylong'),
+              ),
             ],
           ),
-          
-          SizedBox(height: 32),
-          
+
+          const SizedBox(height: 32),
+
           // 2. 현재 감정
-          Text(
-            '지금 나의 마음은?',
-            style: TossDesignSystem.body1.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-              fontWeight: FontWeight.w600,
+          const FieldLabel(text: '지금 나의 마음은?'),
+
+          ...emotionCards.map((card) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: SelectionCard(
+              title: card.title,
+              subtitle: card.description,
+              emoji: card.emoji,
+              isSelected: _currentEmotion == card.id,
+              onTap: () => setState(() => _currentEmotion = card.id),
             ),
-          ),
-          const SizedBox(height: 16),
-          
-          ...emotionCards.map((card) => _buildEmotionCard(card, isDark)),
-          
-          SizedBox(height: 32),
-          
+          )),
+
+          const SizedBox(height: 32),
+
           // 3. 가장 궁금한 것
-          Text(
-            '가장 궁금한 것을 하나만 선택해주세요',
-            style: TossDesignSystem.body1.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-              fontWeight: FontWeight.w600,
+          const FieldLabel(text: '가장 궁금한 것을 하나만 선택해주세요'),
+
+          ...curiosityCards.map((card) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: SelectionCard(
+              title: card.title,
+              subtitle: card.description,
+              emoji: card.icon,
+              isSelected: _mainCuriosity == card.id,
+              onTap: () => setState(() => _mainCuriosity = card.id),
             ),
-          ),
-          const SizedBox(height: 16),
-          
-          ...curiosityCards.map((card) => _buildCuriosityCard(card, isDark)),
+          )),
 
           // Floating 버튼 공간 확보
           const SizedBox(height: 100),
@@ -352,50 +333,15 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppCard(
-            style: AppCardStyle.elevated,
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        TossDesignSystem.tossBlue.withValues(alpha: 0.8),
-                        TossDesignSystem.purple.withValues(alpha: 0.8),
-                      ],
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.auto_awesome_rounded,
-                    color: TossDesignSystem.white,
-                    size: 32,
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  '더 정확한 분석을 원하시나요?',
-                  style: TossDesignSystem.heading3.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '선택사항이에요. 건너뛰어도 괜찮아요.',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+          // 헤더 - ChatGPT 스타일
+          const PageHeaderSection(
+            emoji: '✨',
+            title: '더 정확한 분석을 원하시나요?',
+            subtitle: '선택사항이에요. 건너뛰어도 괜찮아요.',
           ),
-          
-          SizedBox(height: 32),
-          
+
+          const SizedBox(height: 40),
+
           // 상대방 생년월일
           NumericDateInput(
             label: '상대방 생년월일 (선택)',
@@ -405,28 +351,41 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
             maxDate: DateTime.now(),
             showAge: true,
           ),
-          
-          SizedBox(height: 32),
-          
+
+          const SizedBox(height: 32),
+
           // 이별 이유
-          Text(
-            '이별 이유 (선택)',
-            style: TossDesignSystem.body1.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 12),
-          
+          const FieldLabel(text: '이별 이유 (선택)'),
+
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildReasonChip('가치관 차이', 'differentValues', isDark),
-              _buildReasonChip('시기가 맞지 않음', 'timing', isDark),
-              _buildReasonChip('소통 부족', 'communication', isDark),
-              _buildReasonChip('신뢰 문제', 'trust', isDark),
-              _buildReasonChip('기타', 'other', isDark),
+              SelectionChip(
+                label: '가치관 차이',
+                isSelected: _breakupReason == 'differentValues',
+                onTap: () => setState(() => _breakupReason = 'differentValues'),
+              ),
+              SelectionChip(
+                label: '시기가 맞지 않음',
+                isSelected: _breakupReason == 'timing',
+                onTap: () => setState(() => _breakupReason = 'timing'),
+              ),
+              SelectionChip(
+                label: '소통 부족',
+                isSelected: _breakupReason == 'communication',
+                onTap: () => setState(() => _breakupReason = 'communication'),
+              ),
+              SelectionChip(
+                label: '신뢰 문제',
+                isSelected: _breakupReason == 'trust',
+                onTap: () => setState(() => _breakupReason = 'trust'),
+              ),
+              SelectionChip(
+                label: '기타',
+                isSelected: _breakupReason == 'other',
+                onTap: () => setState(() => _breakupReason = 'other'),
+              ),
             ],
           ),
 
@@ -437,245 +396,4 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
     );
   }
 
-  Widget _buildTimeChip(String label, String value, bool isDark) {
-    final isSelected = _timeSinceBreakup == value;
-    
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _timeSinceBreakup = value;
-        });
-        HapticFeedback.lightImpact();
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? TossDesignSystem.purple.withValues(alpha: 0.1)
-              : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: isSelected
-                ? TossDesignSystem.purple
-                : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200),
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TossDesignSystem.body2.copyWith(
-            color: isSelected
-                ? TossDesignSystem.purple
-                : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmotionCard(EmotionCard card, bool isDark) {
-    final isSelected = _currentEmotion == card.id;
-    
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: AppCard(
-        style: AppCardStyle.filled,
-        padding: const EdgeInsets.all(16),
-        onTap: () {
-          setState(() {
-            _currentEmotion = card.id;
-          });
-          HapticFeedback.lightImpact();
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isSelected
-                  ? Color(card.gradientColors[0])
-                  : TossDesignSystem.white.withValues(alpha: 0.0),
-              width: 2,
-            ),
-            gradient: isSelected
-                ? LinearGradient(
-                    colors: card.gradientColors.map((c) => Color(c).withValues(alpha: 0.1)).toList(),
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                : null,
-          ),
-          child: Row(
-            children: [
-              Text(
-                card.emoji,
-                style: TypographyUnified.numberLarge,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      card.title,
-                      style: TossDesignSystem.body1.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      card.description,
-                      style: TossDesignSystem.caption.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Radio<String>(
-                value: card.id,
-                groupValue: _currentEmotion,
-                onChanged: (value) {
-                  setState(() {
-                    _currentEmotion = value;
-                  });
-                },
-                activeColor: Color(card.gradientColors[0]),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ).animate(delay: Duration(milliseconds: 100 * emotionCards.indexOf(card)))
-      .fadeIn(duration: 300.ms)
-      .slideX(begin: 0.05, end: 0);
-  }
-
-  Widget _buildCuriosityCard(CuriosityCard card, bool isDark) {
-    final isSelected = _mainCuriosity == card.id;
-    
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: AppCard(
-        style: AppCardStyle.filled,
-        padding: const EdgeInsets.all(16),
-        onTap: () {
-          setState(() {
-            _mainCuriosity = card.id;
-          });
-          HapticFeedback.lightImpact();
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isSelected
-                  ? TossDesignSystem.purple
-                  : TossDesignSystem.white.withValues(alpha: 0.0),
-              width: 2,
-            ),
-            color: isSelected
-                ? TossDesignSystem.purple.withValues(alpha: 0.05)
-                : null,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? TossDesignSystem.purple.withValues(alpha: 0.1)
-                      : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(
-                    card.icon,
-                    style: TypographyUnified.displaySmall,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      card.title,
-                      style: TossDesignSystem.body1.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      card.description,
-                      style: TossDesignSystem.caption.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Radio<String>(
-                value: card.id,
-                groupValue: _mainCuriosity,
-                onChanged: (value) {
-                  setState(() {
-                    _mainCuriosity = value;
-                  });
-                },
-                activeColor: TossDesignSystem.purple,
-              ),
-            ],
-          ),
-        ),
-      ),
-    ).animate(delay: Duration(milliseconds: 100 * curiosityCards.indexOf(card)))
-      .fadeIn(duration: 300.ms)
-      .slideX(begin: 0.05, end: 0);
-  }
-
-  Widget _buildReasonChip(String label, String value, bool isDark) {
-    final isSelected = _breakupReason == value;
-    
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _breakupReason = value;
-        });
-        HapticFeedback.lightImpact();
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? TossDesignSystem.purple.withValues(alpha: 0.1)
-              : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: isSelected
-                ? TossDesignSystem.purple
-                : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200),
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TossDesignSystem.body2.copyWith(
-            color: isSelected
-                ? TossDesignSystem.purple
-                : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-          ),
-        ),
-      ),
-    );
-  }
 }

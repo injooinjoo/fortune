@@ -144,6 +144,9 @@ class _UnifiedFortuneBaseWidgetState
   /// 현재 상태: 입력 중 or 결과 표시
   bool _showResult = false;
 
+  /// 로딩 상태 (API 호출 중)
+  bool _isLoading = false;
+
   /// 생성된 운세 결과
   FortuneResult? _fortuneResult;
 
@@ -236,8 +239,16 @@ class _UnifiedFortuneBaseWidgetState
       }
     }
 
-    // 2. 신규 플로우: 운세 생성 → 블러 상태로 즉시 표시 → 광고 → 블러 해제
+    // 2. 신규 플로우: 즉시 결과 화면 전환 → 스켈레톤 → 운세 생성 → 블러 상태 표시 → 광고 → 블러 해제
     try {
+      // 2-0. 즉시 결과 화면으로 전환 (스켈레톤 표시)
+      setState(() {
+        _showResult = true;
+        _isLoading = true;
+        _fortuneResult = null;
+      });
+      Logger.info('[UnifiedFortuneBaseWidget] 📱 결과 화면으로 전환 (로딩 스켈레톤 표시)');
+
       // 2-1. 운세 생성 (블러 상태)
       await _generateFortuneBlurred(isPremium: isPremium);
 
@@ -264,10 +275,14 @@ class _UnifiedFortuneBaseWidgetState
       // FloatingBottomButton을 통해 사용자가 직접 블러 해제하도록 유도
     } catch (e) {
       Logger.error('[UnifiedFortuneBaseWidget] 운세 생성 실패', e);
-      // ❌ 에러 발생 시에만 블러 해제
-      if (_fortuneResult == null) {
-        // 운세 자체가 생성 안 됐으면 에러 표시
-        return;
+      // ❌ 에러 발생 시 로딩 해제하고 입력 화면으로 복귀
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          if (_fortuneResult == null) {
+            _showResult = false; // 운세가 없으면 입력 화면으로 복귀
+          }
+        });
       }
     }
   }
@@ -299,8 +314,9 @@ class _UnifiedFortuneBaseWidgetState
             setState(() {
               _fortuneResult = blurredResult;
               _showResult = true;
+              _isLoading = false; // 로딩 완료
             });
-            Logger.info('[UnifiedFortuneBaseWidget] 🔒 블러 상태 결과 표시 완료 (_showResult: $_showResult)');
+            Logger.info('[UnifiedFortuneBaseWidget] 🔒 블러 상태 결과 표시 완료 (_showResult: $_showResult, _isLoading: false)');
           } else {
             Logger.warning('[UnifiedFortuneBaseWidget] ⚠️ mounted=false - setState 스킵됨');
           }
@@ -315,6 +331,7 @@ class _UnifiedFortuneBaseWidgetState
       setState(() {
         _fortuneResult = result;
         _showResult = true;
+        _isLoading = false; // 로딩 완료
       });
 
       HapticUtils.success();
@@ -326,6 +343,9 @@ class _UnifiedFortuneBaseWidgetState
       );
 
       if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
         HapticUtils.error();
         Toast.show(
           context,
@@ -416,9 +436,56 @@ class _UnifiedFortuneBaseWidgetState
               ] : null,
             )
           : null,
-      body: _showResult && _fortuneResult != null
-          ? _buildResultWithBlur(context)
+      body: _showResult
+          ? (_isLoading || _fortuneResult == null
+              ? _buildLoadingSkeleton(context, isDark)
+              : _buildResultWithBlur(context))
           : widget.inputBuilder(context, _handleSubmit),
+    );
+  }
+
+  /// 로딩 스켈레톤 빌드
+  Widget _buildLoadingSkeleton(BuildContext context, bool isDark) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24).copyWith(bottom: 100),
+      child: Column(
+        children: [
+          // 로딩 메시지
+          Padding(
+            padding: const EdgeInsets.only(bottom: 24),
+            child: Column(
+              children: [
+                const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.tossBlue),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '운세를 분석하고 있어요...',
+                  style: TypographyUnified.bodyMedium.copyWith(
+                    color: isDark
+                        ? TossDesignSystem.textSecondaryDark
+                        : TossDesignSystem.textSecondaryLight,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // 헤더 스켈레톤
+          _ShimmerSkeletonCard(isDark: isDark, height: 120),
+          const SizedBox(height: 16),
+          // 컨텐츠 스켈레톤
+          _ShimmerSkeletonCard(isDark: isDark, height: 180),
+          const SizedBox(height: 16),
+          _ShimmerSkeletonCard(isDark: isDark, height: 160),
+          const SizedBox(height: 16),
+          _ShimmerSkeletonCard(isDark: isDark, height: 140),
+        ],
+      ),
     );
   }
 
@@ -446,3 +513,106 @@ final unifiedFortuneServiceProvider = Provider<UnifiedFortuneService>((ref) {
     enableOptimization: true,
   );
 });
+
+/// Shimmer 애니메이션이 있는 스켈레톤 카드
+class _ShimmerSkeletonCard extends StatefulWidget {
+  final bool isDark;
+  final double height;
+
+  const _ShimmerSkeletonCard({
+    required this.isDark,
+    required this.height,
+  });
+
+  @override
+  State<_ShimmerSkeletonCard> createState() => _ShimmerSkeletonCardState();
+}
+
+class _ShimmerSkeletonCardState extends State<_ShimmerSkeletonCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat();
+    _animation = Tween<double>(begin: -1.0, end: 2.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Container(
+          height: widget.height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: widget.isDark
+                  ? [
+                      TossDesignSystem.gray800.withValues(alpha: 0.3),
+                      TossDesignSystem.gray700.withValues(alpha: 0.5),
+                      TossDesignSystem.gray800.withValues(alpha: 0.3),
+                    ]
+                  : [
+                      TossDesignSystem.gray100,
+                      TossDesignSystem.gray50,
+                      TossDesignSystem.gray100,
+                    ],
+              stops: [
+                _animation.value - 0.3,
+                _animation.value,
+                _animation.value + 0.3,
+              ].map((s) => s.clamp(0.0, 1.0)).toList(),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 제목 스켈레톤
+                _buildShimmerLine(150),
+                const SizedBox(height: 16),
+                // 텍스트 스켈레톤
+                _buildShimmerLine(double.infinity),
+                const SizedBox(height: 8),
+                _buildShimmerLine(double.infinity),
+                const SizedBox(height: 8),
+                _buildShimmerLine(200),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildShimmerLine(double width) {
+    return Container(
+      height: 16,
+      width: width,
+      decoration: BoxDecoration(
+        color: widget.isDark
+            ? TossDesignSystem.gray700.withValues(alpha: 0.5)
+            : TossDesignSystem.gray200,
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+}

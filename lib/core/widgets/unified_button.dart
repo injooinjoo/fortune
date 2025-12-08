@@ -576,9 +576,13 @@ class _UnifiedButtonState extends State<UnifiedButton> {
                   const SizedBox(width: TossDesignSystem.spacingXS),
               ],
               if (widget.text.isNotEmpty)
-                Text(
-                  widget.text,
-                  style: _getTextStyle(isDark, effectiveEnabled),
+                Flexible(
+                  child: Text(
+                    widget.text,
+                    style: _getTextStyle(isDark, effectiveEnabled),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
             ],
           );

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../domain/models/talisman_design.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -62,36 +61,6 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Success Header
-          Row(
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: TossDesignSystem.successGreen.withValues(alpha: 0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.check,
-                  color: TossDesignSystem.successGreen,
-                  size: 20,
-                ),
-              ),
-              SizedBox(width: 12),
-              Text(
-                '부적이 완성되었어요!',
-                style: TypographyUnified.heading3.copyWith(
-                  color: TossDesignSystem.successGreen,
-                ),
-              ),
-            ],
-          ).animate()
-            .fadeIn(duration: 500.ms)
-            .slideX(begin: -0.2, end: 0),
-          
-          const SizedBox(height: 32),
-          
           // Talisman Card
           Container(
             width: double.infinity,
@@ -156,46 +125,56 @@ class _TalismanResultCardState extends State<TalismanResultCard> {
                 
                 const SizedBox(height: 20),
                 
-                // Talisman Image
-                Stack(
-                  children: [
-                    Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: TossDesignSystem.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: _categoryColor.withValues(alpha: 0.4),
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: _categoryColor.withValues(alpha: 0.2),
-                            offset: const Offset(0, 4),
-                            blurRadius: 12,
-                            spreadRadius: 0,
-                          ),
-                        ],
+                // Talisman Image - 이미지 크기에 맞게 자동 조정
+                Container(
+                  constraints: const BoxConstraints(
+                    maxWidth: 280,
+                    minWidth: 200,
+                  ),
+                  decoration: BoxDecoration(
+                    color: TossDesignSystem.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: _categoryColor.withValues(alpha: 0.4),
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _categoryColor.withValues(alpha: 0.2),
+                        offset: const Offset(0, 4),
+                        blurRadius: 12,
+                        spreadRadius: 0,
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: widget.talismanDesign.imageUrl.isNotEmpty
-                            ? SvgPicture.asset(
-                                widget.talismanDesign.imageUrl,
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: widget.talismanDesign.imageUrl.isNotEmpty
+                        ? Image.network(
+                            widget.talismanDesign.imageUrl,
+                            fit: BoxFit.contain,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return SizedBox(
                                 width: 200,
                                 height: 200,
-                                fit: BoxFit.cover,
-                                placeholderBuilder: (context) => Center(
+                                child: Center(
                                   child: CircularProgressIndicator(
                                     valueColor: AlwaysStoppedAnimation<Color>(_categoryColor),
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
                                   ),
                                 ),
-                              )
-                            : _buildPlaceholderTalisman(),
-                      ),
-                    ),
-                  ],
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return _buildPlaceholderTalisman();
+                            },
+                          )
+                        : _buildPlaceholderTalisman(),
+                  ),
                 ),
                 
                 const SizedBox(height: 20),

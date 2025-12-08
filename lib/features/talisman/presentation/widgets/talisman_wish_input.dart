@@ -10,7 +10,7 @@ import '../../../../core/utils/logger.dart';
 class TalismanWishInput extends StatefulWidget {
   final TalismanCategory selectedCategory;
   final Function(String) onWishSubmitted;
-  final Function(String, bool)? onAIWishSubmitted; // AI 생성용 콜백
+  final Function(String wish, bool isAI, String? imageUrl)? onAIWishSubmitted; // AI 생성용 콜백
   final Function(bool isValid, bool isLoading)? onValidationChanged;
 
   const TalismanWishInput({
@@ -219,8 +219,8 @@ class TalismanWishInputState extends State<TalismanWishInput> {
       Logger.info('[TalismanWishInput] AI talisman generated: ${result.imageUrl}');
 
       if (mounted) {
-        // Call parent callback with AI-generated result
-        widget.onAIWishSubmitted?.call(wish, true);
+        // Call parent callback with AI-generated result including image URL
+        widget.onAIWishSubmitted?.call(wish, true, result.imageUrl);
       }
     } catch (e, stackTrace) {
       Logger.error('[TalismanWishInput] Failed to generate AI talisman: $e', e, stackTrace);

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fortune/core/theme/toss_theme.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/components/app_card.dart';
+import 'package:fortune/core/widgets/app_widgets.dart';
 import 'package:fortune/core/widgets/unified_date_picker.dart';
 import 'package:fortune/core/widgets/unified_button.dart';
+import 'package:fortune/features/fortune/presentation/widgets/fortune_loading_skeleton.dart';
 
 class CompatibilityInputView extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -37,6 +36,11 @@ class CompatibilityInputView extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // 로딩 중일 때 스켈레톤 UI 표시
+    if (isLoading) {
+      return _buildLoadingSkeleton(isDark);
+    }
+
     return Stack(
       children: [
         SingleChildScrollView(
@@ -46,10 +50,14 @@ class CompatibilityInputView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 헤더 카드
-                _buildHeaderCard(isDark),
+                // 헤더 카드 - ChatGPT 스타일
+                const PageHeaderSection(
+                  emoji: '💕',
+                  title: '두 사람의 궁합',
+                  subtitle: '이름과 생년월일을 입력하면\n두 사람의 궁합을 자세히 분석해드릴게요',
+                ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
 
                 // 첫 번째 사람 정보 - 컴팩트 스타일
                 _buildPerson1Label(),
@@ -58,7 +66,7 @@ class CompatibilityInputView extends StatelessWidget {
 
                 _buildPerson1Card(isDark),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 // 두 번째 사람 정보 - 강조된 스타일
                 _buildPerson2Label(),
@@ -67,13 +75,16 @@ class CompatibilityInputView extends StatelessWidget {
 
                 _buildPerson2Card(isDark),
 
-                SizedBox(height: 16),
+                const SizedBox(height: 20),
 
                 Center(
                   child: Text(
                     '분석 결과는 참고용으로만 활용해 주세요',
-                    style: TossTheme.caption.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondaryLight,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -91,135 +102,40 @@ class CompatibilityInputView extends StatelessWidget {
             text: '궁합 분석하기',
             onPressed: canAnalyze ? onAnalyze : null,
             isEnabled: canAnalyze,
-            isLoading: isLoading,
           ),
       ],
     );
   }
 
-  Widget _buildHeaderCard(bool isDark) {
-    return AppCard(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFFEC4899),
-                  Color(0xFF8B5CF6),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFEC4899).withValues(alpha: 0.3),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.favorite,
-              color: TossDesignSystem.white,
-              size: 36,
-            ),
-          ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
-
-          SizedBox(height: 24),
-
-          Text(
-            '두 사람의 궁합',
-            style: TossTheme.heading2.copyWith(
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-              fontWeight: FontWeight.w700,
-            ),
-            textAlign: TextAlign.center,
-          ),
-
-          SizedBox(height: 12),
-
-          Text(
-            '이름과 생년월일을 입력하면\n두 사람의 궁합을 자세히 분석해드릴게요',
-            style: TossTheme.body2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
-              height: 1.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
+  /// 로딩 스켈레톤 UI
+  Widget _buildLoadingSkeleton(bool isDark) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: FortuneLoadingSkeleton(
+        itemCount: 4,
+        showHeader: true,
+        loadingMessages: const [
+          '두 분의 궁합을 분석하고 있어요...',
+          '사주팔자를 확인하는 중...',
+          '운명의 연결고리를 찾는 중...',
+          '특별한 인연을 분석하는 중...',
         ],
       ),
-    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3);
+    );
   }
 
   Widget _buildPerson1Label() {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.person,
-                size: 14,
-                color: TossTheme.primaryBlue,
-              ),
-              SizedBox(width: 4),
-              Text(
-                '나',
-                style: TossTheme.caption.copyWith(
-                  color: TossTheme.primaryBlue,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+    return const FieldLabel(text: '👤 나의 정보');
   }
 
   Widget _buildPerson1Card(bool isDark) {
-    return AppCard(
-      padding: const EdgeInsets.all(16),
-      style: AppCardStyle.outlined,
+    return ModernCard(
       child: Column(
         children: [
-          TextField(
+          PillTextField(
             controller: person1NameController,
-            decoration: InputDecoration(
-              labelText: '이름',
-              hintText: '이름을 입력해주세요',
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: TossTheme.borderGray300,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: TossTheme.primaryBlue,
-                  width: 1.5,
-                ),
-              ),
-            ),
-            style: TossTheme.body2.copyWith(
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-            ),
+            labelText: '이름',
+            hintText: '이름을 입력해주세요',
           ),
 
           const SizedBox(height: 12),
@@ -242,71 +158,17 @@ class CompatibilityInputView extends StatelessWidget {
   }
 
   Widget _buildPerson2Label() {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [
-                Color(0xFFEC4899),
-                Color(0xFF8B5CF6),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.favorite,
-                size: 16,
-                color: TossDesignSystem.white,
-              ),
-              SizedBox(width: 6),
-              Text(
-                '상대방',
-                style: TossTheme.body2.copyWith(
-                  color: TossDesignSystem.white,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+    return const FieldLabel(text: '💕 상대방 정보');
   }
 
   Widget _buildPerson2Card(bool isDark) {
-    return AppCard(
-      padding: const EdgeInsets.all(20),
+    return ModernCard(
       child: Column(
         children: [
-          TextField(
+          PillTextField(
             controller: person2NameController,
-            decoration: InputDecoration(
-              labelText: '이름',
-              hintText: '상대방 이름을 입력해주세요',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: TossTheme.primaryBlue,
-                ),
-              ),
-            ),
-            style: TossTheme.body1.copyWith(
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
-            ),
+            labelText: '이름',
+            hintText: '상대방 이름을 입력해주세요',
           ),
 
           const SizedBox(height: 16),

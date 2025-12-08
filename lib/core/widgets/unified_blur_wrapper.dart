@@ -104,13 +104,16 @@ class _UnifiedBlurWrapperState extends ConsumerState<UnifiedBlurWrapper> {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Stack(
-      children: [
-        // 원본 콘텐츠 (블러 처리)
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: widget.sigmaX, sigmaY: widget.sigmaY),
-          child: widget.child,
-        ),
+    // SizedBox로 감싸서 부모 전체 너비를 차지하게 함 → 자물쇠가 항상 중앙에 위치
+    return SizedBox(
+      width: double.infinity,
+      child: Stack(
+        children: [
+          // 원본 콘텐츠 (블러 처리)
+          ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: widget.sigmaX, sigmaY: widget.sigmaY),
+            child: widget.child,
+          ),
 
         // 반투명 오버레이
         Positioned.fill(
@@ -152,7 +155,8 @@ class _UnifiedBlurWrapperState extends ConsumerState<UnifiedBlurWrapper> {
                 ),
           ),
         ),
-      ],
+        ],
+      ),
     );
   }
 }

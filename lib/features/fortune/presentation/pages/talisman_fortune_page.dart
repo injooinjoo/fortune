@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../talisman/domain/models/talisman_wish.dart';
 import '../../../talisman/presentation/widgets/talisman_wish_selector.dart';
 import '../../../talisman/presentation/widgets/talisman_wish_input.dart';
-import '../../../talisman/presentation/widgets/talisman_generation_animation.dart';
+import '../../../talisman/presentation/widgets/talisman_loading_skeleton.dart';
 import '../../../talisman/presentation/widgets/talisman_result_card.dart';
 import '../../../talisman/presentation/providers/talisman_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
@@ -44,7 +44,10 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
-        leading: _buildBackButton(context, ref, talismanState.step, userId, isDark),
+        // 결과 페이지면 leading 없음
+        leading: talismanState.step == TalismanGenerationStep.result
+            ? null
+            : _buildBackButton(context, ref, talismanState.step, userId, isDark),
         title: Text(
           '부적',
           style: TypographyUnified.heading3.copyWith(
@@ -52,6 +55,16 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
           ),
         ),
         centerTitle: true,
+        // 결과 페이지면 오른쪽 X 버튼
+        actions: talismanState.step == TalismanGenerationStep.result
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ]
+            : null,
       ),
       body: _buildContent(context, ref, talismanState, userId, isDark),
     );
@@ -152,7 +165,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
                   specificWish: wish,
                 );
               },
-              onAIWishSubmitted: (wish, isAIGenerated) async {
+              onAIWishSubmitted: (wish, isAIGenerated, imageUrl) async {
                 final authState = ref.read(authStateProvider).value;
                 final userId = authState?.session?.user.id;
 
@@ -168,6 +181,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
                 ref.read(talismanGenerationProvider(userId).notifier).generateTalisman(
                   category: _selectedCategory!,
                   specificWish: wish,
+                  aiImageUrl: imageUrl, // AI 생성 이미지 URL 전달
                 );
               },
               onValidationChanged: (isValid, isLoading) {
@@ -194,12 +208,9 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
   }
 
   Widget _buildGenerationAnimation(BuildContext context, WidgetRef ref) {
-    return TalismanGenerationAnimation(
+    return TalismanLoadingSkeleton(
       category: _selectedCategory!,
       wishText: _selectedWish ?? "소원을 이루어보세요",
-      onCompleted: () {
-        // 애니메이션 완료 후 자동으로 결과 화면으로 이동됨
-      },
     );
   }
 

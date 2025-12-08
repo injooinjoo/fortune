@@ -104,6 +104,7 @@ class TalismanGenerationNotifier extends StateNotifier<TalismanGenerationState> 
   Future<void> generateTalisman({
     required TalismanCategory category,
     required String specificWish,
+    String? aiImageUrl, // AI 생성 이미지 URL
   }) async {
     state = state.copyWith(
       isLoading: true,
@@ -113,11 +114,12 @@ class TalismanGenerationNotifier extends StateNotifier<TalismanGenerationState> 
 
     try {
       Logger.info('Starting talisman generation for category: ${category.name}');
-      
+
       final design = await _talismanService.generateTalisman(
         category: category,
         specificWish: specificWish,
         userId: _userId,
+        aiImageUrl: aiImageUrl, // AI 이미지 URL 전달
       );
 
       state = state.copyWith(
@@ -129,7 +131,7 @@ class TalismanGenerationNotifier extends StateNotifier<TalismanGenerationState> 
       Logger.info('Talisman generation completed successfully');
     } catch (e, stackTrace) {
       Logger.error('Talisman generation failed', e, stackTrace);
-      
+
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),

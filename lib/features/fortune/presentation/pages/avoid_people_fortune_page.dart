@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/unified_fortune_base_widget.dart';
+import '../../../../core/widgets/app_widgets.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../domain/models/conditions/avoid_people_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/components/app_card.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -14,7 +15,6 @@ import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
-import 'package:flutter/services.dart'; // ✅ HapticFeedback
 
 class AvoidPeopleFortunePage extends ConsumerStatefulWidget {
   const AvoidPeopleFortunePage({super.key});
@@ -86,10 +86,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             // ✅ PageView로 단계별 입력
             Column(
               children: [
-                // ✅ Step Indicator
-                _buildStepIndicator(isDark),
-
-                // ✅ PageView
+                // ✅ PageView (상단 indicator 제거, 버튼에 progress 표시)
                 Expanded(
                   child: PageView(
                     controller: _pageController,
@@ -354,36 +351,6 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
     );
   }
 
-  // ===== Step Indicator =====
-  Widget _buildStepIndicator(bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(4, (index) {
-          final isActive = index == _currentStep;
-          final isCompleted = index < _currentStep;
-
-          return Row(
-            children: [
-              Container(
-                width: isActive ? 32 : 24,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: isCompleted || isActive
-                      ? TossDesignSystem.tossBlue
-                      : (isDark ? TossDesignSystem.gray600 : TossDesignSystem.gray300),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-              if (index < 3) const SizedBox(width: 8),
-            ],
-          );
-        }),
-      ),
-    );
-  }
-
   // ===== Step 1: 환경 선택 =====
   Widget _buildStep1Environment(bool isDark) {
     return Center(
@@ -394,54 +361,30 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 아이콘
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      TossDesignSystem.warningOrange,
-                      TossDesignSystem.warningOrange.withValues(alpha: 0.8)
-                    ],
-                  ),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.people_outline_rounded,
-                    color: TossDesignSystem.white, size: 40),
-              ),
-              const SizedBox(height: 24),
-
-              // 제목
-              Text(
-                '오늘의 주요 환경',
-                style: context.heading2.copyWith(
-                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // 설명
-              Text(
-                '현재 상태와 일정을 입력하면\n오늘 주의해야 할 사람 유형을 분석해드립니다',
-                style: context.bodyMedium.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                ),
-                textAlign: TextAlign.center,
+              // ChatGPT 스타일 헤더
+              const PageHeaderSection(
+                emoji: '👥',
+                title: '오늘의 주요 환경',
+                subtitle: '현재 상태와 일정을 입력하면\n오늘 주의해야 할 사람 유형을 분석해드립니다',
               ),
               const SizedBox(height: 40),
 
+              // 환경 선택 라벨
+              const FieldLabel(text: '주요 환경을 선택해주세요'),
+
               // 환경 선택
               Wrap(
-                spacing: 12,
-                runSpacing: 12,
+                spacing: 8,
+                runSpacing: 8,
                 alignment: WrapAlignment.center,
                 children: ['직장', '학교', '모임', '가족', '데이트', '집']
-                    .map((env) => _buildChip(
-                        env, _environment == env, () {
+                    .map((env) => SelectionChip(
+                        label: env,
+                        isSelected: _environment == env,
+                        onTap: () {
                           setState(() => _environment = env);
                           HapticFeedback.selectionClick();
-                        }, isDark))
+                        }))
                     .toList(),
               ),
             ],
@@ -461,54 +404,30 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 아이콘
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      TossDesignSystem.tossBlue,
-                      TossDesignSystem.tossBlue.withValues(alpha: 0.8)
-                    ],
-                  ),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.event_note,
-                    color: TossDesignSystem.white, size: 40),
-              ),
-              const SizedBox(height: 24),
-
-              // 제목
-              Text(
-                '중요한 일정',
-                style: context.heading2.copyWith(
-                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // 설명
-              Text(
-                '오늘 예정된 중요한 일정을 선택해주세요',
-                style: context.bodyMedium.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                ),
-                textAlign: TextAlign.center,
+              // ChatGPT 스타일 헤더
+              const PageHeaderSection(
+                emoji: '📅',
+                title: '중요한 일정',
+                subtitle: '오늘 예정된 중요한 일정을 선택해주세요',
               ),
               const SizedBox(height: 40),
 
+              // 일정 선택 라벨
+              const FieldLabel(text: '오늘의 일정'),
+
               // 일정 선택
               Wrap(
-                spacing: 12,
-                runSpacing: 12,
+                spacing: 8,
+                runSpacing: 8,
                 alignment: WrapAlignment.center,
                 children: ['면접', '프레젠테이션', '미팅', '시험', '데이트', '가족모임', '없음']
-                    .map((schedule) => _buildChip(schedule, _importantSchedule == schedule,
-                        () {
+                    .map((schedule) => SelectionChip(
+                        label: schedule,
+                        isSelected: _importantSchedule == schedule,
+                        onTap: () {
                           setState(() => _importantSchedule = schedule);
                           HapticFeedback.selectionClick();
-                        }, isDark))
+                        }))
                     .toList(),
               ),
             ],
@@ -528,50 +447,41 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 아이콘
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      TossDesignSystem.successGreen,
-                      TossDesignSystem.successGreen.withValues(alpha: 0.8)
-                    ],
-                  ),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.mood,
-                    color: TossDesignSystem.white, size: 40),
-              ),
-              const SizedBox(height: 24),
-
-              // 제목
-              Text(
-                '현재 상태',
-                style: context.heading2.copyWith(
-                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // 설명
-              Text(
-                '현재 기분과 상태를 솔직하게 알려주세요',
-                style: context.bodyMedium.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                ),
-                textAlign: TextAlign.center,
+              // ChatGPT 스타일 헤더
+              const PageHeaderSection(
+                emoji: '😊',
+                title: '현재 상태',
+                subtitle: '현재 기분과 상태를 솔직하게 알려주세요',
               ),
               const SizedBox(height: 40),
 
               // 슬라이더들
-              _buildSlider('기분 상태', _moodLevel, (v) => setState(() => _moodLevel = v), isDark),
+              LabeledSlider(
+                label: '기분 상태',
+                value: _moodLevel,
+                onChanged: (v) {
+                  setState(() => _moodLevel = v);
+                  HapticFeedback.selectionClick();
+                },
+              ),
               const SizedBox(height: 32),
-              _buildSlider('스트레스 정도', _stressLevel, (v) => setState(() => _stressLevel = v), isDark),
+              LabeledSlider(
+                label: '스트레스 정도',
+                value: _stressLevel,
+                onChanged: (v) {
+                  setState(() => _stressLevel = v);
+                  HapticFeedback.selectionClick();
+                },
+              ),
               const SizedBox(height: 32),
-              _buildSlider('사람 만나기 피로도', _socialFatigue,
-                  (v) => setState(() => _socialFatigue = v), isDark),
+              LabeledSlider(
+                label: '사람 만나기 피로도',
+                value: _socialFatigue,
+                onChanged: (v) {
+                  setState(() => _socialFatigue = v);
+                  HapticFeedback.selectionClick();
+                },
+              ),
             ],
           ),
         ),
@@ -589,57 +499,42 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 아이콘
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      TossDesignSystem.errorRed,
-                      TossDesignSystem.errorRed.withValues(alpha: 0.8)
-                    ],
-                  ),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.warning_amber_rounded,
-                    color: TossDesignSystem.white, size: 40),
-              ),
-              const SizedBox(height: 24),
-
-              // 제목
-              Text(
-                '주의할 상황',
-                style: context.heading2.copyWith(
-                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // 설명
-              Text(
-                '오늘 예상되는 특별한 상황이 있나요?',
-                style: context.bodyMedium.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-                ),
-                textAlign: TextAlign.center,
+              // ChatGPT 스타일 헤더
+              const PageHeaderSection(
+                emoji: '⚠️',
+                title: '주의할 상황',
+                subtitle: '오늘 예상되는 특별한 상황이 있나요?',
               ),
               const SizedBox(height: 40),
 
               // 체크박스
-              AppCard(
-                style: AppCardStyle.elevated,
-                padding: const EdgeInsets.all(16),
+              ModernCard(
                 child: Column(
                   children: [
-                    _buildCheckbox('중요한 결정을 해야 함', _hasImportantDecision,
-                        (v) => setState(() => _hasImportantDecision = v!), isDark),
-                    const Divider(height: 1),
-                    _buildCheckbox('민감한 대화가 예상됨', _hasSensitiveConversation,
-                        (v) => setState(() => _hasSensitiveConversation = v!), isDark),
-                    const Divider(height: 1),
-                    _buildCheckbox('팀 프로젝트가 있음', _hasTeamProject,
-                        (v) => setState(() => _hasTeamProject = v!), isDark),
+                    CardCheckbox(
+                      label: '중요한 결정을 해야 함',
+                      value: _hasImportantDecision,
+                      onChanged: (v) {
+                        setState(() => _hasImportantDecision = v!);
+                        HapticFeedback.selectionClick();
+                      },
+                    ),
+                    CardCheckbox(
+                      label: '민감한 대화가 예상됨',
+                      value: _hasSensitiveConversation,
+                      onChanged: (v) {
+                        setState(() => _hasSensitiveConversation = v!);
+                        HapticFeedback.selectionClick();
+                      },
+                    ),
+                    CardCheckbox(
+                      label: '팀 프로젝트가 있음',
+                      value: _hasTeamProject,
+                      onChanged: (v) {
+                        setState(() => _hasTeamProject = v!);
+                        HapticFeedback.selectionClick();
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -652,130 +547,39 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
 
   // ===== Step Button =====
   Widget _buildStepButton(VoidCallback onComplete, bool isDark) {
-    if (_currentStep < 3) {
-      // 다음 버튼
-      return UnifiedButton.floating(
-        text: _currentStep == 0
-            ? (_environment.isEmpty ? '환경을 선택해주세요' : '다음')
-            : _currentStep == 1
-                ? (_importantSchedule.isEmpty ? '일정을 선택해주세요' : '다음')
-                : '다음',
-        onPressed: () {
+    // 현재 단계의 활성화 여부
+    final isEnabled = _currentStep == 0
+        ? _environment.isNotEmpty
+        : _currentStep == 1
+            ? _importantSchedule.isNotEmpty
+            : _currentStep == 3
+                ? _canSubmit
+                : true;
+
+    // 버튼 텍스트
+    final buttonText = _currentStep == 0
+        ? (_environment.isEmpty ? '환경을 선택해주세요' : '다음')
+        : _currentStep == 1
+            ? (_importantSchedule.isEmpty ? '일정을 선택해주세요' : '다음')
+            : _currentStep == 3
+                ? '오늘 피해야 할 사람 확인하기'
+                : '다음';
+
+    return UnifiedButton.floating(
+      text: buttonText,
+      onPressed: () {
+        if (_currentStep < 3) {
           if (_currentStep == 0 && _environment.isEmpty) return;
           if (_currentStep == 1 && _importantSchedule.isEmpty) return;
           _nextStep();
-        },
-        isEnabled: _currentStep == 0
-            ? _environment.isNotEmpty
-            : _currentStep == 1
-                ? _importantSchedule.isNotEmpty
-                : true,
-      );
-    } else {
-      // 완료 버튼
-      return UnifiedButton.floating(
-        text: '오늘 피해야 할 사람 확인하기',
-        onPressed: onComplete,
-        isEnabled: _canSubmit,
-      );
-    }
-  }
-
-  // ===== Chip =====
-  Widget _buildChip(String label, bool isSelected, VoidCallback onTap, bool isDark) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? TossDesignSystem.tossBlue.withValues(alpha: 0.15) : Colors.transparent,
-          border: Border.all(
-            color: isSelected ? TossDesignSystem.tossBlue : (isDark ? TossDesignSystem.gray600 : TossDesignSystem.gray300),
-            width: 2,
-          ),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Text(
-          label,
-          style: context.buttonMedium.copyWith(
-            color: isSelected
-                ? TossDesignSystem.tossBlue
-                : (isDark ? TossDesignSystem.white : TossDesignSystem.gray900),
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ===== Slider =====
-  Widget _buildSlider(String label, int value, Function(int) onChanged, bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: context.heading4.copyWith(
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: Slider(
-                value: value.toDouble(),
-                min: 1,
-                max: 5,
-                divisions: 4,
-                label: value.toString(),
-                onChanged: (v) {
-                  onChanged(v.round());
-                  HapticFeedback.selectionClick();
-                },
-                activeColor: TossDesignSystem.tossBlue,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Container(
-              width: 48,
-              height: 48,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                value.toString(),
-                style: context.numberMedium.copyWith(
-                  color: TossDesignSystem.tossBlue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  // ===== Checkbox =====
-  Widget _buildCheckbox(String label, bool value, Function(bool?) onChanged, bool isDark) {
-    return CheckboxListTile(
-      title: Text(
-        label,
-        style: context.bodyLarge.copyWith(
-          color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-        ),
-      ),
-      value: value,
-      onChanged: (v) {
-        onChanged(v);
-        HapticFeedback.selectionClick();
+        } else {
+          onComplete();
+        }
       },
-      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      activeColor: TossDesignSystem.tossBlue,
+      isEnabled: isEnabled,
+      showProgress: true,
+      currentStep: _currentStep + 1,
+      totalSteps: 4,
     );
   }
 

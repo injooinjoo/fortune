@@ -28,13 +28,16 @@ class BlurredFortuneContent extends StatelessWidget {
     }
 
     // 블러 처리된 콘텐츠 (버튼 없음)
-    return Stack(
-      children: [
-        // 원본 콘텐츠 (블러 처리)
-        ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: child,
-        ),
+    // SizedBox로 감싸서 부모 전체 너비를 차지하게 함 → 자물쇠가 항상 중앙에 위치
+    return SizedBox(
+      width: double.infinity,
+      child: Stack(
+        children: [
+          // 원본 콘텐츠 (블러 처리)
+          ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: child,
+          ),
 
         // 반투명 오버레이
         Positioned.fill(
@@ -72,7 +75,8 @@ class BlurredFortuneContent extends StatelessWidget {
                 .shimmer(duration: 2000.ms, color: TossDesignSystem.tossBlue.withValues(alpha: 0.2)),
           ),
         ),
-      ],
+        ],
+      ),
     );
   }
 }

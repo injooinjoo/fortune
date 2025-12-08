@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../../core/widgets/app_widgets.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
@@ -510,41 +512,16 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   }
 
   Widget _buildUserInfoForm() {
-    final theme = Theme.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.cardBackgroundDark
-            : TossDesignSystem.gray50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color:
-              isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
-          width: 1,
-        ),
-      ),
+    return ModernCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '기본 정보',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
-          ),
+          const FieldLabel(text: '👤 기본 정보'),
           const SizedBox(height: 16),
-          TextFormField(
+          PillTextField(
             controller: _nameController,
-            decoration: InputDecoration(
-              labelText: '이름',
-              hintText: '이름을 입력하세요',
-              prefixIcon: const Icon(Icons.person),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            ),
+            labelText: '이름',
+            hintText: '이름을 입력하세요',
           ),
           const SizedBox(height: 16),
           NumericDateInput(
@@ -556,70 +533,47 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
             showAge: true,
           ),
           const SizedBox(height: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          const FieldLabel(text: '성별'),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              Text(
-                '성별',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
-                ),
+              SelectionChip(
+                label: '남성',
+                isSelected: _gender == 'male',
+                onTap: () {
+                  setState(() => _gender = 'male');
+                  HapticFeedback.selectionClick();
+                },
               ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: const Text('남성'),
-                      value: 'male',
-                      groupValue: _gender,
-                      onChanged: (value) => setState(() => _gender = value),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: const Text('여성'),
-                      value: 'female',
-                      groupValue: _gender,
-                      onChanged: (value) => setState(() => _gender = value),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                ],
+              SelectionChip(
+                label: '여성',
+                isSelected: _gender == 'female',
+                onTap: () {
+                  setState(() => _gender = 'female');
+                  HapticFeedback.selectionClick();
+                },
               ),
             ],
           ),
           const SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            value: _mbti,
-            decoration: InputDecoration(
-              labelText: 'MBTI (선택)',
-              prefixIcon: const Icon(Icons.psychology),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            items: [
-              'INTJ',
-              'INTP',
-              'ENTJ',
-              'ENTP',
-              'INFJ',
-              'INFP',
-              'ENFJ',
-              'ENFP',
-              'ISTJ',
-              'ISFJ',
-              'ESTJ',
-              'ESFJ',
-              'ISTP',
-              'ISFP',
-              'ESTP',
-              'ESFP'
-            ]
-                .map((mbti) => DropdownMenuItem(value: mbti, child: Text(mbti)))
-                .toList(),
-            onChanged: (value) => setState(() => _mbti = value),
+          const FieldLabel(text: 'MBTI (선택)'),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              'INTJ', 'INTP', 'ENTJ', 'ENTP',
+              'INFJ', 'INFP', 'ENFJ', 'ENFP',
+              'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
+              'ISTP', 'ISFP', 'ESTP', 'ESFP'
+            ].map((mbti) => SelectionChip(
+              label: mbti,
+              isSelected: _mbti == mbti,
+              onTap: () {
+                setState(() => _mbti = mbti);
+                HapticFeedback.selectionClick();
+              },
+            )).toList(),
           ),
         ],
       ),
@@ -627,34 +581,11 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   }
 
   Widget _buildMeetingDetailsSection(ThemeData theme, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.cardBackgroundDark
-            : TossDesignSystem.gray50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color:
-              isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
-          width: 1,
-        ),
-      ),
+    return ModernCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.calendar_month, color: theme.colorScheme.primary),
-              const SizedBox(width: 8),
-              Text(
-                '만남 정보',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
-                ),
-              ),
-            ],
-          ),
+          const FieldLabel(text: '📅 만남 정보'),
           const SizedBox(height: 16),
           NumericDateInput(
             label: '만남 예정일',
@@ -664,88 +595,50 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
             maxDate: DateTime.now().add(const Duration(days: 90)),
           ),
           const SizedBox(height: 16),
-          Text(
-            '만남 시간대',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
-          ),
-          const SizedBox(height: 8),
+          const FieldLabel(text: '만남 시간대'),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: meetingTimeOptions.entries.map((entry) {
-              final isSelected = _meetingTime == entry.key;
-              return InkWell(
-                onTap: () => setState(() => _meetingTime = entry.key),
-                borderRadius: BorderRadius.circular(20),
-                child: Chip(
-                  label: Text(entry.value),
-                  backgroundColor: isSelected
-                      ? theme.colorScheme.primary.withValues(alpha: 0.2)
-                      : theme.colorScheme.surface.withValues(alpha: 0.5),
-                  side: BorderSide(
-                    color: isSelected
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                  ),
-                ),
+              return SelectionChip(
+                label: entry.value,
+                isSelected: _meetingTime == entry.key,
+                onTap: () {
+                  setState(() => _meetingTime = entry.key);
+                  HapticFeedback.selectionClick();
+                },
               );
             }).toList(),
           ),
           const SizedBox(height: 16),
-          Text(
-            '만남 방식',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
-          ),
-          const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            value: _meetingType,
-            decoration: InputDecoration(
-              hintText: '어떤 방식으로 만날 예정인가요?',
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              filled: true,
-              fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-            ),
-            items: meetingTypeOptions.entries
-                .map((entry) =>
-                    DropdownMenuItem(value: entry.key, child: Text(entry.value)))
-                .toList(),
-            onChanged: (value) => setState(() => _meetingType = value),
+          const FieldLabel(text: '만남 방식'),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: meetingTypeOptions.entries.map((entry) {
+              return SelectionChip(
+                label: entry.value,
+                isSelected: _meetingType == entry.key,
+                onTap: () {
+                  setState(() => _meetingType = entry.key);
+                  HapticFeedback.selectionClick();
+                },
+              );
+            }).toList(),
           ),
           const SizedBox(height: 16),
-          Text(
-            '소개 경로',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
-          ),
-          const SizedBox(height: 8),
+          const FieldLabel(text: '소개 경로'),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: introducerOptions.entries.map((entry) {
-              final isSelected = _introducer == entry.key;
-              return InkWell(
-                onTap: () => setState(() => _introducer = entry.key),
-                borderRadius: BorderRadius.circular(20),
-                child: Chip(
-                  label: Text(entry.value),
-                  backgroundColor: isSelected
-                      ? theme.colorScheme.primary.withValues(alpha: 0.2)
-                      : theme.colorScheme.surface.withValues(alpha: 0.5),
-                  side: BorderSide(
-                    color: isSelected
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                  ),
-                ),
+              return SelectionChip(
+                label: entry.value,
+                isSelected: _introducer == entry.key,
+                onTap: () {
+                  setState(() => _introducer = entry.key);
+                  HapticFeedback.selectionClick();
+                },
               );
             }).toList(),
           ),
@@ -755,49 +648,21 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   }
 
   Widget _buildPreferencesSection(ThemeData theme, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.cardBackgroundDark
-            : TossDesignSystem.gray50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color:
-              isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
-          width: 1,
-        ),
-      ),
+    return ModernCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.favorite_outline, color: theme.colorScheme.primary),
-              const SizedBox(width: 8),
-              Text(
-                '선호 사항',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : null,
-                ),
-              ),
-            ],
-          ),
+          const FieldLabel(text: '💕 선호 사항'),
           const SizedBox(height: 16),
-          Text(
-            '중요하게 생각하는 것 (3개 이상)',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
-          ),
-          const SizedBox(height: 8),
+          const FieldLabel(text: '중요하게 생각하는 것 (3개 이상)'),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: qualityOptions.map((quality) {
               final isSelected = _importantQualities.contains(quality);
-              return InkWell(
+              return SelectionChip(
+                label: quality,
+                isSelected: isSelected,
                 onTap: () {
                   setState(() {
                     if (isSelected) {
@@ -806,89 +671,42 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
                       _importantQualities.add(quality);
                     }
                   });
+                  HapticFeedback.selectionClick();
                 },
-                borderRadius: BorderRadius.circular(20),
-                child: Chip(
-                  label: Text(quality),
-                  backgroundColor: isSelected
-                      ? theme.colorScheme.primary.withValues(alpha: 0.2)
-                      : theme.colorScheme.surface.withValues(alpha: 0.5),
-                  side: BorderSide(
-                    color: isSelected
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                  ),
-                  deleteIcon: isSelected
-                      ? const Icon(Icons.check_circle, size: 18)
-                      : null,
-                  onDeleted: isSelected ? () {} : null,
-                ),
               );
             }).toList(),
           ),
           const SizedBox(height: 16),
-          Text(
-            '나이 선호도',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
+          const FieldLabel(text: '나이 선호도'),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: agePreferenceOptions.entries.map((entry) {
+              return SelectionChip(
+                label: entry.value,
+                isSelected: _agePreference == entry.key,
+                onTap: () {
+                  setState(() => _agePreference = entry.key);
+                  HapticFeedback.selectionClick();
+                },
+              );
+            }).toList(),
           ),
-          const SizedBox(height: 8),
-          ...agePreferenceOptions.entries.map((entry) {
-            final isSelected = _agePreference == entry.key;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: InkWell(
-                onTap: () => setState(() => _agePreference = entry.key),
-                borderRadius: BorderRadius.circular(12),
-                child: GlassContainer(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                  borderRadius: BorderRadius.circular(12),
-                  blur: 10,
-                  borderColor: isSelected
-                      ? theme.colorScheme.primary.withValues(alpha: 0.5)
-                      : TossDesignSystem.transparent,
-                  borderWidth: isSelected ? 2 : 0,
-                  child: Row(
-                    children: [
-                      Radio<String>(
-                        value: entry.key,
-                        groupValue: _agePreference,
-                        onChanged: (value) =>
-                            setState(() => _agePreference = value),
-                      ),
-                      Text(entry.value, style: theme.textTheme.bodyLarge),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }),
           const SizedBox(height: 16),
-          Text(
-            '이상적인 첫 데이트',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
-            ),
-          ),
-          const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            value: _idealFirstDate,
-            decoration: InputDecoration(
-              hintText: '선호하는 데이트 스타일',
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              filled: true,
-              fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-            ),
-            items: idealDateOptions.entries
-                .map((entry) =>
-                    DropdownMenuItem(value: entry.key, child: Text(entry.value)))
-                .toList(),
-            onChanged: (value) => setState(() => _idealFirstDate = value),
+          const FieldLabel(text: '이상적인 첫 데이트'),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: idealDateOptions.entries.map((entry) {
+              return SelectionChip(
+                label: entry.value,
+                isSelected: _idealFirstDate == entry.key,
+                onTap: () {
+                  setState(() => _idealFirstDate = entry.key);
+                  HapticFeedback.selectionClick();
+                },
+              );
+            }).toList(),
           ),
         ],
       ),
@@ -896,155 +714,68 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   }
 
   Widget _buildSelfAssessmentSection(ThemeData theme, bool isDark) {
-    return GlassCard(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.psychology, color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  '자기 평가',
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : null,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '소개팅 자신감',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isDark ? TossDesignSystem.textPrimaryDark : null,
+    return ModernCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const FieldLabel(text: '🧠 자기 평가'),
+          const SizedBox(height: 16),
+          const FieldLabel(text: '소개팅 자신감'),
+          ...confidenceLevelOptions.entries.map((entry) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: SelectionCard(
+                title: entry.value,
+                subtitle: '',
+                emoji: _getConfidenceEmoji(confidenceLevelOptions.keys.toList().indexOf(entry.key)),
+                isSelected: _confidence == entry.key,
+                onTap: () {
+                  setState(() => _confidence = entry.key);
+                  HapticFeedback.selectionClick();
+                },
               ),
-            ),
-            const SizedBox(height: 8),
-            ...confidenceLevelOptions.entries.map((entry) {
-              final isSelected = _confidence == entry.key;
-              final index = confidenceLevelOptions.keys.toList().indexOf(entry.key);
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: InkWell(
-                  onTap: () => setState(() => _confidence = entry.key),
-                  borderRadius: BorderRadius.circular(12),
-                  child: GlassContainer(
-                    padding: const EdgeInsets.all(16),
-                    borderRadius: BorderRadius.circular(12),
-                    blur: 10,
-                    borderColor: isSelected
-                        ? theme.colorScheme.primary.withValues(alpha: 0.5)
-                        : TossDesignSystem.transparent,
-                    borderWidth: isSelected ? 2 : 0,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _getConfidenceColor(index).withValues(alpha: 0.2),
-                            border: Border.all(
-                              color: _getConfidenceColor(index),
-                              width: 2,
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              '${(index + 1) * 20}%',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: _getConfidenceColor(index),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Text(entry.value, style: theme.textTheme.bodyLarge),
-                      ],
-                    ),
-                  ),
-                ),
+            );
+          }),
+          const SizedBox(height: 16),
+          const FieldLabel(text: '걱정되는 부분 (선택)'),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: concernOptions.map((concern) {
+              final isSelected = _concerns.contains(concern);
+              return SelectionChip(
+                label: concern,
+                isSelected: isSelected,
+                onTap: () {
+                  setState(() {
+                    if (isSelected) {
+                      _concerns.remove(concern);
+                    } else {
+                      _concerns.add(concern);
+                    }
+                  });
+                  HapticFeedback.selectionClick();
+                },
               );
-            }),
-            const SizedBox(height: 16),
-            Text(
-              '걱정되는 부분 (선택)',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isDark ? TossDesignSystem.textPrimaryDark : null,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: concernOptions.map((concern) {
-                final isSelected = _concerns.contains(concern);
-                return InkWell(
-                  onTap: () {
-                    setState(() {
-                      if (isSelected) {
-                        _concerns.remove(concern);
-                      } else {
-                        _concerns.add(concern);
-                      }
-                    });
-                  },
-                  borderRadius: BorderRadius.circular(20),
-                  child: Chip(
-                    label: Text(concern),
-                    backgroundColor: isSelected
-                        ? TossDesignSystem.warningOrange.withValues(alpha: 0.2)
-                        : theme.colorScheme.surface.withValues(alpha: 0.5),
-                    side: BorderSide(
-                      color: isSelected
-                          ? TossDesignSystem.warningOrange
-                          : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16),
-            _buildSwitchTile(
-              '첫 소개팅인가요?',
-              _isFirstBlindDate,
-              (value) => setState(() => _isFirstBlindDate = value),
-              Icons.favorite_border,
-            ),
-          ],
-        ),
+            }).toList(),
+          ),
+          const SizedBox(height: 16),
+          CardCheckbox(
+            label: '첫 소개팅인가요?',
+            value: _isFirstBlindDate,
+            onChanged: (value) {
+              setState(() => _isFirstBlindDate = value ?? false);
+              HapticFeedback.selectionClick();
+            },
+          ),
+        ],
       ),
     );
   }
 
-  Color _getConfidenceColor(int index) {
-    final colors = [
-      TossDesignSystem.errorRed,
-      TossDesignSystem.warningOrange,
-      TossDesignSystem.warningYellow,
-      TossDesignSystem.successGreen.withValues(alpha: 0.7),
-      TossDesignSystem.successGreen
-    ];
-    return colors[index];
-  }
-
-  Widget _buildSwitchTile(
-      String title, bool value, Function(bool) onChanged, IconData icon) {
-    final theme = Theme.of(context);
-
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: theme.colorScheme.primary),
-        const SizedBox(width: 8),
-        Expanded(child: Text(title, style: theme.textTheme.bodyLarge)),
-        Switch(value: value, onChanged: onChanged),
-      ],
-    );
+  String _getConfidenceEmoji(int index) {
+    final emojis = ['😰', '😟', '😐', '😊', '😎'];
+    return emojis[index];
   }
 
   Widget _buildFortuneResult() {

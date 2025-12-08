@@ -8,6 +8,7 @@ import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/services/debug_premium_service.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../presentation/providers/token_provider.dart';
+import '../../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../fortune/domain/models/conditions/love_fortune_conditions.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
 import '../love/love_fortune_result_page.dart';
@@ -57,6 +58,36 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
   void initState() {
     super.initState();
     _initializeAccordionSections();
+
+    // Pre-fill user data with profile if available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userProfileAsync = ref.read(userProfileProvider);
+      final userProfile = userProfileAsync.maybeWhen(
+        data: (profile) => profile,
+        orElse: () => null,
+      );
+
+      if (userProfile != null && mounted) {
+        setState(() {
+          // 생년월일에서 나이 계산
+          if (userProfile.birthDate != null) {
+            final now = DateTime.now();
+            int calculatedAge = now.year - userProfile.birthDate!.year;
+            // 생일이 아직 안 지났으면 1살 빼기
+            if (now.month < userProfile.birthDate!.month ||
+                (now.month == userProfile.birthDate!.month &&
+                    now.day < userProfile.birthDate!.day)) {
+              calculatedAge--;
+            }
+            _age = calculatedAge;
+          }
+          // 성별 설정
+          _gender = userProfile.gender;
+        });
+        // Accordion 섹션 업데이트
+        _initializeAccordionSections();
+      }
+    });
   }
 
   void _initializeAccordionSections() {

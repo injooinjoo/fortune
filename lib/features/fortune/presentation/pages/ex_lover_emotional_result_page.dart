@@ -46,32 +46,64 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
       // 'data' 필드가 있으면 그 안의 데이터를 사용 (Edge Function 응답: {success: true, data: {...}})
       final actualData = data['data'] as Map<String, dynamic>? ?? data;
 
+      Logger.info('[전애인운세] 파싱 시작 - keys: ${actualData.keys.toList()}');
+
       // Edge Function 응답 형식을 ExLoverEmotionalResult로 변환
       if (actualData.containsKey('overall_fortune') || actualData.containsKey('reunion_possibility')) {
+        // ✅ reunion_possibility는 Map이므로 안전하게 추출
+        final reunionData = actualData['reunion_possibility'];
+        final reunionMap = reunionData is Map<String, dynamic> ? reunionData : <String, dynamic>{};
+        final reunionScore = reunionMap['score'] as int? ?? 50;
+        final reunionAnalysis = reunionMap['analysis'] as String? ?? '재회 가능성을 분석 중입니다.';
+        final reunionTiming = reunionMap['favorable_timing'] as String? ?? '조금 더 시간이 필요합니다.';
+
+        // ✅ healing_roadmap에서 추천 활동/피할 것 추출
+        final healingRoadmap = actualData['healing_roadmap'];
+        final healingMap = healingRoadmap is Map<String, dynamic> ? healingRoadmap : <String, dynamic>{};
+        final phase1 = healingMap['phase1'] is Map<String, dynamic> ? healingMap['phase1'] as Map<String, dynamic> : <String, dynamic>{};
+        final phase1Actions = phase1['actions'] is List ? (phase1['actions'] as List).cast<String>() : <String>[];
+
+        // ✅ practical_advice에서 조언 추출
+        final practicalAdvice = actualData['practical_advice'];
+        final adviceMap = practicalAdvice is Map<String, dynamic> ? practicalAdvice : <String, dynamic>{};
+        final doNow = adviceMap['do_now'] is List ? (adviceMap['do_now'] as List).cast<String>() : <String>[];
+        final neverDo = adviceMap['never_do'] is List ? (adviceMap['never_do'] as List).cast<String>() : <String>[];
+
+        // ✅ new_love_forecast에서 새 인연 정보 추출
+        final newLoveForecast = actualData['new_love_forecast'];
+        final newLoveMap = newLoveForecast is Map<String, dynamic> ? newLoveForecast : <String, dynamic>{};
+        final newLoveTiming = newLoveMap['timing'] as String? ?? '3-6개월 후';
+        final newLoveAdvice = newLoveMap['ideal_type'] as String? ?? '새로운 만남이 기다립니다.';
+
+        // ✅ relationship_analysis에서 카르마 레슨 추출
+        final relationshipAnalysis = actualData['relationship_analysis'];
+        final relationshipMap = relationshipAnalysis is Map<String, dynamic> ? relationshipAnalysis : <String, dynamic>{};
+        final karmaInterpretation = relationshipMap['karma_interpretation'] as String? ?? '모든 관계는 배움의 기회입니다.';
+
         return ExLoverEmotionalResult(
           emotionalPrescription: EmotionalPrescription(
-            currentState: actualData['emotion_healing'] as String? ?? '감정을 정리하고 있습니다.',
-            recommendedActivities: (actualData['recommendations'] as List?)?.cast<String>() ?? [],
-            thingsToAvoid: (actualData['cautions'] as List?)?.cast<String>() ?? [],
-            healingAdvice: actualData['emotion_healing'] as String? ?? '천천히 치유해나가세요.',
-            healingProgress: 50, // Edge Function에 없으므로 기본값
+            currentState: actualData['overall_fortune'] as String? ?? '감정을 정리하고 있습니다.',
+            recommendedActivities: doNow.isNotEmpty ? doNow : phase1Actions,
+            thingsToAvoid: neverDo,
+            healingAdvice: actualData['comfort_message'] as String? ?? '천천히 치유해나가세요.',
+            healingProgress: (100 - reunionScore).clamp(30, 80), // 재회 가능성 역수로 치유 진행도 계산
           ),
           relationshipInsight: RelationshipInsight(
-            reunionPossibility: 50, // Edge Function에 없으므로 기본값
-            theirCurrentFeelings: actualData['overall_fortune'] as String? ?? '시간이 해결해줄 것입니다.',
-            contactTiming: actualData['reunion_possibility'] as String? ?? '조금 더 시간이 필요합니다.',
-            karmicLesson: actualData['overall_fortune'] as String? ?? '모든 관계는 배움의 기회입니다.',
-            isThinkingOfYou: false,
+            reunionPossibility: reunionScore,
+            theirCurrentFeelings: reunionAnalysis,
+            contactTiming: reunionTiming,
+            karmicLesson: karmaInterpretation,
+            isThinkingOfYou: reunionScore > 50,
           ),
           newBeginning: NewBeginning(
-            readinessLevel: 'preparing',
-            expectedTiming: '3-6개월 후',
-            growthPoints: (actualData['recommendations'] as List?)?.cast<String>() ?? [],
-            newLoveAdvice: actualData['new_beginning'] as String? ?? '새로운 만남이 기다립니다.',
-            readinessScore: 50,
+            readinessLevel: reunionScore < 30 ? 'ready' : reunionScore < 60 ? 'almost_ready' : 'preparing',
+            expectedTiming: newLoveTiming,
+            growthPoints: doNow.take(3).toList(),
+            newLoveAdvice: newLoveAdvice,
+            readinessScore: (100 - reunionScore).clamp(30, 90),
           ),
           overallScore: actualData['score'] as int? ?? 50,
-          specialMessage: actualData['fortune_keyword'] as String? ?? '치유',
+          specialMessage: actualData['comfort_message'] as String? ?? '치유',
         );
       }
 
