@@ -187,7 +187,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                         color: theme.colorScheme.primary,
                         onTap: () {
                           context.pop();
-                          context.push('/payment/tokens');
+                          context.push('/token-purchase');
                         },
                       ),
                     ),

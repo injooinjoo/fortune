@@ -240,7 +240,7 @@ class InAppPurchaseService {
       
       // 서버에 검증 요청
       final response = await _apiClient.post<Map<String, dynamic>>(
-        '/payment/verify-purchase',
+        '/payment-verify-purchase',
         data: verificationData);
       
       return response['valid'] ?? false;
@@ -255,7 +255,7 @@ class InAppPurchaseService {
   Future<void> _activateSubscription(PurchaseDetails purchaseDetails) async {
     try {
       await _apiClient.post(
-        '/subscription/activate',
+        '/subscription-activate',
         data: {
           'productId': purchaseDetails.productID,
           'purchaseId': purchaseDetails.purchaseID,
@@ -282,7 +282,7 @@ class InAppPurchaseService {
   Future<bool> isSubscriptionActive() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        '/subscription/status');
+        '/subscription-status');
       
       return response['active'] ?? false;
     } catch (e) {

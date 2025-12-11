@@ -90,7 +90,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
     final balance = tokenState.balance;
     
     return GestureDetector(
-      onTap: () => context.push('/payment/token-purchase'),
+      onTap: () => context.push('/token-purchase'),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(TossDesignSystem.spacingL),

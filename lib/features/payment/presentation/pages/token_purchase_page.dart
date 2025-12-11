@@ -100,18 +100,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       );
     }
 
-    if (_products.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(32),
-          child: Text(
-            '상품을 불러올 수 없습니다.\\n잠시 후 다시 시도해주세요.',
-            textAlign: TextAlign.center,
-            style: TossDesignSystem.body1,
-          ),
-        ),
-      );
-    }
+    // IAP 상품이 없으면 Mock 데이터로 UI 표시 (스크린샷용)
+    final bool useMockData = _products.isEmpty;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -120,7 +110,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
         children: [
           _buildCurrentBalance(),
           const SizedBox(height: 24),
-          _buildPackageList(),
+          _buildPackageList(useMockData: useMockData),
           const SizedBox(height: 24),
           _buildPurchaseButton(),
           const SizedBox(height: 16),
@@ -197,7 +187,15 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       .slideX(begin: -0.1, end: 0);
   }
 
-  Widget _buildPackageList() {
+  Widget _buildPackageList({bool useMockData = false}) {
+    // Mock 데이터 사용 시 InAppProducts.productDetails에서 소모성 상품만 가져오기
+    final mockProducts = InAppProducts.consumableIds
+        .map((id) => InAppProducts.productDetails[id])
+        .whereType<ProductInfo>()
+        .toList();
+
+    final itemCount = useMockData ? mockProducts.length : _products.length;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -207,16 +205,50 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        if (useMockData) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '미리보기 모드 (App Store 검토 대기 중)',
+              style: TossDesignSystem.caption.copyWith(
+                color: TossDesignSystem.tossBlue,
+              ),
+            ),
+          ),
+        ],
         const SizedBox(height: 16),
-        ...List.generate(_products.length, (index) {
-          final product = _products[index];
-          final productInfo = InAppProducts.productDetails[product.id];
+        ...List.generate(itemCount, (index) {
+          final ProductInfo? productInfo;
+          final String title;
+          final String description;
+          final String price;
+
+          if (useMockData) {
+            productInfo = mockProducts[index];
+            title = productInfo.title;
+            description = productInfo.description;
+            price = '₩${productInfo.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
+          } else {
+            final product = _products[index];
+            productInfo = InAppProducts.productDetails[product.id];
+            title = productInfo?.title ?? product.title;
+            description = productInfo?.description ?? product.description;
+            price = product.price;
+          }
+
           final isSelected = _selectedPackageIndex == index;
-          
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: _buildPackageCard(
-              product: product,
+            child: _buildMockPackageCard(
+              title: title,
+              description: description,
+              price: price,
               productInfo: productInfo,
               isSelected: isSelected,
               onTap: () {
@@ -234,14 +266,16 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     );
   }
 
-  Widget _buildPackageCard({
-    required ProductDetails product,
+  Widget _buildMockPackageCard({
+    required String title,
+    required String description,
+    required String price,
     ProductInfo? productInfo,
     required bool isSelected,
     required VoidCallback onTap,
   }) {
     final isSubscription = productInfo?.isSubscription ?? false;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -270,7 +304,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: isSelected 
+                color: isSelected
                   ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
                   : TossDesignSystem.gray50,
                 borderRadius: BorderRadius.circular(12),
@@ -288,39 +322,15 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        productInfo?.title ?? product.title,
-                        style: TossDesignSystem.body1.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      if (productInfo?.title.contains('인기') ?? false) ...[
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: TossDesignSystem.errorRed,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            '인기',
-                            style: TossDesignSystem.caption.copyWith(
-                              color: TossDesignSystem.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
+                  Text(
+                    title,
+                    style: TossDesignSystem.body1.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    productInfo?.description ?? product.description,
+                    description,
                     style: TossDesignSystem.caption.copyWith(
                       color: TossDesignSystem.gray600,
                     ),
@@ -332,7 +342,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  product.price,
+                  price,
                   style: TossDesignSystem.heading3.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray900,
