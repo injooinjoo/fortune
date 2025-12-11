@@ -27,7 +27,11 @@ class MainFortuneCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final data = fortuneResult.data as Map<String, dynamic>? ?? {};
-    final todayFortune = FortuneTextCleaner.clean(data['todayFortune'] as String? ?? fortuneResult.summary['message'] as String? ?? '');
+    // 폴백: todayFortune → summary['message'] → 기본 메시지
+    final rawFortune = data['todayFortune'] as String? ??
+                       fortuneResult.summary['message'] as String? ??
+                       '오늘의 운세를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+    final todayFortune = FortuneTextCleaner.clean(rawFortune);
     final luckyItems = {
       if (data['luckyColor'] != null) '색상': data['luckyColor'],
       if (data['luckyNumber'] != null) '숫자': data['luckyNumber'].toString(),
@@ -48,6 +52,7 @@ class MainFortuneCard extends StatelessWidget {
               '$selectedMbti 오늘의 운세',
               style: const TextStyle(
                 color: TossDesignSystem.white,
+                fontFamily: 'ZenSerif',
                 fontWeight: FontWeight.w600,
               ),
             ),

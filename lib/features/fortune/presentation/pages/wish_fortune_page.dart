@@ -5,12 +5,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/wish_fortune_result.dart';
 import './wish_fortune_result_page.dart';
 import '../../../../services/ad_service.dart';
-import '../../../../services/speech_recognition_service.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/services/unified_fortune_service.dart';
+import '../../../../core/widgets/voice_input_text_field.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
@@ -42,11 +42,6 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   // Controllers
   final TextEditingController _wishController = TextEditingController();
 
-  // Speech Recognition
-  final SpeechRecognitionService _speechService = SpeechRecognitionService();
-  bool _isRecording = false;
-  String _partialResult = ''; // 실시간 음성 인식 결과
-
   // Selection state
   WishCategory? _selectedCategory;
 
@@ -65,25 +60,27 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
       AdService.instance.loadInterstitialAd();
     });
 
-    // 음성 인식 초기화
-    _initializeSpeechService();
+    // 텍스트 변경 리스너 (글자수 업데이트 + 아코디언 상태 업데이트)
+    _wishController.addListener(_onWishTextChanged);
 
     // Accordion 섹션 초기화
     _initializeAccordionSections();
   }
 
-  Future<void> _initializeSpeechService() async {
-    await _speechService.initialize();
+  void _onWishTextChanged() {
+    final text = _wishController.text;
+    setState(() {});
+    _updateAccordionSection(
+      'wish',
+      text.isNotEmpty ? text : null,
+      text.length > 30 ? '${text.substring(0, 30)}...' : text,
+    );
   }
 
   @override
   void dispose() {
-    // 리스너 제거 (녹음 중 위젯이 dispose되는 경우 대비)
-    if (_isRecording) {
-      _speechService.isListeningNotifier.removeListener(_onListeningStateChanged);
-    }
+    _wishController.removeListener(_onWishTextChanged);
     _wishController.dispose();
-    _speechService.dispose();
     super.dispose();
   }
 
@@ -454,177 +451,34 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 텍스트 입력 필드 + 마이크 버튼 (GPT 스타일 - 통합형)
-        Container(
-          decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray100,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: _isRecording
-                  ? TossDesignSystem.tossBlue
-                  : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray200),
-              width: 1,
+        // ChatGPT 스타일 음성 입력
+        VoiceInputTextField(
+          controller: _wishController,
+          onSubmit: (text) {
+            _updateAccordionSection(
+              'wish',
+              text.isNotEmpty ? text : null,
+              text.length > 30 ? '${text.substring(0, 30)}...' : text,
+            );
+          },
+          hintText: '소원을 말하거나 적어주세요',
+          transcribingText: '듣고 있어요...',
+        ),
+        const SizedBox(height: 8),
+        // 글자수 표시
+        Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: Text(
+            '${_wishController.text.length}/10자',
+            style: TypographyUnified.labelSmall.copyWith(
+              color: _wishController.text.length >= 10
+                  ? TossDesignSystem.successGreen
+                  : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray400),
             ),
-          ),
-          child: Column(
-            children: [
-              // 텍스트 입력 영역
-              TextField(
-                controller: _wishController,
-                maxLines: 4,
-                minLines: 3,
-                decoration: InputDecoration(
-                  hintText: _isRecording
-                      ? (_partialResult.isNotEmpty ? _partialResult : '듣고 있어요...')
-                      : '소원을 말하거나 적어주세요',
-                  filled: false,
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-                  hintStyle: TypographyUnified.bodyMedium.copyWith(
-                    color: _isRecording
-                        ? TossDesignSystem.tossBlue
-                        : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray500),
-                  ),
-                ),
-                style: TypographyUnified.bodyMedium.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                ),
-                onChanged: (value) {
-                  setState(() {});
-                  _updateAccordionSection(
-                    'wish',
-                    value.isNotEmpty ? value : null,
-                    value.length > 30 ? '${value.substring(0, 30)}...' : value,
-                  );
-                },
-              ),
-
-              // 하단 툴바 (글자수 + 마이크)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 8, 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // 글자수
-                    Text(
-                      '${_wishController.text.length}/10자',
-                      style: TypographyUnified.labelSmall.copyWith(
-                        color: _wishController.text.length >= 10
-                            ? TossDesignSystem.successGreen
-                            : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray400),
-                      ),
-                    ),
-
-                    // 마이크 버튼
-                    GestureDetector(
-                      onTap: _toggleRecording,
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _isRecording
-                              ? TossDesignSystem.tossBlue
-                              : Colors.transparent,
-                        ),
-                        child: Icon(
-                          _isRecording ? Icons.stop_rounded : Icons.mic_none_rounded,
-                          size: 20,
-                          color: _isRecording
-                              ? TossDesignSystem.white
-                              : (isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray500),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
           ),
         ),
       ],
     );
-  }
-
-  /// 음성 녹음 토글
-  void _toggleRecording() async {
-    if (_isRecording) {
-      // 녹음 중지 - 리스너 제거 먼저
-      _speechService.isListeningNotifier.removeListener(_onListeningStateChanged);
-      await _speechService.stopListening();
-      setState(() {
-        _isRecording = false;
-        _partialResult = ''; // 부분 결과 초기화
-      });
-      debugPrint('🎤 [WishPage] Recording stopped manually');
-    } else {
-      // 녹음 시작
-      setState(() {
-        _isRecording = true;
-        _partialResult = '';
-      });
-
-      TossDesignSystem.hapticMedium();
-      debugPrint('🎤 [WishPage] Recording started');
-
-      // 상태 변경 리스너 등록 (자동 종료 감지)
-      _speechService.isListeningNotifier.addListener(_onListeningStateChanged);
-
-      await _speechService.startListening(
-        onResult: (result) {
-          debugPrint('🎤 [WishPage] Final result: $result');
-          if (mounted && result.isNotEmpty) {
-            setState(() {
-              // 기존 텍스트에 음성 인식 결과 추가
-              final currentText = _wishController.text;
-              if (currentText.isEmpty) {
-                _wishController.text = result;
-              } else {
-                _wishController.text = '$currentText $result';
-              }
-              // 커서를 맨 끝으로 이동
-              _wishController.selection = TextSelection.fromPosition(
-                TextPosition(offset: _wishController.text.length),
-              );
-              // 부분 결과 초기화 (최종 결과가 반영됨)
-              _partialResult = '';
-
-              _updateAccordionSection(
-                'wish',
-                _wishController.text,
-                _wishController.text.length > 30
-                    ? '${_wishController.text.substring(0, 30)}...'
-                    : _wishController.text,
-              );
-            });
-          }
-        },
-        onPartialResult: (partial) {
-          // 부분 결과 업데이트 (실시간 UI 갱신)
-          debugPrint('🎤 [WishPage] Partial result: $partial');
-          if (mounted) {
-            setState(() {
-              _partialResult = partial;
-            });
-          }
-        },
-      );
-    }
-  }
-
-  /// 음성 인식 상태 변경 핸들러
-  void _onListeningStateChanged() {
-    if (!_speechService.isListeningNotifier.value && _isRecording) {
-      // 음성 인식이 자동으로 종료된 경우
-      debugPrint('🎤 [WishPage] Recording auto-stopped detected');
-      if (mounted) {
-        setState(() {
-          _isRecording = false;
-          _partialResult = ''; // 부분 결과 초기화
-        });
-      }
-      _speechService.isListeningNotifier.removeListener(_onListeningStateChanged);
-    }
   }
 
   /// 도움말 다이얼로그

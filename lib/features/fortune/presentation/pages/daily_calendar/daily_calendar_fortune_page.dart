@@ -27,8 +27,6 @@ import '../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../../core/theme/app_theme.dart';
-import '../../widgets/event_category_selector.dart';
-import '../../widgets/event_detail_input_form.dart';
 
 // 모듈화된 위젯들
 import 'widgets/calendar_sync_banner.dart';
@@ -59,16 +57,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
   Map<DateTime, CalendarEventInfo> _events = {};
   final HolidayService _holidayService = HolidayService();
 
-  // 이벤트 입력 관련 상태
-  EventCategory? _selectedCategory;
-  EmotionState? _selectedEmotion;
-  final TextEditingController _questionController = TextEditingController();
-
-  // UI 단계 (0: 캘린더 선택, 1: 카테고리 선택, 2: 상세 입력)
-  int _currentStep = 0;
-
-  // PageView Controller
-  final PageController _pageController = PageController();
+  // 이벤트 입력 관련 상태 (카테고리/감정/질문 제거 - 결과에 모든 카테고리 포함)
+  // UI 단계 제거 - 캘린더 선택 후 바로 운세 생성
 
   // 운세 결과 상태
   bool _isLoading = false;
@@ -159,8 +149,6 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
   @override
   void dispose() {
-    _questionController.dispose();
-    _pageController.dispose();
     super.dispose();
   }
 
@@ -370,11 +358,6 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
       final conditions = DailyFortuneConditions(
         period: FortunePeriod.daily,
-        category: _selectedCategory,
-        emotion: _selectedEmotion,
-        question: _questionController.text.trim().isNotEmpty
-            ? _questionController.text.trim()
-            : null,
       );
 
       final inputConditions = {
@@ -383,13 +366,6 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         'is_holiday': _isHoliday,
         'holiday_name': _holidayName,
         'special_name': _specialName,
-        'category': _selectedCategory?.label,
-        'categoryType': _selectedCategory?.name,
-        'question': _questionController.text.trim().isNotEmpty
-            ? _questionController.text.trim()
-            : null,
-        'emotion': _selectedEmotion?.label,
-        'emotionType': _selectedEmotion?.name,
         'calendar_events': _selectedEvents.map((e) => {
           'title': e.title,
           'description': e.description,
@@ -594,17 +570,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     );
   }
 
-  void _goToNextStep() {
-    setState(() {
-      _currentStep++;
-    });
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  Widget _buildStep0() {
+  Widget _buildCalendarContent() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -655,82 +621,11 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     );
   }
 
-  Widget _buildStep1() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          EventCategorySelector(
-            selectedCategory: _selectedCategory,
-            onCategorySelected: (category) {
-              setState(() {
-                _selectedCategory = category;
-              });
-            },
-          ),
-          const BottomButtonSpacing(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStep2() {
-    if (_selectedCategory == null) {
-      return const SizedBox.shrink();
-    }
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          EventDetailInputForm(
-            category: _selectedCategory!,
-            questionController: _questionController,
-            selectedEmotion: _selectedEmotion,
-            onEmotionSelected: (emotion) {
-              setState(() {
-                _selectedEmotion = emotion;
-              });
-            },
-            onAddPartner: () {
-              debugPrint('상대방 정보 추가');
-            },
-          ),
-          const BottomButtonSpacing(),
-        ],
-      ),
-    );
-  }
-
   Widget _buildFloatingButton() {
-    bool canProceed = false;
-    String buttonText = '';
-    VoidCallback? onPressed;
-
-    switch (_currentStep) {
-      case 0:
-        canProceed = true;
-        buttonText = '다음';
-        onPressed = _goToNextStep;
-        break;
-      case 1:
-        canProceed = _selectedCategory != null;
-        buttonText = '다음';
-        onPressed = canProceed ? _goToNextStep : null;
-        break;
-      case 2:
-        canProceed = _selectedEmotion != null;
-        buttonText = '운세 보기';
-        onPressed = canProceed ? _generateFortune : null;
-        break;
-    }
-
-    return UnifiedButton.progress(
-      text: buttonText,
-      currentStep: _currentStep + 1,
-      totalSteps: 3,
-      onPressed: onPressed,
-      isEnabled: canProceed,
+    return UnifiedButton(
+      text: '운세 보기',
+      onPressed: _generateFortune,
+      isEnabled: true,
       isFloating: true,
       isLoading: _isLoading,
     );
@@ -1031,19 +926,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
             Icons.arrow_back_ios,
             color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
           ),
-          onPressed: () {
-            if (_currentStep > 0) {
-              setState(() {
-                _currentStep--;
-              });
-              _pageController.previousPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
-            } else {
-              context.pop();
-            }
-          },
+          onPressed: () => context.pop(),
         ),
         title: Text(
           '시간별 운세',
@@ -1056,15 +939,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
       ),
       body: Stack(
         children: [
-          PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              _buildStep0(),
-              _buildStep1(),
-              _buildStep2(),
-            ],
-          ),
+          _buildCalendarContent(),
           _buildFloatingButton(),
         ],
       ),

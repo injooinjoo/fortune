@@ -423,7 +423,7 @@ class _TarotResultCardState extends State<TarotResultCard>
                         widget.result['cardName'] ?? 'The Fool',
                         style: const TextStyle(
                           color: TossDesignSystem.white,
-                          
+                          fontFamily: 'ZenSerif',
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.center,

@@ -6,6 +6,7 @@ import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/services/talisman_generation_service.dart' as ai_talisman;
 import '../../../../core/utils/logger.dart';
+import '../../../../core/widgets/voice_input_text_field.dart';
 
 class TalismanWishInput extends StatefulWidget {
   final TalismanCategory selectedCategory;
@@ -27,7 +28,6 @@ class TalismanWishInput extends StatefulWidget {
 
 class TalismanWishInputState extends State<TalismanWishInput> {
   final TextEditingController _wishController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
   bool _isValid = false;
   bool _isGeneratingAI = false;
 
@@ -44,19 +44,12 @@ class TalismanWishInputState extends State<TalismanWishInput> {
   void initState() {
     super.initState();
     _wishController.addListener(_validateInput);
-    
-    // Auto focus after animation
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) {
-        _focusNode.requestFocus();
-      }
-    });
   }
 
   @override
   void dispose() {
+    _wishController.removeListener(_validateInput);
     _wishController.dispose();
-    _focusNode.dispose();
     super.dispose();
   }
 
@@ -148,41 +141,45 @@ class TalismanWishInputState extends State<TalismanWishInput> {
           .fadeIn(duration: 400.ms),
         
         const SizedBox(height: 24),
-        
-        // Text Input
-        TextFormField(
+
+        // Voice Input
+        VoiceInputTextField(
           controller: _wishController,
-          focusNode: _focusNode,
-          decoration: InputDecoration(
-            hintText: _placeholderText,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            counterText: '${_wishController.text.length}/100',
-          ),
-          maxLines: 3,
-          maxLength: 100,
-          textInputAction: TextInputAction.done,
-          onFieldSubmitted: _isValid ? (value) => handleAISubmit() : null,
+          onSubmit: _isValid ? (text) => handleAISubmit() : (text) {},
+          hintText: _placeholderText,
+          transcribingText: '듣고 있어요...',
         ).animate(delay: 200.ms)
           .fadeIn(duration: 400.ms)
           .slideY(begin: 0.1, end: 0),
-        
+
         const SizedBox(height: 8),
-        
-        // Input Tip
+
+        // Input Tip & Character Count
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(
-              Icons.lightbulb_outline,
-              size: 16,
-              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+            Row(
+              children: [
+                Icon(
+                  Icons.lightbulb_outline,
+                  size: 16,
+                  color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+                ),
+                SizedBox(width: 4),
+                Text(
+                  '최소 5자 이상 입력해주세요',
+                  style: TossTheme.caption.copyWith(
+                    color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(width: 4),
             Text(
-              '최소 5자 이상 입력해주세요',
+              '${_wishController.text.length}/100',
               style: TossTheme.caption.copyWith(
-                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+                color: _wishController.text.length >= 5
+                    ? TossDesignSystem.successGreen
+                    : (isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight),
               ),
             ),
           ],

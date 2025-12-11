@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../core/theme/toss_design_system.dart';
 import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/widgets/voice_input_text_field.dart';
 
 /// Simplified input view for tarot questions
 class TarotInputView extends ConsumerStatefulWidget {
@@ -24,22 +24,13 @@ class TarotInputView extends ConsumerStatefulWidget {
 }
 
 class _TarotInputViewState extends ConsumerState<TarotInputView> {
-  late TextEditingController _questionController;
-
   @override
   void initState() {
     super.initState();
-    _questionController = TextEditingController(text: widget.initialQuestion);
   }
 
-  @override
-  void dispose() {
-    _questionController.dispose();
-    super.dispose();
-  }
-
-  void _handleProceed() {
-    widget.onQuestionChanged(_questionController.text);
+  void _handleQuestionSubmit(String text) {
+    widget.onQuestionChanged(text);
     widget.onProceed();
   }
 
@@ -65,50 +56,16 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
           ),
         ),
         const SizedBox(height: 32),
-        
-        // Question input
-        GlassContainer(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    color: theme.colorScheme.primary,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '당신의 질문',
-                    style: context.buttonMedium.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _questionController,
-                style: context.buttonMedium,
-                maxLines: 3,
-                decoration: InputDecoration(
-                  hintText: '예: 나의 연애운은 어떨까요?\n예: 이직을 해야 할까요?\n예: 오늘 하루는 어떨까요?',
-                  filled: true,
-                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none),
-                  contentPadding: const EdgeInsets.all(16),
-                ),
-                onChanged: widget.onQuestionChanged,
-              ),
-            ],
-          ),
+
+        // Voice input
+        VoiceInputTextField(
+          onSubmit: _handleQuestionSubmit,
+          hintText: '질문을 말하거나 적어주세요',
+          transcribingText: '듣고 있어요...',
         ),
+
         const SizedBox(height: 24),
-        
+
         // Tip
         Container(
           padding: const EdgeInsets.all(16),
@@ -139,16 +96,19 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
           ),
         ),
         const SizedBox(height: 32),
-        
-        // Proceed button
+
+        // Proceed button (for skipping question)
         SizedBox(
           width: double.infinity,
           child: UnifiedButton(
-            text: '계속하기',
-            onPressed: _handleProceed,
-            style: UnifiedButtonStyle.primary,
+            text: '질문 없이 진행하기',
+            onPressed: () {
+              widget.onQuestionChanged('');
+              widget.onProceed();
+            },
+            style: UnifiedButtonStyle.secondary,
             size: UnifiedButtonSize.large,
-            icon: Icon(Icons.auto_awesome),
+            icon: Icon(Icons.arrow_forward),
           ),
         ),
       ],

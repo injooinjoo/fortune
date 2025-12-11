@@ -186,7 +186,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
                     count > 0 ? '$element$count' : '',
                     style: const TextStyle(
                       color: TossDesignSystem.white,
-                      
+                      fontFamily: 'ZenSerif',
                       fontWeight: FontWeight.bold,
                     ),
                   ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../presentation/providers/fortune_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -11,11 +11,14 @@ import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/theme/toss_theme.dart';
-import '../../../../domain/entities/fortune.dart';
+import '../../../../core/models/fortune_result.dart';
+import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+import '../widgets/fortune_loading_skeleton.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../domain/models/conditions/family_fortune_conditions.dart';
 
 // 5가지 가족 운세 관심사
 enum FamilyConcern {
@@ -96,12 +99,10 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   // Step 4: 특별히 궁금한 점 (선택)
   final TextEditingController _questionController = TextEditingController();
 
-  bool _isLoading = false;
-  Fortune? _fortune;
-
-  // ✅ Blur 상태 관리
-  bool _isBlurred = false;
-  List<String> _blurredSections = [];
+  // ✅ 화면 상태 관리
+  bool _showResult = false;  // 결과 화면 전환 여부
+  bool _isLoading = false;   // 스켈레톤 표시 여부
+  FortuneResult? _fortuneResult;  // Fortune → FortuneResult
 
   @override
   void dispose() {
@@ -118,9 +119,22 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
       appBar: const StandardFortuneAppBar(
         title: '가족 운세',
       ),
-      body: _fortune != null
-          ? _buildResultScreen()
+      body: _showResult
+          ? (_isLoading ? _buildLoadingSkeleton() : _buildResultScreen())
           : _buildInputScreen(),
+    );
+  }
+
+  /// 스켈레톤 로딩 화면
+  Widget _buildLoadingSkeleton() {
+    return FortuneLoadingSkeleton(
+      itemCount: 3,
+      showHeader: true,
+      loadingMessages: const [
+        '가족 운세를 분석하고 있어요...',
+        '사주 데이터를 확인하고 있어요...',
+        '맞춤 조언을 준비하고 있어요...',
+      ],
     );
   }
 
@@ -611,7 +625,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
       onPressed: _canProceed() ? _handleNext : null,
       isEnabled: _canProceed(),
       isFloating: true,
-      isLoading: _isLoading,
+      // ✅ 버튼 로딩 제거 - 스켈레톤으로 대체
     );
   }
 
@@ -644,7 +658,11 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   }
 
   Future<void> _generateFortune() async {
-    setState(() => _isLoading = true);
+    // 1. 결과 화면 전환 + 스켈레톤 시작
+    setState(() {
+      _showResult = true;
+      _isLoading = true;
+    });
 
     try {
       final user = ref.read(userProvider).value;
@@ -652,33 +670,62 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
         throw Exception('로그인이 필요합니다');
       }
 
-      final params = {
-        'concern': _selectedConcern!.name,
-        'concern_label': _selectedConcern!.label,
-        'detailed_questions': _selectedQuestions.toList(),
-        'family_member_count': _familyMemberCount,
-        'relationship': _relationship,
-        if (_questionController.text.isNotEmpty)
-          'special_question': _questionController.text,
-      };
-
-      final fortuneService = ref.read(fortuneServiceProvider);
-      final fortune = await fortuneService.getFortune(
-        fortuneType: 'family-${_selectedConcern!.name}',
-        userId: user.id,
-        params: params,
+      // 2. FamilyFortuneConditions 생성
+      final conditions = FamilyFortuneConditions(
+        concern: _selectedConcern!.name,
+        concernLabel: _selectedConcern!.label,
+        detailedQuestions: _selectedQuestions.toList(),
+        familyMemberCount: _familyMemberCount,
+        relationship: _relationship,
+        specialQuestion: _questionController.text.isNotEmpty
+            ? _questionController.text
+            : null,
       );
 
-      setState(() => _fortune = fortune);
+      // 3. UnifiedFortuneService 호출 (6단계 최적화 시스템)
+      final fortuneService = UnifiedFortuneService(
+        Supabase.instance.client,
+        enableOptimization: true,
+      );
+
+      final tokenState = ref.read(tokenProvider);
+      final isPremium = tokenState.hasUnlimitedAccess;
+
+      final result = await fortuneService.getFortune(
+        fortuneType: 'family-${_selectedConcern!.name}',
+        dataSource: FortuneDataSource.api,
+        inputConditions: conditions.toJson(),
+        conditions: conditions,
+        isPremium: isPremium,
+        onBlurredResult: (blurredResult) {
+          // 블러 상태로 즉시 UI 업데이트 (스켈레톤 종료)
+          if (mounted) {
+            setState(() {
+              _fortuneResult = blurredResult;
+              _isLoading = false;
+            });
+          }
+        },
+      );
+
+      // Premium 사용자: 즉시 전체 표시
+      if (isPremium && mounted) {
+        setState(() {
+          _fortuneResult = result;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       Logger.error('가족 운세 생성 실패', e);
       if (mounted) {
+        setState(() {
+          _showResult = false;
+          _isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('운세 생성에 실패했습니다. 다시 시도해주세요.')),
         );
       }
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
@@ -689,8 +736,11 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
     await adService.showRewardedAd(
       onUserEarnedReward: (ad, reward) {
         setState(() {
-          _isBlurred = false;
-          _blurredSections = [];
+          // FortuneResult의 블러 상태 해제
+          _fortuneResult = _fortuneResult?.copyWith(
+            isBlurred: false,
+            blurredSections: [],
+          );
         });
         // 구독 유도 스낵바 표시 (구독자가 아닌 경우만)
         final tokenState = ref.read(tokenProvider);
@@ -705,21 +755,9 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   // ✅ UnifiedBlurWrapper로 마이그레이션 완료 (2024-12-07)
 
   Widget _buildResultScreen() {
-    if (_fortune == null || _selectedConcern == null) return const SizedBox.shrink();
+    if (_fortuneResult == null || _selectedConcern == null) return const SizedBox.shrink();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final concernColor = _selectedConcern!.gradientColors[0];
-
-    // ✅ result.isBlurred 동기화
-    if (_isBlurred != _fortune!.isBlurred || _blurredSections.length != _fortune!.blurredSections.length) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          setState(() {
-            _isBlurred = _fortune!.isBlurred;
-            _blurredSections = List<String>.from(_fortune!.blurredSections);
-          });
-        }
-      });
-    }
 
     return Stack(
       children: [
@@ -790,8 +828,8 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
           // Fortune content
           UnifiedBlurWrapper(
-            isBlurred: _isBlurred,
-            blurredSections: _blurredSections,
+            isBlurred: _fortuneResult!.isBlurred,
+            blurredSections: _fortuneResult!.blurredSections,
             sectionKey: 'fortune_content',
             child: AppCard(
               padding: const EdgeInsets.all(24),
@@ -813,7 +851,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   ),
                   SizedBox(height: 16),
                   Text(
-                    _fortune!.content,
+                    _fortuneResult!.data['content'] as String? ?? '',
                     style: TypographyUnified.buttonMedium.copyWith(
                       color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                       height: 1.6,
@@ -833,7 +871,8 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   text: '다시 해보기',
                   style: UnifiedButtonStyle.secondary,
                   onPressed: () => setState(() {
-                    _fortune = null;
+                    _fortuneResult = null;
+                    _showResult = false;
                     _currentStep = 0;
                     _selectedConcern = null;
                     _selectedQuestions.clear();
@@ -862,7 +901,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
         ).animate().fadeIn(duration: 600.ms),
 
         // ✅ FloatingBottomButton
-        if (_isBlurred)
+        if (_fortuneResult!.isBlurred)
           UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,

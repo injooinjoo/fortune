@@ -13,6 +13,7 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../../../data/services/token_api_service.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/widgets/voice_input_text_field.dart';
 
 class WorryBeadPage extends ConsumerStatefulWidget {
   const WorryBeadPage({super.key});
@@ -45,21 +46,30 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
     _rotationController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this);
-    
+
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this)..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(
       begin: 1.0,
       end: 1.1).animate(CurvedAnimation(
       parent: _pulseController,
       curve: Curves.easeInOut,
     ));
+
+    _worryController.addListener(_onWorryTextChanged);
+  }
+
+  void _onWorryTextChanged() {
+    setState(() {
+      _hasWorry = _worryController.text.trim().isNotEmpty;
+    });
   }
 
   @override
   void dispose() {
+    _worryController.removeListener(_onWorryTextChanged);
     _worryController.dispose();
     _rotationController.dispose();
     _pulseController.dispose();
@@ -167,33 +177,18 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
             ),
           ),
           const SizedBox(height: 12),
-          TextFormField(
+          VoiceInputTextField(
             controller: _worryController,
-            maxLines: 3,
-            maxLength: 200,
-            decoration: InputDecoration(
-              hintText: '마음속 걱정을 적어주세요...',
-              hintStyle: TextStyle(color: AppTheme.textSecondaryColor.withValues(alpha: 0.5)),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: AppTheme.borderColor)),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: AppTheme.borderColor)),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppTheme.primaryColor, width: 2)),
-              filled: true,
-              fillColor: AppTheme.surfaceColor),
-            style: Theme.of(context).textTheme.bodyLarge,
-            onChanged: (value) {
+            onSubmit: (text) {
               setState(() {
-                _hasWorry = value.trim().isNotEmpty;
+                _hasWorry = text.trim().isNotEmpty;
               });
             },
-        ),
-      ],
-    ),
+            hintText: '마음속 걱정을 적어주세요...',
+            transcribingText: '듣고 있어요...',
+          ),
+        ],
+      ),
     ).animate()
       .fadeIn(duration: 600.ms, delay: 100.ms)
       .slideY(begin: 0.1, end: 0);

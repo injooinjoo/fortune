@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/widgets/voice_input_text_field.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
@@ -67,7 +68,18 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
   int _urgencyLevel = 3;
 
   @override
+  void initState() {
+    super.initState();
+    _wishController.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    setState(() {});
+  }
+
+  @override
   void dispose() {
+    _wishController.removeListener(_onTextChanged);
     _wishController.dispose();
     super.dispose();
   }
@@ -256,36 +268,14 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
             ),
           ),
           const SizedBox(height: 16),
-          TextField(
+          VoiceInputTextField(
             controller: _wishController,
-            maxLines: 4,
-            onChanged: (value) => setState(() {}),
-            decoration: InputDecoration(
-              hintText: '마음을 담아 소원을 적어보세요...',
-              hintStyle: const TextStyle(
-                color: Color(0xFF8B95A1),
-                fontFamily: 'TossProductSans',
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFE5E5E5)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFE5E5E5)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF1F4EF5)),
-              ),
-              filled: true,
-              fillColor: const Color(0xFFF7F8FA),
-              contentPadding: const EdgeInsets.all(16),
-            ),
-            style: const TextStyle(
-              fontFamily: 'TossProductSans',
-              
-            ),
+            onSubmit: (text) {
+              // 텍스트가 입력되면 submit 버튼 활성화를 위해 setState 호출
+              setState(() {});
+            },
+            hintText: '마음을 담아 소원을 적어보세요...',
+            transcribingText: '듣고 있어요...',
           ),
         ],
       ),

@@ -12,7 +12,7 @@ import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
-import '../widgets/dream_voice_input_widget.dart';
+import '../../../../core/widgets/voice_input_text_field.dart';
 import '../widgets/dream_result_widget.dart';
 import '../widgets/floating_dream_topics_widget.dart';
 import '../widgets/fortune_loading_skeleton.dart';
@@ -85,8 +85,15 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
 
           // 하단 음성 입력 영역 (초기/녹음 상태에서만 표시, 처리 중에는 숨김)
           if (voiceState.state == VoicePageState.initial || voiceState.state == VoicePageState.recording)
-            DreamVoiceInputWidget(
-              onTextRecognized: _handleTextRecognized,
+            Positioned(
+              bottom: MediaQuery.of(context).padding.bottom + 16,
+              left: TossTheme.spacingM,
+              right: TossTheme.spacingM,
+              child: VoiceInputTextField(
+                onSubmit: _handleTextRecognized,
+                hintText: '무슨 꿈이었나요?',
+                transcribingText: '듣고 있어요...',
+              ),
             ),
 
           // 결과 화면일 때 블러 해제 버튼
@@ -158,7 +165,7 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
         ),
 
         // 하단 입력 영역 여유 공간 (입력창 높이 48 + SafeArea + 패딩)
-        SizedBox(height: 48 + MediaQuery.of(context).padding.bottom + 40),
+        SizedBox(height: 48 + MediaQuery.of(context).padding.bottom + 32),
       ],
     );
   }

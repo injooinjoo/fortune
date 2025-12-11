@@ -56,6 +56,10 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
 
   // API 응답 저장
   FortuneResult? _fortuneResult;
+
+  // 사주 자동 계산 상태
+  bool _isAutoCalculating = false;
+  bool _needsBirthDate = false;
   
   @override
   void initState() {
@@ -165,25 +169,67 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     }
 
     if (sajuState.sajuData == null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.hourglass_empty,
-              size: 48,
-              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '사주 데이터가 없습니다.\n먼저 사주 계산을 완료해주세요.',
-              textAlign: TextAlign.center,
-              style: TossTheme.body3.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-              ),
-            ),
+      // 사주 데이터가 없으면 자동 계산 시도
+      if (!_isAutoCalculating && !_needsBirthDate) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _tryAutoCalculateSaju();
+        });
+      }
+
+      // 자동 계산 중
+      if (_isAutoCalculating) {
+        return FortuneLoadingSkeleton(
+          itemCount: 3,
+          showHeader: true,
+          loadingMessages: const [
+            '사주를 계산하고 있어요...',
+            '만세력을 분석하는 중...',
+            '팔자를 정리하고 있어요...',
           ],
-        ),
+        );
+      }
+
+      // 생년월일이 없어서 계산 불가
+      if (_needsBirthDate) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.calendar_today_outlined,
+                size: 48,
+                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '생년월일 정보가 필요해요.\n프로필에서 생년월일을 입력해주세요.',
+                textAlign: TextAlign.center,
+                style: TossTheme.body3.copyWith(
+                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                ),
+              ),
+              const SizedBox(height: 24),
+              UnifiedButton(
+                text: '프로필 편집하기',
+                onPressed: () {
+                  Navigator.pop(context);
+                  // 프로필 편집 페이지로 이동
+                  Navigator.pushNamed(context, '/profile-edit');
+                },
+                style: UnifiedButtonStyle.primary,
+              ),
+            ],
+          ),
+        );
+      }
+
+      // 기본 로딩 상태
+      return FortuneLoadingSkeleton(
+        itemCount: 3,
+        showHeader: true,
+        loadingMessages: const [
+          '사주 데이터를 확인하고 있어요...',
+        ],
       );
     }
 
@@ -285,10 +331,12 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
         labelStyle: const TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.bold,
+          fontFamily: 'ZenSerif',
         ),
         unselectedLabelStyle: const TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w500,
+          fontFamily: 'ZenSerif',
         ),
         indicatorColor: TossTheme.brandBlue,
         indicatorWeight: 2,
@@ -698,6 +746,104 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   }
 
 
+
+  /// 사주 자동 계산 시도
+  Future<void> _tryAutoCalculateSaju() async {
+    if (_isAutoCalculating) return;
+
+    setState(() {
+      _isAutoCalculating = true;
+    });
+
+    try {
+      final supabase = Supabase.instance.client;
+      final user = supabase.auth.currentUser;
+
+      if (user == null) {
+        setState(() {
+          _isAutoCalculating = false;
+          _needsBirthDate = true;
+        });
+        return;
+      }
+
+      // 프로필에서 생년월일 확인
+      final profile = await supabase
+          .from('user_profiles')
+          .select('birth_date, birth_time')
+          .eq('id', user.id)
+          .maybeSingle();
+
+      if (profile == null || profile['birth_date'] == null) {
+        setState(() {
+          _isAutoCalculating = false;
+          _needsBirthDate = true;
+        });
+        return;
+      }
+
+      // 생년월일이 있으면 사주 계산
+      final birthDate = DateTime.parse(profile['birth_date']);
+      final birthTime = _convertBirthTimeToHHmm(profile['birth_time']);
+
+      Logger.info('[Traditional-Saju] 사주 자동 계산 시작: $birthDate, $birthTime');
+
+      await ref.read(sajuProvider.notifier).calculateAndSaveSaju(
+        birthDate: birthDate,
+        birthTime: birthTime,
+        isLunar: false,
+      );
+
+      if (mounted) {
+        setState(() {
+          _isAutoCalculating = false;
+        });
+      }
+    } catch (e) {
+      Logger.error('[Traditional-Saju] 사주 자동 계산 실패: $e', e);
+      if (mounted) {
+        setState(() {
+          _isAutoCalculating = false;
+        });
+      }
+    }
+  }
+
+  /// 한국식 시간 형식을 HH:mm으로 변환
+  String _convertBirthTimeToHHmm(String? birthTime) {
+    if (birthTime == null || birthTime.isEmpty) return '12:00';
+
+    // 이미 HH:mm 형식인 경우
+    final simpleTimeRegex = RegExp(r'^(\d{1,2}):(\d{2})$');
+    if (simpleTimeRegex.hasMatch(birthTime)) {
+      return birthTime;
+    }
+
+    // "축시 (01:00 - 03:00)" 형식에서 중간 시간 추출
+    final rangeRegex = RegExp(r'(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})');
+    final match = rangeRegex.firstMatch(birthTime);
+    if (match != null) {
+      final startHour = int.parse(match.group(1)!);
+      final endHour = int.parse(match.group(3)!);
+      final middleHour = ((startHour + endHour) / 2).floor();
+      return '${middleHour.toString().padLeft(2, '0')}:00';
+    }
+
+    // 시간대 이름으로 매핑
+    final timeMap = {
+      '자시': '00:00', '축시': '02:00', '인시': '04:00', '묘시': '06:00',
+      '진시': '08:00', '사시': '10:00', '오시': '12:00', '미시': '14:00',
+      '신시': '16:00', '유시': '18:00', '술시': '20:00', '해시': '22:00',
+    };
+
+    for (final entry in timeMap.entries) {
+      if (birthTime.contains(entry.key)) {
+        return entry.value;
+      }
+    }
+
+    return '12:00';
+  }
 
   /// 광고 시청 후 블러 해제
   Future<void> _showAdAndUnblur() async {

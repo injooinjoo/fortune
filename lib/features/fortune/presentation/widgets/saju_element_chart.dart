@@ -125,7 +125,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
   }
 
   Widget _buildPieChart(bool isDark) {
-    final totalCount = widget.elementBalance.values.fold<int>(0, (sum, count) => sum + (count as int));
+    final totalCount = widget.elementBalance.values.fold<double>(0, (sum, count) => sum + (count is num ? count.toDouble() : 0));
 
     if (totalCount == 0) {
       return SizedBox(
@@ -169,12 +169,13 @@ class _SajuElementChartState extends State<SajuElementChart> {
 
   List<PieChartSectionData> _buildPieChartSections() {
     final elements = ['목', '화', '토', '금', '수'];
-    final totalCount = widget.elementBalance.values.fold<int>(0, (sum, count) => sum + (count as int));
+    final totalCount = widget.elementBalance.values.fold<double>(0, (sum, count) => sum + (count is num ? count.toDouble() : 0));
 
     return elements.asMap().entries.map((entry) {
       final index = entry.key;
       final element = entry.value;
-      final count = widget.elementBalance[element] as int? ?? 0;
+      final rawCount = widget.elementBalance[element];
+      final count = rawCount is num ? rawCount.toDouble() : 0.0;
       final percentage = totalCount > 0 ? count / totalCount * 100 : 0.0;
       final isTouched = index == _touchedIndex;
 
@@ -183,7 +184,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
 
       return PieChartSectionData(
         color: color,
-        value: count.toDouble(),
+        value: count,
         title: count > 0 ? '${percentage.round()}%' : '',
         radius: radius,
         titleStyle: TossTheme.caption.copyWith(
@@ -198,7 +199,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
     }).toList();
   }
 
-  Widget _buildBadge(String element, int count) {
+  Widget _buildBadge(String element, double count) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -214,7 +215,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
         ],
       ),
       child: Text(
-        '$element: $count',
+        '$element: ${count.toStringAsFixed(1)}',
         style: TossTheme.caption.copyWith(
           color: TossDesignSystem.white,
           fontWeight: FontWeight.bold,
@@ -231,7 +232,8 @@ class _SajuElementChartState extends State<SajuElementChart> {
         mainAxisSize: MainAxisSize.min,
         children: widget.elementBalance.entries.map((entry) {
           final element = entry.key;
-          final count = entry.value as int;
+          final rawCount = entry.value;
+          final count = rawCount is num ? rawCount.toDouble() : 0.0;
           final color = _getElementColor(element);
           final strength = _getElementStrength(count);
 
@@ -265,7 +267,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
                 ),
                 const Spacer(),
                 Text(
-                  '$count',
+                  count.toStringAsFixed(1),
                   style: TossTheme.caption.copyWith(
                     fontWeight: FontWeight.bold,
                     color: color,
@@ -413,9 +415,10 @@ class _SajuElementChartState extends State<SajuElementChart> {
 
   Map<String, String> _getDominantElement() {
     String maxElement = '목';
-    int maxCount = 0;
-    
-    widget.elementBalance.forEach((element, count) {
+    double maxCount = 0;
+
+    widget.elementBalance.forEach((element, rawCount) {
+      final count = rawCount is num ? rawCount.toDouble() : 0.0;
       if (count > maxCount) {
         maxCount = count;
         maxElement = element;
@@ -438,9 +441,10 @@ class _SajuElementChartState extends State<SajuElementChart> {
 
   Map<String, String> _getLackingElement() {
     String minElement = '목';
-    int minCount = 999;
-    
-    widget.elementBalance.forEach((element, count) {
+    double minCount = 999;
+
+    widget.elementBalance.forEach((element, rawCount) {
+      final count = rawCount is num ? rawCount.toDouble() : 0.0;
       if (count < minCount) {
         minCount = count;
         minElement = element;
@@ -461,10 +465,10 @@ class _SajuElementChartState extends State<SajuElementChart> {
     };
   }
 
-  String _getElementStrength(int count) {
-    if (count >= 3) return '강함';
-    if (count >= 2) return '보통';
-    if (count >= 1) return '약함';
+  String _getElementStrength(double count) {
+    if (count >= 2.5) return '강함';
+    if (count >= 1.5) return '보통';
+    if (count >= 0.5) return '약함';
     return '없음';
   }
 

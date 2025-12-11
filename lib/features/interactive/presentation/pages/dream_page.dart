@@ -10,6 +10,7 @@ import '../../../../core/providers/user_settings_provider.dart';
 
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
+import '../../../../core/widgets/voice_input_text_field.dart';
 
 // Import domain models
 import '../../domain/models/dream_models.dart';
@@ -367,24 +368,11 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                   ),
                 ),
                 const SizedBox(height: 8),
-                TextField(
+                VoiceInputTextField(
                   controller: _titleController,
-                  style: theme.textTheme.bodyLarge?.copyWith(fontSize: fontSize),
-                  decoration: InputDecoration(
-                    hintText: '꿈의 제목을 입력하세요',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withValues(alpha: 0.3),
-                      ),
-                    ),
-                  ),
+                  onSubmit: (text) {},
+                  hintText: '꿈의 제목을 입력하세요',
+                  transcribingText: '듣고 있어요...',
                 ),
               ],
             ),
@@ -403,23 +391,11 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     fontSize: fontSize + 2,
                     fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
-                TextField(
+                VoiceInputTextField(
                   controller: _contentController,
-                  style: theme.textTheme.bodyLarge?.copyWith(fontSize: fontSize),
-                  maxLines: 8,
-                  decoration: InputDecoration(
-                    hintText: '꿈의 내용을 자세히 기록해주세요',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withValues(alpha: 0.3)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: theme.colorScheme.outline.withValues(alpha: 0.3)),
-                    ),
-                  ),
+                  onSubmit: (text) {},
+                  hintText: '꿈의 내용을 자세히 기록해주세요',
+                  transcribingText: '듣고 있어요...',
                 ),
               ],
             ),

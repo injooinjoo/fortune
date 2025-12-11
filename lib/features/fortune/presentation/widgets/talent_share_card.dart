@@ -120,7 +120,7 @@ class TalentShareCard extends StatelessWidget {
                         todaysFocus,
                         style: const TextStyle(
                           color: TossDesignSystem.white,
-                          
+                          fontFamily: 'ZenSerif',
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -131,7 +131,7 @@ class TalentShareCard extends StatelessWidget {
                     '활성화 지수: $activationLevel%',
                     style: TextStyle(
                       color: TossDesignSystem.white.withValues(alpha:0.9),
-                      
+                      fontFamily: 'ZenSerif',
                     ),
                   ),
                 ],
@@ -145,7 +145,7 @@ class TalentShareCard extends StatelessWidget {
               '상위 재능',
               style: TextStyle(
                 color: TossDesignSystem.white.withValues(alpha:0.8),
-                
+                fontFamily: 'ZenSerif',
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -169,7 +169,7 @@ class TalentShareCard extends StatelessWidget {
                       entry.key,
                       style: const TextStyle(
                         color: TossDesignSystem.white,
-                        
+                        fontFamily: 'ZenSerif',
                       ),
                     ),
                   ),
@@ -177,7 +177,7 @@ class TalentShareCard extends StatelessWidget {
                     '${entry.value}점',
                     style: const TextStyle(
                       color: TossDesignSystem.white,
-                      
+                      fontFamily: 'ZenSerif',
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -192,6 +192,7 @@ class TalentShareCard extends StatelessWidget {
               '추천 직업',
               style: TextStyle(
                 color: TossDesignSystem.white.withValues(alpha:0.8),
+                fontFamily: 'ZenSerif',
                 
                 fontWeight: FontWeight.w500,
               ),

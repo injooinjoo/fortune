@@ -14,6 +14,7 @@ import '../../../../core/constants/api_endpoints.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
+import '../../../../core/widgets/voice_input_text_field.dart';
 
 // Example questions for quick access
 final tarotExampleQuestions = [
@@ -85,11 +86,9 @@ class TarotChatPage extends ConsumerStatefulWidget {
   ConsumerState<TarotChatPage> createState() => _TarotChatPageState();
 }
 
-class _TarotChatPageState extends ConsumerState<TarotChatPage> 
+class _TarotChatPageState extends ConsumerState<TarotChatPage>
     with TickerProviderStateMixin {
-  final TextEditingController _inputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final FocusNode _focusNode = FocusNode();
   bool _isProcessing = false;
   bool _hasCheckedDeck = false;
   late AnimationController _cardAnimationController;
@@ -113,9 +112,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
 
   @override
   void dispose() {
-    _inputController.dispose();
     _scrollController.dispose();
-    _focusNode.dispose();
     _cardAnimationController.dispose();
     super.dispose();
   }
@@ -160,7 +157,6 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       timestamp: DateTime.now(),
     ));
 
-    _inputController.clear();
     setState(() => _isProcessing = true);
     _scrollToBottom();
 
@@ -665,47 +661,11 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             color: TossDesignSystem.gray600,
             width: 1)),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _inputController,
-              focusNode: _focusNode,
-              style: context.buttonMedium.copyWith(
-                color: TossDesignSystem.gray900),
-              decoration: InputDecoration(
-                hintText: '궁금한 것을 물어보세요...',
-                hintStyle: context.buttonMedium.copyWith(
-                  color: TossDesignSystem.gray600),
-                filled: true,
-                fillColor: TossDesignSystem.gray50,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12)),
-              maxLines: null,
-              textInputAction: TextInputAction.send,
-              onSubmitted: _isProcessing ? null : _sendMessage,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            decoration: BoxDecoration(
-              color: _isProcessing ? TossDesignSystem.gray600 : TossDesignSystem.gray900,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: Icon(
-                Icons.send,
-                color: TossDesignSystem.white,
-                size: 20,
-              ),
-              onPressed: _isProcessing ? null : () => _sendMessage(_inputController.text),
-            ),
-          ),
-        ],
+      child: VoiceInputTextField(
+        onSubmit: _sendMessage,
+        hintText: '궁금한 것을 물어보세요...',
+        transcribingText: '듣고 있어요...',
+        enabled: !_isProcessing,
       ),
     );
   }

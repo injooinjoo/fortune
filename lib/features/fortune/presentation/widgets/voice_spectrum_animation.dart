@@ -1,16 +1,17 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
-/// 음성 스펙트럼 애니메이션 (실제 마이크 입력 기반)
-/// Duolingo 스타일의 부드럽고 유기적인 애니메이션
+/// ChatGPT 스타일 음성 웨이브폼 애니메이션
+/// 많은 얇은 바가 실시간 소리에 반응
 class VoiceSpectrumAnimation extends StatefulWidget {
   final bool isRecording;
   final int barCount;
-  final double soundLevel; // 0.0 ~ 1.0
+  final double soundLevel; // 0.0 ~ 10.0 (speech_to_text 기준)
 
   const VoiceSpectrumAnimation({
     super.key,
     required this.isRecording,
-    this.barCount = 5, // 바 개수 줄임 (더 굵고 둥글게)
+    this.barCount = 50, // ChatGPT 스타일: 많은 바
     this.soundLevel = 0.0,
   });
 
@@ -18,22 +19,80 @@ class VoiceSpectrumAnimation extends StatefulWidget {
   State<VoiceSpectrumAnimation> createState() => _VoiceSpectrumAnimationState();
 }
 
-class _VoiceSpectrumAnimationState extends State<VoiceSpectrumAnimation> with SingleTickerProviderStateMixin {
-  late AnimationController _breathingController;
-  
+class _VoiceSpectrumAnimationState extends State<VoiceSpectrumAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  final Random _random = Random();
+
+  // 각 바의 높이를 저장 (부드러운 전환용)
+  List<double> _barHeights = [];
+  List<double> _targetHeights = [];
+
   @override
   void initState() {
     super.initState();
-    _breathingController = AnimationController(
+    _barHeights = List.filled(widget.barCount, 0.3);
+    _targetHeights = List.filled(widget.barCount, 0.3);
+
+    _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..repeat(reverse: true);
+      duration: const Duration(milliseconds: 50),
+    )..addListener(_updateBarHeights);
+
+    _animationController.repeat();
+  }
+
+  void _updateBarHeights() {
+    if (!widget.isRecording) return;
+
+    setState(() {
+      // 소리 레벨 정규화 (0.0 ~ 1.0)
+      final normalizedLevel = (widget.soundLevel / 10.0).clamp(0.0, 1.0);
+
+      // 소리가 거의 없으면 (threshold 이하) 조용히 대기
+      final isQuiet = normalizedLevel < 0.05;
+
+      for (int i = 0; i < widget.barCount; i++) {
+        double targetHeight;
+
+        if (isQuiet) {
+          // 조용할 때: 모든 바가 최소 높이로 정지
+          targetHeight = 0.15;
+        } else {
+          // 소리가 있을 때: 랜덤 변화 + 소리 반응
+          final randomVariation = _random.nextDouble() * 0.25;
+          final soundResponse = normalizedLevel * 0.6;
+
+          // 중앙 바가 더 크게 반응
+          final center = widget.barCount / 2;
+          final distanceFromCenter = (i - center).abs() / center;
+          final centerBoost = 1.0 - (distanceFromCenter * 0.4);
+
+          targetHeight = (0.15 + randomVariation + (soundResponse * centerBoost)).clamp(0.1, 1.0);
+        }
+
+        _targetHeights[i] = targetHeight;
+
+        // 부드러운 전환 (lerp) - 조용할 때 더 빠르게 안정화
+        final lerpSpeed = isQuiet ? 0.5 : 0.3;
+        _barHeights[i] = _barHeights[i] + (_targetHeights[i] - _barHeights[i]) * lerpSpeed;
+      }
+    });
   }
 
   @override
   void dispose() {
-    _breathingController.dispose();
+    _animationController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(VoiceSpectrumAnimation oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.barCount != oldWidget.barCount) {
+      _barHeights = List.filled(widget.barCount, 0.3);
+      _targetHeights = List.filled(widget.barCount, 0.3);
+    }
   }
 
   @override
@@ -43,53 +102,31 @@ class _VoiceSpectrumAnimationState extends State<VoiceSpectrumAnimation> with Si
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return AnimatedBuilder(
-      animation: _breathingController,
-      builder: (context, child) {
-        return SizedBox(
-          height: 40,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: List.generate(
-              widget.barCount,
-              (index) {
-                // 중앙 강조형 배치
-                final centerDistance = (index - widget.barCount / 2).abs();
-                
-                // 기본 높이 (숨쉬기 효과 포함)
-                final breathing = _breathingController.value * 4.0;
-                final baseHeight = 8.0 + breathing;
+    // ChatGPT 스타일: 회색 웨이브폼
+    final barColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;
 
-                // 소리에 반응하는 높이
-                // 중앙일수록 더 크게 반응
-                final sensitivity = 1.0 - (centerDistance * 0.2); 
-                final soundHeight = widget.soundLevel * 40 * sensitivity;
-                
-                // 최종 높이 계산
-                // 급격한 변화를 줄이기 위해 clamp 사용하지만, 
-                // 실제로는 상위 위젯에서 soundLevel이 부드럽게 들어오면 더 좋음
-                final targetHeight = (baseHeight + soundHeight).clamp(8.0, 40.0);
+    return SizedBox(
+      height: 32,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: List.generate(
+          widget.barCount,
+          (index) {
+            final height = _barHeights[index] * 28; // 최대 28px
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 3),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 80), // 반응 속도 조절
-                    curve: Curves.easeOutQuad,
-                    width: 6, // 더 굵게
-                    height: targetHeight,
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF6B4EFF) : const Color(0xFF5835E8), // 브랜드 컬러 사용 (예시)
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        );
-      },
+            return Container(
+              width: 2,
+              height: height.clamp(4.0, 28.0),
+              margin: const EdgeInsets.symmetric(horizontal: 1),
+              decoration: BoxDecoration(
+                color: barColor,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

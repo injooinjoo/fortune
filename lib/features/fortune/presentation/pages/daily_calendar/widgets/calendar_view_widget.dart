@@ -53,8 +53,8 @@ class CalendarViewWidget extends StatelessWidget {
         onPageChanged: onPageChanged,
         calendarStyle: CalendarStyle(
           outsideDaysVisible: false,
-          weekendTextStyle: const TextStyle(color: TossDesignSystem.errorRed),
-          holidayTextStyle: const TextStyle(color: TossDesignSystem.errorRed),
+          weekendTextStyle: const TextStyle(color: TossDesignSystem.errorRed, fontFamily: 'ZenSerif'),
+          holidayTextStyle: const TextStyle(color: TossDesignSystem.errorRed, fontFamily: 'ZenSerif'),
           selectedDecoration: BoxDecoration(
             color: AppTheme.primaryColor,
             shape: BoxShape.circle,

@@ -89,6 +89,7 @@ class CompatibilityCard extends StatelessWidget {
                         type,
                         style: const TextStyle(
                           color: TossDesignSystem.white,
+                          fontFamily: 'ZenSerif',
                           fontWeight: FontWeight.w700,
                         ),
                       ),

@@ -171,7 +171,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                 '분수대 동전: ${widget.coinCount}개',
                 style: const TextStyle(
                   color: TossDesignSystem.white,
-                  
+                  fontFamily: 'ZenSerif',
                   fontWeight: FontWeight.w500,
                 ),
               ),

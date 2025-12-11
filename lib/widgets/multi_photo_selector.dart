@@ -401,7 +401,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                                 '${index + 1}',
                                 style: const TextStyle(
                                   color: TossDesignSystem.white,
-                                  
+                                  fontFamily: 'ZenSerif',
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

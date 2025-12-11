@@ -116,7 +116,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         widget.category.title,
                         style: const TextStyle(
                           color: TossDesignSystem.white,
-                          
+                          fontFamily: 'ZenSerif',
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.3,
                         ),

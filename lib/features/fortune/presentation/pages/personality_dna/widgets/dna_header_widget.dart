@@ -39,6 +39,7 @@ class DnaHeaderWidget extends StatelessWidget {
                     dna.popularityText,
                     style: const TextStyle(
                       color: TossDesignSystem.white,
+                      fontFamily: 'ZenSerif',
                       fontWeight: FontWeight.w600,
                     ),
                   ),
