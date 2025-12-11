@@ -114,9 +114,16 @@ class _GptStyleTypingTextState extends State<GptStyleTypingText>
   }
 
   void _startTyping() {
-    if (_hasStarted || widget.text.isEmpty) return;
+    if (_hasStarted) return;
 
     _hasStarted = true;
+
+    // 빈 텍스트면 즉시 완료 처리 (커서 깜빡임 방지)
+    if (widget.text.isEmpty) {
+      _onTypingComplete();
+      return;
+    }
+
     _scheduleNextCharacter();
   }
 

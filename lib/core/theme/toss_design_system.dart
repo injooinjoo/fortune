@@ -433,10 +433,11 @@ class TossDesignSystem {
         fontSize: 17,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,
+        fontFamily: 'ZenSerif',
       ),
     );
   }
-  
+
   static ButtonStyle secondaryButtonStyle({
     bool isEnabled = true,
     Size? fixedSize,
@@ -456,10 +457,11 @@ class TossDesignSystem {
         fontSize: 17,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,
+        fontFamily: 'ZenSerif',
       ),
     );
   }
-  
+
   static ButtonStyle ghostButtonStyle({
     bool isEnabled = true,
     Size? fixedSize,
@@ -476,10 +478,11 @@ class TossDesignSystem {
         fontSize: 15,
         fontWeight: FontWeight.w500,
         letterSpacing: 0,
+        fontFamily: 'ZenSerif',
       ),
     );
   }
-  
+
   /// Input Decoration
   static InputDecoration inputDecoration({
     String? hintText,
@@ -758,10 +761,11 @@ class TossDesignSystem {
             fontSize: 17,
             fontWeight: FontWeight.w600,
             letterSpacing: 0,
+            fontFamily: 'ZenSerif',
           ),
         ),
       ),
-      
+
       // Text Button Theme
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
@@ -775,6 +779,7 @@ class TossDesignSystem {
             fontSize: 15,
             fontWeight: FontWeight.w500,
             letterSpacing: 0,
+            fontFamily: 'ZenSerif',
           ),
         ),
       ),

@@ -476,7 +476,7 @@ class _UnifiedFortuneBaseWidgetState
             ),
           ),
           // 헤더 스켈레톤
-          _ShimmerSkeletonCard(isDark: isDark, height: 120),
+          _ShimmerSkeletonCard(isDark: isDark, height: 140),
           const SizedBox(height: 16),
           // 컨텐츠 스켈레톤
           _ShimmerSkeletonCard(isDark: isDark, height: 180),
