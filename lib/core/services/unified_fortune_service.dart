@@ -418,6 +418,63 @@ class UnifiedFortuneService {
             isPremium: isPremium,
           );
 
+        // ✅ 가족운세 (5가지 concern)
+        case 'family-health':
+        case 'family-wealth':
+        case 'family-children':
+        case 'family-relationship':
+        case 'family-change':
+          final familyIsPremium = inputConditions['isPremium'] as bool? ?? false;
+
+          // concern 추출 (family-health → health)
+          final concern = fortuneType.split('-').last;
+          final endpoint = 'fortune-family-$concern';
+
+          // 사용자 정보 추가
+          final familyUser = _supabase.auth.currentUser;
+          final familyUserProfile = familyUser != null
+              ? await _supabase
+                  .from('user_profiles')
+                  .select('name, birth_date, birth_time, gender')
+                  .eq('id', familyUser.id)
+                  .maybeSingle()
+              : null;
+
+          final familyPayload = {
+            ...inputConditions,
+            'userId': familyUser?.id ?? 'anonymous',
+            'name': familyUserProfile?['name'] ?? 'Guest',
+            'birthDate': familyUserProfile?['birth_date'],
+            'birthTime': familyUserProfile?['birth_time'],
+            'gender': familyUserProfile?['gender'],
+            'isPremium': familyIsPremium,
+          };
+
+          Logger.info('[UnifiedFortune] 가족운세 API 호출: $endpoint');
+
+          final familyResponse = await _supabase.functions.invoke(
+            endpoint,
+            body: familyPayload,
+          );
+
+          if (familyResponse.data == null) {
+            throw Exception('Family Fortune API 응답 데이터 없음');
+          }
+
+          final familyResponseData = familyResponse.data as Map<String, dynamic>;
+          final familyFortuneData = familyResponseData['fortune'] ?? familyResponseData;
+
+          Logger.info('[UnifiedFortune] ✅ 가족운세 API 호출 성공');
+
+          return FortuneResult(
+            type: fortuneType,
+            title: '가족 ${inputConditions['concern_label'] ?? concern}',
+            summary: {},
+            data: familyFortuneData,
+            score: (familyFortuneData['overallScore'] ?? familyFortuneData['score'] ?? 70) as int,
+            createdAt: DateTime.now(),
+          );
+
         case 'wish':
           return await WishGenerator.generate(inputConditions, _supabase);
 
@@ -789,6 +846,13 @@ class UnifiedFortuneService {
         return ['career_path', 'success_factors', 'growth_advice'];
       case 'health':
         return ['health_advice', 'precautions', 'wellness_tips'];
+      // ✅ 가족운세 블러 섹션
+      case 'family-health':
+      case 'family-wealth':
+      case 'family-children':
+      case 'family-relationship':
+      case 'family-change':
+        return ['wealthCategories', 'monthlyTrend', 'familyAdvice', 'recommendations', 'warnings'];
       case 'exam':
       case 'lucky_exam':
         return ['study_tips', 'success_probability', 'recommended_subjects'];
