@@ -57,81 +57,28 @@ class SocialLoginBottomSheet {
                       ),
                     ),
 
-                    // Content
+                    // Content - 버튼만
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 40, vertical: 20),
+                          horizontal: 24, vertical: 24),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Title
-                          Text(
-                            '시작하기',
-                            style: typography.headingLarge.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: TossDesignSystem.gray900,
-                                letterSpacing: -0.5),
-                          ),
+                          // Google Login
+                          _buildSocialButton(
+                              onPressed: isProcessing ? null : onGoogleLogin,
+                              type: 'google',
+                              typography: typography),
                           const SizedBox(height: 12),
-                          Text('소셜 계정으로 간편하게 시작해보세요',
-                              style: typography.labelLarge.copyWith(
-                                  color: TossDesignSystem.gray800)),
 
-                          const SizedBox(height: 40),
-
-                          // Social Login Buttons
-                          // NOTE: Kakao and Naver are temporarily hidden.
-                          // TODO: Re-enable when ready for production rollout.
-                          // See: .claude/docs/09-social-login-status.md for details.
-                          Column(children: [
-                            // Google Login
-                            _buildSocialButton(
-                                onPressed: isProcessing ? null : onGoogleLogin,
-                                type: 'google',
-                                typography: typography),
-                            const SizedBox(height: 12),
-
-                            // Apple Login
-                            _buildSocialButton(
-                                onPressed: isProcessing ? null : onAppleLogin,
-                                type: 'apple',
-                                typography: typography),
-
-                            // ============================================
-                            // TEMPORARILY HIDDEN: Kakao & Naver Login
-                            // Reason: Focus on Google/Apple for initial launch
-                            // Re-enable by uncommenting below when ready
-                            // ============================================
-                            // const SizedBox(height: 12),
-                            // // Kakao Login
-                            // _buildSocialButton(
-                            //     onPressed: isProcessing ? null : onKakaoLogin,
-                            //     type: 'kakao',
-                            //     typography: typography),
-                            // const SizedBox(height: 12),
-                            // // Naver Login
-                            // _buildSocialButton(
-                            //     onPressed: isProcessing ? null : onNaverLogin,
-                            //     type: 'naver',
-                            //     typography: typography),
-                          ]),
-
-                          const SizedBox(height: 30),
-
-                          const Divider(height: 1),
-
-                          const SizedBox(height: 20),
-
-                          // Terms text
-                          Text(
-                              '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                              style: typography.labelMedium.copyWith(
-                                  color: TossDesignSystem.gray600,
-                                  height: 1.5),
-                              textAlign: TextAlign.center),
+                          // Apple Login
+                          _buildSocialButton(
+                              onPressed: isProcessing ? null : onAppleLogin,
+                              type: 'apple',
+                              typography: typography),
 
                           // Safe area bottom padding
-                          SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
+                          SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
                         ],
                       ),
                     ),

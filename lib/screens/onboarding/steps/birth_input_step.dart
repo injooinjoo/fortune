@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../widgets/numeric_keypad.dart';
 import '../../../core/theme/toss_design_system.dart';
 import '../../../core/providers/user_settings_provider.dart';
 
@@ -13,7 +12,7 @@ class BirthInputStep extends ConsumerStatefulWidget {
   final Function(TimeOfDay)? onBirthTimeChanged;
   final VoidCallback onNext;
   final VoidCallback onBack;
-  
+
   const BirthInputStep({
     super.key,
     this.initialDate,
@@ -29,575 +28,457 @@ class BirthInputStep extends ConsumerStatefulWidget {
 }
 
 class _BirthInputStepState extends ConsumerState<BirthInputStep> {
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _timeController = TextEditingController();
-  final FocusNode _dateFocusNode = FocusNode();
-  final FocusNode _timeFocusNode = FocusNode();
-  
+  final _yearController = TextEditingController();
+  final _monthController = TextEditingController();
+  final _dayController = TextEditingController();
+  final _timeController = TextEditingController();
+
+  final _yearFocus = FocusNode();
+  final _monthFocus = FocusNode();
+  final _dayFocus = FocusNode();
+  final _timeFocus = FocusNode();
+
+  // For backspace detection
+  String _prevYear = '';
+  String _prevMonth = '';
+  String _prevDay = '';
+  String _prevTime = '';
+
+  bool _showMonth = false;
+  bool _showDay = false;
+  bool _showTime = false;
   bool _isDateValid = false;
   bool _isTimeValid = false;
-  bool _showTimeInput = false;
   bool _isTimeUnknown = false;
-  bool _isDateFieldFocused = false;
-  bool _isTimeFieldFocused = false;
-  bool _isInputMode = true; // 입력 모드 - 처음부터 true로 설정
-  
+
   @override
   void initState() {
     super.initState();
-    
-    // Initialize date
+
     if (widget.initialDate != null) {
-      _dateController.text = DateFormat('yyyy.MM.dd').format(widget.initialDate!);
+      _yearController.text = widget.initialDate!.year.toString();
+      _monthController.text = widget.initialDate!.month.toString().padLeft(2, '0');
+      _dayController.text = widget.initialDate!.day.toString().padLeft(2, '0');
+      _showMonth = true;
+      _showDay = true;
       _isDateValid = true;
-      _showTimeInput = true;
+      _showTime = true;
     }
-    
-    // Initialize time
+
     if (widget.initialTime != null) {
-      _timeController.text = '${widget.initialTime!.hour.toString().padLeft(2, '0')}:${widget.initialTime!.minute.toString().padLeft(2, '0')}';
+      _timeController.text = '${widget.initialTime!.hour}';
       _isTimeValid = true;
     }
-    
-    _dateController.addListener(_onDateTextChanged);
-    _timeController.addListener(_onTimeTextChanged);
-    
-    // Add focus listeners with extensive logging
-    _dateFocusNode.addListener(() {
-      debugPrint('[FocusListener] Date focus changed: ${_dateFocusNode.hasFocus} at ${DateTime.now()}');
-      setState(() {
-        _isDateFieldFocused = _dateFocusNode.hasFocus;
-        debugPrint('[FocusListener] _isDateFieldFocused set to: $_isDateFieldFocused');
-      });
-    });
-    
-    _timeFocusNode.addListener(() {
-      debugPrint('[FocusListener] Time focus changed: ${_timeFocusNode.hasFocus} at ${DateTime.now()}');
-      setState(() {
-        _isTimeFieldFocused = _timeFocusNode.hasFocus;
-        debugPrint('[FocusListener] _isTimeFieldFocused set to: $_isTimeFieldFocused');
-      });
-    });
-    
-    // Auto-focus when screen loads
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      debugPrint('[Init] Auto-focusing date field at ${DateTime.now()}');
-      _dateFocusNode.requestFocus();
-      setState(() {
-        _isDateFieldFocused = true;
-        _isInputMode = true; // 입력 모드 시작
-        debugPrint('[Init] Initial state - _isDateFieldFocused: true, _isInputMode: true');
-      });
-    });
-  }
-  
-  void _onDateTextChanged() {
-    // Remove any non-digit characters
-    final text = _dateController.text.replaceAll(RegExp(r'[^0-9]'), '');
-    debugPrint('[DateTextChanged] Raw text: $text, Controller text: ${_dateController.text}');
-    
-    // Format the text as YYYY년 MM월 DD일
-    String formatted = '';
-    for (int i = 0; i < text.length && i < 8; i++) {
-      formatted += text[i];
-      
-      // Add labels after specific positions
-      if (i == 3 && text.length > 4) {
-        formatted += '년 ';
-      } else if (i == 5 && text.length > 6) {
-        formatted += '월 ';
-      } else if (i == 7) {
-        formatted += '일';
+
+    _yearController.addListener(() {
+      final text = _yearController.text;
+      _validateDate();
+
+      // Auto-advance to month ONLY when exactly 4 digits
+      if (text.length == 4 && _yearFocus.hasFocus) {
+        if (!_showMonth) setState(() => _showMonth = true);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _monthFocus.requestFocus();
+        });
       }
-    }
-    
-    // Add label even for partial input
-    if (text.length == 4) {
-      formatted += '년';
-    } else if (text.length == 6) {
-      formatted += '월';
-    }
-    
-    // Update text if formatting changed
-    if (formatted != _dateController.text) {
-      _dateController.value = TextEditingValue(
-        text: formatted,
-        selection: TextSelection.collapsed(offset: formatted.length),
-      );
-    }
-    
-    // Validate date
-    if (text.length == 8) {
+    });
+
+    _monthController.addListener(() {
+      final text = _monthController.text;
+
+      // Backspace when empty → go back to year AND delete last digit
+      if (text.isEmpty && _prevMonth.isNotEmpty && _monthFocus.hasFocus) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_yearController.text.isNotEmpty) {
+            _yearController.text = _yearController.text.substring(0, _yearController.text.length - 1);
+          }
+          _yearFocus.requestFocus();
+        });
+      }
+
+      _prevMonth = text;
+      _validateDate();
+
+      // Auto-advance to day ONLY when exactly 2 digits
+      if (text.length == 2 && _monthFocus.hasFocus) {
+        if (!_showDay) setState(() => _showDay = true);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _dayFocus.requestFocus();
+        });
+      }
+    });
+
+    _dayController.addListener(() {
+      final text = _dayController.text;
+
+      // Backspace when empty → go back to month AND delete last digit
+      if (text.isEmpty && _prevDay.isNotEmpty && _dayFocus.hasFocus) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_monthController.text.isNotEmpty) {
+            _monthController.text = _monthController.text.substring(0, _monthController.text.length - 1);
+          }
+          _monthFocus.requestFocus();
+        });
+      }
+
+      _prevDay = text;
+      _validateDate();
+
+      // Auto-advance to time ONLY when exactly 2 digits AND date is valid
+      if (text.length == 2 && _dayFocus.hasFocus && _isDateValid) {
+        if (!_showTime) setState(() => _showTime = true);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _timeFocus.requestFocus();
+        });
+      }
+    });
+
+    _monthFocus.addListener(() {
+      if (!_monthFocus.hasFocus && _monthController.text.isNotEmpty) {
+        final month = int.tryParse(_monthController.text) ?? 0;
+        if (month > 0 && month <= 12) {
+          _monthController.text = month.toString().padLeft(2, '0');
+        }
+      }
+    });
+
+    _dayFocus.addListener(() {
+      if (!_dayFocus.hasFocus && _dayController.text.isNotEmpty) {
+        final day = int.tryParse(_dayController.text) ?? 0;
+        if (day > 0 && day <= 31) {
+          _dayController.text = day.toString().padLeft(2, '0');
+        }
+      }
+    });
+
+    _timeController.addListener(() {
+      final text = _timeController.text;
+
+      // Backspace when empty → go back to day AND delete last digit
+      if (text.isEmpty && _prevTime.isNotEmpty && !_isTimeUnknown && _timeFocus.hasFocus) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_dayController.text.isNotEmpty) {
+            _dayController.text = _dayController.text.substring(0, _dayController.text.length - 1);
+          }
+          _dayFocus.requestFocus();
+        });
+      }
+
+      _prevTime = text;
+      _onTimeChanged();
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => _yearFocus.requestFocus());
+  }
+
+  void _validateDate() {
+    final year = int.tryParse(_yearController.text);
+    final month = int.tryParse(_monthController.text);
+    final day = int.tryParse(_dayController.text);
+
+    if (year != null && month != null && day != null &&
+        year >= 1900 && year <= DateTime.now().year &&
+        month >= 1 && month <= 12 &&
+        day >= 1 && day <= 31) {
       try {
-        final year = int.parse(text.substring(0, 4));
-        final month = int.parse(text.substring(4, 6));
-        final day = int.parse(text.substring(6, 8));
-        
         final date = DateTime(year, month, day);
-        
-        // Check if date is valid and not in the future
-        if (date.year == year && 
-            date.month == month && 
-            date.day == day &&
-            date.isBefore(DateTime.now())) {
-          debugPrint('[DateValidation] Valid date entered: $date');
+        if (date.year == year && date.month == month && date.day == day && date.isBefore(DateTime.now())) {
           setState(() {
             _isDateValid = true;
-            if (!_showTimeInput) {
-              _showTimeInput = true;
-              debugPrint('[DateValidation] Showing time input, switching focus to time field');
-              // Auto focus on time field after successful date entry
-              Future.delayed(const Duration(milliseconds: 100), () {
-                _timeFocusNode.requestFocus();
-                setState(() {
-                  _isTimeFieldFocused = true;
-                  _isDateFieldFocused = false;
-                  // 입력 모드는 계속 유지
-                  debugPrint('[DateValidation] Focus switched to time field, _isInputMode still: $_isInputMode');
-                });
-              });
+            if (!_showTime) {
+              _showTime = true;
+              Future.delayed(300.ms, () => _timeFocus.requestFocus());
             }
           });
           widget.onBirthDateChanged(date);
-        } else {
-          setState(() {
-            _isDateValid = false;
-            _showTimeInput = false;
-          });
+          return;
         }
-      } catch (e) {
-        setState(() {
-          _isDateValid = false;
-          _showTimeInput = false;
-        });
-      }
-    } else {
-      setState(() {
-        _isDateValid = false;
-        _showTimeInput = false;
-      });
+      } catch (_) {}
     }
+    setState(() => _isDateValid = false);
   }
-  
-  void _onTimeTextChanged() {
-    // Remove any non-digit characters
+
+  void _onTimeChanged() {
     final text = _timeController.text.replaceAll(RegExp(r'[^0-9]'), '');
-    debugPrint('[TimeTextChanged] Raw text: $text, Controller text: ${_timeController.text}');
-    
-    // Format the text as N시 or NN시 (1시, 2시, 10시, 11시, etc.)
-    String formatted = '';
     if (text.isNotEmpty) {
       final hour = int.tryParse(text) ?? 0;
       if (hour >= 0 && hour <= 23) {
-        formatted = '$hour시';
-        
-        // Set time as valid and default to 00 minutes
-        final timeOfDay = TimeOfDay(hour: hour, minute: 0);
-        debugPrint('[TimeValidation] Valid time entered: $hour시');
-        setState(() {
-          _isTimeValid = true;
-          // 시간 입력 완료 시에만 입력 모드 종료 고려
-          debugPrint('[TimeValidation] Time is valid, _isInputMode: $_isInputMode');
-        });
-        if (widget.onBirthTimeChanged != null) {
-          widget.onBirthTimeChanged!(timeOfDay);
-        }
+        setState(() => _isTimeValid = true);
+        widget.onBirthTimeChanged?.call(TimeOfDay(hour: hour, minute: 0));
       } else {
-        setState(() {
-          _isTimeValid = false;
-        });
+        setState(() => _isTimeValid = false);
       }
     } else {
-      setState(() {
-        _isTimeValid = false;
-      });
-    }
-    
-    // Update text if formatting changed
-    if (formatted != _timeController.text) {
-      _timeController.value = TextEditingValue(
-        text: formatted,
-        selection: TextSelection.collapsed(offset: formatted.length),
-      );
-    }
-  }
-  
-  void _handleNumberInput(String number) {
-    debugPrint('\n[NumberInput] ========== START ==========');
-    debugPrint('[NumberInput] Number pressed: $number at ${DateTime.now()}');
-    debugPrint('[NumberInput] Current state:');
-    debugPrint('  - _isDateFieldFocused: $_isDateFieldFocused');
-    debugPrint('  - _isTimeFieldFocused: $_isTimeFieldFocused');
-    debugPrint('  - _showTimeInput: $_showTimeInput');
-    debugPrint('  - _isInputMode: $_isInputMode');
-    debugPrint('  - Date hasFocus: ${_dateFocusNode.hasFocus}');
-    debugPrint('  - Time hasFocus: ${_timeFocusNode.hasFocus}');
-    
-    // 어떤 필드에 입력할지 결정
-    bool shouldInputToDate = !_showTimeInput || _isDateFieldFocused || 
-                            (!_isDateFieldFocused && !_isTimeFieldFocused && !_showTimeInput);
-    bool shouldInputToTime = _showTimeInput && (_isTimeFieldFocused || 
-                            (!_isDateFieldFocused && !_isTimeFieldFocused && _isDateValid));
-    
-    debugPrint('[NumberInput] Decision: shouldInputToDate=$shouldInputToDate, shouldInputToTime=$shouldInputToTime');
-    
-    if (shouldInputToDate) {
-      debugPrint('[NumberInput] Inputting to DATE field');
-      // 날짜 필드에 포커스 유지
-      if (!_dateFocusNode.hasFocus) {
-        debugPrint('[NumberInput] Requesting focus for date field');
-        _dateFocusNode.requestFocus();
-      }
-      
-      final currentText = _dateController.text.replaceAll(RegExp(r'[^0-9]'), '');
-      debugPrint('[NumberInput] Current date text (digits only): $currentText');
-      
-      if (currentText.length < 8) {
-        final newText = currentText + number;
-        _dateController.text = newText;
-        debugPrint('[NumberInput] Date text updated to: ${_dateController.text}');
-        // 포커스 상태 유지
-        setState(() {
-          _isDateFieldFocused = true;
-          _isTimeFieldFocused = false;
-          debugPrint('[NumberInput] State updated - date focused');
-        });
-      } else {
-        debugPrint('[NumberInput] Date field is full (8 digits)');
-      }
-    } else if (shouldInputToTime) {
-      debugPrint('[NumberInput] Inputting to TIME field');
-      // 시간 필드에 포커스 유지
-      if (!_timeFocusNode.hasFocus) {
-        debugPrint('[NumberInput] Requesting focus for time field');
-        _timeFocusNode.requestFocus();
-      }
-      
-      final currentText = _timeController.text.replaceAll(RegExp(r'[^0-9]'), '');
-      debugPrint('[NumberInput] Current time text (digits only): $currentText');
-      
-      if (currentText.length < 2) {  // Max 2 digits for hour (0-23)
-        final newText = currentText + number;
-        _timeController.text = newText;
-        debugPrint('[NumberInput] Time text updated to: ${_timeController.text}');
-        // 포커스 상태 유지
-        setState(() {
-          _isTimeFieldFocused = true;
-          _isDateFieldFocused = false;
-          debugPrint('[NumberInput] State updated - time focused');
-        });
-      } else {
-        debugPrint('[NumberInput] Time field is full (2 digits)');
-      }
-    } else {
-      debugPrint('[NumberInput] WARNING: No field to input to!');
-    }
-    
-    debugPrint('[NumberInput] ========== END ==========\n');
-  }
-  
-  void _handleBackspace() {
-    if (_isDateFieldFocused) {
-      // 포커스 유지
-      if (!_dateFocusNode.hasFocus) {
-        _dateFocusNode.requestFocus();
-      }
-      
-      final currentText = _dateController.text.replaceAll(RegExp(r'[^0-9]'), '');
-      if (currentText.isNotEmpty) {
-        final newText = currentText.substring(0, currentText.length - 1);
-        _dateController.text = newText;
-        // 포커스 상태 유지
-        setState(() {
-          _isDateFieldFocused = true;
-          _isTimeFieldFocused = false;
-        });
-      }
-    } else if (_isTimeFieldFocused) {
-      // 포커스 유지
-      if (!_timeFocusNode.hasFocus) {
-        _timeFocusNode.requestFocus();
-      }
-      
-      final currentText = _timeController.text.replaceAll(RegExp(r'[^0-9]'), '');
-      if (currentText.isNotEmpty) {
-        final newText = currentText.substring(0, currentText.length - 1);
-        _timeController.text = newText;
-        // 포커스 상태 유지
-        setState(() {
-          _isTimeFieldFocused = true;
-          _isDateFieldFocused = false;
-        });
-      }
+      setState(() => _isTimeValid = false);
     }
   }
 
   @override
   void dispose() {
-    _dateController.dispose();
+    _yearController.dispose();
+    _monthController.dispose();
+    _dayController.dispose();
     _timeController.dispose();
-    _dateFocusNode.dispose();
-    _timeFocusNode.dispose();
+    _yearFocus.dispose();
+    _monthFocus.dispose();
+    _dayFocus.dispose();
+    _timeFocus.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-    // 입력 모드일 때는 항상 키패드 표시 (생년월일 입력 시작부터 시간 입력 완료까지)
-    final showCustomKeypad = keyboardHeight == 0 && _isInputMode;
-    
-    debugPrint('[Build] ========== BUILD START ==========');
-    debugPrint('[Build] keyboardHeight: $keyboardHeight');
-    debugPrint('[Build] _isInputMode: $_isInputMode');
-    debugPrint('[Build] _isDateFieldFocused: $_isDateFieldFocused');
-    debugPrint('[Build] _isTimeFieldFocused: $_isTimeFieldFocused');
-    debugPrint('[Build] _showTimeInput: $_showTimeInput');
-    debugPrint('[Build] showCustomKeypad: $showCustomKeypad');
-    debugPrint('[Build] ========== BUILD END ==========');
-    
     final typography = ref.watch(typographyThemeProvider);
-    final inputStyle = typography.headingMedium.copyWith(color: TossDesignSystem.textPrimaryLight);
-    final hintStyle = typography.headingMedium.copyWith(color: TossDesignSystem.gray400);
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final inputStyle = typography.displaySmall.copyWith(
+      color: TossDesignSystem.gray900,
+      fontWeight: FontWeight.w600,
+    );
+    final hintStyle = typography.displaySmall.copyWith(
+      color: TossDesignSystem.gray300,
+      fontWeight: FontWeight.w600,
+    );
+    final labelStyle = typography.displaySmall.copyWith(
+      color: TossDesignSystem.gray400,
+      fontWeight: FontWeight.w500,
+    );
+
     return Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? TossDesignSystem.grayDark50
-          : TossDesignSystem.white,
-      resizeToAvoidBottomInset: false,
+      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Spacer to center content
-            const Spacer(),
-            
-            // Center content - Input fields only
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                children: [
-                  // Birth Date Input - minimal style
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      debugPrint('[DateField] Tapped at ${DateTime.now()}');
-                      _dateFocusNode.requestFocus();
-                      setState(() {
-                        _isDateFieldFocused = true;
-                        _isTimeFieldFocused = false;
-                        _isInputMode = true; // 입력 모드 활성화
-                        debugPrint('[DateField] Focus set to date field, _isInputMode: $_isInputMode');
-                      });
-                    },
-                    child: TextField(
-                      controller: _dateController,
-                      focusNode: _dateFocusNode,
-                      readOnly: true,  // Prevent system keyboard
-                      showCursor: false,  // Hide cursor
-                      enableInteractiveSelection: false,  // Disable text selection
-                      style: inputStyle,
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(
-                        hintText: '생년월일을 알려주세요',
-                        hintStyle: hintStyle,
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        filled: true,
-                        fillColor: Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark100
-                            : TossDesignSystem.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 16,
-                        ),
-                      ),
-                    ),
-                  ).animate().fadeIn(
-                    duration: const Duration(milliseconds: 800),
-                  ),
-                  
-                  // Birth Time Input (show after date is entered)
-                  if (_showTimeInput) ...[
-                    const SizedBox(height: 24),
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        debugPrint('[TimeField] Tapped at ${DateTime.now()}');
-                        if (!_isTimeUnknown) {
-                          _timeFocusNode.requestFocus();
-                          setState(() {
-                            _isTimeFieldFocused = true;
-                            _isDateFieldFocused = false;
-                            _isInputMode = true; // 입력 모드 유지
-                            debugPrint('[TimeField] Focus set to time field, _isInputMode: $_isInputMode');
-                          });
-                        } else {
-                          debugPrint('[TimeField] Time is unknown, not focusing');
-                        }
-                      },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 24,
+              right: 24,
+              top: MediaQuery.of(context).size.height * 0.15,
+              bottom: 24,
+            ),
+            child: Column(
+              children: [
+                Text(
+                  '생년월일을 알려주세요',
+                  style: typography.headingSmall.copyWith(color: TossDesignSystem.gray500),
+                ).animate().fadeIn(duration: 500.ms),
+
+                const SizedBox(height: 48),
+
+                // Date Input - Progressive reveal
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    // Year
+                    SizedBox(
+                      width: 90,
                       child: TextField(
-                        controller: _timeController,
-                        focusNode: _timeFocusNode,
-                        readOnly: true,  // Prevent system keyboard
-                        showCursor: false,  // Hide cursor
-                        enableInteractiveSelection: false,  // Disable text selection
-                        style: inputStyle,
+                        controller: _yearController,
+                        focusNode: _yearFocus,
+                        keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
-                        enabled: !_isTimeUnknown,
+                        style: inputStyle,
+                        cursorColor: TossDesignSystem.gray400,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(4),
+                        ],
                         decoration: InputDecoration(
-                          hintText: '태어난 시간을 알려주세요',
-                          hintStyle: hintStyle.copyWith(
-                            color: _isTimeUnknown ? TossDesignSystem.gray400.withValues(alpha: 0.3) : TossDesignSystem.gray400,
-                          ),
+                          hintText: 'YYYY',
+                          hintStyle: hintStyle,
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          filled: true,
-                          fillColor: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark100
-                              : TossDesignSystem.white,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
+                          filled: false,
+                          contentPadding: EdgeInsets.zero,
+                          isDense: true,
+                        ),
+                      ),
+                    ),
+                    Text('년', style: labelStyle),
+
+                    // Month - fade in after year
+                    if (_showMonth) ...[
+                      const SizedBox(width: 16),
+                      SizedBox(
+                        width: 50,
+                        child: TextField(
+                          controller: _monthController,
+                          focusNode: _monthFocus,
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          style: inputStyle,
+                          cursorColor: TossDesignSystem.gray400,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(2),
+                          ],
+                          decoration: InputDecoration(
+                            hintText: 'MM',
+                            hintStyle: hintStyle,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            filled: false,
+                            contentPadding: EdgeInsets.zero,
+                            isDense: true,
+                          ),
+                        ),
+                      ).animate().fadeIn(duration: 300.ms),
+                      Text('월', style: labelStyle).animate().fadeIn(duration: 300.ms),
+                    ],
+
+                    // Day - fade in after month
+                    if (_showDay) ...[
+                      const SizedBox(width: 16),
+                      SizedBox(
+                        width: 50,
+                        child: TextField(
+                          controller: _dayController,
+                          focusNode: _dayFocus,
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          style: inputStyle,
+                          cursorColor: TossDesignSystem.gray400,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(2),
+                          ],
+                          decoration: InputDecoration(
+                            hintText: 'DD',
+                            hintStyle: hintStyle,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            filled: false,
+                            contentPadding: EdgeInsets.zero,
+                            isDense: true,
+                          ),
+                        ),
+                      ).animate().fadeIn(duration: 300.ms),
+                      Text('일', style: labelStyle).animate().fadeIn(duration: 300.ms),
+                    ],
+                  ],
+                ),
+
+                // Time Input - fade in after date complete
+                if (_showTime) ...[
+                  const SizedBox(height: 48),
+                  Text(
+                    '태어난 시간을 알려주세요',
+                    style: typography.headingSmall.copyWith(color: TossDesignSystem.gray500),
+                  ).animate().fadeIn(duration: 400.ms),
+
+                  const SizedBox(height: 24),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      SizedBox(
+                        width: 60,
+                        child: TextField(
+                          controller: _timeController,
+                          focusNode: _timeFocus,
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          style: inputStyle,
+                          cursorColor: TossDesignSystem.gray400,
+                          enabled: !_isTimeUnknown,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(2),
+                          ],
+                          decoration: InputDecoration(
+                            hintText: '00',
+                            hintStyle: hintStyle.copyWith(
+                              color: _isTimeUnknown ? TossDesignSystem.gray200 : TossDesignSystem.gray300,
+                            ),
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            filled: false,
+                            contentPadding: EdgeInsets.zero,
+                            isDense: true,
                           ),
                         ),
                       ),
-                    ).animate().slideY(begin: 0.2, end: 0).fadeIn(
-                      duration: const Duration(milliseconds: 400),
-                    ),
-                    const SizedBox(height: 12),
-                    // Checkbox for "모르겠어요"
-                    GestureDetector(
-                      onTap: () {
-                        debugPrint('[TimeUnknown] Checkbox tapped at ${DateTime.now()}');
-                        setState(() {
-                          _isTimeUnknown = !_isTimeUnknown;
-                          debugPrint('[TimeUnknown] _isTimeUnknown changed to: $_isTimeUnknown');
-                          
-                          if (_isTimeUnknown) {
-                            _timeController.clear();
-                            _isTimeValid = true;  // Allow proceeding when checked
-                            _isInputMode = false; // 시간을 모른다고 체크하면 입력 모드 종료
-                            debugPrint('[TimeUnknown] Time unknown selected, ending input mode');
-                            debugPrint('[TimeUnknown] _isDateValid: $_isDateValid, _isTimeValid: $_isTimeValid, _isTimeUnknown: $_isTimeUnknown');
-                            // Set default time to 12:00 when unknown
-                            if (widget.onBirthTimeChanged != null) {
-                              widget.onBirthTimeChanged!(const TimeOfDay(hour: 12, minute: 0));
-                            }
-                          } else {
-                            _isTimeValid = false;
-                            _isInputMode = true; // 다시 시간 입력하려면 입력 모드 활성화
-                            _timeFocusNode.requestFocus();
-                            debugPrint('[TimeUnknown] Time unknown deselected, reactivating input mode');
-                            debugPrint('[TimeUnknown] _isDateValid: $_isDateValid, _isTimeValid: $_isTimeValid, _isTimeUnknown: $_isTimeUnknown');
-                          }
-                        });
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: _isTimeUnknown ? TossDesignSystem.primaryBlue : TossDesignSystem.gray400,
-                                width: 2,
-                              ),
-                              color: _isTimeUnknown ? TossDesignSystem.primaryBlue : TossDesignSystem.white.withValues(alpha: 0.0),
-                            ),
-                            child: _isTimeUnknown
-                                ? Icon(
-                                    Icons.check,
-                                    size: 14,
-                                    color: Theme.of(context).brightness == Brightness.dark
-                                        ? TossDesignSystem.grayDark50
-                                        : TossDesignSystem.white,
-                                  )
-                                : null,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            '모르겠어요',
-                            style: typography.bodySmall.copyWith(
-                              color: TossDesignSystem.gray600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ).animate().fadeIn(
-                      delay: const Duration(milliseconds: 200),
-                      duration: const Duration(milliseconds: 400),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            
-            const Spacer(),
-            
-            // Next Button - Show when date and time conditions are met (outside keypad area)
-            if (_isDateValid && (_isTimeValid || _isTimeUnknown))
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Container(
-                  width: double.infinity,
-                  height: 58,
-                  margin: const EdgeInsets.only(bottom: 16.0),
-                  child: ElevatedButton(
-                    onPressed: widget.onNext,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TossDesignSystem.primaryBlue,
-                      foregroundColor: TossDesignSystem.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 0,
-                      textStyle: typography.headingSmall.copyWith(fontWeight: FontWeight.w700),
-                    ),
-                    child: Text(
-                      '다음',
-                      style: typography.headingSmall.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark100
-                            : TossDesignSystem.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ).animate().fadeIn(duration: 300.ms),
-            
-            // Custom Number Pad - GestureDetector로 감싸서 포커스 유지
-            if (showCustomKeypad)
-              Column(
-                children: [
-                  
-                  // Number Pad
+                      Text('시', style: labelStyle),
+                    ],
+                  ).animate().fadeIn(duration: 400.ms),
+
+                  const SizedBox(height: 20),
+
                   GestureDetector(
-                    behavior: HitTestBehavior.translucent,
                     onTap: () {
-                      // 키패드 영역을 탭해도 포커스 유지
-                      if (_isDateFieldFocused && !_dateFocusNode.hasFocus) {
-                        _dateFocusNode.requestFocus();
-                      } else if (_isTimeFieldFocused && !_timeFocusNode.hasFocus) {
-                        _timeFocusNode.requestFocus();
-                      }
+                      setState(() {
+                        _isTimeUnknown = !_isTimeUnknown;
+                        if (_isTimeUnknown) {
+                          _timeController.clear();
+                          _isTimeValid = true;
+                          FocusScope.of(context).unfocus();
+                          widget.onBirthTimeChanged?.call(const TimeOfDay(hour: 12, minute: 0));
+                        } else {
+                          _isTimeValid = false;
+                          _timeFocus.requestFocus();
+                        }
+                      });
                     },
-                    child: NumericKeypad(
-                      onNumberPressed: _handleNumberInput,
-                      onBackspacePressed: _handleBackspace,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: _isTimeUnknown ? TossDesignSystem.primaryBlue : TossDesignSystem.gray400,
+                              width: 2,
+                            ),
+                            color: _isTimeUnknown ? TossDesignSystem.primaryBlue : Colors.transparent,
+                          ),
+                          child: _isTimeUnknown
+                              ? Icon(Icons.check, size: 14, color: TossDesignSystem.white)
+                              : null,
+                        ),
+                        const SizedBox(width: 8),
+                        Text('모르겠어요', style: typography.bodyMedium.copyWith(color: TossDesignSystem.gray500)),
+                      ],
                     ),
-                  ),
+                  ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
                 ],
-              ).animate().slideY(begin: 0.5, end: 0, duration: 300.ms),
-            
-            // Bottom padding for safe area
-            const SizedBox(height: 24),
-          ],
+
+                const SizedBox(height: 56),
+
+                // Next Button
+                if (_isDateValid && (_isTimeValid || _isTimeUnknown))
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: widget.onNext,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: TossDesignSystem.primaryBlue,
+                        foregroundColor: TossDesignSystem.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        '다음',
+                        style: typography.labelLarge.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: TossDesignSystem.white,
+                        ),
+                      ),
+                    ),
+                  ).animate().fadeIn(duration: 300.ms),
+              ],
+            ),
+          ),
         ),
       ),
     );

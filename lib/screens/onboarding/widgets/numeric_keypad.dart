@@ -87,7 +87,7 @@ class NumericKeypad extends ConsumerWidget {
                 number,
                 style: typography.displaySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: TossDesignSystem.grayDark900,
+                  color: TossDesignSystem.gray900,
                 ),
               ),
             ),
