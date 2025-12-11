@@ -8,16 +8,24 @@ import NaverThirdPartyLogin
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
+  // Shared FlutterEngine for Scene lifecycle support (iOS 13+)
+  lazy var flutterEngine: FlutterEngine = {
+    let engine = FlutterEngine(name: "main engine")
+    engine.run()
+    return engine
+  }()
+
   #if canImport(NaverThirdPartyLogin)
   private var naverChannel: FlutterMethodChannel?
   private var naverPendingResult: FlutterResult?
   #endif
-  
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
+    // Ensure engine is running and register plugins
+    GeneratedPluginRegistrant.register(with: flutterEngine)
     
     // Register native Naver login handler when Naver SDK is available
     #if canImport(NaverThirdPartyLogin)
@@ -80,12 +88,12 @@ import NaverThirdPartyLogin
   
   // MARK: - Naver Login Methods
   #if canImport(NaverThirdPartyLogin)
-  
+
   private func setupNaverLogin() {
-    let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
+    // Use the shared FlutterEngine's binary messenger for Scene lifecycle support
     naverChannel = FlutterMethodChannel(
       name: "com.beyond.fortune/naver_auth",
-      binaryMessenger: controller.binaryMessenger
+      binaryMessenger: flutterEngine.binaryMessenger
     )
     
     naverChannel?.setMethodCallHandler { [weak self] call, result in

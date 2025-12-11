@@ -48,6 +48,17 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
 
+      # Enable permission_handler permissions (CRITICAL for iOS permissions to work!)
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_MICROPHONE=1'
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_SPEECH_RECOGNIZER=1'
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_CAMERA=1'
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_PHOTOS=1'
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_LOCATION=1'
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_NOTIFICATIONS=1'
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_APP_TRACKING_TRANSPARENCY=1'
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_CALENDARS=1'
+
       # Silence ALL warnings for third-party pods - MAXIMUM SUPPRESSION
       config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
       config.build_settings['SWIFT_SUPPRESS_WARNINGS'] = 'YES'
@@ -79,7 +90,9 @@ post_install do |installer|
       end
     end
 
-    # Fix flutter_inappwebview deployment target warning
+    # Note: flutter_inappwebview has known crash on iOS 18.4+ simulators
+    # See: https://github.com/pichillilorenzo/flutter_inappwebview/issues/2636
+    # Workaround: Use iOS 17.x simulator or physical device
     if target.name == 'flutter_inappwebview_ios'
       target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
