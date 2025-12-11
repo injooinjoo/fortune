@@ -12,6 +12,7 @@ import '../../data/models/user_profile.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/services/debug_premium_service.dart';
 import '../../presentation/providers/token_provider.dart';
+import '../../presentation/providers/subscription_provider.dart';
 import '../../shared/components/settings_list_tile.dart';
 import '../../shared/components/section_header.dart';
 import '../../core/providers/user_settings_provider.dart';
@@ -358,10 +359,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         Icons.chevron_right,
                         color: _getSecondaryTextColor(context),
                       ),
-                      onTap: () => context.push('/profile/edit'),
+                      onTap: _navigateToProfileEdit,
                       isLast: true,
                     ),
                 ),
+
+              // 프리미엄 & 토큰 홍보 배너
+              _buildPremiumBanner(context, ref, isDarkMode, typography),
 
               // 테스트 계정 섹션 (간소화)
               FutureBuilder<UserProfile?>(
@@ -493,7 +497,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                         ],
                       ),
-                      onTap: () => context.push('/fortune/today'),
                     ),
                     SettingsListTile(
                       icon: Icons.local_fire_department_outlined,
@@ -551,7 +554,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
-                        onTap: () => context.push('/profile/edit'),
+                        onTap: _navigateToProfileEdit,
                       ),
                       SettingsListTile(
                         icon: Icons.access_time_outlined,
@@ -562,7 +565,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
-                        onTap: () => context.push('/profile/edit'),
+                        onTap: _navigateToProfileEdit,
                       ),
                       SettingsListTile(
                         icon: Icons.pets_outlined,
@@ -595,7 +598,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
-                        onTap: () => context.push('/profile/edit'),
+                        onTap: _navigateToProfileEdit,
                       ),
                       SettingsListTile(
                         icon: Icons.psychology_outlined,
@@ -606,7 +609,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
-                        onTap: () => context.push('/profile/edit'),
+                        onTap: _navigateToProfileEdit,
                         isLast: true,
                       ),
                     ],
@@ -748,6 +751,169 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     } catch (e) {
       return '미입력';
     }
+  }
+
+  Future<void> _navigateToProfileEdit() async {
+    final result = await context.push<bool>('/profile/edit');
+    if (result == true && mounted) {
+      _loadUserData();
+    }
+  }
+
+  Widget _buildPremiumBanner(BuildContext context, WidgetRef ref, bool isDarkMode, dynamic typography) {
+    final tokenBalance = ref.watch(tokenBalanceProvider);
+    final isPremium = ref.watch(isPremiumProvider);
+    final remainingTokens = tokenBalance?.remainingTokens ?? 0;
+    final hasUnlimited = tokenBalance?.hasUnlimitedAccess ?? false;
+
+    return Column(
+      children: [
+        const SizedBox(height: TossDesignSystem.spacingM),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                TossDesignSystem.tossBlue,
+                TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => context.push('/token-purchase'),
+              borderRadius: BorderRadius.circular(16),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: TossDesignSystem.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        hasUnlimited ? Icons.all_inclusive : Icons.toll_rounded,
+                        color: TossDesignSystem.white,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '보유 토큰',
+                            style: typography.labelSmall.copyWith(
+                              color: TossDesignSystem.white.withValues(alpha: 0.8),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Text(
+                                hasUnlimited ? '무제한' : '$remainingTokens개',
+                                style: typography.headingSmall.copyWith(
+                                  color: TossDesignSystem.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (!hasUnlimited) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: TossDesignSystem.white.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    '충전하기',
+                                    style: typography.labelSmall.copyWith(
+                                      color: TossDesignSystem.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      color: TossDesignSystem.white.withValues(alpha: 0.8),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        // 구독 배너 (프리미엄이 아닌 경우만 표시)
+        if (!isPremium) ...[
+          const SizedBox(height: 12),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+            decoration: BoxDecoration(
+              color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                width: 1,
+              ),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => context.push('/subscription'),
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.workspace_premium_rounded,
+                        color: TossDesignSystem.tossBlue,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          '프리미엄 구독으로 무제한 이용하기',
+                          style: typography.bodyMedium.copyWith(
+                            color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                        size: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
   }
 
   Future<void> _inviteFriend() async {

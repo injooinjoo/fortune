@@ -277,7 +277,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       icon: Icons.local_offer_outlined,
                       title: '토큰 구매',
                       subtitle: '토큰 충전하기',
-                      onTap: () => context.go('/payment/tokens'),
+                      onTap: () => context.push('/token-purchase'),
                     ),
                     SettingsListTile(
                       icon: Icons.card_membership_outlined,
