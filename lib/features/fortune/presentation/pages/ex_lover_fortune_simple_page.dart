@@ -14,6 +14,7 @@ import '../../../../services/ad_service.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/voice_input_text_field.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 class ExLoverFortuneSimplePage extends ConsumerStatefulWidget {
   const ExLoverFortuneSimplePage({super.key});
@@ -161,6 +162,9 @@ class _ExLoverFortuneSimplePageState
 
       Logger.info('[ExLoverFortune] 운세 생성 완료: ${result.id}');
 
+      // ✅ 재회운 결과 생성 시 햅틱 피드백 (연애 테마)
+      ref.read(fortuneHapticServiceProvider).loveHeartbeat();
+
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -209,7 +213,7 @@ class _ExLoverFortuneSimplePageState
     return Scaffold(
       backgroundColor: colors.background,
       appBar: StandardFortuneAppBar(
-        title: '헤어진 애인',
+        title: '재회운',
         onBackPressed: () => Navigator.pop(context),
       ),
       body: Stack(

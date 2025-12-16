@@ -363,8 +363,8 @@ class _ProfileVerificationPageState
                           ),
                           _buildBenefitItem(
                             icon: Icons.card_giftcard,
-                            title: '보너스 토큰',
-                            description: '인증 완료 시 1000 토큰을 지급합니다',
+                            title: '보너스 복주머니',
+                            description: '인증 완료 시 1000 복주머니를 지급합니다',
                             isLast: true,
                           ),
                         ],

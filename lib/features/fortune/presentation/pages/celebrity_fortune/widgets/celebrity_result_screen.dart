@@ -9,6 +9,7 @@ import '../../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../../presentation/providers/ad_provider.dart';
 import '../../../../../../presentation/providers/token_provider.dart';
+import '../../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../../core/services/fortune_haptic_service.dart';
 
@@ -63,7 +64,10 @@ class _CelebrityResultScreenState extends ConsumerState<CelebrityResultScreen> {
     final adService = ref.read(adServiceProvider);
 
     await adService.showRewardedAd(
-      onUserEarnedReward: (ad, reward) {
+      onUserEarnedReward: (ad, reward) async {
+        // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
         setState(() {
           _isBlurred = false;
           _blurredSections = [];
@@ -120,8 +124,8 @@ class _CelebrityResultScreenState extends ConsumerState<CelebrityResultScreen> {
           ),
         ),
 
-        // FloatingBottomButton
-        if (_isBlurred)
+        // FloatingBottomButton (구독자 제외)
+        if (_isBlurred && !ref.watch(isPremiumProvider))
           UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,

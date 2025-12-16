@@ -402,7 +402,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                   _buildBenefitItem(
                     icon: Icons.card_giftcard,
                     title: '특별 보상',
-                    description: '인증 완료 시 보너스 토큰을 지급합니다',
+                    description: '인증 완료 시 보너스 복주머니를 지급합니다',
                   ),
                 ],
               ),

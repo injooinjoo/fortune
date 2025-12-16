@@ -7,6 +7,7 @@ import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/widgets/voice_input_text_field.dart';
@@ -14,6 +15,7 @@ import '../widgets/dream_result_widget.dart';
 import '../widgets/floating_dream_topics_widget.dart';
 import '../widgets/fortune_loading_skeleton.dart';
 import '../providers/dream_voice_provider.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 import '../../../../core/widgets/unified_button.dart';
 /// 음성 중심 꿈 해몽 페이지 (ChatGPT 앱 스타일)
@@ -92,8 +94,8 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
               ),
             ),
 
-          // 결과 화면일 때 블러 해제 버튼
-          if (voiceState.state == VoicePageState.result && _isBlurred)
+          // 결과 화면일 때 블러 해제 버튼 (구독자 제외)
+          if (voiceState.state == VoicePageState.result && _isBlurred && !ref.watch(isPremiumProvider))
             UnifiedButton.floating(
               text: '광고 보고 전체 내용 확인하기',
               onPressed: _showAdAndUnblur,
@@ -241,6 +243,9 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
       _userMessage = text;
     });
 
+    // ✅ 꿈 분석 시작 햅틱 피드백
+    ref.read(fortuneHapticServiceProvider).analysisStart();
+
     // 상태를 처리 중으로 변경
     ref.read(dreamVoiceProvider.notifier).setState(VoicePageState.processing);
 
@@ -277,6 +282,9 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
         _isBlurred = result.isBlurred;
         _blurredSections = result.blurredSections;
       });
+
+      // ✅ 꿈 해몽 결과 공개 시 햅틱 피드백
+      ref.read(fortuneHapticServiceProvider).mysticalReveal();
 
       Logger.info('[DreamVoice] 🔄 상태 변경 → result');
       // 상태를 결과 화면으로 변경
@@ -342,8 +350,12 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
       Logger.info('[DreamVoice] 광고 시청 후 블러 해제 시작');
 
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           Logger.info('[DreamVoice] ✅ User earned reward: ${reward.amount} ${reward.type}');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _isBlurred = false;

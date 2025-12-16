@@ -14,6 +14,9 @@ class SpeechRecognitionService {
   bool _isInitialized = false;
   bool _isListening = false;
 
+  // error_no_match 시 자동 재시작 콜백
+  Function()? _onNoMatchCallback;
+
   final ValueNotifier<bool> isListeningNotifier = ValueNotifier(false);
   final ValueNotifier<String> recognizedTextNotifier = ValueNotifier('');
   final ValueNotifier<String> statusNotifier = ValueNotifier('');
@@ -148,8 +151,19 @@ class SpeechRecognitionService {
           }
         },
         onError: (error) {
-          statusNotifier.value = '오류: ${error.errorMsg}';
           debugPrint('🎤 [STT] Error: ${error.errorMsg}');
+
+          // error_no_match는 침묵 타임아웃 - 자동 재시작 시도
+          if (error.errorMsg == 'error_no_match') {
+            debugPrint('🎤 [STT] No match detected - attempting auto-restart...');
+            if (_onNoMatchCallback != null) {
+              _onNoMatchCallback!();
+              return; // 상태 변경하지 않고 재시작 콜백 호출
+            }
+          }
+
+          // 다른 에러는 기존 로직
+          statusNotifier.value = '오류: ${error.errorMsg}';
           _isListening = false;
           isListeningNotifier.value = false;
         });
@@ -171,8 +185,13 @@ class SpeechRecognitionService {
   Future<void> startListening({
     required Function(String) onResult,
     Function(String)? onPartialResult,
-    String locale = 'ko-KR'}) async {
+    Function()? onNoMatch,
+    String locale = 'ko-KR',
+  }) async {
     debugPrint('🎤 [STT] startListening called, isInitialized: $_isInitialized, isListening: $_isListening');
+
+    // 콜백 저장 (error_no_match 시 자동 재시작용)
+    _onNoMatchCallback = onNoMatch;
 
     if (!_isInitialized) {
       debugPrint('🎤 [STT] Not initialized, calling initialize()...');
@@ -226,12 +245,12 @@ class SpeechRecognitionService {
           }
         },
         localeId: locale,
-        listenFor: const Duration(seconds: 30),
-        pauseFor: const Duration(seconds: 3),
+        listenFor: const Duration(seconds: 60), // 30 → 60초 (더 긴 발화 지원)
+        pauseFor: const Duration(seconds: 8),   // 3 → 8초 (핵심! 침묵 타임아웃 증가)
         listenOptions: stt.SpeechListenOptions(
           partialResults: true,
           onDevice: false,
-          listenMode: stt.ListenMode.dictation, // confirmation -> dictation으로 변경 (더 연속적인 인식)
+          listenMode: stt.ListenMode.dictation,
         ),
       );
 
@@ -251,6 +270,9 @@ class SpeechRecognitionService {
     debugPrint('🎤 [STT] stopListening called, _isListening: $_isListening');
     if (!_isListening) return;
 
+    // 콜백 정리 (자동 재시작 방지)
+    _onNoMatchCallback = null;
+
     try {
       await _speech.stop();
       _isListening = false;
@@ -265,6 +287,9 @@ class SpeechRecognitionService {
   Future<void> cancelListening() async {
     debugPrint('🎤 [STT] cancelListening called, _isListening: $_isListening');
     if (!_isListening) return;
+
+    // 콜백 정리 (자동 재시작 방지)
+    _onNoMatchCallback = null;
 
     try {
       await _speech.cancel();

@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'obangseok_colors.dart';
 
 /// Extended fortune-specific colors following Toss design principles
+/// Enhanced with Korean traditional 오방색 (Five Cardinal Colors)
 /// Each color has a clear semantic meaning and purpose
 class FortuneColors {
   FortuneColors._();
+
+  // ==================== 오방색 통합 (Korean Traditional Colors) ====================
+  // Re-export for convenience
+  static const Color cheong = ObangseokColors.cheong; // 목/Wood - 청색
+  static const Color jeok = ObangseokColors.jeok; // 화/Fire - 적색
+  static const Color hwang = ObangseokColors.hwang; // 토/Earth - 황색
+  static const Color baek = ObangseokColors.baek; // 금/Metal - 백색
+  static const Color heuk = ObangseokColors.heuk; // 수/Water - 흑색
+  static const Color inju = ObangseokColors.inju; // 인주색 (강조)
+  static const Color misaek = ObangseokColors.misaek; // 미색 (배경)
+  static const Color meok = ObangseokColors.meok; // 먹색
 
   // Semantic fortune category colors
 

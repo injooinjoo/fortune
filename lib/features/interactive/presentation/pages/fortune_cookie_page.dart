@@ -148,7 +148,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
               elevation: 0,
               automaticallyImplyLeading: false, // 백 버튼 제거
               title: Text(
-                '포춘 쿠키',
+                '포춘쿠키',
                 style: TossDesignSystem.heading4.copyWith(
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
                 ),
@@ -165,7 +165,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                 const SizedBox(width: 8),
               ],
             )
-          : StandardFortuneAppBar(title: '포춘 쿠키'),
+          : const StandardFortuneAppBar(title: '포춘쿠키'),
       body: _showPaper ? _buildResultView() : _buildMainView(),
     );
   }

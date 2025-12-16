@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:universal_io/io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
 import '../utils/logger.dart';
 
 /// 실시간 에러 리포팅 서비스
 /// Flutter 앱에서 발생하는 모든 에러를 캡처하여 JSON 파일로 저장
 /// 백그라운드 모니터링 시스템이 이 파일을 읽어 자동으로 JIRA에 등록
 class ErrorReporterService {
-  static const String _errorLogPath = '/tmp/fortune_runtime_errors.json';
   static final ErrorReporterService _instance = ErrorReporterService._internal();
 
   factory ErrorReporterService() => _instance;
@@ -18,16 +18,28 @@ class ErrorReporterService {
   final Set<String> _reportedErrorHashes = {};
   Timer? _flushTimer;
   bool _isInitialized = false;
+  String? _errorLogPath;
 
   /// 에러 리포터 초기화
   /// FlutterError.onError와 PlatformDispatcher.instance.onError 설정
-  void initialize() {
+  Future<void> initialize() async {
     if (_isInitialized) {
       Logger.warning('ErrorReporterService already initialized');
       return;
     }
 
     Logger.info('🚨 Initializing ErrorReporterService');
+
+    // 앱 문서 디렉토리 경로 설정 (iOS 샌드박스 호환)
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      _errorLogPath = '${directory.path}/fortune_runtime_errors.json';
+    } catch (e) {
+      // 경로 설정 실패 시 에러 로깅 비활성화
+      Logger.warning('Failed to get documents directory, error logging disabled: $e');
+      _isInitialized = true;
+      return;
+    }
 
     // 1. 동기 에러 캡처 (FlutterError)
     FlutterError.onError = (FlutterErrorDetails details) {
@@ -166,9 +178,10 @@ class ErrorReporterService {
   /// 에러 큐를 JSON 파일로 플러시
   Future<void> _flushErrorsToFile() async {
     if (_errorQueue.isEmpty) return;
+    if (_errorLogPath == null) return;
 
     try {
-      final file = File(_errorLogPath);
+      final file = File(_errorLogPath!);
 
       // 기존 에러 로드
       List<dynamic> existingErrors = [];

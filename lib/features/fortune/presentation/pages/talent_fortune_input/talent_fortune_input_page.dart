@@ -702,7 +702,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
     return Scaffold(
       backgroundColor: colors.background,
       appBar: StandardFortuneAppBar(
-        title: '재능 발견',
+        title: '재능',
       ),
       body: SafeArea(
         child: Stack(

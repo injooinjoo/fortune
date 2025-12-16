@@ -11,6 +11,7 @@ import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 
 import '../../../../core/widgets/unified_button.dart';
@@ -120,8 +121,12 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
       }
 
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           Logger.info('[BiorhythmResultPage] Rewarded ad watched, removing blur');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _fortuneResult = _fortuneResult.copyWith(
@@ -204,8 +209,8 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
             ],
           ),
 
-          // 광고 보고 전체 보기 버튼 (3번째 페이지 + 블러 상태일 때만)
-          if (_currentPage == 2 && _fortuneResult.isBlurred)
+          // 광고 보고 전체 보기 버튼 (3번째 페이지 + 블러 상태일 때만, 구독자 제외)
+          if (_currentPage == 2 && _fortuneResult.isBlurred && !ref.watch(isPremiumProvider))
             UnifiedButton.floating(
               text: '남은 조언 모두 보기',
               onPressed: _showAdAndUnblur,

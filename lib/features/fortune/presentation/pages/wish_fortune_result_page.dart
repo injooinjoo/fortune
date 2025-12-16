@@ -12,6 +12,7 @@ import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/utils/logger.dart'; // ✅ 로그용
 import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../presentation/providers/token_provider.dart'; // ✅ Premium 체크용
+import '../../../../presentation/providers/subscription_provider.dart'; // ✅ 구독 체크용
 
 /// 소원 빌기 결과 페이지 (공감/희망/조언/응원 중심)
 class WishFortuneResultPage extends ConsumerStatefulWidget {
@@ -153,8 +154,8 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
             ),
           ),
 
-          // ✅ FloatingBottomButton (블러 상태일 때만 표시)
-          if (_isBlurred)
+          // ✅ FloatingBottomButton (블러 상태일 때만 표시, 구독자 제외)
+          if (_isBlurred && !ref.watch(isPremiumProvider))
             UnifiedButton.floating(
               text: '광고 보고 전체 내용 확인하기',
               onPressed: _showAdAndUnblur,
@@ -585,8 +586,12 @@ class _WishFortuneResultPageState extends ConsumerState<WishFortuneResultPage> {
       }
 
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           debugPrint('[소원운세] ✅ 광고 시청 완료, 블러 해제');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _isBlurred = false;

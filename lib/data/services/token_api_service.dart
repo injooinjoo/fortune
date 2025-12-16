@@ -71,7 +71,7 @@ class TokenApiService {
       if (e.response?.statusCode == 400 && 
           e.response?.data['code'] == 'INSUFFICIENT_TOKENS') {
         throw InsufficientTokensException(
-          e.response?.data['message'] ?? '영혼이 부족합니다'
+          e.response?.data['message'] ?? '복주머니가 부족합니다'
         );
       }
       throw _handleDioError(e);
@@ -322,7 +322,7 @@ final tokenApiServiceProvider = Provider<TokenApiService>((ref) {
 
 // Custom Exceptions
 class InsufficientTokensException extends AppException {
-  const InsufficientTokensException([String message = '영혼이 부족합니다'])
+  const InsufficientTokensException([String message = '복주머니가 부족합니다'])
       : super(message: message, code: 'INSUFFICIENT_TOKENS');
 }
 

@@ -13,6 +13,8 @@ import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/utils/logger.dart';
 import '../../../../../services/ad_service.dart';
 import '../../../../../core/utils/subscription_snackbar.dart';
+import '../../../../../presentation/providers/subscription_provider.dart';
+import '../../../../../core/services/fortune_haptic_service.dart';
 import 'widgets/widgets.dart';
 
 class TarotPage extends ConsumerStatefulWidget {
@@ -118,8 +120,8 @@ class _TarotPageState extends ConsumerState<TarotPage>
                 isLoading: false,
                 isEnabled: true,
               ),
-            // ✅ FloatingBottomButton - 타로 결과 화면에서 블러 상태일 때만 표시
-            if (_currentState == TarotFlowState.result && _tarotResult != null && _tarotResult!.isBlurred)
+            // ✅ FloatingBottomButton - 타로 결과 화면에서 블러 상태일 때만 표시 (구독자 제외)
+            if (_currentState == TarotFlowState.result && _tarotResult != null && _tarotResult!.isBlurred && !ref.watch(isPremiumProvider))
               UnifiedButton.floating(
                 text: '남은 운세 모두 보기',
                 onPressed: _showAdAndUnblur,
@@ -279,6 +281,9 @@ class _TarotPageState extends ConsumerState<TarotPage>
     if (!mounted) return;
 
     if (result != null) {
+      // ✅ 타로 결과 공개 시 햅틱 피드백
+      ref.read(fortuneHapticServiceProvider).mysticalReveal();
+
       setState(() {
         _tarotResult = result;
         _currentState = TarotFlowState.result;
@@ -436,8 +441,11 @@ class _TarotPageState extends ConsumerState<TarotPage>
       // 2. 광고 표시
       Logger.info('[TarotPage] 광고 표시 시작');
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           Logger.info('[TarotPage] 광고 보상 획득, 블러 해제');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
 
           // ✅ 블러 해제 - copyWith로 isBlurred를 false로 변경
           if (mounted) {

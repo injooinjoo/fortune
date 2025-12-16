@@ -23,6 +23,8 @@ import 'widgets/celebrity_section.dart';
 import 'widgets/toss_section_widget.dart';
 import 'widgets/input_widgets.dart';
 import 'package:fortune/core/widgets/unified_blur_wrapper.dart';
+import 'package:fortune/presentation/providers/subscription_provider.dart';
+import 'package:fortune/core/services/fortune_haptic_service.dart';
 
 class PersonalityDNAPageImpl extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -163,7 +165,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
   Widget build(BuildContext context) {
     return UnifiedFortuneBaseWidget(
       fortuneType: 'personality-dna',
-      title: '성격 DNA',
+      title: '성격',
       description: 'MBTI, 혈액형, 별자리, 띠를 조합한 특별한 성격 분석',
       dataSource: FortuneDataSource.api,
       inputBuilder: (context, onComplete) => _buildInputForm(() {
@@ -401,6 +403,12 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
     if (_unlockedConditionsHash != currentHash) {
       _isBlurred = result.isBlurred;
       _blurredSections = List<String>.from(result.blurredSections);
+
+      // ✅ 결과 최초 표시 시 햅틱 피드백
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final score = result.score ?? 70;
+        ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+      });
     }
 
     debugPrint('🔒 [성격DNA] isBlurred: $_isBlurred, blurredSections: $_blurredSections, currentHash: $currentHash, unlockedHash: $_unlockedConditionsHash');
@@ -486,7 +494,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
             ],
           ),
         ),
-        if (_isBlurred)
+        if (_isBlurred && !ref.watch(isPremiumProvider))
           UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
@@ -560,8 +568,12 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
       }
 
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           debugPrint('[성격DNA] ✅ 광고 시청 완료, 블러 해제');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _isBlurred = false;

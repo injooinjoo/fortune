@@ -26,6 +26,7 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
   final _speechService = SpeechRecognitionService();
   bool _isRecording = false;
   bool _hasText = false;
+  bool _isSpeaking = false; // 실제 음성 인식 중인지
 
   @override
   void initState() {
@@ -33,18 +34,43 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
     // 마이크 버튼 클릭 시 권한 확인하므로 initState에서는 초기화하지 않음
 
     // 텍스트 변화 감지
-    _textController.addListener(() {
-      final newHasText = _textController.text.isNotEmpty;
-      if (_hasText != newHasText) {
-        setState(() {
-          _hasText = newHasText;
-        });
+    _textController.addListener(_onTextChanged);
+
+    // 서비스 상태 변화 감지 (UI 동기화)
+    _speechService.isListeningNotifier.addListener(_onListeningStateChanged);
+  }
+
+  void _onTextChanged() {
+    final newHasText = _textController.text.isNotEmpty;
+    if (_hasText != newHasText) {
+      setState(() {
+        _hasText = newHasText;
+      });
+    }
+  }
+
+  /// 서비스 상태가 변경되면 UI 동기화
+  void _onListeningStateChanged() {
+    if (!_speechService.isListeningNotifier.value && mounted) {
+      // 서비스가 중지되었는데 UI가 아직 recording 상태면 복구
+      if (_isRecording) {
+        final text = _textController.text.trim();
+        // 텍스트가 있으면 hasText 유지, 없으면 idle로
+        if (text.isNotEmpty) {
+          setState(() {
+            _isRecording = false;
+            _hasText = true;
+          });
+        }
+        // 텍스트 없으면 자동 재시작이 처리함
       }
-    });
+    }
   }
 
   @override
   void dispose() {
+    _textController.removeListener(_onTextChanged);
+    _speechService.isListeningNotifier.removeListener(_onListeningStateChanged);
     _textController.dispose();
     _speechService.dispose();
     super.dispose();
@@ -67,18 +93,24 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
     // 2. 권한이 있으면 녹음 시작
     setState(() {
       _isRecording = true;
+      _isSpeaking = false;
       _textController.clear();
     });
 
     // Provider 상태 업데이트
     ref.read(dreamVoiceProvider.notifier).startRecording();
 
+    await _startListeningWithAutoRestart();
+  }
+
+  /// 자동 재시작 지원하는 음성 인식 시작
+  Future<void> _startListeningWithAutoRestart() async {
     await _speechService.startListening(
       onResult: (text) {
         // Final result - 녹음 완료
-        if (text.isNotEmpty) {
+        if (text.isNotEmpty && mounted) {
+          setState(() => _isSpeaking = false);
           _textController.text = text;
-          // 커서를 끝으로 이동
           _textController.selection = TextSelection.fromPosition(
             TextPosition(offset: text.length),
           );
@@ -86,14 +118,27 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
       },
       onPartialResult: (text) {
         // Partial result - 실시간 업데이트
-        if (text.isNotEmpty) {
-          // 텍스트 필드 업데이트 (화면에 즉시 반영)
+        if (text.isNotEmpty && mounted) {
+          setState(() => _isSpeaking = true); // 말하는 중!
           _textController.text = text;
           _textController.selection = TextSelection.fromPosition(
             TextPosition(offset: text.length),
           );
 
           ref.read(dreamVoiceProvider.notifier).updateRecognizedText(text);
+        }
+      },
+      onNoMatch: () {
+        // error_no_match 발생 시 자동 재시작
+        if (mounted && _isRecording) {
+          debugPrint('🎤 [DreamVoice] Auto-restarting after no_match');
+          _startListeningWithAutoRestart();
+        } else {
+          // stop 버튼 눌렀거나 mounted 아니면 idle로 복구
+          if (mounted) {
+            setState(() => _isRecording = false);
+            ref.read(dreamVoiceProvider.notifier).stopRecording();
+          }
         }
       },
     );
@@ -307,6 +352,7 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
                             isRecording: _isRecording,
                             barCount: 5,
                             soundLevel: soundLevel,
+                            isSpeaking: _isSpeaking,
                           );
                         },
                       ),

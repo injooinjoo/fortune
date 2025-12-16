@@ -350,11 +350,14 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
       // 리워드 광고 표시 및 완료 대기
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           debugPrint('');
           debugPrint('3️⃣ 광고 시청 완료!');
           debugPrint('   - reward.type: ${reward.type}');
           debugPrint('   - reward.amount: ${reward.amount}');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
 
           // 광고 시청 완료 시 블러만 해제 (로컬 상태 변경)
           if (mounted) {

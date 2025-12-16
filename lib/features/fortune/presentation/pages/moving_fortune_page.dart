@@ -12,7 +12,9 @@ import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 /// 토스 스타일 이사운 페이지 (UnifiedFortuneBaseWidget 사용)
 class MovingFortunePage extends ConsumerStatefulWidget {
@@ -34,6 +36,9 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
 
   // ✅ GPT 스타일 타이핑 효과
   int _currentTypingSection = 0;
+
+  // ✅ 햅틱 피드백 트리거 여부
+  bool _hasTriggeredHaptic = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +74,17 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
 
       // 결과 표시 UI
       resultBuilder: (context, result) {
-        // ✅ result.isBlurred 동기화
+        // ✅ result.isBlurred 동기화 + 햅틱 피드백
         if (_isBlurred != result.isBlurred || _blurredSections.length != result.blurredSections.length) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
+              // ✅ 이사운 결과 공개 시 햅틱 피드백 (최초 1회)
+              if (!_hasTriggeredHaptic) {
+                final score = result.score ?? 70;
+                ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+                _hasTriggeredHaptic = true;
+              }
+
               setState(() {
                 _isBlurred = result.isBlurred;
                 _blurredSections = List<String>.from(result.blurredSections);
@@ -334,8 +346,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               ),
             ),
 
-            // ✅ FloatingBottomButton (블러 상태일 때만)
-            if (_isBlurred)
+            // ✅ FloatingBottomButton (블러 상태일 때만, 구독자 제외)
+            if (_isBlurred && !ref.watch(isPremiumProvider))
               UnifiedButton.floating(
                 text: '광고 보고 전체 내용 확인하기',
                 onPressed: _showAdAndUnblur,
@@ -375,7 +387,10 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
 
       // 광고 표시
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, rewardItem) {
+        onUserEarnedReward: (ad, rewardItem) async {
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _isBlurred = false;

@@ -45,7 +45,7 @@ class FortuneTypeNames {
     'traditional-compatibility': '전통 궁합',
     'chemistry': '케미',
     'couple-match': '소울메이트',
-    'ex-lover': '전 애인',
+    'ex-lover': '재회운',
     'blind-date': '소개팅',
     'celebrity-match': '연예인 매치',
     'avoid-people': '피해야 할 사람',
@@ -61,8 +61,8 @@ class FortuneTypeNames {
     
     // Wealth & Investment (재물/투자)
     'wealth': '재물운',
-    'investment': '투자 운세',
-    'lucky-investment': '투자 운세',
+    'investment': '재물운',
+    'lucky-investment': '재물운',
     'lucky-realestate': '부동산운',
     'lucky-stock': '주식 운세',
     'lucky-crypto': '암호화폐 운세',

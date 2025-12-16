@@ -162,11 +162,11 @@ class FCMService {
         description: '매일 아침 오늘의 운세를 알려드립니다',
         importance: Importance.high);
       
-      // 토큰 알림 채널
+      // 복주머니 알림 채널
       const tokenChannel = AndroidNotificationChannel(
         NotificationChannels.tokenAlert,
-        '토큰 알림',
-        description: '토큰 부족 및 충전 관련 알림',
+        '복주머니 알림',
+        description: '복주머니 부족 및 충전 관련 알림',
         importance: Importance.high);
       
       // 프로모션 채널

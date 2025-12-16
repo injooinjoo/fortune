@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class TermsOfServicePage extends ConsumerStatefulWidget {
   const TermsOfServicePage({super.key});
@@ -12,71 +12,54 @@ class TermsOfServicePage extends ConsumerStatefulWidget {
 }
 
 class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
-  // TOSS Design System Helper Methods
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
-  Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
-  }
-
-  Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.gray50;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: colors.backgroundSecondary,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: _getTextColor(context)),
+          icon: Icon(Icons.arrow_back_ios, color: colors.textPrimary),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '이용약관',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
+          style: typography.headingMedium.copyWith(
+            color: colors.textPrimary,
           ),
         ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
-            horizontal: TossDesignSystem.marginHorizontal),
+            horizontal: DSSpacing.pageHorizontal),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
 
             _buildSection(
+              context,
               '제1조 (목적)',
               '이 약관은 Fortune(이하 "회사")이 제공하는 운세 서비스(이하 "서비스")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.',
             ),
 
             _buildSection(
+              context,
               '제2조 (용어의 정의)',
               '1. "서비스"란 회사가 제공하는 AI 기반 운세 예측 및 관련 콘텐츠를 의미합니다.\n'
               '2. "이용자"란 이 약관에 따라 회사가 제공하는 서비스를 받는 회원 및 비회원을 말합니다.\n'
               '3. "회원"이란 회사에 개인정보를 제공하여 회원등록을 한 자로서, 서비스를 이용하는 자를 말합니다.\n'
-              '4. "토큰"이란 서비스 내에서 운세 조회 등에 사용되는 가상의 이용권을 말합니다.',
+              '4. "복주머니"란 서비스 내에서 운세 조회 등에 사용되는 가상의 이용권을 말합니다.',
             ),
 
             _buildSection(
+              context,
               '제3조 (약관의 효력 및 변경)',
               '1. 이 약관은 서비스를 이용하고자 하는 모든 이용자에게 그 효력이 발생합니다.\n'
               '2. 회사는 필요한 경우 관련 법령을 위배하지 않는 범위에서 이 약관을 변경할 수 있습니다.\n'
@@ -84,6 +67,7 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
             ),
 
             _buildSection(
+              context,
               '제4조 (서비스의 제공)',
               '회사는 다음과 같은 서비스를 제공합니다:\n\n'
               '• 일일, 주간, 월간 등 다양한 형태의 운세 정보\n'
@@ -95,6 +79,7 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
             ),
 
             _buildSection(
+              context,
               '제5조 (이용자의 의무)',
               '이용자는 다음 행위를 하여서는 안 됩니다:\n\n'
               '1. 타인의 정보 도용\n'
@@ -105,21 +90,24 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
             ),
 
             _buildSection(
+              context,
               '제6조 (유료 서비스)',
-              '1. 회사는 토큰 구매, 구독 서비스 등 유료 서비스를 제공할 수 있습니다.\n'
+              '1. 회사는 복주머니 구매, 구독 서비스 등 유료 서비스를 제공할 수 있습니다.\n'
               '2. 유료 서비스의 이용요금은 서비스 내에 명시된 요금정책에 따릅니다.\n'
               '3. 결제는 앱스토어(App Store, Google Play) 정책에 따라 처리됩니다.\n'
-              '4. 구매한 토큰의 유효기간은 구매일로부터 1년입니다.',
+              '4. 구매한 복주머니의 유효기간은 구매일로부터 1년입니다.',
             ),
 
             _buildSection(
+              context,
               '제7조 (환불 정책)',
-              '1. 토큰 구매 후 7일 이내, 사용하지 않은 경우에 한해 환불이 가능합니다.\n'
+              '1. 복주머니 구매 후 7일 이내, 사용하지 않은 경우에 한해 환불이 가능합니다.\n'
               '2. 구독 서비스는 각 앱스토어의 환불 정책을 따릅니다.\n'
               '3. 이용자의 귀책사유로 인한 서비스 이용 제한의 경우 환불이 불가능합니다.',
             ),
 
             _buildSection(
+              context,
               '제8조 (면책조항)',
               '1. 회사가 제공하는 운세 정보는 오락 및 참고 목적으로만 제공되며, 실제 미래를 예측하거나 보장하지 않습니다.\n'
               '2. 이용자가 서비스를 통해 얻은 정보를 바탕으로 한 의사결정에 대한 책임은 전적으로 이용자에게 있습니다.\n'
@@ -127,20 +115,21 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
             ),
 
             _buildSection(
+              context,
               '제9조 (분쟁해결)',
               '1. 회사와 이용자 간에 발생한 분쟁은 상호 협의하여 해결하는 것을 원칙으로 합니다.\n'
               '2. 협의가 이루어지지 않을 경우, 대한민국 법령에 따라 관할 법원에서 해결합니다.',
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingL),
+            const SizedBox(height: DSSpacing.lg),
 
             Container(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+              padding: const EdgeInsets.all(DSSpacing.md),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(12),
+                color: colors.accent.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(DSRadius.md),
                 border: Border.all(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  color: colors.accent.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -149,43 +138,46 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
                   Icon(
                     Icons.calendar_today,
                     size: 18,
-                    color: TossDesignSystem.tossBlue,
+                    color: colors.accent,
                   ),
-                  const SizedBox(width: TossDesignSystem.spacingS),
+                  const SizedBox(width: DSSpacing.sm),
                   Text(
                     '시행일: 2025년 1월 1일',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: _getSecondaryTextColor(context),
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingXXL),
+            const SizedBox(height: DSSpacing.xxl),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSection(String title, String content) {
+  Widget _buildSection(BuildContext context, String title, String content) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingL),
+      padding: const EdgeInsets.only(bottom: DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: TossDesignSystem.body1.copyWith(
-              color: _getTextColor(context),
+            style: typography.bodyMedium.copyWith(
+              color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: DSSpacing.md),
           Text(
             content,
-            style: TossDesignSystem.caption.copyWith(
-              color: _getSecondaryTextColor(context),
+            style: typography.labelSmall.copyWith(
+              color: colors.textSecondary,
             ),
           ),
         ],

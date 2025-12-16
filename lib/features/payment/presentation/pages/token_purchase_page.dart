@@ -32,7 +32,42 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   @override
   void initState() {
     super.initState();
+    _setupPurchaseCallbacks();
     _initializeInAppPurchase();
+  }
+
+  void _setupPurchaseCallbacks() {
+    _purchaseService.setCallbacks(
+      onPurchaseCompleted: (productId, productName, tokenAmount) {
+        // 실제 결제 완료 시 결과 페이지로 이동
+        ref.invalidate(tokenBalanceProvider);
+        if (mounted) {
+          setState(() => _isProcessing = false);
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => PaymentResultPage(
+                isSuccess: true,
+                productName: productName,
+                tokenAmount: tokenAmount,
+              ),
+            ),
+          );
+        }
+      },
+      onPurchaseError: (error) {
+        if (mounted) {
+          setState(() => _isProcessing = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(error)),
+          );
+        }
+      },
+      onPurchaseCanceled: () {
+        if (mounted) {
+          setState(() => _isProcessing = false);
+        }
+      },
+    );
   }
 
   Future<void> _initializeInAppPurchase() async {
@@ -57,7 +92,22 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   Future<void> _loadProducts() async {
     await _purchaseService.loadProducts();
     setState(() {
-      _products = _purchaseService.products;
+      // 월간 구독 제외, 복주머니(소모성) 상품만 필터링
+      final filteredProducts = _purchaseService.products.where((product) {
+        // 월간 구독 제외
+        if (product.id == InAppProducts.monthlySubscription) return false;
+        // 소모성 상품만 포함
+        return InAppProducts.consumableIds.contains(product.id);
+      }).toList();
+
+      // 토큰 수 기준 오름차순 정렬 (작은 것부터)
+      filteredProducts.sort((a, b) {
+        final aInfo = InAppProducts.productDetails[a.id];
+        final bInfo = InAppProducts.productDetails[b.id];
+        return (aInfo?.tokens ?? 0).compareTo(bInfo?.tokens ?? 0);
+      });
+
+      _products = filteredProducts;
     });
   }
 
@@ -76,7 +126,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(title: '토큰 구매'),
+            const AppHeader(title: '복주머니 구매'),
             Expanded(
               child: _isLoading 
                 ? const Center(child: CircularProgressIndicator())
@@ -107,36 +157,160 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     // IAP 상품이 없으면 Mock 데이터로 UI 표시 (스크린샷용)
     final bool useMockData = _products.isEmpty;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+    return Stack(
+      children: [
+        // 스크롤 가능한 콘텐츠
+        SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 160), // 하단 버튼 공간 확보
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildCurrentBalance(),
+              const SizedBox(height: 24),
+              _buildPackageList(useMockData: useMockData),
+              const SizedBox(height: 32),
+              _buildDescription(),
+            ],
+          ),
+        ),
+        // Floating 버튼 영역
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: _buildFloatingButtons(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFloatingButtons() {
+    final colors = context.colors;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      decoration: BoxDecoration(
+        color: colors.background,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          _buildCurrentBalance(),
-          const SizedBox(height: 24),
-          _buildPackageList(useMockData: useMockData),
-          const SizedBox(height: 24),
           _buildPurchaseButton(),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildRestoreButton(),
-          const SizedBox(height: 32),
-          _buildDescription(),
         ],
       ),
     );
   }
 
   Widget _buildCurrentBalance() {
-    final tokenBalance = ref.watch(tokenBalanceProvider);
+    final tokenState = ref.watch(tokenProvider);
+    final tokenBalance = tokenState.balance;
     final colors = context.colors;
 
-    if (tokenBalance == null) {
+    // 로딩 중이면 로딩 인디케이터
+    if (tokenState.isLoading && tokenBalance == null) {
       return const CustomCard(
         padding: EdgeInsets.all(20),
         child: Center(
           child: CircularProgressIndicator(),
         ),
       );
+    }
+
+    // 에러가 있거나 balance가 null이면 무제한 이용권 확인
+    if (tokenBalance == null) {
+      // 무제한 구독이 있으면 무제한 표시
+      if (tokenState.hasUnlimitedAccess) {
+        return CustomCard(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '현재 보유 복주머니',
+                    style: DSTypography.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '무제한',
+                    style: DSTypography.headingMedium.copyWith(
+                      color: colors.accent,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              Icon(
+                Icons.all_inclusive,
+                size: 40,
+                color: colors.accent.withValues(alpha: 0.3),
+              ),
+            ],
+          ),
+        ).animate()
+          .fadeIn(duration: 600.ms)
+          .slideX(begin: -0.1, end: 0);
+      }
+
+      // 그 외에는 0으로 표시
+      return CustomCard(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '현재 보유 복주머니',
+                  style: DSTypography.labelSmall.copyWith(
+                    color: colors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Text(
+                      '0',
+                      style: DSTypography.headingMedium.copyWith(
+                        color: colors.accent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '개',
+                      style: DSTypography.bodyLarge.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Icon(
+              Icons.toll,
+              size: 40,
+              color: colors.accent.withValues(alpha: 0.3),
+            ),
+          ],
+        ),
+      ).animate()
+        .fadeIn(duration: 600.ms)
+        .slideX(begin: -0.1, end: 0);
     }
 
     return CustomCard(
@@ -148,7 +322,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '현재 보유 토큰',
+                '현재 보유 복주머니',
                 style: DSTypography.labelSmall.copyWith(
                   color: colors.textSecondary,
                 ),
@@ -206,7 +380,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '토큰 패키지 선택',
+          '복주머니 패키지 선택',
           style: DSTypography.headingSmall.copyWith(
             fontWeight: FontWeight.bold,
             color: colors.textPrimary,
@@ -408,8 +582,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
         ),
         const SizedBox(height: 8),
         ...[
-          '• 토큰은 운세를 볼 때 사용됩니다',
-          '• 구매한 토큰은 즉시 계정에 추가됩니다',
+          '• 복주머니는 운세를 볼 때 사용됩니다',
+          '• 구매한 복주머니는 즉시 계정에 추가됩니다',
           '• 무제한 구독은 매월 자동 갱신됩니다',
           '• 구독은 언제든지 취소할 수 있습니다',
           '• 환불은 앱스토어/구글플레이 정책을 따릅니다'
@@ -428,45 +602,30 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
 
   Future<void> _handlePurchase() async {
     if (_selectedPackageIndex == null) return;
-    
+
     setState(() => _isProcessing = true);
     ref.read(fortuneHapticServiceProvider).jackpot();
 
     try {
       final product = _products[_selectedPackageIndex!];
-      final success = await _purchaseService.purchaseProduct(product.id);
-      
-      if (!success) {
-        throw Exception('구매를 완료할 수 없습니다');
-      }
+      // 결제 시작 - 실제 완료는 onPurchaseCompleted 콜백에서 처리
+      final started = await _purchaseService.purchaseProduct(product.id);
 
-      // 구매 완료 후 토큰 잔액 새로고침
-      ref.invalidate(tokenBalanceProvider);
-      
-      // 결과 페이지로 이동
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (_) => PaymentResultPage(
-              isSuccess: true,
-              productName: product.title,
-              amount: product.price,
-            ),
-          ),
-        );
+      if (!started) {
+        throw Exception('구매를 시작할 수 없습니다');
       }
+      // 결제 UI가 표시됨 - 완료/취소/에러는 콜백에서 처리
     } catch (e) {
-      Logger.error('구매 실패', e);
+      Logger.error('구매 시작 실패', e);
       if (mounted) {
+        setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('실패: ${e.toString()}')),
         );
       }
-    } finally {
-      if (mounted) {
-        setState(() => _isProcessing = false);
-      }
     }
+    // finally에서 isProcessing을 false로 설정하지 않음
+    // 콜백에서 결제 완료/취소/에러 시 처리
   }
 
   Future<void> _handleRestore() async {

@@ -40,10 +40,11 @@ class DSTypography {
   // Using Gowun Batang for traditional feel
   // ============================================
 
-  /// Display Large - 32px, Bold - Fortune titles
+  /// Display Large - 32px, SemiBold - Fortune titles
+  /// (w700→w600 조정으로 한지 위 붓글씨 느낌)
   static TextStyle get displayLarge => GoogleFonts.gowunBatang(
         fontSize: 32,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         height: 1.3,
         letterSpacing: 0,
       );
@@ -211,10 +212,11 @@ class DSTypography {
   // NUMBER STYLES (for amounts, statistics)
   // ============================================
 
-  /// Number Large - 32px, Bold
+  /// Number Large - 32px, SemiBold
+  /// (w700→w600 조정으로 부드러운 무게감)
   static const TextStyle numberLarge = TextStyle(
     fontSize: 32,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w600,
     height: 1.25,
     letterSpacing: -0.02,
     fontFamily: numberFamily,
@@ -268,9 +270,10 @@ class DSTypography {
   // ============================================
 
   /// Fortune title - Large calligraphy style
+  /// (w700→w600 조정으로 부드러운 붓글씨 느낌)
   static TextStyle get fortuneTitle => GoogleFonts.gowunBatang(
         fontSize: 28,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         height: 1.35,
         letterSpacing: 0,
       );

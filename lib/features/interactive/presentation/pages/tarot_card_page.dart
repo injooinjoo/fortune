@@ -297,7 +297,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       if (!hasEnoughTokens) {
         Toast.show(
           context,
-          message: '토큰이 부족합니다',
+          message: '복주머니가 부족합니다',
           type: ToastType.error);
         stateNotifier.setLoading(false);
         return;
@@ -368,7 +368,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
         child: Column(
           children: [
             AppHeader(
-              title: '타로 카드',
+              title: '타로',
               showBackButton: true,
               showActions: true,
             ),

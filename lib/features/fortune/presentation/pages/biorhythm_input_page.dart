@@ -216,7 +216,7 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
     return Scaffold(
       backgroundColor: colors.background,
       appBar: const StandardFortuneAppBar(
-        title: '바이오리듬 분석',
+        title: '바이오리듬',
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {

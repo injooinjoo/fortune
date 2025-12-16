@@ -63,27 +63,43 @@ class FortuneListTile extends ConsumerWidget {
                   //   const SizedBox(width: 8),
                   // ],
 
-                  // 좌측 아이콘 (토스 스타일 원형 배경) + 빨간 dot 배지
+                  // 좌측 아이콘 (수묵화 커스텀 이미지 or 토스 스타일 원형 배경) + 빨간 dot 배지
                   Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: FortuneCardImages.getGradientColors(category.type),
+                      // 커스텀 아이콘이 있으면 수묵화 스타일 이미지 표시
+                      if (category.iconAsset != null)
+                        SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: ClipOval(
+                            child: Image.asset(
+                              category.iconAsset!,
+                              width: 44,
+                              height: 44,
+                              fit: BoxFit.cover, // 원형에 꽉 차게
+                            ),
+                          ),
+                        )
+                      else
+                        // 커스텀 아이콘이 없으면 기존 Material Icon (그라데이션 배경)
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: FortuneCardImages.getGradientColors(category.type),
+                            ),
+                          ),
+                          child: Icon(
+                            category.icon,
+                            size: 20,
+                            color: Colors.white,
                           ),
                         ),
-                        child: Icon(
-                          category.icon,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                      ),
                       // 빨간 dot 배지 (새 운세 OR 오늘 안 본 운세)
                       if (category.shouldShowRedDot)
                         Positioned(
@@ -112,11 +128,11 @@ class FortuneListTile extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // 제목 (NEW 배지 제거 - 아이콘 dot으로 대체)
+                        // 제목 (강조)
                         Text(
                           category.title,
-                          style: DSTypography.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w500,
+                          style: DSTypography.labelLarge.copyWith(
+                            fontWeight: FontWeight.w600,
                             color: colors.textPrimary,
                             height: 1.3,
                           ),
@@ -133,18 +149,6 @@ class FortuneListTile extends ConsumerWidget {
                           ),
                         ),
                       ],
-                    ),
-                  ),
-
-                  const SizedBox(width: 12),
-
-                  // 우측 액션 텍스트 (토스 스타일)
-                  Text(
-                    category.isFreeFortune
-                        ? '포인트 받기'
-                        : '${category.soulCost}원 받기',
-                    style: DSTypography.bodySmall.copyWith(
-                      color: colors.textTertiary,
                     ),
                   ),
                 ],

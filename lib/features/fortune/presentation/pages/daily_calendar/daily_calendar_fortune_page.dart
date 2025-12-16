@@ -8,6 +8,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../presentation/providers/auth_provider.dart';
 import '../../../../../presentation/providers/token_provider.dart';
+import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/services/debug_premium_service.dart';
@@ -526,7 +527,10 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
       }
 
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _isBlurred = false;
@@ -686,7 +690,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                 ? _buildLoadingContent(colors)  // API 대기 중: 커서 깜빡임
                 : _buildFortuneResultContent(colors),  // 결과 수신: 타이핑 시작
           ),
-          if (_isBlurred && _fortuneResult != null)
+          // ✅ FloatingBottomButton (블러 상태일 때만, 구독자 제외)
+          if (_isBlurred && _fortuneResult != null && !ref.watch(isPremiumProvider))
             UnifiedButton.floating(
               text: '광고 보고 전체 내용 확인하기',
               onPressed: _showAdAndUnblur,
@@ -815,7 +820,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
               title: '조언',
               content: FortuneTextCleaner.clean(fortuneData['advice'] as String),
               isDark: isDark,
-              startTyping: !_isBlurred && _currentTypingSection >= 3,
+              startTyping: _currentTypingSection >= 3,
               onTypingComplete: () {
                 if (mounted) {
                   setState(() => _currentTypingSection = 4);
@@ -835,7 +840,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
             child: TypingAITipsList(
               tips: fortuneData['ai_tips'] as List,
               isDark: isDark,
-              startTyping: !_isBlurred && _currentTypingSection >= 4,
+              startTyping: _currentTypingSection >= 4,
               onTypingComplete: () {
                 if (mounted) {
                   setState(() => _currentTypingSection = 5);
@@ -858,7 +863,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
               content: FortuneTextCleaner.clean(fortuneData['caution'] as String),
               isDark: isDark,
               isWarning: true,
-              startTyping: !_isBlurred && _currentTypingSection >= 5,
+              startTyping: _currentTypingSection >= 5,
               onTypingComplete: () {
                 debugPrint('✅ 모든 섹션 타이핑 완료');
               },

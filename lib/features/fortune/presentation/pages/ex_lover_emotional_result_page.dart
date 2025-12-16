@@ -9,6 +9,7 @@ import '../../../../core/widgets/blurred_fortune_content.dart'; // ✅ BlurredFo
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 
@@ -241,8 +242,8 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             ),
           ),
 
-          // ✅ FloatingBottomButton (블러 상태일 때만 표시)
-          if (_fortuneResult.isBlurred)
+          // ✅ FloatingBottomButton (블러 상태일 때만 표시, 구독자 제외)
+          if (_fortuneResult.isBlurred && !ref.watch(isPremiumProvider))
             UnifiedButton.floating(
               text: '광고 보고 전체 내용 확인하기',
               onPressed: _showAdAndUnblur,
@@ -971,8 +972,12 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
 
       // 리워드 광고 표시
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           Logger.info('[전애인운세] Rewarded ad watched, removing blur');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _fortuneResult = _fortuneResult.copyWith(

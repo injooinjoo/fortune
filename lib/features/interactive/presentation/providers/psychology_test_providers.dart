@@ -31,7 +31,7 @@ class PsychologyTestNotifier extends StateNotifier<AsyncValue<PsychologyTestResu
 
       if (!hasEnoughTokens) {
         state = AsyncValue.error(
-          Exception('토큰이 부족합니다'),
+          Exception('복주머니가 부족합니다'),
           StackTrace.current);
         return;
       }

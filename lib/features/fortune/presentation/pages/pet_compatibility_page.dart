@@ -9,6 +9,7 @@ import '../../../../data/models/pet_profile.dart';
 import '../../../../providers/pet_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/widgets/hexagon_chart.dart';
 import '../../../../domain/entities/fortune.dart';
@@ -127,7 +128,8 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
               ? _buildFortuneResult()
               : _buildPetSelection(petState),
 
-          if (_fortune != null && _fortune!.isBlurred)
+          // ✅ FloatingBottomButton (블러 상태일 때만, 구독자 제외)
+          if (_fortune != null && _fortune!.isBlurred && !ref.watch(isPremiumProvider))
             Positioned(
               left: 20,
               right: 20,
@@ -973,7 +975,10 @@ class _PetCompatibilityPageState extends ConsumerState<PetCompatibilityPage> wit
       }
 
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _fortune = _fortune!.copyWith(isBlurred: false, blurredSections: []);

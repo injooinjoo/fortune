@@ -10,11 +10,13 @@ import '../../../../../core/design_system/design_system.dart';
 import '../../../../../presentation/providers/auth_provider.dart';
 import '../../../../../presentation/providers/ad_provider.dart';
 import '../../../../../presentation/providers/token_provider.dart';
+import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../core/widgets/accordion_input_section.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../../../core/widgets/unified_button.dart';
+import '../../../../../core/services/fortune_haptic_service.dart';
 import 'widgets/widgets.dart';
 
 /// 행운 아이템 페이지
@@ -111,7 +113,7 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
   Widget build(BuildContext context) {
     return UnifiedFortuneBaseWidget(
       fortuneType: 'lucky_items',
-      title: '행운 아이템',
+      title: '행운아이템',
       description: '로또번호부터 오늘의 색상까지',
       inputBuilder: _buildInput,
       conditionsBuilder: _buildConditions,
@@ -432,6 +434,11 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
       _isBlurred = result.isBlurred;
       _blurredSections = List<String>.from(result.blurredSections);
 
+      // ✅ 결과 최초 표시 시 햅틱 피드백
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(fortuneHapticServiceProvider).mysticalReveal();
+      });
+
       Logger.debug('[LuckyItems] 🔒 블러 상태 동기화 (최초): $_isBlurred');
       Logger.debug('[LuckyItems] 🔒 블러 섹션: $_blurredSections');
     }
@@ -457,8 +464,8 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
           ),
         ),
 
-        // ✅ 전체보기 버튼 (블러가 있을 때만 표시)
-        if (_isBlurred)
+        // ✅ 전체보기 버튼 (블러가 있을 때만, 구독자 제외)
+        if (_isBlurred && !ref.watch(isPremiumProvider))
           UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
@@ -550,8 +557,11 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
       // 광고 표시
       Logger.debug('[LuckyItems] 🎬 광고 표시 시작');
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, rewardItem) {
+        onUserEarnedReward: (ad, rewardItem) async {
           Logger.debug('[LuckyItems] ✅ 광고 보상 획득, 블러 해제');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
 
           if (mounted) {
             setState(() {

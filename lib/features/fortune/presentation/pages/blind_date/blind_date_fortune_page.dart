@@ -19,6 +19,7 @@ import '../../../../../core/models/fortune_result.dart';
 import '../../../../../core/utils/logger.dart';
 import '../../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../../presentation/providers/token_provider.dart';
+import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/toast.dart';
 import '../../../../../services/ad_service.dart';
@@ -139,7 +140,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
               scrolledUnderElevation: 0,
               leading: const SizedBox.shrink(),
               title: Text(
-                '소개팅 운세',
+                '소개팅',
                 style: DSTypography.headingSmall.copyWith(
                   color: colors.textPrimary,
                 ),
@@ -155,7 +156,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
                 ),
               ],
             )
-          : const StandardFortuneAppBar(title: '소개팅 운세'),
+          : const StandardFortuneAppBar(title: '소개팅'),
       body: SafeArea(
         child: Stack(
           children: [
@@ -839,7 +840,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
             ],
           ),
         ),
-        if (_isBlurred)
+        if (_isBlurred && !ref.watch(isPremiumProvider))
           UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
@@ -939,7 +940,10 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
       }
 
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _isBlurred = false;

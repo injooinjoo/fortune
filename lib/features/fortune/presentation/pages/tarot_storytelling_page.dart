@@ -14,6 +14,7 @@ import '../widgets/tarot_interpretation_bubble.dart';
 import '../widgets/mystical_background.dart';
 import '../providers/tarot_storytelling_provider.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 class TarotStorytellingPage extends ConsumerStatefulWidget {
   final List<int> selectedCards;
@@ -103,8 +104,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
       _showInterpretation = false;
     });
 
-    // Haptic feedback
-    HapticFeedback.mediumImpact();
+    // ✅ 카드 선택 햅틱 피드백
+    ref.read(fortuneHapticServiceProvider).cardSelect();
 
     // Trigger card reveal
     setState(() {
@@ -122,6 +123,9 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
           position: _currentCardIndex,
           spreadType: widget.spreadType,
           question: widget.question)).future);
+
+    // ✅ 카드 해석 완료 시 신비로운 햅틱 피드백
+    ref.read(fortuneHapticServiceProvider).mysticalReveal();
 
     setState(() {
       _interpretations.add(interpretation);
@@ -175,7 +179,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     return Scaffold(
       backgroundColor: colors.background,
       appBar: const StandardFortuneAppBar(
-        title: '타로 리딩',
+        title: '타로',
       ),
       body: MysticalBackground(
         child: SafeArea(

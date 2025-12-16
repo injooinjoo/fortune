@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_theme_extensions.dart';
+import 'obangseok_colors.dart';
 import 'toss_design_system.dart';
 import 'typography_unified.dart';
 
@@ -57,7 +58,8 @@ class AppTheme {
           surface: Color(0xFFF3F4F6),
           // background is deprecated, use surface instead
         ),
-        scaffoldBackgroundColor: TossDesignSystem.gray50,
+        // 한지 배경색 (미색) - 오방색 디자인 철학 적용
+        scaffoldBackgroundColor: ObangseokColors.misaek,
         appBarTheme: AppBarTheme(
           backgroundColor: TossDesignSystem.transparent,
           elevation: 0,
@@ -147,7 +149,8 @@ class AppTheme {
           surface: TossDesignSystem.gray900,
           // background is deprecated, use surface instead
         ),
-        scaffoldBackgroundColor: TossDesignSystem.black,
+        // 다크모드 한지 배경색 (흑색) - 오방색 디자인 철학 적용
+        scaffoldBackgroundColor: ObangseokColors.heukLight,
         appBarTheme: AppBarTheme(
           backgroundColor: TossDesignSystem.transparent,
           elevation: 0,

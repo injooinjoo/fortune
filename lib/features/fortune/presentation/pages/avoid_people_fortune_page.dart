@@ -14,6 +14,8 @@ import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 class AvoidPeopleFortunePage extends ConsumerStatefulWidget {
   const AvoidPeopleFortunePage({super.key});
@@ -74,7 +76,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
   Widget build(BuildContext context) {
     return UnifiedFortuneBaseWidget(
       fortuneType: 'avoid-people',
-      title: '피해야 할 사람',
+      title: '경계대상',
       description: '오늘 주의해야 할 사람 유형을 분석해드립니다',
       dataSource: FortuneDataSource.api,
       inputBuilder: (context, onComplete) {
@@ -151,6 +153,10 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
             Logger.info('      - mounted: $mounted');
 
             if (mounted) {
+              // ✅ 피해야 할 사람 결과 공개 시 햅틱 피드백
+              final score = result.score ?? 70;
+              ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+
               Logger.info('      → setState 호출 중...');
               Logger.info('         이전 _isBlurred: $_isBlurred');
               Logger.info('         이전 _blurredSections: $_blurredSections');
@@ -337,8 +343,8 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
               ),
             ),
 
-            // ✅ FloatingBottomButton (블러 상태일 때만 표시)
-            if (_isBlurred)
+            // ✅ FloatingBottomButton (블러 상태일 때만 표시, 구독자 제외)
+            if (_isBlurred && !ref.watch(isPremiumProvider))
               UnifiedButton.floating(
                 text: '🎁 광고 보고 전체 내용 보기',
                 onPressed: _showAdAndUnblur,
@@ -648,11 +654,14 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
 
       // 리워드 광고 표시 및 완료 대기
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           Logger.info('');
           Logger.info('3️⃣ 광고 시청 완료!');
           Logger.info('   - reward.type: ${reward.type}');
           Logger.info('   - reward.amount: ${reward.amount}');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
 
           // ✅ 광고 시청 완료 시 블러만 해제 (로컬 상태 변경)
           if (mounted) {

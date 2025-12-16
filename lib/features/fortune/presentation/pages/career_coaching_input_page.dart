@@ -208,7 +208,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
           ? AppColors.backgroundDark
           : AppColors.backgroundLight,
       appBar: const StandardFortuneAppBar(
-        title: '직업 운세',
+        title: '직업',
       ),
       body: SafeArea(
         child: Stack(

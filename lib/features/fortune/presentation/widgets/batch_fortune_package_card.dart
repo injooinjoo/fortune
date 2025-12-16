@@ -101,7 +101,7 @@ class BatchFortunePackageCard extends ConsumerWidget {
                 color: Theme.of(context).primaryColor),
               const SizedBox(width: 4),
               Text(
-                '${packageType.tokenCost} 토큰',
+                '${packageType.tokenCost} 복주머니',
                 style: TextStyle(
                   color: Theme.of(context).primaryColor,
                   fontWeight: FontWeight.bold)),

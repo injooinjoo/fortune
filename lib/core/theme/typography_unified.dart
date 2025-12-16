@@ -41,28 +41,31 @@ class TypographyUnified {
   // 스플래시, 온보딩, 메인 배너 등 큰 타이틀에 사용
 
   /// Display Large - 가장 큰 헤드라인 (48pt)
+  /// (w700→w600 조정으로 부드러운 붓글씨 느낌)
   static TextStyle get displayLarge => TextStyle(
         fontSize: FontSizeSystem.displayLargeScaled,
         height: 1.17,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -0.02,
         fontFamily: fontFamilyKorean,
       );
 
   /// Display Medium - 큰 헤드라인 (40pt)
+  /// (w700→w600 조정으로 부드러운 붓글씨 느낌)
   static TextStyle get displayMedium => TextStyle(
         fontSize: FontSizeSystem.displayMediumScaled,
         height: 1.2,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -0.02,
         fontFamily: fontFamilyKorean,
       );
 
   /// Display Small - 중간 헤드라인 (32pt)
+  /// (w700→w600 조정으로 부드러운 붓글씨 느낌)
   static TextStyle get displaySmall => TextStyle(
         fontSize: FontSizeSystem.displaySmallScaled,
         height: 1.25,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -0.01,
         fontFamily: fontFamilyKorean,
       );
@@ -74,10 +77,11 @@ class TypographyUnified {
   // 페이지 제목, 섹션 헤더에 사용
 
   /// Heading 1 - 메인 페이지 제목 (28pt)
+  /// (w700→w600 조정으로 부드러운 무게감)
   static TextStyle get heading1 => TextStyle(
         fontSize: FontSizeSystem.heading1Scaled,
         height: 1.29,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -0.01,
         fontFamily: fontFamilyKorean,
       );
@@ -235,20 +239,22 @@ class TypographyUnified {
   // 금액, 점수 등 숫자 표시에 사용 (TossFace 폰트)
 
   /// Number XLarge - 매우 큰 숫자 (40pt)
+  /// (w700→w600 조정으로 부드러운 무게감)
   static TextStyle get numberXLarge => TextStyle(
         fontSize: FontSizeSystem.numberXLargeScaled,
         height: 1.2,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -0.5,
         fontFamily: fontFamilyNumber,
         fontFeatures: const [FontFeature.tabularFigures()],
       );
 
   /// Number Large - 큰 숫자 (32pt)
+  /// (w700→w600 조정으로 부드러운 무게감)
   static TextStyle get numberLarge => TextStyle(
         fontSize: FontSizeSystem.numberLargeScaled,
         height: 1.25,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         letterSpacing: -0.02,
         fontFamily: fontFamilyNumber,
         fontFeatures: const [FontFeature.tabularFigures()],

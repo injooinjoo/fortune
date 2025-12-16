@@ -239,7 +239,16 @@
       "Bash(perl -i -pe:*)",
       "Bash(firebase projects:list:*)",
       "Bash(firebase deploy:*)",
-      "Bash(lsof:*)"
+      "Bash(lsof:*)",
+      "Bash(do echo '=== $f ===' grep -n \"subscription_provider\\|isBlurred)\" $f)",
+      "Bash(dart compile kernel:*)",
+      "Bash(dart analyze:*)",
+      "Bash(echo \"=== 블러 해제 햅틱 (premiumUnlock) 적용 현황 ===\" echo \"\" echo \"showRewardedAd 사용 파일 수:\" grep -r \"showRewardedAd\" lib/ --include=\"*.dart\" -l)",
+      "Bash(while read file)",
+      "Bash(do if ! grep -q \"premiumUnlock\" \"$file\")",
+      "Bash(then echo \"❌ 미적용: $file\" fi done)",
+      "Bash(flutter pub get:*)",
+      "Bash(export LC_ALL=en_US.UTF-8:*)"
     ],
     "deny": [],
     "ask": [],

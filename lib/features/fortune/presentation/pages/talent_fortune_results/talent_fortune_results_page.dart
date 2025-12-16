@@ -16,6 +16,7 @@ import '../../../domain/models/talent_input_model.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../presentation/providers/token_provider.dart';
+import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../../services/ad_service.dart';
 import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../core/utils/logger.dart';
@@ -215,8 +216,12 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
       }
 
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           debugPrint('[TalentFortune] ✅ 광고 시청 완료, 블러 해제');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _isBlurred = false;
@@ -523,8 +528,8 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                       ),
                     ),
 
-                    // FloatingBottomButton (블러 상태일 때만 표시)
-                    if (_isBlurred)
+                    // ✅ FloatingBottomButton (블러 상태일 때만, 구독자 제외)
+                    if (_isBlurred && !ref.watch(isPremiumProvider))
                       UnifiedButton.floating(
                         text: '광고 보고 전체 내용 확인하기',
                         onPressed: _showAdAndUnblur,

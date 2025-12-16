@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../core/design_system/design_system.dart';
+import '../core/theme/obangseok_colors.dart';
+import '../services/app_version_service.dart';
+import '../presentation/widgets/app_update_dialog.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,20 +14,68 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  bool _versionCheckBlocked = false;
+
   @override
   void initState() {
     super.initState();
 
-    // Failsafe: If still on splash after 3 seconds, force navigation
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
+    // Failsafe: If still on splash after 5 seconds (increased for version check), force navigation
+    Future.delayed(const Duration(seconds: 5), () {
+      if (mounted && !_versionCheckBlocked) {
         debugPrint('⏰ SplashScreen: Failsafe triggered, forcing navigation to landing');
         context.go('/');
       }
     });
 
-    // 인증 확인 시작
-    _performAuthCheck();
+    // 버전 체크 → 인증 확인 순서로 진행
+    _performVersionCheck();
+  }
+
+  /// 앱 버전 체크
+  Future<void> _performVersionCheck() async {
+    debugPrint('📱 SplashScreen: Starting version check');
+
+    try {
+      final versionService = AppVersionService();
+      final versionInfo = await versionService.checkVersion();
+
+      if (!mounted) return;
+
+      switch (versionInfo.result) {
+        case VersionCheckResult.forceUpdateRequired:
+          debugPrint('🚨 SplashScreen: Force update required');
+          _versionCheckBlocked = true;
+          await AppUpdateDialog.showForceUpdate(context, versionInfo);
+          // 다이얼로그가 닫히면 앱이 종료되거나 스토어로 이동함
+          return;
+
+        case VersionCheckResult.maintenance:
+          debugPrint('🔧 SplashScreen: Maintenance mode');
+          _versionCheckBlocked = true;
+          await AppUpdateDialog.showMaintenance(context, versionInfo);
+          return;
+
+        case VersionCheckResult.updateAvailable:
+          debugPrint('📦 SplashScreen: Optional update available');
+          // 선택적 업데이트는 표시 후 진행
+          await AppUpdateDialog.showOptionalUpdate(context, versionInfo);
+          if (!mounted) return;
+          _performAuthCheck();
+          return;
+
+        case VersionCheckResult.upToDate:
+        case VersionCheckResult.checkFailed:
+          // 최신 버전이거나 체크 실패 시 정상 진행
+          debugPrint('✅ SplashScreen: Version check passed or skipped');
+          _performAuthCheck();
+          return;
+      }
+    } catch (e) {
+      debugPrint('❌ SplashScreen: Version check error: $e');
+      // 버전 체크 실패 시 정상 진행
+      _performAuthCheck();
+    }
   }
 
   Future<void> _performAuthCheck() async {
@@ -100,23 +150,66 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: context.colors.background,
-      body: Center(
-        child: Image.asset(
-          context.isDark
-            ? 'assets/images/flower_transparent_white.png'
-            : 'assets/images/flower_transparent.png',
-          width: 120,
-          height: 120,
-        ).animate()
-          .fadeIn(duration: 600.ms)
-          .scale(
-            begin: const Offset(0.8, 0.8),
-            end: const Offset(1, 1),
-            duration: 600.ms,
-            curve: Curves.easeOutBack,
+      body: Container(
+        decoration: BoxDecoration(
+          // 수묵화 스타일 그라데이션 배경
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark
+                ? [
+                    ObangseokColors.heukLight,
+                    ObangseokColors.heuk,
+                    ObangseokColors.heukDark,
+                  ]
+                : [
+                    ObangseokColors.misaekLight,
+                    ObangseokColors.misaek,
+                    ObangseokColors.misaekDark,
+                  ],
           ),
+        ),
+        child: Stack(
+          children: [
+            // 한지 텍스처 오버레이
+            Positioned.fill(
+              child: Opacity(
+                opacity: isDark ? 0.03 : 0.06,
+                child: Image.asset(
+                  'assets/images/hanji_texture.png',
+                  fit: BoxFit.cover,
+                  repeat: ImageRepeat.repeat,
+                  color: isDark ? Colors.white : null,
+                  colorBlendMode: isDark ? BlendMode.overlay : null,
+                  errorBuilder: (context, error, stackTrace) {
+                    // 텍스처 이미지가 없어도 gracefully 처리
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
+            ),
+            // 로고 콘텐츠
+            Center(
+              child: Image.asset(
+                isDark
+                    ? 'assets/images/flower_transparent_white.png'
+                    : 'assets/images/flower_transparent.png',
+                width: 120,
+                height: 120,
+              ).animate()
+                  .fadeIn(duration: 600.ms)
+                  .scale(
+                    begin: const Offset(0.8, 0.8),
+                    end: const Offset(1, 1),
+                    duration: 600.ms,
+                    curve: Curves.easeOutBack,
+                  ),
+            ),
+          ],
+        ),
       ),
     );
   }

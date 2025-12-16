@@ -194,7 +194,7 @@ void main() async {
   // Initialize Error Reporter Service (all modes)
   try {
     debugPrint('🚨 [STARTUP] Initializing Error Reporter Service...');
-    ErrorReporterService().initialize();
+    await ErrorReporterService().initialize();
     debugPrint('🚨 [STARTUP] Error Reporter Service initialized');
     Logger.info('Real-time error monitoring enabled');
   } catch (e) {

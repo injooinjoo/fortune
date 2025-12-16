@@ -13,6 +13,7 @@ import '../widgets/investment_category_grid.dart';
 import '../widgets/ticker_search_widget.dart';
 import '../../../../services/ad_service.dart';
 import '../../data/models/investment_ticker.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 // Step 관리를 위한 StateNotifier (v2: 2단계로 간소화)
 class InvestmentStepNotifier extends StateNotifier<int> {
@@ -101,7 +102,7 @@ class _InvestmentFortunePageState
     return Scaffold(
       backgroundColor: colors.background,
       appBar: StandardFortuneAppBar(
-        title: '투자 운세',
+        title: '재물운',
         onBackPressed: () {
           if (currentStep > 0) {
             ref.read(investmentStepProvider.notifier).previousStep();
@@ -135,7 +136,7 @@ class _InvestmentFortunePageState
     final isValid = _validateStep(currentStep, data);
 
     // Step 2에서는 "운세 확인하기", Step 1에서는 "다음"
-    final buttonText = currentStep == 1 ? '투자 운세 확인하기' : '다음';
+    final buttonText = currentStep == 1 ? '재물운 확인하기' : '다음';
 
     final onPressed = currentStep == 1
         ? (isValid ? _generateFortune : null)
@@ -270,7 +271,7 @@ class _InvestmentFortunePageState
       final fortuneResult = FortuneResult(
         id: fortune['id'] as String?,
         type: 'investment',
-        title: '투자 운세',
+        title: '재물운',
         summary: {
           'ticker_name': data.selectedTicker?.name ?? '',
           'ticker_symbol': data.selectedTicker?.symbol ?? '',
@@ -287,6 +288,9 @@ class _InvestmentFortunePageState
       );
 
       if (mounted) {
+        // ✅ 재물운 결과 생성 완료 시 동전 햅틱 피드백
+        ref.read(fortuneHapticServiceProvider).investmentCoin();
+
         setState(() {
           _isLoading = false;
         });

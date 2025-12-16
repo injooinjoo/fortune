@@ -14,7 +14,9 @@ import 'package:fortune/core/utils/subscription_snackbar.dart';
 // ✅ Phase 16-2
 import 'package:fortune/presentation/providers/user_profile_notifier.dart';
 import 'package:fortune/presentation/providers/token_provider.dart';
+import 'package:fortune/presentation/providers/subscription_provider.dart';
 import 'package:fortune/core/widgets/blurred_fortune_content.dart';
+import 'package:fortune/core/services/fortune_haptic_service.dart';
 import 'widgets/widgets.dart';
 
 /// MBTI 운세 페이지 (UnifiedFortuneService 버전)
@@ -144,8 +146,8 @@ class _MbtiFortunePageState
                 isEnabled: !_isLoading,
               ),
 
-            // 전체보기 버튼 (블러 상태일 때만 표시)
-            if (_showResult && _fortuneResult != null && _fortuneResult!.isBlurred)
+            // 전체보기 버튼 (블러 상태일 때만 표시, 구독자 제외)
+            if (_showResult && _fortuneResult != null && _fortuneResult!.isBlurred && !ref.watch(isPremiumProvider))
               UnifiedButton.floating(
                 text: '남은 운세 모두 보기',
                 onPressed: _showAdAndUnblur,
@@ -223,6 +225,10 @@ class _MbtiFortunePageState
       }
 
       if (mounted) {
+        // ✅ MBTI 운세 결과 공개 시 햅틱 피드백
+        final score = result.score ?? 70;
+        ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+
         setState(() {
           _fortuneResult = result;
           _showResult = true;
@@ -293,8 +299,12 @@ class _MbtiFortunePageState
 
       // 리워드 광고 표시
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           Logger.info('[MbtiFortunePage] Rewarded ad watched, removing blur');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _fortuneResult = _fortuneResult!.copyWith(

@@ -29,7 +29,7 @@ android {
 
     defaultConfig {
         applicationId = "com.beyond.fortune"
-        minSdk = 23
+        minSdkVersion = flutter.minSdkVersion
         targetSdk = 34  // Explicitly set for Google Play Store compliance (API 34 required)
         versionCode = flutter.versionCode
         versionName = flutter.versionName

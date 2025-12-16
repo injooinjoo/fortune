@@ -195,7 +195,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       
       if (!hasEnoughTokens) {
         messages.updateLastMessage(ChatMessage(
-          text: '토큰이 부족합니다. 토큰을 충전해주세요.',
+          text: '복주머니가 부족합니다. 복주머니를 충전해주세요.',
           isUser: false,
           timestamp: DateTime.now()));
         setState(() => _isProcessing = false);

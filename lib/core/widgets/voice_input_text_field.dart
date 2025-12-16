@@ -57,6 +57,7 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
   final SpeechRecognitionService _speechService = SpeechRecognitionService();
 
   VoiceInputState _state = VoiceInputState.idle;
+  bool _isSpeaking = false; // 실제 음성 인식 중인지 (partial result 수신)
 
   // 로딩 애니메이션용
   late AnimationController _loadingController;
@@ -69,11 +70,29 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
     // 텍스트 변화 감지
     _textController.addListener(_onTextChanged);
 
+    // 서비스 상태 변화 감지 (UI 동기화)
+    _speechService.isListeningNotifier.addListener(_onListeningStateChanged);
+
     // 로딩 애니메이션 컨트롤러
     _loadingController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     )..repeat();
+  }
+
+  /// 서비스 상태가 변경되면 UI 동기화
+  void _onListeningStateChanged() {
+    if (!_speechService.isListeningNotifier.value && mounted) {
+      // 서비스가 중지되었는데 UI가 아직 recording 상태면 복구
+      if (_state == VoiceInputState.recording || _state == VoiceInputState.transcribing) {
+        final text = _textController.text.trim();
+        // 텍스트가 있으면 hasText, 없으면 idle로 복구
+        if (text.isNotEmpty) {
+          setState(() => _state = VoiceInputState.hasText);
+        }
+        // 텍스트가 없으면 자동 재시작이 처리함 (idle로 가지 않음)
+      }
+    }
   }
 
   @override
@@ -82,6 +101,7 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
       _textController.dispose();
     }
     _textController.removeListener(_onTextChanged);
+    _speechService.isListeningNotifier.removeListener(_onListeningStateChanged);
     _loadingController.dispose();
     _speechService.dispose();
     super.dispose();
@@ -116,15 +136,22 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
     // 2. 녹음 시작
     setState(() {
       _state = VoiceInputState.recording;
+      _isSpeaking = false;
       _textController.clear();
     });
 
+    await _startListeningWithAutoRestart();
+  }
+
+  /// 자동 재시작 지원하는 음성 인식 시작
+  Future<void> _startListeningWithAutoRestart() async {
     await _speechService.startListening(
       onResult: (text) {
         // Final result - 변환 완료
         if (text.isNotEmpty && mounted) {
           setState(() {
             _state = VoiceInputState.hasText;
+            _isSpeaking = false;
             _textController.text = text;
             _textController.selection = TextSelection.fromPosition(
               TextPosition(offset: text.length),
@@ -135,14 +162,28 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
       onPartialResult: (text) {
         // Partial result - 실시간 업데이트 (transcribing 상태로 전환)
         if (text.isNotEmpty && mounted) {
-          // 아직 recording이면 transcribing으로 전환
-          if (_state == VoiceInputState.recording) {
-            setState(() => _state = VoiceInputState.transcribing);
-          }
+          setState(() {
+            _isSpeaking = true; // 말하는 중!
+            if (_state == VoiceInputState.recording) {
+              _state = VoiceInputState.transcribing;
+            }
+          });
           _textController.text = text;
           _textController.selection = TextSelection.fromPosition(
             TextPosition(offset: text.length),
           );
+        }
+      },
+      onNoMatch: () {
+        // error_no_match 발생 시 자동 재시작
+        if (mounted && (_state == VoiceInputState.recording || _state == VoiceInputState.transcribing)) {
+          debugPrint('🎤 [UI] Auto-restarting after no_match');
+          _startListeningWithAutoRestart();
+        } else {
+          // stop 버튼 눌렀거나 mounted 아니면 idle로 복구
+          if (mounted) {
+            setState(() => _state = VoiceInputState.idle);
+          }
         }
       },
     );
@@ -370,6 +411,7 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
             isRecording: true,
             barCount: 50,
             soundLevel: soundLevel,
+            isSpeaking: _isSpeaking,
           );
         },
       ),

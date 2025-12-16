@@ -114,7 +114,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
 
                 // Title
                 Text(
-                  '영혼이 부족합니다',
+                  '복주머니가 부족합니다',
                   style: typography.headingMedium.copyWith(
                     color: colors.textPrimary,
                     fontWeight: FontWeight.bold,

@@ -16,35 +16,35 @@ class InAppProducts {
   static const Map<String, ProductInfo> productDetails = {
     tokens10: ProductInfo(
       id: tokens10,
-      title: '토큰 10개',
+      title: '복주머니 10개',
       description: '기본 운세 10회 이용',
       price: 1000,
       tokens: 10,
       isSubscription: false),
     tokens50: ProductInfo(
       id: tokens50,
-      title: '토큰 50개',
-      description: '10% 보너스 토큰 포함',
+      title: '복주머니 50개',
+      description: '10% 보너스 복주머니 포함',
       price: 4500,
       tokens: 50,
       isSubscription: false),
     tokens100: ProductInfo(
       id: tokens100,
-      title: '토큰 100개',
-      description: '20% 보너스 토큰 포함',
+      title: '복주머니 100개',
+      description: '20% 보너스 복주머니 포함',
       price: 8000,
       tokens: 100,
       isSubscription: false),
     tokens200: ProductInfo(
       id: tokens200,
-      title: '토큰 200개',
-      description: '30% 보너스 토큰 포함',
+      title: '복주머니 200개',
+      description: '30% 보너스 복주머니 포함',
       price: 14000,
       tokens: 200,
       isSubscription: false),
     monthlySubscription: ProductInfo(
       id: monthlySubscription,
-      title: '월간 프리미엄',
+      title: '프리미엄운세 월간',
       description: '광고 제거 + 모든 운세 무제한',
       price: 1900,
       tokens: -1, // Unlimited
@@ -52,7 +52,7 @@ class InAppProducts {
       subscriptionPeriod: 'monthly'),
     yearlySubscription: ProductInfo(
       id: yearlySubscription,
-      title: '연간 프리미엄',
+      title: '프리미엄운세 연간',
       description: '광고 제거 + 모든 운세 무제한 (17% 할인)',
       price: 19000,
       tokens: -1, // Unlimited
@@ -100,7 +100,7 @@ class ProductInfo {
     if (isSubscription) {
       return '광고 제거 + 무제한 운세';
     }
-    return '$tokens 토큰 충전';
+    return '$tokens 복주머니 충전';
   }
 
   /// 월간 기준 가격 (연간 구독 시 할인율 계산용)

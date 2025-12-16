@@ -3,55 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../services/notification/fcm_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/utils/haptic_utils.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class NotificationSettingsPage extends ConsumerStatefulWidget {
   const NotificationSettingsPage({super.key});
 
   @override
-  ConsumerState<NotificationSettingsPage> createState() => _NotificationSettingsPageState();
+  ConsumerState<NotificationSettingsPage> createState() =>
+      _NotificationSettingsPageState();
 }
 
-class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsPage> {
+class _NotificationSettingsPageState
+    extends ConsumerState<NotificationSettingsPage> {
   late final FCMService _fcmService;
   late NotificationSettings _settings;
   TimeOfDay _morningTime = const TimeOfDay(hour: 7, minute: 0);
   TimeOfDay _eveningTime = const TimeOfDay(hour: 21, minute: 0);
-
-  // TOSS Design System Helper Methods
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
-  Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
-  }
-
-  Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.gray50;
-  }
-
-  Color _getCardColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark100
-        : TossDesignSystem.white;
-  }
-
-  Color _getDividerColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray200;
-  }
 
   @override
   void initState() {
@@ -73,48 +40,51 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: colors.backgroundSecondary,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
         iconTheme: IconThemeData(
-          color: _getTextColor(context),
+          color: colors.textPrimary,
         ),
         title: Text(
           '알림 설정',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
+          style: typography.headingMedium.copyWith(
+            color: colors.textPrimary,
           ),
         ),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(
-              horizontal: TossDesignSystem.marginHorizontal),
+              horizontal: DSSpacing.pageHorizontal),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: TossDesignSystem.spacingM),
+              const SizedBox(height: DSSpacing.md),
 
-              _buildMasterSwitch(),
-              const SizedBox(height: TossDesignSystem.spacingXL),
+              _buildMasterSwitch(context),
+              const SizedBox(height: DSSpacing.xl),
 
               // Notification Categories
-              _buildSectionTitle('알림 카테고리'),
-              const SizedBox(height: TossDesignSystem.spacingM),
-              _buildNotificationCategories(),
-              const SizedBox(height: TossDesignSystem.spacingXL),
+              _buildSectionTitle(context, '알림 카테고리'),
+              const SizedBox(height: DSSpacing.md),
+              _buildNotificationCategories(context),
+              const SizedBox(height: DSSpacing.xl),
 
               // Notification Schedule
-              _buildSectionTitle('알림 시간'),
-              const SizedBox(height: TossDesignSystem.spacingM),
-              _buildNotificationSchedule(),
-              const SizedBox(height: TossDesignSystem.spacingXXL),
+              _buildSectionTitle(context, '알림 시간'),
+              const SizedBox(height: DSSpacing.md),
+              _buildNotificationSchedule(context),
+              const SizedBox(height: DSSpacing.xxl),
 
-              _buildTestNotificationButton(),
-              const SizedBox(height: TossDesignSystem.spacingXL),
+              _buildTestNotificationButton(context),
+              const SizedBox(height: DSSpacing.xl),
             ],
           ),
         ),
@@ -122,64 +92,64 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Text(
       title,
-      style: TossDesignSystem.caption.copyWith(
-        color: _getSecondaryTextColor(context),
+      style: typography.labelSmall.copyWith(
+        color: colors.textSecondary,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
       ),
     );
   }
 
-  Widget _buildMasterSwitch() {
+  Widget _buildMasterSwitch(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Container(
-      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: _getCardColor(context),
-        borderRadius: BorderRadius.circular(12),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: _getDividerColor(context),
+          color: colors.divider,
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: context.shadows.sm,
       ),
       child: Row(
         children: [
           Icon(
             Icons.notifications_outlined,
-            color: TossDesignSystem.tossBlue,
+            color: colors.accent,
             size: 22,
           ),
-          const SizedBox(width: TossDesignSystem.spacingM),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '알림 허용',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: _getTextColor(context),
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '모든 알림을 켜거나 끕니다',
-                  style: TossDesignSystem.caption.copyWith(
-                    color: _getSecondaryTextColor(context),
+                  style: typography.labelSmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
             ),
           ),
-          Switch(
+          DSToggle(
             value: _settings.enabled,
             onChanged: (value) {
               HapticUtils.lightImpact();
@@ -194,33 +164,29 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
               });
               _saveSettings();
             },
-            activeColor: TossDesignSystem.tossBlue,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildNotificationCategories() {
+  Widget _buildNotificationCategories(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       decoration: BoxDecoration(
-        color: _getCardColor(context),
-        borderRadius: BorderRadius.circular(12),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: _getDividerColor(context),
+          color: colors.divider,
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: context.shadows.sm,
       ),
       child: Column(
         children: [
           _buildCategoryItem(
+            context,
             icon: Icons.sunny,
             title: '일일 운세',
             subtitle: '매일 아침 오늘의 운세를 알려드립니다',
@@ -239,9 +205,10 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             },
           ),
           _buildCategoryItem(
+            context,
             icon: Icons.toll,
-            title: '토큰 알림',
-            subtitle: '토큰이 부족할 때 알려드립니다',
+            title: '복주머니 알림',
+            subtitle: '복주머니가 부족할 때 알려드립니다',
             value: _settings.tokenAlert,
             onChanged: (value) {
               setState(() {
@@ -257,6 +224,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             },
           ),
           _buildCategoryItem(
+            context,
             icon: Icons.local_offer,
             title: '이벤트 및 프로모션',
             subtitle: '특별 이벤트와 할인 소식을 받아보세요',
@@ -280,47 +248,44 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
     );
   }
 
-  Widget _buildNotificationSchedule() {
+  Widget _buildNotificationSchedule(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Container(
-      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: _getCardColor(context),
-        borderRadius: BorderRadius.circular(12),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: _getDividerColor(context),
+          color: colors.divider,
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: context.shadows.sm,
       ),
       child: Row(
         children: [
           Icon(
             Icons.wb_sunny,
-            color: TossDesignSystem.tossBlue,
+            color: colors.accent,
             size: 22,
           ),
-          const SizedBox(width: TossDesignSystem.spacingM),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '아침 알림 시간',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: _getTextColor(context),
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '매일 ${_morningTime.format(context)}',
-                  style: TossDesignSystem.caption.copyWith(
-                    color: _getSecondaryTextColor(context),
+                  style: typography.labelSmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
@@ -331,14 +296,14 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 ? () => _selectTime(true)
                 : null,
             style: TextButton.styleFrom(
-              foregroundColor: TossDesignSystem.tossBlue,
+              foregroundColor: colors.accent,
             ),
             child: Text(
               '변경',
-              style: TossDesignSystem.caption.copyWith(
+              style: typography.labelSmall.copyWith(
                 color: _settings.enabled && _settings.dailyFortune
-                    ? TossDesignSystem.tossBlue
-                    : _getSecondaryTextColor(context),
+                    ? colors.accent
+                    : colors.textSecondary,
               ),
             ),
           ),
@@ -347,7 +312,8 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
     );
   }
 
-  Widget _buildCategoryItem({
+  Widget _buildCategoryItem(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
@@ -355,15 +321,18 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
     required ValueChanged<bool> onChanged,
     bool isLast = false,
   }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossDesignSystem.marginHorizontal,
-        vertical: TossDesignSystem.spacingM,
+        horizontal: DSSpacing.pageHorizontal,
+        vertical: DSSpacing.md,
       ),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isLast ? Colors.transparent : _getDividerColor(context),
+            color: isLast ? Colors.transparent : colors.divider,
             width: 0.5,
           ),
         ),
@@ -373,40 +342,42 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           Icon(
             icon,
             size: 22,
-            color: _getSecondaryTextColor(context),
+            color: colors.textSecondary,
           ),
-          const SizedBox(width: TossDesignSystem.spacingM),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TossDesignSystem.body2.copyWith(
-                    color: _getTextColor(context),
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: TossDesignSystem.caption.copyWith(
-                    color: _getSecondaryTextColor(context),
+                  style: typography.labelSmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
             ),
           ),
-          Switch(
+          DSToggle(
             value: value && _settings.enabled,
             onChanged: _settings.enabled ? onChanged : null,
-            activeColor: TossDesignSystem.tossBlue,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTestNotificationButton() {
+  Widget _buildTestNotificationButton(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
@@ -414,18 +385,17 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
         icon: const Icon(Icons.notifications_active),
         label: Text(
           '테스트 알림 보내기',
-          style: TossDesignSystem.button.copyWith(
-            color: TossDesignSystem.tossBlue,
+          style: typography.buttonMedium.copyWith(
+            color: colors.accent,
           ),
         ),
         style: OutlinedButton.styleFrom(
-          padding:
-              const EdgeInsets.symmetric(vertical: TossDesignSystem.spacingM),
-          side: const BorderSide(color: TossDesignSystem.tossBlue),
+          padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
+          side: BorderSide(color: colors.accent),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+            borderRadius: BorderRadius.circular(DSRadius.md),
           ),
-          foregroundColor: TossDesignSystem.tossBlue,
+          foregroundColor: colors.accent,
         ),
       ),
     );
@@ -433,7 +403,8 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
 
   Future<void> _selectTime(bool isMorning) async {
     final TimeOfDay initialTime = isMorning ? _morningTime : _eveningTime;
-    
+    final colors = context.colors;
+
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: initialTime,
@@ -441,8 +412,8 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: TossDesignSystem.tossBlue,
-              secondary: TossDesignSystem.gray600,
+              primary: colors.accent,
+              secondary: colors.textSecondary,
             ),
           ),
           child: child!,
@@ -459,7 +430,8 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             dailyFortune: _settings.dailyFortune,
             tokenAlert: _settings.tokenAlert,
             promotion: _settings.promotion,
-            dailyFortuneTime: '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}',
+            dailyFortuneTime:
+                '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}',
           );
         } else {
           _eveningTime = picked;
@@ -470,33 +442,35 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
   }
 
   Future<void> _saveSettings() async {
+    final colors = context.colors;
+
     try {
       await _fcmService.updateSettings(_settings);
-      
+
       // 일일 운세 알림 재설정
       if (_settings.dailyFortune) {
         await _fcmService.scheduleDailyFortuneNotification();
       }
-      
+
       HapticUtils.success();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('알림 설정이 저장되었습니다'),
-            backgroundColor: TossDesignSystem.success,
+          SnackBar(
+            content: const Text('알림 설정이 저장되었습니다'),
+            backgroundColor: colors.success,
             behavior: SnackBarBehavior.floating,
           ),
         );
       }
     } catch (e) {
       Logger.error('알림 설정 저장 실패', e);
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('설정 저장에 실패했습니다'),
-            backgroundColor: TossDesignSystem.error,
+          SnackBar(
+            content: const Text('설정 저장에 실패했습니다'),
+            backgroundColor: colors.error,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -505,14 +479,16 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
   }
 
   Future<void> _sendTestNotification() async {
+    final colors = context.colors;
+
     try {
       await _fcmService.sendTestNotification();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('테스트 알림을 전송했습니다'),
-            backgroundColor: TossDesignSystem.primaryBlue,
+          SnackBar(
+            content: const Text('테스트 알림을 전송했습니다'),
+            backgroundColor: colors.accent,
             behavior: SnackBarBehavior.floating,
           ),
         );

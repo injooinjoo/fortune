@@ -12,6 +12,7 @@ import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
 import '../providers/saju_provider.dart';
 import '../widgets/saju_element_chart.dart';
 import '../widgets/standard_fortune_app_bar.dart';
@@ -21,6 +22,7 @@ import '../widgets/saju/saju_widgets.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 // ✅ Phase 19-2
 
 /// 토스 스타일 전통 사주팔자 페이지
@@ -102,7 +104,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     return Scaffold(
       backgroundColor: colors.background,
       appBar: StandardFortuneAppBar(
-        title: '전통 사주팔자',
+        title: '전통',
         showBackButton: !_showResults,
         onBackPressed: () {
           Navigator.pop(context);
@@ -363,8 +365,8 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
             ],
           ),
         ),
-        // 블러 상태일 때만 광고 버튼 표시
-        if (_isBlurred)
+        // 블러 상태일 때만 광고 버튼 표시 (구독자 제외)
+        if (_isBlurred && !ref.watch(isPremiumProvider))
           UnifiedButton.floating(
             text: '🎁 광고 보고 전체 운세 보기',
             onPressed: _showAdAndUnblur,
@@ -563,6 +565,9 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
       );
 
       if (!mounted) return;
+
+      // ✅ 전통 사주 결과 공개 시 햅틱 피드백
+      ref.read(fortuneHapticServiceProvider).mysticalReveal();
 
       setState(() {
         _fortuneResult = result;
@@ -883,8 +888,12 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
       Logger.info('[Traditional-Saju] 광고 시청 후 블러 해제 시작');
 
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           Logger.info('[Traditional-Saju] ✅ User earned reward: ${reward.amount} ${reward.type}');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _isBlurred = false;

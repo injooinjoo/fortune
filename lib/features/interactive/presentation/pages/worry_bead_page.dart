@@ -149,7 +149,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                   color: AppTheme.primaryColor),
                 SizedBox(width: 4),
                 Text(
-                  '$_requiredTokens 토큰 필요',
+                  '$_requiredTokens 복주머니 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppTheme.primaryColor,
                     fontWeight: FontWeight.bold,

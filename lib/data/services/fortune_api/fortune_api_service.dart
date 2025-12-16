@@ -932,7 +932,7 @@ final fortuneApiServiceProvider = Provider<FortuneApiService>((ref) {
 
 // Exceptions
 class InsufficientTokensException extends AppException {
-  const InsufficientTokensException([String message = '토큰이 부족합니다'])
+  const InsufficientTokensException([String message = '복주머니가 부족합니다'])
       : super(message: message, code: 'INSUFFICIENT_TOKENS');
 }
 

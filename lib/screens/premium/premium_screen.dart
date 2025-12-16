@@ -17,7 +17,7 @@ class PremiumScreen extends StatelessWidget {
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
-          '프리미엄',
+          '프리미엄운세',
           style: DSTypography.headingSmall.copyWith(
             color: colors.textPrimary,
           ),

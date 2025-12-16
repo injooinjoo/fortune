@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/core/widgets/unified_button.dart';
 import 'package:fortune/domain/entities/fortune.dart';
+import 'package:fortune/presentation/providers/subscription_provider.dart';
 import 'overall_score_card.dart';
 import 'detailed_scores_card.dart';
 import 'traditional_compatibility_card.dart';
@@ -10,7 +12,7 @@ import 'emotional_compatibility_card.dart';
 import 'compatibility_analysis_card.dart';
 import 'relationship_advice_card.dart';
 
-class CompatibilityResultView extends StatefulWidget {
+class CompatibilityResultView extends ConsumerStatefulWidget {
   final Fortune fortune;
   final Map<String, double> scores;
   final String person1Name;
@@ -31,10 +33,10 @@ class CompatibilityResultView extends StatefulWidget {
   });
 
   @override
-  State<CompatibilityResultView> createState() => _CompatibilityResultViewState();
+  ConsumerState<CompatibilityResultView> createState() => _CompatibilityResultViewState();
 }
 
-class _CompatibilityResultViewState extends State<CompatibilityResultView> {
+class _CompatibilityResultViewState extends ConsumerState<CompatibilityResultView> {
   // GPT 스타일 타이핑 효과 섹션 관리
   int _currentTypingSection = 0;
 
@@ -135,8 +137,8 @@ class _CompatibilityResultViewState extends State<CompatibilityResultView> {
           ),
         ),
 
-        // 블러 해제 버튼 (블러 상태일 때만 표시)
-        if (widget.isBlurred)
+        // ✅ 블러 해제 버튼 (블러 상태일 때만, 구독자 제외)
+        if (widget.isBlurred && !ref.watch(isPremiumProvider))
           UnifiedButton.floating(
             text: '🎁 광고 보고 전체 내용 보기',
             onPressed: widget.onShowAdAndUnblur,

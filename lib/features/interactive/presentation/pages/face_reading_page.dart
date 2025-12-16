@@ -102,7 +102,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  '$_requiredTokens 토큰 필요',
+                  '$_requiredTokens 복주머니 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,

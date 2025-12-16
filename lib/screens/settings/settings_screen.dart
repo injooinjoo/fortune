@@ -197,16 +197,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 children: [
                   DSListTile(
                     leading: const Icon(Icons.local_offer_outlined),
-                    title: '토큰 구매',
-                    subtitle: '토큰 충전하기',
+                    title: '복주머니 구매',
+                    subtitle: '복주머니 충전하기',
                     onTap: () => context.push('/token-purchase'),
                   ),
                   DSListTile(
                     leading: const Icon(Icons.card_membership_outlined),
                     title: '구독 관리',
                     subtitle: tokenState.hasUnlimitedAccess
-                        ? '프리미엄 구독 중'
-                        : '프리미엄 시작하기',
+                        ? '프리미엄운세 구독 중'
+                        : '프리미엄운세 시작하기',
                     trailing: tokenState.hasUnlimitedAccess
                         ? DSBadge.pro()
                         : null,

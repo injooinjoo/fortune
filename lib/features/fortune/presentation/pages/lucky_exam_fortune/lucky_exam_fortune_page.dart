@@ -19,7 +19,9 @@ import '../../../../../domain/entities/fortune.dart';
 import '../../../../../services/ad_service.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
 import '../../widgets/standard_fortune_page_layout.dart';
+import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../domain/models/conditions/lucky_exam_fortune_conditions.dart';
+import '../../../../../core/services/fortune_haptic_service.dart';
 
 import 'widgets/exam_header_card.dart';
 import 'widgets/exam_category_selection.dart';
@@ -84,7 +86,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                 ),
               ],
               title: Text(
-                '시험 운세',
+                '시험',
                 style: DSTypography.headingSmall.copyWith(
                   color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -93,7 +95,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               centerTitle: true,
             )
           : const StandardFortuneAppBar(
-              title: '시험 운세',
+              title: '시험',
             ),
       body: _fortuneResult != null
           ? _buildResultView(colors)
@@ -159,6 +161,10 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
       );
 
       final fortune = _convertToFortune(fortuneResult);
+
+      // ✅ 시험 운세 결과 공개 시 햅틱 피드백
+      final score = fortune.overallScore ?? 75;
+      ref.read(fortuneHapticServiceProvider).scoreReveal(score);
 
       setState(() {
         _fortuneResult = fortune;
@@ -321,7 +327,10 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     final adService = ref.read(adServiceProvider);
 
     await adService.showRewardedAdWithCallback(
-      onUserEarnedReward: () {
+      onUserEarnedReward: () async {
+        // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
         setState(() {
           _isBlurred = false;
           _blurredSections = [];
@@ -408,7 +417,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             ],
           ),
         ),
-        if (_isBlurred)
+        // ✅ FloatingBottomButton (블러 상태일 때만, 구독자 제외)
+        if (_isBlurred && !ref.watch(isPremiumProvider))
           UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,

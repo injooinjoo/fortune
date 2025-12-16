@@ -176,7 +176,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
 
             // Premium Features
             Text(
-              '프리미엄 혜택',
+              '프리미엄운세 혜택',
               style: typography.labelSmall.copyWith(
                 color: colors.textSecondary,
                 fontWeight: FontWeight.w600,

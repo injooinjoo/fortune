@@ -12,7 +12,9 @@ import '../../../../core/models/fortune_result.dart' as core_models;
 import '../../domain/models/conditions/face_reading_fortune_conditions.dart';
 import 'package:crypto/crypto.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 // Import modular widgets
 import 'face_reading_fortune/index.dart';
@@ -87,8 +89,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                     uploadedImageFile: _uploadResult?.imageFile,
                   )
                 : _buildInputSection(context, isDark),
-            // Floating Bottom Button - 결과 화면에서 블러 상태일 때만 표시
-            if (_fortuneResult != null && _fortuneResult!.isBlurred)
+            // Floating Bottom Button - 결과 화면에서 블러 상태일 때만 표시 (구독자 제외)
+            if (_fortuneResult != null && _fortuneResult!.isBlurred && !ref.watch(isPremiumProvider))
               UnifiedButton.floating(
                 text: '남은 운세 모두 보기',
                 onPressed: _showAdAndUnblur,
@@ -199,6 +201,9 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
       );
 
       if (mounted) {
+        // ✅ 관상 결과 공개 시 햅틱 피드백
+        ref.read(fortuneHapticServiceProvider).mysticalReveal();
+
         setState(() {
           _fortuneResult = _convertToFortuneResult(result, isPremium);
           _isAnalyzing = false;
@@ -295,8 +300,11 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
 
       debugPrint('[FaceReadingFortunePage] 광고 표시 시작');
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           debugPrint('[FaceReadingFortunePage] 광고 보상 획득, 블러 해제');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
 
           if (mounted) {
             setState(() {

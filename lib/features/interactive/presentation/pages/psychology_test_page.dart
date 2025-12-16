@@ -474,8 +474,8 @@ class _TestResultView extends ConsumerWidget {
                 color: theme.colorScheme.error),
               const SizedBox(height: 16),
               Text(
-                error.toString().contains('토큰')
-                    ? '토큰이 부족합니다'
+                error.toString().contains('복주머니')
+                    ? '복주머니가 부족합니다'
                     : '심리 분석 중 오류가 발생했습니다',
                 style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center),

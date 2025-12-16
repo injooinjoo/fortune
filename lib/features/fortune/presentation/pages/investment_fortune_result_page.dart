@@ -81,7 +81,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           title: Text(
-            '투자 운세 결과',
+            '재물운 결과',
             style: DSTypography.headingSmall.copyWith(
               color: colors.textPrimary,
             ),
@@ -178,7 +178,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           const Icon(Icons.trending_up_rounded, color: Colors.white, size: 48),
           const SizedBox(height: 16),
           Text(
-            '투자 운세 점수',
+            '재물운 점수',
             style: DSTypography.bodyMedium.copyWith(color: Colors.white.withValues(alpha: 0.9)),
           ),
           const SizedBox(height: 8),
@@ -757,8 +757,12 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       }
 
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           Logger.info('[투자운 v2] ✅ 광고 시청 완료, 블러 해제');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _fortuneResult = _fortuneResult.copyWith(isBlurred: false, blurredSections: []);

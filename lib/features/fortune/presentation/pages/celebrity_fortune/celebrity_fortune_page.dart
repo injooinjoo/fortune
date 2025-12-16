@@ -47,7 +47,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
     return Scaffold(
       backgroundColor: colors.background,
       appBar: const StandardFortuneAppBar(
-        title: '유명인 운세',
+        title: '유명인',
       ),
       body: _fortune != null
           ? CelebrityResultScreen(

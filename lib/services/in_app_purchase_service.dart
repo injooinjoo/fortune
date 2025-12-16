@@ -24,6 +24,9 @@ class InAppPurchaseService {
   bool _isAvailable = false;
   bool _purchasePending = false;
 
+  // 중복 구매 처리 방지를 위한 처리된 구매 ID 추적
+  final Set<String> _processedPurchaseIds = {};
+
   // Compatibility getters
   bool get isAvailable => _isAvailable;
   bool get purchasePending => _purchasePending;
@@ -33,7 +36,11 @@ class InAppPurchaseService {
   BuildContext? _context;
   void Function()? onPurchaseStarted;
   void Function(String message)? onPurchaseSuccess;
+  /// 결제 완료 시 상품 정보와 함께 호출되는 콜백
+  /// productId: 상품 ID, productName: 상품명, tokenAmount: 토큰 수량
+  void Function(String productId, String productName, int tokenAmount)? onPurchaseCompleted;
   void Function(String error)? onPurchaseError;
+  void Function()? onPurchaseCanceled;
   
   // Set context for UI notifications
   void setContext(BuildContext context) {
@@ -44,10 +51,15 @@ class InAppPurchaseService {
   void setCallbacks({
     void Function()? onPurchaseStarted,
     void Function(String message)? onPurchaseSuccess,
-    void Function(String error)? onPurchaseError}) {
+    void Function(String productId, String productName, int tokenAmount)? onPurchaseCompleted,
+    void Function(String error)? onPurchaseError,
+    void Function()? onPurchaseCanceled,
+  }) {
     this.onPurchaseStarted = onPurchaseStarted;
     this.onPurchaseSuccess = onPurchaseSuccess;
+    this.onPurchaseCompleted = onPurchaseCompleted;
     this.onPurchaseError = onPurchaseError;
+    this.onPurchaseCanceled = onPurchaseCanceled;
   }
   
   // 초기화
@@ -98,9 +110,15 @@ class InAppPurchaseService {
       _products = response.productDetails;
       Logger.info('${_products.length}개의 상품 로드 완료');
 
-      // 상품 정보 로그
+      // 상품 정보 상세 로그
       for (final product in _products) {
-        Logger.info('상품: ${product.id} - ${product.title} (${product.price})');
+        Logger.info('========== 스토어 상품 정보 ==========');
+        Logger.info('id: ${product.id}');
+        Logger.info('title: ${product.title}');
+        Logger.info('description: ${product.description}');
+        Logger.info('price: ${product.price}');
+        Logger.info('rawPrice: ${product.rawPrice}');
+        Logger.info('======================================');
       }
     } catch (e) {
       Logger.error('상품 정보 로드 실패', e);
@@ -157,28 +175,38 @@ class InAppPurchaseService {
   
   // 개별 구매 처리
   Future<void> _handlePurchaseUpdate(PurchaseDetails purchaseDetails) async {
-    Logger.info('업데이트: ${purchaseDetails.status}');
-    
+    final purchaseId = purchaseDetails.purchaseID;
+    Logger.info('업데이트: ${purchaseDetails.status} (ID: $purchaseId)');
+
     switch (purchaseDetails.status) {
       case PurchaseStatus.pending:
         _showPendingUI();
         break;
-        
+
       case PurchaseStatus.purchased:
       case PurchaseStatus.restored:
-        await _deliverProduct(purchaseDetails);
+        // 중복 처리 방지: 이미 처리된 구매 ID는 스킵
+        if (purchaseId != null && _processedPurchaseIds.contains(purchaseId)) {
+          Logger.info('이미 처리된 구매입니다. 스킵: $purchaseId');
+        } else {
+          if (purchaseId != null) {
+            _processedPurchaseIds.add(purchaseId);
+          }
+          await _deliverProduct(purchaseDetails);
+        }
         break;
-        
+
       case PurchaseStatus.error:
         _handleError(purchaseDetails.error!);
         break;
-        
+
       case PurchaseStatus.canceled:
         Logger.info('구매가 취소되었습니다.');
         _purchasePending = false;
+        onPurchaseCanceled?.call();
         break;
     }
-    
+
     // 구매 완료 처리
     if (purchaseDetails.pendingCompletePurchase) {
       await _inAppPurchase.completePurchase(purchaseDetails);
@@ -188,6 +216,13 @@ class InAppPurchaseService {
   // 상품 전달
   Future<void> _deliverProduct(PurchaseDetails purchaseDetails) async {
     try {
+      // 디버그 로그 - 어떤 상품 정보가 오는지 확인
+      Logger.info('========== 상품 전달 시작 ==========');
+      Logger.info('productID: ${purchaseDetails.productID}');
+      Logger.info('purchaseID: ${purchaseDetails.purchaseID}');
+      Logger.info('status: ${purchaseDetails.status}');
+      Logger.info('======================================');
+
       // 서버에 구매 검증 요청
       final isValid = await _verifyPurchase(purchaseDetails);
       
@@ -201,7 +236,7 @@ class InAppPurchaseService {
       final productInfo = InAppProducts.productDetails[purchaseDetails.productID];
       if (productInfo != null && !productInfo.isSubscription && productInfo.tokens > 0) {
         // await _tokenService.addTokens(productInfo.tokens);
-        Logger.info('${productInfo.tokens} 토큰이 추가되었습니다.');
+        Logger.info('${productInfo.tokens} 복주머니가 추가되었습니다.');
       }
       
       // 구독 상품인 경우 구독 활성화
@@ -349,12 +384,37 @@ class InAppPurchaseService {
   }
   
   void _showSuccessNotification(String productId) {
-    Logger.info('Supabase initialized successfully');
-    
-    // Get product name
-    final productName = _getProductName(productId);
+    Logger.info('구매 완료 - productId: $productId');
+
+    // Get product info - 정확한 매칭 먼저 시도
+    ProductInfo? productInfo = InAppProducts.productDetails[productId];
+
+    // 정확한 매칭 실패 시 부분 매칭 시도 (sandbox에서 ID 형식이 다를 수 있음)
+    if (productInfo == null) {
+      Logger.warning('정확한 productId 매칭 실패, 부분 매칭 시도: $productId');
+      for (final entry in InAppProducts.productDetails.entries) {
+        if (productId.contains(entry.key) || entry.key.contains(productId)) {
+          productInfo = entry.value;
+          Logger.info('부분 매칭 성공: ${entry.key}');
+          break;
+        }
+      }
+    }
+
+    // 여전히 없으면 토큰 수 기반 추측
+    if (productInfo == null) {
+      Logger.warning('상품 정보 찾기 실패 - 기본값 사용');
+    }
+
+    final productName = productInfo?.title ?? '복주머니';
+    final tokenAmount = productInfo?.tokens ?? 0;
     final message = '$productName 구매가 완료되었습니다!';
-    
+
+    // 결제 완료 콜백 호출 (상품 정보 포함)
+    if (onPurchaseCompleted != null) {
+      onPurchaseCompleted!(productId, productName, tokenAmount);
+    }
+
     // Show success UI using callback or toast
     if (onPurchaseSuccess != null) {
       onPurchaseSuccess!(message);
@@ -380,12 +440,6 @@ class InAppPurchaseService {
       default:
         return '구매 중 오류가 발생했습니다. 다시 시도해주세요';
     }
-  }
-  
-  // Helper method to get product display name
-  String _getProductName(String productId) {
-    final productInfo = InAppProducts.productDetails[productId];
-    return productInfo?.title ?? '상품';
   }
   
   void _onPurchaseDone() {

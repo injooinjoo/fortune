@@ -15,6 +15,7 @@ import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../widgets/fortune_loading_skeleton.dart';
 import 'widgets/index.dart';
 import '../../../../../core/services/fortune_haptic_service.dart';
+import '../../../../../presentation/providers/subscription_provider.dart';
 
 class CareerCoachingResultPage extends ConsumerStatefulWidget {
   final CareerCoachingInput input;
@@ -158,8 +159,11 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
 
       // 리워드 광고 표시
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           debugPrint('✅ 광고 시청 완료!');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
 
           if (mounted) {
             setState(() {
@@ -253,8 +257,8 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                       : _buildResultContent(colors),
             ),
 
-            // ✅ 광고 버튼 (블러 상태일 때만)
-            if (_isBlurred)
+            // ✅ 광고 버튼 (블러 상태일 때만, 구독자 제외)
+            if (_isBlurred && !ref.watch(isPremiumProvider))
               UnifiedButton.floating(
                 text: '🎁 광고 보고 전체 운세 보기',
                 onPressed: _showAdAndUnblur,

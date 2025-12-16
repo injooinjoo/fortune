@@ -359,7 +359,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                 ),
 
-              // 프리미엄 & 토큰 홍보 배너
+              // 프리미엄 & 복주머니 홍보 배너
               _buildPremiumBanner(context, ref, isDarkMode, typography),
 
               // 테스트 계정 섹션 (간소화)
@@ -400,7 +400,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 children: [
                                   SettingsListTile(
                                     icon: Icons.bug_report_outlined,
-                                    title: '무제한 토큰',
+                                    title: '무제한 복주머니',
                                     trailing: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
@@ -812,7 +812,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '보유 토큰',
+                            '보유 복주머니',
                             style: typography.labelSmall.copyWith(
                               color: Colors.white.withValues(alpha: 0.8),
                             ),
@@ -926,7 +926,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 ✨ Fortune의 특별한 점:
 🎯 매일 업데이트되는 오늘의 운세
 💝 다양한 운세 테마 (사주, 타로, 별자리 등)
-🎁 친구 초대 시 무료 토큰 지급!
+🎁 친구 초대 시 무료 복주머니 지급!
 
 지금 바로 Fortune을 다운로드하고 운세를 확인해보세요!
 

@@ -597,8 +597,12 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
       }
 
       await adService.showRewardedAd(
-        onUserEarnedReward: (ad, reward) {
+        onUserEarnedReward: (ad, reward) async {
           Logger.info('[건강운] ✅ 광고 시청 완료, 블러 해제');
+
+          // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+          await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
           if (mounted) {
             setState(() {
               _fortuneResult = _fortuneResult.copyWith(

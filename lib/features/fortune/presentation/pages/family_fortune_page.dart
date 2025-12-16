@@ -9,6 +9,7 @@ import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/models/fortune_result.dart';
@@ -17,6 +18,7 @@ import '../../../../core/utils/logger.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/fortune_loading_skeleton.dart';
 import '../../domain/models/conditions/family_fortune_conditions.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 // 5가지 가족 운세 관심사
 enum FamilyConcern {
@@ -115,7 +117,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
     return Scaffold(
       backgroundColor: colors.background,
       appBar: const StandardFortuneAppBar(
-        title: '가족 운세',
+        title: '가족',
       ),
       body: _showResult
           ? (_isLoading ? _buildLoadingSkeleton() : _buildResultScreen())
@@ -697,6 +699,10 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
         onBlurredResult: (blurredResult) {
           // 블러 상태로 즉시 UI 업데이트 (스켈레톤 종료)
           if (mounted) {
+            // ✅ 가족 운세 결과 공개 시 햅틱 피드백
+            final score = blurredResult.score ?? 70;
+            ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+
             setState(() {
               _fortuneResult = blurredResult;
               _isLoading = false;
@@ -707,6 +713,10 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
       // Premium 사용자: 즉시 전체 표시
       if (isPremium && mounted) {
+        // ✅ 가족 운세 결과 공개 시 햅틱 피드백
+        final score = result.score ?? 70;
+        ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+
         setState(() {
           _fortuneResult = result;
           _isLoading = false;
@@ -731,7 +741,10 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
     final adService = ref.read(adServiceProvider);
 
     await adService.showRewardedAd(
-      onUserEarnedReward: (ad, reward) {
+      onUserEarnedReward: (ad, reward) async {
+        // ✅ 블러 해제 햅틱 (5단계 상승 패턴)
+        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
+
         setState(() {
           // FortuneResult의 블러 상태 해제
           _fortuneResult = _fortuneResult?.copyWith(
@@ -897,8 +910,8 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
           ),
         ).animate().fadeIn(duration: 600.ms),
 
-        // ✅ FloatingBottomButton
-        if (_fortuneResult!.isBlurred)
+        // ✅ FloatingBottomButton (구독자 제외)
+        if (_fortuneResult!.isBlurred && !ref.watch(isPremiumProvider))
           UnifiedButton.floating(
             text: '광고 보고 전체 내용 확인하기',
             onPressed: _showAdAndUnblur,
