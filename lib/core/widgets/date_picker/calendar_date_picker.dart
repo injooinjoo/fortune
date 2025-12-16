@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../theme/toss_design_system.dart';
-import '../../theme/typography_unified.dart';
+import '../../design_system/design_system.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_dimensions.dart';
 import 'date_picker_utils.dart';
@@ -116,7 +116,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
         children: [
           Text(
             '날짜 길흉 안내',
-            style: context.heading4,
+            style: DSTypography.headingSmall,
           ),
           const SizedBox(height: AppSpacing.spacing3),
           Wrap(
@@ -172,7 +172,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
         const SizedBox(width: AppSpacing.spacing1 * 1.5),
         Text(
           label,
-          style: context.bodySmall,
+          style: DSTypography.bodySmall,
         ),
       ],
     );
@@ -211,7 +211,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
         children: [
           Text(
             DatePickerUtils.formatKorean(day, showWeekday: true),
-            style: context.bodyLarge.copyWith(
+            style: DSTypography.bodyLarge.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -227,7 +227,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                 const SizedBox(width: AppSpacing.spacing1),
                 Text(
                   '손없는날 - 이사하기 매우 좋은 날',
-                  style: context.bodySmall.copyWith(fontWeight: FontWeight.w500),
+                  style: DSTypography.bodySmall.copyWith(fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -244,7 +244,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                 const SizedBox(width: AppSpacing.spacing1),
                 Text(
                   '길흉점수: ${(luckyScore * 100).toInt()}점',
-                  style: context.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: _getDayColor(day),
                     fontWeight: FontWeight.w500,
                   ),
@@ -264,7 +264,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                 const SizedBox(width: AppSpacing.spacing1),
                 Text(
                   holiday,
-                  style: context.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: TossDesignSystem.errorRed,
                   ),
                 ),
@@ -387,7 +387,7 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                     child: Center(
                       child: Text(
                         '${day.day}',
-                        style: context.bodyMedium.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           color: isWeekend
                               ? TossDesignSystem.errorRed
                               : (isDark
@@ -408,11 +408,11 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                   color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
                   borderRadius: AppDimensions.borderRadiusSmall,
                 ),
-                formatButtonTextStyle: context.bodySmall.copyWith(
+                formatButtonTextStyle: DSTypography.bodySmall.copyWith(
                   color: TossDesignSystem.tossBlue,
                   fontWeight: FontWeight.w500,
                 ),
-                titleTextStyle: context.heading4,
+                titleTextStyle: DSTypography.headingSmall,
               ),
             ),
           ),

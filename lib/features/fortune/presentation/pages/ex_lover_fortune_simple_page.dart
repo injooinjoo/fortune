@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/app_widgets.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
 import '../../domain/models/conditions/ex_lover_fortune_conditions.dart';
@@ -12,82 +12,89 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../services/ad_service.dart';
 import '../widgets/standard_fortune_app_bar.dart';
-import '../../../../core/widgets/date_picker/numeric_date_input.dart';
-
 import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/widgets/voice_input_text_field.dart';
+
 class ExLoverFortuneSimplePage extends ConsumerStatefulWidget {
   const ExLoverFortuneSimplePage({super.key});
 
   @override
-  ConsumerState<ExLoverFortuneSimplePage> createState() => _ExLoverFortuneSimplePageState();
+  ConsumerState<ExLoverFortuneSimplePage> createState() =>
+      _ExLoverFortuneSimplePageState();
 }
 
-class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimplePage> {
-  final PageController _pageController = PageController();
-  int _currentStep = 0;
-  bool _isLoading = false; // ✅ 로딩 상태 추가
+class _ExLoverFortuneSimplePageState
+    extends ConsumerState<ExLoverFortuneSimplePage> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoading = false;
 
-  // Step 1: 핵심 질문
+  // 각 섹션의 GlobalKey (자동 스크롤용)
+  final List<GlobalKey> _sectionKeys = List.generate(10, (_) => GlobalKey());
+
+  // 1. 상대방 이름/닉네임
+  final TextEditingController _exNameController = TextEditingController();
+
+  // 2. 상대방 MBTI
+  String? _exMbti;
+
+  // 3. 관계 기간
+  String? _relationshipDuration;
+
+  // 4. 이별 시기
   String? _timeSinceBreakup;
+
+  // 5. 이별 통보자
+  String? _breakupInitiator;
+
+  // 6. 현재 연락 상태
+  String? _contactStatus;
+
+  // 7. 이별 이유 상세 (STT + 타이핑)
+  String? _breakupDetail;
+
+  // 8. 현재 감정
   String? _currentEmotion;
+
+  // 9. 가장 궁금한 것
   String? _mainCuriosity;
 
-  // Step 2: 선택 정보
-  DateTime? _exBirthDate;
-  String? _breakupReason;
+  // 10. 카톡/대화 내용 (선택)
+  final TextEditingController _chatHistoryController = TextEditingController();
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _scrollController.dispose();
+    _exNameController.dispose();
+    _chatHistoryController.dispose();
     super.dispose();
   }
 
-  void _nextStep() {
-    if (_currentStep == 0) {
-      if (!_canProceedStep1()) {
-        // 버튼이 비활성화되어 있으므로 메시지 표시
-        if (_timeSinceBreakup == null) {
-          _showMessage('이별한 시기를 선택해주세요');
-        } else if (_currentEmotion == null) {
-          _showMessage('현재 감정을 선택해주세요');
-        } else if (_mainCuriosity == null) {
-          _showMessage('가장 궁금한 것을 선택해주세요');
-        }
-        return;
+  /// 선택 완료 시 다음 섹션으로 자동 스크롤
+  void _scrollToNextSection(int currentIndex) {
+    if (currentIndex >= _sectionKeys.length - 1) return;
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      final nextKey = _sectionKeys[currentIndex + 1];
+      final context = nextKey.currentContext;
+      if (context != null) {
+        Scrollable.ensureVisible(
+          context,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+          alignment: 0.2, // 화면 상단 20% 위치에 오도록
+        );
       }
-      setState(() {
-        _currentStep = 1;
-      });
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else if (_currentStep == 1) {
-      _analyzeAndShowResult();
-    }
+    });
   }
 
-  void _previousStep() {
-    if (_currentStep > 0) {
-      setState(() {
-        _currentStep--;
-      });
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
-  bool _canProceedStep1() {
-    return _timeSinceBreakup != null &&
-           _currentEmotion != null &&
-           _mainCuriosity != null;
-  }
-
-  bool _canProceedStep2() {
-    // Step 2는 선택사항이므로 항상 true 반환
-    return true;
+  bool _canSubmit() {
+    return _relationshipDuration != null &&
+        _timeSinceBreakup != null &&
+        _breakupInitiator != null &&
+        _contactStatus != null &&
+        (_breakupDetail != null && _breakupDetail!.isNotEmpty) &&
+        _currentEmotion != null &&
+        _mainCuriosity != null;
   }
 
   void _showMessage(String message) {
@@ -96,7 +103,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor: TossDesignSystem.warningOrange,
+          backgroundColor: DSColors.warning,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -107,28 +114,38 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
   }
 
   Future<void> _analyzeAndShowResult() async {
-    // ✅ 1단계: 로딩 시작
+    if (!_canSubmit()) {
+      _showMessage('필수 항목을 모두 입력해주세요');
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // ✅ 2단계: Premium 확인
       final tokenState = ref.read(tokenProvider);
       final isPremium = tokenState.hasUnlimitedAccess;
 
       Logger.info('[ExLoverFortune] Premium 상태: $isPremium');
 
-      // ✅ 3단계: FortuneConditions 생성
       final conditions = ExLoverFortuneConditions(
+        exName: _exNameController.text.isNotEmpty
+            ? _exNameController.text
+            : null,
+        exMbti: _exMbti,
+        relationshipDuration: _relationshipDuration!,
         timeSinceBreakup: _timeSinceBreakup!,
+        breakupInitiator: _breakupInitiator!,
+        contactStatus: _contactStatus!,
+        breakupDetail: _breakupDetail,
         currentEmotion: _currentEmotion!,
         mainCuriosity: _mainCuriosity!,
-        exBirthDate: _exBirthDate,
-        breakupReason: _breakupReason,
+        chatHistory: _chatHistoryController.text.isNotEmpty
+            ? _chatHistoryController.text
+            : null,
       );
 
-      // ✅ 4단계: UnifiedFortuneService 호출
       final fortuneService = UnifiedFortuneService(
         Supabase.instance.client,
         enableOptimization: true,
@@ -139,35 +156,31 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
         dataSource: FortuneDataSource.api,
         inputConditions: conditions.toJson(),
         conditions: conditions,
-        isPremium: isPremium, // ✅ Premium 상태 전달
+        isPremium: isPremium,
       );
 
       Logger.info('[ExLoverFortune] 운세 생성 완료: ${result.id}');
 
-      // ✅ 5단계: 로딩 종료
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
       }
 
-      // ✅ 6단계: 광고 표시 (InterstitialAd)
       await AdService.instance.showInterstitialAdWithCallback(
         onAdCompleted: () async {
-          // 결과 페이지로 이동
           if (mounted) {
             context.push(
               '/ex-lover-emotional-result',
-              extra: result, // ✅ FortuneResult 전달
+              extra: result,
             );
           }
         },
         onAdFailed: () async {
-          // 광고 실패해도 결과 페이지로 이동
           if (mounted) {
             context.push(
               '/ex-lover-emotional-result',
-              extra: result, // ✅ FortuneResult 전달
+              extra: result,
             );
           }
         },
@@ -175,7 +188,6 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
     } catch (error, stackTrace) {
       Logger.error('[ExLoverFortune] 운세 생성 실패', error, stackTrace);
 
-      // 로딩 종료
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -183,7 +195,7 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('운세 생성 중 오류가 발생했습니다'),
-            backgroundColor: TossDesignSystem.errorRed,
+            backgroundColor: DSColors.error,
           ),
         );
       }
@@ -192,208 +204,408 @@ class _ExLoverFortuneSimplePageState extends ConsumerState<ExLoverFortuneSimpleP
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColors.backgroundDark
-          : AppColors.backgroundLight,
+      backgroundColor: colors.background,
       appBar: StandardFortuneAppBar(
         title: '헤어진 애인',
-        onBackPressed: () {
-          if (_currentStep > 0) {
-            _previousStep();
-          } else {
-            Navigator.pop(context);
-          }
-        },
+        onBackPressed: () => Navigator.pop(context),
       ),
       body: Stack(
         children: [
-          // Page Content (프로그레스 인디케이터 제거)
-          PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              _buildStep1(isDark),
-              _buildStep2(isDark),
-            ],
+          SingleChildScrollView(
+            controller: _scrollController,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 헤더
+                const PageHeaderSection(
+                  emoji: '💜',
+                  title: '힘드셨죠?',
+                  subtitle: '천천히 답해주세요. 당신의 마음을 읽어드릴게요.',
+                ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+
+                const SizedBox(height: 32),
+
+                // 1. 상대방 이름/닉네임
+                _buildSection(
+                  key: _sectionKeys[0],
+                  index: 0,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '그 사람을 뭐라고 불렀나요? (선택)'),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _exNameController,
+                        decoration: InputDecoration(
+                          hintText: '이름 또는 닉네임',
+                          filled: true,
+                          fillColor: colors.surface,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                        ),
+                        onSubmitted: (_) => _scrollToNextSection(0),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 2. 상대방 MBTI
+                _buildSection(
+                  key: _sectionKeys[1],
+                  index: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '그 사람 MBTI를 아시나요? (선택)'),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: mbtiOptions.map((mbti) {
+                          final label = mbti == 'unknown' ? '모름' : mbti;
+                          return SelectionChip(
+                            label: label,
+                            isSelected: _exMbti == mbti,
+                            onTap: () {
+                              setState(() => _exMbti = mbti);
+                              _scrollToNextSection(1);
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 3. 관계 기간
+                _buildSection(
+                  key: _sectionKeys[2],
+                  index: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '얼마나 만났나요?'),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: relationshipDurationOptions.map((option) {
+                          return SelectionChip(
+                            label: option.label,
+                            isSelected: _relationshipDuration == option.id,
+                            onTap: () {
+                              setState(() => _relationshipDuration = option.id);
+                              _scrollToNextSection(2);
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 4. 이별 시기
+                _buildSection(
+                  key: _sectionKeys[3],
+                  index: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '이별한 지 얼마나 되었나요?'),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          SelectionChip(
+                            label: '1개월 미만',
+                            isSelected: _timeSinceBreakup == 'recent',
+                            onTap: () {
+                              setState(() => _timeSinceBreakup = 'recent');
+                              _scrollToNextSection(3);
+                            },
+                          ),
+                          SelectionChip(
+                            label: '1-3개월',
+                            isSelected: _timeSinceBreakup == 'short',
+                            onTap: () {
+                              setState(() => _timeSinceBreakup = 'short');
+                              _scrollToNextSection(3);
+                            },
+                          ),
+                          SelectionChip(
+                            label: '3-6개월',
+                            isSelected: _timeSinceBreakup == 'medium',
+                            onTap: () {
+                              setState(() => _timeSinceBreakup = 'medium');
+                              _scrollToNextSection(3);
+                            },
+                          ),
+                          SelectionChip(
+                            label: '6개월-1년',
+                            isSelected: _timeSinceBreakup == 'long',
+                            onTap: () {
+                              setState(() => _timeSinceBreakup = 'long');
+                              _scrollToNextSection(3);
+                            },
+                          ),
+                          SelectionChip(
+                            label: '1년 이상',
+                            isSelected: _timeSinceBreakup == 'verylong',
+                            onTap: () {
+                              setState(() => _timeSinceBreakup = 'verylong');
+                              _scrollToNextSection(3);
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 5. 이별 통보자
+                _buildSection(
+                  key: _sectionKeys[4],
+                  index: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '누가 먼저 이별을 말했나요?'),
+                      const SizedBox(height: 8),
+                      ...breakupInitiatorCards.map((card) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: SelectionCard(
+                              title: card.title,
+                              subtitle: card.description,
+                              emoji: card.emoji,
+                              isSelected: _breakupInitiator == card.id,
+                              onTap: () {
+                                setState(() => _breakupInitiator = card.id);
+                                _scrollToNextSection(4);
+                              },
+                            ),
+                          )),
+                    ],
+                  ),
+                ),
+
+                // 6. 현재 연락 상태
+                _buildSection(
+                  key: _sectionKeys[5],
+                  index: 5,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '지금 연락하고 있나요?'),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: contactStatusOptions.map((option) {
+                          return SelectionChip(
+                            label: option.label,
+                            isSelected: _contactStatus == option.id,
+                            onTap: () {
+                              setState(() => _contactStatus = option.id);
+                              _scrollToNextSection(5);
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 7. 이별 이유 상세 (STT + 타이핑)
+                _buildSection(
+                  key: _sectionKeys[6],
+                  index: 6,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '왜 헤어지게 되었나요?'),
+                      const SizedBox(height: 4),
+                      Text(
+                        '음성 또는 텍스트로 자유롭게 말씀해주세요',
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      VoiceInputTextField(
+                        hintText: '이별하게 된 이유를 말씀해주세요...',
+                        transcribingText: '듣고 있어요...',
+                        onSubmit: (text) {
+                          setState(() => _breakupDetail = text);
+                          _scrollToNextSection(6);
+                        },
+                      ),
+                      if (_breakupDetail != null &&
+                          _breakupDetail!.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: colors.surface,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.check_circle,
+                                  color: DSColors.success, size: 20),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _breakupDetail!,
+                                  style: DSTypography.bodyMedium.copyWith(
+                                    color: colors.textPrimary,
+                                  ),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.close, size: 18),
+                                onPressed: () {
+                                  setState(() => _breakupDetail = null);
+                                },
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                // 8. 현재 감정
+                _buildSection(
+                  key: _sectionKeys[7],
+                  index: 7,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '지금 나의 마음은?'),
+                      const SizedBox(height: 8),
+                      ...emotionCards.map((card) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: SelectionCard(
+                              title: card.title,
+                              subtitle: card.description,
+                              emoji: card.emoji,
+                              isSelected: _currentEmotion == card.id,
+                              onTap: () {
+                                setState(() => _currentEmotion = card.id);
+                                _scrollToNextSection(7);
+                              },
+                            ),
+                          )),
+                    ],
+                  ),
+                ),
+
+                // 9. 가장 궁금한 것
+                _buildSection(
+                  key: _sectionKeys[8],
+                  index: 8,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '가장 궁금한 것을 하나만 선택해주세요'),
+                      const SizedBox(height: 8),
+                      ...curiosityCards.map((card) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: SelectionCard(
+                              title: card.title,
+                              subtitle: card.description,
+                              emoji: card.icon,
+                              isSelected: _mainCuriosity == card.id,
+                              onTap: () {
+                                setState(() => _mainCuriosity = card.id);
+                                _scrollToNextSection(8);
+                              },
+                            ),
+                          )),
+                    ],
+                  ),
+                ),
+
+                // 10. 카톡/대화 내용 (선택)
+                _buildSection(
+                  key: _sectionKeys[9],
+                  index: 9,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FieldLabel(text: '나누었던 대화가 있다면 (선택)'),
+                      const SizedBox(height: 4),
+                      Text(
+                        '카톡이나 문자 대화를 복사해서 붙여넣어 주세요.\n더 정확한 분석에 도움이 돼요.',
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: _chatHistoryController,
+                        maxLines: 8,
+                        decoration: InputDecoration(
+                          hintText: '대화 내용을 붙여넣어주세요...',
+                          filled: true,
+                          fillColor: colors.surface,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.all(16),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Floating 버튼 공간 확보
+                const SizedBox(height: 120),
+              ],
+            ),
           ),
 
           // Floating Progress Button
-          _buildFloatingButton(),
+          UnifiedButton.floating(
+            text: '마음 분석하기',
+            onPressed: (_isLoading || !_canSubmit()) ? null : _analyzeAndShowResult,
+            isLoading: _isLoading,
+            isEnabled: _canSubmit() && !_isLoading,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildFloatingButton() {
-    final canProceed = _currentStep == 0 ? _canProceedStep1() : _canProceedStep2();
-
-    return UnifiedButton.floating(
-      text: _currentStep == 0 ? '다음' : '마음 분석하기',
-      onPressed: (_isLoading || !canProceed) ? null : _nextStep,
-      isLoading: _isLoading, // ✅ 로딩 상태 전달
-      isEnabled: canProceed && !_isLoading,
-    );
+  Widget _buildSection({
+    required GlobalKey key,
+    required int index,
+    required Widget child,
+  }) {
+    return Container(
+      key: key,
+      margin: const EdgeInsets.only(bottom: 32),
+      child: child,
+    ).animate().fadeIn(
+          duration: 400.ms,
+          delay: (index * 50).ms,
+        );
   }
-
-  Widget _buildStep1(bool isDark) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 위로 메시지 - ChatGPT 스타일
-          const PageHeaderSection(
-            emoji: '💜',
-            title: '힘드셨죠?',
-            subtitle: '천천히 답해주세요. 당신의 마음을 읽어드릴게요.',
-          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
-
-          const SizedBox(height: 40),
-
-          // 1. 이별 시기
-          const FieldLabel(text: '이별한 지 얼마나 되었나요?'),
-
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              SelectionChip(
-                label: '1개월 미만',
-                isSelected: _timeSinceBreakup == 'recent',
-                onTap: () => setState(() => _timeSinceBreakup = 'recent'),
-              ),
-              SelectionChip(
-                label: '1-3개월',
-                isSelected: _timeSinceBreakup == 'short',
-                onTap: () => setState(() => _timeSinceBreakup = 'short'),
-              ),
-              SelectionChip(
-                label: '3-6개월',
-                isSelected: _timeSinceBreakup == 'medium',
-                onTap: () => setState(() => _timeSinceBreakup = 'medium'),
-              ),
-              SelectionChip(
-                label: '6개월-1년',
-                isSelected: _timeSinceBreakup == 'long',
-                onTap: () => setState(() => _timeSinceBreakup = 'long'),
-              ),
-              SelectionChip(
-                label: '1년 이상',
-                isSelected: _timeSinceBreakup == 'verylong',
-                onTap: () => setState(() => _timeSinceBreakup = 'verylong'),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 32),
-
-          // 2. 현재 감정
-          const FieldLabel(text: '지금 나의 마음은?'),
-
-          ...emotionCards.map((card) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: SelectionCard(
-              title: card.title,
-              subtitle: card.description,
-              emoji: card.emoji,
-              isSelected: _currentEmotion == card.id,
-              onTap: () => setState(() => _currentEmotion = card.id),
-            ),
-          )),
-
-          const SizedBox(height: 32),
-
-          // 3. 가장 궁금한 것
-          const FieldLabel(text: '가장 궁금한 것을 하나만 선택해주세요'),
-
-          ...curiosityCards.map((card) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: SelectionCard(
-              title: card.title,
-              subtitle: card.description,
-              emoji: card.icon,
-              isSelected: _mainCuriosity == card.id,
-              onTap: () => setState(() => _mainCuriosity = card.id),
-            ),
-          )),
-
-          // Floating 버튼 공간 확보
-          const SizedBox(height: 100),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStep2(bool isDark) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 헤더 - ChatGPT 스타일
-          const PageHeaderSection(
-            emoji: '✨',
-            title: '더 정확한 분석을 원하시나요?',
-            subtitle: '선택사항이에요. 건너뛰어도 괜찮아요.',
-          ),
-
-          const SizedBox(height: 40),
-
-          // 상대방 생년월일
-          NumericDateInput(
-            label: '상대방 생년월일 (선택)',
-            selectedDate: _exBirthDate,
-            onDateChanged: (date) => setState(() => _exBirthDate = date),
-            minDate: DateTime(1950),
-            maxDate: DateTime.now(),
-            showAge: true,
-          ),
-
-          const SizedBox(height: 32),
-
-          // 이별 이유
-          const FieldLabel(text: '이별 이유 (선택)'),
-
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              SelectionChip(
-                label: '가치관 차이',
-                isSelected: _breakupReason == 'differentValues',
-                onTap: () => setState(() => _breakupReason = 'differentValues'),
-              ),
-              SelectionChip(
-                label: '시기가 맞지 않음',
-                isSelected: _breakupReason == 'timing',
-                onTap: () => setState(() => _breakupReason = 'timing'),
-              ),
-              SelectionChip(
-                label: '소통 부족',
-                isSelected: _breakupReason == 'communication',
-                onTap: () => setState(() => _breakupReason = 'communication'),
-              ),
-              SelectionChip(
-                label: '신뢰 문제',
-                isSelected: _breakupReason == 'trust',
-                onTap: () => setState(() => _breakupReason = 'trust'),
-              ),
-              SelectionChip(
-                label: '기타',
-                isSelected: _breakupReason == 'other',
-                onTap: () => setState(() => _breakupReason = 'other'),
-              ),
-            ],
-          ),
-
-          // Floating 버튼 공간 확보
-          const SizedBox(height: 100),
-        ],
-      ),
-    );
-  }
-
 }

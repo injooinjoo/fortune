@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 
 class ExamPreparationStatus extends StatelessWidget {
@@ -29,16 +29,16 @@ class ExamPreparationStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '추가 정보 (선택사항)',
-          style: TossDesignSystem.body1.copyWith(
+          style: DSTypography.bodyLarge.copyWith(
             fontWeight: FontWeight.bold,
-            color: isDark ? TossDesignSystem.textPrimaryDark : null,
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 16),
@@ -50,10 +50,8 @@ class ExamPreparationStatus extends StatelessWidget {
               // 공부 기간
               Text(
                 '공부 기간',
-                style: TossDesignSystem.caption.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.gray600,
+                style: DSTypography.labelSmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
               const SizedBox(height: 12),
@@ -69,23 +67,19 @@ class ExamPreparationStatus extends StatelessWidget {
                           horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? TossDesignSystem.tossBlue.withValues(alpha: 0.2)
-                            : (isDark
-                                ? TossDesignSystem.cardBackgroundDark
-                                : TossDesignSystem.gray100),
+                            ? colors.accent.withValues(alpha: 0.2)
+                            : colors.backgroundSecondary,
                         borderRadius: BorderRadius.circular(16),
                         border: isSelected
-                            ? Border.all(color: TossDesignSystem.tossBlue)
+                            ? Border.all(color: colors.accent)
                             : null,
                       ),
                       child: Text(
                         period,
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: isSelected
-                              ? TossDesignSystem.tossBlue
-                              : (isDark
-                                  ? TossDesignSystem.textPrimaryDark
-                                  : TossDesignSystem.gray700),
+                              ? colors.accent
+                              : colors.textPrimary,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
@@ -100,10 +94,8 @@ class ExamPreparationStatus extends StatelessWidget {
               // 자신감
               Text(
                 '자신감',
-                style: TossDesignSystem.caption.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.gray600,
+                style: DSTypography.labelSmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
               const SizedBox(height: 12),
@@ -119,24 +111,19 @@ class ExamPreparationStatus extends StatelessWidget {
                           horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? TossDesignSystem.successGreen
-                                .withValues(alpha: 0.2)
-                            : (isDark
-                                ? TossDesignSystem.cardBackgroundDark
-                                : TossDesignSystem.gray100),
+                            ? DSColors.success.withValues(alpha: 0.2)
+                            : colors.backgroundSecondary,
                         borderRadius: BorderRadius.circular(16),
                         border: isSelected
-                            ? Border.all(color: TossDesignSystem.successGreen)
+                            ? Border.all(color: DSColors.success)
                             : null,
                       ),
                       child: Text(
                         level,
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: isSelected
-                              ? TossDesignSystem.successGreen
-                              : (isDark
-                                  ? TossDesignSystem.textPrimaryDark
-                                  : TossDesignSystem.gray700),
+                              ? DSColors.success
+                              : colors.textPrimary,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
@@ -151,10 +138,8 @@ class ExamPreparationStatus extends StatelessWidget {
               // 난이도
               Text(
                 '예상 난이도',
-                style: TossDesignSystem.caption.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.gray600,
+                style: DSTypography.labelSmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
               const SizedBox(height: 12),
@@ -170,24 +155,19 @@ class ExamPreparationStatus extends StatelessWidget {
                           horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? TossDesignSystem.warningOrange
-                                .withValues(alpha: 0.2)
-                            : (isDark
-                                ? TossDesignSystem.cardBackgroundDark
-                                : TossDesignSystem.gray100),
+                            ? DSColors.warning.withValues(alpha: 0.2)
+                            : colors.backgroundSecondary,
                         borderRadius: BorderRadius.circular(16),
                         border: isSelected
-                            ? Border.all(color: TossDesignSystem.warningOrange)
+                            ? Border.all(color: DSColors.warning)
                             : null,
                       ),
                       child: Text(
                         level,
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: isSelected
-                              ? TossDesignSystem.warningOrange
-                              : (isDark
-                                  ? TossDesignSystem.textPrimaryDark
-                                  : TossDesignSystem.gray700),
+                              ? DSColors.warning
+                              : colors.textPrimary,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
                         ),

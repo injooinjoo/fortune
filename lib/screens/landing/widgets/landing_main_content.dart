@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/theme/toss_design_system.dart';
-import '../../../core/theme/typography_unified.dart';
+import '../../../core/design_system/design_system.dart';
 
 /// Main content area of landing page with logo, title, and start button
 class LandingMainContent extends StatelessWidget {
@@ -37,7 +36,7 @@ class LandingMainContent extends StatelessWidget {
           // App Name
           Text(
             '관상은 과학',
-            style: TypographyUnified.displaySmall.copyWith(
+            style: DSTypography.displaySmall.copyWith(
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: -1),
@@ -48,11 +47,9 @@ class LandingMainContent extends StatelessWidget {
           // Subtitle
           Text(
             '매일 새로운 운세를 만나보세요',
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: DSTypography.labelMedium.copyWith(
                 fontWeight: FontWeight.w400,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.grayDark400
-                    : TossDesignSystem.gray600),
+                color: context.colors.textSecondary),
           ).animate().fadeIn(delay: 400.ms, duration: 600.ms),
 
           const SizedBox(height: 80),
@@ -61,21 +58,15 @@ class LandingMainContent extends StatelessWidget {
           Hero(
             tag: 'start-button-hero',
             child: Material(
-              color: TossDesignSystem.white.withValues(alpha: 0.0),
+              color: Colors.transparent,
               child: SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
                   onPressed: onStartPressed,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.white
-                            : TossDesignSystem.black,
-                    foregroundColor:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.black
-                            : TossDesignSystem.white,
+                    backgroundColor: context.colors.ctaBackground,
+                    foregroundColor: context.colors.ctaForeground,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(28),
@@ -84,7 +75,7 @@ class LandingMainContent extends StatelessWidget {
                   child: Text(
                     '시작하기',
                     style:
-                        TypographyUnified.heading4.copyWith(fontWeight: FontWeight.w600),
+                        DSTypography.headingSmall.copyWith(fontWeight: FontWeight.w600),
                   ),
                 ),
               ),

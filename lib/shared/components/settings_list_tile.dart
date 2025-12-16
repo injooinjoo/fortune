@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/providers/user_settings_provider.dart';
 
 class SettingsListTile extends ConsumerWidget {
@@ -25,45 +25,24 @@ class SettingsListTile extends ConsumerWidget {
     this.isLast = false,
   }) : assert(icon == null || leading == null, 'Cannot provide both icon and leading widget');
 
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
-  Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
-  }
-
-  Color _getDividerColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray200;
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
     final typography = ref.watch(typographyThemeProvider);
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: TossDesignSystem.marginHorizontal,
-            vertical: TossDesignSystem.spacingM,
+            horizontal: DSSpacing.pageHorizontal,
+            vertical: DSSpacing.md,
           ),
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: isLast ? Colors.transparent : _getDividerColor(context),
+                color: isLast ? Colors.transparent : colors.divider,
                 width: 0.5,
               ),
             ),
@@ -75,13 +54,13 @@ class SettingsListTile extends ConsumerWidget {
                 Icon(
                   icon,
                   size: 22,
-                  color: _getSecondaryTextColor(context),
+                  color: colors.textSecondary,
                 )
               else if (leading != null)
                 leading!,
 
               if (icon != null || leading != null)
-                const SizedBox(width: TossDesignSystem.spacingM),
+                const SizedBox(width: DSSpacing.md),
 
               // Title & Subtitle
               Expanded(
@@ -94,26 +73,26 @@ class SettingsListTile extends ConsumerWidget {
                           child: Text(
                             title,
                             style: typography.bodyMedium.copyWith(
-                              color: _getTextColor(context),
+                              color: colors.textPrimary,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         if (showBadge) ...[
-                          const SizedBox(width: 8),
+                          const SizedBox(width: DSSpacing.sm),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: TossDesignSystem.tossBlue,
-                              borderRadius: BorderRadius.circular(4),
+                              color: colors.accent,
+                              borderRadius: BorderRadius.circular(DSRadius.xs),
                             ),
                             child: Text(
                               'PRO',
                               style: typography.labelSmall.copyWith(
-                                color: TossDesignSystem.white,
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -126,7 +105,7 @@ class SettingsListTile extends ConsumerWidget {
                       Text(
                         subtitle!,
                         style: typography.labelMedium.copyWith(
-                          color: _getSecondaryTextColor(context),
+                          color: colors.textSecondary,
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
@@ -143,7 +122,7 @@ class SettingsListTile extends ConsumerWidget {
                 Icon(
                   Icons.chevron_right,
                   size: 20,
-                  color: _getSecondaryTextColor(context),
+                  color: colors.textSecondary,
                 ),
             ],
           ),

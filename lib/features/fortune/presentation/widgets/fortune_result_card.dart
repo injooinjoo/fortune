@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../domain/entities/fortune.dart';
 import 'fortune_card.dart';
@@ -107,8 +107,8 @@ class FortuneResultCard extends StatelessWidget {
         children: [
           Text(
             fortuneTitle,
-            style: TossDesignSystem.heading2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            style: DSTypography.headingMedium.copyWith(
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
             textAlign: TextAlign.center,
@@ -116,8 +116,8 @@ class FortuneResultCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             DateTime.now().toString().split(' ')[0],
-            style: TossDesignSystem.body3.copyWith(
-              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            style: DSTypography.bodySmall.copyWith(
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             ),
           ),
         ],
@@ -144,15 +144,15 @@ class FortuneResultCard extends StatelessWidget {
               children: [
                 Text(
                   '$score',
-                  style: TossDesignSystem.display2.copyWith(
+                  style: DSTypography.displayMedium.copyWith(
                     color: scoreColor,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
                   '점',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  style: DSTypography.bodyMedium.copyWith(
+                    color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   ),
                 ),
               ],
@@ -164,7 +164,7 @@ class FortuneResultCard extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             _getScoreMessage(score),
-            style: TossDesignSystem.heading3.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               color: scoreColor,
               fontWeight: FontWeight.w600,
             ),
@@ -177,8 +177,8 @@ class FortuneResultCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             _getScoreDescription(score),
-            style: TossDesignSystem.body3.copyWith(
-              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            style: DSTypography.bodySmall.copyWith(
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               height: 1.5,
             ),
             textAlign: TextAlign.center,
@@ -195,16 +195,16 @@ class FortuneResultCard extends StatelessWidget {
     final String emoji;
 
     if (percentile <= 10) {
-      badgeColor = TossDesignSystem.orange;  // 골드 대신 오렌지 사용
+      badgeColor = DSColors.warning;  // 골드 대신 오렌지 사용
       emoji = '🏆';
     } else if (percentile <= 25) {
-      badgeColor = TossDesignSystem.successGreen;
+      badgeColor = DSColors.success;
       emoji = '⭐';
     } else if (percentile <= 50) {
-      badgeColor = TossDesignSystem.tossBlue;
+      badgeColor = DSColors.accent;
       emoji = '✨';
     } else {
-      badgeColor = TossDesignSystem.warningOrange;
+      badgeColor = DSColors.warning;
       emoji = '🍀';
     }
 
@@ -228,7 +228,7 @@ class FortuneResultCard extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             '오늘 운세 본 사람 중 상위 $percentile%',
-            style: TossDesignSystem.caption.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               color: badgeColor,
               fontWeight: FontWeight.w600,
             ),
@@ -247,8 +247,8 @@ class FortuneResultCard extends StatelessWidget {
         children: [
           Text(
             FortuneTextCleaner.clean(fortune.content),
-            style: TossDesignSystem.body2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+            style: DSTypography.bodyMedium.copyWith(
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               height: 1.8,
             ),
           ),
@@ -257,13 +257,13 @@ class FortuneResultCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+                color: DSColors.accent.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 FortuneTextCleaner.clean(fortune.description!),
-                style: TossDesignSystem.body3.copyWith(
-                  color: TossDesignSystem.tossBlue,
+                style: DSTypography.bodySmall.copyWith(
+                  color: DSColors.accent,
                   height: 1.6,
                 ),
               ),
@@ -287,7 +287,7 @@ class FortuneResultCard extends StatelessWidget {
               icon: Icons.palette,
               title: '행운의 색상',
               value: luckyItems['color'],
-              color: TossDesignSystem.purple,
+              color: DSColors.accentSecondary,
               isDark: isDark,
             ),
           if (luckyItems['number'] != null)
@@ -295,7 +295,7 @@ class FortuneResultCard extends StatelessWidget {
               icon: Icons.looks_one,
               title: '행운의 숫자',
               value: luckyItems['number'].toString(),
-              color: TossDesignSystem.successGreen,
+              color: DSColors.success,
               isDark: isDark,
             ),
           if (luckyItems['direction'] != null)
@@ -303,7 +303,7 @@ class FortuneResultCard extends StatelessWidget {
               icon: Icons.explore,
               title: '행운의 방향',
               value: luckyItems['direction'],
-              color: TossDesignSystem.tossBlue,
+              color: DSColors.accent,
               isDark: isDark,
             ),
           if (luckyItems['time'] != null)
@@ -311,7 +311,7 @@ class FortuneResultCard extends StatelessWidget {
               icon: Icons.schedule,
               title: '행운의 시간',
               value: luckyItems['time'],
-              color: TossDesignSystem.warningOrange,
+              color: DSColors.warning,
               isDark: isDark,
             ),
         ],
@@ -350,15 +350,15 @@ class FortuneResultCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TossDesignSystem.caption.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  style: DSTypography.bodyMedium.copyWith(
+                    color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -383,15 +383,15 @@ class FortuneResultCard extends StatelessWidget {
               children: [
                 Icon(
                   Icons.check_circle,
-                  color: TossDesignSystem.successGreen,
+                  color: DSColors.success,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     FortuneTextCleaner.clean(recommendation),
-                    style: TossDesignSystem.body3.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                       height: 1.5,
                     ),
                   ),
@@ -408,7 +408,7 @@ class FortuneResultCard extends StatelessWidget {
     return FortuneCard(
       title: '주의 사항',
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      backgroundColor: TossDesignSystem.warningOrange.withValues(alpha: 0.05),
+      backgroundColor: DSColors.warning.withValues(alpha: 0.05),
       child: Column(
         children: fortune.warnings!.map((warning) {
           return Padding(
@@ -418,15 +418,15 @@ class FortuneResultCard extends StatelessWidget {
               children: [
                 Icon(
                   Icons.warning_amber,
-                  color: TossDesignSystem.warningOrange,
+                  color: DSColors.warning,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     FortuneTextCleaner.clean(warning),
-                    style: TossDesignSystem.body3.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                       height: 1.5,
                     ),
                   ),
@@ -482,10 +482,10 @@ class FortuneResultCard extends StatelessWidget {
   }
   
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accent;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
   
   String _getScoreMessage(int score) {

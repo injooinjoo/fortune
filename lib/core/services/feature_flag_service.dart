@@ -58,9 +58,9 @@ class FeatureFlagService {
           row['key'] as String: FeatureFlag.fromJson(row),
       };
       _initialized = true;
-      AppLogger.debug('FeatureFlagService initialized with ${_flags.length} flags');
+      Logger.debug('FeatureFlagService initialized with ${_flags.length} flags');
     } catch (e) {
-      AppLogger.error('Failed to load feature flags', error: e);
+      Logger.error('Failed to load feature flags', e);
       _flags = {};
     }
   }

@@ -5,7 +5,7 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/models.dart';
 import '../providers/trend_providers.dart';
 
@@ -95,7 +95,7 @@ class _TrendPsychologyTestPageState
             children: [
               Text(
                 '질문 ${_currentQuestionIndex + 1}/${test.questions.length}',
-                style: TypographyUnified.labelMedium.copyWith(
+                style: DSTypography.labelMedium.copyWith(
                   color: isDark
                       ? TossDesignSystem.textSecondaryDark
                       : TossDesignSystem.textSecondaryLight,
@@ -103,7 +103,7 @@ class _TrendPsychologyTestPageState
               ),
               Text(
                 '${(progress * 100).toInt()}%',
-                style: TypographyUnified.labelMedium.copyWith(
+                style: DSTypography.labelMedium.copyWith(
                   color: TossDesignSystem.tossBlue,
                   fontWeight: FontWeight.w600,
                 ),
@@ -134,7 +134,7 @@ class _TrendPsychologyTestPageState
       return Center(
         child: Text(
           '질문이 없습니다',
-          style: TypographyUnified.bodyMedium.copyWith(
+          style: DSTypography.bodyMedium.copyWith(
             color: isDark
                 ? TossDesignSystem.textSecondaryDark
                 : TossDesignSystem.textSecondaryLight,
@@ -154,7 +154,7 @@ class _TrendPsychologyTestPageState
           // Question text
           Text(
             question.questionText,
-            style: TypographyUnified.heading3.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               color: isDark
                   ? TossDesignSystem.textPrimaryDark
                   : TossDesignSystem.textPrimaryLight,
@@ -205,7 +205,7 @@ class _TrendPsychologyTestPageState
                     ),
                     child: Text(
                       '이전',
-                      style: TypographyUnified.bodyMedium.copyWith(
+                      style: DSTypography.bodyMedium.copyWith(
                         color: isDark
                             ? TossDesignSystem.textSecondaryDark
                             : TossDesignSystem.textSecondaryLight,
@@ -243,7 +243,7 @@ class _TrendPsychologyTestPageState
                           _currentQuestionIndex == test.questions.length - 1
                               ? '결과 보기'
                               : '다음',
-                          style: TypographyUnified.bodyMedium.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
@@ -302,7 +302,7 @@ class _TrendPsychologyTestPageState
             Expanded(
               child: Text(
                 option.label,
-                style: TypographyUnified.bodyMedium.copyWith(
+                style: DSTypography.bodyMedium.copyWith(
                   color: isSelected
                       ? TossDesignSystem.tossBlue
                       : isDark
@@ -455,7 +455,7 @@ class _TrendPsychologyTestPageState
                   ),
                   child: Text(
                     '${test.resultType.emoji} ${test.resultType.displayName}',
-                    style: TypographyUnified.labelMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       color: TossDesignSystem.tossBlue,
                       fontWeight: FontWeight.w600,
                     ),
@@ -464,7 +464,7 @@ class _TrendPsychologyTestPageState
                 const SizedBox(height: 16),
                 Text(
                   result.title,
-                  style: TypographyUnified.heading2.copyWith(
+                  style: DSTypography.headingMedium.copyWith(
                     color: isDark
                         ? TossDesignSystem.textPrimaryDark
                         : TossDesignSystem.textPrimaryLight,
@@ -475,7 +475,7 @@ class _TrendPsychologyTestPageState
                 const SizedBox(height: 12),
                 Text(
                   result.description,
-                  style: TypographyUnified.bodyMedium.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     color: isDark
                         ? TossDesignSystem.textSecondaryDark
                         : TossDesignSystem.textSecondaryLight,
@@ -524,7 +524,7 @@ class _TrendPsychologyTestPageState
                         ),
                         child: Text(
                           '다시 하기',
-                          style: TypographyUnified.bodyMedium.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
@@ -561,7 +561,7 @@ class _TrendPsychologyTestPageState
         children: [
           Text(
             '특징',
-            style: TypographyUnified.labelLarge.copyWith(
+            style: DSTypography.labelLarge.copyWith(
               color: isDark
                   ? TossDesignSystem.textPrimaryDark
                   : TossDesignSystem.textPrimaryLight,
@@ -586,7 +586,7 @@ class _TrendPsychologyTestPageState
                     Expanded(
                       child: Text(
                         c,
-                        style: TypographyUnified.bodyMedium.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           color: isDark
                               ? TossDesignSystem.textSecondaryDark
                               : TossDesignSystem.textSecondaryLight,
@@ -621,14 +621,14 @@ class _TrendPsychologyTestPageState
                   const SizedBox(height: 8),
                   Text(
                     '잘 맞는 유형',
-                    style: TypographyUnified.labelSmall.copyWith(
+                    style: DSTypography.labelSmall.copyWith(
                       color: TossDesignSystem.successGreen,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     result.compatibleWith!,
-                    style: TypographyUnified.bodySmall.copyWith(
+                    style: DSTypography.bodySmall.copyWith(
                       color: isDark
                           ? TossDesignSystem.textPrimaryDark
                           : TossDesignSystem.textPrimaryLight,
@@ -659,14 +659,14 @@ class _TrendPsychologyTestPageState
                   const SizedBox(height: 8),
                   Text(
                     '안 맞는 유형',
-                    style: TypographyUnified.labelSmall.copyWith(
+                    style: DSTypography.labelSmall.copyWith(
                       color: TossDesignSystem.errorRed,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     result.incompatibleWith!,
-                    style: TypographyUnified.bodySmall.copyWith(
+                    style: DSTypography.bodySmall.copyWith(
                       color: isDark
                           ? TossDesignSystem.textPrimaryDark
                           : TossDesignSystem.textPrimaryLight,
@@ -705,7 +705,7 @@ class _TrendPsychologyTestPageState
           const SizedBox(height: 16),
           Text(
             error,
-            style: TypographyUnified.bodyMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark
                   : TossDesignSystem.textSecondaryLight,

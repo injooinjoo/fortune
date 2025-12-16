@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../services/speech_recognition_service.dart';
 import '../providers/dream_voice_provider.dart';
@@ -251,8 +250,8 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       bottom: bottomPadding,
-      left: TossTheme.spacingM,
-      right: TossTheme.spacingM,
+      left: 16,
+      right: 16,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -272,12 +271,12 @@ class _DreamVoiceInputWidgetState extends ConsumerState<DreamVoiceInputWidget> {
                       padding: const EdgeInsets.only(left: 20, right: 8),
                       child: TextField(
                         controller: _textController,
-                        style: TypographyUnified.bodyMedium.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           color: isDark ? Colors.white : Colors.black,
                         ),
                         decoration: InputDecoration(
                           hintText: _isRecording ? '듣고 있어요...' : '무슨 꿈이었나요?',
-                          hintStyle: TypographyUnified.bodyMedium.copyWith(
+                          hintStyle: DSTypography.bodyMedium.copyWith(
                             color: _isRecording 
                                 ? (isDark ? const Color(0xFF6B4EFF) : const Color(0xFF5835E8)) // 녹음 중 힌트 색상 강조
                                 : (isDark ? Colors.grey[500] : Colors.grey[600]),

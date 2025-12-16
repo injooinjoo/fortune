@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/components/image_upload_selector.dart';
 
 class InputStep1Widget extends StatelessWidget {
@@ -62,7 +62,7 @@ class InputStep1Widget extends StatelessWidget {
           ),
           child: const Icon(
             Icons.face_retouching_natural,
-            color: TossDesignSystem.white,
+            color: Colors.white,
             size: 20,
           ),
         ),
@@ -74,16 +74,16 @@ class InputStep1Widget extends StatelessWidget {
             children: [
               Text(
                 'AI 관상 분석',
-                style: TossDesignSystem.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                style: DSTypography.headingMedium.copyWith(
+                  color: isDark ? Colors.white : DSColors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 'GPT-4 Vision 기반',
-                style: TossDesignSystem.body3.copyWith(
-                  color: isDark ? const Color(0xFFCE93D8) : TossDesignSystem.purple,
+                style: DSTypography.labelSmall.copyWith(
+                  color: isDark ? const Color(0xFFCE93D8) : DSColors.accent,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -100,8 +100,8 @@ class InputStep1Widget extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.gray100,
+            ? DSColors.backgroundSecondary
+            : DSColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -122,13 +122,13 @@ class InputStep1Widget extends StatelessWidget {
         Icon(
           icon,
           size: 16,
-          color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+          color: isDark ? DSColors.textTertiary : DSColors.textTertiary,
         ),
         const SizedBox(width: 4),
         Text(
           label,
-          style: TossDesignSystem.body3.copyWith(
-            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+          style: DSTypography.labelSmall.copyWith(
+            color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
           ),
         ),
       ],
@@ -145,8 +145,8 @@ class InputStep1Widget extends StatelessWidget {
             children: [
               Text(
                 '사진 업로드',
-                style: TossDesignSystem.body1.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                style: DSTypography.bodyLarge.copyWith(
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -154,13 +154,13 @@ class InputStep1Widget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.errorRed.withValues(alpha: 0.1),
+                  color: DSColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
                   '필수',
-                  style: TossDesignSystem.body3.copyWith(
-                    color: TossDesignSystem.errorRed,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: DSColors.error,
                     fontWeight: FontWeight.w600,
                     fontSize: 11,
                   ),

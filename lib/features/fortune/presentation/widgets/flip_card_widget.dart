@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 
 class FlipCardWidget extends ConsumerStatefulWidget {
@@ -42,7 +39,7 @@ class _FlipCardWidgetState extends ConsumerState<FlipCardWidget>
   void initState() {
     super.initState();
     _flipController = AnimationController(
-      duration: AppAnimations.durationXLong,
+      duration: DSAnimation.durationXLong,
       vsync: this,
     );
 
@@ -120,7 +117,7 @@ class _FlipCardWidgetState extends ConsumerState<FlipCardWidget>
                   ..rotateY(_flipAnimation.value * math.pi),
                 child: SizedBox(
                   width: 80,
-                  height: AppSpacing.spacing24 * 1.25,
+                  height: 96 * 1.25,
                   child: isShowingFront
                       ? _buildCardBack(theme)
                       : Transform(
@@ -151,14 +148,14 @@ class _FlipCardWidgetState extends ConsumerState<FlipCardWidget>
                     child: Opacity(
                       opacity: 1 - value,
                       child: Container(
-                        width: AppSpacing.spacing1 + (index % 3) * 2,
+                        width: 4 + (index % 3) * 2,
                         height: 4 + (index % 3) * 2,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: TossDesignSystem.purple.withValues(alpha: 0.8),
+                          color: DSColors.accentSecondary.withValues(alpha: 0.8),
                           boxShadow: [
                             BoxShadow(
-                              color: TossDesignSystem.purple.withValues(alpha: 0.5),
+                              color: DSColors.accentSecondary.withValues(alpha: 0.5),
                               blurRadius: 4,
                               spreadRadius: 1,
                             ),
@@ -185,7 +182,7 @@ class _FlipCardWidgetState extends ConsumerState<FlipCardWidget>
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
-      borderRadius: AppDimensions.borderRadiusSmall,
+      borderRadius: BorderRadius.circular(DSRadius.sm),
       border: Border.all(
         color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
         width: 1,
@@ -215,13 +212,13 @@ class _FlipCardWidgetState extends ConsumerState<FlipCardWidget>
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.purple.withValues(alpha: 0.6),
-          TossDesignSystem.primaryBlue.withValues(alpha: 0.6),
+          DSColors.accentSecondary.withValues(alpha: 0.6),
+          DSColors.accent.withValues(alpha: 0.6),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
-      borderRadius: AppDimensions.borderRadiusSmall,
+      borderRadius: BorderRadius.circular(DSRadius.sm),
       border: Border.all(
         color: theme.colorScheme.primary,
         width: 2,
@@ -232,14 +229,14 @@ class _FlipCardWidgetState extends ConsumerState<FlipCardWidget>
           Icon(
             Icons.star,
             size: 36,
-            color: TossDesignSystem.white,
+            color: Colors.white,
           ),
-          const SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: 8),
           Container(
             width: 24,
-            height: AppSpacing.spacing6,
+            height: 24,
             decoration: BoxDecoration(
-              color: TossDesignSystem.white,
+              color: Colors.white,
               shape: BoxShape.circle,
             ),
             child: Center(

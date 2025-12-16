@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import 'package:flutter/services.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 /// Section 6: 만남 장소 & 연애 목표
 class MeetingPlacesAndGoalInput extends StatelessWidget {
@@ -20,7 +19,7 @@ class MeetingPlacesAndGoalInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     final places = [
       {'id': 'cafe', 'text': '카페·맛집', 'emoji': '☕'},
@@ -43,16 +42,16 @@ class MeetingPlacesAndGoalInput extends StatelessWidget {
         // 만남 장소
         Text(
           '선호하는 만남 장소',
-          style: TypographyUnified.labelLarge.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.labelLarge.copyWith(
+            color: colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '여러 개 선택 가능',
-          style: TypographyUnified.labelMedium.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+          style: DSTypography.labelMedium.copyWith(
+            color: colors.textSecondary,
           ),
         ),
         const SizedBox(height: 12),
@@ -65,19 +64,19 @@ class MeetingPlacesAndGoalInput extends StatelessWidget {
             return InkWell(
               onTap: () {
                 onMeetingPlaceToggled(placeId);
-                TossDesignSystem.hapticLight();
+                HapticFeedback.lightImpact();
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                      : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
+                      ? colors.accent.withValues(alpha: 0.1)
+                      : colors.surface,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isSelected
-                        ? TossDesignSystem.tossBlue
-                        : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                        ? colors.accent
+                        : colors.border,
                     width: isSelected ? 1.5 : 1,
                   ),
                 ),
@@ -86,15 +85,15 @@ class MeetingPlacesAndGoalInput extends StatelessWidget {
                   children: [
                     Text(
                       place['emoji'] as String,
-                      style: TypographyUnified.bodyMedium,
+                      style: DSTypography.bodyMedium,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       place['text'] as String,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         color: isSelected
-                            ? TossDesignSystem.tossBlue
-                            : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                            ? colors.accent
+                            : colors.textPrimary,
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                       ),
                     ),
@@ -109,8 +108,8 @@ class MeetingPlacesAndGoalInput extends StatelessWidget {
         // 연애 목표
         Text(
           '연애 목표',
-          style: TypographyUnified.labelLarge.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.labelLarge.copyWith(
+            color: colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -123,19 +122,19 @@ class MeetingPlacesAndGoalInput extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 onRelationshipGoalChanged(goalId);
-                TossDesignSystem.hapticLight();
+                HapticFeedback.lightImpact();
               },
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                      : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
+                      ? colors.accent.withValues(alpha: 0.1)
+                      : colors.surface,
                   border: Border.all(
                     color: isSelected
-                        ? TossDesignSystem.tossBlue
-                        : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                        ? colors.accent
+                        : colors.border,
                     width: isSelected ? 2 : 1,
                   ),
                   borderRadius: BorderRadius.circular(12),
@@ -144,16 +143,16 @@ class MeetingPlacesAndGoalInput extends StatelessWidget {
                   children: [
                     Text(
                       goal['emoji'] as String,
-                      style: TypographyUnified.displaySmall,
+                      style: DSTypography.displaySmall,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         goal['text'] as String,
-                        style: TypographyUnified.bodyMedium.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           color: isSelected
-                              ? TossDesignSystem.tossBlue
-                              : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                              ? colors.accent
+                              : colors.textPrimary,
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                         ),
                       ),
@@ -161,7 +160,7 @@ class MeetingPlacesAndGoalInput extends StatelessWidget {
                     if (isSelected)
                       Icon(
                         Icons.check_circle,
-                        color: TossDesignSystem.tossBlue,
+                        color: colors.accent,
                         size: 20,
                       ),
                   ],

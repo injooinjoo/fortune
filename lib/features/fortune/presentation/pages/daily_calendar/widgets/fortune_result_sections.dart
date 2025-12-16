@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/components/app_card.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../../../core/widgets/gpt_style_typing_text.dart';
 
@@ -25,6 +24,7 @@ class FortuneSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     // 문단 구분을 위해 '. '으로 문장 분리
     final sentences = content.split('. ').where((s) => s.trim().isNotEmpty).toList();
 
@@ -38,17 +38,17 @@ class FortuneSectionCard extends StatelessWidget {
               Icon(
                 icon,
                 color: isWarning
-                  ? TossDesignSystem.errorRed
+                  ? DSColors.error
                   : AppTheme.primaryColor,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 title,
-                style: context.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   color: isWarning
-                    ? TossDesignSystem.errorRed
-                    : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
+                    ? DSColors.error
+                    : (colors.textPrimary),
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -65,8 +65,8 @@ class FortuneSectionCard extends StatelessWidget {
               padding: EdgeInsets.only(bottom: isLastSentence ? 0 : 16),
               child: Text(
                 sentence + (sentence.endsWith('.') ? '' : '.'),
-                style: context.bodyMedium.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.bodyMedium.copyWith(
+                  color: colors.textPrimary,
                   height: 1.8,
                   letterSpacing: -0.3,
                 ),
@@ -100,6 +100,7 @@ class CategoriesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -107,8 +108,8 @@ class CategoriesSection extends StatelessWidget {
           padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Text(
             '카테고리별 운세',
-            style: context.heading4.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.headingSmall.copyWith(
+              color: colors.textPrimary,
             ),
           ),
         ),
@@ -133,9 +134,9 @@ class CategoriesSection extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         cat['title'] as String,
-                        style: context.labelLarge.copyWith(
+                        style: DSTypography.labelLarge.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const Spacer(),
@@ -147,7 +148,7 @@ class CategoriesSection extends StatelessWidget {
                         ),
                         child: Text(
                           '${categoryInfo['score']}점',
-                          style: context.labelMedium.copyWith(
+                          style: DSTypography.labelSmall.copyWith(
                             color: cat['color'] as Color,
                             fontWeight: FontWeight.w700,
                           ),
@@ -159,17 +160,17 @@ class CategoriesSection extends StatelessWidget {
                   if (categoryInfo['title'] != null)
                     Text(
                       FortuneTextCleaner.clean(categoryInfo['title'] as String),
-                      style: context.bodyMedium.copyWith(
+                      style: DSTypography.bodyMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        color: colors.textPrimary,
                       ),
                     ),
                   const SizedBox(height: 4),
                   if (categoryInfo['advice'] != null)
                     Text(
                       FortuneTextCleaner.cleanAndTruncate(categoryInfo['advice'] as String),
-                      style: context.bodySmall.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      style: DSTypography.bodySmall.copyWith(
+                        color: colors.textSecondary,
                         height: 1.5,
                       ),
                     ),
@@ -189,6 +190,7 @@ class CategoriesSection extends StatelessWidget {
   }
 
   Widget _buildTotalFortuneCard(BuildContext context) {
+    final colors = context.colors;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -217,7 +219,7 @@ class CategoriesSection extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   '전체 운세',
-                  style: context.heading4.copyWith(
+                  style: DSTypography.headingSmall.copyWith(
                     color: AppTheme.primaryColor,
                   ),
                 ),
@@ -230,8 +232,8 @@ class CategoriesSection extends StatelessWidget {
                   ),
                   child: Text(
                     '${categories['total']['score']}점',
-                    style: context.labelLarge.copyWith(
-                      color: TossDesignSystem.white,
+                    style: DSTypography.labelLarge.copyWith(
+                      color: Colors.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -243,7 +245,7 @@ class CategoriesSection extends StatelessWidget {
               // advice가 Map 구조인 경우 (idiom + description)
               Text(
                 FortuneTextCleaner.clean((categories['total']['advice'] as Map)['idiom'] as String? ?? ''),
-                style: context.bodyLarge.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                   color: AppTheme.primaryColor,
                 ),
@@ -251,8 +253,8 @@ class CategoriesSection extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 FortuneTextCleaner.cleanAndTruncate((categories['total']['advice'] as Map)['description'] as String? ?? ''),
-                style: context.bodyMedium.copyWith(
-                  color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                style: DSTypography.bodyMedium.copyWith(
+                  color: colors.textSecondary,
                   height: 1.6,
                 ),
               ),
@@ -260,8 +262,8 @@ class CategoriesSection extends StatelessWidget {
               // advice가 String인 경우 (하위 호환)
               Text(
                 FortuneTextCleaner.cleanAndTruncate(categories['total']['advice'] as String? ?? ''),
-                style: context.bodyMedium.copyWith(
-                  color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                style: DSTypography.bodyMedium.copyWith(
+                  color: colors.textSecondary,
                   height: 1.6,
                 ),
               ),
@@ -286,6 +288,7 @@ class AITipsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -301,8 +304,8 @@ class AITipsList extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 'AI 팁',
-                style: context.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -326,7 +329,7 @@ class AITipsList extends StatelessWidget {
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: context.labelSmall.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.w700,
                         ),
@@ -337,8 +340,8 @@ class AITipsList extends StatelessWidget {
                   Expanded(
                     child: Text(
                       FortuneTextCleaner.cleanAndTruncate(tip, maxLength: 80),
-                      style: context.bodyMedium.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: colors.textSecondary,
                         height: 1.5,
                       ),
                     ),
@@ -385,6 +388,7 @@ class TypingFortuneSectionCard extends StatefulWidget {
 class _TypingFortuneSectionCardState extends State<TypingFortuneSectionCard> {
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     // 문단 구분을 위해 '. '으로 문장 분리
     final sentences = widget.content.split('. ').where((s) => s.trim().isNotEmpty).toList();
     final paragraphs = sentences.map((s) {
@@ -402,17 +406,17 @@ class _TypingFortuneSectionCardState extends State<TypingFortuneSectionCard> {
               Icon(
                 widget.icon,
                 color: widget.isWarning
-                  ? TossDesignSystem.errorRed
+                  ? DSColors.error
                   : AppTheme.primaryColor,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 widget.title,
-                style: context.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   color: widget.isWarning
-                    ? TossDesignSystem.errorRed
-                    : (widget.isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
+                    ? DSColors.error
+                    : colors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -426,8 +430,8 @@ class _TypingFortuneSectionCardState extends State<TypingFortuneSectionCard> {
             showCursor: true,
             startTyping: widget.startTyping,
             onComplete: widget.onTypingComplete,
-            style: context.bodyMedium.copyWith(
-              color: widget.isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.bodyMedium.copyWith(
+              color: colors.textPrimary,
               height: 1.8,
               letterSpacing: -0.3,
             ),
@@ -462,6 +466,7 @@ class _TypingTotalFortuneSectionState extends State<TypingTotalFortuneSection> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final advice = widget.total['advice'];
     final isMapAdvice = advice is Map;
 
@@ -494,7 +499,7 @@ class _TypingTotalFortuneSectionState extends State<TypingTotalFortuneSection> {
                     _idiomComplete = true;
                   });
                 },
-                style: context.bodyLarge.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                   color: AppTheme.primaryColor,
                 ),
@@ -506,8 +511,8 @@ class _TypingTotalFortuneSectionState extends State<TypingTotalFortuneSection> {
                 showGhostText: false,
                 showCursor: true,
                 onComplete: widget.onTypingComplete,
-                style: context.bodyMedium.copyWith(
-                  color: widget.isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                style: DSTypography.bodyMedium.copyWith(
+                  color: colors.textSecondary,
                   height: 1.6,
                 ),
               ),
@@ -518,8 +523,8 @@ class _TypingTotalFortuneSectionState extends State<TypingTotalFortuneSection> {
                 showGhostText: false,
                 showCursor: true,
                 onComplete: widget.onTypingComplete,
-                style: context.bodyMedium.copyWith(
-                  color: widget.isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                style: DSTypography.bodyMedium.copyWith(
+                  color: colors.textSecondary,
                   height: 1.6,
                 ),
               ),
@@ -587,6 +592,7 @@ class _TypingCategoriesSectionState extends State<TypingCategoriesSection> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -594,8 +600,8 @@ class _TypingCategoriesSectionState extends State<TypingCategoriesSection> {
           padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Text(
             '카테고리별 운세',
-            style: context.heading4.copyWith(
-              color: widget.isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.headingSmall.copyWith(
+              color: colors.textPrimary,
             ),
           ),
         ),
@@ -653,6 +659,7 @@ class _TypingCategoryCard extends StatefulWidget {
 class _TypingCategoryCardState extends State<_TypingCategoryCard> {
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final advice = widget.categoryInfo['advice'] as String?;
 
     return AppCard(
@@ -670,9 +677,9 @@ class _TypingCategoryCardState extends State<_TypingCategoryCard> {
               const SizedBox(width: 8),
               Text(
                 widget.cat['title'] as String,
-                style: context.labelLarge.copyWith(
+                style: DSTypography.labelLarge.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: widget.isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
               const Spacer(),
@@ -684,7 +691,7 @@ class _TypingCategoryCardState extends State<_TypingCategoryCard> {
                 ),
                 child: Text(
                   '${widget.categoryInfo['score']}점',
-                  style: context.labelMedium.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     color: widget.cat['color'] as Color,
                     fontWeight: FontWeight.w700,
                   ),
@@ -700,8 +707,8 @@ class _TypingCategoryCardState extends State<_TypingCategoryCard> {
               showGhostText: false,
               showCursor: true,
               onComplete: widget.onTypingComplete,
-              style: context.bodyMedium.copyWith(
-                color: widget.isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
                 height: 1.6,
               ),
             ),
@@ -733,6 +740,7 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final advice = widget.total['advice'];
     final isMapAdvice = advice is Map;
 
@@ -764,7 +772,7 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
                 const SizedBox(width: 8),
                 Text(
                   '전체 운세',
-                  style: context.heading4.copyWith(
+                  style: DSTypography.headingSmall.copyWith(
                     color: AppTheme.primaryColor,
                   ),
                 ),
@@ -777,8 +785,8 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
                   ),
                   child: Text(
                     '${widget.total['score']}점',
-                    style: context.labelLarge.copyWith(
-                      color: TossDesignSystem.white,
+                    style: DSTypography.labelLarge.copyWith(
+                      color: Colors.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -797,7 +805,7 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
                     _idiomComplete = true;
                   });
                 },
-                style: context.bodyLarge.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                   color: AppTheme.primaryColor,
                 ),
@@ -809,8 +817,8 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
                 showGhostText: false,
                 showCursor: true,
                 onComplete: widget.onTypingComplete,
-                style: context.bodyMedium.copyWith(
-                  color: widget.isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                style: DSTypography.bodyMedium.copyWith(
+                  color: colors.textSecondary,
                   height: 1.6,
                 ),
               ),
@@ -821,8 +829,8 @@ class _TypingTotalFortuneCardState extends State<_TypingTotalFortuneCard> {
                 showGhostText: false,
                 showCursor: true,
                 onComplete: widget.onTypingComplete,
-                style: context.bodyMedium.copyWith(
-                  color: widget.isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                style: DSTypography.bodyMedium.copyWith(
+                  color: colors.textSecondary,
                   height: 1.6,
                 ),
               ),
@@ -858,6 +866,7 @@ class _TypingAITipsListState extends State<TypingAITipsList> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -873,8 +882,8 @@ class _TypingAITipsListState extends State<TypingAITipsList> {
               const SizedBox(width: 8),
               Text(
                 'AI 팁',
-                style: context.heading4.copyWith(
-                  color: widget.isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -900,7 +909,7 @@ class _TypingAITipsListState extends State<TypingAITipsList> {
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: context.labelSmall.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.w700,
                         ),
@@ -923,8 +932,8 @@ class _TypingAITipsListState extends State<TypingAITipsList> {
                           widget.onTypingComplete?.call();
                         }
                       },
-                      style: context.bodyMedium.copyWith(
-                        color: widget.isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: colors.textSecondary,
                         height: 1.5,
                       ),
                     ),

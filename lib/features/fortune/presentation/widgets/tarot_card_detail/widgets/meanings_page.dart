@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 
 class MeaningsPage extends StatelessWidget {
@@ -13,7 +13,7 @@ class MeaningsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -21,7 +21,7 @@ class MeaningsPage extends StatelessWidget {
             '카드의 의미',
             style: Theme.of(context).textTheme.titleMedium,
           ),
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: 16),
 
           // Upright meaning
           if (cardInfo['uprightMeaning'] != null) ...[
@@ -30,9 +30,9 @@ class MeaningsPage extends StatelessWidget {
               title: '정방향',
               meaning: cardInfo['uprightMeaning'],
               icon: Icons.arrow_upward,
-              color: TossDesignSystem.successGreen,
+              color: DSColors.success,
             ),
-            const SizedBox(height: TossDesignSystem.spacingM)
+            const SizedBox(height: 16)
           ],
 
           // Reversed meaning
@@ -42,28 +42,28 @@ class MeaningsPage extends StatelessWidget {
               title: '역방향',
               meaning: cardInfo['reversedMeaning'],
               icon: Icons.arrow_downward,
-              color: TossDesignSystem.warningOrange,
+              color: DSColors.warning,
             ),
-            const SizedBox(height: TossDesignSystem.spacingM)
+            const SizedBox(height: 16)
           ],
 
           // Related cards
           if (cardInfo['relatedCards'] != null) ...[
             _buildSectionTitle(context, '관련 카드'),
-            const SizedBox(height: TossDesignSystem.spacingXS),
+            const SizedBox(height: 8),
             ...cardInfo['relatedCards'].map<Widget>(
               (card) => Padding(
                 padding:
-                    const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
+                    const EdgeInsets.only(bottom: 8),
                 child: Row(
                   children: [
                     const Icon(Icons.link,
-                        size: 16, color: TossDesignSystem.purple),
-                    const SizedBox(width: TossDesignSystem.spacingXS),
+                        size: 16, color: DSColors.accentSecondary),
+                    const SizedBox(width: 8),
                     Text(
                       card,
                       style: TextStyle(
-                        color: TossDesignSystem.white.withValues(alpha: 0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -91,21 +91,21 @@ class MeaningsPage extends StatelessWidget {
     required Color color,
   }) {
     return GlassContainer(
-      padding: const EdgeInsets.all(TossDesignSystem.spacingXS),
+      padding: const EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(icon, color: color, size: 20),
-              const SizedBox(width: TossDesignSystem.spacingXS),
+              const SizedBox(width: 8),
               Text(
                 title,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ],
           ),
-          const SizedBox(height: TossDesignSystem.spacingS),
+          const SizedBox(height: 8),
           Text(
             meaning,
             style: Theme.of(context).textTheme.bodyLarge,

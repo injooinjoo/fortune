@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class DreamTimelineWidget extends StatefulWidget {
   final List<double> emotionalFlow;
@@ -59,11 +56,11 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeader(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildTimelineChart(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildScenesList(),
-        const SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: 16),
         _buildEmotionalSummary(),
       ],
     );
@@ -74,10 +71,10 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
       children: [
         Icon(
           Icons.timeline,
-          color: TossDesignSystem.tossBlue,
+          color: DSColors.accent,
           size: 24,
         ),
-        const SizedBox(width: AppSpacing.spacing2),
+        const SizedBox(width: 8),
         Text(
           '꿈의 감정 흐름',
           style: Theme.of(context).textTheme.bodyMedium,
@@ -91,8 +88,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
       animation: _animation,
       builder: (context, child) {
         return GlassContainer(
-          height: AppSpacing.spacing24 * 2.6,
-          padding: AppSpacing.paddingAll20,
+          height: 96 * 2.6,
+          padding: const EdgeInsets.all(20),
           child: LineChart(
             LineChartData(
               gridData: FlGridData(
@@ -102,13 +99,13 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                 verticalInterval: 1,
                 getDrawingHorizontalLine: (value) {
                   return FlLine(
-                    color: TossDesignSystem.white.withValues(alpha: 0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     strokeWidth: 1,
                   );
                 },
                 getDrawingVerticalLine: (value) {
                   return FlLine(
-                    color: TossDesignSystem.white.withValues(alpha: 0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     strokeWidth: 1,
                   );
                 },
@@ -130,7 +127,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                       final index = value.toInt();
                       if (index >= 0 && index < widget.scenes.length) {
                         return Padding(
-                          padding: const EdgeInsets.only(top: AppSpacing.spacing2),
+                          padding: const EdgeInsets.only(top: 8),
                           child: Text(
                             '장면 ${index + 1}',
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -171,7 +168,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
               borderData: FlBorderData(
                 show: true,
                 border: Border.all(
-                  color: TossDesignSystem.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -185,8 +182,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                   isCurved: true,
                   gradient: LinearGradient(
                     colors: [
-                      TossDesignSystem.tossBlue.withValues(alpha: 0.8),
-                      TossDesignSystem.primaryBlue.withValues(alpha: 0.8),
+                      DSColors.accent.withValues(alpha: 0.8),
+                      DSColors.accent.withValues(alpha: 0.8),
                     ],
                   ),
                   barWidth: 3,
@@ -199,7 +196,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                         radius: isSelected ? 8 : 5,
                         color: _getEmotionColor(spot.y),
                         strokeWidth: 2,
-                        strokeColor: TossDesignSystem.white,
+                        strokeColor: Colors.white,
                       );
                     },
                   ),
@@ -207,8 +204,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                        TossDesignSystem.primaryBlue.withValues(alpha: 0.1),
+                        DSColors.accent.withValues(alpha: 0.1),
+                        DSColors.accent.withValues(alpha: 0.1),
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -249,7 +246,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                       return LineTooltipItem(
                         '장면 ${spot.x.toInt() + 1}\n$emotionText',
                         TextStyle(
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       );
@@ -274,11 +271,11 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
   }
 
   Color _getEmotionColor(double value) {
-    if (value >= 0.8) return TossDesignSystem.successGreen;
-    if (value >= 0.6) return TossDesignSystem.successGreen;
-    if (value >= 0.4) return TossDesignSystem.warningYellow;
-    if (value >= 0.2) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (value >= 0.8) return DSColors.success;
+    if (value >= 0.6) return DSColors.success;
+    if (value >= 0.4) return DSColors.warning;
+    if (value >= 0.2) return DSColors.warning;
+    return DSColors.error;
   }
 
   Widget _buildScenesList() {
@@ -289,7 +286,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
           '주요 장면',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: AppSpacing.spacing3),
+        const SizedBox(height: 12),
         ...widget.scenes.asMap().entries.map((entry) {
           final index = entry.key;
           final scene = entry.value;
@@ -305,18 +302,18 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
               });
             },
             child: AnimatedContainer(
-              duration: AppAnimations.durationShort,
-              margin: const EdgeInsets.only(bottom: AppSpacing.spacing2),
-              padding: AppSpacing.paddingAll12,
+              duration: DSAnimation.durationQuick,
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: isSelected
                     ? _getEmotionColor(emotion).withValues(alpha: 0.2)
-                    : TossDesignSystem.white.withValues(alpha: 0.05),
-                borderRadius: AppDimensions.borderRadiusMedium,
+                    : Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(DSRadius.md),
                 border: Border.all(
                   color: isSelected
                       ? _getEmotionColor(emotion).withValues(alpha: 0.5)
-                      : TossDesignSystem.white.withValues(alpha: 0.1),
+                      : Colors.white.withValues(alpha: 0.1),
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -327,7 +324,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                     height: 32,
                     decoration: BoxDecoration(
                       color: _getEmotionColor(emotion).withValues(alpha: 0.2),
-                      borderRadius: AppDimensions.borderRadiusSmall,
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
                     ),
                     child: Center(
                       child: Text(
@@ -339,7 +336,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                       ),
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.spacing3),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,7 +345,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                           scene,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
-                        const SizedBox(height: AppSpacing.spacing1),
+                        const SizedBox(height: 4),
                         Row(
                           children: [
                             Icon(
@@ -356,7 +353,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                               size: 16,
                               color: _getEmotionColor(emotion),
                             ),
-                            const SizedBox(width: AppSpacing.spacing1),
+                            const SizedBox(width: 4),
                             Text(
                               _getEmotionText(emotion),
                               style: TextStyle(
@@ -400,7 +397,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
     final minEmotion = widget.emotionalFlow.reduce((a, b) => a < b ? a : b);
     
     return GlassContainer(
-      padding: AppSpacing.paddingAll16,
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -408,7 +405,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
             '감정 분석 요약',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -429,7 +426,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: 16),
           _buildInterpretation(avgEmotion, maxEmotion, minEmotion),
         ],
       ),
@@ -444,7 +441,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
           color: _getEmotionColor(value),
           size: 24,
         ),
-        const SizedBox(height: AppSpacing.spacing1),
+        const SizedBox(height: 4),
         Text(
           label,
           style: Theme.of(context).textTheme.bodyMedium,
@@ -480,19 +477,19 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
     }
     
     return Container(
-      padding: AppSpacing.paddingAll12,
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white.withValues(alpha: 0.05),
-        borderRadius: AppDimensions.borderRadiusSmall,
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
-          color: TossDesignSystem.white.withValues(alpha: 0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
       child: Text(
         interpretation,
         style: TextStyle(
-          color: TossDesignSystem.white.withValues(alpha: 0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
           height: 1.4,
         ),

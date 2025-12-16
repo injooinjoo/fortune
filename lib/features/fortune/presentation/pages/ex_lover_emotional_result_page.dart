@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/components/app_card.dart';
 import '../../domain/models/ex_lover_simple_model.dart';
 import '../../../../core/models/fortune_result.dart';
@@ -10,6 +10,7 @@ import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 import '../../../../core/widgets/unified_button.dart';
 class ExLoverEmotionalResultPage extends ConsumerStatefulWidget {
@@ -37,6 +38,14 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
     _parsedResult = _parseFortuneData(_fortuneResult.data);
 
     Logger.info('[전애인운세] isPremium: ${!_fortuneResult.isBlurred}, isBlurred: ${_fortuneResult.isBlurred}');
+
+    // 전애인 운세 결과 공개 햅틱
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final score = _fortuneResult.score ?? 70;
+        ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+      }
+    });
   }
 
   // ✅ FortuneResult.data를 ExLoverEmotionalResult로 파싱
@@ -151,18 +160,18 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    final colors = context.colors;
+
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+        backgroundColor: colors.background.withValues(alpha: 0.0),
         elevation: 0,
         automaticallyImplyLeading: false, // ✅ 뒤로가기 버튼 제거
         title: Text(
           '운세 결과',
-          style: TossDesignSystem.heading3.copyWith(
-            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+          style: DSTypography.headingSmall.copyWith(
+            color: colors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -174,7 +183,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             },
             icon: Icon(
               Icons.close_rounded,
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              color: colors.textPrimary,
               size: 24,
             ),
           ),
@@ -188,7 +197,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             child: Column(
               children: [
                 // 메인 메시지 (블러 없음)
-                _buildMainMessage(_parsedResult, isDark)
+                _buildMainMessage(_parsedResult, colors)
                     .animate()
                     .fadeIn(duration: 400.ms)
                     .slideY(begin: 0.1, end: 0),
@@ -202,7 +211,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                     children: [
                       // Premium 섹션 2: 오늘의 감정 처방
                       _buildEmotionalPrescription(
-                              _parsedResult.emotionalPrescription, isDark)
+                              _parsedResult.emotionalPrescription, colors)
                           .animate(delay: 100.ms)
                           .fadeIn(duration: 400.ms)
                           .slideX(begin: -0.05, end: 0),
@@ -211,7 +220,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
 
                       // Premium 섹션 3: 그 사람과의 인연
                       _buildRelationshipInsight(
-                              _parsedResult.relationshipInsight, isDark)
+                              _parsedResult.relationshipInsight, colors)
                           .animate(delay: 200.ms)
                           .fadeIn(duration: 400.ms)
                           .slideX(begin: 0.05, end: 0),
@@ -219,7 +228,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                       const SizedBox(height: 20),
 
                       // Premium 섹션 4: 새로운 시작
-                      _buildNewBeginning(_parsedResult.newBeginning, isDark)
+                      _buildNewBeginning(_parsedResult.newBeginning, colors)
                           .animate(delay: 300.ms)
                           .fadeIn(duration: 400.ms)
                           .slideX(begin: -0.05, end: 0),
@@ -244,7 +253,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
     );
   }
 
-  Widget _buildMainMessage(ExLoverEmotionalResult result, bool isDark) {
+  Widget _buildMainMessage(ExLoverEmotionalResult result, DSColorScheme colors) {
     return AppCard(
       style: AppCardStyle.elevated,
       padding: const EdgeInsets.all(24),
@@ -256,7 +265,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.purple.withValues(alpha: 0.8),
+                  colors.accent.withValues(alpha: 0.8),
                   const Color(0xFFEC4899).withValues(alpha: 0.8),
                 ],
               ),
@@ -265,39 +274,39 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             child: Center(
               child: Text(
                 '${result.overallScore}',
-                style: TossDesignSystem.heading2.copyWith(
-                  color: TossDesignSystem.white,
+                style: DSTypography.headingMedium.copyWith(
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
-          
+
           const SizedBox(height: 20),
-          
+
           Text(
             '오늘의 운세 점수',
-            style: TossDesignSystem.body2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+            style: DSTypography.bodyMedium.copyWith(
+              color: colors.textSecondary,
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.purple.withValues(alpha: 0.05),
+              color: colors.accent.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.purple.withValues(alpha: 0.2),
+                color: colors.accent.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
             child: Text(
               result.specialMessage,
-              style: TossDesignSystem.body2.copyWith(
-                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textPrimary,
                 height: 1.6,
               ),
               textAlign: TextAlign.center,
@@ -308,7 +317,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
     );
   }
 
-  Widget _buildEmotionalPrescription(EmotionalPrescription prescription, bool isDark) {
+  Widget _buildEmotionalPrescription(EmotionalPrescription prescription, DSColorScheme colors) {
     return AppCard(
       style: AppCardStyle.filled,
       padding: const EdgeInsets.all(20),
@@ -321,28 +330,28 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  color: colors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   Icons.favorite_rounded,
-                  color: TossDesignSystem.tossBlue,
+                  color: colors.accent,
                   size: 20,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 '오늘의 감정 처방',
-                style: TossDesignSystem.body1.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                style: DSTypography.bodyLarge.copyWith(
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 치유 진행도
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,14 +361,14 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 children: [
                   Text(
                     '치유 진행도',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                   Text(
                     '${prescription.healingProgress}%',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: TossDesignSystem.successGreen,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: DSColors.success,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -370,21 +379,21 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: prescription.healingProgress / 100,
-                  backgroundColor: TossDesignSystem.successGreen.withValues(alpha: 0.1),
-                  valueColor: AlwaysStoppedAnimation(TossDesignSystem.successGreen),
+                  backgroundColor: DSColors.success.withValues(alpha: 0.1),
+                  valueColor: const AlwaysStoppedAnimation(DSColors.success),
                   minHeight: 8,
                 ),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 현재 상태
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -395,13 +404,13 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                     Icon(
                       Icons.psychology_rounded,
                       size: 16,
-                      color: TossDesignSystem.tossBlue,
+                      color: colors.accent,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       '현재 상태',
-                      style: TossDesignSystem.caption.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: colors.textSecondary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -410,47 +419,47 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 const SizedBox(height: 8),
                 Text(
                   prescription.currentState,
-                  style: TossDesignSystem.body3.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                  style: DSTypography.bodySmall.copyWith(
+                    color: colors.textSecondary,
                     height: 1.5,
                   ),
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 추천 활동
           _buildListSection(
             '오늘 하면 좋은 활동',
             prescription.recommendedActivities,
             Icons.check_circle_rounded,
-            TossDesignSystem.successGreen,
-            isDark,
+            DSColors.success,
+            colors,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 피해야 할 것
           _buildListSection(
             '피하면 좋은 것',
             prescription.thingsToAvoid,
             Icons.cancel_rounded,
-            TossDesignSystem.warningOrange,
-            isDark,
+            DSColors.warning,
+            colors,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 치유 조언
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+              color: colors.accent.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+                color: colors.accent.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -458,15 +467,15 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
               children: [
                 Icon(
                   Icons.lightbulb_outline_rounded,
-                  color: TossDesignSystem.tossBlue,
+                  color: colors.accent,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     prescription.healingAdvice,
-                    style: TossDesignSystem.caption.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: colors.textPrimary,
                     ),
                   ),
                 ),
@@ -478,12 +487,12 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
     );
   }
 
-  Widget _buildRelationshipInsight(RelationshipInsight insight, bool isDark) {
+  Widget _buildRelationshipInsight(RelationshipInsight insight, DSColorScheme colors) {
     // TODO: 조건 데이터를 FortuneResult에 포함시켜야 함
     // 임시로 모든 섹션을 표시
     final showReunion = true;
     final showFeelings = true;
-    
+
     return AppCard(
       style: AppCardStyle.filled,
       padding: const EdgeInsets.all(20),
@@ -499,25 +508,25 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                   color: const Color(0xFFEC4899).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.people_rounded,
-                  color: const Color(0xFFEC4899),
+                  color: Color(0xFFEC4899),
                   size: 20,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 '그 사람과의 인연',
-                style: TossDesignSystem.body1.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                style: DSTypography.bodyLarge.copyWith(
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 재회 가능성 (궁금증에 따라 표시)
           if (showReunion) ...[
             Container(
@@ -526,7 +535,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 gradient: LinearGradient(
                   colors: [
                     const Color(0xFFEC4899).withValues(alpha: 0.1),
-                    TossDesignSystem.purple.withValues(alpha: 0.1),
+                    colors.accent.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -535,14 +544,14 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 children: [
                   Text(
                     '재회 가능성',
-                    style: TossDesignSystem.body2.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                    style: DSTypography.bodyMedium.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '${insight.reunionPossibility}%',
-                    style: TossDesignSystem.heading2.copyWith(
+                    style: DSTypography.headingMedium.copyWith(
                       color: const Color(0xFFEC4899),
                       fontWeight: FontWeight.bold,
                     ),
@@ -550,8 +559,8 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                   const SizedBox(height: 8),
                   Text(
                     insight.contactTiming,
-                    style: TossDesignSystem.caption.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -560,13 +569,13 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             ),
             const SizedBox(height: 16),
           ],
-          
+
           // 상대방 마음 (궁금증에 따라 표시)
           if (showFeelings) ...[
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -574,15 +583,15 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 children: [
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.favorite_border_rounded,
                         size: 16,
-                        color: const Color(0xFFEC4899),
+                        color: Color(0xFFEC4899),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         insight.isThinkingOfYou ? '그 사람도 당신을 생각해요' : '그 사람은 새로운 길을 가고 있어요',
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: const Color(0xFFEC4899),
                           fontWeight: FontWeight.w600,
                         ),
@@ -592,8 +601,8 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                   const SizedBox(height: 8),
                   Text(
                     insight.theirCurrentFeelings,
-                    style: TossDesignSystem.body3.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                       height: 1.5,
                     ),
                   ),
@@ -602,15 +611,15 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             ),
             const SizedBox(height: 16),
           ],
-          
+
           // 배울 점
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.purple.withValues(alpha: 0.05),
+              color: colors.accent.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.purple.withValues(alpha: 0.2),
+                color: colors.accent.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -618,7 +627,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
               children: [
                 Icon(
                   Icons.auto_awesome_rounded,
-                  color: TossDesignSystem.purple,
+                  color: colors.accent,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
@@ -628,16 +637,16 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                     children: [
                       Text(
                         '이 관계에서 배울 점',
-                        style: TossDesignSystem.caption.copyWith(
-                          color: TossDesignSystem.purple,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.accent,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         insight.karmicLesson,
-                        style: TossDesignSystem.caption.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.textPrimary,
                         ),
                       ),
                     ],
@@ -651,7 +660,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
     );
   }
 
-  Widget _buildNewBeginning(NewBeginning newBeginning, bool isDark) {
+  Widget _buildNewBeginning(NewBeginning newBeginning, DSColorScheme colors) {
     return AppCard(
       style: AppCardStyle.filled,
       padding: const EdgeInsets.all(20),
@@ -664,28 +673,28 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                  color: DSColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.local_florist_rounded,
-                  color: TossDesignSystem.successGreen,
+                  color: DSColors.success,
                   size: 20,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 '새로운 시작',
-                style: TossDesignSystem.body1.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                style: DSTypography.bodyLarge.copyWith(
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 준비도
           Row(
             children: [
@@ -695,8 +704,8 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                   children: [
                     Text(
                       '새로운 사랑 준비도',
-                      style: TossDesignSystem.caption.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -704,16 +713,16 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                       children: [
                         Text(
                           '${newBeginning.readinessScore}%',
-                          style: TossDesignSystem.heading4.copyWith(
-                            color: TossDesignSystem.successGreen,
+                          style: DSTypography.labelLarge.copyWith(
+                            color: DSColors.success,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           _getReadinessText(newBeginning.readinessLevel),
-                          style: TossDesignSystem.caption.copyWith(
-                            color: TossDesignSystem.successGreen,
+                          style: DSTypography.labelSmall.copyWith(
+                            color: DSColors.success,
                           ),
                         ),
                       ],
@@ -733,13 +742,13 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                       child: CircularProgressIndicator(
                         value: newBeginning.readinessScore / 100,
                         strokeWidth: 4,
-                        backgroundColor: TossDesignSystem.successGreen.withValues(alpha: 0.1),
-                        valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.successGreen),
+                        backgroundColor: DSColors.success.withValues(alpha: 0.1),
+                        valueColor: const AlwaysStoppedAnimation<Color>(DSColors.success),
                       ),
                     ),
                     Icon(
                       _getReadinessIcon(newBeginning.readinessLevel),
-                      color: TossDesignSystem.successGreen,
+                      color: DSColors.success,
                       size: 24,
                     ),
                   ],
@@ -747,22 +756,22 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 새로운 인연 시기
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.calendar_today_rounded,
                   size: 16,
-                  color: TossDesignSystem.successGreen,
+                  color: DSColors.success,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -771,15 +780,15 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
                     children: [
                       Text(
                         '새로운 인연 시기',
-                        style: TossDesignSystem.caption.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         newBeginning.expectedTiming,
-                        style: TossDesignSystem.body3.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                        style: DSTypography.bodySmall.copyWith(
+                          color: colors.textSecondary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -789,44 +798,44 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 성장 포인트
           _buildListSection(
             '성장 포인트',
             newBeginning.growthPoints,
             Icons.trending_up_rounded,
-            TossDesignSystem.successGreen,
-            isDark,
+            DSColors.success,
+            colors,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 새로운 사랑 조언
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.successGreen.withValues(alpha: 0.05),
+              color: DSColors.success.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.successGreen.withValues(alpha: 0.2),
+                color: DSColors.success.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.favorite_rounded,
-                  color: TossDesignSystem.successGreen,
+                  color: DSColors.success,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     newBeginning.newLoveAdvice,
-                    style: TossDesignSystem.caption.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: colors.textPrimary,
                     ),
                   ),
                 ),
@@ -843,7 +852,7 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
     List<String> items,
     IconData icon,
     Color color,
-    bool isDark,
+    DSColorScheme colors,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -854,8 +863,8 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             const SizedBox(width: 8),
             Text(
               title,
-              style: TossDesignSystem.caption.copyWith(
-                color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+              style: DSTypography.labelSmall.copyWith(
+                color: colors.textSecondary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -869,15 +878,15 @@ class _ExLoverEmotionalResultPageState extends ConsumerState<ExLoverEmotionalRes
             children: [
               Text(
                 '• ',
-                style: TossDesignSystem.body3.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   color: color,
                 ),
               ),
               Expanded(
                 child: Text(
                   item,
-                  style: TossDesignSystem.body3.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                  style: DSTypography.bodySmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ),

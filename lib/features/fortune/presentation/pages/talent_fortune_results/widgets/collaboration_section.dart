@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/fortune_result.dart';
 import '../../../../../../core/utils/fortune_text_cleaner.dart';
 
 class CollaborationSection extends StatelessWidget {
   final FortuneResult? fortuneResult;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const CollaborationSection({
     super.key,
     required this.fortuneResult,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -21,8 +20,8 @@ class CollaborationSection extends StatelessWidget {
       return Center(
         child: Text(
           '협업 궁합 데이터가 없습니다',
-          style: TypographyUnified.bodySmall.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+          style: DSTypography.bodySmall.copyWith(
+            color: colors.textSecondary,
           ),
         ),
       );
@@ -39,15 +38,15 @@ class CollaborationSection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+              color: colors.accent.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               teamRole,
-              style: TypographyUnified.bodyMedium.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 height: 1.6,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -56,9 +55,9 @@ class CollaborationSection extends StatelessWidget {
         if (goodMatch.isNotEmpty) ...[
           Text(
             '✅ 잘 맞는 타입',
-            style: TypographyUnified.labelMedium.copyWith(
+            style: DSTypography.labelMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossDesignSystem.successGreen,
+              color: DSColors.success,
             ),
           ),
           const SizedBox(height: 8),
@@ -67,13 +66,13 @@ class CollaborationSection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.check_circle, size: 16, color: TossDesignSystem.successGreen),
+                Icon(Icons.check_circle, size: 16, color: DSColors.success),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     match,
-                    style: TypographyUnified.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ),
@@ -85,9 +84,9 @@ class CollaborationSection extends StatelessWidget {
         if (challenges.isNotEmpty) ...[
           Text(
             '⚠️ 주의할 타입',
-            style: TypographyUnified.labelMedium.copyWith(
+            style: DSTypography.labelMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossDesignSystem.warningOrange,
+              color: DSColors.warning,
             ),
           ),
           const SizedBox(height: 8),
@@ -96,13 +95,13 @@ class CollaborationSection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.warning, size: 16, color: TossDesignSystem.warningOrange),
+                Icon(Icons.warning, size: 16, color: DSColors.warning),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     challenge,
-                    style: TypographyUnified.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ),

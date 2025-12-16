@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/components/app_card.dart';
 
 /// 대운 타임라인 위젯
@@ -60,7 +59,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
       animation: widget.animationController,
       builder: (context, child) {
         return AppCard(
-          padding: const EdgeInsets.all(TossTheme.spacingL),
+          padding: const EdgeInsets.all(DSSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -71,13 +70,13 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                   children: [
                     Icon(
                       Icons.timeline_outlined,
-                      color: TossTheme.brandBlue,
+                      color: DSColors.accent,
                       size: 24,
                     ),
-                    const SizedBox(width: TossTheme.spacingS),
+                    const SizedBox(width: DSSpacing.sm),
                     Text(
                       '대운의 흐름',
-                      style: TossTheme.heading2.copyWith(
+                      style: DSTypography.headingLarge.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -85,19 +84,19 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                 ),
               ),
               
-              const SizedBox(height: TossTheme.spacingS),
+              const SizedBox(height: DSSpacing.sm),
               
               FadeTransition(
                 opacity: _titleAnimation,
                 child: Text(
                   '10년 단위로 흘러가는 인생의 대운을 확인해보세요',
-                  style: TossTheme.caption.copyWith(
-                    color: TossTheme.textGray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: DSColors.textSecondary,
                   ),
                 ),
               ),
               
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               
               // 대운 타임라인
               ...displayFortunes.asMap().entries.map((entry) {
@@ -106,7 +105,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                 return _buildFortuneItem(fortune, index);
               }),
               
-              const SizedBox(height: TossTheme.spacingM),
+              const SizedBox(height: DSSpacing.md),
               
               // 대운 설명
               _buildFortuneExplanation(),
@@ -127,7 +126,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
     final isLast = index == widget.majorFortunes.take(6).length - 1;
     
     return Container(
-      margin: EdgeInsets.only(bottom: isLast ? 0 : TossTheme.spacingM),
+      margin: EdgeInsets.only(bottom: isLast ? 0 : DSSpacing.md),
       child: SlideTransition(
         position: Tween<Offset>(
           begin: const Offset(-0.3, 0),
@@ -145,15 +144,15 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                     width: 16,
                     height: 16,
                     decoration: BoxDecoration(
-                      color: isCurrent ? TossTheme.brandBlue : TossTheme.backgroundSecondary,
+                      color: isCurrent ? DSColors.accent : DSColors.backgroundSecondary,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isCurrent ? TossTheme.brandBlue : TossTheme.borderPrimary,
+                        color: isCurrent ? DSColors.accent : DSColors.border,
                         width: isCurrent ? 3 : 2,
                       ),
                       boxShadow: isCurrent ? [
                         BoxShadow(
-                          color: TossTheme.brandBlue.withValues(alpha: 0.3),
+                          color: DSColors.accent.withValues(alpha: 0.3),
                           blurRadius: 8,
                           spreadRadius: 2,
                         ),
@@ -165,26 +164,26 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                       width: 2,
                       height: 60,
                       decoration: BoxDecoration(
-                        color: TossTheme.borderPrimary,
+                        color: DSColors.border,
                         borderRadius: BorderRadius.circular(1),
                       ),
                     ),
                 ],
               ),
               
-              const SizedBox(width: TossTheme.spacingM),
+              const SizedBox(width: DSSpacing.md),
               
               // 대운 내용
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(TossTheme.spacingM),
+                  padding: const EdgeInsets.all(DSSpacing.md),
                   decoration: BoxDecoration(
                     color: isCurrent 
-                        ? TossTheme.brandBlue.withValues(alpha: 0.08)
-                        : TossTheme.backgroundSecondary,
-                    borderRadius: BorderRadius.circular(TossTheme.radiusM),
+                        ? DSColors.accent.withValues(alpha: 0.08)
+                        : DSColors.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                     border: isCurrent 
-                        ? Border.all(color: TossTheme.brandBlue.withValues(alpha: 0.3))
+                        ? Border.all(color: DSColors.accent.withValues(alpha: 0.3))
                         : null,
                   ),
                   child: Column(
@@ -196,9 +195,9 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                         children: [
                           Text(
                             '$startAge세 - $endAge세',
-                            style: TossTheme.body2.copyWith(
+                            style: DSTypography.bodyMedium.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: isCurrent ? TossTheme.brandBlue : TossTheme.textBlack,
+                              color: isCurrent ? DSColors.accent : DSColors.textPrimary,
                             ),
                           ),
                           if (isCurrent)
@@ -208,13 +207,13 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: TossTheme.brandBlue,
+                                color: DSColors.accent,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
                                 '현재',
-                                style: TossTheme.caption.copyWith(
-                                  color: TossDesignSystem.white,
+                                style: DSTypography.labelSmall.copyWith(
+                                  color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                   
                                 ),
@@ -223,7 +222,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                         ],
                       ),
                       
-                      const SizedBox(height: TossTheme.spacingS),
+                      const SizedBox(height: DSSpacing.sm),
                       
                       // 대운 이름
                       Row(
@@ -242,13 +241,13 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                             ),
                             child: Text(
                               name,
-                              style: TossTheme.caption.copyWith(
+                              style: DSTypography.labelSmall.copyWith(
                                 color: _getFortuneColor(name, index),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                          const SizedBox(width: TossTheme.spacingS),
+                          const SizedBox(width: DSSpacing.sm),
                           Icon(
                             _getFortuneIcon(interpretation),
                             color: _getFortuneColor(name, index),
@@ -257,13 +256,13 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
                         ],
                       ),
                       
-                      const SizedBox(height: TossTheme.spacingS),
+                      const SizedBox(height: DSSpacing.sm),
                       
                       // 해석
                       Text(
                         interpretation,
-                        style: TossTheme.caption.copyWith(
-                          color: TossTheme.textGray600,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: DSColors.textSecondary,
                           height: 1.4,
                         ),
                       ),
@@ -282,10 +281,10 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
     return FadeTransition(
       opacity: _titleAnimation,
       child: Container(
-        padding: const EdgeInsets.all(TossTheme.spacingM),
+        padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: TossTheme.backgroundSecondary,
-          borderRadius: BorderRadius.circular(TossTheme.radiusM),
+          color: DSColors.backgroundSecondary,
+          borderRadius: BorderRadius.circular(DSRadius.md),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -294,20 +293,20 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
               children: [
                 Icon(
                   Icons.info_outline,
-                  color: TossTheme.brandBlue,
+                  color: DSColors.accent,
                   size: 20,
                 ),
-                const SizedBox(width: TossTheme.spacingS),
+                const SizedBox(width: DSSpacing.sm),
                 Text(
                   '대운 활용법',
-                  style: TossTheme.body2.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
             
-            const SizedBox(height: TossTheme.spacingM),
+            const SizedBox(height: DSSpacing.md),
             
             ..._buildUsageTips(),
           ],
@@ -326,7 +325,7 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
 
     return tips.map((tip) {
       return Padding(
-        padding: const EdgeInsets.only(bottom: TossTheme.spacingS),
+        padding: const EdgeInsets.only(bottom: DSSpacing.sm),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -335,16 +334,16 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
               height: 4,
               margin: const EdgeInsets.only(top: 8),
               decoration: BoxDecoration(
-                color: TossTheme.brandBlue,
+                color: DSColors.accent,
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: TossTheme.spacingM),
+            const SizedBox(width: DSSpacing.md),
             Expanded(
               child: Text(
                 tip,
-                style: TossTheme.caption.copyWith(
-                  color: TossTheme.textGray600,
+                style: DSTypography.labelSmall.copyWith(
+                  color: DSColors.textSecondary,
                   height: 1.4,
                 ),
               ),
@@ -358,23 +357,23 @@ class _SajuMajorFortuneState extends State<SajuMajorFortune> {
   Color _getFortuneColor(String fortuneName, int index) {
     // 천간지지에 따른 색상 결정
     if (fortuneName.contains('갑') || fortuneName.contains('을')) {
-      return TossTheme.success; // 목
+      return DSColors.success; // 목
     } else if (fortuneName.contains('병') || fortuneName.contains('정')) {
-      return TossTheme.error; // 화
+      return DSColors.error; // 화
     } else if (fortuneName.contains('무') || fortuneName.contains('기')) {
-      return TossTheme.warning; // 토
+      return DSColors.warning; // 토
     } else if (fortuneName.contains('경') || fortuneName.contains('신')) {
-      return TossTheme.textGray600; // 금
+      return DSColors.textSecondary; // 금
     } else if (fortuneName.contains('임') || fortuneName.contains('계')) {
-      return TossTheme.brandBlue; // 수
+      return DSColors.accent; // 수
     } else {
       // 기본 색상 패턴
       final colors = [
-        TossTheme.brandBlue,
-        TossTheme.success,
-        TossTheme.warning,
-        TossTheme.error,
-        TossTheme.textGray600,
+        DSColors.accent,
+        DSColors.success,
+        DSColors.warning,
+        DSColors.error,
+        DSColors.textSecondary,
       ];
       return colors[index % colors.length];
     }

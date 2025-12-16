@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../data/models/investment_ticker.dart';
 import '../providers/ticker_provider.dart';
 import 'ticker_list_item.dart';
@@ -82,20 +81,20 @@ class _TickerSearchWidgetState extends ConsumerState<TickerSearchWidget> {
             children: [
               Text(
                 '${category.label} 종목 선택',
-                style: TypographyUnified.heading3.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark
-                      ? TossDesignSystem.grayDark900
-                      : TossDesignSystem.gray900,
+                      ? DSColors.textPrimary
+                      : DSColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 '운세를 확인할 종목을 선택해주세요',
-                style: TypographyUnified.bodySmall.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   color: isDark
-                      ? TossDesignSystem.grayDark500
-                      : TossDesignSystem.gray500,
+                      ? DSColors.textTertiary
+                      : DSColors.textTertiary,
                 ),
               ),
             ],
@@ -131,37 +130,37 @@ class _TickerSearchWidgetState extends ConsumerState<TickerSearchWidget> {
   Widget _buildSearchField(bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100,
+        color: isDark ? DSColors.surface : DSColors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
         controller: _searchController,
         onChanged: _onSearchChanged,
-        style: TypographyUnified.bodyMedium.copyWith(
+        style: DSTypography.bodyMedium.copyWith(
           color: isDark
-              ? TossDesignSystem.grayDark900
-              : TossDesignSystem.gray900,
+              ? DSColors.textPrimary
+              : DSColors.textPrimary,
         ),
         decoration: InputDecoration(
           hintText: '종목명 또는 티커 검색',
-          hintStyle: TypographyUnified.bodyMedium.copyWith(
+          hintStyle: DSTypography.bodyMedium.copyWith(
             color: isDark
-                ? TossDesignSystem.grayDark500
-                : TossDesignSystem.gray500,
+                ? DSColors.textTertiary
+                : DSColors.textTertiary,
           ),
           prefixIcon: Icon(
             Icons.search_rounded,
             color: isDark
-                ? TossDesignSystem.grayDark500
-                : TossDesignSystem.gray500,
+                ? DSColors.textTertiary
+                : DSColors.textTertiary,
           ),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
                   icon: Icon(
                     Icons.close_rounded,
                     color: isDark
-                        ? TossDesignSystem.grayDark500
-                        : TossDesignSystem.gray500,
+                        ? DSColors.textTertiary
+                        : DSColors.textTertiary,
                   ),
                   onPressed: () {
                     _searchController.clear();
@@ -180,9 +179,9 @@ class _TickerSearchWidgetState extends ConsumerState<TickerSearchWidget> {
   Widget _buildSectionHeader(String title, bool isDark) {
     return Text(
       title,
-      style: TypographyUnified.labelMedium.copyWith(
+      style: DSTypography.labelMedium.copyWith(
         fontWeight: FontWeight.w600,
-        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+        color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
       ),
     );
   }
@@ -203,15 +202,15 @@ class _TickerSearchWidgetState extends ConsumerState<TickerSearchWidget> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               color: isSelected
-                  ? TossDesignSystem.tossBlue
-                  : (isDark ? TossDesignSystem.grayDark100 : Colors.white),
+                  ? DSColors.accent
+                  : (isDark ? DSColors.surface : Colors.white),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: isSelected
-                    ? TossDesignSystem.tossBlue
+                    ? DSColors.accent
                     : (isDark
-                        ? TossDesignSystem.grayDark300
-                        : TossDesignSystem.gray200),
+                        ? DSColors.border
+                        : DSColors.border),
                 width: 1,
               ),
             ),
@@ -220,24 +219,24 @@ class _TickerSearchWidgetState extends ConsumerState<TickerSearchWidget> {
               children: [
                 Text(
                   ticker.name,
-                  style: TypographyUnified.labelMedium.copyWith(
+                  style: DSTypography.labelMedium.copyWith(
                     fontWeight: FontWeight.w500,
                     color: isSelected
                         ? Colors.white
                         : (isDark
-                            ? TossDesignSystem.grayDark900
-                            : TossDesignSystem.gray900),
+                            ? DSColors.textPrimary
+                            : DSColors.textPrimary),
                   ),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   ticker.symbol,
-                  style: TypographyUnified.labelSmall.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     color: isSelected
                         ? Colors.white.withValues(alpha: 0.8)
                         : (isDark
-                            ? TossDesignSystem.grayDark500
-                            : TossDesignSystem.gray500),
+                            ? DSColors.textTertiary
+                            : DSColors.textTertiary),
                   ),
                 ),
               ],
@@ -281,16 +280,16 @@ class _TickerSearchWidgetState extends ConsumerState<TickerSearchWidget> {
               height: 32,
               child: CircularProgressIndicator(
                 strokeWidth: 3,
-                color: TossDesignSystem.tossBlue,
+                color: DSColors.accent,
               ),
             ),
             const SizedBox(height: 16),
             Text(
               '종목을 불러오는 중...',
-              style: TypographyUnified.bodyMedium.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 color: isDark
-                    ? TossDesignSystem.grayDark500
-                    : TossDesignSystem.gray500,
+                    ? DSColors.textTertiary
+                    : DSColors.textTertiary,
               ),
             ),
           ],
@@ -311,16 +310,16 @@ class _TickerSearchWidgetState extends ConsumerState<TickerSearchWidget> {
               Icons.search_off_rounded,
               size: 48,
               color: isDark
-                  ? TossDesignSystem.grayDark400
-                  : TossDesignSystem.gray400,
+                  ? DSColors.textTertiary
+                  : DSColors.textTertiary,
             ),
             const SizedBox(height: 12),
             Text(
               '검색 결과가 없습니다',
-              style: TypographyUnified.bodyMedium.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 color: isDark
-                    ? TossDesignSystem.grayDark500
-                    : TossDesignSystem.gray500,
+                    ? DSColors.textTertiary
+                    : DSColors.textTertiary,
               ),
             ),
           ],

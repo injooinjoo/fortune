@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../../core/providers/user_settings_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 import 'tarot_deck_spread_widget.dart';
 
 /// Simplified tarot card selection view
@@ -132,14 +132,14 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
       children: [
         Text(
           '카드를 선택하세요',
-          style: context.heading2.copyWith(
+          style: context.typography.headingLarge.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           '${widget.requiredCards}장의 카드를 선택해주세요',
-          style: context.buttonMedium.copyWith(
+          style: context.typography.labelLarge.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
@@ -159,7 +159,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
                 Flexible(
                   child: Text(
                     widget.question!,
-                    style: context.bodySmall.copyWith(
+                    style: context.typography.bodySmall.copyWith(
                       fontStyle: FontStyle.italic,
                     ),
                     maxLines: 2,

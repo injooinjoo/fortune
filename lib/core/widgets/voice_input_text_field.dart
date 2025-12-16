@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/typography_unified.dart';
+import '../design_system/design_system.dart';
 import '../utils/haptic_utils.dart';
 import '../../services/speech_recognition_service.dart';
 import '../../features/fortune/presentation/widgets/voice_spectrum_animation.dart';
@@ -328,18 +328,21 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
 
   /// TextField (idle, hasText 상태)
   Widget _buildTextField(bool isDark) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 8),
+      padding: const EdgeInsets.only(left: DSSpacing.lg, right: DSSpacing.sm),
       child: TextField(
         controller: _textController,
         enabled: widget.enabled,
-        style: TypographyUnified.bodyMedium.copyWith(
-          color: isDark ? Colors.white : Colors.black,
+        style: typography.bodyMedium.copyWith(
+          color: colors.textPrimary,
         ),
         decoration: InputDecoration(
           hintText: widget.hintText,
-          hintStyle: TypographyUnified.bodyMedium.copyWith(
-            color: isDark ? Colors.grey[500] : Colors.grey[600],
+          hintStyle: typography.bodyMedium.copyWith(
+            color: colors.textTertiary,
           ),
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
@@ -375,8 +378,11 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
 
   /// 변환 중 콘텐츠 (로딩 스피너 + 텍스트)
   Widget _buildTranscribingContent(bool isDark) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.lg),
       child: Row(
         children: [
           // 로딩 스피너 (점 깜빡임)
@@ -387,16 +393,15 @@ class _VoiceInputTextFieldState extends State<VoiceInputTextField>
               return Icon(
                 Icons.auto_awesome,
                 size: 16,
-                color: (isDark ? Colors.grey[400] : Colors.grey[600])!
-                    .withValues(alpha: opacity),
+                color: colors.textTertiary.withValues(alpha: opacity),
               );
             },
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.sm),
           Text(
             widget.transcribingText,
-            style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
+            style: typography.bodyMedium.copyWith(
+              color: colors.textTertiary,
             ),
           ),
         ],

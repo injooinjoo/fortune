@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
+import '../../core/services/fortune_haptic_service.dart';
+import '../../core/providers/user_settings_provider.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/constants/in_app_products.dart';
 import '../../services/in_app_purchase_service.dart';
@@ -54,51 +56,18 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     );
   }
 
-  // TOSS Design System Helper Methods
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
-  Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
-  }
-
-  Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.gray50;
-  }
-
-  Color _getCardColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark100
-        : TossDesignSystem.white;
-  }
-
-  Color _getDividerColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray200;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = ref.watch(typographyThemeProvider);
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: colors.backgroundSecondary,
       appBar: AppHeader(
         title: '구독 관리',
         showBackButton: true,
         showTokenBalance: false,
         backgroundColor: Colors.transparent,
-        foregroundColor: _getTextColor(context),
+        foregroundColor: colors.textPrimary,
         onBackPressed: () {
           Navigator.of(context).pop();
         },
@@ -107,25 +76,25 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
         children: [
           SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
-            horizontal: TossDesignSystem.marginHorizontal),
+            horizontal: DSSpacing.pageHorizontal),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
 
             // Premium Benefits
             Container(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+              padding: const EdgeInsets.all(DSSpacing.lg),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    TossDesignSystem.tossBlue,
-                    TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+                    colors.accent,
+                    colors.accent.withValues(alpha: 0.8),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(DSRadius.lg),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,42 +103,42 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     children: [
                       Icon(
                         Icons.workspace_premium,
-                        color: TossDesignSystem.white,
+                        color: colors.ctaForeground,
                         size: 32,
                       ),
-                      const SizedBox(width: TossDesignSystem.spacingM),
+                      const SizedBox(width: DSSpacing.md),
                       Text(
                         'Premium',
-                        style: TossDesignSystem.heading3.copyWith(
-                          color: TossDesignSystem.white,
+                        style: typography.headingMedium.copyWith(
+                          color: colors.ctaForeground,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingM),
+                  const SizedBox(height: DSSpacing.md),
                   Text(
                     '무제한 운세와 프리미엄 기능을 경험하세요',
-                    style: TossDesignSystem.body2.copyWith(
-                      color: TossDesignSystem.white.withValues(alpha: 0.9),
+                    style: typography.bodySmall.copyWith(
+                      color: colors.ctaForeground.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingXL),
+            const SizedBox(height: DSSpacing.xl),
 
             // Plan Selection
             Text(
               '구독 플랜 선택',
-              style: TossDesignSystem.caption.copyWith(
-                color: _getSecondaryTextColor(context),
+              style: typography.labelSmall.copyWith(
+                color: colors.textSecondary,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
 
             // Free Plan
             _buildPlanCard(
@@ -180,7 +149,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               badge: '지금',
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
 
             // Monthly Plan
             _buildPlanCard(
@@ -191,7 +160,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               badge: null,
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
 
             // Yearly Plan
             _buildPlanCard(
@@ -203,31 +172,31 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               originalPrice: '₩22,800',
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingXL),
+            const SizedBox(height: DSSpacing.xl),
 
             // Premium Features
             Text(
               '프리미엄 혜택',
-              style: TossDesignSystem.caption.copyWith(
-                color: _getSecondaryTextColor(context),
+              style: typography.labelSmall.copyWith(
+                color: colors.textSecondary,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
 
             Container(
               decoration: BoxDecoration(
-                color: _getCardColor(context),
-                borderRadius: BorderRadius.circular(12),
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.md),
                 border: Border.all(
-                  color: _getDividerColor(context),
+                  color: colors.border,
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: TossDesignSystem.black.withValues(alpha: 0.04),
+                    color: colors.textPrimary.withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -260,29 +229,29 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingXXL),
+            const SizedBox(height: DSSpacing.xxl),
 
             // Terms
             Center(
               child: Text(
                 '구독은 언제든 해지 가능합니다\n자동 갱신되며 해지 전까지 요금이 청구됩니다',
                 textAlign: TextAlign.center,
-                style: TossDesignSystem.caption.copyWith(
-                  color: _getSecondaryTextColor(context),
+                style: typography.labelSmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingL),
+            const SizedBox(height: DSSpacing.lg),
 
             // Subscription Management Guide (Apple 심사 필수)
             Container(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+              padding: const EdgeInsets.all(DSSpacing.md),
               decoration: BoxDecoration(
-                color: _getCardColor(context),
-                borderRadius: BorderRadius.circular(12),
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.md),
                 border: Border.all(
-                  color: _getDividerColor(context),
+                  color: colors.border,
                   width: 1,
                 ),
               ),
@@ -294,19 +263,19 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                       Icon(
                         Icons.info_outline,
                         size: 18,
-                        color: TossDesignSystem.tossBlue,
+                        color: colors.accent,
                       ),
-                      const SizedBox(width: TossDesignSystem.spacingS),
+                      const SizedBox(width: DSSpacing.sm),
                       Text(
                         '구독 관리 방법',
-                        style: TossDesignSystem.body2.copyWith(
-                          color: _getTextColor(context),
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingM),
+                  const SizedBox(height: DSSpacing.md),
                   Text(
                     '구독 취소 및 관리는 Apple ID 설정에서 가능합니다:\n\n'
                     '1. 설정 앱 열기\n'
@@ -316,8 +285,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     '5. [구독 취소] 또는 플랜 변경\n\n'
                     '• 구독 기간 종료 최소 24시간 전에 취소해야 다음 결제가 되지 않습니다.\n'
                     '• 무료 체험 기간 중 취소하면 체험 기간 종료와 함께 구독이 해지됩니다.',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: _getSecondaryTextColor(context),
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textSecondary,
                       height: 1.5,
                     ),
                   ),
@@ -325,7 +294,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
 
             // Restore Purchases Button (Apple 심사 필수)
             Center(
@@ -333,8 +302,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                 onPressed: _isLoading ? null : _restorePurchases,
                 child: Text(
                   '이전 구매 복원',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: TossDesignSystem.tossBlue,
+                  style: typography.bodySmall.copyWith(
+                    color: colors.accent,
                     decoration: TextDecoration.underline,
                   ),
                 ),
@@ -371,29 +340,30 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     String? badge,
     String? originalPrice,
   }) {
+    final colors = context.colors;
+    final typography = ref.watch(typographyThemeProvider);
     final isSelected = _selectedPlan == id;
 
     return GestureDetector(
       onTap: () {
+        ref.read(fortuneHapticServiceProvider).selection();
         setState(() {
           _selectedPlan = id;
         });
       },
       child: Container(
-        padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+        padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: _getCardColor(context),
-          borderRadius: BorderRadius.circular(12),
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: isSelected
-                ? TossDesignSystem.tossBlue
-                : _getDividerColor(context),
+            color: isSelected ? colors.accent : colors.border,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+                    color: colors.accent.withValues(alpha: 0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -408,24 +378,20 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected
-                      ? TossDesignSystem.tossBlue
-                      : _getDividerColor(context),
+                  color: isSelected ? colors.accent : colors.border,
                   width: 2,
                 ),
-                color: isSelected
-                    ? TossDesignSystem.tossBlue
-                    : Colors.transparent,
+                color: isSelected ? colors.accent : Colors.transparent,
               ),
               child: isSelected
                   ? Icon(
                       Icons.check,
                       size: 16,
-                      color: TossDesignSystem.white,
+                      color: colors.ctaForeground,
                     )
                   : null,
             ),
-            const SizedBox(width: TossDesignSystem.spacingM),
+            const SizedBox(width: DSSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,26 +400,25 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     children: [
                       Text(
                         title,
-                        style: TossDesignSystem.body1.copyWith(
-                          color: _getTextColor(context),
+                        style: typography.bodyMedium.copyWith(
+                          color: colors.textPrimary,
                         ),
                       ),
                       if (badge != null) ...[
-                        const SizedBox(width: TossDesignSystem.spacingS),
+                        const SizedBox(width: DSSpacing.sm),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: TossDesignSystem.tossBlue
-                                .withValues(alpha: 0.1),
+                            color: colors.accent.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             badge,
-                            style: TossDesignSystem.caption.copyWith(
-                              color: TossDesignSystem.tossBlue,
+                            style: typography.labelSmall.copyWith(
+                              color: colors.accent,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -466,22 +431,22 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     children: [
                       Text(
                         price,
-                        style: TossDesignSystem.heading4.copyWith(
-                          color: _getTextColor(context),
+                        style: typography.headingSmall.copyWith(
+                          color: colors.textPrimary,
                         ),
                       ),
                       Text(
                         period,
-                        style: TossDesignSystem.caption.copyWith(
-                          color: _getSecondaryTextColor(context),
+                        style: typography.labelSmall.copyWith(
+                          color: colors.textSecondary,
                         ),
                       ),
                       if (originalPrice != null) ...[
-                        const SizedBox(width: TossDesignSystem.spacingS),
+                        const SizedBox(width: DSSpacing.sm),
                         Text(
                           originalPrice,
-                          style: TossDesignSystem.caption.copyWith(
-                            color: _getSecondaryTextColor(context),
+                          style: typography.labelSmall.copyWith(
+                            color: colors.textSecondary,
                             decoration: TextDecoration.lineThrough,
                           ),
                         ),
@@ -503,15 +468,17 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     required String subtitle,
     bool isLast = false,
   }) {
+    final colors = context.colors;
+    final typography = ref.watch(typographyThemeProvider);
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossDesignSystem.marginHorizontal,
-        vertical: TossDesignSystem.spacingM,
+        horizontal: DSSpacing.pageHorizontal,
+        vertical: DSSpacing.md,
       ),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isLast ? Colors.transparent : _getDividerColor(context),
+            color: isLast ? Colors.transparent : colors.border,
             width: 0.5,
           ),
         ),
@@ -521,24 +488,24 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           Icon(
             icon,
             size: 22,
-            color: TossDesignSystem.tossBlue,
+            color: colors.accent,
           ),
-          const SizedBox(width: TossDesignSystem.spacingM),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TossDesignSystem.body2.copyWith(
-                    color: _getTextColor(context),
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: TossDesignSystem.caption.copyWith(
-                    color: _getSecondaryTextColor(context),
+                  style: typography.labelSmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
@@ -563,6 +530,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
 
     try {
       setState(() => _isLoading = true);
+      ref.read(fortuneHapticServiceProvider).jackpot();
       await _purchaseService.purchaseProduct(productId);
     } catch (e) {
       if (mounted) {

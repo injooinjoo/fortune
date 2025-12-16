@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 플로팅 꿈 주제 위젯 - 수평으로 흘러가는 애니메이션
 class FloatingDreamTopicsWidget extends StatefulWidget {
@@ -214,13 +213,13 @@ class _DreamTopicChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isDark
-              ? TossDesignSystem.surfaceBackgroundDark
-              : TossDesignSystem.white,
+              ? DSColors.surface
+              : Colors.white,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: isDark
-                ? TossDesignSystem.gray700
-                : TossDesignSystem.gray200,
+                ? DSColors.border
+                : DSColors.border,
             width: 1,
           ),
           boxShadow: [
@@ -233,10 +232,10 @@ class _DreamTopicChip extends StatelessWidget {
         ),
         child: Text(
           topic,
-          style: TypographyUnified.bodyMedium.copyWith(
+          style: DSTypography.bodyMedium.copyWith(
             color: isDark
-                ? TossDesignSystem.textPrimaryDark
-                : TossDesignSystem.textPrimaryLight,
+                ? DSColors.textPrimary
+                : DSColors.textPrimary,
             fontWeight: FontWeight.w500,
           ),
         ),

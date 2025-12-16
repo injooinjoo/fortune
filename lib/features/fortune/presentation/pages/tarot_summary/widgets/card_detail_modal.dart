@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../tarot_card_helpers.dart';
 
 class CardDetailModal extends StatelessWidget {
@@ -24,7 +23,7 @@ class CardDetailModal extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       builder: (context) => CardDetailModal(
         cardIndex: cardIndex,
         position: position,
@@ -43,7 +42,7 @@ class CardDetailModal extends StatelessWidget {
       maxChildSize: 0.95,
       builder: (context, scrollController) => Container(
         decoration: BoxDecoration(
-          color: TossDesignSystem.black.withValues(alpha: 0.9),
+          color: Colors.black.withValues(alpha: 0.9),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: ListView(
@@ -55,7 +54,7 @@ class CardDetailModal extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white.withValues(alpha: 0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -63,8 +62,8 @@ class CardDetailModal extends StatelessWidget {
             SizedBox(height: 20),
             Text(
               position,
-              style: TypographyUnified.bodyLarge.copyWith(
-                color: TossDesignSystem.purple,
+              style: DSTypography.bodyLarge.copyWith(
+                color: const Color(0xFF9333EA),
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
@@ -83,15 +82,15 @@ class CardDetailModal extends StatelessWidget {
             SizedBox(height: 20),
             Text(
               '해석',
-              style: TypographyUnified.heading4.copyWith(
-                color: TossDesignSystem.white,
+              style: DSTypography.headingSmall.copyWith(
+                color: Colors.white,
               ),
             ),
             SizedBox(height: 12),
             Text(
               interpretation,
-              style: TypographyUnified.bodySmall.copyWith(
-                color: TossDesignSystem.white.withValues(alpha: 0.7),
+              style: DSTypography.bodySmall.copyWith(
+                color: Colors.white.withValues(alpha: 0.7),
                 height: 1.5,
               ),
             ),

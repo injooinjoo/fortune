@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'toss_section_widget.dart';
 
 class LoveStyleSection extends StatelessWidget {
@@ -14,7 +13,7 @@ class LoveStyleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return TossSectionWidget(
       title: '연애 스타일',
       icon: Icons.favorite,
@@ -23,18 +22,18 @@ class LoveStyleSection extends StatelessWidget {
         children: [
           Text(
             loveStyle.title,
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossDesignSystem.tossBlue,
+              color: colors.accent,
               height: 1.3,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             loveStyle.description,
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               fontWeight: FontWeight.w400,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              color: colors.textPrimary,
               height: 1.5,
             ),
           ),
@@ -59,11 +58,11 @@ class _DetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark200 : const Color(0xFFF7F8FA),
+        color: colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -71,17 +70,17 @@ class _DetailCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
+              color: colors.textSecondary,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             content,
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               fontWeight: FontWeight.w400,
-              color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
+              color: colors.textPrimary,
               height: 1.4,
             ),
           ),

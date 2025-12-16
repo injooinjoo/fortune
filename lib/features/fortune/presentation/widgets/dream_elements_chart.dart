@@ -1,11 +1,8 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/dream_elements_analysis_service.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 
 class DreamElementsChart extends StatefulWidget {
   final Map<String, double> elementWeights;
@@ -33,7 +30,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AppAnimations.durationShimmer,
+      duration: DSAnimation.durationSlow,
       vsync: this,
     );
     _animation = CurvedAnimation(
@@ -60,9 +57,9 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeader(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildChart(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildElementsList(),
       ],
     );
@@ -76,12 +73,12 @@ class _DreamElementsChartState extends State<DreamElementsChart>
           '꿈 요소 분석',
           style: Theme.of(context).textTheme.bodyMedium),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4 * 1.5),
           decoration: BoxDecoration(
-            color: TossDesignSystem.purple.withValues(alpha:0.2),
-            borderRadius: AppDimensions.borderRadius(TossDesignSystem.radiusXL),
+            color: DSColors.accentTertiary.withValues(alpha:0.2),
+            borderRadius: BorderRadius.circular(DSRadius.xl),
             border: Border.all(
-              color: TossDesignSystem.purple.withValues(alpha:0.3),
+              color: DSColors.accentTertiary.withValues(alpha:0.3),
               width: 1,
             ),
           ),
@@ -107,8 +104,8 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       animation: _animation,
       builder: (context, child) {
         return GlassContainer(
-          height: AppSpacing.spacing24 * 3.125,
-          padding: AppSpacing.paddingAll20,
+          height: 84 * 3.125,
+          padding: const EdgeInsets.all(20),
           child: Stack(
             children: [
               // 파이 차트
@@ -163,7 +160,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
             titleStyle: TextStyle(
               fontSize: isSelected ? 16 : 14,
               fontWeight: FontWeight.bold,
-              color: TossDesignSystem.white,
+              color: Colors.white,
             ),
             badgeWidget: _buildBadge(entry.key),
             badgePositionPercentageOffset: 1.3,
@@ -178,10 +175,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
 
   Widget _buildBadge(String category) {
     return Container(
-      padding: AppSpacing.paddingAll8,
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: _getCategoryColor(category).withValues(alpha:0.2),
-        borderRadius: AppDimensions.borderRadiusMedium,
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: _getCategoryColor(category).withValues(alpha:0.5),
           width: 1,
@@ -203,9 +200,9 @@ class _DreamElementsChartState extends State<DreamElementsChart>
           Icon(
             Icons.bedtime,
             size: 32,
-            color: TossDesignSystem.white.withValues(alpha: 0.54),
+            color: Colors.white.withValues(alpha: 0.54),
           ),
-          const SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: 8),
           Text(
             '꿈 요소',
             style: Theme.of(context).textTheme.bodyMedium,
@@ -227,7 +224,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
             size: 32,
             color: _getCategoryColor(category),
           ),
-          const SizedBox(height: AppSpacing.spacing1),
+          const SizedBox(height: 4),
           Text(
             category,
             style: Theme.of(context).textTheme.bodyMedium,
@@ -251,7 +248,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
           '발견된 요소 상세',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: AppSpacing.spacing3),
+        const SizedBox(height: 12),
         ...widget.elements.entries.where((e) => e.value.isNotEmpty).map((entry) {
           return _buildCategorySection(entry.key, entry.value);
         }),
@@ -261,11 +258,11 @@ class _DreamElementsChartState extends State<DreamElementsChart>
 
   Widget _buildCategorySection(String category, List<String> items) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
-      padding: AppSpacing.paddingAll12,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: _getCategoryColor(category).withValues(alpha:0.1),
-        borderRadius: AppDimensions.borderRadiusMedium,
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: _getCategoryColor(category).withValues(alpha:0.3),
           width: 1,
@@ -281,7 +278,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
                 size: 16,
                 color: _getCategoryColor(category),
               ),
-              const SizedBox(width: AppSpacing.spacing2),
+              const SizedBox(width: 8),
               Text(
                 category,
                 style: TextStyle(
@@ -292,7 +289,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: 8),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -300,12 +297,12 @@ class _DreamElementsChartState extends State<DreamElementsChart>
               return GestureDetector(
                 onTap: () => _showElementDetail(category, item),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4 * 1.5),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.white.withValues(alpha:0.1),
-                    borderRadius: AppDimensions.borderRadiusLarge,
+                    color: Colors.white.withValues(alpha:0.1),
+                    borderRadius: BorderRadius.circular(DSRadius.lg),
                     border: Border.all(
-                      color: TossDesignSystem.white.withValues(alpha:0.2),
+                      color: Colors.white.withValues(alpha:0.2),
                       width: 1,
                     ),
                   ),
@@ -328,31 +325,31 @@ class _DreamElementsChartState extends State<DreamElementsChart>
     
     showModalBottomSheet(
       context: context,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
-        padding: AppSpacing.paddingAll24,
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 40,
-              height: AppSpacing.spacing1,
+              height: 4,
               decoration: BoxDecoration(
-                color: TossDesignSystem.white.withValues(alpha:0.3),
-                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
+                color: Colors.white.withValues(alpha:0.3),
+                borderRadius: BorderRadius.circular(2 * 0.5),
               ),
             ),
-            const SizedBox(height: AppSpacing.spacing5),
+            const SizedBox(height: 20),
             Icon(
               _getCategoryIcon(category),
               size: 48,
               color: _getCategoryColor(category),
             ),
-            const SizedBox(height: AppSpacing.spacing3),
+            const SizedBox(height: 12),
             Text(
               element,
               style: Theme.of(context).textTheme.bodyMedium,
@@ -361,23 +358,23 @@ class _DreamElementsChartState extends State<DreamElementsChart>
               symbolData['meaning'],
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: AppSpacing.spacing5),
+            const SizedBox(height: 20),
             _buildMeaningSection(
               '긍정적 의미',
               symbolData['positive'],
-              TossDesignSystem.successGreen,
+              DSColors.success,
             ),
-            const SizedBox(height: AppSpacing.spacing3),
+            const SizedBox(height: 12),
             _buildMeaningSection(
               '부정적 의미',
               symbolData['negative'],
-              TossDesignSystem.warningOrange,
+              DSColors.warning,
             ),
-            const SizedBox(height: AppSpacing.spacing3),
+            const SizedBox(height: 12),
             _buildMeaningSection(
               '심리학적 해석',
               symbolData['psychological'],
-              TossDesignSystem.purple,
+              DSColors.accentTertiary,
             ),
           ],
         ),
@@ -388,10 +385,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
   Widget _buildMeaningSection(String title, String content, Color color) {
     return Container(
       width: double.infinity,
-      padding: AppSpacing.paddingAll16,
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: color.withValues(alpha:0.1),
-        borderRadius: AppDimensions.borderRadiusMedium,
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: color.withValues(alpha:0.3),
           width: 1,
@@ -404,11 +401,11 @@ class _DreamElementsChartState extends State<DreamElementsChart>
             title,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(height: AppSpacing.spacing1),
+          const SizedBox(height: 4),
           Text(
             content,
             style: TextStyle(
-              color: TossDesignSystem.white.withValues(alpha:0.8),
+              color: Colors.white.withValues(alpha:0.8),
               fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
               height: 1.4,
             ),
@@ -420,23 +417,23 @@ class _DreamElementsChartState extends State<DreamElementsChart>
 
   Color _getCategoryColor(String category) {
     switch (category) {
-      case '동물': return TossDesignSystem.warningOrange;
+      case '동물': return DSColors.warning;
       case '사람':
-        return TossDesignSystem.primaryBlue;
+        return DSColors.accent;
       case '장소':
-        return TossDesignSystem.successGreen;
+        return DSColors.success;
       case '행동':
-        return TossDesignSystem.errorRed;
+        return DSColors.error;
       case '사물':
-        return TossDesignSystem.warningOrange;
+        return DSColors.warning;
       case '자연':
-        return TossDesignSystem.successGreen;
+        return DSColors.success;
       case '색상':
-        return TossDesignSystem.purple;
+        return DSColors.accentTertiary;
       case '감정': 
-        return TossDesignSystem.purple;
+        return DSColors.accentTertiary;
       default:
-        return TossDesignSystem.gray500;
+        return DSColors.textTertiary;
     }
   }
 

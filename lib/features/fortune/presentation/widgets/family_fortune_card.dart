@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import 'fortune_card.dart';
 
 /// 가족 운세 카드 컴포넌트 - 토스 디자인 시스템
@@ -36,18 +36,18 @@ class FamilyFortuneCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected 
-              ? TossDesignSystem.tossBlue.withValues(alpha:0.05)
-              : isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+              ? DSColors.accent.withValues(alpha:0.05)
+              : isDark ? DSColors.surface : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected 
-                ? TossDesignSystem.tossBlue 
-                : isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                ? DSColors.accent 
+                : isDark ? DSColors.border : DSColors.border,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected ? [
             BoxShadow(
-              color: TossDesignSystem.tossBlue.withValues(alpha:0.1),
+              color: DSColors.accent.withValues(alpha:0.1),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -64,7 +64,7 @@ class FamilyFortuneCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: isSelected 
-                        ? [TossDesignSystem.tossBlue, TossDesignSystem.purple]
+                        ? [DSColors.accent, DSColors.accentSecondary]
                         : gradientColors,
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -73,7 +73,7 @@ class FamilyFortuneCard extends StatelessWidget {
                 ),
                 child: Icon(
                   icon,
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                   size: 28,
                 ),
               ),
@@ -88,10 +88,10 @@ class FamilyFortuneCard extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: TossDesignSystem.heading4.copyWith(
+                          style: DSTypography.headingSmall.copyWith(
                             
                             fontWeight: FontWeight.w700,
-                            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                            color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                           ),
                         ),
                         if (badge != null) ...[
@@ -104,8 +104,8 @@ class FamilyFortuneCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         subtitle!,
-                        style: TossDesignSystem.body3.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        style: DSTypography.bodySmall.copyWith(
+                          color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                         ),
                       ),
                     ],
@@ -117,13 +117,13 @@ class FamilyFortuneCard extends StatelessWidget {
               if (isSelected)
                 Icon(
                   Icons.check_circle,
-                  color: TossDesignSystem.tossBlue,
+                  color: DSColors.accent,
                   size: 24,
                 )
               else if (showArrow)
                 Icon(
                   Icons.arrow_forward_ios,
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                  color: isDark ? DSColors.textTertiary : DSColors.textTertiary,
                   size: 16,
                 ),
             ],
@@ -154,7 +154,7 @@ class FamilyMemberChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final chipColor = color ?? TossDesignSystem.tossBlue;
+    final chipColor = color ?? DSColors.accent;
     
     return GestureDetector(
       onTap: onTap,
@@ -164,12 +164,12 @@ class FamilyMemberChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected 
               ? chipColor.withValues(alpha:0.1)
-              : isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+              : isDark ? DSColors.surface : DSColors.backgroundSecondary,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isSelected 
                 ? chipColor
-                : isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                : isDark ? DSColors.border : DSColors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -181,16 +181,16 @@ class FamilyMemberChip extends StatelessWidget {
               size: 18,
               color: isSelected 
                   ? chipColor
-                  : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  : isDark ? DSColors.textTertiary : DSColors.textSecondary,
             ),
             const SizedBox(width: 8),
             Text(
               label,
-              style: TossDesignSystem.body3.copyWith(
+              style: DSTypography.bodySmall.copyWith(
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected 
                     ? chipColor
-                    : isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                    : isDark ? DSColors.textSecondary : DSColors.textSecondary,
               ),
             ),
           ],
@@ -222,7 +222,7 @@ class FamilyActivityCard extends StatelessWidget {
     required this.duration,
     required this.benefit,
     this.icon = Icons.stars,
-    this.gradientColors = const [TossDesignSystem.primaryBlue, TossDesignSystem.purple],
+    this.gradientColors = const [DSColors.accent, DSColors.accentSecondary],
   });
 
   @override
@@ -264,7 +264,7 @@ class FamilyActivityCard extends StatelessWidget {
                   ),
                   child: Icon(
                     icon,
-                    color: TossDesignSystem.white,
+                    color: Colors.white,
                     size: 24,
                   ),
                 ),
@@ -275,10 +275,10 @@ class FamilyActivityCard extends StatelessWidget {
                     children: [
                       Text(
                         activity,
-                        style: TossDesignSystem.heading4.copyWith(
+                        style: DSTypography.headingSmall.copyWith(
                           
                           fontWeight: FontWeight.w700,
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                          color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -286,7 +286,7 @@ class FamilyActivityCard extends StatelessWidget {
                         children: [
                           _buildTag(difficulty, _getDifficultyColor(difficulty)),
                           const SizedBox(width: 8),
-                          _buildTag(duration, TossDesignSystem.gray600),
+                          _buildTag(duration, DSColors.textSecondary),
                         ],
                       ),
                     ],
@@ -300,8 +300,8 @@ class FamilyActivityCard extends StatelessWidget {
             // Description
             Text(
               description,
-              style: TossDesignSystem.body3.copyWith(
-                color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+              style: DSTypography.bodySmall.copyWith(
+                color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                 height: 1.5,
               ),
             ),
@@ -312,7 +312,7 @@ class FamilyActivityCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: TossDesignSystem.successGreen.withValues(alpha:0.05),
+                color: DSColors.success.withValues(alpha:0.05),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -320,14 +320,14 @@ class FamilyActivityCard extends StatelessWidget {
                   Icon(
                     Icons.auto_awesome,
                     size: 16,
-                    color: TossDesignSystem.successGreen,
+                    color: DSColors.success,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       benefit,
-                      style: TossDesignSystem.caption.copyWith(
-                        color: TossDesignSystem.successGreen,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: DSColors.success,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -350,7 +350,7 @@ class FamilyActivityCard extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TossDesignSystem.caption.copyWith(
+        style: DSTypography.labelSmall.copyWith(
           color: color,
           fontWeight: FontWeight.w600,
         ),
@@ -361,13 +361,13 @@ class FamilyActivityCard extends StatelessWidget {
   Color _getDifficultyColor(String difficulty) {
     switch (difficulty) {
       case '쉬움':
-        return TossDesignSystem.successGreen;
+        return DSColors.success;
       case '보통':
-        return TossDesignSystem.warningOrange;
+        return DSColors.warning;
       case '어려움':
-        return TossDesignSystem.errorRed;
+        return DSColors.error;
       default:
-        return TossDesignSystem.gray600;
+        return DSColors.textSecondary;
     }
   }
 }
@@ -425,9 +425,9 @@ class FamilyMemberFortuneCard extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: TossDesignSystem.body2.copyWith(
+                      style: DSTypography.bodyMedium.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -439,7 +439,7 @@ class FamilyMemberFortuneCard extends StatelessWidget {
                       ),
                       child: Text(
                         mood,
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: moodColor,
                           fontWeight: FontWeight.w600,
                         ),
@@ -450,8 +450,8 @@ class FamilyMemberFortuneCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   advice,
-                  style: TossDesignSystem.caption.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                     height: 1.4,
                   ),
                 ),
@@ -461,13 +461,13 @@ class FamilyMemberFortuneCard extends StatelessWidget {
                     Icon(
                       Icons.bolt,
                       size: 14,
-                      color: TossDesignSystem.warningOrange,
+                      color: DSColors.warning,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       '에너지 $energy%',
-                      style: TossDesignSystem.caption.copyWith(
-                        color: TossDesignSystem.warningOrange,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: DSColors.warning,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -475,13 +475,13 @@ class FamilyMemberFortuneCard extends StatelessWidget {
                     Icon(
                       Icons.schedule,
                       size: 14,
-                      color: TossDesignSystem.purple,
+                      color: DSColors.accentSecondary,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       luckyTime,
-                      style: TossDesignSystem.caption.copyWith(
-                        color: TossDesignSystem.purple,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: DSColors.accentSecondary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -497,13 +497,13 @@ class FamilyMemberFortuneCard extends StatelessWidget {
   
   Color _getMoodColor(String mood) {
     final moodColors = {
-      '활기찬': TossDesignSystem.warningOrange,
-      '평온한': TossDesignSystem.tossBlue,
-      '도전적인': TossDesignSystem.errorRed,
-      '성장하는': TossDesignSystem.successGreen,
-      '행복한': TossDesignSystem.purple,
+      '활기찬': DSColors.warning,
+      '평온한': DSColors.accent,
+      '도전적인': DSColors.error,
+      '성장하는': DSColors.success,
+      '행복한': DSColors.accentSecondary,
     };
     
-    return moodColors[mood] ?? TossDesignSystem.gray600;
+    return moodColors[mood] ?? DSColors.textSecondary;
   }
 }

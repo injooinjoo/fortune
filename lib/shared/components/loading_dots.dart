@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 
-/// 점 3개 로딩 애니메이션 위젯
+/// Korean Traditional loading animation with 3 dots
 class LoadingDots extends StatefulWidget {
   final Color? color;
   final double size;
-  
+
   const LoadingDots({
     super.key,
     this.color,
@@ -26,13 +26,13 @@ class _LoadingDotsState extends State<LoadingDots>
   @override
   void initState() {
     super.initState();
-    
+
     _controller = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     )..repeat();
-    
-    // 각 점이 순차적으로 애니메이션되도록 설정
+
+    // Sequential animation for each dot
     _animation1 = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -40,7 +40,7 @@ class _LoadingDotsState extends State<LoadingDots>
       parent: _controller,
       curve: const Interval(0.0, 0.5, curve: Curves.easeInOut),
     ));
-    
+
     _animation2 = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -48,7 +48,7 @@ class _LoadingDotsState extends State<LoadingDots>
       parent: _controller,
       curve: const Interval(0.2, 0.7, curve: Curves.easeInOut),
     ));
-    
+
     _animation3 = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -66,16 +66,17 @@ class _LoadingDotsState extends State<LoadingDots>
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.color ?? TossDesignSystem.white;
-    
+    final colors = context.colors;
+    final dotColor = widget.color ?? colors.textPrimary;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildDot(_animation1, color),
+        _buildDot(_animation1, dotColor),
         SizedBox(width: widget.size * 0.5),
-        _buildDot(_animation2, color),
+        _buildDot(_animation2, dotColor),
         SizedBox(width: widget.size * 0.5),
-        _buildDot(_animation3, color),
+        _buildDot(_animation3, dotColor),
       ],
     );
   }

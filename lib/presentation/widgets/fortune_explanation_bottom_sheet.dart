@@ -6,7 +6,7 @@ import 'package:fortune/core/theme/app_animations.dart';
 import '../../services/ad_service.dart';
 import '../../core/utils/logger.dart';
 import '../../core/theme/toss_design_system.dart';
-import '../../core/theme/typography_unified.dart';
+import '../../core/design_system/design_system.dart';
 import '../../core/widgets/date_picker/numeric_date_input.dart';
 
 class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
@@ -472,7 +472,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           SizedBox(width: 12),
           Text(
             '$score - $meaning',
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -522,7 +522,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                   SizedBox(width: 8),
                   Text(
                     'AI가 분석하는 개인 맞춤 운세',
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).brightness == Brightness.dark
                           ? TossDesignSystem.purple.withValues(alpha: 0.7)
@@ -537,7 +537,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 '• 매일 업데이트되는 실시간 운세\n'
                 '• 상세한 운세 해석과 조언 제공\n'
                 '• 다양한 운세 카테고리별 상세 분석',
-                style: TypographyUnified.bodySmall.copyWith( height: 1.5),
+                style: DSTypography.bodySmall.copyWith( height: 1.5),
               ),
             ],
           ),
@@ -639,7 +639,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 SizedBox(width: 8),
                 Text(
                   '${_getFortuneTypeName(widget.fortuneType)} 보기',
-                  style: TypographyUnified.buttonMedium.copyWith(
+                  style: DSTypography.labelMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),

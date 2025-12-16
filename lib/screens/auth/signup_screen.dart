@@ -3,7 +3,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -48,9 +48,9 @@ class _SignupScreenState extends State<SignupScreen> {
           if (!mounted) return;
 
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('회원가입이 완료되었습니다!'),
-              backgroundColor: TossDesignSystem.successGreen));
+            SnackBar(
+              content: const Text('회원가입이 완료되었습니다!'),
+              backgroundColor: context.colors.success));
           
           context.go('/onboarding');
         }
@@ -59,13 +59,13 @@ class _SignupScreenState extends State<SignupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error.message),
-            backgroundColor: TossDesignSystem.errorRed));
+            backgroundColor: context.colors.error));
       } catch (error) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('회원가입 중 오류가 발생했습니다.'),
-            backgroundColor: TossDesignSystem.errorRed));
+          SnackBar(
+            content: const Text('회원가입 중 오류가 발생했습니다.'),
+            backgroundColor: context.colors.error));
       } finally {
         if (mounted) {
           setState(() => _isLoading = false);
@@ -96,7 +96,7 @@ class _SignupScreenState extends State<SignupScreen> {
               Text(
                 'Fortune과 함께 운명을 만나보세요',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600)),
+                      color: context.colors.textSecondary)),
               const SizedBox(height: 32),
               FormBuilder(
                 key: _formKey,
@@ -186,7 +186,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white)))
+                                    context.colors.ctaForeground)))
                             : const Text('회원가입')),
                     ),
                     const SizedBox(height: 16),

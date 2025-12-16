@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
 /// 📊 총운 카드 - ChatGPT Pulse 스타일
@@ -154,7 +154,7 @@ class OverallCard extends StatelessWidget {
           ),
           child: Text(
             fullDescription,
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
               fontWeight: FontWeight.w400,
               height: 1.5,

@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../domain/entities/fortune.dart' as fortune_entity;
-import '../../../core/theme/toss_design_system.dart';
+import '../../../core/design_system/design_system.dart';
 import '../fortune_story_viewer.dart';
 
 class StoryHelpers {
@@ -133,7 +133,7 @@ class StoryHelpers {
       return [
         StorySegment(
           text: '운세를 불러오는 중...',
-          fontSize: TossDesignSystem.heading3.fontSize!,
+          fontSize: DSTypography.headingSmall.fontSize!,
           fontWeight: FontWeight.w300,
         ),
       ];
@@ -145,14 +145,14 @@ class StoryHelpers {
     // 1. 인사 페이지
     segments.add(StorySegment(
       text: userName.isNotEmpty ? '$userName님' : '오늘의 주인공',
-      fontSize: TossDesignSystem.heading1.fontSize!,
+      fontSize: DSTypography.displaySmall.fontSize!,
       fontWeight: FontWeight.w200,
     ));
 
     // 2. 오늘의 총평 (날씨 페이지 제거)
     segments.add(StorySegment(
       text: getEnergyDescription(score),
-      fontSize: TossDesignSystem.heading3.fontSize!,
+      fontSize: DSTypography.headingSmall.fontSize!,
       fontWeight: FontWeight.w300,
       emoji: score >= 80 ? '✨' : score >= 60 ? '☁️' : '🌙',
     ));
@@ -171,7 +171,7 @@ class StoryHelpers {
           segments.add(StorySegment(
             subtitle: subtitle,
             text: chunk,
-            fontSize: TossDesignSystem.heading3.fontSize!,
+            fontSize: DSTypography.headingSmall.fontSize!,
             fontWeight: FontWeight.w300,
           ));
         }
@@ -180,17 +180,17 @@ class StoryHelpers {
       // 기본 운세 텍스트
       segments.add(StorySegment(
         text: getFortuneText1(score),
-        fontSize: TossDesignSystem.heading3.fontSize!,
+        fontSize: DSTypography.headingSmall.fontSize!,
         fontWeight: FontWeight.w300,
       ));
       segments.add(StorySegment(
         text: getFortuneText2(score),
-        fontSize: TossDesignSystem.heading3.fontSize!,
+        fontSize: DSTypography.headingSmall.fontSize!,
         fontWeight: FontWeight.w300,
       ));
       segments.add(StorySegment(
         text: getFortuneText3(score),
-        fontSize: TossDesignSystem.heading3.fontSize!,
+        fontSize: DSTypography.headingSmall.fontSize!,
         fontWeight: FontWeight.w300,
       ));
     }
@@ -200,7 +200,7 @@ class StoryHelpers {
     segments.add(StorySegment(
       subtitle: '⚠️ 주의',
       text: cautionText,
-      fontSize: TossDesignSystem.heading4.fontSize!,
+      fontSize: DSTypography.headingSmall.fontSize!,
       fontWeight: FontWeight.w300,
     ));
 
@@ -223,7 +223,7 @@ class StoryHelpers {
     segments.add(StorySegment(
       subtitle: '🍀 행운',
       text: luckyText,
-      fontSize: TossDesignSystem.heading3.fontSize!,
+      fontSize: DSTypography.headingSmall.fontSize!,
       fontWeight: FontWeight.w300,
     ));
 
@@ -232,7 +232,7 @@ class StoryHelpers {
     segments.add(StorySegment(
       subtitle: '💡 조언',
       text: adviceText,
-      fontSize: TossDesignSystem.heading3.fontSize!,
+      fontSize: DSTypography.headingSmall.fontSize!,
       fontWeight: FontWeight.w300,
     ));
 
@@ -240,7 +240,7 @@ class StoryHelpers {
     segments.add(StorySegment(
       subtitle: '마무리',
       text: '좋은 하루 되세요',
-      fontSize: TossDesignSystem.heading2.fontSize!,
+      fontSize: DSTypography.displaySmall.fontSize!,
       fontWeight: FontWeight.w300,
       emoji: '✨',
     ));

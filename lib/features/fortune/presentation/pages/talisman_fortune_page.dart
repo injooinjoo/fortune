@@ -8,8 +8,7 @@ import '../../../talisman/presentation/widgets/talisman_wish_input.dart';
 import '../../../talisman/presentation/widgets/talisman_loading_skeleton.dart';
 import '../../../talisman/presentation/widgets/talisman_result_card.dart';
 import '../../../talisman/presentation/providers/talisman_provider.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../talisman/presentation/widgets/talisman_premium_bottom_sheet.dart';
 
@@ -31,27 +30,27 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final authState = ref.watch(authStateProvider).value;
     final userId = authState?.session?.user.id;
 
     final talismanState = ref.watch(talismanGenerationProvider(userId));
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        backgroundColor: colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         // 결과 페이지면 leading 없음
         leading: talismanState.step == TalismanGenerationStep.result
             ? null
-            : _buildBackButton(context, ref, talismanState.step, userId, isDark),
+            : _buildBackButton(context, ref, talismanState.step, userId, colors),
         title: Text(
           '부적',
-          style: TypographyUnified.heading3.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.headingSmall.copyWith(
+            color: colors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -60,17 +59,17 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
             ? [
                 IconButton(
                   icon: const Icon(Icons.close),
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ]
             : null,
       ),
-      body: _buildContent(context, ref, talismanState, userId, isDark),
+      body: _buildContent(context, ref, talismanState, userId, colors),
     );
   }
 
-  Widget _buildBackButton(BuildContext context, WidgetRef ref, TalismanGenerationStep step, String? userId, bool isDark) {
+  Widget _buildBackButton(BuildContext context, WidgetRef ref, TalismanGenerationStep step, String? userId, DSColorScheme colors) {
     VoidCallback onTap;
 
     if (step == TalismanGenerationStep.result) {
@@ -88,14 +87,14 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
 
     return IconButton(
       icon: const Icon(Icons.arrow_back_ios),
-      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+      color: colors.textPrimary,
       onPressed: onTap,
     );
   }
 
-  Widget _buildContent(BuildContext context, WidgetRef ref, TalismanGenerationState state, String? userId, bool isDark) {
+  Widget _buildContent(BuildContext context, WidgetRef ref, TalismanGenerationState state, String? userId, DSColorScheme colors) {
     if (state.error != null) {
-      return _buildErrorState(context, ref, state.error!, userId, isDark);
+      return _buildErrorState(context, ref, state.error!, userId, colors);
     }
 
     switch (state.step) {
@@ -238,7 +237,7 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
     );
   }
 
-  Widget _buildErrorState(BuildContext context, WidgetRef ref, String error, String? userId, bool isDark) {
+  Widget _buildErrorState(BuildContext context, WidgetRef ref, String error, String? userId, DSColorScheme colors) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -247,21 +246,21 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
           Icon(
             Icons.error_outline,
             size: 64,
-            color: TossDesignSystem.errorRed,
+            color: DSColors.error,
           ),
           const SizedBox(height: 24),
           Text(
             '오류가 발생했습니다',
-            style: TypographyUnified.heading3.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.headingSmall.copyWith(
+              color: colors.textPrimary,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
           Text(
             error,
-            style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+            style: DSTypography.bodyMedium.copyWith(
+              color: colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),

@@ -1,9 +1,6 @@
-import 'package:fortune/core/theme/toss_theme.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/theme/typography_unified.dart';
+import '../../core/design_system/design_system.dart';
 
 class FortuneBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -52,22 +49,19 @@ class FortuneBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentPath = GoRouterState.of(context).uri.path;
     final activeIndex = _getIndexFromPath(currentPath);
+    final colors = context.colors;
 
+    // Korean Traditional navigation bar with ink-wash top border
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.white,
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.white.withValues(alpha: 0.1)
-                : TossDesignSystem.black.withValues(alpha: 0.04),
-            offset: const Offset(0, -1),
-            blurRadius: 0,
-            spreadRadius: 0,
+        color: colors.surface,
+        // Ink-wash effect: subtle top border instead of drop shadow
+        border: Border(
+          top: BorderSide(
+            color: colors.textPrimary.withValues(alpha: 0.08),
+            width: 1,
           ),
-        ],
+        ),
       ),
       child: SafeArea(
         top: false,
@@ -81,7 +75,7 @@ class FortuneBottomNavigationBar extends StatelessWidget {
                 item: _items[index],
                 isSelected: index == activeIndex,
                 onTap: () {
-                  HapticFeedback.lightImpact();
+                  DSHaptics.light();
                   // Only navigate if not already on the same route
                   if (currentPath != _items[index].route && !currentPath.startsWith(_items[index].route)) {
                     context.go(_items[index].route);
@@ -121,35 +115,43 @@ class _NavItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    // Korean Traditional navigation item with vermilion seal indicator
     return Expanded(
       child: InkWell(
         onTap: onTap,
+        splashColor: colors.accentSecondary.withValues(alpha: 0.1),
+        highlightColor: colors.accentSecondary.withValues(alpha: 0.05),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Icon with traditional ink color
             Icon(
               isSelected ? item.selectedIcon : item.icon,
               size: 24,
-              color: isSelected
-                ? (Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.white
-                    : TossTheme.textBlack)
-                : (Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.grayDark400
-                    : TossTheme.textGray600)),
-            SizedBox(height: 2),
+              color: isSelected ? colors.textPrimary : colors.textTertiary,
+            ),
+            const SizedBox(height: 2),
+            // Label with traditional typography
             Text(
               item.label,
-              style: TypographyUnified.labelSmall.copyWith(
+              style: typography.labelSmall.copyWith(
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected
-                  ? (Theme.of(context).brightness == Brightness.dark
-                      ? TossDesignSystem.white
-                      : TossTheme.textBlack)
-                  : (Theme.of(context).brightness == Brightness.dark
-                      ? TossDesignSystem.grayDark400
-                      : TossTheme.textGray600),
+                color: isSelected ? colors.textPrimary : colors.textTertiary,
                 letterSpacing: -0.2,
+              ),
+            ),
+            const SizedBox(height: 2),
+            // Vermilion seal dot indicator (Korean traditional 인장 style)
+            AnimatedContainer(
+              duration: DSAnimation.durationFast,
+              width: isSelected ? 4 : 0,
+              height: isSelected ? 4 : 0,
+              decoration: BoxDecoration(
+                color: colors.accentSecondary,
+                shape: BoxShape.circle,
               ),
             ),
           ],

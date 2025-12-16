@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:fortune/core/theme/toss_design_system.dart';
-import '../../core/theme/typography_unified.dart';
+import '../../core/design_system/design_system.dart';
 
 /// 오행 균형 차트 위젯 - 목/화/토/금/수 균형을 시각화
 class ElementBalanceChart extends StatelessWidget {
@@ -166,7 +166,7 @@ class ElementCirclePainter extends CustomPainter {
         final iconPainter = TextPainter(
           text: TextSpan(
             text: data['icon'] as String,
-            style: TypographyUnified.heading3,
+            style: DSTypography.headingSmall,
           ),
           textDirection: TextDirection.ltr,
         );

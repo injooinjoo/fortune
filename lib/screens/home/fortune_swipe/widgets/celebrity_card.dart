@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../presentation/providers/celebrity_saju_provider.dart';
 
 /// 🎭 유사 사주 연예인 카드 - ChatGPT Pulse 스타일
@@ -195,7 +195,7 @@ class _CelebrityCardItem extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: TypographyUnified.bodyMedium.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     color: isDark ? Colors.white : Colors.black87,
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
@@ -204,7 +204,7 @@ class _CelebrityCardItem extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   description,
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
                     fontSize: 12,
                   ),

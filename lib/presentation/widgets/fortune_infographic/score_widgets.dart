@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/toss_design_system.dart';
-import '../../../core/theme/typography_unified.dart';
+import '../../../core/design_system/design_system.dart';
 import 'helpers.dart';
 
 /// Score display widgets for fortune infographic
@@ -219,7 +219,7 @@ class ScoreWidgets {
       children: [
         Text(
           value,
-          style: TypographyUnified.displaySmall.copyWith(
+          style: DSTypography.displaySmall.copyWith(
             fontWeight: FontWeight.bold,
             color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
           ),
@@ -227,7 +227,7 @@ class ScoreWidgets {
         const SizedBox(height: 4),
         Text(
           title,
-          style: TypographyUnified.labelMedium.copyWith(
+          style: DSTypography.labelMedium.copyWith(
             color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
           ),
         ),

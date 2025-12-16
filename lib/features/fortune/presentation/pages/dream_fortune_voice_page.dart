@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
-import '../../../../core/theme/font_size_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/models/fortune_result.dart';
@@ -36,13 +33,13 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final voiceState = ref.watch(dreamVoiceProvider);
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        backgroundColor: colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         // 결과 표시 시 백버튼 제거
@@ -50,7 +47,7 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
             ? IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
                 onPressed: () => Navigator.pop(context),
               )
@@ -58,9 +55,8 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
         automaticallyImplyLeading: _fortuneResult == null,
         title: Text(
           '꿈 해몽',
-          style: TextStyle(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            fontSize: FontSizeSystem.heading4,
+          style: DSTypography.labelLarge.copyWith(
+            color: colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -71,7 +67,7 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -81,14 +77,14 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
       body: Stack(
         children: [
           // 메인 콘텐츠
-          _buildMainContent(isDark, voiceState),
+          _buildMainContent(colors, voiceState),
 
           // 하단 음성 입력 영역 (초기/녹음 상태에서만 표시, 처리 중에는 숨김)
           if (voiceState.state == VoicePageState.initial || voiceState.state == VoicePageState.recording)
             Positioned(
-              bottom: MediaQuery.of(context).padding.bottom + 16,
-              left: TossTheme.spacingM,
-              right: TossTheme.spacingM,
+              bottom: MediaQuery.of(context).padding.bottom + DSSpacing.lg,
+              left: DSSpacing.md,
+              right: DSSpacing.md,
               child: VoiceInputTextField(
                 onSubmit: _handleTextRecognized,
                 hintText: '무슨 꿈이었나요?',
@@ -108,51 +104,51 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
     );
   }
 
-  Widget _buildMainContent(bool isDark, DreamVoiceState voiceState) {
+  Widget _buildMainContent(DSColorScheme colors, DreamVoiceState voiceState) {
     switch (voiceState.state) {
       case VoicePageState.initial:
       case VoicePageState.recording: // 녹음 중에도 초기 화면 유지
-        return _buildInitialScreen(isDark, voiceState);
+        return _buildInitialScreen(colors, voiceState);
       case VoicePageState.processing:
-        return _buildProcessingScreen(isDark);
+        return _buildProcessingScreen(colors);
       case VoicePageState.result:
-        return _buildResultScreen(isDark);
+        return _buildResultScreen(colors);
     }
   }
 
   /// 초기 화면 (플로팅 꿈 주제)
-  Widget _buildInitialScreen(bool isDark, DreamVoiceState voiceState) {
+  Widget _buildInitialScreen(DSColorScheme colors, DreamVoiceState voiceState) {
     return Column(
       children: [
         const SizedBox(height: 20),
 
         // 제목
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingM),
+          padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
           child: Text(
             '🌙 어떤 꿈을 꾸셨나요?',
-            style: TossTheme.heading2.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.headingMedium.copyWith(
+              color: colors.textPrimary,
             ),
             textAlign: TextAlign.center,
           ),
         ),
 
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
 
         // 서브 타이틀
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingM),
+          padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
           child: Text(
             '터치하거나 직접 입력해보세요',
-            style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+            style: DSTypography.bodyLarge.copyWith(
+              color: colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
         ),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: DSSpacing.xl),
 
         // 플로팅 꿈 주제들
         Expanded(
@@ -165,13 +161,13 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
         ),
 
         // 하단 입력 영역 여유 공간 (입력창 높이 48 + SafeArea + 패딩)
-        SizedBox(height: 48 + MediaQuery.of(context).padding.bottom + 32),
+        SizedBox(height: 48 + MediaQuery.of(context).padding.bottom + DSSpacing.xl),
       ],
     );
   }
 
   /// 처리 중 화면 (스켈레톤 로딩)
-  Widget _buildProcessingScreen(bool isDark) {
+  Widget _buildProcessingScreen(DSColorScheme colors) {
     return FortuneLoadingSkeleton(
       itemCount: 3,
       showHeader: true,
@@ -184,13 +180,13 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
   }
 
   /// 결과 화면
-  Widget _buildResultScreen(bool isDark) {
+  Widget _buildResultScreen(DSColorScheme colors) {
     if (_fortuneResult == null) {
       return const Center(child: Text('결과를 불러올 수 없습니다.'));
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -202,25 +198,25 @@ class _DreamFortuneVoicePageState extends ConsumerState<DreamFortuneVoicePage> {
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.75,
                 ),
-                margin: const EdgeInsets.only(bottom: TossTheme.spacingM),
+                margin: const EdgeInsets.only(bottom: DSSpacing.md),
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
+                  horizontal: DSSpacing.lg,
+                  vertical: DSSpacing.md,
                 ),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.grey[800] : Colors.grey[200],
+                  color: colors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   _userMessage,
-                  style: TypographyUnified.bodyMedium.copyWith(
-                    color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
             ),
 
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: DSSpacing.md),
 
           // 운세 결과
           DreamResultWidget(

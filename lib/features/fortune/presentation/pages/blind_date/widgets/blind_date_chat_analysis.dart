@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 import '../constants/blind_date_options.dart';
 
@@ -19,7 +19,7 @@ class BlindDateChatAnalysis extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return GlassCard(
       child: Padding(
@@ -37,7 +37,7 @@ class BlindDateChatAnalysis extends StatelessWidget {
                 Text(
                   '대화 분석',
                   style: theme.textTheme.headlineSmall?.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                    color: colors.textPrimary,
                   ),
                 ),
               ],
@@ -56,7 +56,7 @@ class BlindDateChatAnalysis extends StatelessWidget {
               '대화 플랫폼',
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -90,7 +90,7 @@ class BlindDateChatAnalysis extends StatelessWidget {
               '대화 내용',
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),

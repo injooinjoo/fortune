@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class MbtiEnergyGauge extends StatelessWidget {
   final Map<String, dynamic> energyLevels;
@@ -18,13 +18,13 @@ class MbtiEnergyGauge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        color: isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: isDark
-              ? TossDesignSystem.black.withValues(alpha: 0.2)
-              : TossDesignSystem.gray400.withValues(alpha: 0.08),
+              ? Colors.black.withValues(alpha: 0.2)
+              : DSColors.border.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -38,20 +38,20 @@ class MbtiEnergyGauge extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  color: DSColors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.battery_charging_full,
-                  color: TossDesignSystem.tossBlue,
+                  color: DSColors.accent,
                   size: 24,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 '오늘의 에너지 레벨',
-                style: TossDesignSystem.heading3.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                style: DSTypography.headingMedium.copyWith(
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -61,7 +61,7 @@ class MbtiEnergyGauge extends StatelessWidget {
           _buildEnergyBar(
             '소셜 배터리',
             energyLevels['socialBattery'] ?? 0,
-            TossDesignSystem.tossBlue,
+            DSColors.accent,
             Icons.people_outline,
             _getSocialDescription(energyLevels['socialBattery'] ?? 0),
           ),
@@ -69,7 +69,7 @@ class MbtiEnergyGauge extends StatelessWidget {
           _buildEnergyBar(
             '혼자 배터리',
             energyLevels['aloneBattery'] ?? 0,
-            TossDesignSystem.purple,
+            DSColors.accentTertiary,
             Icons.person_outline,
             _getAloneDescription(energyLevels['aloneBattery'] ?? 0),
           ),
@@ -77,7 +77,7 @@ class MbtiEnergyGauge extends StatelessWidget {
           _buildEnergyBar(
             '집중력',
             energyLevels['focus'] ?? 0,
-            TossDesignSystem.orange,
+            DSColors.warning,
             Icons.center_focus_strong,
             _getFocusDescription(energyLevels['focus'] ?? 0),
           ),
@@ -85,7 +85,7 @@ class MbtiEnergyGauge extends StatelessWidget {
           _buildEnergyBar(
             '유연성',
             energyLevels['flexibility'] ?? 0,
-            TossDesignSystem.successGreen,
+            DSColors.success,
             Icons.sync_alt,
             _getFlexibilityDescription(energyLevels['flexibility'] ?? 0),
           ),
@@ -93,24 +93,24 @@ class MbtiEnergyGauge extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isDark 
-                ? TossDesignSystem.grayDark50
-                : TossDesignSystem.gray50,
+              color: isDark
+                ? DSColors.surface
+                : DSColors.background,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.lightbulb_outline,
-                  color: TossDesignSystem.orange,
+                  color: DSColors.warning,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     _getOverallAdvice(),
-                    style: TossDesignSystem.body3.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                       height: 1.5,
                     ),
                   ),
@@ -144,8 +144,8 @@ class MbtiEnergyGauge extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   label,
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                  style: DSTypography.bodyMedium.copyWith(
+                    color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -153,7 +153,7 @@ class MbtiEnergyGauge extends StatelessWidget {
             ),
             Text(
               '$value%',
-              style: TossDesignSystem.body2.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 color: color,
                 fontWeight: FontWeight.w600,
               ),
@@ -165,9 +165,9 @@ class MbtiEnergyGauge extends StatelessWidget {
           lineHeight: 8.0,
           percent: value / 100,
           padding: EdgeInsets.zero,
-          backgroundColor: isDark 
-            ? TossDesignSystem.grayDark200
-            : TossDesignSystem.gray200,
+          backgroundColor: isDark
+            ? DSColors.border
+            : DSColors.border,
           progressColor: color,
           barRadius: const Radius.circular(4),
           animateFromLastPercent: true,
@@ -177,8 +177,8 @@ class MbtiEnergyGauge extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           description,
-          style: TossDesignSystem.caption.copyWith(
-            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+          style: DSTypography.labelSmall.copyWith(
+            color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             height: 1.4,
           ),
         ),

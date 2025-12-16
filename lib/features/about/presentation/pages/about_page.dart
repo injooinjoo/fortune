@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/shared/components/app_header.dart';
 
@@ -96,18 +96,18 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           SizedBox(height: 24),
           Text(
             '관상은 과학',
-            style: TypographyUnified.numberLarge.copyWith(
+            style: DSTypography.displayLarge.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.white)).animate().fadeIn(delay: 200.ms),
           SizedBox(height: 8),
           Text(
             'AI가 읽어주는 나만의 운세',
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.9))).animate().fadeIn(delay: 400.ms),
           SizedBox(height: 16),
           Text(
             '매일 새로운 인사이트와 함께\n더 나은 하루를 시작하세요',
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.7),
               height: 1.5),
             textAlign: TextAlign.center).animate().fadeIn(delay: 600.ms)]));
@@ -151,7 +151,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       children: [
         Text(
           '주요 기능',
-          style: TypographyUnified.displaySmall.copyWith(
+          style: DSTypography.displaySmall.copyWith(
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white)),
         const SizedBox(height: 16),
@@ -198,13 +198,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           SizedBox(height: 8),
           Text(
             title,
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               color: TossDesignSystem.white,
               fontWeight: FontWeight.bold)),
           SizedBox(height: 4),
           Text(
             description,
-            style: TypographyUnified.labelSmall.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.7),
               height: 1.3),
             textAlign: TextAlign.center)]));
@@ -222,7 +222,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         children: [
           Text(
             '우리의 미션',
-            style: TypographyUnified.heading3.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.bold,
               color: TossDesignSystem.white)),
           const SizedBox(height: 16),
@@ -251,12 +251,12 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       children: [
         Text(
           value,
-          style: TypographyUnified.displaySmall.copyWith(
+          style: DSTypography.displaySmall.copyWith(
             fontWeight: FontWeight.bold,
             color: TossDesignSystem.white)),
         Text(
           label,
-          style: TypographyUnified.labelMedium.copyWith(
+          style: DSTypography.labelMedium.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.7)))]);
   }
 
@@ -266,12 +266,12 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         SizedBox(height: 16),
         Text(
           '버전 $_version',
-          style: TypographyUnified.labelMedium.copyWith(
+          style: DSTypography.labelMedium.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.5))),
         SizedBox(height: 8),
         Text(
           '© 2025 Fortune. All rights reserved.',
-          style: TypographyUnified.labelMedium.copyWith(
+          style: DSTypography.labelMedium.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.5))),
         const SizedBox(height: 32)]);
   }

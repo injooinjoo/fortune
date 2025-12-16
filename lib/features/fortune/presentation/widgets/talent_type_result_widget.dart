@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/talent_type.dart';
-import '../../../../core/theme/typography_unified.dart';
+
+// Korean Traditional Design System - Talent Type Result Widget
 
 /// 재능 타입 결과를 표시하는 메인 위젯
 class TalentTypeResultWidget extends StatelessWidget {
@@ -46,13 +46,13 @@ class TalentTypeResultWidget extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            TossTheme.primaryBlue.withValues(alpha: 0.1),
-            TossTheme.primaryBlue.withValues(alpha: 0.05),
+            DSColors.accent.withValues(alpha: 0.1),
+            DSColors.accent.withValues(alpha: 0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(TossTheme.radiusL),
+        borderRadius: BorderRadius.circular(DSRadius.lg),
         border: Border.all(
-          color: TossTheme.primaryBlue.withValues(alpha: 0.2),
+          color: DSColors.accent.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -61,25 +61,25 @@ class TalentTypeResultWidget extends StatelessWidget {
           // 이모지
           Text(
             talentInfo.emoji,
-            style: TypographyUnified.displayLarge,
+            style: DSTypography.displayLarge,
           ),
           const SizedBox(height: 12),
-          
+
           // 타입명
           Text(
             talentInfo.title,
-            style: TossTheme.heading2.copyWith(
-              color: TossTheme.primaryBlue,
+            style: DSTypography.headingMedium.copyWith(
+              color: DSColors.accent,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          
+
           // 서브타이틀
           Text(
             talentInfo.subtitle,
-            style: TossTheme.subtitle1.copyWith(
-              
+            style: DSTypography.bodyLarge.copyWith(
+
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
@@ -113,7 +113,7 @@ class TalentTypeResultWidget extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 '재능 점수 $overallScore점',
-                style: TossTheme.body2.copyWith(
+                style: DSTypography.bodyMedium.copyWith(
                   color: _getScoreColor(overallScore),
                   fontWeight: FontWeight.w600,
                 ),
@@ -130,14 +130,14 @@ class TalentTypeResultWidget extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossTheme.borderGray200.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        color: DSColors.border.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(DSRadius.md),
       ),
       child: Text(
         talentInfo.description,
-        style: TossTheme.subtitle2.copyWith(
+        style: DSTypography.bodyMedium.copyWith(
           height: 1.6,
-          color: TossTheme.textGray600,
+          color: DSColors.textSecondary,
         ),
         textAlign: TextAlign.center,
       ),
@@ -145,10 +145,10 @@ class TalentTypeResultWidget extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 85) return const Color(0xFF22C55E); // 초록
-    if (score >= 70) return TossTheme.primaryBlue;    // 파랑
-    if (score >= 55) return const Color(0xFFF59E0B); // 주황
-    return const Color(0xFFEF4444);                  // 빨강
+    if (score >= 85) return DSColors.success; // 초록
+    if (score >= 70) return DSColors.accent;    // 파랑
+    if (score >= 55) return DSColors.warning; // 주황
+    return DSColors.error;                  // 빨강
   }
 }
 
@@ -170,15 +170,15 @@ class TalentStrengthCards extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.emoji_events_rounded,
-                color: TossTheme.primaryBlue,
+                color: DSColors.accent,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 '핵심 강점 TOP 3',
-                style: TossTheme.body1.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -209,7 +209,7 @@ class TalentStrengthCards extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: colors[rank - 1].withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: colors[rank - 1].withValues(alpha: 0.3),
         ),
@@ -226,9 +226,9 @@ class TalentStrengthCards extends StatelessWidget {
             child: Center(
               child: Text(
                 '$rank',
-                style: TossTheme.button.copyWith(
-                  color: TossDesignSystem.white,
-                  
+                style: DSTypography.labelMedium.copyWith(
+                  color: Colors.white,
+
                 ),
               ),
             ),
@@ -237,9 +237,9 @@ class TalentStrengthCards extends StatelessWidget {
           Expanded(
             child: Text(
               strength,
-              style: TossTheme.body2.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               ),
             ),
           ),
@@ -267,15 +267,15 @@ class RecommendedCareersWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.work_rounded,
-                color: TossTheme.primaryBlue,
+                color: DSColors.accent,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 '추천 직업',
-                style: TossTheme.body1.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -297,16 +297,16 @@ class RecommendedCareersWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+        color: DSColors.accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: TossTheme.primaryBlue.withValues(alpha: 0.2),
+          color: DSColors.accent.withValues(alpha: 0.2),
         ),
       ),
       child: Text(
         career,
-        style: TossTheme.caption.copyWith(
-          color: TossTheme.primaryBlue,
+        style: DSTypography.labelSmall.copyWith(
+          color: DSColors.accent,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -332,15 +332,15 @@ class ActionPlanWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.rocket_launch_rounded,
-                color: TossTheme.primaryBlue,
+                color: DSColors.accent,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 '오늘부터 시작할 수 있는 3가지',
-                style: TossTheme.body1.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -364,8 +364,8 @@ class ActionPlanWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        color: isDark ? DSColors.surface : DSColors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
       ),
       child: Row(
         children: [
@@ -373,14 +373,14 @@ class ActionPlanWidget extends StatelessWidget {
             width: 28,
             height: 28,
             decoration: BoxDecoration(
-              color: TossTheme.primaryBlue,
+              color: DSColors.accent,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
               child: Text(
                 '$step',
-                style: TossTheme.caption.copyWith(
-                  color: TossDesignSystem.white,
+                style: DSTypography.labelSmall.copyWith(
+                  color: Colors.white,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -390,9 +390,9 @@ class ActionPlanWidget extends StatelessWidget {
           Expanded(
             child: Text(
               plan,
-              style: TossTheme.subtitle2.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 fontWeight: FontWeight.w500,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               ),
             ),
           ),

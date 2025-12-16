@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 class SummaryCard extends StatelessWidget {
@@ -19,15 +18,15 @@ class SummaryCard extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.warningYellow.withValues(alpha: 0.2),
-          TossDesignSystem.warningOrange.withValues(alpha: 0.2),
+          DSColors.warning.withValues(alpha: 0.2),
+          DSColors.warning.withValues(alpha: 0.25),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
       borderRadius: BorderRadius.circular(20),
       border: Border.all(
-        color: TossDesignSystem.warningYellow.withValues(alpha: 0.3),
+        color: DSColors.warning.withValues(alpha: 0.3),
         width: 1,
       ),
       blur: 15,
@@ -40,18 +39,18 @@ class SummaryCard extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  TossDesignSystem.warningYellow.withValues(alpha: 0.3),
-                  TossDesignSystem.transparent,
+                  DSColors.warning.withValues(alpha: 0.3),
+                  Colors.transparent,
                 ],
               ),
             ),
             child: Icon(
               Icons.auto_stories,
               size: 48,
-              color: TossDesignSystem.warningYellow,
+              color: DSColors.warning,
               shadows: [
                 Shadow(
-                  color: TossDesignSystem.warningYellow,
+                  color: DSColors.warning,
                   blurRadius: 20,
                 ),
               ],
@@ -60,17 +59,17 @@ class SummaryCard extends StatelessWidget {
           SizedBox(height: 16),
           Text(
             '전체 해석',
-            style: TypographyUnified.heading3.copyWith(
-              fontSize: TypographyUnified.heading3.fontSize! * fontScale,
-              color: TossDesignSystem.white,
+            style: DSTypography.headingMedium.copyWith(
+              fontSize: DSTypography.headingMedium.fontSize! * fontScale,
+              color: Colors.white,
             ),
           ),
           SizedBox(height: 16),
           Text(
             summary,
-            style: TypographyUnified.bodyLarge.copyWith(
-              fontSize: TypographyUnified.bodyLarge.fontSize! * fontScale,
-              color: TossDesignSystem.white,
+            style: DSTypography.bodyLarge.copyWith(
+              fontSize: DSTypography.bodyLarge.fontSize! * fontScale,
+              color: Colors.white,
               height: 1.5,
             ),
             textAlign: TextAlign.center,

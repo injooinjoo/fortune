@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/theme/toss_design_system.dart';
-import '../../../core/theme/typography_unified.dart';
+import '../../../core/design_system/design_system.dart';
 
 /// Loading screen shown while checking authentication status
 class LandingLoadingScreen extends StatelessWidget {
@@ -27,10 +26,8 @@ class LandingLoadingScreen extends StatelessWidget {
             SizedBox(height: 16),
             Text(
               '로그인 상태를 확인하고 있습니다...',
-              style: TypographyUnified.buttonMedium.copyWith(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? TossDesignSystem.grayDark400
-                      : TossDesignSystem.gray600),
+              style: DSTypography.labelMedium.copyWith(
+                  color: context.colors.textSecondary),
             ),
           ],
         ),

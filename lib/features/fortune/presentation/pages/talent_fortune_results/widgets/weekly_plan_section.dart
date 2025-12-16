@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/fortune_result.dart';
 import '../../../../../../core/utils/fortune_text_cleaner.dart';
 
 class WeeklyPlanSection extends StatelessWidget {
   final FortuneResult? fortuneResult;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const WeeklyPlanSection({
     super.key,
     required this.fortuneResult,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -22,8 +21,8 @@ class WeeklyPlanSection extends StatelessWidget {
       return Center(
         child: Text(
           '주간 계획 데이터가 없습니다',
-          style: TypographyUnified.bodySmall.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+          style: DSTypography.bodySmall.copyWith(
+            color: colors.textSecondary,
           ),
         ),
       );
@@ -47,7 +46,7 @@ class WeeklyPlanSection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray50,
+                color: colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -59,15 +58,15 @@ class WeeklyPlanSection extends StatelessWidget {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                          color: colors.accent.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
                           child: Text(
                             '${index + 1}',
-                            style: TypographyUnified.labelMedium.copyWith(
+                            style: DSTypography.labelMedium.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: TossDesignSystem.tossBlue,
+                              color: colors.accent,
                             ),
                           ),
                         ),
@@ -79,16 +78,16 @@ class WeeklyPlanSection extends StatelessWidget {
                           children: [
                             Text(
                               day,
-                              style: TypographyUnified.bodyMedium.copyWith(
+                              style: DSTypography.bodyMedium.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                                color: colors.textPrimary,
                               ),
                             ),
                             if (timeNeeded.isNotEmpty)
                               Text(
                                 timeNeeded,
-                                style: TypographyUnified.labelSmall.copyWith(
-                                  color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                                style: DSTypography.labelSmall.copyWith(
+                                  color: colors.textSecondary,
                                 ),
                               ),
                           ],
@@ -101,14 +100,14 @@ class WeeklyPlanSection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                        color: colors.accent.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         '🎯 $focus',
-                        style: TypographyUnified.labelMedium.copyWith(
+                        style: DSTypography.labelMedium.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: TossDesignSystem.tossBlue,
+                          color: colors.accent,
                         ),
                       ),
                     ),
@@ -122,15 +121,15 @@ class WeeklyPlanSection extends StatelessWidget {
                         children: [
                           Text(
                             '• ',
-                            style: TypographyUnified.bodySmall.copyWith(
-                              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                            style: DSTypography.bodySmall.copyWith(
+                              color: colors.textSecondary,
                             ),
                           ),
                           Expanded(
                             child: Text(
                               activity,
-                              style: TypographyUnified.bodySmall.copyWith(
-                                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                              style: DSTypography.bodySmall.copyWith(
+                                color: colors.textSecondary,
                               ),
                             ),
                           ),
@@ -142,9 +141,9 @@ class WeeklyPlanSection extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       '✅ 체크리스트',
-                      style: TypographyUnified.labelMedium.copyWith(
+                      style: DSTypography.labelMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        color: colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -156,14 +155,14 @@ class WeeklyPlanSection extends StatelessWidget {
                           Icon(
                             Icons.check_box_outline_blank,
                             size: 16,
-                            color: TossDesignSystem.successGreen,
+                            color: DSColors.success,
                           ),
                           SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               item,
-                              style: TypographyUnified.labelSmall.copyWith(
-                                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                              style: DSTypography.labelSmall.copyWith(
+                                color: colors.textSecondary,
                               ),
                             ),
                           ),
@@ -176,10 +175,10 @@ class WeeklyPlanSection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.successGreen.withValues(alpha: 0.05),
+                        color: DSColors.success.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: TossDesignSystem.successGreen.withValues(alpha: 0.2),
+                          color: DSColors.success.withValues(alpha: 0.2),
                           width: 1,
                         ),
                       ),
@@ -188,15 +187,15 @@ class WeeklyPlanSection extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.stars,
-                            color: TossDesignSystem.successGreen,
+                            color: DSColors.success,
                             size: 16,
                           ),
                           SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               expectedOutcome,
-                              style: TypographyUnified.labelSmall.copyWith(
-                                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                              style: DSTypography.labelSmall.copyWith(
+                                color: colors.textSecondary,
                               ),
                             ),
                           ),

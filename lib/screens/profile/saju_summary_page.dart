@@ -6,7 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import '../../core/theme/toss_theme.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'widgets/saju_summary_card.dart';
 
@@ -45,9 +45,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
     final sajuState = ref.watch(sajuProvider);
 
     return Scaffold(
-      backgroundColor: isDark
-          ? TossDesignSystem.backgroundDark
-          : TossDesignSystem.backgroundLight,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         title: const Text('사주 종합'),
         backgroundColor: Colors.transparent,
@@ -89,9 +87,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
       child: Screenshot(
         controller: _screenshotController,
         child: Container(
-          color: isDark
-              ? TossDesignSystem.backgroundDark
-              : TossDesignSystem.backgroundLight,
+          color: context.colors.background,
           child: SajuSummaryCard(
             sajuData: sajuData,
             showHeader: true,
@@ -181,9 +177,7 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark
-          ? TossDesignSystem.cardBackgroundDark
-          : Colors.white,
+      backgroundColor: context.colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -248,10 +242,8 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: isDark
-              ? TossDesignSystem.grayDark200
-              : TossDesignSystem.gray100,
-          borderRadius: BorderRadius.circular(12),
+          color: context.colors.backgroundSecondary,
+          borderRadius: BorderRadius.circular(DSRadius.md),
         ),
         child: Icon(
           icon,

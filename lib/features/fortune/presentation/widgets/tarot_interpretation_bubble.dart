@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 
 class TarotInterpretationBubble extends StatefulWidget {
   final String interpretation;
@@ -121,22 +119,22 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
               children: [
                 // Main bubble
                 GlassContainer(
-                  padding: AppSpacing.paddingAll16,
+                  padding: EdgeInsets.all(16),
                   gradient: LinearGradient(
                     colors: widget.isCurrentCard
                         ? [
-                            TossDesignSystem.purple.withValues(alpha:0.3),
-                            TossDesignSystem.primaryBlue.withValues(alpha:0.3)]
+                            DSColors.accentSecondary.withValues(alpha:0.3),
+                            DSColors.accent.withValues(alpha:0.3)]
                         : [
-                            TossDesignSystem.gray400.withValues(alpha:0.1),
-                            TossDesignSystem.gray400.withValues(alpha:0.05)],
+                            DSColors.textTertiary.withValues(alpha:0.1),
+                            DSColors.textTertiary.withValues(alpha:0.05)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight),
-                  borderRadius: AppDimensions.borderRadiusLarge,
+                  borderRadius: BorderRadius.circular(DSRadius.lg),
                   border: Border.all(
                     color: widget.isCurrentCard
-                        ? TossDesignSystem.purple.withValues(alpha:0.4)
-                        : TossDesignSystem.white.withValues(alpha:0.1),
+                        ? DSColors.accentSecondary.withValues(alpha:0.4)
+                        : Colors.white.withValues(alpha:0.1),
                     width: 1),
                   blur: 10,
                   child: Column(
@@ -147,22 +145,22 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                           children: [
                             Container(
                               width: 32,
-                              height: AppSpacing.spacing8,
+                              height: 32,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 gradient: LinearGradient(
                                   colors: [
-                                    TossDesignSystem.purple.withValues(alpha:0.6),
-                                    TossDesignSystem.primaryBlue.withValues(alpha:0.6)])),
+                                    DSColors.accentSecondary.withValues(alpha:0.6),
+                                    DSColors.accent.withValues(alpha:0.6)])),
                               child: const Icon(
                                 Icons.auto_awesome,
-                                color: TossDesignSystem.white,
+                                color: Colors.white,
                                 size: 18)),
-                            const SizedBox(width: AppSpacing.spacing2),
+                            const SizedBox(width: 8),
                             Text(
                               '타로 마스터',
                               style: Theme.of(context).textTheme.bodyMedium)]),
-                      if (widget.isCurrentCard) const SizedBox(height: AppSpacing.spacing3),
+                      if (widget.isCurrentCard) const SizedBox(height: 12),
                       
                       // Interpretation text with typing effect
                       if (widget.isCurrentCard && !_typingComplete) ...[
@@ -179,8 +177,8 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                               builder: (context, child) {
                                 return Container(
                                   width: 2,
-                                  height: AppSpacing.spacing4 * 1.125,
-                                  color: TossDesignSystem.white.withValues(alpha:(math.sin(_typingController.value * math.pi * 4) + 1) / 2));
+                                  height: 16 * 1.125,
+                                  color: Colors.white.withValues(alpha:(math.sin(_typingController.value * math.pi * 4) + 1) / 2));
                               },
                             ),
                           ]),
@@ -202,7 +200,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                       
                       // Show more/less button
                       if (lines.length > 2) Padding(
-                          padding: const EdgeInsets.only(top: AppSpacing.spacing2),
+                          padding: const EdgeInsets.only(top: 8),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -215,7 +213,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                                     ? Icons.keyboard_arrow_up
                                     : Icons.keyboard_arrow_down,
                                 size: 16,
-                                color: TossDesignSystem.purple.withValues(alpha:0.5)),
+                                color: DSColors.accentSecondary.withValues(alpha:0.5)),
                             ],
                           ),
                         ),
@@ -229,7 +227,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                     left: -10,
                     child: CustomPaint(
                       painter: _BubbleTailPainter(
-                        color: TossDesignSystem.purple.withValues(alpha:0.2)),
+                        color: DSColors.accentSecondary.withValues(alpha:0.2)),
                       size: const Size(20, 20),
                     ),
                   ),
@@ -269,10 +267,10 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
       final text = line.substring(2).trim();
       
       return Container(
-        padding: AppSpacing.paddingAll12,
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: _getCalloutColor(emoji).withValues(alpha:0.1),
-          borderRadius: AppDimensions.borderRadiusSmall,
+          borderRadius: BorderRadius.circular(DSRadius.sm),
           border: Border.all(
             color: _getCalloutColor(emoji).withValues(alpha:0.3),
             width: 1)),
@@ -282,7 +280,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
             Text(
               emoji,
               style: Theme.of(context).textTheme.bodyMedium),
-            const SizedBox(width: AppSpacing.spacing2),
+            const SizedBox(width: 8),
             Expanded(
               child: Text(
                 text,
@@ -300,10 +298,10 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
 
   Color _getCalloutColor(String emoji) {
     switch (emoji) {
-      case '💡': return TossDesignSystem.warningOrange;
-      case '⚠️': return TossDesignSystem.warningOrange;
-      case '✨': return TossDesignSystem.purple;
-      default: return TossDesignSystem.primaryBlue;
+      case '💡': return DSColors.warning;
+      case '⚠️': return DSColors.warning;
+      case '✨': return DSColors.accentSecondary;
+      default: return DSColors.accent;
     }
   }
 }

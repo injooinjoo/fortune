@@ -8,13 +8,12 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../presentation/providers/auth_provider.dart';
 import '../../../../../presentation/providers/token_provider.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/services/debug_premium_service.dart';
 import '../../../../../core/models/fortune_result.dart';
 import '../../../../../core/services/holiday_service.dart';
 import '../../../../../core/models/holiday_models.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../../domain/models/conditions/daily_fortune_conditions.dart';
 import '../../../../../services/fortune_history_service.dart';
 import '../../../../../services/storage_service.dart';
@@ -27,6 +26,7 @@ import '../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/widgets/gpt_style_typing_text.dart';
 import '../../../../../core/theme/app_theme.dart';
+import '../../../../../core/services/fortune_haptic_service.dart';
 
 // 모듈화된 위젯들
 import 'widgets/calendar_sync_banner.dart';
@@ -207,7 +207,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${eventsByDate.length}일의 일정을 불러왔습니다'),
-              backgroundColor: TossDesignSystem.successGreen,
+              backgroundColor: DSColors.success,
             ),
           );
         }
@@ -220,7 +220,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('캘린더 동기화 중 오류가 발생했습니다: $e'),
-            backgroundColor: TossDesignSystem.errorRed,
+            backgroundColor: DSColors.error,
           ),
         );
       }
@@ -265,7 +265,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Google Calendar 연동 완료: ${_calendarService.googleEmail}'),
-              backgroundColor: TossDesignSystem.successGreen,
+              backgroundColor: DSColors.success,
             ),
           );
 
@@ -276,7 +276,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Google Calendar 연동이 취소되었습니다'),
-              backgroundColor: TossDesignSystem.warningOrange,
+              backgroundColor: DSColors.warning,
             ),
           );
         }
@@ -287,7 +287,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Google Calendar 연동 실패: $e'),
-            backgroundColor: TossDesignSystem.errorRed,
+            backgroundColor: DSColors.error,
           ),
         );
       }
@@ -415,6 +415,10 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           // 타이핑 효과 초기화 (새 운세 결과가 로드될 때)
           _currentTypingSection = 0;
         });
+
+        // 시간별 운세 결과 공개 햅틱
+        final score = fortuneResult.score ?? 70;
+        ref.read(fortuneHapticServiceProvider).scoreReveal(score);
 
         debugPrint('');
         debugPrint('5️⃣ UI 상태 업데이트 완료');
@@ -633,33 +637,33 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     // ✅ 결과 화면 표시 (로딩 중이거나 결과가 있을 때)
     if (_showResultView) {
-      return _buildResultScaffold(isDark);
+      return _buildResultScaffold(colors);
     }
 
     // 에러 발생
     if (_error != null) {
-      return _buildErrorScaffold(isDark);
+      return _buildErrorScaffold(colors);
     }
 
     // 기본 입력 폼
-    return _buildInputFormScaffold(isDark);
+    return _buildInputFormScaffold(colors);
   }
 
-  Widget _buildResultScaffold(bool isDark) {
+  Widget _buildResultScaffold(DSColorScheme colors) {
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        backgroundColor: colors.background,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
           '시간별 운세',
-          style: context.heading4.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.headingSmall.copyWith(
+            color: colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -668,7 +672,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           IconButton(
             icon: Icon(
               Icons.close,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              color: colors.textPrimary,
             ),
             onPressed: () => context.go('/fortune'),
           ),
@@ -679,8 +683,8 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
             child: _isLoading && _fortuneResult == null
-                ? _buildLoadingContent(isDark)  // API 대기 중: 커서 깜빡임
-                : _buildFortuneResultContent(isDark),  // 결과 수신: 타이핑 시작
+                ? _buildLoadingContent(colors)  // API 대기 중: 커서 깜빡임
+                : _buildFortuneResultContent(colors),  // 결과 수신: 타이핑 시작
           ),
           if (_isBlurred && _fortuneResult != null)
             UnifiedButton.floating(
@@ -695,7 +699,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
   }
 
   /// API 대기 중 커서 깜빡임 표시
-  Widget _buildLoadingContent(bool isDark) {
+  Widget _buildLoadingContent(DSColorScheme colors) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.only(top: 100),
@@ -704,18 +708,14 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           children: [
             Text(
               '운세를 불러오는 중...',
-              style: context.buttonMedium.copyWith(
-                color: isDark
-                    ? TossDesignSystem.textSecondaryDark
-                    : TossDesignSystem.textSecondaryLight,
+              style: DSTypography.labelLarge.copyWith(
+                color: colors.textSecondary,
               ),
             ),
             const SizedBox(height: 24),
             TypingLoadingIndicator(
-              style: context.heading3.copyWith(
-                color: isDark
-                    ? TossDesignSystem.textPrimaryDark
-                    : TossDesignSystem.textPrimaryLight,
+              style: DSTypography.headingMedium.copyWith(
+                color: colors.textPrimary,
               ),
             ),
           ],
@@ -724,11 +724,12 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     );
   }
 
-  Widget _buildFortuneResultContent(bool isDark) {
+  Widget _buildFortuneResultContent(DSColorScheme colors) {
     final fortuneData = _fortuneResult!.data['fortune'] as Map<String, dynamic>? ?? {};
     final categories = fortuneData['categories'] as Map<String, dynamic>? ?? {};
     final totalFortune = categories['total'] as Map<String, dynamic>?;
     final score = totalFortune?['score'] as int?;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -741,7 +742,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                 if (score != null) ...[
                   Text(
                     '$score점',
-                    style: context.displayLarge.copyWith(
+                    style: DSTypography.displayLarge.copyWith(
                       color: AppTheme.primaryColor,
                       fontWeight: FontWeight.bold,
                     ),
@@ -750,7 +751,7 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
                 ],
                 Text(
                   totalFortune['title'] as String? ?? '오늘의 총운',
-                  style: context.heading3,
+                  style: DSTypography.headingMedium,
                 ),
               ],
             ),
@@ -869,16 +870,16 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     );
   }
 
-  Widget _buildErrorScaffold(bool isDark) {
+  Widget _buildErrorScaffold(DSColorScheme colors) {
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        backgroundColor: colors.background,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            color: colors.textPrimary,
           ),
           onPressed: () => context.pop(),
         ),
@@ -889,14 +890,14 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
           children: [
             Text(
               '운세 생성 실패',
-              style: context.heading3.copyWith(
-                color: TossDesignSystem.errorRed,
+              style: DSTypography.headingMedium.copyWith(
+                color: DSColors.error,
               ),
             ),
             const SizedBox(height: 16),
             Text(
               _error!,
-              style: context.bodyMedium,
+              style: DSTypography.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -914,24 +915,24 @@ class _DailyCalendarFortunePageState extends ConsumerState<DailyCalendarFortuneP
     );
   }
 
-  Widget _buildInputFormScaffold(bool isDark) {
+  Widget _buildInputFormScaffold(DSColorScheme colors) {
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        backgroundColor: colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            color: colors.textPrimary,
           ),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '시간별 운세',
-          style: context.heading4.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.headingSmall.copyWith(
+            color: colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),

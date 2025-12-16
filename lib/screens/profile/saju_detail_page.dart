@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import '../../services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -193,51 +193,38 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
     }
   }
 
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
+  // Design System Helper Methods
   Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
+    return context.colors.textPrimary;
   }
 
   Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
+    return context.colors.textSecondary;
   }
 
   Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.gray50;
+    return context.colors.background;
   }
 
   Color _getCardColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark100
-        : TossDesignSystem.white;
+    return context.colors.surface;
   }
 
   Color _getDividerColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray200;
+    return context.colors.border;
   }
 
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingL,
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingS,
+        DSSpacing.pageHorizontal,
+        DSSpacing.lg,
+        DSSpacing.pageHorizontal,
+        DSSpacing.sm,
       ),
       child: Text(
         title,
-        style: TossDesignSystem.caption.copyWith(
+        style: DSTypography.labelSmall.copyWith(
           color: _getSecondaryTextColor(context),
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
@@ -253,8 +240,8 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossDesignSystem.marginHorizontal,
-        vertical: TossDesignSystem.spacingM,
+        horizontal: DSSpacing.pageHorizontal,
+        vertical: DSSpacing.md,
       ),
       decoration: BoxDecoration(
         border: Border(
@@ -269,13 +256,13 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
         children: [
           Text(
             title,
-            style: TossDesignSystem.body2.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               color: _getTextColor(context),
             ),
           ),
           Text(
             value,
-            style: TossDesignSystem.body2.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               color: _getSecondaryTextColor(context),
               fontWeight: FontWeight.w500,
             ),
@@ -300,14 +287,14 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
           ),
           title: Text(
             '사주 정보',
-            style: TossDesignSystem.heading4.copyWith(
+            style: DSTypography.labelLarge.copyWith(
               color: _getTextColor(context),
             ),
           ),
         ),
         body: const Center(
           child: CircularProgressIndicator(
-            color: TossDesignSystem.tossBlue,
+            color: DSColors.accent,
           ),
         ),
       );
@@ -327,7 +314,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
         ),
         title: Text(
           '사주 정보',
-          style: TossDesignSystem.heading4.copyWith(
+          style: DSTypography.labelLarge.copyWith(
             color: _getTextColor(context),
           ),
         ),
@@ -337,12 +324,12 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: TossDesignSystem.spacingM),
+              const SizedBox(height: DSSpacing.md),
 
               // 기본 정보 섹션
               _buildSectionHeader('기본 정보'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
                   color: _getCardColor(context),
                   borderRadius: BorderRadius.circular(12),
@@ -352,7 +339,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -384,7 +371,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               // 사주 팔자 섹션
               _buildSectionHeader('사주 팔자'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
                   color: _getCardColor(context),
                   borderRadius: BorderRadius.circular(12),
@@ -394,7 +381,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -427,7 +414,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               if (userSaju != null) ...[
                 _buildSectionHeader('오행 균형'),
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                  margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                   decoration: BoxDecoration(
                     color: _getCardColor(context),
                     borderRadius: BorderRadius.circular(12),
@@ -437,7 +424,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.black.withValues(alpha: 0.04),
+                        color: Colors.black.withValues(alpha: 0.04),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -479,7 +466,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               // 십이지 정보 섹션
               _buildSectionHeader('십이지 정보'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
                   color: _getCardColor(context),
                   borderRadius: BorderRadius.circular(12),
@@ -489,7 +476,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -510,12 +497,12 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                 ),
               ),
 
-              const SizedBox(height: TossDesignSystem.spacingXXL),
+              const SizedBox(height: DSSpacing.xxl),
 
               // 사주 재계산 버튼 (사주 데이터가 없는 경우)
               if (userSaju == null)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                  padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -528,7 +515,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                               }
                             },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: TossDesignSystem.tossBlue,
+                        backgroundColor: DSColors.accent,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -556,30 +543,30 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                 ),
 
               if (userSaju == null)
-                const SizedBox(height: TossDesignSystem.spacingL),
+                const SizedBox(height: DSSpacing.lg),
 
               // 안내 메시지
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 child: Container(
-                  padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+                  padding: const EdgeInsets.all(DSSpacing.md),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                    color: DSColors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.info_outline,
-                        color: TossDesignSystem.tossBlue,
+                        color: DSColors.accent,
                         size: 20,
                       ),
-                      const SizedBox(width: TossDesignSystem.spacingS),
+                      const SizedBox(width: DSSpacing.sm),
                       Expanded(
                         child: Text(
                           '정확한 사주 팔자 계산을 위해서는 출생시간 정보가 필요합니다.',
-                          style: TossDesignSystem.caption.copyWith(
-                            color: TossDesignSystem.tossBlue,
+                          style: DSTypography.labelSmall.copyWith(
+                            color: DSColors.accent,
                           ),
                         ),
                       ),
@@ -588,7 +575,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                 ),
               ),
 
-              const SizedBox(height: TossDesignSystem.spacingXXL),
+              const SizedBox(height: DSSpacing.xxl),
             ],
           ),
         ),

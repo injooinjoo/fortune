@@ -1,19 +1,21 @@
 import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
-class TarotAnimatedFlowPage extends StatefulWidget {
+class TarotAnimatedFlowPage extends ConsumerStatefulWidget {
   const TarotAnimatedFlowPage({
     super.key,
   });
 
   @override
-  State<TarotAnimatedFlowPage> createState() => _TarotAnimatedFlowPageState();
+  ConsumerState<TarotAnimatedFlowPage> createState() => _TarotAnimatedFlowPageState();
 }
 
-class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
+class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
     with TickerProviderStateMixin {
   PageController? _pageController;
   int? _selectedCardIndex;
@@ -88,6 +90,8 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {
+          // 페이지 전환 햅틱
+          ref.read(fortuneHapticServiceProvider).pageSnap();
           setState(() {});
         },
         children: [
@@ -325,7 +329,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
                             SizedBox(height: 20),
                             Text(
                               cardData['name'] ?? 'Unknown',
-                              style: TypographyUnified.displaySmall.copyWith(
+                              style: DSTypography.displaySmall.copyWith(
                                 color: TossDesignSystem.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -344,7 +348,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
             // Card info
             Text(
               cardData['name'] ?? 'Unknown Card',
-              style: TypographyUnified.heading1.copyWith(
+              style: DSTypography.displaySmall.copyWith(
                 color: TossDesignSystem.white,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 2,
@@ -356,7 +360,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
             Text(
               '"Go forward and do whatever\nyour heart tells you"',
               textAlign: TextAlign.center,
-              style: TypographyUnified.buttonMedium.copyWith(
+              style: DSTypography.labelMedium.copyWith(
                 color: TossDesignSystem.white.withValues(alpha: 0.8),
                 fontStyle: FontStyle.italic,
               ),
@@ -391,7 +395,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
               ),
               child: Text(
                 'View Full Reading',
-                style: TypographyUnified.buttonMedium.copyWith(
+                style: DSTypography.labelMedium.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -409,7 +413,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
         SizedBox(width: 8),
         Text(
           text,
-          style: TypographyUnified.bodySmall.copyWith(
+          style: DSTypography.bodySmall.copyWith(
             color: TossDesignSystem.white.withValues(alpha: 0.6),
           ),
         ),
@@ -418,10 +422,13 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
   }
 
   void _selectCard(int index) {
+    // 타로 카드 선택 햅틱
+    ref.read(fortuneHapticServiceProvider).cardSelect();
+
     setState(() {
       _selectedCardIndex = index;
     });
-    
+
     _heroController.forward();
     
     Future.delayed(const Duration(milliseconds: 500), () {

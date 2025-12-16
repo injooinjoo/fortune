@@ -2,7 +2,7 @@ import 'package:universal_io/io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/widgets/unified_button_enums.dart';
 
@@ -11,11 +11,11 @@ enum ImageUploadType {
   camera('카메라', Icons.camera_alt, '사진 촬영'),
   gallery('갤러리', Icons.photo_library, '사진 선택'),
   instagram('인스타그램', Icons.link, 'URL 입력');
-  
+
   final String label;
   final IconData icon;
   final String description;
-  
+
   const ImageUploadType(this.label, this.icon, this.description);
 }
 
@@ -70,7 +70,8 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,60 +79,60 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
         // Title & Description
         Text(
           widget.title,
-          style: TossDesignSystem.heading3.copyWith(
-            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+          style: typography.headingSmall.copyWith(
+            color: colors.textPrimary,
           ),
         ).animate().fadeIn(duration: 500.ms),
-        
-        const SizedBox(height: 8),
-        
+
+        const SizedBox(height: DSSpacing.sm),
+
         Text(
           widget.description,
-          style: TossDesignSystem.body2.copyWith(
-            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+          style: typography.bodyMedium.copyWith(
+            color: colors.textSecondary,
           ),
         ).animate().fadeIn(duration: 500.ms, delay: 50.ms),
-        
-        const SizedBox(height: 24),
+
+        const SizedBox(height: DSSpacing.lg),
 
         // Image Display or Upload Options
         if (_selectedImage != null) ...[
-          _buildSelectedImage(isDark),
+          _buildSelectedImage(colors, typography),
         ] else if (_showInstagramInput) ...[
-          _buildInstagramInput(isDark),
+          _buildInstagramInput(colors, typography),
         ] else ...[
-          _buildUploadOptions(isDark),
+          _buildUploadOptions(colors, typography),
         ],
 
         // Guidelines
         if (widget.guidelines.isNotEmpty && _selectedImage == null) ...[
-          const SizedBox(height: 24),
-          _buildGuidelines(isDark),
+          const SizedBox(height: DSSpacing.lg),
+          _buildGuidelines(colors, typography),
         ],
 
         // Privacy Notice
         if (_selectedImage != null || _showInstagramInput) ...[
-          const SizedBox(height: 16),
-          _buildPrivacyNotice(isDark),
+          const SizedBox(height: DSSpacing.md),
+          _buildPrivacyNotice(colors, typography),
         ],
       ],
     );
   }
 
-  Widget _buildSelectedImage(bool isDark) {
+  Widget _buildSelectedImage(DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
       height: widget.imageHeight,
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(DSRadius.lg),
         border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+          color: colors.border,
         ),
       ),
       child: Stack(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(DSRadius.lg - 1),
             child: Image.file(
               _selectedImage!,
               width: double.infinity,
@@ -140,49 +141,49 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
             ),
           ),
           Positioned(
-            top: 12,
-            right: 12,
+            top: DSSpacing.sm,
+            right: DSSpacing.sm,
             child: Row(
               children: [
                 _buildImageActionButton(
                   icon: Icons.edit,
                   onTap: _changeImage,
-                  isDark: isDark,
+                  colors: colors,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: DSSpacing.sm),
                 _buildImageActionButton(
                   icon: Icons.close,
                   onTap: _removeImage,
-                  isDark: isDark,
+                  colors: colors,
                 ),
               ],
             ),
           ),
           // Type indicator
           Positioned(
-            bottom: 12,
-            left: 12,
+            bottom: DSSpacing.sm,
+            left: DSSpacing.sm,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
               decoration: BoxDecoration(
-                color: TossDesignSystem.gray900.withValues(alpha: 0.7),
-                borderRadius: BorderRadius.circular(20),
+                color: colors.textPrimary.withValues(alpha: 0.7),
+                borderRadius: BorderRadius.circular(DSRadius.xl),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    _selectedType == ImageUploadType.camera 
-                        ? Icons.camera_alt 
+                    _selectedType == ImageUploadType.camera
+                        ? Icons.camera_alt
                         : Icons.photo_library,
                     size: 16,
-                    color: TossDesignSystem.white,
+                    color: colors.surface,
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: DSSpacing.xs),
                   Text(
                     _selectedType == ImageUploadType.camera ? '촬영' : '갤러리',
-                    style: TossDesignSystem.body3.copyWith(
-                      color: TossDesignSystem.white,
+                    style: typography.labelSmall.copyWith(
+                      color: colors.surface,
                     ),
                   ),
                 ],
@@ -194,17 +195,17 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
     ).animate().fadeIn(duration: 300.ms).scale(begin: const Offset(0.95, 0.95));
   }
 
-  Widget _buildInstagramInput(bool isDark) {
+  Widget _buildInstagramInput(DSColorScheme colors, DSTypographyScheme typography) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(DSSpacing.lg),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
-            borderRadius: BorderRadius.circular(16),
+            color: colors.surfaceSecondary,
+            borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
-              color: TossDesignSystem.purple.withValues(alpha: 0.3),
+              color: colors.accent.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -213,62 +214,65 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(DSSpacing.sm),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [TossDesignSystem.purple, TossDesignSystem.pinkPrimary, TossDesignSystem.warningOrange],
+                      gradient: LinearGradient(
+                        colors: [colors.accent, colors.accentSecondary, colors.accentTertiary],
                       ),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.camera_alt,
-                      color: TossDesignSystem.white,
+                      color: colors.surface,
                       size: 20,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: DSSpacing.sm),
                   Text(
                     '인스타그램 프로필 분석',
-                    style: TossDesignSystem.body1.copyWith(
+                    style: typography.bodyLarge.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: DSSpacing.md),
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm + 2),
                     decoration: BoxDecoration(
-                      color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
+                      color: colors.surface,
                       borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        bottomLeft: Radius.circular(12),
+                        topLeft: Radius.circular(DSRadius.md),
+                        bottomLeft: Radius.circular(DSRadius.md),
                       ),
                       border: Border.all(
-                        color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                        color: colors.border,
                       ),
                     ),
                     child: Text(
                       'instagram.com/',
-                      style: TossDesignSystem.body2.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      style: typography.bodyMedium.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                   ),
                   Expanded(
                     child: TextField(
                       controller: _instagramController,
+                      style: typography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'username',
-                        hintStyle: TossDesignSystem.body2.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                        hintStyle: typography.bodyMedium.copyWith(
+                          color: colors.textTertiary,
                         ),
                         suffixIcon: _instagramController.text.isNotEmpty
                             ? IconButton(
-                                icon: const Icon(Icons.clear),
+                                icon: Icon(Icons.clear, color: colors.textTertiary),
                                 onPressed: () {
                                   setState(() {
                                     _instagramController.clear();
@@ -277,36 +281,36 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                               )
                             : null,
                         filled: true,
-                        fillColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+                        fillColor: colors.surface,
                         border: OutlineInputBorder(
                           borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(12),
-                            bottomRight: Radius.circular(12),
+                            topRight: Radius.circular(DSRadius.md),
+                            bottomRight: Radius.circular(DSRadius.md),
                           ),
                           borderSide: BorderSide(
-                            color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                            color: colors.border,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(12),
-                            bottomRight: Radius.circular(12),
+                            topRight: Radius.circular(DSRadius.md),
+                            bottomRight: Radius.circular(DSRadius.md),
                           ),
                           borderSide: BorderSide(
-                            color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                            color: colors.border,
                           ),
                         ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(12),
-                            bottomRight: Radius.circular(12),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(DSRadius.md),
+                            bottomRight: Radius.circular(DSRadius.md),
                           ),
                           borderSide: BorderSide(
-                            color: TossDesignSystem.purple,
+                            color: colors.accent,
                             width: 2,
                           ),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm + 2),
                       ),
                       onChanged: (value) {
                         setState(() {});
@@ -315,17 +319,17 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: DSSpacing.sm),
               Text(
                 '공개 프로필의 사진을 분석합니다',
-                style: TossDesignSystem.body3.copyWith(
-                  color: TossDesignSystem.purple,
+                style: typography.labelSmall.copyWith(
+                  color: colors.accent,
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: DSSpacing.md),
         Row(
           children: [
             Expanded(
@@ -340,7 +344,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                 size: UnifiedButtonSize.medium,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: DSSpacing.sm),
             Expanded(
               child: UnifiedButton.primary(
                 text: '확인',
@@ -355,7 +359,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(errorMessage),
-                              backgroundColor: TossDesignSystem.errorRed,
+                              backgroundColor: colors.error,
                               behavior: SnackBarBehavior.floating,
                               duration: const Duration(seconds: 3),
                             ),
@@ -382,7 +386,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
     ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
   }
 
-  Widget _buildUploadOptions(bool isDark) {
+  Widget _buildUploadOptions(DSColorScheme colors, DSTypographyScheme typography) {
     final options = [
       ImageUploadType.camera,
       ImageUploadType.gallery,
@@ -395,17 +399,17 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
         InkWell(
           onTap: () {
             // Show bottom sheet with options
-            _showImageSelectionBottomSheet(context, isDark);
+            _showImageSelectionBottomSheet(context, colors, typography);
           },
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
           child: Container(
             height: widget.imageHeight,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
-              borderRadius: BorderRadius.circular(16),
+              color: colors.surfaceSecondary,
+              borderRadius: BorderRadius.circular(DSRadius.lg),
               border: Border.all(
-                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                color: colors.border,
                 width: 1.5,
               ),
             ),
@@ -415,21 +419,21 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                 Icon(
                   Icons.add_photo_alternate,
                   size: 64,
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                  color: colors.textTertiary,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: DSSpacing.md),
                 Text(
                   '분석할 사진을 선택해주세요',
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  style: typography.bodyLarge.copyWith(
+                    color: colors.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: DSSpacing.sm),
                 Text(
                   '탭하여 선택',
-                  style: TossDesignSystem.body3.copyWith(
-                    color: TossDesignSystem.purple,
+                  style: typography.labelSmall.copyWith(
+                    color: colors.accent,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -437,29 +441,29 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
             ),
           ),
         ).animate().fadeIn(duration: 400.ms),
-        
-        const SizedBox(height: 24),
-        
+
+        const SizedBox(height: DSSpacing.lg),
+
         // Option buttons
         ...options.map((option) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: _buildUploadOptionButton(option, isDark),
+          padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+          child: _buildUploadOptionButton(option, colors, typography),
         )),
       ],
     );
   }
 
-  Widget _buildUploadOptionButton(ImageUploadType type, bool isDark) {
+  Widget _buildUploadOptionButton(ImageUploadType type, DSColorScheme colors, DSTypographyScheme typography) {
     return InkWell(
       onTap: () => _handleOptionSelect(type),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(DSRadius.lg),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-          borderRadius: BorderRadius.circular(16),
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.lg),
           border: Border.all(
-            color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            color: colors.border,
           ),
         ),
         child: Row(
@@ -469,36 +473,34 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
               height: 48,
               decoration: BoxDecoration(
                 color: type == ImageUploadType.instagram
-                    ? const LinearGradient(
-                        colors: [TossDesignSystem.purple, TossDesignSystem.pinkPrimary, TossDesignSystem.warningOrange],
-                      ).colors.first.withValues(alpha: 0.1)
-                    : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100),
-                borderRadius: BorderRadius.circular(12),
+                    ? colors.accent.withValues(alpha: 0.1)
+                    : colors.surfaceSecondary,
+                borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Icon(
                 type.icon,
                 color: type == ImageUploadType.instagram
-                    ? TossDesignSystem.purple
-                    : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700),
+                    ? colors.accent
+                    : colors.textSecondary,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: DSSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     type.label,
-                    style: TossDesignSystem.body1.copyWith(
+                    style: typography.bodyLarge.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      color: colors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DSSpacing.xs),
                   Text(
                     type.description,
-                    style: TossDesignSystem.body3.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textTertiary,
                     ),
                   ),
                 ],
@@ -507,7 +509,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
             Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+              color: colors.textTertiary,
             ),
           ],
         ),
@@ -517,14 +519,14 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
       .slideX(begin: 0.05, end: 0);
   }
 
-  Widget _buildGuidelines(bool isDark) {
+  Widget _buildGuidelines(DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: colors.accent.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+          color: colors.accent.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -534,36 +536,36 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
             children: [
               Icon(
                 Icons.info_outline,
-                color: TossDesignSystem.infoBlue,
+                color: colors.accent,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '좋은 결과를 위한 가이드',
-                style: TossDesignSystem.body2.copyWith(
+                style: typography.bodyMedium.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: TossDesignSystem.infoBlue,
+                  color: colors.accent,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.sm),
           ...widget.guidelines.map((guideline) => Padding(
-            padding: const EdgeInsets.only(bottom: 6),
+            padding: const EdgeInsets.only(bottom: DSSpacing.xs),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '• ',
-                  style: TossDesignSystem.body3.copyWith(
-                    color: TossDesignSystem.infoBlue,
+                  style: typography.labelSmall.copyWith(
+                    color: colors.accent,
                   ),
                 ),
                 Expanded(
                   child: Text(
                     guideline,
-                    style: TossDesignSystem.body3.copyWith(
-                      color: TossDesignSystem.infoBlue,
+                    style: typography.labelSmall.copyWith(
+                      color: colors.accent,
                     ),
                   ),
                 ),
@@ -575,26 +577,26 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
     ).animate().fadeIn(duration: 500.ms, delay: 300.ms);
   }
 
-  Widget _buildPrivacyNotice(bool isDark) {
+  Widget _buildPrivacyNotice(DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
-        borderRadius: BorderRadius.circular(8),
+        color: colors.surfaceSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
         children: [
           Icon(
             Icons.lock_outline,
             size: 16,
-            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            color: colors.textSecondary,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Text(
               '개인정보는 안전하게 보호되며 분석 후 즉시 삭제됩니다',
-              style: TossDesignSystem.body3.copyWith(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              style: typography.labelSmall.copyWith(
+                color: colors.textSecondary,
               ),
             ),
           ),
@@ -606,20 +608,20 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
   Widget _buildImageActionButton({
     required IconData icon,
     required VoidCallback onTap,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(DSRadius.xl),
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(DSSpacing.sm),
         decoration: BoxDecoration(
-          color: TossDesignSystem.gray900.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(20),
+          color: colors.textPrimary.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(DSRadius.xl),
         ),
         child: Icon(
           icon,
-          color: TossDesignSystem.white,
+          color: colors.surface,
           size: 20,
         ),
       ),
@@ -632,13 +634,15 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
         _showInstagramInput = true;
       });
     } else {
-      _pickImage(type == ImageUploadType.camera 
-          ? ImageSource.camera 
+      _pickImage(type == ImageUploadType.camera
+          ? ImageSource.camera
           : ImageSource.gallery);
     }
   }
 
   Future<void> _pickImage(ImageSource source) async {
+    final colors = context.colors;
+
     try {
       final XFile? image = await _picker.pickImage(
         source: source,
@@ -650,11 +654,11 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
       if (image != null) {
         setState(() {
           _selectedImage = File(image.path);
-          _selectedType = source == ImageSource.camera 
-              ? ImageUploadType.camera 
+          _selectedType = source == ImageSource.camera
+              ? ImageUploadType.camera
               : ImageUploadType.gallery;
         });
-        
+
         widget.onImageSelected(ImageUploadResult(
           type: _selectedType!,
           imageFile: _selectedImage,
@@ -665,7 +669,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('오류가 발생했습니다: $e'),
-            backgroundColor: TossDesignSystem.errorRed,
+            backgroundColor: colors.error,
           ),
         );
       }
@@ -686,12 +690,12 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
     });
   }
 
-  void _showImageSelectionBottomSheet(BuildContext context, bool isDark) {
+  void _showImageSelectionBottomSheet(BuildContext context, DSColorScheme colors, DSTypographyScheme typography) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(DSRadius.xl)),
       ),
       builder: (BuildContext context) {
         return SafeArea(
@@ -699,31 +703,31 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                margin: const EdgeInsets.only(top: 8),
+                margin: const EdgeInsets.only(top: DSSpacing.sm),
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                  color: colors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: DSSpacing.lg),
               Text(
                 '사진 선택 방법',
-                style: TossDesignSystem.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                style: typography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: DSSpacing.lg),
               ListTile(
                 leading: Icon(
                   Icons.camera_alt,
-                  color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                  color: colors.textSecondary,
                 ),
                 title: Text(
                   '카메라로 촬영',
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  style: typography.bodyLarge.copyWith(
+                    color: colors.textPrimary,
                   ),
                 ),
                 onTap: () {
@@ -734,12 +738,12 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
               ListTile(
                 leading: Icon(
                   Icons.photo_library,
-                  color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                  color: colors.textSecondary,
                 ),
                 title: Text(
                   '갤러리에서 선택',
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  style: typography.bodyLarge.copyWith(
+                    color: colors.textPrimary,
                   ),
                 ),
                 onTap: () {
@@ -752,21 +756,21 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                   leading: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [TossDesignSystem.purple, TossDesignSystem.pinkPrimary, TossDesignSystem.warningOrange],
+                      gradient: LinearGradient(
+                        colors: [colors.accent, colors.accentSecondary, colors.accentTertiary],
                       ),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.camera_alt,
-                      color: TossDesignSystem.white,
+                      color: colors.surface,
                       size: 16,
                     ),
                   ),
                   title: Text(
                     '인스타그램 URL 입력',
-                    style: TossDesignSystem.body1.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    style: typography.bodyLarge.copyWith(
+                      color: colors.textPrimary,
                     ),
                   ),
                   onTap: () {
@@ -776,7 +780,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
                     });
                   },
                 ),
-              const SizedBox(height: 20),
+              const SizedBox(height: DSSpacing.lg),
             ],
           ),
         );

@@ -9,6 +9,7 @@ import '../../../core/errors/exceptions.dart';
 
 class MiscFortuneApi {
   final ApiClient _apiClient;
+  // ignore: unused_field - 향후 캐싱 구현 예정
   final CacheService _cacheService;
 
   MiscFortuneApi(this._apiClient, this._cacheService);

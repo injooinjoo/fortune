@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class LoveLuckyItems extends StatelessWidget {
   final Map<String, String> luckyItems;
@@ -23,7 +21,7 @@ class LoveLuckyItems extends StatelessWidget {
       case '꽃':
         return const Color(0xFFF59E0B);
       default:
-        return TossTheme.primaryBlue;
+        return DSColors.accent;
     }
   }
 
@@ -47,9 +45,9 @@ class LoveLuckyItems extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossTheme.backgroundSecondary,
+        color: DSColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: TossTheme.borderGray200),
+        border: Border.all(color: DSColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +68,7 @@ class LoveLuckyItems extends StatelessWidget {
                 ),
                 child: const Icon(
                   Icons.auto_awesome,
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                   size: 20,
                 ),
               ),
@@ -78,8 +76,8 @@ class LoveLuckyItems extends StatelessWidget {
               Expanded(
                 child: Text(
                   '🎁 이번 달 행운 아이템',
-                  style: TossTheme.heading4.copyWith(
-                    color: TossTheme.textBlack,
+                  style: DSTypography.labelLarge.copyWith(
+                    color: DSColors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -87,13 +85,13 @@ class LoveLuckyItems extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: TossTheme.warning.withValues(alpha: 0.1),
+                  color: DSColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   'NEW',
-                  style: TossTheme.caption.copyWith(
-                    color: TossTheme.warning,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: DSColors.warning,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -105,8 +103,8 @@ class LoveLuckyItems extends StatelessWidget {
           
           Text(
             '이 아이템들이 연애 운을 높여줄 거예요!',
-            style: TossTheme.body2.copyWith(
-              color: TossTheme.textGray600,
+            style: DSTypography.bodyMedium.copyWith(
+              color: DSColors.textSecondary,
             ),
           ),
           
@@ -138,30 +136,30 @@ class LoveLuckyItems extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossTheme.primaryBlue.withValues(alpha: 0.05),
-                  TossTheme.primaryBlue.withValues(alpha: 0.1),
+                  DSColors.accent.withValues(alpha: 0.05),
+                  DSColors.accent.withValues(alpha: 0.1),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossTheme.primaryBlue.withValues(alpha: 0.2),
+                color: DSColors.accent.withValues(alpha: 0.2),
               ),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.lightbulb_outline,
-                  color: TossTheme.primaryBlue,
+                  color: DSColors.accent,
                   size: 20,
                 ),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '💡 데이트나 중요한 만남 전에 이 아이템들을 활용해보세요!',
-                    style: TossTheme.body2.copyWith(
-                      color: TossTheme.primaryBlue,
+                    style: DSTypography.bodyMedium.copyWith(
+                      color: DSColors.accent,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -181,7 +179,7 @@ class LoveLuckyItems extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: TossTheme.backgroundPrimary,
+        color: DSColors.background,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: color.withValues(alpha: 0.3),
@@ -202,13 +200,13 @@ class LoveLuckyItems extends StatelessWidget {
             children: [
               Text(
                 emoji,
-                style: TypographyUnified.buttonMedium,
+                style: DSTypography.buttonMedium,
               ),
               SizedBox(width: 6),
               Expanded(
                 child: Text(
                   category,
-                  style: TossTheme.body2.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     color: color,
                     fontWeight: FontWeight.w700,
                   ),
@@ -219,8 +217,8 @@ class LoveLuckyItems extends StatelessWidget {
           SizedBox(height: 4),
           Text(
             item,
-            style: TossTheme.caption.copyWith(
-              color: TossTheme.textBlack,
+            style: DSTypography.labelSmall.copyWith(
+              color: DSColors.textPrimary,
               fontWeight: FontWeight.w500,
             ),
             maxLines: 2,

@@ -4,9 +4,7 @@ import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 토스 스타일 이사운 결과 페이지
 class MovingResultToss extends StatefulWidget {
@@ -120,15 +118,15 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(TossTheme.spacingL),
+          padding: const EdgeInsets.all(DSSpacing.lg),
           child: Column(
             children: [
-              SizedBox(height: TossTheme.spacingXL),
+              SizedBox(height: DSSpacing.xl),
           
           // 인사말
           Text(
             '${widget.name}님의\n이사운을 확인해 보세요',
-            style: TossTheme.heading1.copyWith(
+            style: DSTypography.displayLarge.copyWith(
               
               fontWeight: FontWeight.w800,
               height: 1.1,
@@ -137,7 +135,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
             textAlign: TextAlign.center,
           ),
           
-          const SizedBox(height: TossTheme.spacingXXL),
+          const SizedBox(height: DSSpacing.xxl),
           
           Expanded(
             child: SingleChildScrollView(
@@ -146,22 +144,22 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                   // 메인 점수 카드
                   _buildScoreCard(),
                   
-                  const SizedBox(height: TossTheme.spacingL),
+                  const SizedBox(height: DSSpacing.lg),
                   
                   // 핵심 조언
                   _buildMainAdviceCard(),
                   
-                  const SizedBox(height: TossTheme.spacingL),
+                  const SizedBox(height: DSSpacing.lg),
                   
                   // 추천 날짜
                   _buildLuckyDatesCard(),
                   
-                  const SizedBox(height: TossTheme.spacingL),
+                  const SizedBox(height: DSSpacing.lg),
                   
                   // 길방향
                   _buildDirectionCard(),
                   
-                  const SizedBox(height: TossTheme.spacingL),
+                  const SizedBox(height: DSSpacing.lg),
                   
                   // 이사 정보 요약
                   _buildSummaryCard(),
@@ -185,7 +183,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                   ),
                 ),
                 
-                const SizedBox(height: TossTheme.spacingS),
+                const SizedBox(height: DSSpacing.sm),
                 
                 // 다시 보기 버튼
                 SizedBox(
@@ -209,18 +207,18 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
 
   Widget _buildScoreCard() {
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingXL),
+      padding: const EdgeInsets.all(DSSpacing.xl),
       child: Column(
         children: [
           Text(
             '종합 이사운',
-            style: TypographyUnified.heading3.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.w700,
-              color: TossTheme.textBlack,
+              color: DSColors.textPrimary,
             ),
           ),
           
-          const SizedBox(height: TossTheme.spacingL),
+          const SizedBox(height: DSSpacing.lg),
           
           // 원형 점수 표시
           SizedBox(
@@ -235,7 +233,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                   child: CircularProgressIndicator(
                     value: _overallScore / 100,
                     strokeWidth: 8,
-                    backgroundColor: TossTheme.borderGray200,
+                    backgroundColor: DSColors.border,
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getScoreColor(),
                     ),
@@ -246,7 +244,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                   children: [
                     Text(
                       '$_overallScore',
-                      style: TossTheme.heading1.copyWith(
+                      style: DSTypography.displayLarge.copyWith(
                         
                         fontWeight: FontWeight.w800,
                         color: _getScoreColor(),
@@ -255,7 +253,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
                     ),
                     Text(
                       '점',
-                      style: TossTheme.body2.copyWith(
+                      style: DSTypography.bodyMedium.copyWith(
                         
                         fontWeight: FontWeight.w600,
                         color: _getScoreColor(),
@@ -267,11 +265,11 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
             ),
           ),
           
-          SizedBox(height: TossTheme.spacingL),
+          SizedBox(height: DSSpacing.lg),
           
           Text(
             _scoreDescription,
-            style: TossTheme.body2.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               
               fontWeight: FontWeight.w700,
               color: _getScoreColor(),
@@ -285,33 +283,33 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
 
   Widget _buildMainAdviceCard() {
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingXL),
+      padding: const EdgeInsets.all(DSSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Text('💡', style: TypographyUnified.displaySmall),
-              SizedBox(width: TossTheme.spacingS),
+              Text('💡', style: DSTypography.displaySmall),
+              SizedBox(width: DSSpacing.sm),
               Text(
                 '핵심 조언',
-                style: TossTheme.heading3.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   
                   fontWeight: FontWeight.w700,
-                  color: TossTheme.textBlack,
+                  color: DSColors.textPrimary,
                 ),
               ),
             ],
           ),
           
-          SizedBox(height: TossTheme.spacingM),
+          SizedBox(height: DSSpacing.md),
           
           Text(
             _mainAdvice,
-            style: TossTheme.body2.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               
               fontWeight: FontWeight.w400,
-              color: TossTheme.textGray600,
+              color: DSColors.textSecondary,
               height: 1.6,
             ),
           ),
@@ -322,26 +320,26 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
 
   Widget _buildLuckyDatesCard() {
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingXL),
+      padding: const EdgeInsets.all(DSSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Text('📅', style: TypographyUnified.displaySmall),
-              SizedBox(width: TossTheme.spacingS),
+              Text('📅', style: DSTypography.displaySmall),
+              SizedBox(width: DSSpacing.sm),
               Text(
                 '추천 이사 날짜',
-                style: TossTheme.heading3.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   
                   fontWeight: FontWeight.w700,
-                  color: TossTheme.textBlack,
+                  color: DSColors.textPrimary,
                 ),
               ),
             ],
           ),
           
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: DSSpacing.md),
           
           ..._luckyDates.asMap().entries.map((entry) {
             final index = entry.key;
@@ -350,33 +348,33 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
             
             return Padding(
               padding: EdgeInsets.only(
-                bottom: index < _luckyDates.length - 1 ? TossTheme.spacingS : 0
+                bottom: index < _luckyDates.length - 1 ? DSSpacing.sm : 0
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: TossTheme.spacingS,
+                      horizontal: DSSpacing.sm,
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
                       color: index == 0 
-                          ? TossTheme.primaryBlue 
-                          : TossTheme.borderGray300,
+                          ? DSColors.accent 
+                          : DSColors.border,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       rank,
-                      style: TossTheme.caption.copyWith(
-                        color: index == 0 ? TossDesignSystem.white : TossTheme.textGray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: index == 0 ? Colors.white : DSColors.textSecondary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                  const SizedBox(width: TossTheme.spacingS),
+                  const SizedBox(width: DSSpacing.sm),
                   Text(
                     '${date.month}월 ${date.day}일 (${_getWeekdayName(date.weekday)})',
-                    style: TossTheme.body2,
+                    style: DSTypography.bodyMedium,
                   ),
                 ],
               ),
@@ -389,44 +387,44 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
 
   Widget _buildDirectionCard() {
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingXL),
+      padding: const EdgeInsets.all(DSSpacing.xl),
       child: Column(
         children: [
           Row(
             children: [
-              Text('🧭', style: TypographyUnified.displaySmall),
-              SizedBox(width: TossTheme.spacingS),
+              Text('🧭', style: DSTypography.displaySmall),
+              SizedBox(width: DSSpacing.sm),
               Text(
                 '길방향',
-                style: TossTheme.heading3.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   
                   fontWeight: FontWeight.w700,
-                  color: TossTheme.textBlack,
+                  color: DSColors.textPrimary,
                 ),
               ),
             ],
           ),
           
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: DSSpacing.md),
           
           Container(
-            padding: const EdgeInsets.all(TossTheme.spacingL),
+            padding: const EdgeInsets.all(DSSpacing.lg),
             decoration: BoxDecoration(
-              color: TossTheme.primaryBlue.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(TossTheme.radiusM),
+              color: DSColors.accent.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(DSRadius.md),
             ),
             child: Column(
               children: [
                 Text(
                   _luckyDirection,
-                  style: TossTheme.heading2.copyWith(
-                    color: TossTheme.primaryBlue,
+                  style: DSTypography.headingMedium.copyWith(
+                    color: DSColors.accent,
                   ),
                 ),
-                const SizedBox(height: TossTheme.spacingXS),
+                const SizedBox(height: DSSpacing.xs),
                 Text(
                   '${widget.currentArea}에서 $_luckyDirection 방향으로',
-                  style: TossTheme.caption,
+                  style: DSTypography.labelSmall,
                 ),
               ],
             ),
@@ -438,20 +436,20 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
 
   Widget _buildSummaryCard() {
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingXL),
+      padding: const EdgeInsets.all(DSSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '이사 정보',
-            style: TossTheme.heading3.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               
               fontWeight: FontWeight.w700,
-              color: TossTheme.textBlack,
+              color: DSColors.textPrimary,
             ),
           ),
           
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: DSSpacing.md),
           
           _buildInfoRow('현재', widget.currentArea),
           _buildInfoRow('목적지', widget.targetArea),
@@ -464,7 +462,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: TossTheme.spacingXS),
+      padding: const EdgeInsets.only(bottom: DSSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -472,13 +470,13 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
             width: 50,
             child: Text(
               label,
-              style: TossTheme.caption,
+              style: DSTypography.labelSmall,
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: TossTheme.body2,
+              style: DSTypography.bodyMedium,
             ),
           ),
         ],
@@ -488,11 +486,11 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
 
   Color _getScoreColor() {
     if (_overallScore >= 80) {
-      return TossDesignSystem.successGreen;
+      return DSColors.success;
     } else if (_overallScore >= 60) {
-      return TossTheme.primaryBlue;
+      return DSColors.accent;
     } else {
-      return TossDesignSystem.warningOrange;
+      return DSColors.warning;
     }
   }
 
@@ -516,7 +514,7 @@ class _MovingResultTossState extends State<MovingResultToss> with TickerProvider
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('결과가 클립보드에 복사되었습니다'),
-        backgroundColor: TossTheme.primaryBlue,
+        backgroundColor: DSColors.accent,
         behavior: SnackBarBehavior.floating,
       ),
     );

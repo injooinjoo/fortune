@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../../core/constants/tarot_metadata.dart';
 import 'celtic_cross_layout.dart';
@@ -27,17 +26,17 @@ class CardSpreadSection extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.purple.withValues(alpha: 0.2),
-          TossDesignSystem.bluePrimary.withValues(alpha: 0.2),
+          const Color(0xFF9333EA).withValues(alpha: 0.2),
+          const Color(0xFF3182F6).withValues(alpha: 0.2),
         ],
       ),
       child: Column(
         children: [
           Text(
             '카드 스프레드',
-            style: TypographyUnified.heading4.copyWith(
-              fontSize: TypographyUnified.heading4.fontSize! * fontScale,
-              color: TossDesignSystem.white,
+            style: DSTypography.headingSmall.copyWith(
+              fontSize: DSTypography.headingSmall.fontSize! * fontScale,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 16),

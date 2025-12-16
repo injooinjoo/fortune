@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 
 /// 신의 응답을 기다리는 신비로운 로딩 애니메이션
@@ -135,13 +135,13 @@ class _DivineLoadingAnimationState extends ConsumerState<DivineLoadingAnimation>
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                            color: DSColors.accent.withValues(alpha: 0.3),
                             width: 2,
                           ),
                         ),
                         child: CustomPaint(
                           painter: _ArcPainter(
-                            color: TossDesignSystem.tossBlue,
+                            color: DSColors.accent,
                             progress: _rotateController.value,
                           ),
                         ),
@@ -161,7 +161,7 @@ class _DivineLoadingAnimationState extends ConsumerState<DivineLoadingAnimation>
                         height: 140,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1 + (_pulseController.value * 0.1)),
+                          color: DSColors.accent.withValues(alpha: 0.1 + (_pulseController.value * 0.1)),
                         ),
                       ),
                     );
@@ -178,13 +178,13 @@ class _DivineLoadingAnimationState extends ConsumerState<DivineLoadingAnimation>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        TossDesignSystem.tossBlue,
-                        TossDesignSystem.tossBlue.withValues(alpha: 0.7),
+                        DSColors.accent,
+                        DSColors.accent.withValues(alpha: 0.7),
                       ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.4),
+                        color: DSColors.accent.withValues(alpha: 0.4),
                         blurRadius: 30,
                         spreadRadius: 5,
                       ),
@@ -211,7 +211,7 @@ class _DivineLoadingAnimationState extends ConsumerState<DivineLoadingAnimation>
               child: Text(
                 _loadingSteps[_currentStep],
                 style: TextStyle(
-                  color: isDark ? Colors.white : TossDesignSystem.grayDark900,
+                  color: isDark ? Colors.white : DSColors.textPrimary,
                   
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.3,
@@ -239,8 +239,8 @@ class _DivineLoadingAnimationState extends ConsumerState<DivineLoadingAnimation>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        TossDesignSystem.tossBlue,
-                        TossDesignSystem.tossBlue.withValues(alpha: 0.6),
+                        DSColors.accent,
+                        DSColors.accent.withValues(alpha: 0.6),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(2),

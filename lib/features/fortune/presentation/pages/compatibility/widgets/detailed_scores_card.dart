@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fortune/core/theme/toss_theme.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/components/app_card.dart';
 import 'package:fortune/core/widgets/unified_blur_wrapper.dart';
 import '../compatibility_utils.dart';
@@ -20,7 +19,7 @@ class DetailedScoresCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return UnifiedBlurWrapper(
       isBlurred: isBlurred,
@@ -36,20 +35,20 @@ class DetailedScoresCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+                    color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.analytics,
-                    color: TossTheme.primaryBlue,
+                    color: colors.accent,
                     size: 20,
                   ),
                 ),
                 SizedBox(width: 12),
                 Text(
                   '세부 궁합 분석',
-                  style: TossTheme.heading4.copyWith(
-                    color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                  style: DSTypography.headingSmall.copyWith(
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -69,14 +68,14 @@ class DetailedScoresCard extends StatelessWidget {
                       children: [
                         Text(
                           entry.key,
-                          style: TossTheme.body2.copyWith(
-                            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                          style: DSTypography.bodyMedium.copyWith(
+                            color: colors.textPrimary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
                           '${(entry.value * 100).round()}점',
-                          style: TossTheme.body2.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             color: CompatibilityUtils.getScoreColor(entry.value),
                             fontWeight: FontWeight.w600,
                           ),
@@ -86,7 +85,7 @@ class DetailedScoresCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     LinearProgressIndicator(
                       value: entry.value,
-                      backgroundColor: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200,
+                      backgroundColor: colors.border,
                       valueColor: AlwaysStoppedAnimation<Color>(
                         CompatibilityUtils.getScoreColor(entry.value),
                       ),

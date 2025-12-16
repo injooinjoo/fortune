@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 /// 소개팅 운세 페이지의 탭 선택기
 class BlindDateTabSelector extends StatelessWidget {
@@ -16,7 +15,7 @@ class BlindDateTabSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     final tabOptions = [
       {'index': 0, 'icon': Icons.edit, 'label': '기본 정보'},
@@ -48,25 +47,17 @@ class BlindDateTabSelector extends StatelessWidget {
                 gradient: isSelected
                     ? LinearGradient(
                         colors: [
-                          TossDesignSystem.tossBlue,
-                          TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+                          colors.accent,
+                          colors.accent.withValues(alpha: 0.8),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       )
                     : null,
-                color: isSelected
-                    ? null
-                    : (isDark
-                        ? TossDesignSystem.cardBackgroundDark
-                        : TossDesignSystem.gray50),
+                color: isSelected ? null : colors.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected
-                      ? TossDesignSystem.tossBlue
-                      : (isDark
-                          ? TossDesignSystem.borderDark
-                          : TossDesignSystem.gray200),
+                  color: isSelected ? colors.accent : colors.border,
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -75,23 +66,15 @@ class BlindDateTabSelector extends StatelessWidget {
                 children: [
                   Icon(
                     icon,
-                    color: isSelected
-                        ? TossDesignSystem.white
-                        : (isDark
-                            ? TossDesignSystem.grayDark100
-                            : TossDesignSystem.gray600),
+                    color: isSelected ? Colors.white : colors.textSecondary,
                     size: 24,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     label,
-                    style: TypographyUnified.labelMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                      color: isSelected
-                          ? TossDesignSystem.white
-                          : (isDark
-                              ? TossDesignSystem.grayDark100
-                              : TossDesignSystem.gray600),
+                      color: isSelected ? Colors.white : colors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),

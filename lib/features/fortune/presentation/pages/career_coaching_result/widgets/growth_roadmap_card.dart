@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 
 class GrowthRoadmapCard extends StatelessWidget {
   final Map<String, dynamic> growthRoadmap;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const GrowthRoadmapCard({
     super.key,
     required this.growthRoadmap,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -28,13 +27,13 @@ class GrowthRoadmapCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.route, color: TossDesignSystem.tossBlue, size: 24),
+              Icon(Icons.route, color: colors.accent, size: 24),
               const SizedBox(width: 8),
               Text(
                 '성장 로드맵',
-                style: context.bodyLarge.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -48,23 +47,23 @@ class GrowthRoadmapCard extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray200,
+                    color: colors.backgroundSecondary,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
                     children: [
                       Text(
                         '현재',
-                        style: context.labelSmall.copyWith(
-                          color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         currentStage,
-                        style: context.bodyMedium.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                          color: colors.textPrimary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -74,7 +73,7 @@ class GrowthRoadmapCard extends StatelessWidget {
               ),
               SizedBox(
                 width: 40,
-                child: Icon(Icons.arrow_forward, color: TossDesignSystem.tossBlue),
+                child: Icon(Icons.arrow_forward, color: colors.accent),
               ),
               Expanded(
                 child: Container(
@@ -82,13 +81,13 @@ class GrowthRoadmapCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                        TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                        colors.accent.withValues(alpha: 0.1),
+                        DSColors.success.withValues(alpha: 0.1),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: TossDesignSystem.tossBlue,
+                      color: colors.accent,
                       width: 1.5,
                     ),
                   ),
@@ -96,16 +95,16 @@ class GrowthRoadmapCard extends StatelessWidget {
                     children: [
                       Text(
                         '목표',
-                        style: context.labelSmall.copyWith(
-                          color: TossDesignSystem.tossBlue,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.accent,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         nextStage,
-                        style: context.bodyMedium.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: TossDesignSystem.tossBlue,
+                          color: colors.accent,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -121,21 +120,21 @@ class GrowthRoadmapCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.gray100,
+              color: colors.backgroundSecondary,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.schedule,
-                  color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
+                  color: colors.textSecondary,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   '예상 기간: $estimatedMonths개월',
-                  style: context.bodyMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray700,
+                  style: DSTypography.bodyMedium.copyWith(
+                    color: colors.textPrimary,
                   ),
                 ),
               ],
@@ -146,9 +145,9 @@ class GrowthRoadmapCard extends StatelessWidget {
 
           Text(
             '핵심 마일스톤',
-            style: context.labelMedium.copyWith(
+            style: DSTypography.labelMedium.copyWith(
               fontWeight: FontWeight.bold,
-              color: TossDesignSystem.gray600,
+              color: colors.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
@@ -158,12 +157,14 @@ class GrowthRoadmapCard extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 8),
               child: Row(
                 children: [
-                  Icon(Icons.check_circle_outline, color: TossDesignSystem.gray500, size: 16),
+                  Icon(Icons.check_circle_outline, color: colors.textSecondary, size: 16),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       milestone.toString(),
-                      style: context.bodyMedium,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
+                      ),
                     ),
                   ),
                 ],

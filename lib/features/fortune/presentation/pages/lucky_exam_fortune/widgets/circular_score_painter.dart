@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 /// Custom Painter for Circular Score visualization
 class CircularScorePainter extends CustomPainter {
@@ -19,7 +19,7 @@ class CircularScorePainter extends CustomPainter {
 
     // Background circle
     final backgroundPaint = Paint()
-      ..color = TossDesignSystem.gray200
+      ..color = DSColors.border
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12;
 

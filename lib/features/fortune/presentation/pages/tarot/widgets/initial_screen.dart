@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../../presentation/providers/auth_provider.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/widgets/unified_button.dart';
 import '../../../../../../core/widgets/unified_button_enums.dart';
 import 'tarot_card_back_painter.dart';
@@ -22,7 +21,7 @@ class InitialScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userProfile = ref.watch(userProfileProvider).value;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return FadeTransition(
       opacity: fadeAnimation,
@@ -52,7 +51,7 @@ class InitialScreen extends ConsumerWidget {
                     ),
                     child: const Icon(
                       Icons.auto_awesome,
-                      color: TossDesignSystem.white,
+                      color: Colors.white,
                       size: 24,
                     ),
                   ),
@@ -63,16 +62,16 @@ class InitialScreen extends ConsumerWidget {
                       children: [
                         Text(
                           '${userProfile?.name ?? '익명'}님의',
-                          style: TypographyUnified.buttonMedium.copyWith(
+                          style: DSTypography.labelLarge.copyWith(
                             fontWeight: FontWeight.w400,
-                            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                            color: colors.textSecondary,
                           ),
                         ),
                         Text(
                           '타로 운세',
-                          style: TypographyUnified.displaySmall.copyWith(
+                          style: DSTypography.displaySmall.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                            color: colors.textPrimary,
                             height: 1.2,
                           ),
                         ),
@@ -129,9 +128,9 @@ class InitialScreen extends ConsumerWidget {
                 child: Text(
                   '카드가 전하는 신비로운 메시지를\n받아보세요',
                   textAlign: TextAlign.center,
-                  style: TypographyUnified.buttonMedium.copyWith(
+                  style: DSTypography.labelLarge.copyWith(
                     fontWeight: FontWeight.w400,
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                    color: colors.textSecondary,
                     height: 1.5,
                   ),
                 ),

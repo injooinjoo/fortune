@@ -12,7 +12,7 @@ import 'package:fortune/core/utils/subscription_snackbar.dart';
 import 'package:fortune/presentation/providers/token_provider.dart';
 import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/presentation/providers/auth_provider.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'widgets/dna_header_widget.dart';
 import 'widgets/daily_fortune_section.dart';
 import 'widgets/love_style_section.dart';
@@ -23,7 +23,6 @@ import 'widgets/celebrity_section.dart';
 import 'widgets/toss_section_widget.dart';
 import 'widgets/input_widgets.dart';
 import 'package:fortune/core/widgets/unified_blur_wrapper.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
 
 class PersonalityDNAPageImpl extends ConsumerStatefulWidget {
   final Map<String, dynamic>? initialParams;
@@ -499,15 +498,15 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
   }
 
   Widget _buildTodayHighlight() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return TossSectionWidget(
       title: '오늘의 하이라이트',
       icon: Icons.star,
       child: Text(
         _currentDNA!.todayHighlight!,
-        style: TypographyUnified.buttonMedium.copyWith(
+        style: DSTypography.bodyMedium.copyWith(
           fontWeight: FontWeight.w400,
-          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          color: colors.textPrimary,
           height: 1.5,
         ),
       ),
@@ -515,15 +514,15 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
   }
 
   Widget _buildFunnyFactSection() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return TossSectionWidget(
       title: '재미있는 사실',
       icon: Icons.lightbulb_outline,
       child: Text(
         _currentDNA!.funnyFact!,
-        style: TypographyUnified.buttonMedium.copyWith(
+        style: DSTypography.bodyMedium.copyWith(
           fontWeight: FontWeight.w400,
-          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          color: colors.textPrimary,
           height: 1.5,
         ),
       ),
@@ -550,9 +549,9 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
           debugPrint('[성격DNA] ❌ RewardedAd 로드 타임아웃');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
-                backgroundColor: TossDesignSystem.errorRed,
+              SnackBar(
+                content: const Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: DSColors.error,
               ),
             );
           }
@@ -590,9 +589,9 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
-            backgroundColor: TossDesignSystem.warningOrange,
+          SnackBar(
+            content: const Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+            backgroundColor: DSColors.warning,
           ),
         );
       }

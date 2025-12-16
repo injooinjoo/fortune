@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 /// 대화 주제 추천 위젯
@@ -95,10 +95,10 @@ class BlindDateConversationTopics extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: TossDesignSystem.errorRed.withValues(alpha: 0.1),
+                color: DSColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: TossDesignSystem.errorRed.withValues(alpha: 0.3),
+                  color: DSColors.error.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -109,14 +109,14 @@ class BlindDateConversationTopics extends StatelessWidget {
                       Icon(
                         Icons.warning_amber_rounded,
                         size: 16,
-                        color: TossDesignSystem.errorRed,
+                        color: DSColors.error,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         '피해야 할 주제',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: TossDesignSystem.errorRed,
+                          color: DSColors.error,
                         ),
                       ),
                     ],

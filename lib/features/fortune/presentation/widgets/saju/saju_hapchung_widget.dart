@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../domain/models/saju/stem_branch_relations.dart';
@@ -46,34 +45,34 @@ class SajuHapchungWidget extends StatelessWidget {
     final inauspiciousRelations = StemBranchRelations.filterInauspicious(relations);
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
             _buildTitle(isDark),
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
           ],
           // 관계 요약 시각화
           _buildRelationSummary(relations, isDark),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: DSSpacing.sm),
           // 합(合) 섹션
           if (combinationRelations.isNotEmpty) ...[
             _buildSectionHeader(RelationType.combination, isDark),
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             ...combinationRelations.map((r) => _buildRelationItem(r, isDark)),
-            const SizedBox(height: TossTheme.spacingM),
+            const SizedBox(height: DSSpacing.md),
           ],
           // 충/형/파/해 섹션
           if (inauspiciousRelations.isNotEmpty) ...[
             _buildSectionHeader(null, isDark, isInauspicious: true),
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             ...inauspiciousRelations.map((r) => _buildRelationItem(r, isDark)),
           ],
           // 종합 해석
           if (relations.isNotEmpty) ...[
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             _buildSummary(
               combinationRelations.length,
               inauspiciousRelations.length,
@@ -90,25 +89,25 @@ class SajuHapchungWidget extends StatelessWidget {
       children: [
         Icon(
           Icons.swap_horizontal_circle_outlined,
-          color: TossTheme.brandBlue,
+          color: DSColors.accent,
           size: 20,
         ),
-        const SizedBox(width: TossTheme.spacingXS),
+        const SizedBox(width: DSSpacing.xs),
         Row(
           children: [
             Text(
               '합충형파해',
-              style: TossTheme.heading3.copyWith(
+              style: DSTypography.headingMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(width: 4),
             Text(
               '合沖刑破害',
-              style: TossTheme.caption.copyWith(
+              style: DSTypography.labelSmall.copyWith(
                 color: isDark
-                    ? TossTheme.textGray400
-                    : TossDesignSystem.gray600,
+                    ? DSColors.textTertiary
+                    : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -126,14 +125,14 @@ class SajuHapchungWidget extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingS,
-        vertical: TossTheme.spacingXS,
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
         color: isDark
-            ? TossDesignSystem.cardBackgroundDark
-            : TossTheme.backgroundSecondary,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+            ? DSColors.surface
+            : DSColors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -149,7 +148,7 @@ class SajuHapchungWidget extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: count > 0 ? color : (isDark ? TossDesignSystem.gray600 : TossTheme.textGray400),
+                  color: count > 0 ? color : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
                 ),
               ),
               // 한글 + 개수
@@ -158,10 +157,10 @@ class SajuHapchungWidget extends StatelessWidget {
                 children: [
                   Text(
                     type.korean,
-                    style: TossTheme.caption.copyWith(
+                    style: DSTypography.labelSmall.copyWith(
                       color: count > 0
-                          ? (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700)
-                          : (isDark ? TossDesignSystem.gray600 : TossTheme.textGray400),
+                          ? (isDark ? DSColors.textTertiary : DSColors.textSecondary)
+                          : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
                       fontWeight: FontWeight.w500,
                       fontSize: 10,
                     ),
@@ -184,7 +183,7 @@ class SajuHapchungWidget extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           color: count > 0
                               ? color
-                              : (isDark ? TossDesignSystem.gray600 : TossTheme.textGray400),
+                              : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
                         ),
                       ),
                     ),
@@ -226,12 +225,12 @@ class SajuHapchungWidget extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingM,
-        vertical: TossTheme.spacingS,
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
       ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: color.withValues(alpha: 0.3),
           width: 1,
@@ -241,10 +240,10 @@ class SajuHapchungWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: color, size: 16),
-          const SizedBox(width: TossTheme.spacingXS),
+          const SizedBox(width: DSSpacing.xs),
           Text(
             title,
-            style: TossTheme.body2.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -252,7 +251,7 @@ class SajuHapchungWidget extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             hanja,
-            style: TossTheme.caption.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               color: color.withValues(alpha: 0.8),
               fontWeight: FontWeight.w500,
             ),
@@ -266,13 +265,13 @@ class SajuHapchungWidget extends StatelessWidget {
     final color = relation.type.getColor(isDark: isDark);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: TossTheme.spacingXS),
-      padding: const EdgeInsets.all(TossTheme.spacingS),
+      margin: const EdgeInsets.only(bottom: DSSpacing.xs),
+      padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
-            ? TossDesignSystem.cardBackgroundDark
-            : TossTheme.backgroundPrimary,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+            ? DSColors.surface
+            : DSColors.background,
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: color.withValues(alpha: 0.3),
           width: 1,
@@ -286,12 +285,12 @@ class SajuHapchungWidget extends StatelessWidget {
               // 관계 한자 표시
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: TossTheme.spacingS,
-                  vertical: TossTheme.spacingXS,
+                  horizontal: DSSpacing.sm,
+                  vertical: DSSpacing.xs,
                 ),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(TossTheme.radiusS),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -309,7 +308,7 @@ class SajuHapchungWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: TossTheme.spacingS),
+              const SizedBox(width: DSSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,7 +317,7 @@ class SajuHapchungWidget extends StatelessWidget {
                       children: [
                         Text(
                           relation.name,
-                          style: TossTheme.body2.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             fontWeight: FontWeight.bold,
                             color: color,
                           ),
@@ -348,10 +347,10 @@ class SajuHapchungWidget extends StatelessWidget {
                         relation.positions!.isNotEmpty)
                       Text(
                         relation.positions!.join(' - '),
-                        style: TossTheme.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: isDark
-                              ? TossTheme.textGray400
-                              : TossDesignSystem.gray600,
+                              ? DSColors.textTertiary
+                              : DSColors.textSecondary,
                           fontWeight: FontWeight.w500,
                           fontSize: 10,
                         ),
@@ -363,8 +362,8 @@ class SajuHapchungWidget extends StatelessWidget {
               if (relation.resultWuxing != null)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: TossTheme.spacingS,
-                    vertical: TossTheme.spacingXS,
+                    horizontal: DSSpacing.sm,
+                    vertical: DSSpacing.xs,
                   ),
                   decoration: BoxDecoration(
                     color: SajuColors.getWuxingBackgroundColor(
@@ -408,23 +407,23 @@ class SajuHapchungWidget extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingXS),
+          const SizedBox(height: DSSpacing.xs),
           // 설명
           Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: TossTheme.spacingS,
-              vertical: TossTheme.spacingXS,
+              horizontal: DSSpacing.sm,
+              vertical: DSSpacing.xs,
             ),
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.black.withValues(alpha: 0.2)
                   : Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(TossTheme.radiusS),
+              borderRadius: BorderRadius.circular(DSRadius.sm),
             ),
             child: Text(
               relation.description,
-              style: TossTheme.caption.copyWith(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+              style: DSTypography.labelSmall.copyWith(
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontSize: 11,
               ),
             ),
@@ -453,7 +452,7 @@ class SajuHapchungWidget extends StatelessWidget {
       summaryIcon = Icons.sentiment_neutral_outlined;
     } else if (combinationCount == 0 && inauspiciousCount == 0) {
       summaryText = '특별한 관계가 없습니다. 안정적인 사주입니다.';
-      summaryColor = TossTheme.textGray500;
+      summaryColor = DSColors.textSecondary;
       summaryIcon = Icons.balance_outlined;
     } else {
       summaryText = '합과 충이 균형을 이룹니다. 상황에 따라 유연하게 대처하세요.';
@@ -463,8 +462,8 @@ class SajuHapchungWidget extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingS,
-        vertical: TossTheme.spacingXS,
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -475,7 +474,7 @@ class SajuHapchungWidget extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: summaryColor.withValues(alpha: 0.3),
           width: 1,
@@ -484,13 +483,13 @@ class SajuHapchungWidget extends StatelessWidget {
       child: Row(
         children: [
           Icon(summaryIcon, color: summaryColor, size: 18),
-          const SizedBox(width: TossTheme.spacingS),
+          const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Text(
               summaryText,
-              style: TossTheme.caption.copyWith(
+              style: DSTypography.labelSmall.copyWith(
                 color:
-                    isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                    isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontSize: 11,
               ),
             ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 import '../../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../domain/models/fortune_result.dart';
@@ -28,21 +28,21 @@ class OgwanSectionWidget extends StatelessWidget {
         'title': '귀(耳) - 채청관',
         'subtitle': '복록과 수명',
         'icon': Icons.hearing,
-        'color': TossDesignSystem.purple,
+        'color': DSColors.accent,
       },
       {
         'key': 'eyebrow',
         'title': '눈썹(眉) - 보수관',
         'subtitle': '형제와 친구',
         'icon': Icons.remove_red_eye_outlined,
-        'color': TossDesignSystem.tossBlue,
+        'color': DSColors.accent,
       },
       {
         'key': 'eye',
         'title': '눈(目) - 감찰관',
         'subtitle': '마음의 창',
         'icon': Icons.remove_red_eye,
-        'color': TossDesignSystem.successGreen,
+        'color': DSColors.success,
       },
       {
         'key': 'nose',
@@ -68,23 +68,23 @@ class OgwanSectionWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Row(
             children: [
-              Icon(Icons.face_retouching_natural, color: TossDesignSystem.purple, size: 32),
+              Icon(Icons.face_retouching_natural, color: DSColors.accent, size: 32),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     '오관(五官) 분석',
-                    style: TossDesignSystem.heading2.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    style: DSTypography.headingLarge.copyWith(
+                      color: DSColors.textPrimary,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '전통 관상학의 핵심 - 얼굴 5대 관문',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: DSColors.textSecondary,
                     ),
                   ),
                 ],
@@ -149,16 +149,16 @@ class OgwanSectionWidget extends StatelessWidget {
                             children: [
                               Text(
                                 item['title'] as String,
-                                style: TossDesignSystem.heading4.copyWith(
-                                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                                style: DSTypography.headingSmall.copyWith(
+                                  color: DSColors.textPrimary,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 item['subtitle'] as String,
-                                style: TossDesignSystem.caption.copyWith(
-                                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                                style: DSTypography.labelSmall.copyWith(
+                                  color: DSColors.textSecondary,
                                 ),
                               ),
                             ],
@@ -174,7 +174,7 @@ class OgwanSectionWidget extends StatelessWidget {
                             ),
                             child: Text(
                               '$score점',
-                              style: TossDesignSystem.caption.copyWith(
+                              style: DSTypography.labelSmall.copyWith(
                                 color: item['color'] as Color,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -243,8 +243,8 @@ class OgwanSectionWidget extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 advice,
-                                style: TossDesignSystem.body2.copyWith(
-                                  color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                                style: DSTypography.bodyMedium.copyWith(
+                                  color: DSColors.textPrimary,
                                   height: 1.6,
                                 ),
                               ),
@@ -274,7 +274,7 @@ class OgwanSectionWidget extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TossDesignSystem.caption.copyWith(
+          style: DSTypography.labelSmall.copyWith(
             color: color,
             fontWeight: FontWeight.w600,
           ),
@@ -282,8 +282,8 @@ class OgwanSectionWidget extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           content,
-          style: TossDesignSystem.body2.copyWith(
-            color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+          style: DSTypography.bodyMedium.copyWith(
+            color: DSColors.textPrimary,
             height: 1.6,
           ),
         ),

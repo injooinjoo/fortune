@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/theme/toss_theme.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import '../../services/social_auth_service.dart';
 import '../../core/utils/logger.dart';
-import '../../core/theme/typography_unified.dart';
 
 class PreviewScreen extends StatefulWidget {
   final VoidCallback? onLoginSuccess;
@@ -57,17 +55,16 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
   }
 
   void _showSocialLoginBottomSheet(BuildContext context) {
+    final colors = context.colors;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height * 0.6,
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark100
-              : TossDesignSystem.white,
+          color: colors.surface,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(25),
             topRight: Radius.circular(25),
@@ -83,6 +80,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
   }
 
   Widget _buildBottomSheetContent(StateSetter setBottomSheetState) {
+    final colors = context.colors;
     return Column(
       children: [
         // Drag handle
@@ -91,13 +89,11 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
           width: 40,
           height: 4,
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark300
-                : TossDesignSystem.gray300,
+            color: colors.border,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        
+
         // Content
         Expanded(
           child: SingleChildScrollView(
@@ -107,8 +103,8 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                 // Title
                 Text(
                   '나만의 운세를 확인하세요',
-                  style: TossTheme.heading2.copyWith(
-                    
+                  style: DSTypography.displaySmall.copyWith(
+                    color: colors.textPrimary,
                   ),
                 ),
                 
@@ -159,8 +155,8 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                 // Terms text
                 Text(
                   '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                  style: TypographyUnified.labelMedium.copyWith(
-                    color: TossTheme.textGray600,
+                  style: DSTypography.labelMedium.copyWith(
+                    color: colors.textSecondary,
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -221,9 +217,9 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
         
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('로그인에 실패했습니다. 다시 시도해주세요.'),
-            backgroundColor: TossDesignSystem.errorRed,
+          SnackBar(
+            content: const Text('로그인에 실패했습니다. 다시 시도해주세요.'),
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -236,19 +232,19 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
     required String logoPath,
     required VoidCallback onTap,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
         height: 52,
         decoration: BoxDecoration(
-          color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+          color: colors.surface,
           border: Border.all(
-            color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+            color: colors.border,
             width: 1,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(DSRadius.md),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -258,12 +254,12 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
               width: 24,
               height: 24,
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Text(
               label,
-              style: TypographyUnified.buttonMedium.copyWith(
+              style: DSTypography.labelMedium.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900,
+                color: colors.textPrimary,
               ),
             ),
           ],
@@ -274,16 +270,16 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
           child: Column(
             children: [
               const Spacer(),
-              
+
               // Main content
               FadeTransition(
                 opacity: _fadeController,
@@ -300,55 +296,61 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                       // Title
                       Text(
                         '오늘의 이야기가\n완성되었어요!',
-                        style: TypographyUnified.heading1.copyWith(
+                        style: DSTypography.displaySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                          color: colors.textPrimary,
                           height: 1.2,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Subtitle
                       Text(
                         '로그인하고 나만의 맞춤 운세를\n확인해보세요',
-                        style: TypographyUnified.buttonMedium.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                        style: DSTypography.labelMedium.copyWith(
+                          color: colors.textSecondary,
                           height: 1.4,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      
+
                       const SizedBox(height: 48),
-                      
+
                       // Preview button
                       SizedBox(
                         width: double.infinity,
                         height: 58,
                         child: ElevatedButton(
                           onPressed: () => _showSocialLoginBottomSheet(context),
-                          style: TossTheme.primaryButtonStyle(true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: colors.ctaBackground,
+                            foregroundColor: colors.ctaForeground,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(DSRadius.md),
+                            ),
+                          ),
                           child: Text(
                             '내 미래 미리보기',
-                            style: TossTheme.button.copyWith(
-                              color: TossDesignSystem.white,
+                            style: DSTypography.labelMedium.copyWith(
+                              color: colors.ctaForeground,
                             ),
                           ),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       // Continue without login
                       GestureDetector(
                         onTap: widget.onContinueWithoutLogin,
                         child: Text(
                           '로그인 없이 보기',
-                          style: TypographyUnified.bodySmall.copyWith(
-                            color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                          style: DSTypography.bodySmall.copyWith(
+                            color: colors.textSecondary,
                             decoration: TextDecoration.underline,
-                            decorationColor: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                            decorationColor: colors.textSecondary,
                           ),
                         ),
                       ),
@@ -356,7 +358,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                   ),
                 ),
               ),
-              
+
               const Spacer(),
             ],
           ),

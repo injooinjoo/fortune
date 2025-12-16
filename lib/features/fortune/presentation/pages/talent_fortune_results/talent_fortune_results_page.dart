@@ -11,10 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../domain/models/talent_input_model.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../services/ad_service.dart';
@@ -23,6 +22,7 @@ import '../../../../../core/utils/logger.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/models/fortune_result.dart';
 import '../../widgets/fortune_loading_skeleton.dart';
+import '../../../../../core/services/fortune_haptic_service.dart';
 
 // Import modular widgets
 import 'widgets/overview_section.dart';
@@ -88,6 +88,14 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
       _isLoading = false;
       _currentTypingSection = 0; // ✅ 타이핑 효과 초기화
       _calculateLocalSaju();
+
+      // 재능 분석 결과 공개 햅틱
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          final score = widget.fortuneResult!.score ?? 70;
+          ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+        }
+      });
     } else {
       Logger.warning('[TalentFortune] ⚠️ 전달받은 결과 없음 → API 직접 호출');
       _loadFortuneData();
@@ -196,9 +204,9 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
           debugPrint('[TalentFortune] ❌ RewardedAd 로드 타임아웃');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
-                backgroundColor: TossDesignSystem.errorRed,
+              SnackBar(
+                content: const Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: DSColors.error,
               ),
             );
           }
@@ -233,9 +241,9 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
-            backgroundColor: TossDesignSystem.warningOrange,
+          SnackBar(
+            content: const Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+            backgroundColor: DSColors.warning,
           ),
         );
       }
@@ -249,7 +257,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
     required IconData icon,
     required Color iconColor,
     required Widget Function() contentBuilder,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     final shouldBlur = _isBlurred && _blurredSections.contains(sectionKey);
 
@@ -265,9 +273,9 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
               Expanded(
                 child: Text(
                   title,
-                  style: TypographyUnified.heading3.copyWith(
+                  style: DSTypography.headingMedium.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -275,18 +283,18 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                    color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.lock_outline, size: 14, color: TossDesignSystem.tossBlue),
+                      Icon(Icons.lock_outline, size: 14, color: colors.accent),
                       const SizedBox(width: 4),
                       Text(
                         'Premium',
-                        style: TypographyUnified.labelSmall.copyWith(
-                          color: TossDesignSystem.tossBlue,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.accent,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -298,7 +306,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
           const SizedBox(height: 16),
           // 내용만 블러 처리
           if (shouldBlur)
-            _buildBlurredContent(contentBuilder(), isDark)
+            _buildBlurredContent(contentBuilder(), colors)
           else
             contentBuilder(),
         ],
@@ -307,7 +315,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
   }
 
   /// 내용만 블러 처리하는 헬퍼
-  Widget _buildBlurredContent(Widget child, bool isDark) {
+  Widget _buildBlurredContent(Widget child, DSColorScheme colors) {
     return Stack(
       children: [
         ImageFiltered(
@@ -321,10 +329,8 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  (isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight)
-                      .withValues(alpha: 0.2),
-                  (isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight)
-                      .withValues(alpha: 0.6),
+                  colors.background.withValues(alpha: 0.2),
+                  colors.background.withValues(alpha: 0.6),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
@@ -339,14 +345,13 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                 Icon(
                   Icons.lock_outline,
                   size: 32,
-                  color: (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight)
-                      .withValues(alpha: 0.5),
+                  color: colors.textPrimary.withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   '광고 시청 후 확인',
-                  style: TypographyUnified.labelMedium.copyWith(
-                    color: (isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight),
+                  style: DSTypography.labelMedium.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
@@ -359,18 +364,18 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
+        backgroundColor: colors.background,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
           '재능 발견 결과',
-          style: TypographyUnified.heading3.copyWith(
+          style: DSTypography.headingMedium.copyWith(
             fontWeight: FontWeight.w700,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            color: colors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -378,7 +383,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
           IconButton(
             icon: Icon(
               Icons.close,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              color: colors.textPrimary,
             ),
             onPressed: () => Navigator.of(context).pop(),
           ),
@@ -397,7 +402,7 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                           // Part 1: 종합 브리핑 (타이핑 효과 적용)
                           OverviewSection(
                             fortuneResult: _fortuneResult,
-                            isDark: isDark,
+                            colors: colors,
                             enableTyping: true,
                             startTyping: _currentTypingSection >= 0,
                             onTypingComplete: () {
@@ -416,12 +421,12 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                               sectionKey: 'top3_talents',
                               title: 'TOP 3 재능 인사이트',
                               icon: Icons.lightbulb,
-                              iconColor: TossDesignSystem.warningOrange,
+                              iconColor: DSColors.warning,
                               contentBuilder: () => TalentInsightsSection(
                                 fortuneResult: _fortuneResult,
-                                isDark: isDark,
+                                colors: colors,
                               ),
-                              isDark: isDark,
+                              colors: colors,
                             ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
                           ),
 
@@ -434,12 +439,12 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                               sectionKey: 'career_roadmap',
                               title: '7일 실행 계획',
                               icon: Icons.calendar_today,
-                              iconColor: TossDesignSystem.tossBlue,
+                              iconColor: colors.accent,
                               contentBuilder: () => WeeklyPlanSection(
                                 fortuneResult: _fortuneResult,
-                                isDark: isDark,
+                                colors: colors,
                               ),
-                              isDark: isDark,
+                              colors: colors,
                             ).animate().fadeIn(delay: 400.ms, duration: 400.ms),
                           ),
 
@@ -454,60 +459,60 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
                                   sectionKey: 'growth_timeline',
                                   title: '상세 분석',
                                   icon: Icons.analytics,
-                                  iconColor: TossDesignSystem.tossBlue,
+                                  iconColor: colors.accent,
                                   contentBuilder: () => DetailedAnalysisSection(
                                     fortuneResult: _fortuneResult,
-                                    isDark: isDark,
+                                    colors: colors,
                                   ),
-                                  isDark: isDark,
+                                  colors: colors,
                                 ),
                                 const SizedBox(height: 16),
                                 _buildSectionWithBlur(
                                   sectionKey: 'growth_timeline',
                                   title: '🧠 멘탈 모델 분석',
                                   icon: Icons.psychology,
-                                  iconColor: TossDesignSystem.tossBlue,
+                                  iconColor: colors.accent,
                                   contentBuilder: () => MentalModelSection(
                                     fortuneResult: _fortuneResult,
-                                    isDark: isDark,
+                                    colors: colors,
                                   ),
-                                  isDark: isDark,
+                                  colors: colors,
                                 ),
                                 const SizedBox(height: 16),
                                 _buildSectionWithBlur(
                                   sectionKey: 'growth_timeline',
                                   title: '🤝 협업 궁합',
                                   icon: Icons.groups,
-                                  iconColor: TossDesignSystem.successGreen,
+                                  iconColor: DSColors.success,
                                   contentBuilder: () => CollaborationSection(
                                     fortuneResult: _fortuneResult,
-                                    isDark: isDark,
+                                    colors: colors,
                                   ),
-                                  isDark: isDark,
+                                  colors: colors,
                                 ),
                                 const SizedBox(height: 16),
                                 _buildSectionWithBlur(
                                   sectionKey: 'growth_timeline',
                                   title: '📅 단계별 성장 로드맵',
                                   icon: Icons.timeline,
-                                  iconColor: TossDesignSystem.tossBlue,
+                                  iconColor: colors.accent,
                                   contentBuilder: () => GrowthRoadmapSection(
                                     fortuneResult: _fortuneResult,
-                                    isDark: isDark,
+                                    colors: colors,
                                   ),
-                                  isDark: isDark,
+                                  colors: colors,
                                 ),
                                 const SizedBox(height: 16),
                                 _buildSectionWithBlur(
                                   sectionKey: 'growth_timeline',
                                   title: '📖 학습 전략',
                                   icon: Icons.school,
-                                  iconColor: TossDesignSystem.tossBlue,
+                                  iconColor: colors.accent,
                                   contentBuilder: () => LearningStrategySection(
                                     fortuneResult: _fortuneResult,
-                                    isDark: isDark,
+                                    colors: colors,
                                   ),
-                                  isDark: isDark,
+                                  colors: colors,
                                 ),
                               ],
                             ).animate().fadeIn(delay: 600.ms, duration: 400.ms),
@@ -546,6 +551,8 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
 
   /// 에러 상태 UI
   Widget _buildErrorState() {
+    final colors = context.colors;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -555,21 +562,21 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
             Icon(
               Icons.error_outline,
               size: 64,
-              color: TossDesignSystem.errorRed,
+              color: DSColors.error,
             ),
             const SizedBox(height: 24),
             Text(
               '운세 데이터를 불러오지 못했어요',
-              style: TypographyUnified.heading3.copyWith(
-                color: TossDesignSystem.errorRed,
+              style: DSTypography.headingMedium.copyWith(
+                color: DSColors.error,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
               _error ?? '알 수 없는 오류',
-              style: TypographyUnified.bodySmall.copyWith(
-                color: TossDesignSystem.gray600,
+              style: DSTypography.bodySmall.copyWith(
+                color: colors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -577,13 +584,13 @@ class _TalentFortuneResultsPageState extends ConsumerState<TalentFortuneResultsP
             ElevatedButton(
               onPressed: _loadFortuneData,
               style: ElevatedButton.styleFrom(
-                backgroundColor: TossDesignSystem.tossBlue,
+                backgroundColor: colors.accent,
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               ),
               child: Text(
                 '다시 시도',
-                style: TypographyUnified.buttonMedium.copyWith(
-                  color: TossDesignSystem.white,
+                style: DSTypography.labelLarge.copyWith(
+                  color: Colors.white,
                 ),
               ),
             ),

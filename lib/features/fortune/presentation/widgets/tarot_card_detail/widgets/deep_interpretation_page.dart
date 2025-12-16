@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/constants/tarot_metadata.dart';
 
@@ -24,7 +24,7 @@ class DeepInterpretationPage extends StatelessWidget {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -33,13 +33,13 @@ class DeepInterpretationPage extends StatelessWidget {
               '심리학적 해석',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: 16),
             GlassContainer(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+              padding: const EdgeInsets.all(24),
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.purple.withValues(alpha: 0.1),
-                  TossDesignSystem.purple.withValues(alpha: 0.1)
+                  DSColors.accentSecondary.withValues(alpha: 0.1),
+                  DSColors.accentSecondary.withValues(alpha: 0.1)
                 ],
               ),
               child: Column(
@@ -47,9 +47,9 @@ class DeepInterpretationPage extends StatelessWidget {
                   const Icon(
                     Icons.psychology,
                     size: 48,
-                    color: TossDesignSystem.purple,
+                    color: DSColors.accentSecondary,
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingM),
+                  const SizedBox(height: 16),
                   Text(
                     tarotCardInfo!.psychologicalMeaning!,
                     style: Theme.of(context).textTheme.bodyLarge,
@@ -60,18 +60,18 @@ class DeepInterpretationPage extends StatelessWidget {
           ],
 
           if (tarotCardInfo?.spiritualMeaning != null) ...[
-            const SizedBox(height: TossDesignSystem.spacingXL),
+            const SizedBox(height: 32),
             Text(
               '영적 의미',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: 16),
             GlassContainer(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+              padding: const EdgeInsets.all(24),
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.primaryBlue.withValues(alpha: 0.1),
-                  TossDesignSystem.purple.withValues(alpha: 0.1)
+                  DSColors.accent.withValues(alpha: 0.1),
+                  DSColors.accentSecondary.withValues(alpha: 0.1)
                 ],
               ),
               child: Column(
@@ -79,9 +79,9 @@ class DeepInterpretationPage extends StatelessWidget {
                   const Icon(
                     Icons.self_improvement,
                     size: 48,
-                    color: TossDesignSystem.primaryBlue,
+                    color: DSColors.accent,
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingM),
+                  const SizedBox(height: 16),
                   Text(
                     tarotCardInfo!.spiritualMeaning!,
                     style: Theme.of(context).textTheme.bodyLarge,
@@ -104,14 +104,14 @@ class DeepInterpretationPage extends StatelessWidget {
           const Icon(
             Icons.hourglass_empty,
             size: 64,
-            color: TossDesignSystem.purple,
+            color: DSColors.accentSecondary,
           ),
-          const SizedBox(height: TossDesignSystem.spacingXL),
+          const SizedBox(height: 32),
           Text(
             title,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: 16),
           Text(
             message,
             style: Theme.of(context).textTheme.titleMedium,

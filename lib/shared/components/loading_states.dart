@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 
 class LoadingIndicator extends StatelessWidget {
   final double size;
@@ -36,7 +36,7 @@ class LoadingIndicator extends StatelessWidget {
 class LoadingStateWidget extends StatelessWidget {
   final String? message;
   final double size;
-  
+
   const LoadingStateWidget({
     super.key,
     this.message,
@@ -45,16 +45,19 @@ class LoadingStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        LoadingIndicator(size: size),
+        LoadingIndicator(size: size, color: colors.accentSecondary),
         if (message != null) ...[
-          SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: DSSpacing.md),
           Text(
             message!,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: typography.bodyMedium.copyWith(color: colors.textSecondary),
           ),
         ],
       ],
@@ -76,9 +79,9 @@ class AppLoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Stack(
       children: [
         child,
@@ -87,25 +90,20 @@ class AppLoadingOverlay extends StatelessWidget {
             child: GestureDetector(
               onTap: () {}, // Prevent taps from passing through
               child: Container(
-                color: TossDesignSystem.gray900.withValues(alpha: 0.5),
+                color: colors.textPrimary.withValues(alpha: 0.5),
                 child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(TossDesignSystem.spacingL),
-                    decoration: BoxDecoration(
-                      color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
-                      boxShadow: TossDesignSystem.shadowL,
-                    ),
+                  child: DSCard.hanji(
+                    padding: const EdgeInsets.all(DSSpacing.lg),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const LoadingIndicator(),
+                        LoadingIndicator(color: colors.accentSecondary),
                         if (message != null) ...[
-                          const SizedBox(height: TossDesignSystem.spacingM),
+                          const SizedBox(height: DSSpacing.md),
                           Text(
                             message!,
-                            style: TossDesignSystem.body2.copyWith(
-                              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                            style: typography.bodyMedium.copyWith(
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -137,22 +135,18 @@ class SkeletonLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Shimmer.fromColors(
-      baseColor: isDark 
-        ? TossDesignSystem.grayDark300
-        : TossDesignSystem.gray200,
-      highlightColor: isDark 
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray100,
+      baseColor: colors.surfaceSecondary,
+      highlightColor: colors.surface,
       child: Container(
         width: width,
         height: height ?? 20,
         margin: margin,
         decoration: BoxDecoration(
-          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-          borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusS),
+          color: colors.surfaceSecondary,
+          borderRadius: borderRadius ?? BorderRadius.circular(DSRadius.sm),
         ),
       ),
     );
@@ -171,35 +165,29 @@ class CardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
     return Container(
       height: height ?? 120,
       margin: margin,
-      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
-      decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
-        boxShadow: isDark ? null : TossDesignSystem.shadowXS,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SkeletonLoader(width: 150, height: 20),
-          const SizedBox(height: TossDesignSystem.spacingS),
-          const SkeletonLoader(height: 16),
-          const SizedBox(height: TossDesignSystem.spacingXS),
-          const SkeletonLoader(height: 16),
-          const Spacer(),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SkeletonLoader(width: 80, height: 16),
-              SkeletonLoader(width: 60, height: 16),
-            ],
-          ),
-        ],
+      child: DSCard.hanji(
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            SkeletonLoader(width: 150, height: 20),
+            SizedBox(height: DSSpacing.sm),
+            SkeletonLoader(height: 16),
+            SizedBox(height: DSSpacing.xs),
+            SkeletonLoader(height: 16),
+            Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SkeletonLoader(width: 80, height: 16),
+                SkeletonLoader(width: 60, height: 16),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -210,61 +198,48 @@ class FortuneResultSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         children: [
           // Overall Score Skeleton
-          Container(
-            padding: const EdgeInsets.all(TossDesignSystem.spacingL),
-            decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-              borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
-              boxShadow: isDark ? null : TossDesignSystem.shadowXS,
-            ),
+          DSCard.hanji(
+            padding: const EdgeInsets.all(DSSpacing.lg),
             child: Column(
               children: [
                 SkeletonLoader(
                   width: 120,
                   height: 120,
                   borderRadius: BorderRadius.circular(60)),
-                const SizedBox(height: TossDesignSystem.spacingM),
+                const SizedBox(height: DSSpacing.md),
                 const SkeletonLoader(width: 200, height: 24),
-                const SizedBox(height: TossDesignSystem.spacingXS),
+                const SizedBox(height: DSSpacing.xs),
                 const SkeletonLoader(width: 150, height: 16),
               ],
             ),
           ),
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: DSSpacing.md),
 
           // Score Breakdown Skeleton
-          Container(
-            padding: const EdgeInsets.all(TossDesignSystem.spacingL),
-            decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-              borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
-              boxShadow: isDark ? null : TossDesignSystem.shadowXS,
-            ),
+          DSCard.hanji(
+            padding: const EdgeInsets.all(DSSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SkeletonLoader(width: 100, height: 20),
-                const SizedBox(height: TossDesignSystem.spacingM),
+                const SizedBox(height: DSSpacing.md),
                 ...List.generate(
                   4,
                   (index) => Padding(
-                    padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingS),
+                    padding: const EdgeInsets.only(bottom: DSSpacing.sm),
                     child: Row(
                       children: const [
                         SkeletonLoader(width: 80, height: 16),
-                        SizedBox(width: TossDesignSystem.spacingS),
+                        SizedBox(width: DSSpacing.sm),
                         Expanded(
                           child: SkeletonLoader(height: 8),
                         ),
-                        SizedBox(width: TossDesignSystem.spacingS),
+                        SizedBox(width: DSSpacing.sm),
                         SkeletonLoader(width: 40, height: 16),
                       ],
                     ),
@@ -273,21 +248,16 @@ class FortuneResultSkeleton extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: DSSpacing.md),
 
           // Lucky Items Skeleton
-          Container(
-            padding: const EdgeInsets.all(TossDesignSystem.spacingL),
-            decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-              borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
-              boxShadow: isDark ? null : TossDesignSystem.shadowXS,
-            ),
+          DSCard.hanji(
+            padding: const EdgeInsets.all(DSSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SkeletonLoader(width: 100, height: 20),
-                const SizedBox(height: TossDesignSystem.spacingM),
+                const SizedBox(height: DSSpacing.md),
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -298,33 +268,28 @@ class FortuneResultSkeleton extends StatelessWidget {
                   children: List.generate(
                     6,
                     (index) => SkeletonLoader(
-                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+                      borderRadius: BorderRadius.circular(DSRadius.md),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: DSSpacing.md),
 
           // Description Skeleton
-          Container(
-            padding: const EdgeInsets.all(TossDesignSystem.spacingL),
-            decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-              borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
-              boxShadow: isDark ? null : TossDesignSystem.shadowXS,
-            ),
+          DSCard.hanji(
+            padding: const EdgeInsets.all(DSSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SkeletonLoader(width: 100, height: 20),
-                const SizedBox(height: TossDesignSystem.spacingM),
+                const SizedBox(height: DSSpacing.md),
                 ...List.generate(
                   5,
-                  (index) => Padding(
-                    padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
-                    child: const SkeletonLoader(height: 16),
+                  (index) => const Padding(
+                    padding: EdgeInsets.only(bottom: DSSpacing.xs),
+                    child: SkeletonLoader(height: 16),
                   ),
                 ),
                 const SkeletonLoader(width: 200, height: 16),
@@ -351,44 +316,38 @@ class ListItemSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
     return ListView.builder(
-      padding: padding ?? const EdgeInsets.all(TossDesignSystem.spacingL),
+      padding: padding ?? const EdgeInsets.all(DSSpacing.lg),
       itemCount: itemCount,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingM),
-          child: Container(
+          padding: const EdgeInsets.only(bottom: DSSpacing.md),
+          child: SizedBox(
             height: itemHeight,
-            padding: const EdgeInsets.all(TossDesignSystem.spacingL),
-            decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-              borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
-              boxShadow: isDark ? null : TossDesignSystem.shadowXS,
-            ),
-            child: Row(
-              children: [
-                SkeletonLoader(
-                  width: 48,
-                  height: 48,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                const SizedBox(width: TossDesignSystem.spacingM),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SkeletonLoader(width: 150, height: 16),
-                      SizedBox(height: TossDesignSystem.spacingXS),
-                      SkeletonLoader(height: 14),
-                    ],
+            child: DSCard.hanji(
+              padding: const EdgeInsets.all(DSSpacing.lg),
+              child: Row(
+                children: [
+                  SkeletonLoader(
+                    width: 48,
+                    height: 48,
+                    borderRadius: BorderRadius.circular(24),
                   ),
-                ),
-                const SkeletonLoader(width: 60, height: 30),
-              ],
+                  const SizedBox(width: DSSpacing.md),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SkeletonLoader(width: 150, height: 16),
+                        SizedBox(height: DSSpacing.xs),
+                        SkeletonLoader(height: 14),
+                      ],
+                    ),
+                  ),
+                  const SkeletonLoader(width: 60, height: 30),
+                ],
+              ),
             ),
           ),
         );
@@ -413,25 +372,17 @@ class GridSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
     return GridView.builder(
-      padding: padding ?? const EdgeInsets.all(TossDesignSystem.spacingL),
+      padding: padding ?? const EdgeInsets.all(DSSpacing.lg),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         childAspectRatio: childAspectRatio,
-        mainAxisSpacing: TossDesignSystem.spacingM,
-        crossAxisSpacing: TossDesignSystem.spacingM),
+        mainAxisSpacing: DSSpacing.md,
+        crossAxisSpacing: DSSpacing.md),
       itemCount: itemCount,
       itemBuilder: (context, index) {
-        return Container(
-          padding: const EdgeInsets.all(TossDesignSystem.spacingL),
-          decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-            borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
-            boxShadow: isDark ? null : TossDesignSystem.shadowXS,
-          ),
+        return DSCard.hanji(
+          padding: const EdgeInsets.all(DSSpacing.lg),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -440,7 +391,7 @@ class GridSkeleton extends StatelessWidget {
                 height: 60,
                 borderRadius: BorderRadius.circular(30),
               ),
-              const SizedBox(height: TossDesignSystem.spacingS),
+              const SizedBox(height: DSSpacing.sm),
               const SkeletonLoader(width: 80, height: 16),
             ],
           ),

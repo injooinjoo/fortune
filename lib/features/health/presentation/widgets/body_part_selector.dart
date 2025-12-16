@@ -5,7 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/health_fortune_model.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 
 class BodyPartSelector extends StatefulWidget {
@@ -167,7 +167,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
               if (!isSelected)
                 Text(
                   part.displayName,
-                  style: TypographyUnified.labelTiny.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     fontWeight: FontWeight.w500,
                   ),

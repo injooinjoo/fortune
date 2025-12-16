@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 
 class ExamHeaderCard extends StatelessWidget {
@@ -8,7 +8,7 @@ class ExamHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return AppCard(
       padding: const EdgeInsets.all(24),
@@ -20,8 +20,8 @@ class ExamHeaderCard extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.successGreen,
-                  TossDesignSystem.successGreen.withValues(alpha: 0.7),
+                  DSColors.success,
+                  DSColors.success.withValues(alpha: 0.7),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -30,7 +30,7 @@ class ExamHeaderCard extends StatelessWidget {
             ),
             child: const Icon(
               Icons.school_rounded,
-              color: TossDesignSystem.white,
+              color: Colors.white,
               size: 40,
             ),
           ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
@@ -39,8 +39,8 @@ class ExamHeaderCard extends StatelessWidget {
 
           Text(
             '시험 운세 리뉴얼',
-            style: TossDesignSystem.heading2.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
+            style: DSTypography.headingLarge.copyWith(
+              color: colors.textPrimary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -49,10 +49,8 @@ class ExamHeaderCard extends StatelessWidget {
 
           Text(
             '시험 종류를 선택하고\n맞춤형 합격 운세를 확인하세요!',
-            style: TossDesignSystem.body2.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.gray600,
+            style: DSTypography.bodyMedium.copyWith(
+              color: colors.textSecondary,
               height: 1.5,
             ),
             textAlign: TextAlign.center,

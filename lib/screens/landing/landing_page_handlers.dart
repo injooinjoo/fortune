@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import '../../core/utils/profile_validation.dart';
 import '../../presentation/widgets/social_login_bottom_sheet.dart';
 import 'landing_page_state.dart';
@@ -41,8 +41,8 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Apple 로그인 성공!'),
-              backgroundColor: TossDesignSystem.successGreen,
+              content: const Text('Apple 로그인 성공!'),
+              backgroundColor: context.colors.success,
             ),
           );
 
@@ -67,10 +67,8 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
       debugPrint('Error saving profile: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Apple 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.errorRedDark
-                : TossDesignSystem.errorRed));
+            content: const Text('Apple 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
+            backgroundColor: context.colors.error));
       }
     } finally {
       debugPrint('🍎 Setting _isAuthProcessing to false');
@@ -111,8 +109,8 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
       if (result != null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('네이버 로그인 성공!'),
-            backgroundColor: TossDesignSystem.successGreen,
+            content: const Text('네이버 로그인 성공!'),
+            backgroundColor: context.colors.success,
           ));
         }
       } else {
@@ -136,10 +134,8 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(errorMessage),
-            duration: Duration(seconds: 4),
-            backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.errorRedDark
-                : TossDesignSystem.errorRed));
+            duration: const Duration(seconds: 4),
+            backgroundColor: context.colors.error));
       }
     } finally {
       if (mounted) {
@@ -219,20 +215,16 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
       } else if (provider == 'Instagram') {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('인스타그램 로그인은 현재 준비 중입니다.'),
-              backgroundColor: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.warningOrange
-                  : TossDesignSystem.warningOrange));
+              content: const Text('인스타그램 로그인은 현재 준비 중입니다.'),
+              backgroundColor: context.colors.warning));
         }
       }
     } catch (e) {
       debugPrint('Error saving profile: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.errorRedDark
-                : TossDesignSystem.errorRed));
+            content: const Text('로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
+            backgroundColor: context.colors.error));
       }
     } finally {
       if (mounted) {
@@ -253,7 +245,7 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
                 child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                        TossDesignSystem.white)),
+                        Colors.white)),
               ),
               SizedBox(width: 16),
               Text('Google 로그인 진행 중...'),
@@ -313,7 +305,7 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(errorMessage),
-            backgroundColor: TossDesignSystem.errorRed));
+            backgroundColor: context.colors.error));
       }
       rethrow;
     }
@@ -331,7 +323,7 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
                 child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                        TossDesignSystem.white)),
+                        Colors.white)),
               ),
               SizedBox(width: 16),
               Text('카카오 로그인 진행 중...'),
@@ -362,8 +354,8 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('카카오 로그인이 완료되었습니다.'),
-              backgroundColor: TossDesignSystem.successGreen,
+              content: const Text('카카오 로그인이 완료되었습니다.'),
+              backgroundColor: context.colors.success,
             ),
           );
         }
@@ -384,8 +376,8 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('카카오 로그인을 처리하고 있습니다...'),
-              backgroundColor: TossDesignSystem.warningOrange,
+              content: const Text('카카오 로그인을 처리하고 있습니다...'),
+              backgroundColor: context.colors.warning,
             ),
           );
         }
@@ -401,9 +393,7 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('카카오 로그인 중 문제가 발생했습니다: ${kakaoError.toString()}'),
-            backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.errorRed
-                : TossDesignSystem.errorRed,
+            backgroundColor: context.colors.error,
           ),
         );
       }

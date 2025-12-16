@@ -163,6 +163,9 @@ dependencies:
   # Caching & Offline Support
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+
+  # Korean Typography (Traditional fonts)
+  google_fonts: ^6.2.1
   
   # Payment Integration - Using only In-App Purchase (Google/Apple)
   
@@ -229,6 +232,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - .env
+    - .env.test
     - assets/images/
     - assets/images/social/
     - assets/images/face_reading/
@@ -284,6 +288,11 @@ flutter:
     - assets/images/talismans/
     - assets/images/health/
     - assets/fonts/
+    # Korean Traditional Assets
+    - assets/textures/
+    - assets/decorations/
+    - assets/icons/traditional/
+    - assets/animations/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class MbtiSynergyCard extends StatelessWidget {
   final Map<String, dynamic> synergyMap;
@@ -22,13 +22,13 @@ class MbtiSynergyCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        color: isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: isDark
-              ? TossDesignSystem.black.withValues(alpha: 0.2)
-              : TossDesignSystem.gray400.withValues(alpha: 0.08),
+              ? Colors.black.withValues(alpha: 0.2)
+              : DSColors.textTertiary.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -44,23 +44,23 @@ class MbtiSynergyCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      TossDesignSystem.purple,
-                      TossDesignSystem.tossBlue,
+                      DSColors.accentSecondary,
+                      DSColors.accent,
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.people,
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                   size: 24,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 'MBTI 시너지',
-                style: TossDesignSystem.heading3.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                style: DSTypography.headingSmall.copyWith(
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -80,7 +80,7 @@ class MbtiSynergyCard extends StatelessWidget {
             mbti: bestMatch['type'] as String? ?? '',
             score: bestMatch['score'] as int? ?? 0,
             reason: bestMatch['reason'] as String? ?? '',
-            color: TossDesignSystem.successGreen,
+            color: DSColors.success,
             icon: Icons.favorite,
           ),
           
@@ -92,7 +92,7 @@ class MbtiSynergyCard extends StatelessWidget {
             mbti: worstMatch['type'] as String? ?? '',
             score: worstMatch['score'] as int? ?? 0,
             reason: worstMatch['reason'] as String? ?? '',
-            color: TossDesignSystem.orange,
+            color: DSColors.warning,
             icon: Icons.warning_amber_outlined,
           ),
           
@@ -102,10 +102,10 @@ class MbtiSynergyCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+              color: DSColors.accent.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+                color: DSColors.accent.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -114,7 +114,7 @@ class MbtiSynergyCard extends StatelessWidget {
               children: [
                 Icon(
                   Icons.tips_and_updates,
-                  color: TossDesignSystem.tossBlue,
+                  color: DSColors.accent,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
@@ -124,16 +124,16 @@ class MbtiSynergyCard extends StatelessWidget {
                     children: [
                       Text(
                         '오늘의 소통 팁',
-                        style: TossDesignSystem.body3.copyWith(
-                          color: TossDesignSystem.tossBlue,
+                        style: DSTypography.bodySmall.copyWith(
+                          color: DSColors.accent,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         communicationTip,
-                        style: TossDesignSystem.caption.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                           height: 1.4,
                         ),
                       ),
@@ -160,8 +160,8 @@ class MbtiSynergyCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            TossDesignSystem.purple.withValues(alpha: 0.8),
-            TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+            DSColors.accentSecondary.withValues(alpha: 0.8),
+            DSColors.accent.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -175,14 +175,14 @@ class MbtiSynergyCard extends StatelessWidget {
             children: [
               Icon(
                 Icons.auto_awesome,
-                color: TossDesignSystem.white,
+                color: Colors.white,
                 size: 20,
               ),
               const SizedBox(width: 8),
               Text(
                 '오늘의 특별 시너지',
-                style: TossDesignSystem.body2.copyWith(
-                  color: TossDesignSystem.white,
+                style: DSTypography.bodyMedium.copyWith(
+                  color: Colors.white,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -195,13 +195,13 @@ class MbtiSynergyCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   type,
-                  style: TossDesignSystem.body1.copyWith(
-                    color: TossDesignSystem.white,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -210,13 +210,13 @@ class MbtiSynergyCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white.withValues(alpha: 0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '$score%',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: TossDesignSystem.white,
+                  style: DSTypography.bodyMedium.copyWith(
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -226,8 +226,8 @@ class MbtiSynergyCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             message,
-            style: TossDesignSystem.body3.copyWith(
-              color: TossDesignSystem.white.withValues(alpha: 0.95),
+            style: DSTypography.bodySmall.copyWith(
+              color: Colors.white.withValues(alpha: 0.95),
               height: 1.4,
             ),
             textAlign: TextAlign.center,
@@ -251,8 +251,8 @@ class MbtiSynergyCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark 
-          ? TossDesignSystem.grayDark50
-          : TossDesignSystem.gray50,
+          ? DSColors.surface
+          : DSColors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: color.withValues(alpha: 0.2),
@@ -268,7 +268,7 @@ class MbtiSynergyCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: TossDesignSystem.body3.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   color: color,
                   fontWeight: FontWeight.w600,
                 ),
@@ -288,7 +288,7 @@ class MbtiSynergyCard extends StatelessWidget {
                 child: Center(
                   child: Text(
                     mbti,
-                    style: TossDesignSystem.body2.copyWith(
+                    style: DSTypography.bodyMedium.copyWith(
                       color: color,
                       fontWeight: FontWeight.bold,
                     ),
@@ -302,16 +302,16 @@ class MbtiSynergyCard extends StatelessWidget {
                   children: [
                     Text(
                       _getMbtiTitle(mbti),
-                      style: TossDesignSystem.body2.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       reason,
-                      style: TossDesignSystem.caption.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                         height: 1.3,
                       ),
                     ),
@@ -326,7 +326,7 @@ class MbtiSynergyCard extends StatelessWidget {
                 ),
                 child: Text(
                   '$score%',
-                  style: TossDesignSystem.body3.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: color,
                     fontWeight: FontWeight.bold,
                   ),

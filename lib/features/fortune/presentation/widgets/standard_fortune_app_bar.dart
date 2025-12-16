@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 표준 운세 페이지 AppBar
 ///
@@ -26,10 +25,10 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return AppBar(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       elevation: 0,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
@@ -37,18 +36,18 @@ class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidg
           ? IconButton(
               icon: Icon(
                 Icons.arrow_back_ios,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                color: colors.textPrimary,
               ),
               onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
             )
           : null,
       iconTheme: IconThemeData(
-        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+        color: colors.textPrimary,
       ),
       title: Text(
         title,
-        style: TypographyUnified.heading3.copyWith(
-          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+        style: DSTypography.headingMedium.copyWith(
+          color: colors.textPrimary,
         ),
       ),
       centerTitle: centerTitle,

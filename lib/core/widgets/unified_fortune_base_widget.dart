@@ -8,8 +8,7 @@ import '../services/unified_fortune_service.dart';
 import '../services/debug_premium_service.dart';
 import '../utils/logger.dart';
 import '../../shared/components/toast.dart';
-import '../theme/toss_design_system.dart';
-import '../theme/typography_unified.dart';
+import '../design_system/design_system.dart';
 import '../../services/ad_service.dart';
 import '../utils/haptic_utils.dart';
 import '../constants/soul_rates.dart';
@@ -378,37 +377,28 @@ class _UnifiedFortuneBaseWidgetState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     return Scaffold(
-      backgroundColor: widget.appBarBackgroundColor ??
-          (isDark
-              ? TossDesignSystem.backgroundDark
-              : TossDesignSystem.backgroundLight),
+      backgroundColor: widget.appBarBackgroundColor ?? colors.background,
       appBar: widget.showAppBar
           ? AppBar(
-              backgroundColor: widget.appBarBackgroundColor ??
-                  (isDark
-                      ? TossDesignSystem.backgroundDark
-                      : TossDesignSystem.backgroundLight),
+              backgroundColor: widget.appBarBackgroundColor ?? colors.background,
               elevation: 0,
               scrolledUnderElevation: 0,
               automaticallyImplyLeading: false,
               leading: _showResult ? null : IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios,
-                  color: isDark
-                      ? TossDesignSystem.textPrimaryDark
-                      : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               title: Text(
                 widget.title,
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textPrimaryDark
-                      : TossDesignSystem.textPrimaryLight,
+                style: typography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
               centerTitle: true,
@@ -417,9 +407,7 @@ class _UnifiedFortuneBaseWidgetState
                 IconButton(
                   icon: Icon(
                     Icons.share_outlined,
-                    color: isDark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                   onPressed: _showShareDialog,
                   tooltip: '공유하기',
@@ -427,9 +415,7 @@ class _UnifiedFortuneBaseWidgetState
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: isDark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                   onPressed: () => context.go('/fortune'),
                 ),
@@ -438,52 +424,27 @@ class _UnifiedFortuneBaseWidgetState
           : null,
       body: _showResult
           ? (_isLoading || _fortuneResult == null
-              ? _buildLoadingSkeleton(context, isDark)
+              ? _buildLoadingSkeleton(context)
               : _buildResultWithBlur(context))
           : widget.inputBuilder(context, _handleSubmit),
     );
   }
 
   /// 로딩 스켈레톤 빌드
-  Widget _buildLoadingSkeleton(BuildContext context, bool isDark) {
+  Widget _buildLoadingSkeleton(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24).copyWith(bottom: 100),
+      padding: const EdgeInsets.all(DSSpacing.lg).copyWith(bottom: 100),
       child: Column(
         children: [
-          // 로딩 메시지
-          Padding(
-            padding: const EdgeInsets.only(bottom: 24),
-            child: Column(
-              children: [
-                const SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.tossBlue),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  '운세를 분석하고 있어요...',
-                  style: TypographyUnified.bodyMedium.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.textSecondaryLight,
-                  ),
-                ),
-              ],
-            ),
-          ),
           // 헤더 스켈레톤
-          _ShimmerSkeletonCard(isDark: isDark, height: 140),
-          const SizedBox(height: 16),
+          DSSkeleton(height: 140),
+          const SizedBox(height: DSSpacing.md),
           // 컨텐츠 스켈레톤
-          _ShimmerSkeletonCard(isDark: isDark, height: 180),
-          const SizedBox(height: 16),
-          _ShimmerSkeletonCard(isDark: isDark, height: 160),
-          const SizedBox(height: 16),
-          _ShimmerSkeletonCard(isDark: isDark, height: 140),
+          DSSkeleton(height: 180),
+          const SizedBox(height: DSSpacing.md),
+          DSSkeleton(height: 160),
+          const SizedBox(height: DSSpacing.md),
+          DSSkeleton(height: 140),
         ],
       ),
     );
@@ -514,105 +475,4 @@ final unifiedFortuneServiceProvider = Provider<UnifiedFortuneService>((ref) {
   );
 });
 
-/// Shimmer 애니메이션이 있는 스켈레톤 카드
-class _ShimmerSkeletonCard extends StatefulWidget {
-  final bool isDark;
-  final double height;
-
-  const _ShimmerSkeletonCard({
-    required this.isDark,
-    required this.height,
-  });
-
-  @override
-  State<_ShimmerSkeletonCard> createState() => _ShimmerSkeletonCardState();
-}
-
-class _ShimmerSkeletonCardState extends State<_ShimmerSkeletonCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat();
-    _animation = Tween<double>(begin: -1.0, end: 2.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        return Container(
-          height: widget.height,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: widget.isDark
-                  ? [
-                      TossDesignSystem.gray800.withValues(alpha: 0.3),
-                      TossDesignSystem.gray700.withValues(alpha: 0.5),
-                      TossDesignSystem.gray800.withValues(alpha: 0.3),
-                    ]
-                  : [
-                      TossDesignSystem.gray100,
-                      TossDesignSystem.gray50,
-                      TossDesignSystem.gray100,
-                    ],
-              stops: [
-                _animation.value - 0.3,
-                _animation.value,
-                _animation.value + 0.3,
-              ].map((s) => s.clamp(0.0, 1.0)).toList(),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 제목 스켈레톤
-                _buildShimmerLine(150),
-                const SizedBox(height: 16),
-                // 텍스트 스켈레톤
-                _buildShimmerLine(double.infinity),
-                const SizedBox(height: 8),
-                _buildShimmerLine(double.infinity),
-                const SizedBox(height: 8),
-                _buildShimmerLine(200),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildShimmerLine(double width) {
-    return Container(
-      height: 16,
-      width: width,
-      decoration: BoxDecoration(
-        color: widget.isDark
-            ? TossDesignSystem.gray700.withValues(alpha: 0.5)
-            : TossDesignSystem.gray200,
-        borderRadius: BorderRadius.circular(8),
-      ),
-    );
-  }
-}
+// Note: _ShimmerSkeletonCard removed - now using DSSkeleton from design_system

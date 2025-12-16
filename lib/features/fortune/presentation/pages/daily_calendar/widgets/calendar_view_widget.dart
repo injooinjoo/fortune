@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../../../../core/components/app_card.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/theme/app_theme.dart';
 import '../../../../../../core/models/holiday_models.dart';
 
@@ -53,8 +53,8 @@ class CalendarViewWidget extends StatelessWidget {
         onPageChanged: onPageChanged,
         calendarStyle: CalendarStyle(
           outsideDaysVisible: false,
-          weekendTextStyle: const TextStyle(color: TossDesignSystem.errorRed, fontFamily: 'ZenSerif'),
-          holidayTextStyle: const TextStyle(color: TossDesignSystem.errorRed, fontFamily: 'ZenSerif'),
+          weekendTextStyle: const TextStyle(color: DSColors.error, fontFamily: 'ZenSerif'),
+          holidayTextStyle: const TextStyle(color: DSColors.error, fontFamily: 'ZenSerif'),
           selectedDecoration: BoxDecoration(
             color: AppTheme.primaryColor,
             shape: BoxShape.circle,
@@ -82,7 +82,7 @@ class CalendarViewWidget extends StatelessWidget {
         ),
         daysOfWeekStyle: DaysOfWeekStyle(
           weekdayStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
-          weekendStyle: TextStyle(color: TossDesignSystem.errorRed.withValues(alpha: 0.7)),
+          weekendStyle: TextStyle(color: DSColors.error.withValues(alpha: 0.7)),
         ),
         daysOfWeekHeight: 40,
         locale: 'ko_KR',
@@ -110,12 +110,12 @@ class CalendarViewWidget extends StatelessWidget {
       textColor = theme.colorScheme.onSurface.withValues(alpha: 0.3);
     } else if (isSelected) {
       backgroundColor = AppTheme.primaryColor;
-      textColor = TossDesignSystem.white;
+      textColor = Colors.white;
     } else if (isToday) {
       borderColor = AppTheme.primaryColor;
       textColor = AppTheme.primaryColor;
     } else if (isHoliday || (isWeekend && !isPastDate)) {
-      textColor = TossDesignSystem.errorRed;
+      textColor = DSColors.error;
     }
 
     return Container(
@@ -149,7 +149,7 @@ class CalendarViewWidget extends StatelessWidget {
                       width: 6,
                       height: 6,
                       decoration: const BoxDecoration(
-                        color: TossDesignSystem.errorRed,
+                        color: DSColors.error,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -159,7 +159,7 @@ class CalendarViewWidget extends StatelessWidget {
                       height: 6,
                       margin: const EdgeInsets.only(left: 2),
                       decoration: const BoxDecoration(
-                        color: TossDesignSystem.warningOrange,
+                        color: DSColors.warning,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -169,7 +169,7 @@ class CalendarViewWidget extends StatelessWidget {
                       height: 6,
                       margin: const EdgeInsets.only(left: 2),
                       decoration: const BoxDecoration(
-                        color: TossDesignSystem.warningOrange,
+                        color: DSColors.warning,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -187,14 +187,14 @@ class CalendarViewWidget extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue,
+                    color: DSColors.accent,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     '${eventInfo!.deviceEventCount}',
                     style: TextStyle(
                       fontSize: 8,
-                      color: TossDesignSystem.white,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

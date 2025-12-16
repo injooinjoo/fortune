@@ -3,10 +3,11 @@ import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../presentation/providers/providers.dart';
-import '../../../../core/theme/typography_unified.dart';
+
+// Design System migration: TossDesignSystem → DSColors/DSTypography
 
 class LuckyItemsBottomSheet extends ConsumerStatefulWidget {
   const LuckyItemsBottomSheet({super.key});
@@ -21,8 +22,8 @@ class LuckyItemsBottomSheet extends ConsumerStatefulWidget {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
-      barrierColor: TossDesignSystem.black.withValues(alpha: 0.5),
+      backgroundColor: Colors.white.withValues(alpha: 0.0),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) => const LuckyItemsBottomSheet(),
     ).whenComplete(() {
       // Bottom Sheet가 닫힐 때 네비게이션 바 다시 표시
@@ -43,56 +44,56 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
       'id': 'lotto',
       'title': '로또 번호',
       'icon': Icons.casino,
-      'color': TossDesignSystem.warningOrange,
+      'color': DSColors.warning,
       'description': '행운의 번호와 최적 구매 시간'
     },
     {
       'id': 'shopping',
       'title': '쇼핑',
       'icon': Icons.shopping_bag,
-      'color': TossDesignSystem.errorRed,
+      'color': DSColors.error,
       'description': '오늘의 럭키 아이템과 구매 팁'
     },
     {
       'id': 'game',
       'title': '게임',
       'icon': Icons.games,
-      'color': TossDesignSystem.tossBlue,
+      'color': DSColors.accent,
       'description': '승부운을 높이는 게임 추천'
     },
     {
       'id': 'food',
       'title': '음식',
       'icon': Icons.restaurant,
-      'color': TossDesignSystem.warningOrange,
+      'color': DSColors.warning,
       'description': '행운을 부르는 오늘의 음식'
     },
     {
       'id': 'travel',
       'title': '여행',
       'icon': Icons.flight,
-      'color': TossDesignSystem.tossBlue,
+      'color': DSColors.accent,
       'description': '운이 좋은 여행지와 방향'
     },
     {
       'id': 'health',
       'title': '건강',
       'icon': Icons.health_and_safety,
-      'color': TossDesignSystem.successGreen,
+      'color': DSColors.success,
       'description': '건강 운세와 주의사항'
     },
     {
       'id': 'fashion',
       'title': '패션',
       'icon': Icons.checkroom,
-      'color': TossDesignSystem.warningOrange,
+      'color': DSColors.warning,
       'description': '오늘의 럭키 컬러와 스타일'
     },
     {
       'id': 'lifestyle',
       'title': '라이프스타일',
       'icon': Icons.home,
-      'color': TossDesignSystem.gray500,
+      'color': DSColors.textTertiary,
       'description': '일상의 행운을 높이는 팁'
     },
   ];
@@ -146,9 +147,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.gray900
-            : TossDesignSystem.white,
+        color: context.colors.background,
         borderRadius: const BorderRadius.vertical(
           top: Radius.circular(20),
         ),
@@ -168,9 +167,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
           width: 40,
           height: 4,
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark300
-                : TossDesignSystem.gray300,
+            color: context.colors.border,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -186,20 +183,16 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                   children: [
                     Text(
                       '오늘의 행운 아이템',
-                      style: TypographyUnified.displaySmall.copyWith(
+                      style: DSTypography.displaySmall.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.white
-                            : TossDesignSystem.grayDark900,
+                        color: context.colors.textPrimary,
                       ),
                     ),
                     SizedBox(height: 8),
                     Text(
                       '당신만을 위한 특별한 행운을 찾아보세요',
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark400
-                            : TossDesignSystem.gray700,
+                      style: DSTypography.labelMedium.copyWith(
+                        color: context.colors.textSecondary,
                       ),
                     ),
                   ],
@@ -228,9 +221,7 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.surfaceBackgroundDark
-                        : TossDesignSystem.surfaceBackgroundLight,
+                    color: context.colors.surface,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -240,17 +231,15 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                         children: [
                           Icon(
                             Icons.auto_awesome,
-                            color: TossDesignSystem.tossBlue,
+                            color: DSColors.accent,
                             size: 24,
                           ),
                           SizedBox(width: 8),
                           Text(
                             '오늘만의 특별한 행운',
-                            style: TypographyUnified.heading4.copyWith(
+                            style: DSTypography.headingSmall.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: Theme.of(context).brightness == Brightness.dark
-                                  ? TossDesignSystem.white
-                                  : TossDesignSystem.grayDark900,
+                              color: context.colors.textPrimary,
                             ),
                           ),
                         ],
@@ -258,11 +247,9 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                       const SizedBox(height: 12),
                       Text(
                         '매일 새롭게 업데이트되는 8가지 카테고리의 행운 정보를 확인하세요. 로또 번호부터 오늘의 럭키 컬러까지, 당신의 하루를 더욱 특별하게 만들어 드립니다.',
-                        style: TypographyUnified.bodySmall.copyWith(
+                        style: DSTypography.bodySmall.copyWith(
                           height: 1.5,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.grayDark400
-                              : TossDesignSystem.gray800,
+                          color: context.colors.textPrimary,
                         ),
                       ),
                     ],
@@ -274,11 +261,9 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                 // 카테고리 미리보기
                 Text(
                   '확인할 수 있는 행운 정보',
-                  style: TypographyUnified.heading4.copyWith(
+                  style: DSTypography.headingSmall.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.white
-                        : TossDesignSystem.grayDark900,
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -299,14 +284,10 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                     return Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.gray800
-                            : TossDesignSystem.gray50,
+                        color: context.colors.surface,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.gray700
-                              : TossDesignSystem.gray200,
+                          color: context.colors.border,
                         ),
                       ),
                       child: Row(
@@ -328,11 +309,9 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
                           Expanded(
                             child: Text(
                               category['title'],
-                              style: TypographyUnified.bodySmall.copyWith(
+                              style: DSTypography.bodySmall.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: Theme.of(context).brightness == Brightness.dark
-                                    ? TossDesignSystem.white
-                                    : TossDesignSystem.black,
+                                color: context.colors.textPrimary,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -359,12 +338,10 @@ class _LuckyItemsBottomSheetState extends ConsumerState<LuckyItemsBottomSheet> {
             bottom: MediaQuery.of(context).padding.bottom + 16,
           ),
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.gray900
-                : TossDesignSystem.white,
+            color: context.colors.background,
             boxShadow: [
               BoxShadow(
-                color: TossDesignSystem.black.withValues(alpha: 0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, -2),
               ),

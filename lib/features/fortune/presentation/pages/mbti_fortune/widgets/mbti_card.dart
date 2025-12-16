@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class MbtiCard extends StatelessWidget {
   final String mbti;
@@ -17,7 +16,7 @@ class MbtiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return GestureDetector(
       onTap: () {
@@ -28,23 +27,19 @@ class MbtiCard extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: isSelected
-              ? TossDesignSystem.tossBlue
-              : (isDark
-                  ? TossDesignSystem.grayDark700
-                  : TossDesignSystem.gray50),
+              ? colors.accent
+              : colors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
-                ? TossDesignSystem.tossBlue
-                : (isDark
-                    ? TossDesignSystem.grayDark400
-                    : TossDesignSystem.gray200),
+                ? colors.accent
+                : colors.border,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+                    color: colors.accent.withValues(alpha: 0.2),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   )
@@ -54,11 +49,11 @@ class MbtiCard extends StatelessWidget {
         child: Center(
           child: Text(
             mbti,
-            style: TypographyUnified.buttonSmall.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               fontWeight: FontWeight.w600,
               color: isSelected
-                  ? TossDesignSystem.white
-                  : (isDark ? TossDesignSystem.white : TossDesignSystem.gray800),
+                  ? Colors.white
+                  : colors.textPrimary,
             ),
           ),
         ),

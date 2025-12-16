@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import '../design_system/design_system.dart';
 
-/// 토스 스타일 정보 배너 위젯
+/// 전통 한국 스타일 정보 배너 위젯
 ///
 /// 토스 앱의 "재직중인 회사에서..." 같은 배너 디자인을 재현한 공용 컴포넌트
 ///
@@ -10,7 +9,7 @@ import 'package:fortune/core/theme/typography_unified.dart';
 /// ```dart
 /// InfoBanner(
 ///   icon: Icons.calendar_month,
-///   iconColor: TossDesignSystem.tossBlue,
+///   iconColor: context.colors.accent,
 ///   title: '캘린더 연동으로 더 정확한 운세를!',
 ///   subtitle: '일정 기반 맞춤 조언을 받아보세요',
 ///   onTap: _syncCalendar,
@@ -56,24 +55,23 @@ class InfoBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     // backgroundColor가 transparent이면 배경색 없이 테두리만
     final isTransparent = backgroundColor == Colors.transparent;
     final bgColor = isTransparent
         ? Colors.transparent
-        : (backgroundColor ??
-            TossDesignSystem.tossBlue.withValues(alpha: isDark ? 0.15 : 0.08));
+        : (backgroundColor ?? colors.accent.withValues(alpha: 0.1));
 
     return Container(
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: isTransparent
-              ? (isDark ? Colors.white24 : Colors.black12)
-              : ((backgroundColor ?? TossDesignSystem.tossBlue)
-                  .withValues(alpha: isDark ? 0.3 : 0.2)),
+              ? colors.border
+              : ((backgroundColor ?? colors.accent).withValues(alpha: 0.25)),
           width: 1,
         ),
       ),
@@ -81,9 +79,9 @@ class InfoBanner extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(DSRadius.md),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(DSSpacing.md),
             child: Row(
               children: [
                 // 좌측 체크 아이콘
@@ -100,7 +98,7 @@ class InfoBanner extends StatelessWidget {
                     size: 24,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: DSSpacing.sm + 4),
                 // 중앙 텍스트 영역
                 Expanded(
                   child: Column(
@@ -109,11 +107,9 @@ class InfoBanner extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: context.bodyMedium.copyWith(
+                        style: typography.bodyMedium.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: isDark
-                              ? TossDesignSystem.textPrimaryDark
-                              : TossDesignSystem.textPrimaryLight,
+                          color: colors.textPrimary,
                           height: 1.3,
                         ),
                       ),
@@ -121,10 +117,8 @@ class InfoBanner extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           subtitle!,
-                          style: context.bodySmall.copyWith(
-                            color: isDark
-                                ? TossDesignSystem.textSecondaryDark
-                                : TossDesignSystem.textSecondaryLight,
+                          style: typography.bodySmall.copyWith(
+                            color: colors.textSecondary,
                             height: 1.3,
                           ),
                         ),
@@ -132,7 +126,7 @@ class InfoBanner extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: DSSpacing.sm),
                 // 우측 영역 (커스텀 또는 화살표)
                 if (trailing != null)
                   trailing!
@@ -140,11 +134,9 @@ class InfoBanner extends StatelessWidget {
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 16,
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.textSecondaryLight,
+                    color: colors.textSecondary,
                   ),
-                const SizedBox(width: 8),
+                const SizedBox(width: DSSpacing.sm),
                 // 우측 X 닫기 버튼
                 InkWell(
                   onTap: onClose,
@@ -154,14 +146,12 @@ class InfoBanner extends StatelessWidget {
                     height: 32,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: colors.textPrimary.withValues(alpha: 0.05),
                     ),
                     child: Icon(
                       Icons.close,
                       size: 18,
-                      color: isDark
-                          ? TossDesignSystem.textSecondaryDark
-                          : TossDesignSystem.textSecondaryLight,
+                      color: colors.textSecondary,
                     ),
                   ),
                 ),
@@ -174,16 +164,16 @@ class InfoBanner extends StatelessWidget {
   }
 }
 
-/// 토스 스타일 배너의 변형 버전들
+/// 배너의 변형 버전들
 
 /// 성공 배너 (초록색)
-class TossSuccessBanner extends StatelessWidget {
+class SuccessBanner extends StatelessWidget {
   final String title;
   final String? subtitle;
   final VoidCallback? onTap;
   final VoidCallback onClose;
 
-  const TossSuccessBanner({
+  const SuccessBanner({
     super.key,
     required this.title,
     this.subtitle,
@@ -193,26 +183,27 @@ class TossSuccessBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return InfoBanner(
       icon: Icons.check_circle_outline,
-      iconColor: TossDesignSystem.successGreen,
+      iconColor: colors.success,
       title: title,
       subtitle: subtitle,
       onTap: onTap,
       onClose: onClose,
-      backgroundColor: TossDesignSystem.successGreen,
+      backgroundColor: colors.success,
     );
   }
 }
 
 /// 경고 배너 (주황색)
-class TossWarningBanner extends StatelessWidget {
+class WarningBanner extends StatelessWidget {
   final String title;
   final String? subtitle;
   final VoidCallback? onTap;
   final VoidCallback onClose;
 
-  const TossWarningBanner({
+  const WarningBanner({
     super.key,
     required this.title,
     this.subtitle,
@@ -222,26 +213,27 @@ class TossWarningBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return InfoBanner(
       icon: Icons.warning_amber_rounded,
-      iconColor: TossDesignSystem.warningOrange,
+      iconColor: colors.warning,
       title: title,
       subtitle: subtitle,
       onTap: onTap,
       onClose: onClose,
-      backgroundColor: TossDesignSystem.warningOrange,
+      backgroundColor: colors.warning,
     );
   }
 }
 
 /// 에러 배너 (빨간색)
-class TossErrorBanner extends StatelessWidget {
+class ErrorBanner extends StatelessWidget {
   final String title;
   final String? subtitle;
   final VoidCallback? onTap;
   final VoidCallback onClose;
 
-  const TossErrorBanner({
+  const ErrorBanner({
     super.key,
     required this.title,
     this.subtitle,
@@ -251,14 +243,15 @@ class TossErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return InfoBanner(
       icon: Icons.error_outline,
-      iconColor: TossDesignSystem.errorRed,
+      iconColor: colors.error,
       title: title,
       subtitle: subtitle,
       onTap: onTap,
       onClose: onClose,
-      backgroundColor: TossDesignSystem.errorRed,
+      backgroundColor: colors.error,
     );
   }
 }

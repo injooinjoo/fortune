@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/toast.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../widgets/standard_fortune_app_bar.dart';
@@ -96,11 +96,10 @@ class _InvestmentFortunePageState
   @override
   Widget build(BuildContext context) {
     final currentStep = ref.watch(investmentStepProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? TossDesignSystem.grayDark50 : const Color(0xFFF7F7F8),
+      backgroundColor: colors.background,
       appBar: StandardFortuneAppBar(
         title: '투자 운세',
         onBackPressed: () {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'mbti_card.dart';
 
 class MbtiGroupsSection extends StatelessWidget {
@@ -27,7 +26,7 @@ class MbtiGroupsSection extends StatelessWidget {
     required this.scrollController,
   });
 
-  Color _getGroupColor(String groupName) {
+  Color _getGroupColor(String groupName, DSColorScheme colors) {
     switch (groupName) {
       case '분석가':
         return const Color(0xFF8B5CF6);
@@ -38,13 +37,13 @@ class MbtiGroupsSection extends StatelessWidget {
       case '탐험가':
         return const Color(0xFFF59E0B);
       default:
-        return TossDesignSystem.tossBlue;
+        return colors.accent;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Column(
       children: [
@@ -60,17 +59,13 @@ class MbtiGroupsSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: showAllGroups
-                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                  : (isDark
-                      ? TossDesignSystem.grayDark700
-                      : TossDesignSystem.gray50),
+                  ? colors.accent.withValues(alpha: 0.1)
+                  : colors.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: showAllGroups
-                    ? TossDesignSystem.tossBlue.withValues(alpha: 0.3)
-                    : (isDark
-                        ? TossDesignSystem.grayDark400
-                        : TossDesignSystem.gray200),
+                    ? colors.accent.withValues(alpha: 0.3)
+                    : colors.border,
                 width: showAllGroups ? 2 : 1,
               ),
             ),
@@ -78,17 +73,16 @@ class MbtiGroupsSection extends StatelessWidget {
               children: [
                 Icon(
                   Icons.psychology_rounded,
-                  color: TossDesignSystem.tossBlue,
+                  color: colors.accent,
                   size: 24,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     selectedMbti ?? 'MBTI 성격 유형 선택',
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: DSTypography.labelLarge.copyWith(
                       fontWeight: FontWeight.w600,
-                      color:
-                          isDark ? TossDesignSystem.white : TossDesignSystem.gray800,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ),
@@ -96,7 +90,7 @@ class MbtiGroupsSection extends StatelessWidget {
                   showAllGroups
                       ? Icons.keyboard_arrow_up
                       : Icons.keyboard_arrow_down,
-                  color: TossDesignSystem.tossBlue,
+                  color: colors.accent,
                   size: 20,
                 ),
               ],
@@ -127,17 +121,15 @@ class MbtiGroupsSection extends StatelessWidget {
                             height: 20,
                             margin: const EdgeInsets.only(right: 8),
                             decoration: BoxDecoration(
-                              color: _getGroupColor(entry.key),
+                              color: _getGroupColor(entry.key, colors),
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
                           Text(
                             entry.key,
-                            style: TypographyUnified.buttonMedium.copyWith(
+                            style: DSTypography.labelLarge.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? TossDesignSystem.white
-                                  : TossDesignSystem.gray800,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ],

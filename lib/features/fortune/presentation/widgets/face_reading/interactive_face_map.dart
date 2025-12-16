@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 
 /// Interactive Face Map for Physiognomy (관상학)
 /// 터치 가능한 얼굴 맵 - 오관(五官) 영역 표시
@@ -97,18 +96,18 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
           end: Alignment.bottomRight,
           colors: isDark
               ? [
-                  TossDesignSystem.grayDark200,
-                  TossDesignSystem.grayDark100,
+                  DSColors.backgroundSecondary,
+                  DSColors.surface,
                 ]
               : [
-                  TossDesignSystem.gray100,
+                  DSColors.surface,
                   Colors.white,
                 ],
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.purple.withValues(alpha: 0.1),
+            color: DSColors.accentSecondary.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -125,7 +124,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                 height: 44,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [TossDesignSystem.purple, TossDesignSystem.tossBlue],
+                    colors: [DSColors.accentSecondary, DSColors.accent],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -142,20 +141,20 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                   children: [
                     Text(
                       '오관(五官) 인터랙티브 맵',
-                      style: TypographyUnified.heading4.copyWith(
+                      style: DSTypography.headingSmall.copyWith(
                         color: isDark
-                            ? TossDesignSystem.grayDark900
-                            : TossDesignSystem.gray900,
+                            ? DSColors.textPrimary
+                            : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       '터치하여 상세 분석 보기',
-                      style: TypographyUnified.caption.copyWith(
+                      style: DSTypography.labelSmall.copyWith(
                         color: isDark
-                            ? TossDesignSystem.grayDark600
-                            : TossDesignSystem.gray600,
+                            ? DSColors.textSecondary
+                            : DSColors.textSecondary,
                       ),
                     ),
                   ],
@@ -180,8 +179,8 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                         size: Size(size.width * 0.85, size.height * 0.95),
                         painter: _FaceOutlinePainter(
                           color: isDark
-                              ? TossDesignSystem.grayDark400
-                              : TossDesignSystem.gray400,
+                              ? DSColors.textTertiary
+                              : DSColors.textTertiary,
                         ),
                       ),
                     ),
@@ -250,7 +249,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                                             width: 8,
                                             height: 8,
                                             decoration: BoxDecoration(
-                                              color: TossDesignSystem.successGreen,
+                                              color: DSColors.success,
                                               shape: BoxShape.circle,
                                             ),
                                           ),
@@ -283,22 +282,22 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                                   Icon(
                                     Icons.lock_outline,
                                     size: 48,
-                                    color: TossDesignSystem.purple,
+                                    color: DSColors.accentSecondary,
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
                                     '프리미엄 잠금',
-                                    style: TypographyUnified.heading4.copyWith(
-                                      color: TossDesignSystem.purple,
+                                    style: DSTypography.headingSmall.copyWith(
+                                      color: DSColors.accentSecondary,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     '터치하여 잠금 해제',
-                                    style: TypographyUnified.caption.copyWith(
+                                    style: DSTypography.labelSmall.copyWith(
                                       color: isDark
-                                          ? TossDesignSystem.grayDark600
-                                          : TossDesignSystem.gray600,
+                                          ? DSColors.textSecondary
+                                          : DSColors.textSecondary,
                                     ),
                                   ),
                                 ],
@@ -383,16 +382,16 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                   children: [
                     Text(
                       zone.name,
-                      style: TypographyUnified.heading4.copyWith(
+                      style: DSTypography.headingSmall.copyWith(
                         color: isDark
-                            ? TossDesignSystem.grayDark900
-                            : TossDesignSystem.gray900,
+                            ? DSColors.textPrimary
+                            : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     Text(
                       zone.subtitle,
-                      style: TypographyUnified.caption.copyWith(
+                      style: DSTypography.labelSmall.copyWith(
                         color: zone.color,
                         fontWeight: FontWeight.w600,
                       ),
@@ -410,7 +409,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                   ),
                   child: Text(
                     '$score점',
-                    style: TypographyUnified.caption.copyWith(
+                    style: DSTypography.labelSmall.copyWith(
                       color: zone.color,
                       fontWeight: FontWeight.w700,
                     ),
@@ -421,8 +420,8 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               IconButton(
                 icon: const Icon(Icons.close, size: 20),
                 color: isDark
-                    ? TossDesignSystem.grayDark600
-                    : TossDesignSystem.gray600,
+                    ? DSColors.textSecondary
+                    : DSColors.textSecondary,
                 onPressed: () => setState(() => _selectedZone = null),
               ),
             ],
@@ -448,7 +447,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               const SizedBox(height: 12),
               Text(
                 '관찰',
-                style: TypographyUnified.caption.copyWith(
+                style: DSTypography.labelSmall.copyWith(
                   color: zone.color,
                   fontWeight: FontWeight.w600,
                 ),
@@ -456,10 +455,10 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               const SizedBox(height: 4),
               Text(
                 observation,
-                style: TypographyUnified.body2.copyWith(
+                style: DSTypography.bodyMedium.copyWith(
                   color: isDark
-                      ? TossDesignSystem.grayDark800
-                      : TossDesignSystem.gray800,
+                      ? DSColors.textPrimary
+                      : DSColors.textPrimary,
                   height: 1.5,
                 ),
               ),
@@ -470,7 +469,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               const SizedBox(height: 10),
               Text(
                 '해석',
-                style: TypographyUnified.caption.copyWith(
+                style: DSTypography.labelSmall.copyWith(
                   color: zone.color,
                   fontWeight: FontWeight.w600,
                 ),
@@ -478,10 +477,10 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               const SizedBox(height: 4),
               Text(
                 interpretation,
-                style: TypographyUnified.body2.copyWith(
+                style: DSTypography.bodyMedium.copyWith(
                   color: isDark
-                      ? TossDesignSystem.grayDark800
-                      : TossDesignSystem.gray800,
+                      ? DSColors.textPrimary
+                      : DSColors.textPrimary,
                   height: 1.5,
                 ),
               ),
@@ -508,10 +507,10 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                     Expanded(
                       child: Text(
                         advice,
-                        style: TypographyUnified.body2.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           color: isDark
-                              ? TossDesignSystem.grayDark800
-                              : TossDesignSystem.gray800,
+                              ? DSColors.textPrimary
+                              : DSColors.textPrimary,
                           height: 1.5,
                         ),
                       ),
@@ -524,10 +523,10 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
             const SizedBox(height: 12),
             Text(
               '분석 데이터가 없습니다.',
-              style: TypographyUnified.body2.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 color: isDark
-                    ? TossDesignSystem.grayDark600
-                    : TossDesignSystem.gray600,
+                    ? DSColors.textSecondary
+                    : DSColors.textSecondary,
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -558,8 +557,8 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                 color: isSelected
                     ? zone.color
                     : (isDark
-                        ? TossDesignSystem.grayDark400
-                        : TossDesignSystem.gray400),
+                        ? DSColors.textTertiary
+                        : DSColors.textTertiary),
                 width: isSelected ? 2 : 1,
               ),
             ),
@@ -577,12 +576,12 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                 const SizedBox(width: 6),
                 Text(
                   zone.name.split('(')[0],
-                  style: TypographyUnified.caption.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     color: isSelected
                         ? zone.color
                         : (isDark
-                            ? TossDesignSystem.grayDark700
-                            : TossDesignSystem.gray700),
+                            ? DSColors.textSecondary
+                            : DSColors.textSecondary),
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),

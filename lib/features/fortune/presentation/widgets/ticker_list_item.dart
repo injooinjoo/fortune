@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../data/models/investment_ticker.dart';
 
 /// ChatGPT 스타일의 종목 리스트 아이템
@@ -23,7 +22,7 @@ class TickerListItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final backgroundColor = isSelected
-        ? (isDark ? TossDesignSystem.tossBlue.withValues(alpha: 0.15) : TossDesignSystem.tossBlue.withValues(alpha: 0.08))
+        ? (isDark ? DSColors.accent.withValues(alpha: 0.15) : DSColors.accent.withValues(alpha: 0.08))
         : Colors.transparent;
 
     return GestureDetector(
@@ -51,16 +50,16 @@ class TickerListItem extends StatelessWidget {
                 children: [
                   Text(
                     ticker.name,
-                    style: TypographyUnified.bodyMedium.copyWith(
+                    style: DSTypography.bodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     _buildSubtitle(),
-                    style: TypographyUnified.labelSmall.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: isDark ? DSColors.textTertiary : DSColors.textTertiary,
                     ),
                   ),
                 ],
@@ -73,7 +72,7 @@ class TickerListItem extends StatelessWidget {
                 width: 24,
                 height: 24,
                 decoration: const BoxDecoration(
-                  color: TossDesignSystem.tossBlue,
+                  color: DSColors.accent,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -89,8 +88,8 @@ class TickerListItem extends StatelessWidget {
   }
 
   Widget _buildTickerIcon(bool isDark) {
-    final bgColor = isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100;
-    final textColor = isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700;
+    final bgColor = isDark ? DSColors.border : DSColors.backgroundSecondary;
+    final textColor = isDark ? DSColors.textSecondary : DSColors.textSecondary;
 
     return Container(
       width: 44,
@@ -102,7 +101,7 @@ class TickerListItem extends StatelessWidget {
       child: Center(
         child: Text(
           ticker.symbol.length > 3 ? ticker.symbol.substring(0, 2) : ticker.symbol,
-          style: TypographyUnified.labelMedium.copyWith(
+          style: DSTypography.labelMedium.copyWith(
             fontWeight: FontWeight.w700,
             color: textColor,
           ),

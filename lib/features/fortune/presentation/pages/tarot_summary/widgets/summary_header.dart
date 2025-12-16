@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import 'dart:math' as math;
 
 class SummaryHeader extends StatelessWidget {
@@ -47,10 +46,10 @@ class SummaryHeader extends StatelessWidget {
                         shape: BoxShape.circle,
                         gradient: SweepGradient(
                           colors: [
-                            TossDesignSystem.purple.withValues(alpha: 0),
+                            const Color(0xFF9333EA).withValues(alpha: 0),
                             const Color(0xFF9333EA).withValues(alpha: 0.3),
-                            TossDesignSystem.tossBlue.withValues(alpha: 0.3),
-                            TossDesignSystem.purple.withValues(alpha: 0),
+                            const Color(0xFF3182F6).withValues(alpha: 0.3),
+                            const Color(0xFF9333EA).withValues(alpha: 0),
                           ],
                         ),
                       ),
@@ -60,7 +59,7 @@ class SummaryHeader extends StatelessWidget {
                   Icon(
                     Icons.auto_awesome,
                     size: 60,
-                    color: TossDesignSystem.white,
+                    color: Colors.white,
                     shadows: [
                       Shadow(
                         color: const Color(0xFF9333EA),
@@ -75,18 +74,18 @@ class SummaryHeader extends StatelessWidget {
           SizedBox(height: 16),
           Text(
             '리딩이 완료되었습니다',
-            style: TypographyUnified.displaySmall.copyWith(
-              fontSize: TypographyUnified.displaySmall.fontSize! * fontScale,
-              color: TossDesignSystem.white,
+            style: DSTypography.displayMedium.copyWith(
+              fontSize: DSTypography.displayMedium.fontSize! * fontScale,
+              color: Colors.white,
             ),
           ),
           if (question != null) ...[
             SizedBox(height: 8),
             Text(
               question!,
-              style: TypographyUnified.bodyLarge.copyWith(
-                fontSize: TypographyUnified.bodyLarge.fontSize! * fontScale,
-                color: TossDesignSystem.white.withValues(alpha: 0.7),
+              style: DSTypography.bodyLarge.copyWith(
+                fontSize: DSTypography.bodyLarge.fontSize! * fontScale,
+                color: Colors.white.withValues(alpha: 0.7),
                 fontStyle: FontStyle.italic,
               ),
               textAlign: TextAlign.center,

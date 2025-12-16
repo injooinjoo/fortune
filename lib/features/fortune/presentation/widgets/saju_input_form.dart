@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
@@ -105,7 +105,7 @@ class _SajuInputFormState extends State<SajuInputForm>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: DSColors.background,
       body: SafeArea(
         child: AnimatedBuilder(
           animation: _animationController,
@@ -115,43 +115,43 @@ class _SajuInputFormState extends State<SajuInputForm>
               child: SlideTransition(
                 position: _slideAnimation,
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(TossTheme.spacingL),
+                  padding: const EdgeInsets.all(DSSpacing.lg),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: TossTheme.spacingL),
+                        const SizedBox(height: DSSpacing.lg),
                         
                         // 제목과 설명
                         _buildHeader(),
                         
-                        const SizedBox(height: TossTheme.spacingXL),
+                        const SizedBox(height: DSSpacing.xl),
                         
                         // 이름 입력
                         _buildNameInput(),
                         
-                        const SizedBox(height: TossTheme.spacingL),
+                        const SizedBox(height: DSSpacing.lg),
                         
                         // 생년월일 선택
                         _buildDateInput(),
                         
-                        const SizedBox(height: TossTheme.spacingL),
+                        const SizedBox(height: DSSpacing.lg),
                         
                         // 출생 시간 선택
                         _buildTimeInput(),
                         
-                        const SizedBox(height: TossTheme.spacingL),
+                        const SizedBox(height: DSSpacing.lg),
                         
                         // 성별 선택
                         _buildGenderInput(),
                         
-                        const SizedBox(height: TossTheme.spacingXL),
+                        const SizedBox(height: DSSpacing.xl),
                         
                         // 안내 메시지
                         _buildInfoMessage(),
                         
-                        const SizedBox(height: TossTheme.spacingXL),
+                        const SizedBox(height: DSSpacing.xl),
                         
                         // 확인 버튼
                         UnifiedButton(
@@ -162,7 +162,7 @@ class _SajuInputFormState extends State<SajuInputForm>
                           icon: const Icon(Icons.auto_awesome),
                         ),
                         
-                        const SizedBox(height: TossTheme.spacingXL),
+                        const SizedBox(height: DSSpacing.xl),
                       ],
                     ),
                   ),
@@ -181,15 +181,15 @@ class _SajuInputFormState extends State<SajuInputForm>
       children: [
         Text(
           '정보 입력',
-          style: TossTheme.heading1.copyWith(
-            color: TossTheme.textBlack,
+          style: DSTypography.displaySmall.copyWith(
+            color: DSColors.textPrimary,
           ),
         ),
-        const SizedBox(height: TossTheme.spacingS),
+        const SizedBox(height: DSSpacing.sm),
         Text(
           '정확한 사주팔자 분석을 위해\n기본 정보를 입력해주세요',
-          style: TossTheme.body1.copyWith(
-            color: TossTheme.textGray600,
+          style: DSTypography.bodyLarge.copyWith(
+            color: DSColors.textSecondary,
             height: 1.5,
           ),
         ),
@@ -199,7 +199,7 @@ class _SajuInputFormState extends State<SajuInputForm>
 
   Widget _buildNameInput() {
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -207,25 +207,25 @@ class _SajuInputFormState extends State<SajuInputForm>
             children: [
               Icon(
                 Icons.person_outline,
-                color: TossTheme.brandBlue,
+                color: DSColors.accent,
                 size: 20,
               ),
-              const SizedBox(width: TossTheme.spacingS),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '이름',
-                style: TossTheme.body1.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 ' *',
-                style: TossTheme.body1.copyWith(
-                  color: TossTheme.error,
+                style: DSTypography.bodyLarge.copyWith(
+                  color: DSColors.error,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: DSSpacing.md),
           TossTextField(
             controller: _nameController,
             hintText: '성함을 입력해주세요',
@@ -244,7 +244,7 @@ class _SajuInputFormState extends State<SajuInputForm>
 
   Widget _buildDateInput() {
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -252,25 +252,25 @@ class _SajuInputFormState extends State<SajuInputForm>
             children: [
               Icon(
                 Icons.calendar_today_outlined,
-                color: TossTheme.brandBlue,
+                color: DSColors.accent,
                 size: 20,
               ),
-              const SizedBox(width: TossTheme.spacingS),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '생년월일',
-                style: TossTheme.body1.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 ' *',
-                style: TossTheme.body1.copyWith(
-                  color: TossTheme.error,
+                style: DSTypography.bodyLarge.copyWith(
+                  color: DSColors.error,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: DSSpacing.md),
           NumericDateInput(
             selectedDate: _selectedDate,
             onDateChanged: (date) => setState(() => _selectedDate = date),
@@ -285,7 +285,7 @@ class _SajuInputFormState extends State<SajuInputForm>
 
   Widget _buildTimeInput() {
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -293,50 +293,50 @@ class _SajuInputFormState extends State<SajuInputForm>
             children: [
               Icon(
                 Icons.access_time_outlined,
-                color: TossTheme.brandBlue,
+                color: DSColors.accent,
                 size: 20,
               ),
-              const SizedBox(width: TossTheme.spacingS),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '출생 시간',
-                style: TossTheme.body1.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '정확한 분석을 위해 출생 시간을 선택해주세요',
-            style: TossTheme.caption.copyWith(
-              color: TossTheme.textGray600,
+            style: DSTypography.labelSmall.copyWith(
+              color: DSColors.textSecondary,
             ),
           ),
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: DSSpacing.md),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingM),
+            padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
             decoration: BoxDecoration(
-              border: Border.all(color: TossTheme.borderPrimary),
-              borderRadius: BorderRadius.circular(TossTheme.radiusM),
+              border: Border.all(color: DSColors.border),
+              borderRadius: BorderRadius.circular(DSRadius.md),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: _unknownTime ? '모름' : _selectedTime,
                 hint: Text(
                   '출생 시간을 선택하세요',
-                  style: TossTheme.body1.copyWith(
-                    color: TossTheme.textGray500,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: DSColors.textTertiary,
                   ),
                 ),
                 icon: Icon(
                   Icons.arrow_drop_down,
-                  color: TossTheme.textGray500,
+                  color: DSColors.textTertiary,
                 ),
-                style: TossTheme.body1.copyWith(
-                  color: TossTheme.textBlack,
+                style: DSTypography.bodyLarge.copyWith(
+                  color: DSColors.textPrimary,
                 ),
-                dropdownColor: TossTheme.backgroundPrimary,
+                dropdownColor: DSColors.background,
                 items: _hourOptions.map((String time) {
                   return DropdownMenuItem<String>(
                     value: time,
@@ -348,26 +348,26 @@ class _SajuInputFormState extends State<SajuInputForm>
             ),
           ),
           if (_unknownTime) ...[
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             Container(
-              padding: const EdgeInsets.all(TossTheme.spacingS),
+              padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: TossTheme.warning.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(TossTheme.radiusS),
+                color: DSColors.warning.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.info_outline,
                     size: 16,
-                    color: TossTheme.warning,
+                    color: DSColors.warning,
                   ),
-                  const SizedBox(width: TossTheme.spacingXS),
+                  const SizedBox(width: DSSpacing.xs),
                   Expanded(
                     child: Text(
                       '시간을 모르는 경우 정오(12시) 기준으로 분석됩니다',
-                      style: TossTheme.caption.copyWith(
-                        color: TossTheme.warning,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: DSColors.warning,
                       ),
                     ),
                   ),
@@ -382,7 +382,7 @@ class _SajuInputFormState extends State<SajuInputForm>
 
   Widget _buildGenderInput() {
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -390,42 +390,42 @@ class _SajuInputFormState extends State<SajuInputForm>
             children: [
               Icon(
                 Icons.wc_outlined,
-                color: TossTheme.brandBlue,
+                color: DSColors.accent,
                 size: 20,
               ),
-              const SizedBox(width: TossTheme.spacingS),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '성별',
-                style: TossTheme.body1.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 ' *',
-                style: TossTheme.body1.copyWith(
-                  color: TossTheme.error,
+                style: DSTypography.bodyLarge.copyWith(
+                  color: DSColors.error,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: DSSpacing.md),
           Row(
             children: [
               Expanded(
                 child: GestureDetector(
                   onTap: () => setState(() => _selectedGender = '남'),
                   child: Container(
-                    padding: const EdgeInsets.all(TossTheme.spacingM),
+                    padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
                       color: _selectedGender == '남'
-                          ? TossTheme.brandBlue.withValues(alpha: 0.1)
-                          : TossTheme.backgroundSecondary,
+                          ? DSColors.accent.withValues(alpha: 0.1)
+                          : DSColors.backgroundSecondary,
                       border: Border.all(
                         color: _selectedGender == '남'
-                            ? TossTheme.brandBlue
-                            : TossTheme.borderPrimary,
+                            ? DSColors.accent
+                            : DSColors.border,
                       ),
-                      borderRadius: BorderRadius.circular(TossTheme.radiusM),
+                      borderRadius: BorderRadius.circular(DSRadius.md),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -433,16 +433,16 @@ class _SajuInputFormState extends State<SajuInputForm>
                         Icon(
                           Icons.male,
                           color: _selectedGender == '남'
-                              ? TossTheme.brandBlue
-                              : TossTheme.textGray600,
+                              ? DSColors.accent
+                              : DSColors.textSecondary,
                         ),
-                        const SizedBox(width: TossTheme.spacingS),
+                        const SizedBox(width: DSSpacing.sm),
                         Text(
                           '남성',
-                          style: TossTheme.body1.copyWith(
+                          style: DSTypography.bodyLarge.copyWith(
                             color: _selectedGender == '남'
-                                ? TossTheme.brandBlue
-                                : TossTheme.textGray600,
+                                ? DSColors.accent
+                                : DSColors.textSecondary,
                             fontWeight: _selectedGender == '남'
                                 ? FontWeight.w600
                                 : FontWeight.normal,
@@ -453,22 +453,22 @@ class _SajuInputFormState extends State<SajuInputForm>
                   ),
                 ),
               ),
-              const SizedBox(width: TossTheme.spacingM),
+              const SizedBox(width: DSSpacing.md),
               Expanded(
                 child: GestureDetector(
                   onTap: () => setState(() => _selectedGender = '여'),
                   child: Container(
-                    padding: const EdgeInsets.all(TossTheme.spacingM),
+                    padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
                       color: _selectedGender == '여'
-                          ? TossTheme.brandBlue.withValues(alpha: 0.1)
-                          : TossTheme.backgroundSecondary,
+                          ? DSColors.accent.withValues(alpha: 0.1)
+                          : DSColors.backgroundSecondary,
                       border: Border.all(
                         color: _selectedGender == '여'
-                            ? TossTheme.brandBlue
-                            : TossTheme.borderPrimary,
+                            ? DSColors.accent
+                            : DSColors.border,
                       ),
-                      borderRadius: BorderRadius.circular(TossTheme.radiusM),
+                      borderRadius: BorderRadius.circular(DSRadius.md),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -476,16 +476,16 @@ class _SajuInputFormState extends State<SajuInputForm>
                         Icon(
                           Icons.female,
                           color: _selectedGender == '여'
-                              ? TossTheme.brandBlue
-                              : TossTheme.textGray600,
+                              ? DSColors.accent
+                              : DSColors.textSecondary,
                         ),
-                        const SizedBox(width: TossTheme.spacingS),
+                        const SizedBox(width: DSSpacing.sm),
                         Text(
                           '여성',
-                          style: TossTheme.body1.copyWith(
+                          style: DSTypography.bodyLarge.copyWith(
                             color: _selectedGender == '여'
-                                ? TossTheme.brandBlue
-                                : TossTheme.textGray600,
+                                ? DSColors.accent
+                                : DSColors.textSecondary,
                             fontWeight: _selectedGender == '여'
                                 ? FontWeight.w600
                                 : FontWeight.normal,
@@ -505,12 +505,12 @@ class _SajuInputFormState extends State<SajuInputForm>
 
   Widget _buildInfoMessage() {
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: TossTheme.brandBlue.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        color: DSColors.accent.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: TossTheme.brandBlue.withValues(alpha: 0.2),
+          color: DSColors.accent.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -518,26 +518,26 @@ class _SajuInputFormState extends State<SajuInputForm>
         children: [
           Icon(
             Icons.info_outline,
-            color: TossTheme.brandBlue,
+            color: DSColors.accent,
             size: 20,
           ),
-          const SizedBox(width: TossTheme.spacingM),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '개인정보 보호',
-                  style: TossTheme.body2.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: TossTheme.brandBlue,
+                    color: DSColors.accent,
                   ),
                 ),
-                const SizedBox(height: TossTheme.spacingXS),
+                const SizedBox(height: DSSpacing.xs),
                 Text(
                   '입력하신 정보는 사주 분석 목적으로만 사용되며, 서버에 저장되지 않습니다.',
-                  style: TossTheme.caption.copyWith(
-                    color: TossTheme.textGray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: DSColors.textSecondary,
                     height: 1.4,
                   ),
                 ),

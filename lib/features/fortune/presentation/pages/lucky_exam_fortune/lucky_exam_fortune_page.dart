@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
 
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../../core/utils/subscription_snackbar.dart';
@@ -64,13 +64,13 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.gray50,
+      backgroundColor: colors.background,
       appBar: _fortuneResult != null
           ? AppBar(
-              backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+              backgroundColor: colors.background,
               elevation: 0,
               scrolledUnderElevation: 0,
               automaticallyImplyLeading: false,
@@ -78,16 +78,15 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                   onPressed: () => context.pop(),
                 ),
               ],
               title: Text(
                 '시험 운세',
-                style: TextStyle(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-                  fontSize: 18,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -97,8 +96,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
               title: '시험 운세',
             ),
       body: _fortuneResult != null
-          ? _buildResultView(isDark)
-          : _buildInputView(isDark),
+          ? _buildResultView(colors)
+          : _buildInputView(colors),
     );
   }
 
@@ -106,8 +105,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     if (_selectedCategory.isEmpty || _examDate.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('시험 카테고리와 예정일을 선택해주세요'),
-          backgroundColor: TossDesignSystem.errorRed,
+          content: const Text('시험 카테고리와 예정일을 선택해주세요'),
+          backgroundColor: DSColors.error,
         ),
       );
       return;
@@ -175,8 +174,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('서버 연결 중 오류가 발생했습니다. 샘플 데이터를 표시합니다.'),
-            backgroundColor: TossDesignSystem.warningOrange,
+            content: const Text('서버 연결 중 오류가 발생했습니다. 샘플 데이터를 표시합니다.'),
+            backgroundColor: DSColors.warning,
           ),
         );
       }
@@ -233,7 +232,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     ];
   }
 
-  Widget _buildInputView(bool isDark) {
+  Widget _buildInputView(DSColorScheme colors) {
     return StandardFortunePageLayout(
       buttonText: '운세 분석하기',
       onButtonPressed: () async {
@@ -341,11 +340,11 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('광고를 불러오는 중입니다. 잠시 후 다시 시도해주세요.'),
-              backgroundColor: TossDesignSystem.warningOrange,
+              backgroundColor: DSColors.warning,
               duration: const Duration(seconds: 3),
               action: SnackBarAction(
                 label: '무료로 보기',
-                textColor: TossDesignSystem.white,
+                textColor: Colors.white,
                 onPressed: () {
                   setState(() {
                     _isBlurred = false;
@@ -364,9 +363,9 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             _blurredSections = [];
           });
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('광고 로드에 실패했습니다. 전체 내용을 확인하세요.'),
-              backgroundColor: TossDesignSystem.successGreen,
+            SnackBar(
+              content: const Text('광고 로드에 실패했습니다. 전체 내용을 확인하세요.'),
+              backgroundColor: DSColors.success,
             ),
           );
         }
@@ -374,7 +373,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     );
   }
 
-  Widget _buildResultView(bool isDark) {
+  Widget _buildResultView(DSColorScheme colors) {
     if (_fortuneResult == null) return const SizedBox.shrink();
 
     final fortune = _fortuneResult!;
@@ -399,12 +398,12 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           padding: EdgeInsets.fromLTRB(20, 20, 20, _isBlurred ? 120 : 40),
           child: Column(
             children: [
-              _buildMainResultCard(fortune, score, data, isDark),
+              _buildMainResultCard(fortune, score, data, colors),
               const SizedBox(height: 20),
-              ..._buildResultSections(data, isDark),
-              ..._buildScoreBreakdown(fortune, isDark),
-              ..._buildRecommendations(fortune, isDark),
-              ..._buildLuckyItems(fortune, isDark),
+              ..._buildResultSections(data, colors),
+              ..._buildScoreBreakdown(fortune, colors),
+              ..._buildRecommendations(fortune, colors),
+              ..._buildLuckyItems(fortune, colors),
               const SizedBox(height: 40),
             ],
           ),
@@ -419,7 +418,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     );
   }
 
-  Widget _buildMainResultCard(Fortune fortune, int score, Map<String, dynamic> data, bool isDark) {
+  Widget _buildMainResultCard(Fortune fortune, int score, Map<String, dynamic> data, DSColorScheme colors) {
     return AppCard(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -435,8 +434,8 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                   painter: CircularScorePainter(
                     score: score,
                     gradientColors: [
-                      TossDesignSystem.successGreen,
-                      TossDesignSystem.tossBlue,
+                      DSColors.success,
+                      colors.accent,
                     ],
                   ),
                 ),
@@ -445,15 +444,15 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                   children: [
                     Text(
                       '$score',
-                      style: TossDesignSystem.heading1.copyWith(
+                      style: DSTypography.displayLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: TossDesignSystem.successGreen,
+                        color: DSColors.success,
                       ),
                     ),
                     Text(
                       data['exam_keyword'] as String? ?? '합격',
-                      style: TossDesignSystem.caption.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],
@@ -464,21 +463,21 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
           const SizedBox(height: 24),
           Text(
             data['title'] as String? ?? _examType,
-            style: TossDesignSystem.heading3.copyWith(
+            style: DSTypography.headingMedium.copyWith(
               fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : null,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+              color: DSColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
               FortuneTextCleaner.clean(data['overall_fortune'] as String? ?? fortune.content),
-              style: TossDesignSystem.body2.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 height: 1.6,
               ),
               textAlign: TextAlign.center,
@@ -489,7 +488,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.3);
   }
 
-  List<Widget> _buildResultSections(Map<String, dynamic> data, bool isDark) {
+  List<Widget> _buildResultSections(Map<String, dynamic> data, DSColorScheme colors) {
     final sections = <Widget>[];
 
     if (_shouldShowSection(data['pass_possibility'])) {
@@ -578,7 +577,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
            value.first != '🔒 프리미엄 결제 후 확인 가능합니다';
   }
 
-  List<Widget> _buildScoreBreakdown(Fortune fortune, bool isDark) {
+  List<Widget> _buildScoreBreakdown(Fortune fortune, DSColorScheme colors) {
     if (fortune.scoreBreakdown == null) return [];
 
     return [
@@ -593,13 +592,13 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.analytics, color: TossDesignSystem.tossBlue, size: 24),
+                  Icon(Icons.analytics, color: colors.accent, size: 24),
                   const SizedBox(width: 8),
                   Text(
                     '세부 분석',
-                    style: TossDesignSystem.body1.copyWith(
+                    style: DSTypography.bodyLarge.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ],
@@ -616,14 +615,14 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                         children: [
                           Text(
                             entry.key,
-                            style: TossDesignSystem.body2.copyWith(
-                              color: TossDesignSystem.gray700,
+                            style: DSTypography.bodyMedium.copyWith(
+                              color: colors.textSecondary,
                             ),
                           ),
                           Text(
                             '${entry.value}점',
-                            style: TossDesignSystem.body2.copyWith(
-                              color: TossDesignSystem.tossBlue,
+                            style: DSTypography.bodyMedium.copyWith(
+                              color: colors.accent,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -632,7 +631,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                       const SizedBox(height: 8),
                       LinearProgressIndicator(
                         value: entry.value / 100,
-                        backgroundColor: TossDesignSystem.gray200,
+                        backgroundColor: colors.border,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           _getScoreColor(entry.value),
                         ),
@@ -649,7 +648,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     ];
   }
 
-  List<Widget> _buildRecommendations(Fortune fortune, bool isDark) {
+  List<Widget> _buildRecommendations(Fortune fortune, DSColorScheme colors) {
     if (fortune.recommendations == null || fortune.recommendations!.isEmpty) return [];
 
     return [
@@ -664,11 +663,11 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.tips_and_updates, color: TossDesignSystem.warningOrange, size: 24),
+                  Icon(Icons.tips_and_updates, color: DSColors.warning, size: 24),
                   const SizedBox(width: 8),
                   Text(
                     '합격 전략',
-                    style: TossDesignSystem.body1.copyWith(
+                    style: DSTypography.bodyLarge.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -686,14 +685,14 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                         height: 6,
                         margin: const EdgeInsets.only(top: 8, right: 12),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.warningOrange,
+                          color: DSColors.warning,
                           shape: BoxShape.circle,
                         ),
                       ),
                       Expanded(
                         child: Text(
                           rec,
-                          style: TossDesignSystem.body2.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             height: 1.5,
                           ),
                         ),
@@ -710,7 +709,7 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
     ];
   }
 
-  List<Widget> _buildLuckyItems(Fortune fortune, bool isDark) {
+  List<Widget> _buildLuckyItems(Fortune fortune, DSColorScheme colors) {
     if (fortune.luckyItems == null || fortune.luckyItems!.isEmpty) return [];
 
     return [
@@ -725,11 +724,11 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.star, color: TossDesignSystem.warningOrange, size: 24),
+                  Icon(Icons.star, color: DSColors.warning, size: 24),
                   const SizedBox(width: 8),
                   Text(
                     '행운 아이템',
-                    style: TossDesignSystem.body1.copyWith(
+                    style: DSTypography.bodyLarge.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -745,19 +744,19 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+                          color: DSColors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: TossDesignSystem.warningOrange.withValues(alpha: 0.3)),
+                          border: Border.all(color: DSColors.warning.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.palette, size: 16, color: TossDesignSystem.warningOrange),
+                            Icon(Icons.palette, size: 16, color: DSColors.warning),
                             const SizedBox(width: 4),
                             Text(
                               color,
-                              style: TossDesignSystem.caption.copyWith(
-                                color: TossDesignSystem.warningOrange,
+                              style: DSTypography.labelSmall.copyWith(
+                                color: DSColors.warning,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -770,19 +769,19 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                          color: colors.accent.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: TossDesignSystem.tossBlue.withValues(alpha: 0.3)),
+                          border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.tag, size: 16, color: TossDesignSystem.tossBlue),
+                            Icon(Icons.tag, size: 16, color: colors.accent),
                             const SizedBox(width: 4),
                             Text(
                               number,
-                              style: TossDesignSystem.caption.copyWith(
-                                color: TossDesignSystem.tossBlue,
+                              style: DSTypography.labelSmall.copyWith(
+                                color: colors.accent,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -800,10 +799,10 @@ class _LuckyExamFortunePageState extends ConsumerState<LuckyExamFortunePage> {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return context.colors.accent;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 
   Fortune _convertToFortune(FortuneResult fortuneResult) {

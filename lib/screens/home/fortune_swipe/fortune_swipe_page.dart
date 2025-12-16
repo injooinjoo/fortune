@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../core/theme/toss_design_system.dart';
+import '../../../core/design_system/design_system.dart';
+import '../../../core/services/fortune_haptic_service.dart';
 import '../../../core/utils/fortune_text_cleaner.dart';
 import '../../../domain/entities/fortune.dart' as fortune_entity;
 import '../../../domain/entities/user_profile.dart';
 import '../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../presentation/providers/location_provider.dart';
 import '../../../services/weather_service.dart';
-import '../../../core/theme/typography_unified.dart';
 
 // 분리된 위젯들
 import 'widgets/overall_card.dart';
@@ -56,6 +56,7 @@ class FortuneSwipePage extends ConsumerStatefulWidget {
 class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
   late PageController _pageController;
   int _currentPage = 0;
+  bool _initialHapticTriggered = false;
 
   int get totalScore => widget.fortune?.overallScore ?? 75;
 
@@ -68,6 +69,12 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ref.read(navigationVisibilityProvider.notifier).show();
+
+        // 첫 페이지 로드 시 점수 공개 햅틱
+        if (!_initialHapticTriggered) {
+          _initialHapticTriggered = true;
+          ref.read(fortuneHapticServiceProvider).scoreReveal(totalScore);
+        }
       }
     });
   }
@@ -84,11 +91,14 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
     final page = _pageController.page?.round() ?? 0;
     if (page != _currentPage) {
       setState(() => _currentPage = page);
+      // 페이지 스냅 시 햅틱 피드백
+      ref.read(fortuneHapticServiceProvider).pageSnap();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     String displayUserName = widget.userName ?? widget.userProfile?.name ?? '';
@@ -101,7 +111,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
     final score = widget.fortune?.overallScore ?? 75;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : const Color(0xFFF8F9FA),
+      backgroundColor: colors.background,
       extendBodyBehindAppBar: true,
       body: SafeArea(
         bottom: false,
@@ -116,7 +126,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
                 scrollDirection: Axis.vertical,
                 itemCount: 17,
                 itemBuilder: (context, index) {
-                  return _buildFullSizeCard(context, index, score, isDark, displayUserName);
+                  return _buildFullSizeCard(context, index, score, isDark, displayUserName, colors);
                 },
               ),
             ),
@@ -130,7 +140,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
                 height: 3,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+                  color: colors.textPrimary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(2),
                 ),
                 child: FractionallySizedBox(
@@ -151,7 +161,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
               top: 12,
               left: 0,
               right: 0,
-              child: _buildHeader(context, displayUserName, isDark),
+              child: _buildHeader(context, displayUserName, colors),
             ),
           ],
         ),
@@ -159,7 +169,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, String displayUserName, bool isDark) {
+  Widget _buildHeader(BuildContext context, String displayUserName, DSColorScheme colors) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Row(
@@ -168,7 +178,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
           Text(
             displayUserName,
             style: TextStyle(
-              color: isDark ? Colors.white : Colors.black87,
+              color: colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -183,7 +193,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
                         Text(
                           cityName,
                           style: TextStyle(
-                            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+                            color: colors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -197,7 +207,7 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
               Text(
                 '${DateTime.now().year}.${DateTime.now().month.toString().padLeft(2, '0')}.${DateTime.now().day.toString().padLeft(2, '0')}',
                 style: TextStyle(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+                  color: colors.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -205,13 +215,13 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
                 const SizedBox(width: 12),
                 Text(
                   FortuneSwipeHelpers.getWeatherEmoji(widget.currentWeather!.condition),
-                  style: TypographyUnified.buttonMedium,
+                  style: DSTypography.labelMedium,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '${widget.currentWeather!.temperature.round()}°',
                   style: TextStyle(
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+                    color: colors.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -223,16 +233,16 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
     );
   }
 
-  Widget _buildFullSizeCard(BuildContext context, int index, int score, bool isDark, String displayUserName) {
+  Widget _buildFullSizeCard(BuildContext context, int index, int score, bool isDark, String displayUserName, DSColorScheme colors) {
     return Container(
       height: double.infinity,
       margin: const EdgeInsets.fromLTRB(20, 60, 20, 20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+            color: colors.textPrimary.withValues(alpha: isDark ? 0.3 : 0.08),
             blurRadius: 32,
             offset: const Offset(0, 12),
           ),

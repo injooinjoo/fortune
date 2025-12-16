@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/widgets/unified_button.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../services/region_service.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 
 /// 집 풍수 진단 통합 입력 페이지 - 토스 스타일
@@ -222,21 +220,21 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
       children: [
         Text(
           '우리 집의 기운을\n진단해보세요',
-          style: TypographyUnified.heading1.copyWith(
+          style: DSTypography.displayLarge.copyWith(
             fontWeight: FontWeight.w700,
             color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.white
-                : TossDesignSystem.gray900,
+                ? Colors.white
+                : DSColors.textPrimary,
             height: 1.3,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           '집의 위치와 구조를 분석하여\n풍수적 길흉을 알려드려요',
-          style: TypographyUnified.bodySmall.copyWith(
+          style: DSTypography.bodySmall.copyWith(
             color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark100
-                : TossDesignSystem.gray600,
+                ? DSColors.surface
+                : DSColors.textSecondary,
             height: 1.4,
           ),
         ),
@@ -285,10 +283,10 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
       return Center(
         child: Text(
           '검색 결과가 없습니다',
-          style: TypographyUnified.bodyMedium.copyWith(
+          style: DSTypography.bodyMedium.copyWith(
             color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+                ? DSColors.textSecondary
+                : DSColors.textSecondary,
           ),
         ),
       );
@@ -340,10 +338,10 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
       return Center(
         child: Text(
           '인기 지역을 불러올 수 없습니다',
-          style: TypographyUnified.bodyMedium.copyWith(
+          style: DSTypography.bodyMedium.copyWith(
             color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+                ? DSColors.textSecondary
+                : DSColors.textSecondary,
           ),
         ),
       );
@@ -355,7 +353,7 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
       itemBuilder: (context, index) {
         final region = _popularRegions[index];
         return ListTile(
-          leading: const Icon(Icons.star, color: TossTheme.primaryBlue),
+          leading: const Icon(Icons.star, color: DSColors.accent),
           title: Text(region.displayName),
           onTap: () {
             setState(() {
@@ -420,17 +418,17 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
                   const SizedBox(height: 8),
                   Text(
                     homeType['title']!,
-                    style: TypographyUnified.bodyMedium.copyWith(
+                    style: DSTypography.bodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isSelected ? TossTheme.primaryBlue : null,
+                      color: isSelected ? DSColors.accent : null,
                     ),
                   ),
                   Text(
                     homeType['subtitle']!,
-                    style: TypographyUnified.bodySmall.copyWith(
+                    style: DSTypography.bodySmall.copyWith(
                       color: Theme.of(context).brightness == Brightness.dark
-                          ? TossDesignSystem.textSecondaryDark
-                          : TossDesignSystem.textSecondaryLight,
+                          ? DSColors.textSecondary
+                          : DSColors.textSecondary,
                     ),
                   ),
                 ],
@@ -452,10 +450,10 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
             padding: const EdgeInsets.all(16),
             child: Text(
               '층수를 선택해주세요',
-              style: TypographyUnified.bodyMedium.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.textSecondaryDark
-                    : TossDesignSystem.textSecondaryLight,
+                    ? DSColors.textSecondary
+                    : DSColors.textSecondary,
               ),
             ),
           ),
@@ -491,9 +489,9 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
                   child: Center(
                     child: Text(
                       '$floor',
-                      style: TypographyUnified.bodyMedium.copyWith(
+                      style: DSTypography.bodyMedium.copyWith(
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected ? TossTheme.primaryBlue : null,
+                        color: isSelected ? DSColors.accent : null,
                       ),
                     ),
                   ),
@@ -516,10 +514,10 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
           children: [
             Text(
               '대문이 향하는 방향을 선택해주세요',
-              style: TypographyUnified.bodyMedium.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.textSecondaryDark
-                    : TossDesignSystem.textSecondaryLight,
+                    ? DSColors.textSecondary
+                    : DSColors.textSecondary,
               ),
             ),
             const SizedBox(height: 16),
@@ -537,7 +535,7 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray50,
+        color: isDark ? DSColors.textPrimary : DSColors.surface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -607,21 +605,21 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
         height: isMain ? 80 : 70,
         decoration: BoxDecoration(
           color: isSelected
-              ? TossTheme.primaryBlue
+              ? DSColors.accent
               : Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.gray700
-                  : TossDesignSystem.white,
+                  ? DSColors.textSecondary
+                  : Colors.white,
           borderRadius: BorderRadius.circular(isMain ? 40 : 12),
           border: Border.all(
             color: isSelected
-                ? TossTheme.primaryBlue
-                : TossDesignSystem.gray300,
+                ? DSColors.accent
+                : DSColors.border,
             width: 2,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: TossTheme.primaryBlue.withValues(alpha: 0.3),
+                    color: DSColors.accent.withValues(alpha: 0.3),
                     blurRadius: 8,
                     spreadRadius: 2,
                   ),
@@ -633,25 +631,25 @@ class _HomeFengshuiInputUnifiedState extends State<HomeFengshuiInputUnified> wit
           children: [
             Text(
               direction,
-              style: TypographyUnified.bodyMedium.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 fontWeight: FontWeight.bold,
                 color: isSelected
-                    ? TossDesignSystem.white
+                    ? Colors.white
                     : Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.white
-                        : TossDesignSystem.gray900,
+                        ? Colors.white
+                        : DSColors.textPrimary,
               ),
             ),
             if (isMain) ...[
               const SizedBox(height: 2),
               Text(
                 directionData['subtitle']!,
-                style: TypographyUnified.labelSmall.copyWith(
+                style: DSTypography.labelSmall.copyWith(
                   color: isSelected
-                      ? TossDesignSystem.white.withValues(alpha: 0.8)
+                      ? Colors.white.withValues(alpha: 0.8)
                       : Theme.of(context).brightness == Brightness.dark
-                          ? TossDesignSystem.textSecondaryDark
-                          : TossDesignSystem.textSecondaryLight,
+                          ? DSColors.textSecondary
+                          : DSColors.textSecondary,
                 ),
               ),
             ],

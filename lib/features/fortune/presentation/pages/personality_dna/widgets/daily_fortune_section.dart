@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class DailyFortuneSection extends StatelessWidget {
   final DailyFortune dailyFortune;
@@ -13,7 +12,7 @@ class DailyFortuneSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -23,8 +22,8 @@ class DailyFortuneSection extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue,
-            isDark ? TossDesignSystem.tossBlueDark.withValues(alpha: 0.7) : TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+            colors.accent,
+            colors.accent.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -36,15 +35,15 @@ class DailyFortuneSection extends StatelessWidget {
             children: [
               Icon(
                 Icons.wb_sunny_outlined,
-                color: TossDesignSystem.white,
+                color: Colors.white,
                 size: 24,
               ),
               SizedBox(width: 8),
               Text(
                 '오늘의 운세',
-                style: TypographyUnified.heading3.copyWith(
+                style: DSTypography.headingMedium.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -60,7 +59,7 @@ class DailyFortuneSection extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: _parseColor(dailyFortune.luckyColor),
                   shape: BoxShape.circle,
-                  border: Border.all(color: TossDesignSystem.white, width: 2),
+                  border: Border.all(color: Colors.white, width: 2),
                 ),
               ),
               SizedBox(width: 12),
@@ -70,15 +69,15 @@ class DailyFortuneSection extends StatelessWidget {
                   children: [
                     Text(
                       '행운의 색',
-                      style: TypographyUnified.labelMedium.copyWith(
-                        color: TossDesignSystem.white.withValues(alpha: 0.8),
+                      style: DSTypography.labelSmall.copyWith(
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                     Text(
                       dailyFortune.luckyColor,
-                      style: TypographyUnified.buttonMedium.copyWith(
+                      style: DSTypography.bodyMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.white,
+                        color: Colors.white,
                       ),
                     ),
                   ],
@@ -88,23 +87,23 @@ class DailyFortuneSection extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
                     Text(
                       '행운 번호',
-                      style: TypographyUnified.labelMedium.copyWith(
-                        color: TossDesignSystem.white.withValues(alpha: 0.8),
+                      style: DSTypography.labelSmall.copyWith(
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                     SizedBox(width: 8),
                     Text(
                       '${dailyFortune.luckyNumber}',
-                      style: TypographyUnified.heading3.copyWith(
+                      style: DSTypography.headingMedium.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: TossDesignSystem.white,
+                        color: Colors.white,
                       ),
                     ),
                   ],
@@ -123,15 +122,15 @@ class DailyFortuneSection extends StatelessWidget {
                 children: [
                   Text(
                     '오늘의 에너지',
-                    style: TypographyUnified.labelMedium.copyWith(
-                      color: TossDesignSystem.white.withValues(alpha: 0.8),
+                    style: DSTypography.labelSmall.copyWith(
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                   Text(
                     '${dailyFortune.energyLevel}%',
-                    style: TypographyUnified.heading4.copyWith(
+                    style: DSTypography.headingSmall.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: TossDesignSystem.white,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -142,8 +141,8 @@ class DailyFortuneSection extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: dailyFortune.energyLevel / 100,
                   minHeight: 8,
-                  backgroundColor: TossDesignSystem.white.withValues(alpha: 0.3),
-                  valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.white),
+                  backgroundColor: Colors.white.withValues(alpha: 0.3),
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               ),
             ],
@@ -155,7 +154,6 @@ class DailyFortuneSection extends StatelessWidget {
             icon: Icons.lightbulb_outline,
             title: '추천 활동',
             content: dailyFortune.recommendedActivity,
-            isDark: isDark,
           ),
           const SizedBox(height: 12),
 
@@ -164,7 +162,6 @@ class DailyFortuneSection extends StatelessWidget {
             icon: Icons.warning_amber_outlined,
             title: '주의사항',
             content: dailyFortune.caution,
-            isDark: isDark,
           ),
           const SizedBox(height: 12),
 
@@ -173,7 +170,6 @@ class DailyFortuneSection extends StatelessWidget {
             icon: Icons.favorite_outline,
             title: '오늘의 베스트 매치',
             content: dailyFortune.bestMatchToday,
-            isDark: isDark,
           ),
         ],
       ),
@@ -196,7 +192,7 @@ class DailyFortuneSection extends StatelessWidget {
       '세이지 그린': Color(0xFF9DC183),
       '샴페인': Color(0xFFF7E7CE),
     };
-    return colorMap[colorName] ?? TossDesignSystem.white;
+    return colorMap[colorName] ?? Colors.white;
   }
 }
 
@@ -204,13 +200,11 @@ class _FortuneItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final String content;
-  final bool isDark;
 
   const _FortuneItem({
     required this.icon,
     required this.title,
     required this.content,
-    required this.isDark,
   });
 
   @override
@@ -220,7 +214,7 @@ class _FortuneItem extends StatelessWidget {
       children: [
         Icon(
           icon,
-          color: TossDesignSystem.white,
+          color: Colors.white,
           size: 20,
         ),
         SizedBox(width: 8),
@@ -230,16 +224,16 @@ class _FortuneItem extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TypographyUnified.labelMedium.copyWith(
-                  color: TossDesignSystem.white.withValues(alpha: 0.8),
+                style: DSTypography.labelSmall.copyWith(
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
               SizedBox(height: 2),
               Text(
                 content,
-                style: TypographyUnified.buttonMedium.copyWith(
+                style: DSTypography.bodyMedium.copyWith(
                   fontWeight: FontWeight.w400,
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                   height: 1.4,
                 ),
               ),

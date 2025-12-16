@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/components/app_card.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class CognitiveFunctionsCard extends StatelessWidget {
   const CognitiveFunctionsCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -16,15 +15,15 @@ class CognitiveFunctionsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.psychology,
+              Icon(Icons.psychology,
                 size: 20,
-                color: TossDesignSystem.tossBlue),
+                color: colors.accent),
               const SizedBox(width: 8),
               Text(
                 '인지 기능 분석',
-                style: TypographyUnified.buttonMedium.copyWith(
+                style: DSTypography.labelLarge.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -33,14 +32,14 @@ class CognitiveFunctionsCard extends StatelessWidget {
           Container(
             height: 200,
             decoration: BoxDecoration(
-              color: TossDesignSystem.gray50,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 '인지 기능 차트',
                 style: TextStyle(
-                  color: TossDesignSystem.gray500,
+                  color: colors.textSecondary,
                 ),
               ),
             ),

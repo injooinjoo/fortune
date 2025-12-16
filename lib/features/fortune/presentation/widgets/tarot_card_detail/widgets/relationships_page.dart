@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/core/constants/tarot_metadata.dart';
 
@@ -23,7 +23,7 @@ class RelationshipsPage extends StatelessWidget {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -31,17 +31,17 @@ class RelationshipsPage extends StatelessWidget {
             '다른 카드와의 조합',
             style: Theme.of(context).textTheme.titleMedium,
           ),
-          const SizedBox(height: TossDesignSystem.spacingL),
+          const SizedBox(height: 24),
 
           ...tarotCardInfo!.cardCombinations!.entries.map(
             (entry) => Container(
-              margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingM),
+              margin: const EdgeInsets.only(bottom: 16),
               child: GlassContainer(
-                padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+                padding: const EdgeInsets.all(24),
                 gradient: LinearGradient(
                   colors: [
-                    TossDesignSystem.purple.withValues(alpha: 0.1),
-                    TossDesignSystem.purple.withValues(alpha: 0.1)
+                    DSColors.accentSecondary.withValues(alpha: 0.1),
+                    DSColors.accentSecondary.withValues(alpha: 0.1)
                   ],
                 ),
                 child: Column(
@@ -51,10 +51,10 @@ class RelationshipsPage extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.link,
-                          color: TossDesignSystem.purple,
+                          color: DSColors.accentSecondary,
                           size: 24,
                         ),
-                        const SizedBox(width: TossDesignSystem.spacingS),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             entry.key,
@@ -63,7 +63,7 @@ class RelationshipsPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: TossDesignSystem.spacingS),
+                    const SizedBox(height: 8),
                     Text(
                       entry.value,
                       style: Theme.of(context).textTheme.bodyLarge,
@@ -75,18 +75,18 @@ class RelationshipsPage extends StatelessWidget {
           ),
 
           if (tarotCardInfo.colorSymbolism != null) ...[
-            const SizedBox(height: TossDesignSystem.spacingXL),
+            const SizedBox(height: 32),
             Text(
               '색채 상징',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: 16),
             GlassContainer(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+              padding: const EdgeInsets.all(24),
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.warningOrange.withValues(alpha: 0.1),
-                  TossDesignSystem.warningOrange.withValues(alpha: 0.1)
+                  DSColors.warning.withValues(alpha: 0.1),
+                  DSColors.warning.withValues(alpha: 0.1)
                 ],
               ),
               child: Text(
@@ -97,31 +97,31 @@ class RelationshipsPage extends StatelessWidget {
           ],
 
           if (tarotCardInfo.crystals != null) ...[
-            const SizedBox(height: TossDesignSystem.spacingXL),
+            const SizedBox(height: 32),
             Text(
               '연관 크리스탈',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: 16),
             ...tarotCardInfo.crystals!.map(
               (crystal) => Container(
-                margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingS),
+                margin: const EdgeInsets.only(bottom: 8),
                 child: GlassContainer(
-                  padding: const EdgeInsets.all(TossDesignSystem.spacingS),
+                  padding: const EdgeInsets.all(8),
                   gradient: LinearGradient(
                     colors: [
-                      TossDesignSystem.primaryBlue.withValues(alpha: 0.1),
-                      TossDesignSystem.primaryBlue.withValues(alpha: 0.1)
+                      DSColors.accent.withValues(alpha: 0.1),
+                      DSColors.accent.withValues(alpha: 0.1)
                     ],
                   ),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.diamond,
-                        color: TossDesignSystem.primaryBlue,
+                        color: DSColors.accent,
                         size: 20,
                       ),
-                      const SizedBox(width: TossDesignSystem.spacingS),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           crystal,
@@ -148,14 +148,14 @@ class RelationshipsPage extends StatelessWidget {
           const Icon(
             Icons.hourglass_empty,
             size: 64,
-            color: TossDesignSystem.purple,
+            color: DSColors.accentSecondary,
           ),
-          const SizedBox(height: TossDesignSystem.spacingXL),
+          const SizedBox(height: 32),
           Text(
             title,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: 16),
           Text(
             message,
             style: Theme.of(context).textTheme.titleMedium,

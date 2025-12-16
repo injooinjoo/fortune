@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/toss_design_system.dart';
-import '../theme/typography_unified.dart';
+import '../design_system/design_system.dart';
 
 /// 아코디언 방식 입력 섹션 모델
 class AccordionInputSection {
@@ -243,21 +242,22 @@ class AnimatedAccordionSection extends StatelessWidget {
   }
 
   Widget _buildCollapsedHeader(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.lg - 4, vertical: DSSpacing.md),
         decoration: BoxDecoration(
           color: section.isCompleted
-            ? (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray100)
-            : (isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray50),
-          borderRadius: BorderRadius.circular(16),
+            ? colors.surfaceSecondary
+            : colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
             color: section.isCompleted
-              ? TossDesignSystem.tossBlue.withValues(alpha: 0.3)
-              : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200),
+              ? colors.accent.withValues(alpha: 0.3)
+              : colors.border,
             width: 1,
           ),
         ),
@@ -268,28 +268,28 @@ class AnimatedAccordionSection extends StatelessWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: section.isCompleted
-                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                  : (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray100),
-                borderRadius: BorderRadius.circular(12),
+                  ? colors.accent.withValues(alpha: 0.1)
+                  : colors.surfaceSecondary,
+                borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Icon(
                 section.icon,
                 color: section.isCompleted
-                  ? TossDesignSystem.tossBlue
-                  : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray500),
+                  ? colors.accent
+                  : colors.textTertiary,
                 size: 20,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: DSSpacing.sm + 4),
             Expanded(
               child: Text(
                 section.isCompleted
                   ? section.displayText
                   : section.title,
-                style: context.bodyMedium.copyWith(
+                style: typography.bodyMedium.copyWith(
                   color: section.isCompleted
-                    ? (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight)
-                    : (isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight),
+                    ? colors.textPrimary
+                    : colors.textTertiary,
                   fontWeight: section.isCompleted ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
@@ -297,13 +297,13 @@ class AnimatedAccordionSection extends StatelessWidget {
             if (section.isCompleted)
               Icon(
                 Icons.check_circle,
-                color: TossDesignSystem.tossBlue,
+                color: colors.accent,
                 size: 24,
               )
             else
               Icon(
                 Icons.chevron_right,
-                color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray400,
+                color: colors.textTertiary,
                 size: 24,
               ),
           ],
@@ -315,20 +315,21 @@ class AnimatedAccordionSection extends StatelessWidget {
   }
 
   Widget _buildExpandedContent(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(20),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.xl),
         border: Border.all(
-          color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+          color: colors.accent.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.tossBlue.withValues(alpha: 0.08),
+            color: colors.accent.withValues(alpha: 0.08),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -344,28 +345,28 @@ class AnimatedAccordionSection extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(14),
+                  color: colors.accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.md + 2),
                 ),
                 child: Icon(
                   section.icon,
-                  color: TossDesignSystem.tossBlue,
+                  color: colors.accent,
                   size: 24,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: DSSpacing.sm + 4),
               Expanded(
                 child: Text(
                   section.title,
-                  style: context.heading3.copyWith(
+                  style: typography.headingSmall.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
           section.inputWidgetBuilder(context, onComplete),
         ],
       ),

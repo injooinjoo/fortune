@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import 'info_item.dart';
 
 /// 오늘의 색상 컨텐츠 - ChatGPT 스타일
@@ -49,7 +48,7 @@ class TodayColorContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final colorData = _generateTodayColor();
     final color = colorData['color'] as Color;
     final hex = colorData['hex'] as String;
@@ -60,10 +59,10 @@ class TodayColorContent extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.gray900 : TossDesignSystem.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray200,
+          color: colors.border,
         ),
       ),
       child: Column(
@@ -78,8 +77,8 @@ class TodayColorContent extends StatelessWidget {
             child: Center(
               child: Text(
                 hex,
-                style: TypographyUnified.heading3.copyWith(
-                  color: (r + g + b) > 382 ? TossDesignSystem.gray900 : TossDesignSystem.white,
+                style: DSTypography.headingMedium.copyWith(
+                  color: (r + g + b) > 382 ? Colors.black : Colors.white,
                   fontWeight: FontWeight.w600,
                 ),
               ),

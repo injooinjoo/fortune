@@ -4,8 +4,7 @@ import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../widgets/moving_input_unified.dart';
 import '../../domain/models/conditions/moving_fortune_conditions.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -84,7 +83,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
           });
         }
 
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final colors = context.colors;
         final data = result.data;
 
         // API에서 받은 데이터 추출 (새 응답 구조에 맞게)
@@ -176,14 +175,14 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   // 제목
                   Text(
                     title,
-                    style: TypographyUnified.heading2.copyWith(
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    style: DSTypography.headingMedium.copyWith(
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 24),
 
                   // 운세 점수 카드 (공개)
-                  _buildScoreCard(score, summaryKeyword, isDark),
+                  _buildScoreCard(score, summaryKeyword, colors),
                   const SizedBox(height: 20),
 
                   // 전반적인 운세 (공개) - 타이핑 섹션 0
@@ -192,7 +191,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                       title: '전반적인 운세',
                       icon: Icons.brightness_5,
                       content: overallFortune,
-                      isDark: isDark,
+                      colors: colors,
                       sectionIndex: 0,
                       onTypingComplete: () {
                         if (mounted) setState(() => _currentTypingSection = 1);
@@ -210,7 +209,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                         title: '방위 분석',
                         icon: Icons.explore,
                         content: directionContent,
-                        isDark: isDark,
+                        colors: colors,
                         sectionIndex: 1,
                         onTypingComplete: () {
                           if (mounted) setState(() => _currentTypingSection = 2);
@@ -229,7 +228,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                         title: '시기 분석',
                         icon: Icons.calendar_today,
                         content: timingContent,
-                        isDark: isDark,
+                        colors: colors,
                         sectionIndex: 2,
                         onTypingComplete: () {
                           // 마지막 섹션 완료
@@ -249,8 +248,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                         title: '주의사항',
                         icon: Icons.warning_amber_rounded,
                         items: cautions,
-                        color: TossDesignSystem.warningYellow,
-                        isDark: isDark,
+                        color: DSColors.warning,
+                        colors: colors,
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -265,8 +264,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                         title: '추천사항',
                         icon: Icons.star_rounded,
                         items: recommendations,
-                        color: TossDesignSystem.tossBlue,
-                        isDark: isDark,
+                        color: DSColors.accent,
+                        colors: colors,
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -277,7 +276,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                       isBlurred: _isBlurred,
                       blurredSections: _blurredSections,
                       sectionKey: 'lucky_dates',
-                      child: _buildLuckyDatesCard(luckyDates, isDark),
+                      child: _buildLuckyDatesCard(luckyDates, colors),
                     ),
                   const SizedBox(height: 16),
 
@@ -292,7 +291,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                         livingRoom: fengShuiLivingRoom,
                         bedroom: fengShuiBedroom,
                         kitchen: fengShuiKitchen,
-                        isDark: isDark,
+                        colors: colors,
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -305,9 +304,9 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                       sectionKey: 'lucky_items',
                       child: _buildLuckyItemsCard(
                         items: luckyItems,
-                        colors: luckyColors,
+                        luckyColors: luckyColors,
                         plants: luckyPlants,
-                        isDark: isDark,
+                        colors: colors,
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -327,7 +326,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                         mountainEnergy: mountainEnergy,
                         energyFlow: energyFlow,
                         recommendations: terrainRecommendations,
-                        isDark: isDark,
+                        colors: colors,
                       ),
                     ),
                   const SizedBox(height: 32),
@@ -403,26 +402,26 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
   }
 
   /// 운세 점수 카드
-  Widget _buildScoreCard(int score, String keyword, bool isDark) {
+  Widget _buildScoreCard(int score, String keyword, DSColorScheme colors) {
     // 점수에 따른 색상 결정
     Color scoreColor;
     String scoreText;
     if (score >= 80) {
-      scoreColor = TossDesignSystem.successGreen;
+      scoreColor = DSColors.success;
       scoreText = '매우 좋음';
     } else if (score >= 60) {
-      scoreColor = TossDesignSystem.tossBlue;
+      scoreColor = DSColors.accent;
       scoreText = '좋음';
     } else if (score >= 40) {
-      scoreColor = TossDesignSystem.warningYellow;
+      scoreColor = DSColors.warning;
       scoreText = '보통';
     } else {
-      scoreColor = TossDesignSystem.errorRed;
+      scoreColor = DSColors.error;
       scoreText = '주의 필요';
     }
 
     return GlassCard(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       gradient: LinearGradient(
         colors: [
           scoreColor.withValues(alpha: 0.1),
@@ -440,7 +439,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             children: [
               Text(
                 '$score',
-                style: TypographyUnified.displayLarge.copyWith(
+                style: DSTypography.displayLarge.copyWith(
                   color: scoreColor,
                   fontWeight: FontWeight.w700,
                 ),
@@ -449,24 +448,24 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                 padding: const EdgeInsets.only(bottom: 12, left: 4),
                 child: Text(
                   '/100',
-                  style: TypographyUnified.heading3.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                  style: DSTypography.headingSmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           // 점수 텍스트
           Text(
             scoreText,
-            style: TypographyUnified.bodyLarge.copyWith(
+            style: DSTypography.bodyLarge.copyWith(
               color: scoreColor,
               fontWeight: FontWeight.w600,
             ),
           ),
           if (keyword.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: DSSpacing.md),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
@@ -475,8 +474,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               ),
               child: Text(
                 keyword,
-                style: TypographyUnified.bodyMedium.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.bodyMedium.copyWith(
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -492,7 +491,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
     required String title,
     required IconData icon,
     required String content,
-    required bool isDark,
+    required DSColorScheme colors,
     int? sectionIndex,
     VoidCallback? onTypingComplete,
   }) {
@@ -506,20 +505,20 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  color: DSColors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   icon,
-                  color: TossDesignSystem.tossBlue,
+                  color: DSColors.accent,
                   size: 20,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 title,
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.labelLarge.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -529,8 +528,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
           sectionIndex != null
               ? GptStyleTypingText(
                   text: content,
-                  style: TypographyUnified.bodyMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: colors.textPrimary,
                     height: 1.6,
                   ),
                   startTyping: _currentTypingSection >= sectionIndex,
@@ -539,8 +538,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                 )
               : Text(
                   content,
-                  style: TypographyUnified.bodyMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: colors.textPrimary,
                     height: 1.6,
                   ),
                 ),
@@ -555,7 +554,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
     required IconData icon,
     required List<String> items,
     required Color color,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
@@ -579,8 +578,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.labelLarge.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -607,8 +606,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   Expanded(
                     child: Text(
                       item,
-                      style: TossDesignSystem.body2.copyWith(
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
                         height: 1.6,
                       ),
                     ),
@@ -623,13 +622,13 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
   }
 
   /// 행운의 날 카드
-  Widget _buildLuckyDatesCard(List<String> dates, bool isDark) {
+  Widget _buildLuckyDatesCard(List<String> dates, DSColorScheme colors) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-          TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+          DSColors.accent.withValues(alpha: 0.1),
+          DSColors.accent.withValues(alpha: 0.05),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -642,20 +641,20 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+                  color: DSColors.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.event_available,
-                  color: TossDesignSystem.tossBlue,
+                  color: DSColors.accent,
                   size: 20,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 '행운의 날',
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.labelLarge.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -668,17 +667,17 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.15),
+                  color: DSColors.accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                    color: DSColors.accent.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
                   date,
-                  style: TossDesignSystem.body2.copyWith(
-                    color: TossDesignSystem.tossBlue,
+                  style: DSTypography.bodyMedium.copyWith(
+                    color: DSColors.accent,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -696,7 +695,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
     required String livingRoom,
     required String bedroom,
     required String kitchen,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     final tips = [
       {'icon': '🚪', 'title': '현관', 'content': entrance},
@@ -717,20 +716,20 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                  color: DSColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.home_rounded,
-                  color: TossDesignSystem.successGreen,
+                  color: DSColors.success,
                   size: 20,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 '공간별 풍수 조언',
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.labelLarge.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -753,8 +752,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                       const SizedBox(width: 8),
                       Text(
                         tip['title'] as String,
-                        style: TypographyUnified.bodyLarge.copyWith(
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        style: DSTypography.bodyLarge.copyWith(
+                          color: colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -763,8 +762,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   const SizedBox(height: 8),
                   Text(
                     tip['content'] as String,
-                    style: TypographyUnified.bodyMedium.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                    style: DSTypography.bodyLarge.copyWith(
+                      color: colors.textSecondary,
                       height: 1.6,
                     ),
                   ),
@@ -780,16 +779,16 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
   /// 행운 아이템 카드
   Widget _buildLuckyItemsCard({
     required List<String> items,
-    required List<String> colors,
+    required List<String> luckyColors,
     required List<String> plants,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.warningYellow.withValues(alpha: 0.1),
-          TossDesignSystem.warningYellow.withValues(alpha: 0.05),
+          DSColors.warning.withValues(alpha: 0.1),
+          DSColors.warning.withValues(alpha: 0.05),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -802,20 +801,20 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.warningYellow.withValues(alpha: 0.2),
+                  color: DSColors.warning.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.auto_awesome_rounded,
-                  color: TossDesignSystem.warningYellow,
+                  color: DSColors.warning,
                   size: 20,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 '행운 아이템',
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.labelLarge.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -826,8 +825,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             const SizedBox(height: 20),
             Text(
               '🎁 행운의 물건',
-              style: TypographyUnified.bodyLarge.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              style: DSTypography.bodyLarge.copyWith(
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -841,8 +840,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                     margin: const EdgeInsets.only(top: 6),
                     width: 6,
                     height: 6,
-                    decoration: const BoxDecoration(
-                      color: TossDesignSystem.warningYellow,
+                    decoration: BoxDecoration(
+                      color: DSColors.warning,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -850,8 +849,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   Expanded(
                     child: Text(
                       item,
-                      style: TypographyUnified.bodyMedium.copyWith(
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      style: DSTypography.bodyLarge.copyWith(
+                        color: colors.textPrimary,
                         height: 1.6,
                       ),
                     ),
@@ -862,12 +861,12 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
           ],
 
           // 행운의 색상
-          if (colors.isNotEmpty) ...[
+          if (luckyColors.isNotEmpty) ...[
             const SizedBox(height: 16),
             Text(
               '🎨 행운의 색상',
-              style: TypographyUnified.bodyLarge.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              style: DSTypography.bodyLarge.copyWith(
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -875,20 +874,20 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: colors.map((color) => Container(
+              children: luckyColors.map((color) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.warningYellow.withValues(alpha: 0.15),
+                  color: DSColors.warning.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: TossDesignSystem.warningYellow.withValues(alpha: 0.3),
+                    color: DSColors.warning.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
                   color,
-                  style: TypographyUnified.bodyMedium.copyWith(
-                    color: TossDesignSystem.warningYellow,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: DSColors.warning,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -901,8 +900,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             const SizedBox(height: 16),
             Text(
               '🌿 행운의 식물',
-              style: TypographyUnified.bodyLarge.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              style: DSTypography.bodyLarge.copyWith(
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -913,17 +912,17 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               children: plants.map((plant) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.successGreen.withValues(alpha: 0.15),
+                  color: DSColors.success.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: TossDesignSystem.successGreen.withValues(alpha: 0.3),
+                    color: DSColors.success.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
                   plant,
-                  style: TypographyUnified.bodyMedium.copyWith(
-                    color: TossDesignSystem.successGreen,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: DSColors.success,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -945,18 +944,18 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
     required String mountainEnergy,
     required String energyFlow,
     required List<String> recommendations,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     // 지형 점수 색상
     Color qualityColor;
     if (quality >= 80) {
-      qualityColor = TossDesignSystem.successGreen;
+      qualityColor = DSColors.success;
     } else if (quality >= 60) {
-      qualityColor = TossDesignSystem.tossBlue;
+      qualityColor = DSColors.accent;
     } else if (quality >= 40) {
-      qualityColor = TossDesignSystem.warningYellow;
+      qualityColor = DSColors.warning;
     } else {
-      qualityColor = TossDesignSystem.errorRed;
+      qualityColor = DSColors.error;
     }
 
     return GlassCard(
@@ -981,8 +980,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
               const SizedBox(width: 12),
               Text(
                 '지형 풍수 분석',
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.labelLarge.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -1005,7 +1004,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                     Expanded(
                       child: Text(
                         terrainType,
-                        style: TypographyUnified.heading4.copyWith(
+                        style: DSTypography.labelLarge.copyWith(
                           color: qualityColor,
                           fontWeight: FontWeight.w700,
                         ),
@@ -1013,7 +1012,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                     ),
                     Text(
                       '$quality점',
-                      style: TypographyUnified.heading3.copyWith(
+                      style: DSTypography.headingSmall.copyWith(
                         color: qualityColor,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1024,8 +1023,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   const SizedBox(height: 12),
                   Text(
                     qualityDescription,
-                    style: TypographyUnified.bodyMedium.copyWith(
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    style: DSTypography.bodyLarge.copyWith(
+                      color: colors.textPrimary,
                       height: 1.6,
                     ),
                   ),
@@ -1039,27 +1038,27 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             const SizedBox(height: 20),
             Text(
               '🐉 사신사(四神砂)',
-              style: TypographyUnified.bodyLarge.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              style: DSTypography.bodyLarge.copyWith(
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 12),
-            _buildGuardianItem('🐉', '좌청룡', FortuneTextCleaner.cleanNullable(fourGuardians['left_azure_dragon'] as String?), const Color(0xFF2196F3), isDark),
-            _buildGuardianItem('🐯', '우백호', FortuneTextCleaner.cleanNullable(fourGuardians['right_white_tiger'] as String?), const Color(0xFF9E9E9E), isDark),
-            _buildGuardianItem('🦅', '전주작', FortuneTextCleaner.cleanNullable(fourGuardians['front_red_phoenix'] as String?), const Color(0xFFF44336), isDark),
-            _buildGuardianItem('🐢', '후현무', FortuneTextCleaner.cleanNullable(fourGuardians['back_black_turtle'] as String?), const Color(0xFF424242), isDark),
+            _buildGuardianItem('🐉', '좌청룡', FortuneTextCleaner.cleanNullable(fourGuardians['left_azure_dragon'] as String?), const Color(0xFF2196F3), colors),
+            _buildGuardianItem('🐯', '우백호', FortuneTextCleaner.cleanNullable(fourGuardians['right_white_tiger'] as String?), const Color(0xFF9E9E9E), colors),
+            _buildGuardianItem('🦅', '전주작', FortuneTextCleaner.cleanNullable(fourGuardians['front_red_phoenix'] as String?), const Color(0xFFF44336), colors),
+            _buildGuardianItem('🐢', '후현무', FortuneTextCleaner.cleanNullable(fourGuardians['back_black_turtle'] as String?), const Color(0xFF424242), colors),
           ],
 
           // 수기/산기/기의 흐름
           if (waterEnergy.isNotEmpty || mountainEnergy.isNotEmpty || energyFlow.isNotEmpty) ...[
             const SizedBox(height: 20),
             if (waterEnergy.isNotEmpty)
-              _buildEnergySection('💧', '수기(水氣)', waterEnergy, const Color(0xFF2196F3), isDark),
+              _buildEnergySection('💧', '수기(水氣)', waterEnergy, const Color(0xFF2196F3), colors),
             if (mountainEnergy.isNotEmpty)
-              _buildEnergySection('⛰️', '산기(山氣)', mountainEnergy, const Color(0xFF66BB6A), isDark),
+              _buildEnergySection('⛰️', '산기(山氣)', mountainEnergy, const Color(0xFF66BB6A), colors),
             if (energyFlow.isNotEmpty)
-              _buildEnergySection('🌀', '기의 흐름', energyFlow, const Color(0xFFAB47BC), isDark),
+              _buildEnergySection('🌀', '기의 흐름', energyFlow, const Color(0xFFAB47BC), colors),
           ],
 
           // 지형 보완 방법
@@ -1067,8 +1066,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
             const SizedBox(height: 20),
             Text(
               '✨ 지형 보완 방법',
-              style: TypographyUnified.bodyLarge.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              style: DSTypography.bodyLarge.copyWith(
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1091,8 +1090,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   Expanded(
                     child: Text(
                       rec,
-                      style: TypographyUnified.bodyMedium.copyWith(
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      style: DSTypography.bodyLarge.copyWith(
+                        color: colors.textPrimary,
                         height: 1.6,
                       ),
                     ),
@@ -1107,7 +1106,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
   }
 
   /// 사신사 개별 항목
-  Widget _buildGuardianItem(String emoji, String title, String description, Color color, bool isDark) {
+  Widget _buildGuardianItem(String emoji, String title, String description, Color color, DSColorScheme colors) {
     if (description.isEmpty) return const SizedBox.shrink();
 
     return Padding(
@@ -1133,7 +1132,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                 children: [
                   Text(
                     title,
-                    style: TypographyUnified.bodyMedium.copyWith(
+                    style: DSTypography.bodyLarge.copyWith(
                       color: color,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1141,8 +1140,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: TypographyUnified.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                    style: DSTypography.bodyMedium.copyWith(
+                      color: colors.textSecondary,
                       height: 1.5,
                     ),
                   ),
@@ -1156,7 +1155,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
   }
 
   /// 에너지 섹션 (수기/산기/기의 흐름)
-  Widget _buildEnergySection(String emoji, String title, String content, Color color, bool isDark) {
+  Widget _buildEnergySection(String emoji, String title, String content, Color color, DSColorScheme colors) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
@@ -1176,7 +1175,7 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                 children: [
                   Text(
                     title,
-                    style: TypographyUnified.bodyLarge.copyWith(
+                    style: DSTypography.bodyLarge.copyWith(
                       color: color,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1184,8 +1183,8 @@ class _MovingFortunePageState extends ConsumerState<MovingFortunePage> {
                   const SizedBox(height: 6),
                   Text(
                     content,
-                    style: TypographyUnified.bodyMedium.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                    style: DSTypography.bodyLarge.copyWith(
+                      color: colors.textSecondary,
                       height: 1.6,
                     ),
                   ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import '../../core/utils/logger.dart';
 
 class OAuthWebViewBottomSheet extends StatefulWidget {
@@ -28,10 +28,11 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
+        color: colors.surface,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(25),
           topRight: Radius.circular(25),
@@ -43,14 +44,14 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.white,
+              color: colors.surface,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(25),
                 topRight: Radius.circular(25),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: TossDesignSystem.gray900.withValues(alpha: 0.05),
+                  color: colors.textPrimary.withValues(alpha: 0.05),
                   offset: const Offset(0, 2),
                   blurRadius: 10,
                 ),
@@ -65,29 +66,29 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.gray300,
+                        color: colors.border,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
                   ),
                 ),
-                
+
                 // Close button
                 IconButton(
                   onPressed: widget.onCancel,
                   icon: const Icon(Icons.close),
-                  color: TossDesignSystem.gray600,
+                  color: colors.textSecondary,
                 ),
               ],
             ),
           ),
-          
+
           // Progress bar
           if (progress > 0 && progress < 1)
             LinearProgressIndicator(
               value: progress,
-              backgroundColor: TossDesignSystem.gray200,
-              valueColor: AlwaysStoppedAnimation<Color>(TossDesignSystem.tossBlue),
+              backgroundColor: colors.border,
+              valueColor: AlwaysStoppedAnimation<Color>(colors.accent),
             ),
           
           // WebView
@@ -179,20 +180,19 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                 // Loading overlay
                 if (isLoading)
                   Container(
-                    color: TossDesignSystem.white,
+                    color: colors.surface,
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircularProgressIndicator(
-                            color: TossDesignSystem.tossBlue,
+                            color: colors.accent,
                           ),
                           const SizedBox(height: 16),
                           Text(
                             'Google 로그인 페이지를 로드하는 중...',
                             style: TextStyle(
-                              color: TossDesignSystem.gray600,
-                              
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -219,7 +219,7 @@ Future<String?> showOAuthBottomSheet(
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+    backgroundColor: Colors.transparent,
     builder: (context) => OAuthWebViewBottomSheet(
       oauthUrl: oauthUrl,
       redirectUrlScheme: redirectUrlScheme,

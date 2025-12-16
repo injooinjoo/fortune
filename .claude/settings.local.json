@@ -235,7 +235,11 @@
       "Bash(lib/shared/components/token_insufficient_modal.dart)",
       "Bash(lib/screens/onboarding/steps/birth_input_step.dart )",
       "Bash(lib/screens/onboarding/widgets/numeric_keypad.dart )",
-      "Bash(lib/presentation/widgets/social_login_bottom_sheet.dart)"
+      "Bash(lib/presentation/widgets/social_login_bottom_sheet.dart)",
+      "Bash(perl -i -pe:*)",
+      "Bash(firebase projects:list:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(lsof:*)"
     ],
     "deny": [],
     "ask": [],

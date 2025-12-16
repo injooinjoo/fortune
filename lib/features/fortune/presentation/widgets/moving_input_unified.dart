@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/widgets/unified_button.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../services/region_service.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 
 /// 이사운 통합 입력 페이지 - 토스 스타일
@@ -217,17 +215,17 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
       children: [
         Text(
           '새로운 보금자리의\n운을 확인해보세요',
-          style: TypographyUnified.heading1.copyWith(
+          style: DSTypography.displayLarge.copyWith(
             fontWeight: FontWeight.w700,
-            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : DSColors.textPrimary,
             height: 1.3,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           '이사할 지역과 시기를 입력하면\n방위와 타이밍을 고려한 운세를 알려드려요',
-          style: TypographyUnified.bodySmall.copyWith(
-            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
+          style: DSTypography.bodySmall.copyWith(
+            color: Theme.of(context).brightness == Brightness.dark ? DSColors.surface : DSColors.textSecondary,
             height: 1.4,
           ),
         ),
@@ -276,10 +274,10 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
       return Center(
         child: Text(
           '검색 결과가 없습니다',
-          style: TypographyUnified.bodyMedium.copyWith(
+          style: DSTypography.bodyMedium.copyWith(
             color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+                ? DSColors.textSecondary
+                : DSColors.textSecondary,
           ),
         ),
       );
@@ -344,10 +342,10 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
       return Center(
         child: Text(
           '인기 지역을 불러올 수 없습니다',
-          style: TypographyUnified.bodyMedium.copyWith(
+          style: DSTypography.bodyMedium.copyWith(
             color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+                ? DSColors.textSecondary
+                : DSColors.textSecondary,
           ),
         ),
       );
@@ -359,7 +357,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
       itemBuilder: (context, index) {
         final region = _popularRegions[index];
         return ListTile(
-          leading: const Icon(Icons.star, color: TossTheme.primaryBlue),
+          leading: const Icon(Icons.star, color: DSColors.accent),
           title: Text(region.displayName),
           onTap: () {
             setState(() {
@@ -420,7 +418,7 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                 children: [
                   Icon(
                     isSelected ? Icons.check_circle : Icons.circle_outlined,
-                    color: isSelected ? TossTheme.primaryBlue : TossDesignSystem.gray400,
+                    color: isSelected ? DSColors.accent : DSColors.textTertiary,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -429,17 +427,17 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
                       children: [
                         Text(
                           period['title']!,
-                          style: TypographyUnified.bodyMedium.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: isSelected ? TossTheme.primaryBlue : null,
+                            color: isSelected ? DSColors.accent : null,
                           ),
                         ),
                         Text(
                           period['subtitle']!,
-                          style: TypographyUnified.bodySmall.copyWith(
+                          style: DSTypography.bodySmall.copyWith(
                             color: Theme.of(context).brightness == Brightness.dark
-                                ? TossDesignSystem.textSecondaryDark
-                                : TossDesignSystem.textSecondaryLight,
+                                ? DSColors.textSecondary
+                                : DSColors.textSecondary,
                           ),
                         ),
                       ],
@@ -493,14 +491,14 @@ class _MovingInputUnifiedState extends State<MovingInputUnified> with TickerProv
               children: [
                 Text(
                   purpose['icon']!,
-                  style: TypographyUnified.displaySmall,
+                  style: DSTypography.displaySmall,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   purpose['title']!,
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isSelected ? TossTheme.primaryBlue : null,
+                    color: isSelected ? DSColors.accent : null,
                   ),
                   textAlign: TextAlign.center,
                 ),

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../data/models/investment_ticker.dart';
 
 /// ChatGPT 스타일의 투자 카테고리 선택 그리드
@@ -27,9 +26,9 @@ class InvestmentCategoryGrid extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 16),
           child: Text(
             '어떤 투자에 관심이 있으신가요?',
-            style: TypographyUnified.heading3.copyWith(
+            style: DSTypography.headingMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              color: DSColors.textPrimary,
             ),
           ),
         ),
@@ -91,22 +90,22 @@ class _CategoryCard extends StatelessWidget {
 
     // ChatGPT 스타일 색상
     final backgroundColor = isSelected
-        ? (isDark ? TossDesignSystem.tossBlue.withValues(alpha: 0.15) : TossDesignSystem.tossBlue.withValues(alpha: 0.08))
-        : (isDark ? TossDesignSystem.grayDark100 : Colors.white);
+        ? (isDark ? DSColors.accent.withValues(alpha: 0.15) : DSColors.accent.withValues(alpha: 0.08))
+        : (isDark ? DSColors.surface : Colors.white);
 
     final borderColor = isSelected
-        ? TossDesignSystem.tossBlue
-        : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200);
+        ? DSColors.accent
+        : DSColors.border;
 
     final iconColor = isSelected
-        ? TossDesignSystem.tossBlue
-        : (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600);
+        ? DSColors.accent
+        : DSColors.textSecondary;
 
     final textColor = isSelected
-        ? TossDesignSystem.tossBlue
-        : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900);
+        ? DSColors.accent
+        : DSColors.textPrimary;
 
-    final descColor = isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500;
+    final descColor = DSColors.textTertiary;
 
     return GestureDetector(
       onTap: onTap,
@@ -138,8 +137,8 @@ class _CategoryCard extends StatelessWidget {
                   Container(
                     width: 20,
                     height: 20,
-                    decoration: const BoxDecoration(
-                      color: TossDesignSystem.tossBlue,
+                    decoration: BoxDecoration(
+                      color: DSColors.accent,
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -154,7 +153,7 @@ class _CategoryCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               category.label,
-              style: TypographyUnified.bodyMedium.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: textColor,
               ),
@@ -162,7 +161,7 @@ class _CategoryCard extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               category.description,
-              style: TypographyUnified.labelSmall.copyWith(
+              style: DSTypography.labelSmall.copyWith(
                 color: descColor,
               ),
               maxLines: 1,

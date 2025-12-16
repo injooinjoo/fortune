@@ -6,7 +6,7 @@
 library;
 
 import 'package:flutter/material.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import 'dart:math' as math;
 
 /// 오행 타입
@@ -422,7 +422,7 @@ class WuxingDetailCard extends StatelessWidget {
           // 제목
           Text(
             '오행 분포 분석',
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : Colors.black87,
             ),
@@ -443,7 +443,7 @@ class WuxingDetailCard extends StatelessWidget {
             children: [
               Text(
                 '균형 점수',
-                style: TypographyUnified.bodySmall.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),
@@ -451,7 +451,7 @@ class WuxingDetailCard extends StatelessWidget {
               const Spacer(),
               Text(
                 '${distribution.balanceScore.toStringAsFixed(0)}점',
-                style: TypographyUnified.buttonMedium.copyWith(
+                style: DSTypography.labelMedium.copyWith(
                   fontWeight: FontWeight.w700,
                   color: distribution.balanceScore >= 60
                       ? Colors.green
@@ -467,7 +467,7 @@ class WuxingDetailCard extends StatelessWidget {
           // 설명
           Text(
             distribution.description,
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               height: 1.5,
               color: isDark ? Colors.white70 : Colors.black87,
             ),
@@ -478,7 +478,7 @@ class WuxingDetailCard extends StatelessWidget {
           if (distribution.recommendations.isNotEmpty) ...[
             Text(
               '추천 사항',
-              style: TypographyUnified.bodySmall.copyWith(
+              style: DSTypography.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isDark ? Colors.white70 : Colors.black54,
               ),
@@ -491,14 +491,14 @@ class WuxingDetailCard extends StatelessWidget {
                     children: [
                       Text(
                         '• ',
-                        style: TypographyUnified.bodySmall.copyWith(
+                        style: DSTypography.bodySmall.copyWith(
                           color: isDark ? Colors.white70 : Colors.black87,
                         ),
                       ),
                       Expanded(
                         child: Text(
                           rec,
-                          style: TypographyUnified.bodySmall.copyWith(
+                          style: DSTypography.bodySmall.copyWith(
                             height: 1.4,
                             color: isDark ? Colors.white70 : Colors.black87,
                           ),

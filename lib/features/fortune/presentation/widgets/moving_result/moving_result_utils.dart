@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 
 /// 이사운 결과 유틸리티 함수들
 class MovingResultUtils {
   /// 점수에 따른 색상 반환
   static Color getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.success;
-    if (score >= 60) return TossTheme.primaryBlue;
-    return TossDesignSystem.warningOrange;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accent;
+    return DSColors.warning;
   }
 
   /// 점수 설명 텍스트 반환
@@ -38,20 +37,20 @@ class MovingResultUtils {
 
   /// 타이밍에 따른 색상 반환
   static Color getTimeColor(String timing) {
-    if (timing.contains('D-30')) return TossDesignSystem.primaryBlue;
-    if (timing.contains('D-21') || timing.contains('D-14')) return TossDesignSystem.warningOrange;
-    if (timing.contains('D-7') || timing.contains('D-3') || timing.contains('D-1')) return TossDesignSystem.error;
-    return TossTheme.primaryBlue;
+    if (timing.contains('D-30')) return DSColors.accent;
+    if (timing.contains('D-21') || timing.contains('D-14')) return DSColors.warning;
+    if (timing.contains('D-7') || timing.contains('D-3') || timing.contains('D-1')) return DSColors.error;
+    return DSColors.accent;
   }
 
   /// 예산 카테고리별 색상 반환
   static Color getBudgetColor(String category) {
     switch (category) {
-      case '이사업체': return TossTheme.primaryBlue;
-      case '포장재료': return TossDesignSystem.warningOrange;
-      case '청소비용': return TossDesignSystem.success;
-      case '기타비용': return TossDesignSystem.primaryBlue;
-      default: return TossDesignSystem.gray300;
+      case '이사업체': return DSColors.accent;
+      case '포장재료': return DSColors.warning;
+      case '청소비용': return DSColors.success;
+      case '기타비용': return DSColors.accent;
+      default: return DSColors.border;
     }
   }
 

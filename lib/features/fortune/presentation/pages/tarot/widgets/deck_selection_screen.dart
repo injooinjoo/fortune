@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../domain/models/tarot_card_model.dart';
 
@@ -20,7 +19,7 @@ class DeckSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final allDecks = TarotDeckMetadata.getAllDecks();
 
     return FadeTransition(
@@ -52,23 +51,23 @@ class DeckSelectionScreen extends StatelessWidget {
                       ),
                       child: const Icon(
                         Icons.style,
-                        color: TossDesignSystem.white,
+                        color: Colors.white,
                         size: 18,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       '타로 덱 선택',
-                      style: TypographyUnified.heading3.copyWith(
+                      style: DSTypography.headingMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        color: colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '당신에게 맞는 타로 덱을 선택하세요',
-                      style: TypographyUnified.labelMedium.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      style: DSTypography.labelMedium.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],
@@ -82,7 +81,7 @@ class DeckSelectionScreen extends StatelessWidget {
                 deck: deck,
                 isSelected: selectedDeck.name.toLowerCase() == deck.id.replaceAll('_', ''),
                 onTap: () => onDeckSelected(_deckIdToType(deck.id)),
-                isDark: isDark,
+                colors: colors,
               )),
 
               const SizedBox(height: 100), // FloatingButton 공간
@@ -122,13 +121,13 @@ class _DeckCard extends StatelessWidget {
   final TarotDeck deck;
   final bool isSelected;
   final VoidCallback onTap;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const _DeckCard({
     required this.deck,
     required this.isSelected,
     required this.onTap,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -142,12 +141,10 @@ class _DeckCard extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? const Color(0xFF7C3AED)
-                : (isDark ? TossDesignSystem.gray700 : TossDesignSystem.gray200),
+                : colors.border,
             width: isSelected ? 2 : 1,
           ),
-          color: isDark
-              ? TossDesignSystem.gray800.withValues(alpha: 0.5)
-              : TossDesignSystem.white,
+          color: colors.surface,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -176,7 +173,7 @@ class _DeckCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(6),
                               boxShadow: [
                                 BoxShadow(
-                                  color: TossDesignSystem.gray900.withValues(alpha: 0.2),
+                                  color: Colors.black.withValues(alpha: 0.2),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -193,7 +190,7 @@ class _DeckCard extends StatelessWidget {
                                     child: Center(
                                       child: Icon(
                                         Icons.style,
-                                        color: TossDesignSystem.white.withValues(alpha: 0.5),
+                                        color: Colors.white.withValues(alpha: 0.5),
                                         size: 20,
                                       ),
                                     ),
@@ -221,9 +218,9 @@ class _DeckCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             deck.koreanName,
-                            style: TypographyUnified.buttonMedium.copyWith(
+                            style: DSTypography.labelLarge.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ),
@@ -236,7 +233,7 @@ class _DeckCard extends StatelessWidget {
                             ),
                             child: const Icon(
                               Icons.check,
-                              color: TossDesignSystem.white,
+                              color: Colors.white,
                               size: 14,
                             ),
                           ),
@@ -245,8 +242,8 @@ class _DeckCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       '${deck.artist} (${deck.year})',
-                      style: TypographyUnified.labelMedium.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      style: DSTypography.labelMedium.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -291,7 +288,7 @@ class _DeckTag extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TypographyUnified.labelTiny.copyWith(
+        style: DSTypography.labelSmall.copyWith(
           color: color,
           fontWeight: FontWeight.w500,
         ),

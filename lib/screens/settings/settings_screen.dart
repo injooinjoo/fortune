@@ -3,13 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../core/services/debug_premium_service.dart';
-import '../../shared/components/toast.dart';
-import '../../shared/components/settings_list_tile.dart';
-import '../../shared/components/section_header.dart';
 import '../../core/providers/user_settings_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -50,78 +47,62 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       _overrideEnabled = enabled;
     });
 
-    // 토스트 메시지
+    // Toast message
     if (!enabled) {
-      Toast.show(context, message: '프리미엄 오버라이드 해제');
+      DSToast.info(context, '프리미엄 오버라이드 해제');
     } else {
-      Toast.show(
+      DSToast.info(
         context,
-        message: newValue ? '디버그: 프리미엄 활성화' : '디버그: 일반 사용자 모드',
+        newValue ? '디버그: 프리미엄 활성화' : '디버그: 일반 사용자 모드',
       );
     }
   }
 
-  // TOSS Design System Helper Methods (프로필 페이지와 동일)
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
+  Future<void> _handleLogout() async {
+    final shouldLogout = await DSModal.confirm(
+      context: context,
+      title: '로그아웃',
+      message: '정말 로그아웃 하시겠습니까?',
+      confirmText: '로그아웃',
+      cancelText: '취소',
+      isDestructive: true,
+    );
 
-  Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
-  }
-
-  Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.gray50;
-  }
-
-  Color _getCardColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark100
-        : TossDesignSystem.white;
-  }
-
-  Color _getDividerColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray200;
+    if (shouldLogout == true) {
+      await supabase.auth.signOut();
+      if (mounted) {
+        context.go('/splash');
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
     final tokenState = ref.watch(tokenProvider);
     final themeMode = ref.watch(themeModeProvider);
     final isDarkMode = themeMode == ThemeMode.dark ||
         (themeMode == ThemeMode.system &&
             MediaQuery.of(context).platformBrightness == Brightness.dark);
-    final typography = ref.watch(typographyThemeProvider);
 
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+        backgroundColor: colors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            color: colors.textPrimary,
           ),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '설정',
           style: typography.headingMedium.copyWith(
-            color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            color: colors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -131,347 +112,189 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: TossDesignSystem.spacingM),
+              const SizedBox(height: DSSpacing.md),
 
               // 계정 섹션
-              const SectionHeader(title: '계정'),
-              Container(
-                margin: const EdgeInsets.symmetric(
-                    horizontal: TossDesignSystem.marginHorizontal),
-                decoration: BoxDecoration(
-                  color: _getCardColor(context),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: _getDividerColor(context),
-                    width: 1,
+              DSGroupedCard(
+                header: '계정',
+                children: [
+                  DSListTile(
+                    leading: const Icon(Icons.person_outline),
+                    title: '프로필 편집',
+                    onTap: () async {
+                      final result = await context.push('/profile/edit');
+                      if (result == true && mounted) {
+                        setState(() {});
+                      }
+                    },
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    SettingsListTile(
-                      icon: Icons.person_outline,
-                      title: '프로필 편집',
-                      onTap: () async {
-                        final result = await context.push('/profile/edit');
-                        if (result == true && mounted) {
-                          setState(() {});
-                        }
-                      },
-                    ),
-                    SettingsListTile(
-                      icon: Icons.link_outlined,
-                      title: '소셜 계정 연동',
-                      subtitle: '여러 로그인 방법을 하나로 관리',
-                      onTap: () => context.push('/settings/social-accounts'),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.phone_outlined,
-                      title: '전화번호 관리',
-                      subtitle: '전화번호 변경 및 인증',
-                      onTap: () => context.push('/settings/phone-management'),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.notifications_outlined,
-                      title: '알림 설정',
-                      subtitle: '푸시, 문자, 운세 알림 관리',
-                      onTap: () => context.push('/settings/notifications'),
-                      isLast: true,
-                    ),
-                  ],
-                ),
+                  DSListTile(
+                    leading: const Icon(Icons.link_outlined),
+                    title: '소셜 계정 연동',
+                    subtitle: '여러 로그인 방법을 하나로 관리',
+                    onTap: () => context.push('/settings/social-accounts'),
+                  ),
+                  DSListTile(
+                    leading: const Icon(Icons.phone_outlined),
+                    title: '전화번호 관리',
+                    subtitle: '전화번호 변경 및 인증',
+                    onTap: () => context.push('/settings/phone-management'),
+                  ),
+                  DSListTile(
+                    leading: const Icon(Icons.notifications_outlined),
+                    title: '알림 설정',
+                    subtitle: '푸시, 문자, 운세 알림 관리',
+                    onTap: () => context.push('/settings/notifications'),
+                    isLast: true,
+                  ),
+                ],
               ),
 
               // 앱 설정 섹션
-              const SectionHeader(title: '앱 설정'),
-              Container(
-                margin: const EdgeInsets.symmetric(
-                    horizontal: TossDesignSystem.marginHorizontal),
-                decoration: BoxDecoration(
-                  color: _getCardColor(context),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: _getDividerColor(context),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    SettingsListTile(
-                      icon: Icons.dark_mode_outlined,
-                      title: '다크 모드',
-                      trailing: Switch(
-                        value: isDarkMode,
-                        onChanged: (value) {
-                          ref.read(themeModeProvider.notifier).setThemeMode(
-                              value ? ThemeMode.dark : ThemeMode.light);
-                        },
-                        activeColor: TossDesignSystem.tossBlue,
-                      ),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.vibration_outlined,
-                      title: '진동 피드백',
-                      subtitle: '버튼 및 카드 터치 시 진동',
-                      trailing: Switch(
-                        value: ref.watch(userSettingsProvider).hapticEnabled,
-                        onChanged: (value) {
-                          ref.read(userSettingsProvider.notifier).setHapticEnabled(value);
-                          // 활성화 시 즉시 햅틱 피드백 제공
-                          if (value) {
-                            TossDesignSystem.hapticLight();
-                          }
-                        },
-                        activeColor: TossDesignSystem.tossBlue,
-                      ),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.language_outlined,
-                      title: '언어',
-                      subtitle: '한국어',
-                      onTap: () {
-                        // TODO: Implement language selection
+              DSGroupedCard(
+                header: '앱 설정',
+                children: [
+                  DSListTile(
+                    leading: const Icon(Icons.dark_mode_outlined),
+                    title: '다크 모드',
+                    trailing: DSToggle(
+                      value: isDarkMode,
+                      onChanged: (value) {
+                        ref.read(themeModeProvider.notifier).setThemeMode(
+                            value ? ThemeMode.dark : ThemeMode.light);
                       },
-                      isLast: true,
                     ),
-                  ],
-                ),
+                  ),
+                  DSListTile(
+                    leading: const Icon(Icons.vibration_outlined),
+                    title: '진동 피드백',
+                    subtitle: '버튼 및 카드 터치 시 진동',
+                    trailing: DSToggle(
+                      value: ref.watch(userSettingsProvider).hapticEnabled,
+                      onChanged: (value) {
+                        ref.read(userSettingsProvider.notifier).setHapticEnabled(value);
+                        if (value) {
+                          DSHaptics.light();
+                        }
+                      },
+                    ),
+                  ),
+                  DSListTile(
+                    leading: const Icon(Icons.language_outlined),
+                    title: '언어',
+                    subtitle: '한국어',
+                    onTap: () {
+                      // TODO: Implement language selection
+                    },
+                    isLast: true,
+                  ),
+                ],
               ),
 
               // 결제 섹션
-              const SectionHeader(title: '결제'),
-              Container(
-                margin: const EdgeInsets.symmetric(
-                    horizontal: TossDesignSystem.marginHorizontal),
-                decoration: BoxDecoration(
-                  color: _getCardColor(context),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: _getDividerColor(context),
-                    width: 1,
+              DSGroupedCard(
+                header: '결제',
+                children: [
+                  DSListTile(
+                    leading: const Icon(Icons.local_offer_outlined),
+                    title: '토큰 구매',
+                    subtitle: '토큰 충전하기',
+                    onTap: () => context.push('/token-purchase'),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    SettingsListTile(
-                      icon: Icons.local_offer_outlined,
-                      title: '토큰 구매',
-                      subtitle: '토큰 충전하기',
-                      onTap: () => context.push('/token-purchase'),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.card_membership_outlined,
-                      title: '구독 관리',
-                      subtitle: tokenState.hasUnlimitedAccess
-                          ? '프리미엄 구독 중'
-                          : '프리미엄 시작하기',
-                      showBadge: tokenState.hasUnlimitedAccess,
-                      onTap: () => context.go('/subscription'),
-                      isLast: true,
-                    ),
-                  ],
-                ),
+                  DSListTile(
+                    leading: const Icon(Icons.card_membership_outlined),
+                    title: '구독 관리',
+                    subtitle: tokenState.hasUnlimitedAccess
+                        ? '프리미엄 구독 중'
+                        : '프리미엄 시작하기',
+                    trailing: tokenState.hasUnlimitedAccess
+                        ? DSBadge.pro()
+                        : null,
+                    onTap: () => context.go('/subscription'),
+                    isLast: true,
+                  ),
+                ],
               ),
 
               // 지원 섹션
-              const SectionHeader(title: '지원'),
-              Container(
-                margin: const EdgeInsets.symmetric(
-                    horizontal: TossDesignSystem.marginHorizontal),
-                decoration: BoxDecoration(
-                  color: _getCardColor(context),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: _getDividerColor(context),
-                    width: 1,
+              DSGroupedCard(
+                header: '지원',
+                children: [
+                  DSListTile(
+                    leading: const Icon(Icons.help_outline),
+                    title: '도움말',
+                    onTap: () => context.push('/help'),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    SettingsListTile(
-                      icon: Icons.help_outline,
-                      title: '도움말',
-                      onTap: () => context.push('/help'),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.privacy_tip_outlined,
-                      title: '개인정보 처리방침',
-                      onTap: () => context.push('/policy/privacy'),
-                    ),
-                    SettingsListTile(
-                      icon: Icons.description_outlined,
-                      title: '이용약관',
-                      onTap: () => context.push('/policy/terms'),
-                      isLast: true,
-                    ),
-                  ],
-                ),
+                  DSListTile(
+                    leading: const Icon(Icons.privacy_tip_outlined),
+                    title: '개인정보 처리방침',
+                    onTap: () => context.push('/policy/privacy'),
+                  ),
+                  DSListTile(
+                    leading: const Icon(Icons.description_outlined),
+                    title: '이용약관',
+                    onTap: () => context.push('/policy/terms'),
+                    isLast: true,
+                  ),
+                ],
               ),
 
               // 개발자 도구 (개발 환경에서만 표시)
-              if (kDebugMode) ...[
-                const SectionHeader(title: '개발자 도구'),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: TossDesignSystem.marginHorizontal),
-                  decoration: BoxDecoration(
-                    color: _getCardColor(context),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: _getDividerColor(context),
-                      width: 1,
+              if (kDebugMode)
+                DSGroupedCard(
+                  header: '개발자 도구',
+                  children: [
+                    DSListTile(
+                      leading: const Icon(Icons.cloud_download_outlined),
+                      title: '유명인 정보 크롤링',
+                      onTap: () => context.push('/admin/celebrity-crawling'),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: TossDesignSystem.black.withValues(alpha: 0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      SettingsListTile(
-                        icon: Icons.cloud_download_outlined,
-                        title: '유명인 정보 크롤링',
-                        onTap: () => context.push('/admin/celebrity-crawling'),
-                      ),
-                      SettingsListTile(
-                        icon: _overrideEnabled
+                    DSListTile(
+                      leading: Icon(
+                        _overrideEnabled
                             ? (_premiumOverride
                                 ? Icons.workspace_premium
                                 : Icons.person_outline)
                             : Icons.toggle_off_outlined,
-                        title: '프리미엄 상태 토글',
-                        subtitle: _overrideEnabled
-                            ? (_premiumOverride ? '강제 프리미엄' : '강제 일반 사용자')
-                            : '오버라이드 해제됨',
-                        onTap: _togglePremiumOverride,
-                        isLast: true,
                       ),
-                    ],
-                  ),
+                      title: '프리미엄 상태 토글',
+                      subtitle: _overrideEnabled
+                          ? (_premiumOverride ? '강제 프리미엄' : '강제 일반 사용자')
+                          : '오버라이드 해제됨',
+                      onTap: _togglePremiumOverride,
+                      isLast: true,
+                    ),
+                  ],
                 ),
-              ],
 
-              // 로그아웃
-              const SizedBox(height: TossDesignSystem.spacingXL),
+              // 로그아웃 버튼
+              const SizedBox(height: DSSpacing.xl),
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: TossDesignSystem.marginHorizontal),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: () async {
-                      final shouldLogout = await showDialog<bool>(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text(
-                            '로그아웃',
-                            style: typography.headingSmall.copyWith(
-                              color: _getTextColor(context),
-                            ),
-                          ),
-                          content: Text(
-                            '정말 로그아웃 하시겠습니까?',
-                            style: typography.bodyMedium.copyWith(
-                              color: _getTextColor(context),
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, false),
-                              child: Text(
-                                '취소',
-                                style: typography.labelLarge.copyWith(
-                                  color: _getSecondaryTextColor(context),
-                                ),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, true),
-                              child: Text(
-                                '로그아웃',
-                                style: typography.labelLarge.copyWith(
-                                  color: TossDesignSystem.errorRed,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-
-                      if (shouldLogout == true) {
-                        await supabase.auth.signOut();
-                        if (context.mounted) {
-                          context.go('/splash');
-                        }
-                      }
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: TossDesignSystem.spacingM),
-                      side: BorderSide(color: TossDesignSystem.errorRed),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            TossDesignSystem.radiusM),
-                      ),
-                    ),
-                    child: Text(
-                      '로그아웃',
-                      style: typography.labelLarge.copyWith(
-                        color: TossDesignSystem.errorRed,
-                      ),
-                    ),
-                  ),
+                  horizontal: DSSpacing.pageHorizontal,
+                ),
+                child: DSButton.destructive(
+                  text: '로그아웃',
+                  onPressed: _handleLogout,
+                  size: DSButtonSize.medium,
                 ),
               ),
 
               // 버전 정보
-              const SizedBox(height: TossDesignSystem.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               Center(
                 child: Text(
                   'Fortune v1.0.0',
                   style: typography.labelMedium.copyWith(
-                    color: _getSecondaryTextColor(context),
+                    color: colors.textSecondary,
                   ),
                 ),
               ),
-              const SizedBox(height: TossDesignSystem.spacingXXL),
+              const SizedBox(height: DSSpacing.xxl),
             ],
           ),
         ),
       ),
     );
   }
-
-  // _buildSectionHeader replaced by SectionHeader component
-  // _buildListItem replaced by SettingsListTile component
 }

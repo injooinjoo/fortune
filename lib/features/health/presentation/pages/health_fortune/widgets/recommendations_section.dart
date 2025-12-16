@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../../core/theme/toss_theme.dart';
 import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../domain/models/health_fortune_model.dart';
 
 class RecommendationsSection extends StatelessWidget {
@@ -54,7 +54,7 @@ class RecommendationsSection extends StatelessWidget {
                 children: [
                   Text(
                     rec.type.emoji,
-                    style: TypographyUnified.heading3,
+                    style: DSTypography.headingSmall,
                   ),
                   const SizedBox(width: 12),
                   Expanded(

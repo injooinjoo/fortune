@@ -1,30 +1,29 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../glassmorphism/glass_container.dart';
-// import 'daily_token_claim_widget.dart';
-import '../../core/theme/typography_unified.dart'; // defined in same file
+import '../../core/design_system/design_system.dart';
 
 class DailyTokenBanner extends ConsumerWidget {
   const DailyTokenBanner({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Container(
-      margin: AppSpacing.paddingAll16,
+      margin: const EdgeInsets.all(DSSpacing.md),
       child: GlassContainer(
         padding: EdgeInsets.zero,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+        borderRadius: BorderRadius.circular(DSRadius.xl),
         blur: 20,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+            borderRadius: BorderRadius.circular(DSRadius.xl),
             gradient: LinearGradient(
               colors: [
-                TossDesignSystem.gray600.withValues(alpha: 0.3),
-                TossDesignSystem.gray600.withValues(alpha: 0.2),
+                colors.accentTertiary.withValues(alpha: 0.3),
+                colors.accentTertiary.withValues(alpha: 0.2),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -40,7 +39,7 @@ class DailyTokenBanner extends ConsumerWidget {
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.white.withValues(alpha: 0.1),
+                    color: colors.surface.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -52,55 +51,55 @@ class DailyTokenBanner extends ConsumerWidget {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.white.withValues(alpha: 0.05),
+                    color: colors.surface.withValues(alpha: 0.05),
                     shape: BoxShape.circle,
                   ),
                 ),
               ),
-              
+
               // Content
               Padding(
-                padding: AppSpacing.paddingAll20,
+                padding: const EdgeInsets.all(DSSpacing.lg),
                 child: Row(
                   children: [
                     // Icon
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(DSSpacing.sm),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(12),
+                        color: colors.surface.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(DSRadius.sm),
                       ),
                       child: Icon(
                         Icons.stars,
-                        color: TossDesignSystem.white,
+                        color: colors.textPrimary,
                         size: 24,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    
+                    const SizedBox(width: DSSpacing.md),
+
                     // Text Content
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '매일 무료 토큰 받기',
-                            style: TypographyUnified.buttonMedium.copyWith(
+                            '매일 무료 영혼 받기',
+                            style: typography.labelLarge.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: TossDesignSystem.white,
+                              color: colors.textPrimary,
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: DSSpacing.xs),
                           Text(
-                            '매일 접속하여 토큰을 받아보세요!',
-                            style: TypographyUnified.labelMedium.copyWith(
-                              color: TossDesignSystem.white.withValues(alpha: 0.8),
+                            '매일 접속하여 영혼을 받아보세요!',
+                            style: typography.labelMedium.copyWith(
+                              color: colors.textPrimary.withValues(alpha: 0.8),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    
+
                     // Claim Button
                     const DailyTokenClaimWidget(),
                   ],
@@ -116,7 +115,7 @@ class DailyTokenBanner extends ConsumerWidget {
 
 class DailyTokenClaimWidget extends ConsumerStatefulWidget {
   const DailyTokenClaimWidget({super.key});
-  
+
   @override
   ConsumerState<DailyTokenClaimWidget> createState() => _DailyTokenClaimWidgetState();
 }
@@ -124,20 +123,24 @@ class DailyTokenClaimWidget extends ConsumerStatefulWidget {
 class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget> {
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return ElevatedButton(
       onPressed: () {
+        DSHaptics.light();
         // Handle claim logic
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: TossDesignSystem.white,
-        foregroundColor: TossDesignSystem.gray600,
+        backgroundColor: colors.surface,
+        foregroundColor: colors.accentTertiary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(DSRadius.sm),
         ),
       ),
       child: Text(
         '받기',
-        style: TextStyle(
+        style: typography.labelMedium.copyWith(
           fontWeight: FontWeight.bold,
         ),
       ),

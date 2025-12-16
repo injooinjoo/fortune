@@ -1,4 +1,3 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
@@ -6,14 +5,11 @@ import '../glassmorphism/glass_container.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../core/utils/haptic_utils.dart';
 import '../../core/utils/secure_storage.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_animations.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../core/design_system/design_system.dart';
 
 class DailyTokenClaimWidget extends ConsumerStatefulWidget {
   final bool showCompact;
-  
+
   const DailyTokenClaimWidget({
     super.key,
     this.showCompact = false,
@@ -37,7 +33,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
     super.initState();
     _initializeAnimations();
     _checkClaimAvailability();
-    
+
     // Check every minute if claiming becomes available
     _checkTimer = Timer.periodic(const Duration(minutes: 1), (_) {
       _checkClaimAvailability();
@@ -46,7 +42,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
 
   void _initializeAnimations() {
     _animationController = AnimationController(
-      duration: AppAnimations.durationMedium,
+      duration: DSAnimation.durationMedium,
       vsync: this,
     );
 
@@ -78,7 +74,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
     final lastClaimDate = await SecureStorage.getString('last_daily_claim_date');
     final today = DateTime.now();
     final todayString = '${today.year}-${today.month}-${today.day}';
-    
+
     setState(() {
       _canClaim = lastClaimDate != todayString;
     });
@@ -110,7 +106,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
       if (mounted) {
         Toast.show(
           context: context,
-          message: '일일 토큰 50개를 받았습니다!',
+          message: '일일 영혼 50개를 받았습니다!',
           type: ToastType.success,
         );
       }
@@ -122,7 +118,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
       if (mounted) {
         Toast.show(
           context: context,
-          message: '토큰 지급에 실패했습니다. 다시 시도해주세요.',
+          message: '영혼 지급에 실패했습니다. 다시 시도해주세요.',
           type: ToastType.error,
         );
       }
@@ -133,40 +129,43 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     if (!_canClaim && widget.showCompact) {
       return const SizedBox.shrink();
     }
 
     return GlassContainer(
-      padding: EdgeInsets.all(widget.showCompact ? AppSpacing.spacing3 : AppSpacing.spacing4),
+      padding: EdgeInsets.all(widget.showCompact ? DSSpacing.sm : DSSpacing.md),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (!widget.showCompact) ...[
             Icon(
-              Icons.toll,
+              Icons.auto_awesome,
               size: 48,
-              color: _canClaim ? TossDesignSystem.gray600 : TossDesignSystem.gray400,
+              color: _canClaim ? colors.accentTertiary : colors.textTertiary,
             ),
-            SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: DSSpacing.sm),
             Text(
-              '일일 토큰',
-              style: AppTypography.titleMedium.copyWith(
-                color: TossDesignSystem.gray900,
+              '일일 영혼',
+              style: typography.headingSmall.copyWith(
+                color: colors.textPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: AppSpacing.spacing1),
+            const SizedBox(height: DSSpacing.xs),
             Text(
-              _canClaim ? '오늘의 토큰을 받아보세요!' : '내일 다시 받을 수 있어요',
-              style: AppTypography.bodySmall.copyWith(
-                color: TossDesignSystem.gray400,
+              _canClaim ? '오늘의 영혼을 받아보세요!' : '내일 다시 받을 수 있어요',
+              style: typography.bodySmall.copyWith(
+                color: colors.textTertiary,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: AppSpacing.spacing3),
+            const SizedBox(height: DSSpacing.sm),
           ],
-          
+
           AnimatedBuilder(
             animation: _animationController,
             builder: (context, child) {
@@ -174,7 +173,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                 scale: _scaleAnimation.value,
                 child: Transform.rotate(
                   angle: _rotationAnimation.value,
-                  child: _buildClaimButton(),
+                  child: _buildClaimButton(colors, typography),
                 ),
               );
             },
@@ -184,20 +183,20 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
     );
   }
 
-  Widget _buildClaimButton() {
+  Widget _buildClaimButton(DSColorScheme colors, DSTypographyScheme typography) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _canClaim && !_isLoading ? _claimDailyTokens : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: _canClaim ? TossDesignSystem.gray600 : TossDesignSystem.gray600,
-          disabledBackgroundColor: TossDesignSystem.gray600,
-          foregroundColor: _canClaim ? TossDesignSystem.white : TossDesignSystem.gray400,
+          backgroundColor: _canClaim ? colors.accentTertiary : colors.surfaceSecondary,
+          disabledBackgroundColor: colors.surfaceSecondary,
+          foregroundColor: _canClaim ? colors.surface : colors.textTertiary,
           padding: EdgeInsets.symmetric(
-            vertical: widget.showCompact ? AppSpacing.spacing2 : AppSpacing.spacing3,
+            vertical: widget.showCompact ? DSSpacing.sm : DSSpacing.sm + 4,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+            borderRadius: BorderRadius.circular(DSRadius.md),
           ),
           elevation: _canClaim ? 2 : 0,
         ),
@@ -208,7 +207,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    _canClaim ? TossDesignSystem.white : TossDesignSystem.gray400,
+                    _canClaim ? colors.surface : colors.textTertiary,
                   ),
                 ),
               )
@@ -216,13 +215,13 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    _canClaim ? Icons.redeem : Icons.schedule,
+                    _canClaim ? Icons.auto_awesome : Icons.schedule,
                     size: widget.showCompact ? 16 : 20,
                   ),
-                  SizedBox(width: AppSpacing.spacing1),
+                  const SizedBox(width: DSSpacing.xs),
                   Text(
-                    _canClaim ? '토큰 받기 (+50)' : '내일 다시',
-                    style: AppTypography.labelLarge.copyWith(
+                    _canClaim ? '영혼 받기 (+50)' : '내일 다시',
+                    style: typography.labelLarge.copyWith(
                       fontWeight: FontWeight.w600,
                       fontSize: widget.showCompact ? 14 : 16,
                     ),
@@ -244,11 +243,13 @@ class Toast {
     required String message,
     required ToastType type,
   }) {
+    final colors = context.colors;
+
     final color = switch (type) {
-      ToastType.success => TossDesignSystem.successGreen,
-      ToastType.error => TossDesignSystem.errorRed,
-      ToastType.warning => TossDesignSystem.warningOrange,
-      ToastType.info => TossDesignSystem.primaryBlue,
+      ToastType.success => colors.success,
+      ToastType.error => colors.error,
+      ToastType.warning => colors.warning,
+      ToastType.info => colors.accent,
     };
 
     ScaffoldMessenger.of(context).showSnackBar(

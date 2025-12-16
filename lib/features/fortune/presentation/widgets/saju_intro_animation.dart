@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 
@@ -105,9 +105,9 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              TossTheme.backgroundPrimary,
-              TossTheme.backgroundSecondary,
-              TossTheme.backgroundPrimary,
+              DSColors.background,
+              DSColors.backgroundSecondary,
+              DSColors.background,
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -120,7 +120,7 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
             // 메인 콘텐츠
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(TossTheme.spacingL),
+                padding: const EdgeInsets.all(DSSpacing.lg),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -129,7 +129,7 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                     // 태극 심볼과 애니메이션
                     _buildTaeguekSymbol(),
                     
-                    const SizedBox(height: TossTheme.spacingXXL),
+                    const SizedBox(height: DSSpacing.xxl),
                     
                     // 제목과 설명
                     AnimatedBuilder(
@@ -141,26 +141,26 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                             children: [
                               Text(
                                 '천간지지로 보는',
-                                style: TossTheme.heading1.copyWith(
-                                  color: TossTheme.textBlack,
+                                style: DSTypography.displaySmall.copyWith(
+                                  color: DSColors.textPrimary,
                                   fontWeight: FontWeight.w700,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              const SizedBox(height: TossTheme.spacingS),
+                              const SizedBox(height: DSSpacing.sm),
                               Text(
                                 '당신의 운명',
-                                style: TossTheme.heading1.copyWith(
-                                  color: TossTheme.brandBlue,
+                                style: DSTypography.displaySmall.copyWith(
+                                  color: DSColors.accent,
                                   fontWeight: FontWeight.w700,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              const SizedBox(height: TossTheme.spacingL),
+                              const SizedBox(height: DSSpacing.lg),
                               Text(
                                 '만세력을 바탕으로 정확한\n사주팔자 분석을 제공합니다',
-                                style: TossTheme.body1.copyWith(
-                                  color: TossTheme.textGray600,
+                                style: DSTypography.bodyLarge.copyWith(
+                                  color: DSColors.textSecondary,
                                   height: 1.5,
                                 ),
                                 textAlign: TextAlign.center,
@@ -190,7 +190,7 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                       },
                     ),
                     
-                    const SizedBox(height: TossTheme.spacingL),
+                    const SizedBox(height: DSSpacing.lg),
                     
                     // 하단 안내 텍스트
                     AnimatedBuilder(
@@ -200,8 +200,8 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                           opacity: _textFadeAnimation.value * 0.7,
                           child: Text(
                             '정확한 분석을 위해 출생 정보를 입력해주세요',
-                            style: TossTheme.caption.copyWith(
-                              color: TossTheme.textGray500,
+                            style: DSTypography.labelSmall.copyWith(
+                              color: DSColors.textTertiary,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -209,7 +209,7 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                       },
                     ),
                     
-                    const SizedBox(height: TossTheme.spacingXL),
+                    const SizedBox(height: DSSpacing.xl),
                   ],
                 ),
               ),
@@ -263,7 +263,7 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: TossTheme.brandBlue.withValues(alpha: 0.3),
+                          color: DSColors.accent.withValues(alpha: 0.3),
                           width: 2,
                         ),
                       ),
@@ -286,8 +286,8 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                         angle: -_rotationAnimation.value + angle + math.pi / 2,
                         child: Text(
                           _getZodiacChar(index),
-                          style: TossTheme.caption.copyWith(
-                            color: TossTheme.textGray600,
+                          style: DSTypography.labelSmall.copyWith(
+                            color: DSColors.textSecondary,
                             fontWeight: FontWeight.bold,
                             
                           ),
@@ -302,10 +302,10 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                     height: 80,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: TossTheme.backgroundPrimary,
+                      color: DSColors.background,
                       boxShadow: [
                         BoxShadow(
-                          color: TossTheme.brandBlue.withValues(alpha: 0.2),
+                          color: DSColors.accent.withValues(alpha: 0.2),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -314,8 +314,8 @@ class _SajuIntroAnimationState extends State<SajuIntroAnimation>
                     child: Center(
                       child: Text(
                         '사주\n팔자',
-                        style: TossTheme.body2.copyWith(
-                          color: TossTheme.brandBlue,
+                        style: DSTypography.bodyMedium.copyWith(
+                          color: DSColors.accent,
                           fontWeight: FontWeight.bold,
                           height: 1.2,
                         ),
@@ -349,11 +349,11 @@ class TaeguekPainter extends CustomPainter {
     final radius = size.width / 2 - 10;
     
     final yinPaint = Paint()
-      ..color = TossTheme.textBlack.withValues(alpha: 0.8)
+      ..color = DSColors.textPrimary.withValues(alpha: 0.8)
       ..style = PaintingStyle.fill;
     
     final yangPaint = Paint()
-      ..color = TossTheme.backgroundPrimary
+      ..color = DSColors.background
       ..style = PaintingStyle.fill;
     
     // 태극 그리기
@@ -408,7 +408,7 @@ class TraditionalPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = TossTheme.textGray600.withValues(alpha: 0.1)
+      ..color = DSColors.textSecondary.withValues(alpha: 0.1)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
     

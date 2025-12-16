@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class CognitiveFunctionWeather extends StatelessWidget {
   final Map<String, dynamic> cognitiveWeather;
@@ -26,20 +26,20 @@ class CognitiveFunctionWeather extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: isDark
               ? [
-                  TossDesignSystem.grayDark100,
-                  TossDesignSystem.grayDark200.withValues(alpha: 0.5),
+                  DSColors.surface,
+                  DSColors.backgroundSecondary.withValues(alpha: 0.5),
                 ]
               : [
-                  TossDesignSystem.white,
-                  TossDesignSystem.gray50.withValues(alpha: 0.5),
+                  Colors.white,
+                  DSColors.background.withValues(alpha: 0.5),
                 ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: isDark
-              ? TossDesignSystem.black.withValues(alpha: 0.2)
-              : TossDesignSystem.gray400.withValues(alpha: 0.08),
+              ? Colors.black.withValues(alpha: 0.2)
+              : DSColors.textTertiary.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -53,20 +53,20 @@ class CognitiveFunctionWeather extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.purple.withValues(alpha: 0.1),
+                  color: DSColors.accentSecondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.wb_cloudy_outlined,
-                  color: TossDesignSystem.purple,
+                  color: DSColors.accentSecondary,
                   size: 24,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 '인지기능 날씨',
-                style: TossDesignSystem.heading3.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                style: DSTypography.headingSmall.copyWith(
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -75,8 +75,8 @@ class CognitiveFunctionWeather extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             '오늘의 인지기능 상태를 날씨로 표현했어요',
-            style: TossDesignSystem.body3.copyWith(
-              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            style: DSTypography.bodySmall.copyWith(
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             ),
           ),
           const SizedBox(height: 24),
@@ -102,14 +102,14 @@ class CognitiveFunctionWeather extends StatelessWidget {
             title: '오늘의 강점',
             content: todayHighlight,
             icon: Icons.star_outline,
-            color: TossDesignSystem.orange,
+            color: DSColors.warning,
           ),
           const SizedBox(height: 12),
           _buildInsightCard(
             title: '주의 필요',
             content: todayChallenge,
             icon: Icons.warning_amber_outlined,
-            color: TossDesignSystem.purple,
+            color: DSColors.accentSecondary,
           ),
         ],
       ),
@@ -127,8 +127,8 @@ class CognitiveFunctionWeather extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: isDark 
-          ? TossDesignSystem.grayDark50.withValues(alpha: 0.5)
-          : TossDesignSystem.white.withValues(alpha: 0.8),
+          ? DSColors.surface.withValues(alpha: 0.5)
+          : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _getFunctionColor(name).withValues(alpha: 0.3),
@@ -150,15 +150,15 @@ class CognitiveFunctionWeather extends StatelessWidget {
               children: [
                 Text(
                   _getFunctionKoreanName(name),
-                  style: TossDesignSystem.caption.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   _getWeatherDescription(weather),
-                  style: TossDesignSystem.caption.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     color: _getFunctionColor(name),
                     fontWeight: FontWeight.w600,
                     
@@ -177,7 +177,7 @@ class CognitiveFunctionWeather extends StatelessWidget {
             ),
             child: Text(
               '$level',
-              style: TossDesignSystem.caption.copyWith(
+              style: DSTypography.labelSmall.copyWith(
                 color: _getFunctionColor(name),
                 fontWeight: FontWeight.bold,
               ),
@@ -219,7 +219,7 @@ class CognitiveFunctionWeather extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TossDesignSystem.body3.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: color,
                     fontWeight: FontWeight.w600,
                   ),
@@ -227,8 +227,8 @@ class CognitiveFunctionWeather extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   content,
-                  style: TossDesignSystem.caption.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                     height: 1.4,
                   ),
                 ),
@@ -276,15 +276,15 @@ class CognitiveFunctionWeather extends StatelessWidget {
 
   Color _getFunctionColor(String function) {
     if (function.contains('Ti') || function.contains('Te')) {
-      return TossDesignSystem.tossBlue;
+      return DSColors.accent;
     } else if (function.contains('Fi') || function.contains('Fe')) {
-      return TossDesignSystem.purple;
+      return DSColors.accentSecondary;
     } else if (function.contains('Ni') || function.contains('Ne')) {
-      return TossDesignSystem.orange;
+      return DSColors.warning;
     } else if (function.contains('Si') || function.contains('Se')) {
-      return TossDesignSystem.successGreen;
+      return DSColors.success;
     }
-    return TossDesignSystem.gray600;
+    return DSColors.textTertiary;
   }
 
   String _getFunctionKoreanName(String function) {

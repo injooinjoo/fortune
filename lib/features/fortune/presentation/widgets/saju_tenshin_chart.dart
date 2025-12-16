@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/components/app_card.dart';
 
 /// 십신 분포 차트 위젯
@@ -27,61 +26,61 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
     '비견': {
       'meaning': '형제, 동료, 경쟁자',
       'description': '협력과 경쟁을 통한 성장',
-      'color': TossTheme.brandBlue,
+      'color': DSColors.accent,
       'icon': Icons.people_outline,
     },
     '겁재': {
       'meaning': '도전, 투쟁, 변화',
       'description': '역경을 통한 강화',
-      'color': TossTheme.error,
+      'color': DSColors.error,
       'icon': Icons.trending_up,
     },
     '식신': {
       'meaning': '재능, 표현, 창조',
       'description': '타고난 재능과 창의력',
-      'color': TossTheme.success,
+      'color': DSColors.success,
       'icon': Icons.palette_outlined,
     },
     '상관': {
       'meaning': '예술, 기술, 창의',
       'description': '특별한 기술과 예술성',
-      'color': TossDesignSystem.purple,
+      'color': DSColors.accent,
       'icon': Icons.auto_awesome,
     },
     '편재': {
       'meaning': '사업, 투자, 변화',
       'description': '유동적인 재물과 기회',
-      'color': TossTheme.warning,
+      'color': DSColors.warning,
       'icon': Icons.trending_up,
     },
     '정재': {
       'meaning': '안정된 재물, 근면',
       'description': '꾸준한 노력으로 얻는 재물',
-      'color': TossDesignSystem.warningYellow,
+      'color': DSColors.warning,
       'icon': Icons.savings_outlined,
     },
     '편관': {
       'meaning': '권력, 도전, 변혁',
       'description': '강력한 추진력과 개혁',
-      'color': TossDesignSystem.infoBlue,
+      'color': DSColors.info,
       'icon': Icons.flash_on_outlined,
     },
     '정관': {
       'meaning': '명예, 지위, 책임',
       'description': '사회적 인정과 명예',
-      'color': TossDesignSystem.tossBlue,
+      'color': DSColors.accent,
       'icon': Icons.workspace_premium_outlined,
     },
     '편인': {
       'meaning': '학문, 종교, 직관',
       'description': '특별한 지식과 영적 성장',
-      'color': TossDesignSystem.gray600,
+      'color': DSColors.textSecondary,
       'icon': Icons.school_outlined,
     },
     '정인': {
       'meaning': '어머니, 교육, 보호',
       'description': '체계적인 교육과 보살핌',
-      'color': TossDesignSystem.pinkPrimary,
+      'color': DSColors.accentSecondary,
       'icon': Icons.favorite_outline,
     },
   };
@@ -134,7 +133,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
       animation: widget.animationController,
       builder: (context, child) {
         return AppCard(
-          padding: const EdgeInsets.all(TossTheme.spacingL),
+          padding: const EdgeInsets.all(DSSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -145,13 +144,13 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                   children: [
                     Icon(
                       Icons.psychology_outlined,
-                      color: TossTheme.brandBlue,
+                      color: DSColors.accent,
                       size: 24,
                     ),
-                    const SizedBox(width: TossTheme.spacingS),
+                    const SizedBox(width: DSSpacing.sm),
                     Text(
                       '십신 분포',
-                      style: TossTheme.heading2.copyWith(
+                      style: DSTypography.headingLarge.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -159,19 +158,19 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                 ),
               ),
               
-              const SizedBox(height: TossTheme.spacingS),
+              const SizedBox(height: DSSpacing.sm),
               
               FadeTransition(
                 opacity: _titleAnimation,
                 child: Text(
                   '당신의 성격과 재능을 나타내는 십신 분석입니다',
-                  style: TossTheme.caption.copyWith(
-                    color: TossTheme.textGray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: DSColors.textSecondary,
                   ),
                 ),
               ),
               
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               
               // 십신 차트
               ...activeTenshin.asMap().entries.map((entry) {
@@ -183,7 +182,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                 return _buildTenshinBar(tenshin, count, index);
               }),
               
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               
               // 십신 해석
               _buildTenshinInterpretation(activeTenshin),
@@ -205,7 +204,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
     final color = info['color'] as Color;
     
     return Container(
-      margin: const EdgeInsets.only(bottom: TossTheme.spacingM),
+      margin: const EdgeInsets.only(bottom: DSSpacing.md),
       child: Column(
         children: [
           Row(
@@ -216,7 +215,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                 height: 40,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(TossTheme.radiusS),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
                 ),
                 child: Icon(
                   info['icon'] as IconData,
@@ -225,7 +224,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                 ),
               ),
               
-              const SizedBox(width: TossTheme.spacingM),
+              const SizedBox(width: DSSpacing.md),
               
               // 십신 정보
               Expanded(
@@ -237,7 +236,7 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                       children: [
                         Text(
                           tenshin,
-                          style: TossTheme.body2.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             fontWeight: FontWeight.bold,
                             color: color,
                           ),
@@ -250,8 +249,8 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                           ),
                           child: Text(
                             '$count',
-                            style: TossTheme.caption.copyWith(
-                              color: TossDesignSystem.white,
+                            style: DSTypography.labelSmall.copyWith(
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -261,8 +260,8 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                     const SizedBox(height: 2),
                     Text(
                       info['meaning'] as String,
-                      style: TossTheme.caption.copyWith(
-                        color: TossTheme.textGray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: DSColors.textSecondary,
                       ),
                     ),
                   ],
@@ -271,13 +270,13 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
             ],
           ),
           
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: DSSpacing.sm),
           
           // 진행 바
           Container(
             height: 8,
             decoration: BoxDecoration(
-              color: TossTheme.backgroundSecondary,
+              color: DSColors.backgroundSecondary,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Stack(
@@ -321,10 +320,10 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
     return FadeTransition(
       opacity: _titleAnimation,
       child: Container(
-        padding: const EdgeInsets.all(TossTheme.spacingM),
+        padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
           color: (dominantInfo['color'] as Color).withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(TossTheme.radiusM),
+          borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
             color: (dominantInfo['color'] as Color).withValues(alpha: 0.3),
           ),
@@ -339,10 +338,10 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
                   color: dominantInfo['color'] as Color,
                   size: 20,
                 ),
-                const SizedBox(width: TossTheme.spacingS),
+                const SizedBox(width: DSSpacing.sm),
                 Text(
                   '주요 성향',
-                  style: TossTheme.body2.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     color: dominantInfo['color'] as Color,
                   ),
@@ -350,41 +349,41 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
               ],
             ),
             
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             
             RichText(
               text: TextSpan(
                 children: [
                   TextSpan(
                     text: dominantTenshin,
-                    style: TossTheme.body2.copyWith(
+                    style: DSTypography.bodyMedium.copyWith(
                       fontWeight: FontWeight.bold,
                       color: dominantInfo['color'] as Color,
                     ),
                   ),
                   TextSpan(
                     text: '이 강하게 나타나는 당신은 ',
-                    style: TossTheme.body2.copyWith(
-                      color: TossTheme.textBlack,
+                    style: DSTypography.bodyMedium.copyWith(
+                      color: DSColors.textPrimary,
                     ),
                   ),
                   TextSpan(
                     text: dominantInfo['description'] as String,
-                    style: TossTheme.body2.copyWith(
-                      color: TossTheme.textBlack,
+                    style: DSTypography.bodyMedium.copyWith(
+                      color: DSColors.textPrimary,
                     ),
                   ),
                   TextSpan(
                     text: '의 특성을 가지고 있습니다.',
-                    style: TossTheme.body2.copyWith(
-                      color: TossTheme.textBlack,
+                    style: DSTypography.bodyMedium.copyWith(
+                      color: DSColors.textPrimary,
                     ),
                   ),
                 ],
               ),
             ),
             
-            const SizedBox(height: TossTheme.spacingM),
+            const SizedBox(height: DSSpacing.md),
             
             // 십신별 조언
             _buildTenshinAdvice(dominantTenshin),
@@ -411,24 +410,24 @@ class _SajuTenshinChartState extends State<SajuTenshinChart> {
     final advice = adviceMap[dominantTenshin] ?? '균형잡힌 삶을 추구하세요';
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingS),
+      padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: TossTheme.backgroundPrimary,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        color: DSColors.background,
+        borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
         children: [
           Icon(
             Icons.lightbulb_outline,
-            color: TossTheme.warning,
+            color: DSColors.warning,
             size: 16,
           ),
-          const SizedBox(width: TossTheme.spacingS),
+          const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Text(
               advice,
-              style: TossTheme.caption.copyWith(
-                color: TossTheme.textGray600,
+              style: DSTypography.labelSmall.copyWith(
+                color: DSColors.textSecondary,
               ),
             ),
           ),

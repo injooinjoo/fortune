@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../domain/models/saju/ji_jang_gan_data.dart';
@@ -49,17 +48,17 @@ class SajuPillarTablePro extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
             _buildTitle(isDark),
-            const SizedBox(height: TossTheme.spacingM),
+            const SizedBox(height: DSSpacing.md),
           ],
           _buildProTable(isDark),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: DSSpacing.sm),
           _buildDayMasterInfo(isDark),
         ],
       ),
@@ -71,25 +70,25 @@ class SajuPillarTablePro extends StatelessWidget {
       children: [
         Icon(
           Icons.grid_view_rounded,
-          color: TossTheme.brandBlue,
+          color: DSColors.accent,
           size: 20,
         ),
-        const SizedBox(width: TossTheme.spacingXS),
+        const SizedBox(width: DSSpacing.xs),
         Row(
           children: [
             Text(
               '사주명식',
-              style: TossTheme.heading3.copyWith(
+              style: DSTypography.headingMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(width: 4),
             Text(
               '四柱命式',
-              style: TossTheme.caption.copyWith(
+              style: DSTypography.labelSmall.copyWith(
                 color: isDark
-                    ? TossTheme.textGray400
-                    : TossTheme.textGray600,
+                    ? DSColors.textTertiary
+                    : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -121,9 +120,9 @@ class SajuPillarTablePro extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+          color: DSColors.border,
         ),
       ),
       child: Column(
@@ -148,11 +147,11 @@ class SajuPillarTablePro extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: isDark
-            ? TossDesignSystem.cardBackgroundDark
-            : TossTheme.backgroundSecondary,
+            ? DSColors.surface
+            : DSColors.backgroundSecondary,
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(TossTheme.radiusM),
-          topRight: Radius.circular(TossTheme.radiusM),
+          topLeft: Radius.circular(DSRadius.md),
+          topRight: Radius.circular(DSRadius.md),
         ),
       ),
       child: Row(
@@ -164,21 +163,21 @@ class SajuPillarTablePro extends StatelessWidget {
           return Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(
-                vertical: TossTheme.spacingS,
+                vertical: DSSpacing.sm,
               ),
               decoration: BoxDecoration(
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
                           color: isDark
-                              ? TossDesignSystem.borderDark
-                              : TossTheme.borderPrimary,
+                              ? DSColors.border
+                              : DSColors.border,
                           width: 1,
                         )
                       : BorderSide.none,
                 ),
                 color: isDay
-                    ? TossTheme.brandBlue.withValues(alpha: 0.15)
+                    ? DSColors.accent.withValues(alpha: 0.15)
                     : null,
               ),
               child: Column(
@@ -189,20 +188,20 @@ class SajuPillarTablePro extends StatelessWidget {
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: isDay
-                          ? TossTheme.brandBlue
+                          ? DSColors.accent
                           : (isDark
-                              ? TossDesignSystem.grayDark600
-                              : TossDesignSystem.gray700),
+                              ? DSColors.textTertiary
+                              : DSColors.textSecondary),
                     ),
                   ),
                   Text(
                     pillar['title']!,
-                    style: TossTheme.caption.copyWith(
+                    style: DSTypography.labelSmall.copyWith(
                       color: isDay
-                          ? TossTheme.brandBlue
+                          ? DSColors.accent
                           : (isDark
-                              ? TossTheme.textGray400
-                              : TossTheme.textGray600),
+                              ? DSColors.textTertiary
+                              : DSColors.textSecondary),
                       fontSize: 10,
                     ),
                   ),
@@ -220,7 +219,7 @@ class SajuPillarTablePro extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+            color: isDark ? DSColors.border : DSColors.border,
             width: 1,
           ),
         ),
@@ -236,21 +235,21 @@ class SajuPillarTablePro extends StatelessWidget {
           return Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(
-                vertical: TossTheme.spacingS,
+                vertical: DSSpacing.sm,
               ),
               decoration: BoxDecoration(
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
                           color: isDark
-                              ? TossDesignSystem.borderDark
-                              : TossTheme.borderPrimary,
+                              ? DSColors.border
+                              : DSColors.border,
                           width: 1,
                         )
                       : BorderSide.none,
                 ),
                 color: isDay
-                    ? TossTheme.brandBlue.withValues(alpha: 0.08)
+                    ? DSColors.accent.withValues(alpha: 0.08)
                     : null,
               ),
               child: _buildStemCell(stemData, isDay, isDark),
@@ -270,7 +269,7 @@ class SajuPillarTablePro extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+            color: isDark ? DSColors.border : DSColors.border,
             width: 1,
           ),
         ),
@@ -293,21 +292,21 @@ class SajuPillarTablePro extends StatelessWidget {
           return Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(
-                vertical: TossTheme.spacingS,
+                vertical: DSSpacing.sm,
               ),
               decoration: BoxDecoration(
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
                           color: isDark
-                              ? TossDesignSystem.borderDark
-                              : TossTheme.borderPrimary,
+                              ? DSColors.border
+                              : DSColors.border,
                           width: 1,
                         )
                       : BorderSide.none,
                 ),
                 color: isDay
-                    ? TossTheme.brandBlue.withValues(alpha: 0.08)
+                    ? DSColors.accent.withValues(alpha: 0.08)
                     : null,
               ),
               child: _buildBranchCell(branchData, isDay, isGongMang, isDark),
@@ -323,7 +322,7 @@ class SajuPillarTablePro extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+            color: isDark ? DSColors.border : DSColors.border,
             width: 1,
           ),
         ),
@@ -342,22 +341,22 @@ class SajuPillarTablePro extends StatelessWidget {
             return Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  vertical: TossTheme.spacingS,
-                  horizontal: TossTheme.spacingXS,
+                  vertical: DSSpacing.sm,
+                  horizontal: DSSpacing.xs,
                 ),
                 decoration: BoxDecoration(
                   border: Border(
                     right: index < pillars.length - 1
                         ? BorderSide(
                             color: isDark
-                                ? TossDesignSystem.borderDark
-                                : TossTheme.borderPrimary,
+                                ? DSColors.border
+                                : DSColors.border,
                             width: 1,
                           )
                         : BorderSide.none,
                   ),
                   color: isDay
-                      ? TossTheme.brandBlue.withValues(alpha: 0.05)
+                      ? DSColors.accent.withValues(alpha: 0.05)
                       : (isDark
                           ? Colors.black.withValues(alpha: 0.1)
                           : Colors.grey.shade50),
@@ -387,8 +386,8 @@ class SajuPillarTablePro extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(TossTheme.radiusM),
-          bottomRight: Radius.circular(TossTheme.radiusM),
+          bottomLeft: Radius.circular(DSRadius.md),
+          bottomRight: Radius.circular(DSRadius.md),
         ),
       ),
       child: Row(
@@ -400,29 +399,29 @@ class SajuPillarTablePro extends StatelessWidget {
           return Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(
-                vertical: TossTheme.spacingS,
+                vertical: DSSpacing.sm,
               ),
               decoration: BoxDecoration(
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
                           color: isDark
-                              ? TossDesignSystem.borderDark
-                              : TossTheme.borderPrimary,
+                              ? DSColors.border
+                              : DSColors.border,
                           width: 1,
                         )
                       : BorderSide.none,
                 ),
                 color: isDark
-                    ? TossDesignSystem.cardBackgroundDark
-                    : TossTheme.backgroundSecondary,
+                    ? DSColors.surface
+                    : DSColors.backgroundSecondary,
                 borderRadius: index == 0
                     ? const BorderRadius.only(
-                        bottomLeft: Radius.circular(TossTheme.radiusM),
+                        bottomLeft: Radius.circular(DSRadius.md),
                       )
                     : index == pillars.length - 1
                         ? const BorderRadius.only(
-                            bottomRight: Radius.circular(TossTheme.radiusM),
+                            bottomRight: Radius.circular(DSRadius.md),
                           )
                         : null,
               ),
@@ -458,15 +457,15 @@ class SajuPillarTablePro extends StatelessWidget {
           style: TextStyle(
             fontSize: isDay ? 28 : 24,
             fontWeight: FontWeight.bold,
-            color: isDay ? TossTheme.brandBlue : color,
+            color: isDay ? DSColors.accent : color,
           ),
           textAlign: TextAlign.center,
         ),
         // 한글 작게
         Text(
           name,
-          style: TossTheme.caption.copyWith(
-            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+          style: DSTypography.labelSmall.copyWith(
+            color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
             fontWeight: FontWeight.w500,
             fontSize: 10,
           ),
@@ -522,15 +521,15 @@ class SajuPillarTablePro extends StatelessWidget {
               style: TextStyle(
                 fontSize: isDay ? 28 : 24,
                 fontWeight: FontWeight.bold,
-                color: isDay ? TossTheme.brandBlue : color,
+                color: isDay ? DSColors.accent : color,
               ),
               textAlign: TextAlign.center,
             ),
             // 한글 + 띠 한줄로
             Text(
               '$name $animal',
-              style: TossTheme.caption.copyWith(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+              style: DSTypography.labelSmall.copyWith(
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
                 fontSize: 9,
               ),
@@ -650,8 +649,8 @@ class SajuPillarTablePro extends StatelessWidget {
         ),
         Text(
           stage.korean,
-          style: TossTheme.caption.copyWith(
-            color: isDark ? TossTheme.textGray400 : TossTheme.textGray600,
+          style: DSTypography.labelSmall.copyWith(
+            color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
             fontSize: 9,
           ),
           textAlign: TextAlign.center,
@@ -674,8 +673,8 @@ class SajuPillarTablePro extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingS,
-        vertical: TossTheme.spacingXS,
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -686,7 +685,7 @@ class SajuPillarTablePro extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: color.withValues(alpha: 0.25),
           width: 1,
@@ -712,23 +711,23 @@ class SajuPillarTablePro extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: TossTheme.spacingS),
+          const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Row(
               children: [
                 Text(
                   '일간 日干',
-                  style: TossTheme.caption.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     color: isDark
-                        ? TossTheme.textGray400
-                        : TossTheme.textGray600,
+                        ? DSColors.textTertiary
+                        : DSColors.textSecondary,
                     fontSize: 10,
                   ),
                 ),
                 const SizedBox(width: 6),
                 Text(
                   '$stemName($stemHanja)',
-                  style: TossTheme.body2.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     color: color,
                   ),

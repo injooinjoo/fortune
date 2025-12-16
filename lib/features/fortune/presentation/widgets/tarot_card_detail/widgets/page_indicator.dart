@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class TarotPageIndicator extends StatelessWidget {
   final int currentPage;
@@ -32,8 +32,8 @@ class TarotPageIndicator extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            TossDesignSystem.transparent,
-            TossDesignSystem.gray900.withValues(alpha: 0.3)
+            Colors.transparent,
+            DSColors.textPrimary.withValues(alpha: 0.3)
           ],
         ),
       ),
@@ -50,36 +50,36 @@ class TarotPageIndicator extends StatelessWidget {
                   onTap: () {
                     pageController.animateToPage(
                       index,
-                      duration: TossDesignSystem.durationMedium,
+                      duration: DSAnimation.durationMedium,
                       curve: Curves.easeInOut,
                     );
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(
-                        horizontal: TossDesignSystem.spacingXXS * 1.5),
+                        horizontal: 4 * 1.5),
                     child: Column(
                       children: [
                         AnimatedContainer(
-                          duration: TossDesignSystem.durationShort,
+                          duration: DSAnimation.durationQuick,
                           width: isActive ? 40 : 32,
                           height: isActive ? 40 : 32,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: isActive
-                                ? TossDesignSystem.purple
-                                : TossDesignSystem.white.withValues(alpha: 0.2),
+                                ? DSColors.accentSecondary
+                                : Colors.white.withValues(alpha: 0.2),
                             border: Border.all(
                               color: isActive
-                                  ? TossDesignSystem.purple
+                                  ? DSColors.accentSecondary
                                       .withValues(alpha: 0.5)
-                                  : TossDesignSystem.white
+                                  : Colors.white
                                       .withValues(alpha: 0.3),
                               width: 2,
                             ),
                             boxShadow: isActive
                                 ? [
                                     BoxShadow(
-                                      color: TossDesignSystem.purple
+                                      color: DSColors.accentSecondary
                                           .withValues(alpha: 0.5),
                                       blurRadius: 8,
                                       spreadRadius: 2,
@@ -92,8 +92,8 @@ class TarotPageIndicator extends StatelessWidget {
                               '${index + 1}',
                               style: TextStyle(
                                 color: isActive
-                                    ? TossDesignSystem.white
-                                    : TossDesignSystem.white
+                                    ? Colors.white
+                                    : Colors.white
                                         .withValues(alpha: 0.7),
                                 fontWeight: isActive
                                     ? FontWeight.bold
@@ -103,7 +103,7 @@ class TarotPageIndicator extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: TossDesignSystem.spacingXXS),
+                        const SizedBox(height: 4),
                         Text(
                           pageNames[index],
                           style: Theme.of(context)
@@ -125,7 +125,7 @@ class TarotPageIndicator extends StatelessWidget {
 
           // Swipe hint with animation
           if (currentPage == 0) ...[
-            const SizedBox(height: TossDesignSystem.spacingS),
+            const SizedBox(height: 8),
             TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: 1),
               duration: const Duration(seconds: 2),
@@ -139,10 +139,10 @@ class TarotPageIndicator extends StatelessWidget {
                       child: Icon(
                         Icons.swipe,
                         size: 20,
-                        color: TossDesignSystem.white.withValues(alpha: 0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                       ),
                     ),
-                    const SizedBox(width: TossDesignSystem.spacingXS),
+                    const SizedBox(width: 8),
                     Text(
                       '좌우로 스와이프하거나 숫자를 탭하세요',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(

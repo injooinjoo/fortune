@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class LuckyItems extends StatelessWidget {
   final Map<String, dynamic> items;
@@ -12,7 +11,7 @@ class LuckyItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -20,13 +19,13 @@ class LuckyItems extends StatelessWidget {
           children: [
             const Icon(Icons.stars,
               size: 20,
-              color: TossDesignSystem.warningOrange),
+              color: DSColors.warning),
             const SizedBox(width: 8),
             Text(
               '오늘의 행운 아이템',
-              style: TypographyUnified.bodySmall.copyWith(
+              style: DSTypography.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                color: colors.textPrimary,
               ),
             ),
           ],
@@ -38,14 +37,14 @@ class LuckyItems extends StatelessWidget {
           children: items.entries.map((entry) => Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+              color: DSColors.warning.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: TossDesignSystem.warningOrange.withValues(alpha: 0.3)),
+              border: Border.all(color: DSColors.warning.withValues(alpha: 0.3)),
             ),
             child: Text(
               '${entry.value}',
-              style: TypographyUnified.bodySmall.copyWith(
-                color: TossDesignSystem.warningOrange,
+              style: DSTypography.bodySmall.copyWith(
+                color: DSColors.warning,
                 fontWeight: FontWeight.w500,
               ),
             ),

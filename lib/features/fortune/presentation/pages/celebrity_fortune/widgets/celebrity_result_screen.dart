@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../domain/entities/fortune.dart';
 import '../../../../../../data/models/celebrity_simple.dart';
 import '../../../../../../core/widgets/unified_button.dart';
@@ -12,6 +10,7 @@ import '../../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../../presentation/providers/ad_provider.dart';
 import '../../../../../../presentation/providers/token_provider.dart';
 import '../../../../../../core/utils/subscription_snackbar.dart';
+import '../../../../../../core/services/fortune_haptic_service.dart';
 
 class CelebrityResultScreen extends ConsumerStatefulWidget {
   final Fortune fortune;
@@ -40,6 +39,13 @@ class _CelebrityResultScreenState extends ConsumerState<CelebrityResultScreen> {
     super.initState();
     _isBlurred = widget.fortune.isBlurred;
     _blurredSections = List<String>.from(widget.fortune.blurredSections);
+
+    // 연예인 운세 결과 공개 햅틱 (신비로운 공개)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(fortuneHapticServiceProvider).mysticalReveal();
+      }
+    });
   }
 
   @override
@@ -76,8 +82,6 @@ class _CelebrityResultScreenState extends ConsumerState<CelebrityResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Stack(
       children: [
         SingleChildScrollView(
@@ -181,16 +185,16 @@ class _CelebrityHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
+            color: colors.textPrimary.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -203,7 +207,7 @@ class _CelebrityHeader extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               color: celebrity?.characterImageUrl != null
-                  ? (isDark ? TossDesignSystem.cardBackgroundDark : Colors.grey[100])
+                  ? colors.backgroundSecondary
                   : _getCelebrityColor(celebrity?.name ?? ''),
               borderRadius: BorderRadius.circular(30),
             ),
@@ -216,9 +220,9 @@ class _CelebrityHeader extends StatelessWidget {
                       errorBuilder: (context, error, stackTrace) => Center(
                         child: Text(
                           celebrity?.name.substring(0, 1) ?? '?',
-                          style: TypographyUnified.displaySmall.copyWith(
+                          style: DSTypography.headingMedium.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: TossDesignSystem.white,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -227,29 +231,29 @@ class _CelebrityHeader extends StatelessWidget {
                 : Center(
                     child: Text(
                       celebrity?.name.substring(0, 1) ?? '?',
-                      style: TypographyUnified.displaySmall.copyWith(
+                      style: DSTypography.headingMedium.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: TossDesignSystem.white,
+                        color: Colors.white,
                       ),
                     ),
                   ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '${celebrity?.name}님과의 궁합',
-                  style: TypographyUnified.heading4.copyWith(
+                  style: DSTypography.labelLarge.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                    color: colors.textPrimary,
                   ),
                 ),
                 Text(
                   _getConnectionTypeText(connectionType),
-                  style: TypographyUnified.bodySmall.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
@@ -259,11 +263,11 @@ class _CelebrityHeader extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: _getScoreColor(score).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(DSRadius.md),
             ),
             child: Text(
               '${score}점',
-              style: TypographyUnified.buttonMedium.copyWith(
+              style: DSTypography.buttonMedium.copyWith(
                 fontWeight: FontWeight.w700,
                 color: _getScoreColor(score),
               ),
@@ -297,10 +301,10 @@ class _CelebrityHeader extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.success;
-    if (score >= 60) return TossTheme.primaryBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.error;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accent;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 }
 
@@ -311,16 +315,16 @@ class _FortuneMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
+            color: colors.textPrimary.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -330,15 +334,15 @@ class _FortuneMessage extends StatelessWidget {
         children: [
           Icon(
             Icons.auto_awesome,
-            color: Color(0xFFFF6B6B),
+            color: DSColors.accentSecondary,
             size: 32,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             message,
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: DSTypography.buttonMedium.copyWith(
               height: 1.6,
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              color: colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -355,16 +359,16 @@ class _Recommendations extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
+            color: colors.textPrimary.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -375,18 +379,18 @@ class _Recommendations extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.lightbulb_outline, color: TossTheme.primaryBlue, size: 24),
-              SizedBox(width: 8),
+              Icon(Icons.lightbulb_outline, color: colors.accent, size: 24),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '추천 조언',
-                style: TypographyUnified.heading4.copyWith(
+                style: DSTypography.labelLarge.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                  color: colors.textPrimary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           ...recommendations.map((advice) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: Row(
@@ -397,7 +401,7 @@ class _Recommendations extends StatelessWidget {
                   height: 6,
                   margin: const EdgeInsets.only(top: 8),
                   decoration: BoxDecoration(
-                    color: TossTheme.primaryBlue,
+                    color: colors.accent,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -405,9 +409,9 @@ class _Recommendations extends StatelessWidget {
                 Expanded(
                   child: Text(
                     advice,
-                    style: TypographyUnified.bodySmall.copyWith(
+                    style: DSTypography.labelSmall.copyWith(
                       height: 1.5,
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                      color: colors.textSecondary,
                     ),
                   ),
                 ),

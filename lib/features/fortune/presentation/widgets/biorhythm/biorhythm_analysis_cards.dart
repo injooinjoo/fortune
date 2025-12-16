@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/theme/toss_theme.dart';
 import '../../pages/biorhythm_result_page.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 
 class PersonalAnalysisCard extends StatelessWidget {
   final BiorhythmData biorhythmData;
@@ -29,7 +27,7 @@ class PersonalAnalysisCard extends StatelessWidget {
             '당신의 바이오리듬 특성',
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+              color: isDark ? Colors.white : DSColors.textPrimary,
             ),
           ),
           SizedBox(height: 16),
@@ -37,7 +35,7 @@ class PersonalAnalysisCard extends StatelessWidget {
           Text(
             '$age세의 당신은 지금까지 ${biorhythmData.totalDays}일을 살아오셨네요.',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               height: 1.6,
             ),
           ),
@@ -46,7 +44,7 @@ class PersonalAnalysisCard extends StatelessWidget {
           Text(
             _getPersonalAnalysis(),
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               height: 1.6,
             ),
           ),
@@ -105,7 +103,7 @@ class LifestyleAdviceCard extends StatelessWidget {
             '맞춤형 라이프 스타일 조언',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+              color: isDark ? Colors.white : DSColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -123,12 +121,12 @@ class LifestyleAdviceCard extends StatelessWidget {
                     height: 24,
                     margin: const EdgeInsets.only(top: 2),
                     decoration: BoxDecoration(
-                      color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+                      color: DSColors.accent.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Icon(
                       advice['icon'] as IconData,
-                      color: TossTheme.primaryBlue,
+                      color: DSColors.accent,
                       size: 14,
                     ),
                   ),
@@ -140,16 +138,16 @@ class LifestyleAdviceCard extends StatelessWidget {
                       children: [
                         Text(
                           advice['title'] as String,
-                          style: TypographyUnified.bodySmall.copyWith(
+                          style: DSTypography.bodySmall.copyWith(
                             fontWeight: FontWeight.w500,
-                            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                            color: isDark ? Colors.white : DSColors.textPrimary,
                           ),
                         ),
                         SizedBox(height: 2),
                         Text(
                           advice['description'] as String,
-                          style: TypographyUnified.bodySmall.copyWith(
-                            color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                          style: DSTypography.bodySmall.copyWith(
+                            color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                             height: 1.4,
                           ),
                         ),
@@ -265,7 +263,7 @@ class HealthTipsCard extends StatelessWidget {
                 '건강 관리 팁',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                  color: isDark ? Colors.white : DSColors.textPrimary,
                 ),
               ),
             ],
@@ -329,16 +327,16 @@ class HealthTipsCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TypographyUnified.bodySmall.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                  color: isDark ? Colors.white : DSColors.textPrimary,
                 ),
               ),
               SizedBox(height: 2),
               Text(
                 tip,
-                style: TypographyUnified.bodySmall.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                style: DSTypography.bodySmall.copyWith(
+                  color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   height: 1.4,
                 ),
               ),
@@ -397,7 +395,7 @@ class NextAnalysisCard extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  TossTheme.primaryBlue,
+                  DSColors.accent,
                   const Color(0xFF00C896),
                 ],
               ),
@@ -405,7 +403,7 @@ class NextAnalysisCard extends StatelessWidget {
             ),
             child: const Icon(
               Icons.schedule_rounded,
-              color: TossDesignSystem.white,
+              color: Colors.white,
               size: 24,
             ),
           ),
@@ -419,14 +417,14 @@ class NextAnalysisCard extends StatelessWidget {
                   '1주일 후 다시 확인해보세요',
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                    color: isDark ? Colors.white : DSColors.textPrimary,
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
                   '바이오리듬은 매일 변화해요',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                    color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   ),
                 ),
               ],
@@ -435,7 +433,7 @@ class NextAnalysisCard extends StatelessWidget {
 
           Icon(
             Icons.arrow_forward_ios_rounded,
-            color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+            color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             size: 16,
           ),
         ],

@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class DreamPsychologyChart extends StatefulWidget {
   final Map<String, double> psychologicalState;
@@ -57,11 +54,11 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeader(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildRadarChart(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildBalanceIndicators(),
-        const SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: 16),
         _buildInsightSection(),
       ],
     );
@@ -72,9 +69,9 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       children: [
         Icon(
           Icons.psychology,
-          color: TossDesignSystem.purple,
+          color: DSColors.accentSecondary,
           size: 24),
-        const SizedBox(width: AppSpacing.spacing2),
+        const SizedBox(width: 8),
         Text(
           '심리 상태 분석',
           style: Theme.of(context).textTheme.bodyMedium),
@@ -87,8 +84,8 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
       animation: _animation,
       builder: (context, child) {
         return GlassContainer(
-          height: AppSpacing.spacing24 * 3.125,
-          padding: AppSpacing.paddingAll20,
+          height: 96 * 3.125,
+          padding: EdgeInsets.all(20),
           child: Stack(
             children: [
               CustomPaint(
@@ -98,17 +95,17 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                 RadarChartData(
                   radarShape: RadarShape.polygon,
                   tickCount: 5,
-                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? TypographyUnified.labelMedium,
+                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? DSTypography.labelMedium,
                   tickBorderData: BorderSide(
-                    color: TossDesignSystem.white.withValues(alpha: 0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1),
                   gridBorderData: BorderSide(
-                    color: TossDesignSystem.white.withValues(alpha: 0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1),
                   radarBorderData: BorderSide(
-                    color: TossDesignSystem.purple.withValues(alpha: 0.5),
+                    color: DSColors.accentSecondary.withValues(alpha: 0.5),
                     width: 2),
-                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? TypographyUnified.labelMedium,
+                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? DSTypography.labelMedium,
                   titlePositionPercentageOffset: 0.15,
                   getTitle: (index, angle) {
                     final titles = ['의식', '무의식', '긍정', '부정', '안정', '변화', '내향', '외향'];
@@ -118,8 +115,8 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                   },
                   dataSets: [
                     RadarDataSet(
-                      fillColor: TossDesignSystem.purple.withValues(alpha: 0.3),
-                      borderColor: TossDesignSystem.purple,
+                      fillColor: DSColors.accentSecondary.withValues(alpha: 0.3),
+                      borderColor: DSColors.accentSecondary,
                       borderWidth: 2,
                       entryRadius: 4,
                       dataEntries: _getRadarEntries()),
@@ -155,19 +152,19 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
     
     if (consciousness > 0.6 && positivity > 0.6) {
       stateText = '의식적 긍정';
-      stateColor = TossDesignSystem.successGreen;
+      stateColor = DSColors.success;
     } else if (consciousness > 0.6 && positivity < 0.4) {
       stateText = '의식적 우려';
-      stateColor = TossDesignSystem.warningOrange;
+      stateColor = DSColors.warning;
     } else if (consciousness < 0.4 && positivity > 0.6) {
       stateText = '무의식적 희망';
-      stateColor = TossDesignSystem.tossBlue;
+      stateColor = DSColors.accent;
     } else if (consciousness < 0.4 && positivity < 0.4) {
       stateText = '무의식적 불안';
-      stateColor = TossDesignSystem.errorRed;
+      stateColor = DSColors.error;
     } else {
       stateText = '균형 상태';
-      stateColor = TossDesignSystem.purple;
+      stateColor = DSColors.accentSecondary;
     }
     
     return Column(
@@ -176,12 +173,12 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
         Text(
           '전반적 상태',
           style: Theme.of(context).textTheme.bodyMedium),
-        const SizedBox(height: AppSpacing.spacing1),
+        const SizedBox(height: 4),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
             color: stateColor.withValues(alpha: 0.2),
-            borderRadius: AppDimensions.borderRadiusMedium,
+            borderRadius: BorderRadius.circular(DSRadius.md),
             border: Border.all(
               color: stateColor.withValues(alpha: 0.5),
               width: 1),
@@ -197,13 +194,13 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
   Widget _buildBalanceIndicators() {
     return Column(
       children: [
-        _buildBalanceBar('의식', '무의식', TossDesignSystem.tossBlue, TossDesignSystem.purple),
-        const SizedBox(height: AppSpacing.spacing3),
-        _buildBalanceBar('긍정', '부정', TossDesignSystem.successGreen, TossDesignSystem.errorRed),
-        const SizedBox(height: AppSpacing.spacing3),
-        _buildBalanceBar('안정', '변화', TossDesignSystem.tossBlue, TossDesignSystem.warningOrange),
-        const SizedBox(height: AppSpacing.spacing3),
-        _buildBalanceBar('내향', '외향', TossDesignSystem.purple, TossDesignSystem.warningYellow),
+        _buildBalanceBar('의식', '무의식', DSColors.accent, DSColors.accentSecondary),
+        const SizedBox(height: 12),
+        _buildBalanceBar('긍정', '부정', DSColors.success, DSColors.error),
+        const SizedBox(height: 12),
+        _buildBalanceBar('안정', '변화', DSColors.accent, DSColors.warning),
+        const SizedBox(height: 12),
+        _buildBalanceBar('내향', '외향', DSColors.accentSecondary, DSColors.warning),
       ],
     );
   }
@@ -216,12 +213,12 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
     final rightPercent = (rightValue / total * 100).toInt();
     
     return Container(
-      padding: AppSpacing.paddingAll12,
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white.withValues(alpha: 0.05),
-        borderRadius: AppDimensions.borderRadiusMedium,
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: TossDesignSystem.white.withValues(alpha: 0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1),
       ),
       child: Column(
@@ -237,9 +234,9 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                 style: Theme.of(context).textTheme.bodyMedium),
             ],
           ),
-          const SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: 8),
           ClipRRect(
-            borderRadius: AppDimensions.borderRadiusSmall,
+            borderRadius: BorderRadius.circular(DSRadius.sm),
             child: LinearProgressIndicator(
               value: leftValue / total,
               backgroundColor: rightColor.withValues(alpha: 0.3),
@@ -253,7 +250,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
 
   Widget _buildInsightSection() {
     return GlassContainer(
-      padding: AppSpacing.paddingAll16,
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -261,21 +258,21 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
             children: [
               Icon(
                 Icons.lightbulb_outline,
-                color: TossDesignSystem.warningYellow,
+                color: DSColors.warning,
                 size: 20),
-              const SizedBox(width: AppSpacing.spacing2),
+              const SizedBox(width: 8),
               Text(
                 '심리학적 통찰',
                 style: Theme.of(context).textTheme.bodyMedium),
             ],
           ),
-          SizedBox(height: AppSpacing.spacing3),
+          SizedBox(height: 12),
           Text(
             _generateInsight(),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               height: 1.5),
           ),
-          const SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: 12),
           _buildRecommendations(),
         ],
       ),
@@ -318,15 +315,15 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
         Text(
           '추천 활동',
           style: Theme.of(context).textTheme.bodyMedium),
-        const SizedBox(height: AppSpacing.spacing2),
+        const SizedBox(height: 8),
         ...recommendations.map((rec) => Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.spacing1),
+          padding: const EdgeInsets.only(bottom: 4),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 '• ',
-                style: TextStyle(color: TossDesignSystem.warningYellow),
+                style: TextStyle(color: DSColors.warning),
               ),
               Expanded(
                 child: Text(
@@ -379,7 +376,7 @@ class _RadarBackgroundPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = TossDesignSystem.white.withValues(alpha: 0.1);
+      ..color = Colors.white.withValues(alpha: 0.1);
     
     // 동심원
     for (int i = 1; i <= 5; i++) {

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+import '../../../../core/design_system/design_system.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
 
 class CareerFortuneType {
@@ -76,7 +74,7 @@ class CareerFortuneSelector extends StatelessWidget {
       subtitle: '도전의 길',
       description: '새로운 사업을 시작하려는 분들을 위한 운세',
       icon: Icons.rocket_launch_rounded,
-      gradientColors: [TossDesignSystem.gray600, TossDesignSystem.gray600],
+      gradientColors: [DSColors.textSecondary, DSColors.textSecondary],
       route: '/fortune/career/startup',
       targetAudience: ['예비 창업자', '스타트업', '사업가']),
     CareerFortuneType(
@@ -97,17 +95,17 @@ class CareerFortuneSelector extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
+      backgroundColor: isDark ? DSColors.background : Colors.white,
       appBar: AppBar(
         title: const Text('커리어 운세'),
-        backgroundColor: TossDesignSystem.transparent,
+        backgroundColor: Colors.transparent,
         elevation: 0),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: AppSpacing.paddingAll20,
+                padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -115,10 +113,10 @@ class CareerFortuneSelector extends StatelessWidget {
                       '당신의 커리어 상황은?',
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                        color: isDark ? DSColors.textPrimary : null,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.spacing2),
+                    const SizedBox(height: 8),
                     Text(
                       '현재 상황에 맞는 운세를 선택해주세요',
                       style: theme.textTheme.bodyLarge?.copyWith(
@@ -129,7 +127,7 @@ class CareerFortuneSelector extends StatelessWidget {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -146,7 +144,7 @@ class CareerFortuneSelector extends StatelessWidget {
               ),
             ),
             const SliverToBoxAdapter(
-              child: SizedBox(height: AppSpacing.spacing8)),
+              child: SizedBox(height: 32)),
           ],
         ),
       ),
@@ -170,7 +168,7 @@ class _CareerTypeCard extends StatelessWidget {
       onTap: () => context.push(careerType.route),
       borderRadius: BorderRadius.circular(20),
       child: GlassContainer(
-        padding: AppSpacing.paddingAll20,
+        padding: EdgeInsets.all(20),
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -184,39 +182,39 @@ class _CareerTypeCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: AppSpacing.paddingAll12,
+                  padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: careerType.gradientColors),
-                    borderRadius: AppDimensions.borderRadiusMedium),
+                    borderRadius: BorderRadius.circular(DSRadius.md)),
                   child: Icon(
                     careerType.icon,
-                    color: TossDesignSystem.white,
+                    color: Colors.white,
                     size: 24)),
                 const Spacer(),
                 if (careerType.isNew) Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.spacing2,
-                      vertical: AppSpacing.spacing1),
+                      horizontal: 8,
+                      vertical: 4),
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.gray600,
-                      borderRadius: AppDimensions.borderRadiusMedium),
+                      color: DSColors.textSecondary,
+                      borderRadius: BorderRadius.circular(DSRadius.md)),
                     child: Text(
                       'NEW',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: TossDesignSystem.white,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold)))
               ],
             ),
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: 16),
             Text(
               careerType.title,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                color: isDark ? DSColors.textPrimary : null,
               ),
             ),
-            const SizedBox(height: AppSpacing.spacing1),
+            const SizedBox(height: 4),
             Text(
               careerType.subtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -229,18 +227,18 @@ class _CareerTypeCard extends StatelessWidget {
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
               maxLines: 2,
               overflow: TextOverflow.ellipsis),
-            const SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: 8),
             Wrap(
               spacing: 4,
               runSpacing: 4,
               children: careerType.targetAudience.take(2).map((audience) {
                 return Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.spacing2,
+                    horizontal: 8,
                     vertical: 4 * 0.5),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                    borderRadius: AppDimensions.borderRadiusSmall),
+                    borderRadius: BorderRadius.circular(DSRadius.sm)),
                   child: Text(
                     audience,
                     style: theme.textTheme.bodySmall?.copyWith(

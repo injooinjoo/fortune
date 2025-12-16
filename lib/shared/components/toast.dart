@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 
 enum ToastType {
   success, error, warning, info
@@ -95,7 +95,7 @@ class _ToastWidgetState extends State<_ToastWidget>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: TossDesignSystem.durationShort,
+      duration: DSAnimation.durationFast,
       vsync: this,
     );
 
@@ -144,20 +144,20 @@ class _ToastWidgetState extends State<_ToastWidget>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
+    final typography = context.typography;
     final mediaQuery = MediaQuery.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Positioned(
-      top: mediaQuery.padding.top + 16,
-      left: 16,
-      right: 16,
+      top: mediaQuery.padding.top + DSSpacing.md,
+      left: DSSpacing.md,
+      right: DSSpacing.md,
       child: SlideTransition(
         position: _offsetAnimation,
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: Material(
-            color: TossDesignSystem.transparent,
+            color: Colors.transparent,
             child: GestureDetector(
               onTap: widget.onTap ?? _dismiss,
               onHorizontalDragEnd: (details) {
@@ -167,15 +167,15 @@ class _ToastWidgetState extends State<_ToastWidget>
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: TossDesignSystem.spacingM,
-                  vertical: TossDesignSystem.spacingM,
+                  horizontal: DSSpacing.md,
+                  vertical: DSSpacing.md,
                 ),
                 decoration: BoxDecoration(
-                  color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray900,
-                  borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+                  color: colors.textPrimary.withValues(alpha: 0.95),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.gray900.withValues(alpha: 0.2),
+                      color: colors.textPrimary.withValues(alpha: 0.2),
                       offset: const Offset(0, 4),
                       blurRadius: 12,
                     ),
@@ -186,15 +186,15 @@ class _ToastWidgetState extends State<_ToastWidget>
                   children: [
                     Icon(
                       _icon,
-                      color: TossDesignSystem.white,
+                      color: colors.background,
                       size: 20,
                     ),
-                    const SizedBox(width: TossDesignSystem.spacingS),
+                    const SizedBox(width: DSSpacing.sm),
                     Flexible(
                       child: Text(
                         widget.message,
-                        style: TossDesignSystem.body2.copyWith(
-                          color: TossDesignSystem.white,
+                        style: typography.bodyMedium.copyWith(
+                          color: colors.background,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -233,8 +233,8 @@ class SnackBarHelper {
     String message,
     IconData icon,
   ) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -242,26 +242,26 @@ class SnackBarHelper {
           children: [
             Icon(
               icon,
-              color: TossDesignSystem.white,
+              color: colors.background,
               size: 20,
             ),
-            const SizedBox(width: TossDesignSystem.spacingS),
+            const SizedBox(width: DSSpacing.sm),
             Expanded(
               child: Text(
                 message,
-                style: TossDesignSystem.body2.copyWith(
-                  color: TossDesignSystem.white,
+                style: typography.bodyMedium.copyWith(
+                  color: colors.background,
                 ),
               ),
             ),
           ],
         ),
-        backgroundColor: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray900,
+        backgroundColor: colors.textPrimary.withValues(alpha: 0.95),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+          borderRadius: BorderRadius.circular(DSRadius.md),
         ),
-        margin: const EdgeInsets.all(TossDesignSystem.spacingM),
+        margin: const EdgeInsets.all(DSSpacing.md),
         dismissDirection: DismissDirection.horizontal,
       ),
     );

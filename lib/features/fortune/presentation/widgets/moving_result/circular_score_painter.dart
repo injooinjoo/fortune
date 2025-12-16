@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 
 /// 원형 점수 그리기 Painter
 class CircularScorePainter extends CustomPainter {
@@ -16,7 +16,7 @@ class CircularScorePainter extends CustomPainter {
 
     // 배경 원
     final backgroundPaint = Paint()
-      ..color = TossDesignSystem.gray300.withValues(alpha: 0.2)
+      ..color = DSColors.border.withValues(alpha: 0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12;
 

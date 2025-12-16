@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import 'package:go_router/go_router.dart';
 
 enum TraditionalType {
@@ -29,7 +29,7 @@ class TraditionalFortunePage extends ConsumerStatefulWidget {
 class _TraditionalFortunePageState extends ConsumerState<TraditionalFortunePage> {
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     // Navigate directly to the saju toss page
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.pushReplacement('/traditional-saju');
@@ -37,10 +37,10 @@ class _TraditionalFortunePageState extends ConsumerState<TraditionalFortunePage>
 
     // Show loading while navigating
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       body: Center(
         child: CircularProgressIndicator(
-          color: Color(0xFFEF4444),
+          color: colors.accent,
         ),
       ),
     );
@@ -54,7 +54,7 @@ class SajuPatternPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-      ..color = TossDesignSystem.white.withValues(alpha:0.1);
+      ..color = Colors.white.withValues(alpha:0.1);
 
     // Draw Yin-Yang pattern
     final centerX = size.width * 0.85;
@@ -66,9 +66,9 @@ class SajuPatternPainter extends CustomPainter {
 
     // Inner circles
     paint.style = PaintingStyle.fill;
-    paint.color = TossDesignSystem.white.withValues(alpha:0.15);
+    paint.color = Colors.white.withValues(alpha:0.15);
     canvas.drawCircle(Offset(centerX - radius / 3, centerY), radius / 3, paint);
-    paint.color = TossDesignSystem.gray900.withValues(alpha:0.15);
+    paint.color = Colors.black.withValues(alpha:0.15);
     canvas.drawCircle(Offset(centerX + radius / 3, centerY), radius / 3, paint);
 }
 
@@ -83,7 +83,7 @@ class ChartPreviewPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0
-      ..color = TossDesignSystem.white.withValues(alpha:0.3);
+      ..color = Colors.white.withValues(alpha:0.3);
 
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 3;
@@ -93,15 +93,15 @@ class ChartPreviewPainter extends CustomPainter {
       final angle = (i * 72 - 90) * 3.14159 / 180;
       final x = center.dx + radius * cos(angle);
       final y = center.dy + radius * sin(angle);
-      
+
       if (i == 0) {
         paint.style = PaintingStyle.fill;
-        paint.color = TossDesignSystem.white.withValues(alpha:0.2);
+        paint.color = Colors.white.withValues(alpha:0.2);
         canvas.drawPath(
           Path()
             ..moveTo(x, y)
             ..lineTo(center.dx + radius * 0.7 * cos(angle), center.dy + radius * 0.7 * sin(angle))
-            ..lineTo(center.dx + radius * 0.7 * cos((i + 1) * 72 - 90) * 3.14159 / 180, 
+            ..lineTo(center.dx + radius * 0.7 * cos((i + 1) * 72 - 90) * 3.14159 / 180,
                      center.dy + radius * 0.7 * sin((i + 1) * 72 - 90) * 3.14159 / 180)
             ..lineTo(center.dx + radius * cos((i + 1) * 72 - 90) * 3.14159 / 180,
                      center.dy + radius * sin((i + 1) * 72 - 90) * 3.14159 / 180)
@@ -109,9 +109,9 @@ class ChartPreviewPainter extends CustomPainter {
           paint
         );
         paint.style = PaintingStyle.stroke;
-        paint.color = TossDesignSystem.white.withValues(alpha:0.3);
+        paint.color = Colors.white.withValues(alpha:0.3);
       }
-      
+
       if (i < 4) {
         final nextAngle = ((i + 1) * 72 - 90) * 3.14159 / 180;
         final nextX = center.dx + radius * cos(nextAngle);
@@ -137,7 +137,7 @@ class TojeongPatternPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-      ..color = TossDesignSystem.white.withValues(alpha:0.1);
+      ..color = Colors.white.withValues(alpha:0.1);
 
     // Draw traditional Korean pattern
     final spacing = 20.0;

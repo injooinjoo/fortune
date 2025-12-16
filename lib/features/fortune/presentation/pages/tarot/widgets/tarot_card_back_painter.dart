@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as dart_math;
-import '../../../../../../core/theme/toss_design_system.dart';
 
 /// 타로 카드 뒷면 그리기 위한 CustomPainter
 class TarotCardBackPainter extends CustomPainter {
@@ -9,7 +8,7 @@ class TarotCardBackPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-      ..color = TossDesignSystem.white.withValues(alpha: 0.3);
+      ..color = Colors.white.withValues(alpha: 0.3);
 
     final center = Offset(size.width / 2, size.height / 2);
 

@@ -260,6 +260,64 @@ class FortuneHapticService {
   }
 
   // ============================================================
+  // 인터랙티브 기능 전용
+  // ============================================================
+
+  /// 포춘쿠키 흔들기 패턴
+  ///
+  /// 쿠키를 탭한 후 흔들리는 애니메이션 동안 사용
+  /// 4회 연속 빠른 진동으로 흔들리는 느낌 표현
+  Future<void> cookieShake() async {
+    if (!_canExecute) return;
+
+    for (int i = 0; i < 4; i++) {
+      await HapticUtils.lightImpact();
+      await Future.delayed(const Duration(milliseconds: 80));
+    }
+  }
+
+  /// 긁기/스크래치 패턴
+  ///
+  /// 복권 긁기, 숨겨진 내용 드러내기 등에 사용
+  /// 부드럽고 연속적인 느낌
+  Future<void> scratch() async {
+    if (!_canExecute) return;
+    await HapticUtils.soft();
+  }
+
+  /// 스와이프 완료 패턴
+  ///
+  /// 카드 스와이프, 슬라이드 완료 시 사용
+  Future<void> swipeComplete() async {
+    if (!_canExecute) return;
+    await HapticUtils.lightImpact();
+  }
+
+  /// 숫자 키패드 입력
+  ///
+  /// 생년월일 등 숫자 입력 시 가벼운 피드백
+  Future<void> keypadTap() async {
+    if (!_canExecute) return;
+    await HapticUtils.selection();
+  }
+
+  /// 슬롯머신/룰렛 스핀
+  ///
+  /// 회전하는 요소의 틱 사운드처럼 반복 피드백
+  Future<void> spinTick() async {
+    if (!_canExecute) return;
+    await HapticUtils.soft();
+  }
+
+  /// 탭앤홀드 시작
+  ///
+  /// 길게 누르기 시작 시 피드백
+  Future<void> longPressStart() async {
+    if (!_canExecute) return;
+    await HapticUtils.mediumImpact();
+  }
+
+  // ============================================================
   // 특수 이벤트
   // ============================================================
 

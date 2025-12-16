@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
+import '../../core/providers/user_settings_provider.dart';
 import '../../services/phone_auth_service.dart';
 import '../onboarding/steps/phone_step.dart';
 import '../onboarding/steps/phone_verification_step.dart';
@@ -26,58 +27,23 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
   bool _showPhoneInput = false;
   bool _showVerification = false;
 
-  // TOSS Design System Helper Methods
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
-  Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
-  }
-
-  Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.gray50;
-  }
-
-  Color _getCardColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark100
-        : TossDesignSystem.white;
-  }
-
-  Color _getDividerColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray200;
-  }
-  
   @override
   void initState() {
     super.initState();
     _loadUserData();
   }
-  
+
   Future<void> _loadUserData() async {
     try {
       final user = supabase.auth.currentUser;
       if (user == null) return;
-      
+
       final profileResponse = await supabase
           .from('user_profiles')
           .select()
           .eq('id', user.id)
           .maybeSingle();
-      
+
       setState(() {
         userProfile = profileResponse;
         isLoading = false;
@@ -89,10 +55,10 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
       });
     }
   }
-  
+
   String _formatDisplayPhone(String? phone) {
     if (phone == null || phone.isEmpty) return '등록된 전화번호가 없습니다';
-    
+
     // Hide middle digits for privacy
     if (phone.length >= 10) {
       final start = phone.substring(0, phone.length - 7);
@@ -101,12 +67,14 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
     }
     return phone;
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    final hasPhone = userProfile?['phone'] != null && 
+    final colors = context.colors;
+    final typography = ref.watch(typographyThemeProvider);
+    final hasPhone = userProfile?['phone'] != null &&
                      userProfile!['phone'].toString().isNotEmpty;
-    
+
     if (_showPhoneInput) {
       return PhoneStep(
         initialPhone: _phoneNumber,
@@ -132,7 +100,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),
-                backgroundColor: TossDesignSystem.errorRed,
+                backgroundColor: colors.error,
               ),
             );
           }
@@ -150,7 +118,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
               phoneNumber: _phoneNumber,
               countryCode: _countryCode,
               otpCode: otpCode);
-            
+
             // Update profile with new phone
             final user = supabase.auth.currentUser;
             if (user != null) {
@@ -159,16 +127,16 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                 phoneNumber: _phoneNumber,
                 countryCode: _countryCode);
             }
-            
+
             setState(() {
               _showVerification = false;
             });
 
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('전화번호가 성공적으로 변경되었습니다'),
-                  backgroundColor: TossDesignSystem.successGreen,
+                SnackBar(
+                  content: const Text('전화번호가 성공적으로 변경되었습니다'),
+                  backgroundColor: colors.success,
                 ),
               );
               context.pop();
@@ -178,7 +146,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),
-                backgroundColor: TossDesignSystem.errorRed,
+                backgroundColor: colors.error,
               ),
             );
           }
@@ -191,9 +159,9 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             );
             if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('인증번호가 재발송되었습니다'),
-                backgroundColor: TossDesignSystem.successGreen,
+              SnackBar(
+                content: const Text('인증번호가 재발송되었습니다'),
+                backgroundColor: colors.success,
               ),
             );
           } catch (e) {
@@ -201,7 +169,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),
-                backgroundColor: TossDesignSystem.errorRed,
+                backgroundColor: colors.error,
               ),
             );
           }
@@ -214,22 +182,22 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
         },
       );
     }
-    
+
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: colors.backgroundSecondary,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: _getTextColor(context)),
+          icon: Icon(Icons.arrow_back_ios, color: colors.textPrimary),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '전화번호 관리',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
+          style: typography.headingSmall.copyWith(
+            color: colors.textPrimary,
           ),
         ),
       ),
@@ -241,13 +209,13 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                 children: [
                   // Info card
                   Container(
-                    margin: const EdgeInsets.all(TossDesignSystem.marginHorizontal),
-                    padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+                    margin: const EdgeInsets.all(DSSpacing.pageHorizontal),
+                    padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(12),
+                      color: colors.accent.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(DSRadius.md),
                       border: Border.all(
-                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                        color: colors.accent.withValues(alpha: 0.1),
                         width: 1,
                       ),
                     ),
@@ -255,36 +223,36 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                       children: [
                         Icon(
                           Icons.info_outline,
-                          color: TossDesignSystem.tossBlue,
+                          color: colors.accent,
                           size: 22,
                         ),
-                        const SizedBox(width: TossDesignSystem.spacingM),
+                        const SizedBox(width: DSSpacing.md),
                         Expanded(
                           child: Text(
                             '전화번호는 계정 보안과 다른 소셜 계정 연동에 사용됩니다.',
-                            style: TossDesignSystem.body2.copyWith(
-                              color: _getSecondaryTextColor(context),
+                            style: typography.bodySmall.copyWith(
+                              color: colors.textSecondary,
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  
+
                   // Current phone number
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
-                    padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+                    margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                    padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
-                      color: _getCardColor(context),
-                      borderRadius: BorderRadius.circular(12),
+                      color: colors.surface,
+                      borderRadius: BorderRadius.circular(DSRadius.md),
                       border: Border.all(
-                        color: _getDividerColor(context),
+                        color: colors.border,
                         width: 1,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: TossDesignSystem.black.withValues(alpha: 0.04),
+                          color: colors.textPrimary.withValues(alpha: 0.04),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -297,25 +265,25 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                           children: [
                             Icon(
                               Icons.phone_outlined,
-                              color: _getSecondaryTextColor(context),
+                              color: colors.textSecondary,
                               size: 22,
                             ),
-                            const SizedBox(width: TossDesignSystem.spacingM),
+                            const SizedBox(width: DSSpacing.md),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     '등록된 전화번호',
-                                    style: TossDesignSystem.body2.copyWith(
-                                      color: _getTextColor(context),
+                                    style: typography.bodySmall.copyWith(
+                                      color: colors.textPrimary,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     _formatDisplayPhone(userProfile?['phone']),
-                                    style: TossDesignSystem.caption.copyWith(
-                                      color: _getSecondaryTextColor(context),
+                                    style: typography.labelSmall.copyWith(
+                                      color: colors.textSecondary,
                                     ),
                                   ),
                                 ],
@@ -327,23 +295,23 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                                   horizontal: 8,
                                   vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                                  color: colors.success.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
                                       Icons.verified,
-                                      color: TossDesignSystem.successGreen,
+                                      color: colors.success,
                                       size: 16,
                                     ),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
                                       '인증됨',
                                       style: TextStyle(
-                                        color: TossDesignSystem.successGreen,
-                                        
+                                        color: colors.success,
+                                        fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -352,7 +320,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                               ),
                           ],
                         ),
-                        const SizedBox(height: TossDesignSystem.spacingM),
+                        const SizedBox(height: DSSpacing.md),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -362,19 +330,18 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: TossDesignSystem.tossBlue,
-                              foregroundColor: TossDesignSystem.white,
+                              backgroundColor: colors.ctaBackground,
+                              foregroundColor: colors.ctaForeground,
                               padding: const EdgeInsets.symmetric(
-                                  vertical: TossDesignSystem.spacingM),
+                                  vertical: DSSpacing.md),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    TossDesignSystem.radiusM),
+                                borderRadius: BorderRadius.circular(DSRadius.md),
                               ),
                             ),
                             child: Text(
                               hasPhone ? '전화번호 변경' : '전화번호 등록',
-                              style: TossDesignSystem.button.copyWith(
-                                color: TossDesignSystem.white,
+                              style: typography.buttonMedium.copyWith(
+                                color: colors.ctaForeground,
                               ),
                             ),
                           ),
@@ -382,40 +349,44 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                       ],
                     ),
                   ),
-                  
+
                   // Benefits
-                  const SizedBox(height: TossDesignSystem.spacingXL),
+                  const SizedBox(height: DSSpacing.xl),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: TossDesignSystem.marginHorizontal),
+                        horizontal: DSSpacing.pageHorizontal),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           '전화번호 등록 혜택',
-                          style: TossDesignSystem.caption.copyWith(
-                            color: _getSecondaryTextColor(context),
+                          style: typography.labelSmall.copyWith(
+                            color: colors.textSecondary,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.5,
                           ),
                         ),
-                        const SizedBox(height: TossDesignSystem.spacingM),
+                        const SizedBox(height: DSSpacing.md),
                         _buildBenefitItem(
+                          context,
                           icon: Icons.security,
                           title: '계정 보안 강화',
                           subtitle: '2단계 인증으로 계정을 안전하게 보호',
                         ),
                         _buildBenefitItem(
+                          context,
                           icon: Icons.link,
                           title: '쉬운 계정 연동',
                           subtitle: '여러 소셜 계정을 하나로 통합 관리',
                         ),
                         _buildBenefitItem(
+                          context,
                           icon: Icons.restore,
                           title: '계정 복구',
                           subtitle: '비밀번호를 잊어도 쉽게 계정 복구',
                         ),
                         _buildBenefitItem(
+                          context,
                           icon: Icons.notifications_active,
                           title: '중요 알림',
                           subtitle: '운세 알림과 이벤트 소식 받기',
@@ -423,45 +394,48 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 32),
                 ],
               ),
             ),
     );
   }
-  
-  Widget _buildBenefitItem({
+
+  Widget _buildBenefitItem(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
   }) {
+    final colors = context.colors;
+    final typography = ref.watch(typographyThemeProvider);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: TossDesignSystem.spacingS),
+      padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
             icon,
-            color: TossDesignSystem.tossBlue,
+            color: colors.accent,
             size: 22,
           ),
-          const SizedBox(width: TossDesignSystem.spacingM),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TossDesignSystem.body2.copyWith(
-                    color: _getTextColor(context),
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TossDesignSystem.caption.copyWith(
-                    color: _getSecondaryTextColor(context),
+                  style: typography.labelSmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ],

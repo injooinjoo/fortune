@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 /// 토스 스타일의 만세력 사주 표시 위젯
 class ManseryeokDisplay extends StatelessWidget {
@@ -16,7 +14,7 @@ class ManseryeokDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Builder(
         builder: (context) {
           final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -24,11 +22,11 @@ class ManseryeokDisplay extends StatelessWidget {
             children: [
               // 제목
               _buildTitle(isDark),
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
 
               // 만세력 표
               _buildManseryeokTable(isDark),
-              const SizedBox(height: TossTheme.spacingM),
+              const SizedBox(height: DSSpacing.md),
 
               // 하단 설명
               _buildDescription(isDark),
@@ -45,17 +43,17 @@ class ManseryeokDisplay extends StatelessWidget {
         // 한문 제목
         Text(
           '사주 명식',
-          style: TossTheme.heading2.copyWith(
+          style: DSTypography.headingMedium.copyWith(
             fontWeight: FontWeight.bold,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
           ),
         ),
-        SizedBox(height: TossTheme.spacingXS),
+        SizedBox(height: DSSpacing.xs),
         // 한글 부제
         Text(
           '당신의 타고난 사주팔자입니다',
-          style: TossTheme.caption.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+          style: DSTypography.labelSmall.copyWith(
+            color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
           ),
         ),
       ],
@@ -70,10 +68,10 @@ class ManseryeokDisplay extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        color: isDark ? DSColors.surface : DSColors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
+          color: isDark ? DSColors.border : DSColors.border,
           width: 1,
         ),
       ),
@@ -81,18 +79,18 @@ class ManseryeokDisplay extends StatelessWidget {
         children: [
           // 상단 라벨
           Container(
-            padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingM),
+            padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
             decoration: BoxDecoration(
               color: isDark
-                  ? TossDesignSystem.cardBackgroundDark.withValues(alpha: 0.5)
-                  : TossDesignSystem.surfaceBackgroundLight,
+                  ? DSColors.surface.withValues(alpha: 0.5)
+                  : DSColors.surface,
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(TossTheme.radiusM),
-                topRight: Radius.circular(TossTheme.radiusM),
+                topLeft: Radius.circular(DSRadius.md),
+                topRight: Radius.circular(DSRadius.md),
               ),
               border: Border(
                 bottom: BorderSide(
-                  color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
+                  color: isDark ? DSColors.border : DSColors.border,
                   width: 1,
                 ),
               ),
@@ -112,11 +110,11 @@ class ManseryeokDisplay extends StatelessWidget {
 
           // 천간 행
           Container(
-            padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingL),
+            padding: const EdgeInsets.symmetric(vertical: DSSpacing.lg),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight).withValues(alpha: 0.5),
+                  color: (isDark ? DSColors.border : DSColors.border).withValues(alpha: 0.5),
                   width: 1,
                 ),
               ),
@@ -136,7 +134,7 @@ class ManseryeokDisplay extends StatelessWidget {
 
           // 지지 행
           Container(
-            padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingL),
+            padding: const EdgeInsets.symmetric(vertical: DSSpacing.lg),
             child: Row(
               children: [
                 _buildPillarCell(hour, '지지', isHour: true, isDark: isDark),
@@ -160,20 +158,20 @@ class ManseryeokDisplay extends StatelessWidget {
         children: [
           Text(
             hanja,
-            style: TossTheme.body1.copyWith(
+            style: DSTypography.bodyLarge.copyWith(
               fontSize: isHighlight ? 20 : 18,
               fontWeight: FontWeight.bold,
               color: isHighlight
-                  ? TossTheme.brandBlue
-                  : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
+                  ? DSColors.accent
+                  : (isDark ? DSColors.textPrimary : DSColors.textPrimary),
               letterSpacing: 2,
             ),
           ),
           SizedBox(height: 4),
           Text(
             korean,
-            style: TossTheme.caption.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+            style: DSTypography.labelSmall.copyWith(
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             ),
           ),
         ],
@@ -188,7 +186,7 @@ class ManseryeokDisplay extends StatelessWidget {
           child: Text(
             '-',
             style: TextStyle(
-              color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+              color: isDark ? DSColors.textTertiary : DSColors.textTertiary,
             ),
           ),
         ),
@@ -230,12 +228,12 @@ class ManseryeokDisplay extends StatelessWidget {
           // 큰 한자
           Text(
             hanja,
-            style: TossTheme.heading3.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontSize: isDay ? 24 : 20,
               fontWeight: FontWeight.bold,
               color: isDay
-                  ? TossTheme.brandBlue
-                  : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
+                  ? DSColors.accent
+                  : (isDark ? DSColors.textPrimary : DSColors.textPrimary),
               height: 1,
             ),
           ),
@@ -243,11 +241,11 @@ class ManseryeokDisplay extends StatelessWidget {
           // 한글
           Text(
             korean,
-            style: TossTheme.caption.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               fontSize: isDay ? 12 : 11,
               color: isDay
-                  ? TossTheme.brandBlue.withValues(alpha: 0.8)
-                  : (isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight),
+                  ? DSColors.accent.withValues(alpha: 0.8)
+                  : (isDark ? DSColors.textSecondary : DSColors.textSecondary),
               fontWeight: isDay ? FontWeight.w600 : FontWeight.normal,
             ),
           ),
@@ -266,7 +264,7 @@ class ManseryeokDisplay extends StatelessWidget {
               ),
               child: Text(
                 '$element행',
-                style: TypographyUnified.labelTiny.copyWith(
+                style: DSTypography.labelSmall.copyWith(
                   color: _getElementColor(element),
                   fontWeight: FontWeight.bold,
                 ),
@@ -282,32 +280,32 @@ class ManseryeokDisplay extends StatelessWidget {
     return Container(
       width: 1,
       height: 60,
-      color: (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight).withValues(alpha: 0.3),
+      color: (isDark ? DSColors.border : DSColors.border).withValues(alpha: 0.3),
     );
   }
 
   Widget _buildDescription(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: isDark
-            ? TossDesignSystem.cardBackgroundDark.withValues(alpha: 0.3)
-            : TossDesignSystem.surfaceBackgroundLight,
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+            ? DSColors.surface.withValues(alpha: 0.3)
+            : DSColors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.info_outline,
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+            color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             size: 16,
           ),
-          SizedBox(width: TossTheme.spacingXS),
+          SizedBox(width: DSSpacing.xs),
           Text(
             '위 사주는 만세력 기준으로 계산되었습니다',
-            style: TossTheme.caption.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+            style: DSTypography.labelSmall.copyWith(
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             ),
           ),
         ],
@@ -318,17 +316,17 @@ class ManseryeokDisplay extends StatelessWidget {
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
-        return TossTheme.success;
+        return DSColors.success;
       case '화':
-        return TossTheme.error;
+        return DSColors.error;
       case '토':
-        return TossTheme.warning;
+        return DSColors.warning;
       case '금':
-        return TossTheme.textGray600;
+        return DSColors.textSecondary;
       case '수':
-        return TossTheme.brandBlue;
+        return DSColors.accent;
       default:
-        return TossTheme.textGray500;
+        return DSColors.textTertiary;
     }
   }
 }

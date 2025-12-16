@@ -4,8 +4,7 @@ import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../widgets/home_fengshui_input_unified.dart';
 import '../../domain/models/conditions/home_fengshui_fortune_conditions.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -83,7 +82,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
           });
         }
 
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final colors = context.colors;
         final data = result.data;
 
         // API에서 받은 데이터 추출
@@ -144,14 +143,14 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                   // 제목
                   Text(
                     title,
-                    style: TypographyUnified.heading2.copyWith(
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    style: DSTypography.headingLarge.copyWith(
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 24),
 
                   // 운세 점수 카드 (공개)
-                  _buildScoreCard(score, summaryKeyword, isDark),
+                  _buildScoreCard(score, summaryKeyword, colors),
                   const SizedBox(height: 20),
 
                   // 전반적인 분석 (공개)
@@ -160,7 +159,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                       title: '전반적인 분석',
                       icon: Icons.analytics_outlined,
                       content: overallAnalysis,
-                      isDark: isDark,
+                      colors: colors,
                       sectionIndex: 0,
                       onTypingComplete: () {
                         if (mounted) setState(() => _currentTypingSection = 1);
@@ -180,7 +179,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                         roadImpact: roadImpact,
                         terrainScore: terrainScore,
                         terrainAnalysis: terrainAnalysis,
-                        isDark: isDark,
+                        colors: colors,
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -196,7 +195,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                         doorDirection: doorDirection,
                         compatibility: compatibility,
                         directionAnalysis: directionAnalysis,
-                        isDark: isDark,
+                        colors: colors,
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -207,7 +206,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                       isBlurred: _isBlurred,
                       blurredSections: _blurredSections,
                       sectionKey: 'interior_layout',
-                      child: _buildInteriorLayoutCard(interior, isDark),
+                      child: _buildInteriorLayoutCard(interior, colors),
                     ),
                   const SizedBox(height: 16),
 
@@ -222,7 +221,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                         brightAreas: brightAreas,
                         darkAreas: darkAreas,
                         suggestions: suggestions,
-                        isDark: isDark,
+                        colors: colors,
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -236,7 +235,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                       child: _buildDefectsCard(
                         majorDefects: majorDefects,
                         minorDefects: minorDefects,
-                        isDark: isDark,
+                        colors: colors,
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -248,10 +247,10 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                       blurredSections: _blurredSections,
                       sectionKey: 'lucky_elements',
                       child: _buildLuckyElementsCard(
-                        colors: luckyColors,
+                        luckyColors: luckyColors,
                         plants: luckyPlants,
                         items: luckyItems,
-                        isDark: isDark,
+                        colors: colors,
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -262,7 +261,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                       isBlurred: _isBlurred,
                       blurredSections: _blurredSections,
                       sectionKey: 'seasonal_advice',
-                      child: _buildSeasonalAdviceCard(seasonal, isDark),
+                      child: _buildSeasonalAdviceCard(seasonal, colors),
                     ),
                   const SizedBox(height: 32),
                 ],
@@ -333,20 +332,20 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
   }
 
   /// 운세 점수 카드
-  Widget _buildScoreCard(int score, String keyword, bool isDark) {
+  Widget _buildScoreCard(int score, String keyword, DSColorScheme colors) {
     Color scoreColor;
     String scoreText;
     if (score >= 80) {
-      scoreColor = TossDesignSystem.successGreen;
+      scoreColor = DSColors.success;
       scoreText = '매우 좋음';
     } else if (score >= 60) {
-      scoreColor = TossDesignSystem.tossBlue;
+      scoreColor = colors.accent;
       scoreText = '좋음';
     } else if (score >= 40) {
-      scoreColor = TossDesignSystem.warningYellow;
+      scoreColor = DSColors.warning;
       scoreText = '보통';
     } else {
-      scoreColor = TossDesignSystem.errorRed;
+      scoreColor = DSColors.error;
       scoreText = '주의 필요';
     }
 
@@ -368,7 +367,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             children: [
               Text(
                 '$score',
-                style: TypographyUnified.displayLarge.copyWith(
+                style: DSTypography.displayLarge.copyWith(
                   color: scoreColor,
                   fontWeight: FontWeight.w700,
                 ),
@@ -377,8 +376,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 padding: const EdgeInsets.only(bottom: 12, left: 4),
                 child: Text(
                   '/100',
-                  style: TypographyUnified.heading3.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                  style: DSTypography.headingMedium.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ),
@@ -393,7 +392,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             ),
             child: Text(
               scoreText,
-              style: TypographyUnified.bodySmall.copyWith(
+              style: DSTypography.bodySmall.copyWith(
                 color: scoreColor,
                 fontWeight: FontWeight.w600,
               ),
@@ -403,8 +402,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             const SizedBox(height: 12),
             Text(
               keyword,
-              style: TypographyUnified.bodyMedium.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -419,7 +418,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
     required String title,
     required IconData icon,
     required String content,
-    required bool isDark,
+    required DSColorScheme colors,
     required int sectionIndex,
     VoidCallback? onTypingComplete,
   }) {
@@ -432,12 +431,12 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
         children: [
           Row(
             children: [
-              Icon(icon, color: TossDesignSystem.tossBlue, size: 24),
+              Icon(icon, color: colors.accent, size: 24),
               const SizedBox(width: 8),
               Text(
                 title,
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -445,8 +444,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
           const SizedBox(height: 16),
           GptStyleTypingText(
             text: content,
-            style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+            style: DSTypography.bodyMedium.copyWith(
+              color: colors.textSecondary,
               height: 1.6,
             ),
             startTyping: shouldAnimate,
@@ -464,7 +463,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
     required String roadImpact,
     required int terrainScore,
     required String terrainAnalysis,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
@@ -477,8 +476,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '배산임수 분석',
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
               const Spacer(),
@@ -490,7 +489,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 ),
                 child: Text(
                   '지형점수 $terrainScore점',
-                  style: TypographyUnified.labelSmall.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     color: const Color(0xFF8B7355),
                     fontWeight: FontWeight.w600,
                   ),
@@ -504,7 +503,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             icon: '⛰️',
             title: '산의 기운 (후현무)',
             content: mountainPresence,
-            isDark: isDark,
+            colors: colors,
           ),
           const SizedBox(height: 12),
           // 물의 기운 (전주작)
@@ -512,7 +511,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             icon: '🌊',
             title: '물의 기운 (전주작)',
             content: waterPresence,
-            isDark: isDark,
+            colors: colors,
           ),
           const SizedBox(height: 12),
           // 도로의 영향
@@ -520,7 +519,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             icon: '🛤️',
             title: '도로의 영향',
             content: roadImpact,
-            isDark: isDark,
+            colors: colors,
           ),
           if (terrainAnalysis.isNotEmpty) ...[
             const SizedBox(height: 16),
@@ -528,8 +527,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             const SizedBox(height: 12),
             Text(
               terrainAnalysis,
-              style: TypographyUnified.bodyMedium.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
                 height: 1.6,
               ),
             ),
@@ -543,12 +542,12 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
     required String icon,
     required String title,
     required String content,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray50,
+        color: colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -562,16 +561,16 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               children: [
                 Text(
                   title,
-                  style: TypographyUnified.labelMedium.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  style: DSTypography.labelMedium.copyWith(
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   content,
-                  style: TypographyUnified.bodySmall.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                  style: DSTypography.bodySmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
@@ -588,17 +587,17 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
     required String doorDirection,
     required int compatibility,
     required String directionAnalysis,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     Color compatColor;
     if (compatibility >= 80) {
-      compatColor = TossDesignSystem.successGreen;
+      compatColor = DSColors.success;
     } else if (compatibility >= 60) {
-      compatColor = TossDesignSystem.tossBlue;
+      compatColor = colors.accent;
     } else if (compatibility >= 40) {
-      compatColor = TossDesignSystem.warningYellow;
+      compatColor = DSColors.warning;
     } else {
-      compatColor = TossDesignSystem.errorRed;
+      compatColor = DSColors.error;
     }
 
     return GlassCard(
@@ -612,8 +611,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '양택풍수 분석',
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
               const Spacer(),
@@ -625,7 +624,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 ),
                 child: Text(
                   '궁합도 $compatibility점',
-                  style: TypographyUnified.labelSmall.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     color: compatColor,
                     fontWeight: FontWeight.w600,
                   ),
@@ -641,7 +640,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 child: _buildDirectionItem(
                   title: '집의 좌향',
                   value: homeDirection,
-                  isDark: isDark,
+                  colors: colors,
                 ),
               ),
               const SizedBox(width: 12),
@@ -649,7 +648,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 child: _buildDirectionItem(
                   title: '대문 방향',
                   value: doorDirection,
-                  isDark: isDark,
+                  colors: colors,
                 ),
               ),
             ],
@@ -658,8 +657,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             const SizedBox(height: 16),
             Text(
               directionAnalysis,
-              style: TypographyUnified.bodyMedium.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
                 height: 1.6,
               ),
             ),
@@ -672,26 +671,26 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
   Widget _buildDirectionItem({
     required String title,
     required String value,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray50,
+        color: colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         children: [
           Text(
             title,
-            style: TypographyUnified.labelSmall.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+            style: DSTypography.labelSmall.copyWith(
+              color: colors.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             value,
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               color: const Color(0xFF8B7355),
             ),
           ),
@@ -701,7 +700,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
   }
 
   /// 내부 공간 배치 카드
-  Widget _buildInteriorLayoutCard(Map<String, dynamic> interior, bool isDark) {
+  Widget _buildInteriorLayoutCard(Map<String, dynamic> interior, DSColorScheme colors) {
     final spaces = [
       {'key': 'entrance', 'icon': '🚪', 'title': '현관'},
       {'key': 'living_room', 'icon': '🛋️', 'title': '거실'},
@@ -721,8 +720,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '내부 공간 배치',
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -742,7 +741,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 title: space['title'] as String,
                 status: status,
                 advice: advice,
-                isDark: isDark,
+                colors: colors,
               ),
             );
           }),
@@ -756,12 +755,12 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
     required String title,
     required String status,
     required String advice,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray50,
+        color: colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -773,8 +772,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 title,
-                style: TypographyUnified.labelMedium.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.labelMedium.copyWith(
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -783,13 +782,13 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                    color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     status,
-                    style: TypographyUnified.labelSmall.copyWith(
-                      color: TossDesignSystem.tossBlue,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: colors.accent,
                     ),
                   ),
                 ),
@@ -799,8 +798,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             const SizedBox(height: 8),
             Text(
               advice,
-              style: TypographyUnified.bodySmall.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+              style: DSTypography.bodySmall.copyWith(
+                color: colors.textSecondary,
               ),
             ),
           ],
@@ -815,7 +814,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
     required List<String> brightAreas,
     required List<String> darkAreas,
     required List<String> suggestions,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
@@ -828,8 +827,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '기운 흐름',
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -838,8 +837,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
           if (qiCirculation.isNotEmpty) ...[
             Text(
               qiCirculation,
-              style: TypographyUnified.bodyMedium.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
                 height: 1.6,
               ),
             ),
@@ -850,8 +849,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               icon: '☀️',
               title: '밝은 기운 (길한 곳)',
               items: brightAreas,
-              color: TossDesignSystem.successGreen,
-              isDark: isDark,
+              color: DSColors.success,
+              colors: colors,
             ),
             const SizedBox(height: 12),
           ],
@@ -860,8 +859,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               icon: '🌑',
               title: '어두운 기운 (주의할 곳)',
               items: darkAreas,
-              color: TossDesignSystem.warningYellow,
-              isDark: isDark,
+              color: DSColors.warning,
+              colors: colors,
             ),
             const SizedBox(height: 12),
           ],
@@ -870,8 +869,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               icon: '💡',
               title: '기운 개선 방법',
               items: suggestions,
-              color: TossDesignSystem.tossBlue,
-              isDark: isDark,
+              color: colors.accent,
+              colors: colors,
             ),
           ],
         ],
@@ -884,7 +883,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
     required String title,
     required List<String> items,
     required Color color,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -902,7 +901,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 title,
-                style: TypographyUnified.labelMedium.copyWith(
+                style: DSTypography.labelMedium.copyWith(
                   color: color,
                   fontWeight: FontWeight.w600,
                 ),
@@ -919,8 +918,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                 Expanded(
                   child: Text(
                     item,
-                    style: TypographyUnified.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ),
@@ -936,7 +935,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
   Widget _buildDefectsCard({
     required List<Map<String, dynamic>> majorDefects,
     required List<Map<String, dynamic>> minorDefects,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
@@ -949,8 +948,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '결함 및 해결책',
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -959,35 +958,35 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
           if (majorDefects.isNotEmpty) ...[
             Text(
               '🚨 주요 결함',
-              style: TypographyUnified.labelMedium.copyWith(
-                color: TossDesignSystem.errorRed,
+              style: DSTypography.labelMedium.copyWith(
+                color: DSColors.error,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
-            ...majorDefects.map((defect) => _buildDefectItem(defect, true, isDark)),
+            ...majorDefects.map((defect) => _buildDefectItem(defect, true, colors)),
             const SizedBox(height: 16),
           ],
           if (minorDefects.isNotEmpty) ...[
             Text(
               '⚠️ 경미한 결함',
-              style: TypographyUnified.labelMedium.copyWith(
-                color: TossDesignSystem.warningYellow,
+              style: DSTypography.labelMedium.copyWith(
+                color: DSColors.warning,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
-            ...minorDefects.map((defect) => _buildDefectItem(defect, false, isDark)),
+            ...minorDefects.map((defect) => _buildDefectItem(defect, false, colors)),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildDefectItem(Map<String, dynamic> defect, bool isMajor, bool isDark) {
+  Widget _buildDefectItem(Map<String, dynamic> defect, bool isMajor, DSColorScheme colors) {
     final issue = FortuneTextCleaner.cleanNullable(defect['issue'] as String?);
     final solution = FortuneTextCleaner.cleanNullable(defect['solution'] as String?);
-    final color = isMajor ? TossDesignSystem.errorRed : TossDesignSystem.warningYellow;
+    final color = isMajor ? DSColors.error : DSColors.warning;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -1003,8 +1002,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
           if (issue.isNotEmpty)
             Text(
               issue,
-              style: TypographyUnified.bodyMedium.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -1013,13 +1012,13 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.lightbulb_outline, size: 16, color: TossDesignSystem.successGreen),
+                Icon(Icons.lightbulb_outline, size: 16, color: DSColors.success),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     solution,
-                    style: TypographyUnified.bodySmall.copyWith(
-                      color: TossDesignSystem.successGreen,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: DSColors.success,
                     ),
                   ),
                 ),
@@ -1033,10 +1032,10 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
 
   /// 행운 요소 카드
   Widget _buildLuckyElementsCard({
-    required List<Map<String, dynamic>> colors,
+    required List<Map<String, dynamic>> luckyColors,
     required List<Map<String, dynamic>> plants,
     required List<Map<String, dynamic>> items,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return GlassCard(
       padding: const EdgeInsets.all(20),
@@ -1049,19 +1048,19 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '행운 요소',
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          if (colors.isNotEmpty) ...[
+          if (luckyColors.isNotEmpty) ...[
             _buildLuckyCategory(
               icon: '🎨',
               title: '행운의 색상',
-              items: colors,
-              isDark: isDark,
+              items: luckyColors,
+              colors: colors,
             ),
             const SizedBox(height: 12),
           ],
@@ -1070,7 +1069,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               icon: '🌿',
               title: '행운의 식물',
               items: plants,
-              isDark: isDark,
+              colors: colors,
             ),
             const SizedBox(height: 12),
           ],
@@ -1079,7 +1078,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               icon: '🎁',
               title: '행운의 물건',
               items: items,
-              isDark: isDark,
+              colors: colors,
             ),
           ],
         ],
@@ -1091,7 +1090,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
     required String icon,
     required String title,
     required List<Map<String, dynamic>> items,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1102,8 +1101,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
             const SizedBox(width: 8),
             Text(
               title,
-              style: TypographyUnified.labelMedium.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              style: DSTypography.labelMedium.copyWith(
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1121,16 +1120,16 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray50,
+                  color: colors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isDark ? TossDesignSystem.gray700 : TossDesignSystem.gray200,
+                    color: colors.border,
                   ),
                 ),
                 child: Text(
                   name,
-                  style: TypographyUnified.bodySmall.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  style: DSTypography.bodySmall.copyWith(
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -1142,7 +1141,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
   }
 
   /// 계절별 조언 카드
-  Widget _buildSeasonalAdviceCard(Map<String, dynamic> seasonal, bool isDark) {
+  Widget _buildSeasonalAdviceCard(Map<String, dynamic> seasonal, DSColorScheme colors) {
     final seasons = [
       {'key': 'spring', 'icon': '🌸', 'title': '봄'},
       {'key': 'summer', 'icon': '☀️', 'title': '여름'},
@@ -1161,8 +1160,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               const SizedBox(width: 8),
               Text(
                 '계절별 조언',
-                style: TypographyUnified.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -1184,7 +1183,7 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
               return Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray50,
+                  color: colors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -1196,8 +1195,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                         const SizedBox(width: 4),
                         Text(
                           season['title'] as String,
-                          style: TypographyUnified.labelMedium.copyWith(
-                            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                          style: DSTypography.labelMedium.copyWith(
+                            color: colors.textPrimary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -1207,8 +1206,8 @@ class _HomeFengshuiFortunePageState extends ConsumerState<HomeFengshuiFortunePag
                     Expanded(
                       child: Text(
                         advice,
-                        style: TypographyUnified.bodySmall.copyWith(
-                          color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                        style: DSTypography.bodySmall.copyWith(
+                          color: colors.textSecondary,
                         ),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,

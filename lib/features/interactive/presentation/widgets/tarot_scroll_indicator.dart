@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class TarotScrollIndicator extends StatefulWidget {
   final bool isVisible;
@@ -85,7 +85,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                       width: 1)),
                   child: Text(
                     widget.text,
-                    style: TypographyUnified.bodySmall.copyWith(
+                    style: DSTypography.bodySmall.copyWith(
                       color: TossDesignSystem.white,
                       fontWeight: FontWeight.w500),
                   ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../tarot_card_helpers.dart';
 
 class MiniCardWidget extends StatelessWidget {
@@ -54,7 +53,7 @@ class MiniCardWidget extends StatelessWidget {
                       ),
                     ],
                     border: Border.all(
-                      color: TossDesignSystem.white.withValues(alpha: 0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -64,14 +63,14 @@ class MiniCardWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.black.withValues(alpha: 0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${index + 1}',
-                  style: TypographyUnified.labelTiny.copyWith(
-                    fontSize: TypographyUnified.labelTiny.fontSize! * fontScale,
-                    color: TossDesignSystem.white,
+                  style: DSTypography.labelSmall.copyWith(
+                    fontSize: DSTypography.labelSmall.fontSize! * fontScale * 0.8,
+                    color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

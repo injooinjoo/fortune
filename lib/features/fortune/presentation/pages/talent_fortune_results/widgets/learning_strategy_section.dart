@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/fortune_result.dart';
 import '../../../../../../core/utils/fortune_text_cleaner.dart';
 
 class LearningStrategySection extends StatelessWidget {
   final FortuneResult? fortuneResult;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const LearningStrategySection({
     super.key,
     required this.fortuneResult,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -21,8 +20,8 @@ class LearningStrategySection extends StatelessWidget {
       return Center(
         child: Text(
           '학습 전략 데이터가 없습니다',
-          style: TypographyUnified.bodySmall.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+          style: DSTypography.bodySmall.copyWith(
+            color: colors.textSecondary,
           ),
         ),
       );
@@ -38,9 +37,9 @@ class LearningStrategySection extends StatelessWidget {
         if (optimalMethods.isNotEmpty) ...[
           Text(
             '📌 최적의 학습 방법',
-            style: TypographyUnified.labelMedium.copyWith(
+            style: DSTypography.labelMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossDesignSystem.tossBlue,
+              color: colors.accent,
             ),
           ),
           const SizedBox(height: 8),
@@ -49,13 +48,13 @@ class LearningStrategySection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.lightbulb_outline, size: 16, color: TossDesignSystem.warningOrange),
+                Icon(Icons.lightbulb_outline, size: 16, color: DSColors.warning),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     method,
-                    style: TypographyUnified.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ),
@@ -67,9 +66,9 @@ class LearningStrategySection extends StatelessWidget {
         if (resources.isNotEmpty) ...[
           Text(
             '📚 추천 리소스',
-            style: TypographyUnified.labelMedium.copyWith(
+            style: DSTypography.labelMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossDesignSystem.successGreen,
+              color: DSColors.success,
             ),
           ),
           const SizedBox(height: 8),
@@ -78,13 +77,13 @@ class LearningStrategySection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.book_outlined, size: 16, color: TossDesignSystem.successGreen),
+                Icon(Icons.book_outlined, size: 16, color: DSColors.success),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     resource,
-                    style: TypographyUnified.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ),
@@ -96,23 +95,23 @@ class LearningStrategySection extends StatelessWidget {
         if (dailyRoutine.isNotEmpty) ...[
           Text(
             '⏰ 추천 루틴',
-            style: TypographyUnified.labelMedium.copyWith(
+            style: DSTypography.labelMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossDesignSystem.warningOrange,
+              color: DSColors.warning,
             ),
           ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.warningOrange.withValues(alpha: 0.05),
+              color: DSColors.warning.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               dailyRoutine,
-              style: TypographyUnified.bodySmall.copyWith(
+              style: DSTypography.bodySmall.copyWith(
                 height: 1.6,
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                color: colors.textSecondary,
               ),
             ),
           ),

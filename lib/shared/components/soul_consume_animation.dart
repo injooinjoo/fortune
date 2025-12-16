@@ -1,12 +1,9 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../glassmorphism/glass_container.dart';
 import '../../core/utils/haptic_utils.dart';
-import 'package:fortune/core/theme/app_animations.dart';
+import '../../core/design_system/design_system.dart';
 
 class SoulConsumeAnimation {
   static OverlayEntry? _currentOverlay;
@@ -15,7 +12,8 @@ class SoulConsumeAnimation {
     required BuildContext context,
     required int soulAmount,
     Offset? startPosition,
-    Offset? endPosition}) {
+    Offset? endPosition,
+  }) {
     // Remove any existing overlay
     _currentOverlay?.remove();
     _currentOverlay = null;
@@ -75,45 +73,53 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _positionAnimation;
-  
+
   final List<_Particle> _particles = [];
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // Main animation controller
     _mainController = AnimationController(
-      duration: AppAnimations.durationShimmer,
-      vsync: this);
-    
+      duration: DSAnimation.durationLong,
+      vsync: this,
+    );
+
     // Particle animation controller
     _particleController = AnimationController(
-      duration: AppAnimations.durationXLong,
-      vsync: this
+      duration: DSAnimation.durationSlow,
+      vsync: this,
     );
-    
+
     // Scale animation - starts normal, gets bigger then smaller
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween(begin: 1.0, end: 1.0),
-        weight: 20),
+        weight: 20,
+      ),
       TweenSequenceItem(
         tween: Tween(begin: 1.0, end: 1.3).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 30),
+        weight: 30,
+      ),
       TweenSequenceItem(
         tween: Tween(begin: 1.3, end: 0.0).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 50)]).animate(_mainController);
-    
+        weight: 50,
+      ),
+    ]).animate(_mainController);
+
     // Fade animation
     _fadeAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween(begin: 1.0, end: 1.0),
-        weight: 50),
+        weight: 50,
+      ),
       TweenSequenceItem(
         tween: Tween(begin: 1.0, end: 0.0),
-        weight: 50)]).animate(_mainController);
-    
+        weight: 50,
+      ),
+    ]).animate(_mainController);
+
     // Position animation with curve
     _positionAnimation = Tween<Offset>(
       begin: widget.startPosition,
@@ -122,14 +128,14 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
       parent: _mainController,
       curve: Curves.easeInBack,
     ));
-    
+
     // Generate particles
     _generateParticles();
-    
+
     // Start animations
     _mainController.forward();
     _particleController.forward();
-    
+
     // Complete callback
     _mainController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -137,7 +143,7 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
       }
     });
   }
-  
+
   void _generateParticles() {
     final random = math.Random();
     for (int i = 0; i < 6; i++) {
@@ -149,18 +155,19 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
       ));
     }
   }
-  
+
   @override
   void dispose() {
     _mainController.dispose();
     _particleController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
+    final colors = context.colors;
+    final typography = context.typography;
+
     return AnimatedBuilder(
       animation: _mainController,
       builder: (context, child) {
@@ -173,37 +180,39 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
               child: FadeTransition(
                 opacity: Tween<double>(
                   begin: 1.0,
-                  end: 0.0).animate(CurvedAnimation(
+                  end: 0.0,
+                ).animate(CurvedAnimation(
                   parent: _particleController,
                   curve: const Interval(
                     0.4,
                     1.0,
-                    curve: Curves.easeOut),
-                ),
-              ),
-              child: Transform.translate(
+                    curve: Curves.easeOut,
+                  ),
+                )),
+                child: Transform.translate(
                   offset: Offset(
                     math.cos(particle.angle) * particle.distance * (1 - _particleController.value),
-                    math.sin(particle.angle) * particle.distance * (1 - _particleController.value)),
+                    math.sin(particle.angle) * particle.distance * (1 - _particleController.value),
+                  ),
                   child: Container(
                     width: particle.size,
                     height: particle.size,
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.gray600.withValues(alpha: 0.8),
+                      color: colors.accent.withValues(alpha: 0.8),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: TossDesignSystem.gray600.withValues(alpha: 0.4),
+                          color: colors.accent.withValues(alpha: 0.4),
                           blurRadius: 3,
-                          spreadRadius: 1),
+                          spreadRadius: 1,
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
-            ).animate(delay: particle.delay)
-                  .fadeIn(duration: 200.ms)),
-            
+            ).animate(delay: particle.delay).fadeIn(duration: 200.ms)),
+
             // Main soul animation
             Positioned(
               left: _positionAnimation.value.dx - 60,
@@ -214,9 +223,12 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                   scale: _scaleAnimation,
                   child: GlassContainer(
                     width: 120,
-                    height: AppSpacing.spacing15,
-                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
+                    height: 60,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.lg,
+                      vertical: DSSpacing.md,
+                    ),
+                    borderRadius: BorderRadius.circular(DSRadius.xl),
                     blur: 20,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -224,15 +236,17 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                       children: [
                         Icon(
                           Icons.auto_awesome_rounded,
-                          color: TossDesignSystem.gray600,
-                          size: AppDimensions.iconSizeMedium).animate(onPlay: (controller) => controller.repeat())
-                          .rotate(duration: 1500.ms, end: -2 * math.pi),
-                        SizedBox(width: AppSpacing.spacing2),
+                          color: colors.accent,
+                          size: 24,
+                        ).animate(onPlay: (controller) => controller.repeat())
+                            .rotate(duration: 1500.ms, end: -2 * math.pi),
+                        const SizedBox(width: DSSpacing.sm),
                         Text(
                           '-${widget.soulAmount}',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: TossDesignSystem.gray600,
-                            fontWeight: FontWeight.bold),
+                          style: typography.labelLarge.copyWith(
+                            color: colors.accent,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -252,7 +266,7 @@ class _Particle {
   final double distance;
   final Duration delay;
   final double size;
-  
+
   _Particle({
     required this.angle,
     required this.distance,

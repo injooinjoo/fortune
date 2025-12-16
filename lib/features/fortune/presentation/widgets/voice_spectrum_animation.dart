@@ -107,25 +107,36 @@ class _VoiceSpectrumAnimationState extends State<VoiceSpectrumAnimation>
 
     return SizedBox(
       height: 32,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: List.generate(
-          widget.barCount,
-          (index) {
-            final height = _barHeights[index] * 28; // 최대 28px
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // 가용 너비에 맞게 바 개수 계산 (각 바 = 2px 너비 + 2px 마진 = 4px)
+          final maxBars = (constraints.maxWidth / 4).floor();
+          final actualBarCount = maxBars.clamp(10, widget.barCount);
 
-            return Container(
-              width: 2,
-              height: height.clamp(4.0, 28.0),
-              margin: const EdgeInsets.symmetric(horizontal: 1),
-              decoration: BoxDecoration(
-                color: barColor,
-                borderRadius: BorderRadius.circular(1),
-              ),
-            );
-          },
-        ),
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: List.generate(
+              actualBarCount,
+              (index) {
+                // barCount가 줄어들 수 있으므로 인덱스 맵핑
+                final mappedIndex = (index * widget.barCount / actualBarCount).floor().clamp(0, _barHeights.length - 1);
+                final height = _barHeights[mappedIndex] * 28; // 최대 28px
+
+                return Container(
+                  width: 2,
+                  height: height.clamp(4.0, 28.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 1),
+                  decoration: BoxDecoration(
+                    color: barColor,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }

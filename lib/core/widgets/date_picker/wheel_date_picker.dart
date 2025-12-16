@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../../theme/toss_design_system.dart';
-import '../../theme/typography_unified.dart';
+import '../../design_system/design_system.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_dimensions.dart';
 import 'date_picker_utils.dart';
@@ -111,7 +111,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                       onPressed: () => Navigator.pop(context),
                       child: Text(
                         '취소',
-                        style: context.bodyMedium.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           color: isDark
                               ? TossDesignSystem.textSecondaryDark
                               : TossDesignSystem.textSecondaryLight,
@@ -120,7 +120,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                     ),
                     Text(
                       widget.label ?? '날짜 선택',
-                      style: context.heading4,
+                      style: DSTypography.headingSmall,
                     ),
                     TextButton(
                       onPressed: () {
@@ -129,7 +129,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                       },
                       child: Text(
                         '완료',
-                        style: context.bodyMedium.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           color: TossDesignSystem.tossBlue,
                           fontWeight: FontWeight.w600,
                         ),
@@ -146,13 +146,13 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                   children: [
                     Text(
                       DatePickerUtils.formatKorean(_tempDate, showWeekday: true),
-                      style: context.heading3,
+                      style: DSTypography.headingSmall,
                     ),
                     if (widget.showAge) ...[
                       SizedBox(height: AppSpacing.spacing2),
                       Text(
                         '만 ${DatePickerUtils.calculateAge(_tempDate)}세',
-                        style: context.bodyMedium.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           color: TossDesignSystem.tossBlue,
                           fontWeight: FontWeight.w600,
                         ),
@@ -196,7 +196,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
         brightness: isDark ? Brightness.dark : Brightness.light,
         primaryColor: TossDesignSystem.tossBlue,
         textTheme: CupertinoTextThemeData(
-          pickerTextStyle: context.bodyLarge.copyWith(
+          pickerTextStyle: DSTypography.bodyLarge.copyWith(
             color: isDark
                 ? TossDesignSystem.textPrimaryDark
                 : TossDesignSystem.textPrimaryLight,
@@ -227,7 +227,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                 return Center(
                   child: Text(
                     '$year년',
-                    style: context.bodyLarge,
+                    style: DSTypography.bodyLarge,
                   ),
                 );
               }).toList(),
@@ -256,7 +256,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                 return Center(
                   child: Text(
                     '$month월',
-                    style: context.bodyLarge,
+                    style: DSTypography.bodyLarge,
                   ),
                 );
               }).toList(),
@@ -285,7 +285,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                 return Center(
                   child: Text(
                     '$day일',
-                    style: context.bodyLarge,
+                    style: DSTypography.bodyLarge,
                   ),
                 );
               }).toList(),
@@ -315,7 +315,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
             padding: const EdgeInsets.only(bottom: AppSpacing.small),
             child: Text(
               widget.label!,
-              style: context.labelMedium.copyWith(
+              style: DSTypography.labelMedium.copyWith(
                 color: isDark
                     ? TossDesignSystem.textSecondaryDark
                     : TossDesignSystem.textSecondaryLight,
@@ -359,7 +359,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                                 widget.selectedDate!,
                               )
                             : '날짜를 선택해주세요',
-                        style: context.bodyLarge.copyWith(
+                        style: DSTypography.bodyLarge.copyWith(
                           color: widget.selectedDate != null
                               ? (isDark
                                   ? TossDesignSystem.textPrimaryDark
@@ -375,7 +375,7 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                       if (age != null && age >= 0)
                         Text(
                           '만 $age세',
-                          style: context.bodySmall.copyWith(
+                          style: DSTypography.bodySmall.copyWith(
                             color: isDark
                                 ? TossDesignSystem.textSecondaryDark
                                 : TossDesignSystem.textSecondaryLight,

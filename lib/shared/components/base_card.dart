@@ -1,5 +1,5 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/theme/app_theme_extensions.dart';
 
 /// Base card widget that enforces consistent design guidelines
@@ -34,11 +34,11 @@ class BaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.colors;
+    final shadows = context.shadows;
 
-    final cardColor = backgroundColor ?? (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white);
-    
+    final cardColor = backgroundColor ?? colors.surface;
+
     Widget content = Container(
       width: width,
       height: height,
@@ -46,22 +46,22 @@ class BaseCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: gradient != null ? null : cardColor,
         gradient: gradient,
-        borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusL),
-        boxShadow: boxShadow ?? (isDark ? null : TossDesignSystem.shadowXS),
+        borderRadius: borderRadius ?? BorderRadius.circular(DSRadius.lg),
+        boxShadow: boxShadow ?? [shadows.card],
         border: border),
       child: Padding(
-        padding: padding ?? const EdgeInsets.all(TossDesignSystem.spacingL),
+        padding: padding ?? const EdgeInsets.all(DSSpacing.lg),
         child: child));
-    
+
     if (onTap != null) {
       return Material(
-        color: TossDesignSystem.transparent,
+        color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: borderRadius ?? BorderRadius.circular(TossDesignSystem.radiusL),
+          borderRadius: borderRadius ?? BorderRadius.circular(DSRadius.lg),
           child: content));
     }
-    
+
     return content;
   }
 }
@@ -125,32 +125,32 @@ class InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
+    final colors = context.colors;
+    final typography = context.typography;
+
     return BaseCard(
       onTap: onTap,
-      backgroundColor: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+      backgroundColor: colors.surface,
       child: Row(
         children: [
           if (leading != null) ...[
             leading!,
-            const SizedBox(width: TossDesignSystem.spacingM)],
+            const SizedBox(width: DSSpacing.md)],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w600)),
                 if (subtitle != null) ...[
-                  const SizedBox(height: TossDesignSystem.spacingXXS),
+                  const SizedBox(height: DSSpacing.xxs),
                   Text(
                     subtitle!,
-                    style: TossDesignSystem.body3.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],

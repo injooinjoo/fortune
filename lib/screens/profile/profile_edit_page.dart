@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/services/fortune_haptic_service.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../constants/fortune_constants.dart';
 import '../../models/user_profile.dart';
@@ -13,16 +15,16 @@ import '../../shared/components/numeric_time_input.dart';
 import '../../presentation/widgets/profile_image_picker.dart';
 import '../onboarding/widgets/birth_date_preview.dart';
 import '../../core/utils/logger.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 
-class ProfileEditPage extends StatefulWidget {
+class ProfileEditPage extends ConsumerStatefulWidget {
   const ProfileEditPage({super.key});
 
   @override
-  State<ProfileEditPage> createState() => _ProfileEditPageState();
+  ConsumerState<ProfileEditPage> createState() => _ProfileEditPageState();
 }
 
-class _ProfileEditPageState extends State<ProfileEditPage> {
+class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   final StorageService _storageService = StorageService();
   final TextEditingController _nameController = TextEditingController();
   late final SupabaseStorageService _storageService2;
@@ -32,33 +34,21 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   bool _isUploadingImage = false;
   User? _currentUser;
 
-  // TOSS Design System Helper Methods
-  bool _isDarkMode() {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
+  // Design System Helper Methods
   Color _getTextColor() {
-    return _isDarkMode()
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
+    return context.colors.textPrimary;
   }
 
   Color _getSecondaryTextColor() {
-    return _isDarkMode()
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
+    return context.colors.textSecondary;
   }
 
   Color _getBackgroundColor() {
-    return _isDarkMode()
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.white;
+    return context.colors.background;
   }
 
   Color _getCardColor() {
-    return _isDarkMode()
-        ? TossDesignSystem.grayDark100
-        : TossDesignSystem.white;
+    return context.colors.surface;
   }
 
   // Parse time from birth time string like "축시 (01:00 - 03:00)"
@@ -171,9 +161,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('프로필을 불러오는 중 오류가 발생했습니다.'),
-            backgroundColor: TossDesignSystem.errorRed,
+          SnackBar(
+            content: const Text('프로필을 불러오는 중 오류가 발생했습니다.'),
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -210,9 +200,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       Logger.error('Error uploading profile image', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('프로필 이미지 업로드에 실패했습니다.'),
-            backgroundColor: TossDesignSystem.errorRed,
+          SnackBar(
+            content: const Text('프로필 이미지 업로드에 실패했습니다.'),
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -292,10 +282,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       }
       
       if (mounted) {
+        // 저장 완료 햅틱
+        ref.read(fortuneHapticServiceProvider).sectionComplete();
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('프로필이 성공적으로 업데이트되었습니다.'),
-            backgroundColor: TossDesignSystem.successGreen,
+          SnackBar(
+            content: const Text('프로필이 성공적으로 업데이트되었습니다.'),
+            backgroundColor: context.colors.success,
           ),
         );
 
@@ -308,7 +301,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString()),
-            backgroundColor: TossDesignSystem.errorRed,
+            backgroundColor: context.colors.error,
           ),
         );
       }
@@ -324,9 +317,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     if (_isLoading) {
       return Scaffold(
         backgroundColor: _getBackgroundColor(),
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator(
-            color: TossDesignSystem.tossBlue,
+            color: context.colors.accent,
           ),
         ),
       );
@@ -343,15 +336,22 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+            padding: const EdgeInsets.all(DSSpacing.md),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 // Profile Image Picker
                 Container(
-                  padding: const EdgeInsets.all(TossDesignSystem.spacingL),
-                  decoration: TossDesignSystem.cardDecoration(
-                    backgroundColor: _getCardColor(),
-                    shadows: TossDesignSystem.shadowS,
+                  padding: const EdgeInsets.all(DSSpacing.lg),
+                  decoration: BoxDecoration(
+                    color: _getCardColor(),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Column(
                     children: [
@@ -360,31 +360,38 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         onImageSelected: _handleImageSelected,
                         isLoading: _isUploadingImage,
                       ),
-                      const SizedBox(height: TossDesignSystem.spacingM),
+                      const SizedBox(height: DSSpacing.md),
                       Text(
                         '프로필 사진',
-                        style: TossDesignSystem.heading4.copyWith(
+                        style: DSTypography.labelLarge.copyWith(
                           color: _getTextColor(),
                         ),
                       ),
-                      const SizedBox(height: TossDesignSystem.spacingS),
+                      const SizedBox(height: DSSpacing.sm),
                       Text(
                         '카메라 또는 갤러리에서 사진을 선택하세요',
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.bodySmall.copyWith(
                           color: _getSecondaryTextColor(),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: TossDesignSystem.spacingM),
+                const SizedBox(height: DSSpacing.md),
 
 
                 Container(
-                  padding: const EdgeInsets.all(TossDesignSystem.spacingL),
-                  decoration: TossDesignSystem.cardDecoration(
-                    backgroundColor: _getCardColor(),
-                    shadows: TossDesignSystem.shadowS,
+                  padding: const EdgeInsets.all(DSSpacing.lg),
+                  decoration: BoxDecoration(
+                    color: _getCardColor(),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -392,19 +399,21 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       // Name input
                       TextField(
                         controller: _nameController,
-                        style: TossDesignSystem.body1.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           color: _getTextColor(),
                         ),
-                        decoration: TossDesignSystem.inputDecoration(
+                        decoration: InputDecoration(
                           hintText: '홍길동',
-                        ).copyWith(
                           labelText: '이름',
-                          labelStyle: TossDesignSystem.body2.copyWith(
+                          labelStyle: DSTypography.bodySmall.copyWith(
                             color: _getSecondaryTextColor(),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(DSRadius.sm),
                           ),
                         ),
                       ),
-                      const SizedBox(height: TossDesignSystem.spacingL),
+                      const SizedBox(height: DSSpacing.lg),
 
                       // Birth date input (숫자패드)
                       NumericDateInput(
@@ -450,18 +459,18 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       // MBTI Selection
                       Text(
                         'MBTI 성격 유형',
-                        style: TossDesignSystem.heading4.copyWith(
+                        style: DSTypography.labelLarge.copyWith(
                           color: _getTextColor(),
                         ),
                       ),
-                      const SizedBox(height: TossDesignSystem.spacingS),
+                      const SizedBox(height: DSSpacing.sm),
                       Text(
                         'MBTI를 모르시나요? 온라인 테스트를 통해 확인해보세요.',
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.bodySmall.copyWith(
                           color: _getSecondaryTextColor(),
                         ),
                       ),
-                      const SizedBox(height: TossDesignSystem.spacingM),
+                      const SizedBox(height: DSSpacing.md),
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -475,30 +484,31 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         itemBuilder: (context, index) {
                           final type = mbtiTypes[index];
                           final isSelected = _mbti == type;
-                          
+
                           return InkWell(
                             onTap: () {
+                              ref.read(fortuneHapticServiceProvider).selection();
                               setState(() => _mbti = type);
                             },
                             borderRadius: BorderRadius.circular(8),
                             child: Container(
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? TossDesignSystem.tossBlue
+                                    ? context.colors.accent
                                     : _getCardColor(),
                                 border: Border.all(
                                   color: isSelected
-                                      ? TossDesignSystem.tossBlue
-                                      : TossDesignSystem.gray300,
+                                      ? context.colors.accent
+                                      : context.colors.border,
                                 ),
-                                borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+                                borderRadius: BorderRadius.circular(DSRadius.sm),
                               ),
                               child: Center(
                                 child: Text(
                                   type,
-                                  style: TossDesignSystem.body2.copyWith(
+                                  style: DSTypography.bodySmall.copyWith(
                                     color: isSelected
-                                        ? TossDesignSystem.white
+                                        ? Colors.white
                                         : _getTextColor(),
                                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                   ),
@@ -513,11 +523,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       // Gender Selection
                       Text(
                         '성별',
-                        style: TossDesignSystem.heading4.copyWith(
+                        style: DSTypography.labelLarge.copyWith(
                           color: _getTextColor(),
                         ),
                       ),
-                      const SizedBox(height: TossDesignSystem.spacingM),
+                      const SizedBox(height: DSSpacing.md),
                       Row(
                         children: [
                           ...Gender.values.map((gender) {
@@ -530,21 +540,22 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                 ),
                                 child: InkWell(
                                   onTap: () {
+                                    ref.read(fortuneHapticServiceProvider).selection();
                                     setState(() => _gender = gender);
                                   },
                                   borderRadius: BorderRadius.circular(8),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: TossDesignSystem.spacingM),
+                                    padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
                                     decoration: BoxDecoration(
                                       color: isSelected
-                                          ? TossDesignSystem.tossBlue
+                                          ? context.colors.accent
                                           : _getCardColor(),
                                       border: Border.all(
                                         color: isSelected
-                                            ? TossDesignSystem.tossBlue
-                                            : TossDesignSystem.gray300,
+                                            ? context.colors.accent
+                                            : context.colors.border,
                                       ),
-                                      borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+                                      borderRadius: BorderRadius.circular(DSRadius.sm),
                                     ),
                                     child: Column(
                                       children: [
@@ -552,15 +563,15 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                           gender.icon,
                                           size: 32,
                                           color: isSelected
-                                              ? TossDesignSystem.white
+                                              ? Colors.white
                                               : _getTextColor(),
                                         ),
-                                        const SizedBox(height: TossDesignSystem.spacingS),
+                                        const SizedBox(height: DSSpacing.sm),
                                         Text(
                                           gender.label,
-                                          style: TossDesignSystem.body2.copyWith(
+                                          style: DSTypography.bodySmall.copyWith(
                                             color: isSelected
-                                                ? TossDesignSystem.white
+                                                ? Colors.white
                                                 : _getTextColor(),
                                             fontWeight: isSelected
                                                 ? FontWeight.bold
@@ -581,8 +592,14 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       // Save button
                       ElevatedButton(
                         onPressed: (_isSaving || _isUploadingImage) ? null : _saveProfile,
-                        style: TossDesignSystem.primaryButtonStyle(
-                          isEnabled: !_isSaving && !_isUploadingImage,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.colors.ctaBackground,
+                          foregroundColor: context.colors.ctaForeground,
+                          disabledBackgroundColor: context.colors.ctaBackground.withValues(alpha: 0.5),
+                          minimumSize: const Size(double.infinity, 56),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(DSRadius.md),
+                          ),
                         ),
                         child: _isSaving
                             ? const SizedBox(
@@ -590,30 +607,33 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: TossDesignSystem.white,
+                                  color: Colors.white,
                                 ),
                               )
                             : Text(
                                 '저장',
-                                style: TossDesignSystem.button.copyWith(
-                                  color: TossDesignSystem.white,
+                                style: DSTypography.buttonMedium.copyWith(
+                                  color: Colors.white,
                                 ),
                               ),
                       ),
-                      const SizedBox(height: TossDesignSystem.spacingM),
+                      const SizedBox(height: DSSpacing.md),
 
                       // Cancel button
                       TextButton(
                         onPressed: _isSaving ? null : () => context.pop(),
-                        style: TossDesignSystem.ghostButtonStyle(
-                          isEnabled: !_isSaving,
+                        style: TextButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(DSRadius.md),
+                          ),
                         ),
                         child: Text(
                           '취소',
-                          style: TossDesignSystem.button.copyWith(
+                          style: DSTypography.buttonMedium.copyWith(
                             color: _isSaving
-                                ? TossDesignSystem.gray400
-                                : TossDesignSystem.tossBlue,
+                                ? context.colors.textTertiary
+                                : context.colors.accent,
                           ),
                         ),
                       ),

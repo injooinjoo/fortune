@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/theme/toss_theme.dart';
 import '../../pages/biorhythm_result_page.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 
 class WeeklyForecastHeader extends StatelessWidget {
   final BiorhythmData biorhythmData;
@@ -28,14 +26,14 @@ class WeeklyForecastHeader extends StatelessWidget {
             '이번 주 바이오리듬 전망',
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+              color: isDark ? Colors.white : DSColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             '${DateTime.now().month}월 ${DateTime.now().day}일 ~ ${DateTime.now().add(const Duration(days: 6)).month}월 ${DateTime.now().add(const Duration(days: 6)).day}일',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             ),
           ),
         ],
@@ -70,7 +68,7 @@ class WeeklyRhythmChart extends StatelessWidget {
               horizontalInterval: 50,
               getDrawingHorizontalLine: (value) {
                 return FlLine(
-                  color: isDark ? TossDesignSystem.grayDark500 : TossTheme.borderGray300,
+                  color: isDark ? DSColors.textTertiary : DSColors.border,
                   strokeWidth: 1,
                 );
               },
@@ -86,7 +84,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                     return Text(
                       '${value.toInt()}',
                       style: TextStyle(
-                        color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                        color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                         
                       ),
                     );
@@ -102,7 +100,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                       return Text(
                         days[value.toInt()],
                         style: TextStyle(
-                          color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                          color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                           
                         ),
                       );
@@ -133,7 +131,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                       radius: 4,
                       color: const Color(0xFFFF5A5F),
                       strokeWidth: 2,
-                      strokeColor: TossDesignSystem.white,
+                      strokeColor: Colors.white,
                     );
                   },
                 ),
@@ -157,7 +155,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                       radius: 4,
                       color: const Color(0xFF00C896),
                       strokeWidth: 2,
-                      strokeColor: TossDesignSystem.white,
+                      strokeColor: Colors.white,
                     );
                   },
                 ),
@@ -177,7 +175,7 @@ class WeeklyRhythmChart extends StatelessWidget {
                       radius: 4,
                       color: const Color(0xFF0068FF),
                       strokeWidth: 2,
-                      strokeColor: TossDesignSystem.white,
+                      strokeColor: Colors.white,
                     );
                   },
                 ),
@@ -218,7 +216,7 @@ class ImportantDatesCard extends StatelessWidget {
             '이번 주 주요 날짜',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+              color: isDark ? Colors.white : DSColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -281,16 +279,16 @@ class ImportantDatesCard extends StatelessWidget {
             children: [
               Text(
                 '$title - $date',
-                style: TypographyUnified.bodySmall.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                  color: isDark ? Colors.white : DSColors.textPrimary,
                 ),
               ),
               SizedBox(height: 2),
               Text(
                 description,
-                style: TypographyUnified.bodySmall.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                style: DSTypography.bodySmall.copyWith(
+                  color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                 ),
               ),
             ],

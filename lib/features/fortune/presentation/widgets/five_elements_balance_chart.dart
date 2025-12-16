@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 class FiveElementsBalanceChart extends StatefulWidget {
   final Map<String, int> elementBalance;
@@ -30,7 +27,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
   // 오행 정보
   static const Map<String, Map<String, dynamic>> elementInfo = {
     '목': {
-      'color': TossDesignSystem.successGreen,
+      'color': DSColors.success,
       'icon': Icons.park,
       'meaning': '성장, 발전, 인자함',
       'season': '봄',
@@ -38,7 +35,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       'organ': '간, 담',
     },
     '화': {
-      'color': TossDesignSystem.warningOrange,
+      'color': DSColors.warning,
       'icon': Icons.local_fire_department,
       'meaning': '열정, 활력, 예의',
       'season': '여름',
@@ -54,7 +51,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       'organ': '비장, 위',
     },
     '금': {
-      'color': TossDesignSystem.gray600,
+      'color': DSColors.textSecondary,
       'icon': Icons.diamond,
       'meaning': '결단, 정의, 수렴',
       'season': '가을',
@@ -62,7 +59,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       'organ': '폐, 대장',
     },
     '수': {
-      'color': TossDesignSystem.tossBlue,
+      'color': DSColors.accent,
       'icon': Icons.water_drop,
       'meaning': '지혜, 유연성, 겸손',
       'season': '겨울',
@@ -102,11 +99,11 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeader(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildRadarChart(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildElementDetails(),
-        const SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: 16),
         _buildElementRelations(),
       ],
     );
@@ -123,7 +120,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
               '오행 균형도',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: AppSpacing.spacing1),
+            const SizedBox(height: 4),
             Text(
               '당신의 사주에 나타난 오행의 분포',
               style: Theme.of(context).textTheme.bodyMedium,
@@ -139,12 +136,12 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
     final total = widget.elementBalance.values.fold(0, (sum, count) => sum + count);
     
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: TossDesignSystem.purple.withValues(alpha: 0.2),
+        color: DSColors.accentTertiary.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: TossDesignSystem.purple.withValues(alpha: 0.3),
+          color: DSColors.accentTertiary.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -153,10 +150,10 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
         children: [
           Icon(
             Icons.auto_awesome,
-            color: TossDesignSystem.purple,
+            color: DSColors.accentTertiary,
             size: 16,
           ),
-          const SizedBox(width: AppSpacing.spacing1),
+          const SizedBox(width: 4),
           Text(
             '총 $total점',
             style: Theme.of(context).textTheme.bodyMedium,
@@ -171,8 +168,8 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       animation: _animation,
       builder: (context, child) {
         return GlassContainer(
-          height: AppSpacing.spacing24 * 3.125,
-          padding: AppSpacing.paddingAll20,
+          height: 96 * 3.125,
+          padding: const EdgeInsets.all(20),
           child: Stack(
             children: [
               // 배경 원
@@ -185,20 +182,20 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                 RadarChartData(
                   radarShape: RadarShape.polygon,
                   tickCount: 4,
-                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? TypographyUnified.labelMedium,
+                  ticksTextStyle: Theme.of(context).textTheme.bodyMedium ?? DSTypography.labelMedium,
                   tickBorderData: BorderSide(
-                    color: TossDesignSystem.white.withValues(alpha: 0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                   gridBorderData: BorderSide(
-                    color: TossDesignSystem.white.withValues(alpha: 0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                   radarBorderData: BorderSide(
-                    color: TossDesignSystem.purple.withValues(alpha: 0.5),
+                    color: DSColors.accentTertiary.withValues(alpha: 0.5),
                     width: 2,
                   ),
-                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? TypographyUnified.labelMedium,
+                  titleTextStyle: Theme.of(context).textTheme.bodyMedium ?? DSTypography.labelMedium,
                   titlePositionPercentageOffset: 0.2,
                   getTitle: (index, angle) {
                     final elements = ['목', '화', '토', '금', '수'];
@@ -209,8 +206,8 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   },
                   dataSets: [
                     RadarDataSet(
-                      fillColor: TossDesignSystem.purple.withValues(alpha: 0.3),
-                      borderColor: TossDesignSystem.purple,
+                      fillColor: DSColors.accentTertiary.withValues(alpha: 0.3),
+                      borderColor: DSColors.accentTertiary,
                       borderWidth: 2,
                       entryRadius: 4,
                       dataEntries: _getRadarEntries(),
@@ -249,7 +246,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
           '주 원소',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: AppSpacing.spacing1),
+        const SizedBox(height: 4),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -258,7 +255,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
               color: elementInfo[strongestElement]!['color'],
               size: 24,
             ),
-            const SizedBox(width: AppSpacing.spacing1),
+            const SizedBox(width: 4),
             Text(
               strongestElement,
               style: Theme.of(context).textTheme.bodyMedium,
@@ -281,15 +278,15 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
         return GestureDetector(
           onTap: () => _showElementDetail(element, info),
           child: Container(
-            margin: const EdgeInsets.only(bottom: AppSpacing.spacing2),
-            padding: AppSpacing.paddingAll12,
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: (info['color'] as Color).withValues(alpha: 0.1),
-              borderRadius: AppDimensions.borderRadiusMedium,
+              borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
                 color: isStrongest
                     ? (info['color'] as Color).withValues(alpha: 0.3)
-                    : TossDesignSystem.transparent,
+                    : Colors.transparent,
                 width: 2,
               ),
             ),
@@ -300,7 +297,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   height: 32,
                   decoration: BoxDecoration(
                     color: (info['color'] as Color).withValues(alpha: 0.2),
-                    borderRadius: AppDimensions.borderRadiusSmall,
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
                   ),
                   child: Icon(
                     info['icon'],
@@ -308,7 +305,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                     size: 24,
                   ),
                 ),
-                const SizedBox(width: AppSpacing.spacing3),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,15 +316,15 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                             '$element원소',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
-                          const SizedBox(width: AppSpacing.spacing2),
+                          const SizedBox(width: 8),
                           if (isStrongest) Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.spacing2,
+                                horizontal: 8,
                                 vertical: 4 * 0.5,
                               ),
                               decoration: BoxDecoration(
-                                color: TossDesignSystem.successGreen.withValues(alpha: 0.2),
-                                borderRadius: AppDimensions.borderRadiusMedium,
+                                color: DSColors.success.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(DSRadius.md),
                               ),
                               child: Text(
                                 '최강',
@@ -336,12 +333,12 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                             ),
                           if (isWeakest) Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.spacing2,
+                                horizontal: 8,
                                 vertical: 4 * 0.5,
                               ),
                               decoration: BoxDecoration(
-                                color: TossDesignSystem.warningOrange.withValues(alpha: 0.2),
-                                borderRadius: AppDimensions.borderRadiusMedium,
+                                color: DSColors.warning.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(DSRadius.md),
                               ),
                               child: Text(
                                 '보충필요',
@@ -350,7 +347,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                             ),
                         ],
                       ),
-                      const SizedBox(height: AppSpacing.spacing1),
+                      const SizedBox(height: 4),
                       Text(
                         info['meaning'],
                         style: Theme.of(context).textTheme.bodyMedium,
@@ -360,7 +357,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                 ),
                 // 개수 표시
                 SizedBox(
-                  width: AppSpacing.spacing12 * 1.04,
+                  width: 48 * 1.04,
                   child: Column(
                     children: [
                       Text(
@@ -384,7 +381,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
 
   Widget _buildElementRelations() {
     return GlassContainer(
-      padding: AppSpacing.paddingAll16,
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -392,23 +389,23 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
             '오행 상생상극',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
                 child: _buildRelationInfo(
                   '상생',
                   '목→화→토→금→수→목',
-                  TossDesignSystem.successGreen,
+                  DSColors.success,
                   Icons.refresh,
                 ),
               ),
-              const SizedBox(width: AppSpacing.spacing3),
+              const SizedBox(width: 12),
               Expanded(
                 child: _buildRelationInfo(
                   '상극',
                   '목→토→수→화→금→목',
-                  TossDesignSystem.errorRed,
+                  DSColors.error,
                   Icons.close,
                 ),
               ),
@@ -426,10 +423,10 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
     IconData icon,
   ) {
     return Container(
-      padding: AppSpacing.paddingAll12,
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: AppDimensions.borderRadiusSmall,
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: color.withValues(alpha: 0.3),
           width: 1,
@@ -441,7 +438,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, color: color, size: 16),
-              const SizedBox(width: AppSpacing.spacing1),
+              const SizedBox(width: 4),
               Text(
                 title,
                 style: TextStyle(
@@ -451,7 +448,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.spacing1),
+          const SizedBox(height: 4),
           Text(
             relation,
             style: Theme.of(context).textTheme.bodyMedium,
@@ -493,41 +490,41 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
   void _showElementDetail(String element, Map<String, dynamic> info) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
-        padding: AppSpacing.paddingAll24,
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 40,
-              height: AppSpacing.spacing1,
+              height: 4,
               decoration: BoxDecoration(
-                color: TossDesignSystem.white.withValues(alpha: 0.3),
+                color: Colors.white.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(4 * 0.5),
               ),
             ),
-            const SizedBox(height: AppSpacing.spacing5),
+            const SizedBox(height: 20),
             Icon(
               info['icon'],
               color: info['color'],
               size: 48,
             ),
-            const SizedBox(height: AppSpacing.spacing3),
+            const SizedBox(height: 12),
             Text(
               '$element원소',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: AppSpacing.spacing5),
+            const SizedBox(height: 20),
             _buildDetailRow('의미', info['meaning']),
             _buildDetailRow('계절', info['season']),
             _buildDetailRow('방위', info['direction']),
             _buildDetailRow('장기', info['organ']),
-            const SizedBox(height: AppSpacing.spacing5),
+            const SizedBox(height: 20),
             Text(
               '개수: ${widget.elementBalance[element] ?? 0}개',
               style: Theme.of(context).textTheme.bodyMedium,
@@ -540,7 +537,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing1),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -567,7 +564,7 @@ class _RadarBackgroundPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = TossDesignSystem.white.withValues(alpha: 0.1);
+      ..color = Colors.white.withValues(alpha: 0.1);
     
     // 동심원 그리기
     for (int i = 1; i <= 4; i++) {

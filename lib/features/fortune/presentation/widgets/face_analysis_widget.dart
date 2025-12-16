@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 관상 타입 정보를 담는 클래스
 class FaceTypeInfo {
@@ -165,7 +163,7 @@ class FaceAnalysisResultWidget extends StatelessWidget {
           // 이모지
           Text(
             faceTypeInfo.emoji,
-            style: TypographyUnified.displayLarge,
+            style: DSTypography.displayLarge,
           ),
           const SizedBox(height: 16),
           
@@ -184,7 +182,7 @@ class FaceAnalysisResultWidget extends StatelessWidget {
           Text(
             faceTypeInfo.subtitle,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: TossTheme.textGray600,
+              color: DSColors.textSecondary,
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
@@ -230,14 +228,14 @@ class FaceAnalysisResultWidget extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossTheme.backgroundSecondary,
+        color: DSColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
         faceTypeInfo.description,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
           height: 1.6,
-          color: TossTheme.textBlack,
+          color: DSColors.textPrimary,
         ),
         textAlign: TextAlign.center,
       ),
@@ -322,7 +320,7 @@ class FaceStrengthsWidget extends StatelessWidget {
               child: Text(
                 '$rank',
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                   fontWeight: FontWeight.w700,
                 ),
               ),

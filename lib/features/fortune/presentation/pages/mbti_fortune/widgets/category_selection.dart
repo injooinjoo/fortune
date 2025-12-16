@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class CategorySelection extends StatelessWidget {
   final List<String> selectedCategories;
@@ -24,16 +23,16 @@ class CategorySelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '어떤 운을 보고 싶으신가요?',
-          style: TypographyUnified.buttonMedium.copyWith(
+          style: DSTypography.labelLarge.copyWith(
             fontWeight: FontWeight.w600,
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray800,
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 12),
@@ -52,16 +51,12 @@ class CategorySelection extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? (cat['color'] as Color).withValues(alpha: 0.1)
-                      : (isDark
-                          ? TossDesignSystem.grayDark700
-                          : TossDesignSystem.gray50),
+                      : colors.surface,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isSelected
                         ? (cat['color'] as Color)
-                        : (isDark
-                            ? TossDesignSystem.grayDark400
-                            : TossDesignSystem.gray200),
+                        : colors.border,
                   ),
                 ),
                 child: Row(
@@ -72,20 +67,16 @@ class CategorySelection extends StatelessWidget {
                       size: 16,
                       color: isSelected
                           ? (cat['color'] as Color)
-                          : (isDark
-                              ? TossDesignSystem.grayDark100
-                              : TossDesignSystem.gray600),
+                          : colors.textSecondary,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       cat['label'] as String,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                         color: isSelected
                             ? (cat['color'] as Color)
-                            : (isDark
-                                ? TossDesignSystem.grayDark100
-                                : TossDesignSystem.gray600),
+                            : colors.textSecondary,
                       ),
                     ),
                   ],

@@ -10,7 +10,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../../../data/services/token_api_service.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class TaemongPage extends ConsumerStatefulWidget {
   const TaemongPage({super.key});
@@ -273,7 +273,7 @@ class _TaemongPageState extends ConsumerState<TaemongPage> {
               )
             : Text(
                 '태몽 해석하기',
-                style: TypographyUnified.buttonMedium.copyWith(
+                style: DSTypography.labelMedium.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),

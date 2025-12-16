@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 
 class EmotionRadarChart extends StatelessWidget {
@@ -14,8 +13,8 @@ class EmotionRadarChart extends StatelessWidget {
     super.key,
     required this.emotions,
     this.size = 200,
-    this.primaryColor = TossDesignSystem.purple,
-    this.backgroundColor = TossDesignSystem.gray200});
+    this.primaryColor = DSColors.accentSecondary,
+    this.backgroundColor = DSColors.border});
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +70,7 @@ class _RadarChartPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: TextSpan(
           text: _getEmotionLabel(key),
-          style: TypographyUnified.labelMedium.copyWith( color: TossDesignSystem.black)),
+          style: DSTypography.labelMedium.copyWith( color: DSColors.textPrimary)),
         textDirection: TextDirection.ltr,
         textAlign: TextAlign.center);
       textPainter.layout();

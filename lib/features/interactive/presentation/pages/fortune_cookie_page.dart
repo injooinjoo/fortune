@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -10,7 +9,8 @@ import 'dart:math' as math;
 import 'package:share_plus/share_plus.dart';
 import '../../../fortune/presentation/widgets/standard_fortune_app_bar.dart';
 import '../../../../core/services/unified_fortune_service.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 
@@ -355,7 +355,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
         setState(() {
           _selectedCookie = cookie;
         });
-        HapticFeedback.lightImpact();
+        ref.read(fortuneHapticServiceProvider).selection();
       },
       child: Container(
         decoration: BoxDecoration(
@@ -537,7 +537,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                               // Cookie emoji
                               Text(
                                 _selectedCookie!.emoji,
-                                style: TypographyUnified.displayLarge.copyWith(
+                                style: DSTypography.displayLarge.copyWith(
                                   shadows: [
                                     Shadow(
                                       color: TossDesignSystem.black.withValues(alpha: 0.2),
@@ -648,7 +648,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                     children: [
                       Text(
                         '"',
-                        style: TypographyUnified.heading1.copyWith(
+                        style: DSTypography.displaySmall.copyWith(
                           fontWeight: FontWeight.w300,
                           color: Color(0xFFFFB74D),
                           height: 0.5,
@@ -667,7 +667,7 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
                       SizedBox(height: 8),
                       Text(
                         '"',
-                        style: TypographyUnified.heading1.copyWith(
+                        style: DSTypography.displaySmall.copyWith(
                           fontWeight: FontWeight.w300,
                           color: Color(0xFFFFB74D),
                           height: 0.5,
@@ -843,45 +843,66 @@ class _FortuneCookiePageState extends ConsumerState<FortuneCookiePage>
 
   Future<void> _onCookieTap() async {
     if (_isProcessing || _isShaking || _isCracking) return;
-    
+
+    final haptic = ref.read(fortuneHapticServiceProvider);
+
     setState(() {
       _isProcessing = true;
     });
-    
-    HapticFeedback.mediumImpact();
-    
+
+    // 쿠키 탭 시작 - 카드 선택 햅틱
+    haptic.cardSelect();
+
     setState(() {
       _isShaking = true;
     });
-    
-    // Shake animation
+
+    // Shake animation with haptic feedback
+    haptic.cookieShake(); // 흔들기 시작 시 연속 햅틱
     await _shakeController.forward();
     await _shakeController.reverse();
     await _shakeController.forward();
     await _shakeController.reverse();
-    
+
     setState(() {
       _isShaking = false;
       _isCracking = true;
     });
-    
+
     // Get fortune
     await _getFortune();
-    
-    // Crack animation
+
+    // Crack animation with haptic at 50% point
+    _crackController.addListener(_onCrackProgress);
     await _crackController.forward();
-    
-    // Show paper
+    _crackController.removeListener(_onCrackProgress);
+
+    // Show paper with reveal haptic
+    haptic.mysticalReveal();
+
     setState(() {
       _showPaper = true;
     });
-    
+
     // Paper animation
     await _paperController.forward();
-    
+
+    // 결과 표시 완료
+    haptic.loadingComplete();
+
     setState(() {
       _isProcessing = false;
     });
+  }
+
+  bool _crackHapticTriggered = false;
+
+  void _onCrackProgress() {
+    // 균열 애니메이션 50% 지점에서 햅틱
+    if (!_crackHapticTriggered && _crackController.value >= 0.5) {
+      _crackHapticTriggered = true;
+      ref.read(fortuneHapticServiceProvider).cardSelect();
+    }
   }
 
   Future<void> _getFortune() async {

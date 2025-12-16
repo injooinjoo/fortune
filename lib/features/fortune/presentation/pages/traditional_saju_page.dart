@@ -5,8 +5,7 @@ import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/services/debug_premium_service.dart';
@@ -97,11 +96,11 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final sajuState = ref.watch(sajuProvider);
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       appBar: StandardFortuneAppBar(
         title: '전통 사주팔자',
         showBackButton: !_showResults,
@@ -113,7 +112,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                   onPressed: () {
                     Navigator.pop(context);
@@ -127,7 +126,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   }
   
   Widget _buildBody(SajuState sajuState) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     if (sajuState.isLoading) {
       return FortuneLoadingSkeleton(
@@ -146,16 +145,16 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 48, color: TossTheme.error),
-            const SizedBox(height: 16),
+            Icon(Icons.error_outline, size: 48, color: colors.error),
+            const SizedBox(height: DSSpacing.md),
             Text(
               sajuState.error!,
               textAlign: TextAlign.center,
-              style: TossTheme.body3.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              style: DSTypography.bodyLarge.copyWith(
+                color: colors.textPrimary,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
             UnifiedButton(
               text: '다시 시도',
               onPressed: () {
@@ -198,17 +197,17 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
               Icon(
                 Icons.calendar_today_outlined,
                 size: 48,
-                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+                color: colors.textTertiary,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: DSSpacing.md),
               Text(
                 '생년월일 정보가 필요해요.\n프로필에서 생년월일을 입력해주세요.',
                 textAlign: TextAlign.center,
-                style: TossTheme.body3.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.bodyLarge.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: DSSpacing.lg),
               UnifiedButton(
                 text: '프로필 편집하기',
                 onPressed: () {
@@ -243,7 +242,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     }
 
     final hasQuestion = _selectedQuestion != null && _selectedQuestion!.isNotEmpty;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     // 오행 균형 데이터 생성
     final sajuState = ref.watch(sajuProvider);
@@ -261,7 +260,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
         Column(
           children: [
             // 탭바
-            _buildTabBar(isDark),
+            _buildTabBar(colors),
             // 탭뷰
             Expanded(
               child: TabBarView(
@@ -304,20 +303,20 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   /// 탭 컨텐츠 래퍼
   Widget _buildTabContent(Widget child) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       physics: const ClampingScrollPhysics(),
       child: child,
     );
   }
 
   /// 탭바
-  Widget _buildTabBar(bool isDark) {
+  Widget _buildTabBar(DSColorScheme colors) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        color: colors.surface,
         border: Border(
           bottom: BorderSide(
-            color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
+            color: colors.border,
             width: 1,
           ),
         ),
@@ -326,8 +325,8 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
         controller: _tabController,
         isScrollable: true,
         tabAlignment: TabAlignment.start,
-        labelColor: TossTheme.brandBlue,
-        unselectedLabelColor: isDark ? TossDesignSystem.gray400 : TossDesignSystem.gray600,
+        labelColor: colors.accent,
+        unselectedLabelColor: colors.textSecondary,
         labelStyle: const TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.bold,
@@ -338,11 +337,11 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           fontWeight: FontWeight.w500,
           fontFamily: 'ZenSerif',
         ),
-        indicatorColor: TossTheme.brandBlue,
+        indicatorColor: colors.accent,
         indicatorWeight: 2,
         dividerColor: Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingS),
-        labelPadding: const EdgeInsets.symmetric(horizontal: TossTheme.spacingM),
+        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
+        labelPadding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
         tabs: _tabNames.map((name) => Tab(text: name)).toList(),
       ),
     );
@@ -353,12 +352,12 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     return Stack(
       children: [
         SingleChildScrollView(
-          padding: const EdgeInsets.all(TossTheme.spacingM),
+          padding: const EdgeInsets.all(DSSpacing.md),
           child: Column(
             children: [
               // 운세 결과
               _buildFortuneResult(sajuData),
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
 
               const BottomButtonSpacing(),
             ],
@@ -377,6 +376,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     );
   }
 
+  // ignore: unused_element - 대체 UI로 미사용 중
   Widget _buildBasicSajuInfo(Map<String, dynamic> sajuData) {
     // 오행 균형 데이터 생성 - sajuProvider에서 가져오기
     final sajuState = ref.watch(sajuProvider);
@@ -394,26 +394,26 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
       children: [
         // 사주 명식 표시 (전문가 스타일 4주 테이블)
         SajuPillarTablePro(sajuData: sajuData),
-        const SizedBox(height: TossTheme.spacingL),
+        const SizedBox(height: DSSpacing.lg),
 
         // 오행 차트
         SajuElementChart(
           elementBalance: elementBalance,
           animationController: _resultAnimationController,
         ),
-        const SizedBox(height: TossTheme.spacingL),
+        const SizedBox(height: DSSpacing.lg),
 
         // 지장간 분석
         SajuJijangganWidget(sajuData: sajuData),
-        const SizedBox(height: TossTheme.spacingL),
+        const SizedBox(height: DSSpacing.lg),
 
         // 12운성 분석
         SajuTwelveStagesWidget(sajuData: sajuData),
-        const SizedBox(height: TossTheme.spacingL),
+        const SizedBox(height: DSSpacing.lg),
 
         // 신살 분석
         SajuSinsalWidget(sajuData: sajuData),
-        const SizedBox(height: TossTheme.spacingL),
+        const SizedBox(height: DSSpacing.lg),
 
         // 합충형파해 분석
         SajuHapchungWidget(sajuData: sajuData),
@@ -422,7 +422,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   }
 
   Widget _buildQuestionSelectionSection() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final predefinedQuestions = [
       '언제 돈이 들어올까요?',
       '어떤 일이 나에게 맞을까요?',
@@ -432,23 +432,23 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     ];
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '궁금한 질문을 선택하세요',
-            style: TossTheme.heading3.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.headingSmall.copyWith(
+              color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: TossTheme.spacingM),
-          
+          const SizedBox(height: DSSpacing.md),
+
           // 미리 정의된 질문들
-          ...predefinedQuestions.map((question) => 
+          ...predefinedQuestions.map((question) =>
             Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(bottom: TossTheme.spacingS),
+              margin: const EdgeInsets.only(bottom: DSSpacing.sm),
               child: UnifiedButton(
                 text: question,
                 onPressed: () {
@@ -463,18 +463,18 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
               ),
             ),
           ),
-          
-          const SizedBox(height: TossTheme.spacingL),
+
+          const SizedBox(height: DSSpacing.lg),
 
           // 직접 질문 입력
           Text(
             '또는 직접 질문을 작성해주세요',
-            style: TossTheme.body3.copyWith(
+            style: DSTypography.bodyLarge.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: DSSpacing.md),
 
           TextField(
             controller: _customQuestionController,
@@ -489,31 +489,31 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
             },
             decoration: InputDecoration(
               hintText: '예: 언제 직장을 옮겨야 할까요?',
-              hintStyle: TossTheme.hintStyle.copyWith(
-                color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
+              hintStyle: DSTypography.labelSmall.copyWith(
+                color: colors.textTertiary,
               ),
-              fillColor: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
+              fillColor: colors.backgroundSecondary,
               filled: true,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(TossTheme.radiusM),
+                borderRadius: BorderRadius.circular(DSRadius.md),
                 borderSide: BorderSide(
-                  color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
+                  color: colors.border,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                borderSide: BorderSide(color: TossTheme.brandBlue, width: 2),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                borderSide: BorderSide(color: colors.accent, width: 2),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(TossTheme.radiusM),
+                borderRadius: BorderRadius.circular(DSRadius.md),
                 borderSide: BorderSide(
-                  color: isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight,
+                  color: colors.border,
                 ),
               ),
-              contentPadding: const EdgeInsets.all(TossTheme.spacingM),
+              contentPadding: const EdgeInsets.all(DSSpacing.md),
             ),
-            style: TossTheme.body3.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.bodyLarge.copyWith(
+              color: colors.textPrimary,
             ),
             maxLines: 2,
           ),
@@ -591,7 +591,7 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   Widget _buildFortuneResult(Map<String, dynamic> sajuData) {
     if (_fortuneResult == null) return const SizedBox.shrink();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final question = _fortuneResult!.data['question'] as String? ?? _selectedQuestion ?? '';
     final sections = _fortuneResult!.data['sections'] as Map<String, dynamic>? ?? {};
 
@@ -604,36 +604,36 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
       children: [
         // 질문 카드
         AppCard(
-          padding: const EdgeInsets.all(TossTheme.spacingL),
+          padding: const EdgeInsets.all(DSSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.auto_awesome, color: TossTheme.brandBlue, size: 24),
-                  const SizedBox(width: TossTheme.spacingS),
+                  Icon(Icons.auto_awesome, color: colors.accent, size: 24),
+                  const SizedBox(width: DSSpacing.sm),
                   Text(
                     '질문',
-                    style: TossTheme.heading3.copyWith(
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    style: DSTypography.headingSmall.copyWith(
+                      color: colors.textPrimary,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: TossTheme.spacingM),
+              const SizedBox(height: DSSpacing.md),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(TossTheme.spacingM),
+                padding: const EdgeInsets.all(DSSpacing.md),
                 decoration: BoxDecoration(
-                  color: TossTheme.brandBlue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(TossTheme.radiusM),
-                  border: Border.all(color: TossTheme.brandBlue.withValues(alpha: 0.3)),
+                  color: colors.accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
+                  border: Border.all(color: colors.accent.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   question,
-                  style: TossTheme.body3.copyWith(
+                  style: DSTypography.bodyLarge.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -641,54 +641,54 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
           ),
         ),
 
-        const SizedBox(height: TossTheme.spacingL),
+        const SizedBox(height: DSSpacing.lg),
 
         // 사주 명식 (전문가 스타일)
         SajuPillarTablePro(sajuData: sajuData, showTitle: false),
-        const SizedBox(height: TossTheme.spacingM),
+        const SizedBox(height: DSSpacing.md),
 
         // 합충형파해 (간결 버전)
         SajuHapchungWidget(sajuData: sajuData, showTitle: false),
-        const SizedBox(height: TossTheme.spacingL),
+        const SizedBox(height: DSSpacing.lg),
 
         // 사주 분석 (항상 표시)
         _buildSection(
           title: '📊 사주 분석',
           content: analysis,
-          isDark: isDark,
+          colors: colors,
           sectionKey: 'analysis',
           sectionIndex: 0,
         ),
 
-        const SizedBox(height: TossTheme.spacingM),
+        const SizedBox(height: DSSpacing.md),
 
         // 답변 (블러)
         _buildSection(
           title: '💬 답변',
           content: answer,
-          isDark: isDark,
+          colors: colors,
           sectionKey: 'answer',
           sectionIndex: 1,
         ),
 
-        const SizedBox(height: TossTheme.spacingM),
+        const SizedBox(height: DSSpacing.md),
 
         // 조언 (블러)
         _buildSection(
           title: '💡 조언',
           content: advice,
-          isDark: isDark,
+          colors: colors,
           sectionKey: 'advice',
           sectionIndex: 2,
         ),
 
-        const SizedBox(height: TossTheme.spacingM),
+        const SizedBox(height: DSSpacing.md),
 
         // 오행 보완 (블러)
         _buildSection(
           title: '🌿 오행 보완',
           content: supplement,
-          isDark: isDark,
+          colors: colors,
           sectionKey: 'supplement',
           sectionIndex: 3,
         ),
@@ -700,25 +700,25 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
   Widget _buildSection({
     required String title,
     required String content,
-    required bool isDark,
+    required DSColorScheme colors,
     required String sectionKey,
     required int sectionIndex,
   }) {
     final isLastSection = sectionIndex == 3; // supplement가 마지막
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 제목은 항상 표시 (블러 없음)
           Text(
             title,
-            style: TossTheme.heading4.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.labelLarge.copyWith(
+              color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: DSSpacing.md),
 
           // 내용만 블러 처리
           UnifiedBlurWrapper(
@@ -727,9 +727,9 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
             sectionKey: sectionKey,
             child: GptStyleTypingText(
               text: content,
-              style: TossTheme.body3.copyWith(
+              style: DSTypography.bodyLarge.copyWith(
                 height: 1.6,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                color: colors.textPrimary,
               ),
               startTyping: _currentTypingSection >= sectionIndex,
               showGhostText: true,

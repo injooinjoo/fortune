@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter/services.dart';
@@ -171,9 +170,10 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
   @override
   Widget build(BuildContext context) {
     final fontScale = ref.watch(userSettingsProvider).fontScale;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: TossDesignSystem.black,
+      backgroundColor: colors.background,
       appBar: const StandardFortuneAppBar(
         title: '타로 리딩',
       ),
@@ -219,7 +219,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
 
   Widget _buildProgressIndicator() {
     final progress = (_currentCardIndex + 1) / widget.selectedCards.length;
-    
+    final colors = context.colors;
+
     return Container(
       height: 6,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -228,7 +229,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
           // Background
           Container(
             decoration: BoxDecoration(
-              color: TossDesignSystem.white.withValues(alpha: 0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(3),
             ),
           ),
@@ -261,9 +262,9 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        TossDesignSystem.white.withValues(alpha: 0),
-                        TossDesignSystem.white.withValues(alpha: 0.3 * _fadeController.value),
-                        TossDesignSystem.white.withValues(alpha: 0)],
+                        Colors.white.withValues(alpha: 0),
+                        Colors.white.withValues(alpha: 0.3 * _fadeController.value),
+                        Colors.white.withValues(alpha: 0)],
                       stops: const [0.0, 0.5, 1.0]),
                     borderRadius: BorderRadius.circular(3),
                   ),
@@ -277,6 +278,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
   }
 
   Widget _buildIntroduction(double fontScale) {
+    final colors = context.colors;
+
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(
@@ -302,10 +305,10 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                           shape: BoxShape.circle,
                           gradient: SweepGradient(
                             colors: [
-                              TossDesignSystem.purple.withValues(alpha: 0),
+                              colors.accent.withValues(alpha: 0),
                               const Color(0xFF9333EA).withValues(alpha: 0.3),
-                              TossDesignSystem.purple.withValues(alpha: 0.3),
-                              TossDesignSystem.purple.withValues(alpha: 0)],
+                              colors.accent.withValues(alpha: 0.3),
+                              colors.accent.withValues(alpha: 0)],
                           ),
                         ),
                       ),
@@ -314,7 +317,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                     Icon(
                       Icons.auto_awesome,
                       size: 80,
-                      color: TossDesignSystem.white,
+                      color: Colors.white,
                       shadows: [
                         Shadow(
                           color: const Color(0xFF9333EA),
@@ -327,15 +330,15 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
             const SizedBox(height: 24),
             Text(
               '타로 카드가 당신에게 전하는 메시지',
-              style: context.heading2.copyWith(
+              style: DSTypography.headingMedium.copyWith(
                 fontWeight: FontWeight.bold,
-                color: TossDesignSystem.white),
+                color: Colors.white),
               textAlign: TextAlign.center),
             const SizedBox(height: 16),
             Text(
               widget.question ?? '오늘의 운세를 알아보겠습니다',
-              style: context.buttonMedium.copyWith(
-                color: TossDesignSystem.white.withValues(alpha: 0.7),
+              style: DSTypography.labelLarge.copyWith(
+                color: Colors.white.withValues(alpha: 0.7),
                 fontStyle: FontStyle.italic),
               textAlign: TextAlign.center),
             const SizedBox(height: 32),
@@ -343,11 +346,11 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
               padding: const EdgeInsets.all(20),
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.purple.withValues(alpha: 0.2),
-                  TossDesignSystem.purple.withValues(alpha: 0.2)]),
+                  colors.accent.withValues(alpha: 0.2),
+                  colors.accent.withValues(alpha: 0.2)]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: TossDesignSystem.white.withValues(alpha: 0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 width: 1),
               child: Column(
 
@@ -358,17 +361,17 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          TossDesignSystem.white.withValues(alpha: 0.1),
-                          TossDesignSystem.transparent])),
+                          Colors.white.withValues(alpha: 0.1),
+                          Colors.transparent])),
                     child: Icon(
                       Icons.info_outline,
-                      color: TossDesignSystem.white.withValues(alpha: 0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       size: 24)),
                   const SizedBox(height: 12),
                   Text(
                     '${widget.selectedCards.length}장의 카드를 하나씩 공개하며\n각 카드가 전하는 메시지를 들려드리겠습니다.',
-                    style: context.bodySmall.copyWith(
-                      color: TossDesignSystem.white,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: Colors.white,
                       height: 1.5,
                       letterSpacing: 0.5),
                     textAlign: TextAlign.center),
@@ -384,6 +387,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
   Widget _buildCurrentCardSection(double fontScale) {
     if (_currentCardIndex >= widget.selectedCards.length) return const SizedBox();
 
+    final colors = context.colors;
     final positionName = TarotHelper.getPositionDescription(
       widget.spreadType,
       _currentCardIndex);
@@ -402,7 +406,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   const Color(0xFF7C3AED).withValues(alpha: 0.3)]),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: TossDesignSystem.white.withValues(alpha: 0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 width: 1),
               boxShadow: [
                 BoxShadow(
@@ -416,15 +420,15 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.white.withValues(alpha: 0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
                     child: Text(
                       '${_currentCardIndex + 1}',
-                      style: context.labelMedium.copyWith(
+                      style: DSTypography.labelMedium.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: TossDesignSystem.white,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -432,9 +436,9 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                 const SizedBox(width: 12),
                 Text(
                   positionName,
-                  style: context.buttonMedium.copyWith(
+                  style: DSTypography.labelLarge.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: TossDesignSystem.white,
+                    color: Colors.white,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -474,13 +478,14 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
   }
 
   List<Widget> _buildInterpretationHistory(double fontScale) {
+    final colors = context.colors;
     final history = <Widget>[];
-    
+
     for (int i = 0; i < _currentCardIndex; i++) {
       if (i < _interpretations.length) {
         final cardInfo = TarotMetadata.majorArcana[widget.selectedCards[i] % 22];
         final positionName = TarotHelper.getPositionDescription(widget.spreadType, i);
-        
+
         history.add(
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
@@ -492,8 +497,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   padding: const EdgeInsets.all(12),
                   gradient: LinearGradient(
                     colors: [
-                      TossDesignSystem.purple.withValues(alpha: 0.1),
-                      TossDesignSystem.purple.withValues(alpha: 0.1)]),
+                      colors.accent.withValues(alpha: 0.1),
+                      colors.accent.withValues(alpha: 0.1)]),
                   child: Row(
                     children: [
                       // Mini card image
@@ -518,13 +523,13 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                           children: [
                             Text(
                               '${i + 1}. $positionName',
-                              style: context.labelMedium.copyWith(
-                                color: TossDesignSystem.white.withValues(alpha: 0.7))),
+                              style: DSTypography.labelMedium.copyWith(
+                                color: Colors.white.withValues(alpha: 0.7))),
                             Text(
                               cardInfo?.name ?? 'Unknown Card',
-                              style: context.bodySmall.copyWith(
+                              style: DSTypography.bodySmall.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: TossDesignSystem.white)),
+                                color: Colors.white)),
                           ],
                         ),
                       ),
@@ -543,7 +548,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
         );
       }
     }
-    
+
     return history;
   }
 
@@ -580,8 +585,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            TossDesignSystem.transparent,
-            TossDesignSystem.black.withValues(alpha: 0.8)])),
+            Colors.transparent,
+            Colors.black.withValues(alpha: 0.8)])),
       child: SafeArea(
         top: false,
         child: SizedBox(

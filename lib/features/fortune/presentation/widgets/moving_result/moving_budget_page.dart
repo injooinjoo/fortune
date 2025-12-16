@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 import 'moving_fortune_data.dart';
 import 'moving_result_utils.dart';
 
@@ -28,7 +26,7 @@ class MovingBudgetPage extends StatelessWidget {
         children: [
           Text(
             '예상 이사 비용',
-            style: TossTheme.heading2,
+            style: DSTypography.headingLarge,
           ),
           const SizedBox(height: 20),
 
@@ -39,7 +37,7 @@ class MovingBudgetPage extends StatelessWidget {
               children: [
                 Text(
                   '예상 총 비용',
-                  style: TossTheme.body2.copyWith(color: TossTheme.textGray600),
+                  style: DSTypography.bodyMedium.copyWith(color: DSColors.textSecondary),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -47,9 +45,9 @@ class MovingBudgetPage extends StatelessWidget {
                     RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
                     (Match m) => '${m[1]},',
                   )}만원',
-                  style: TypographyUnified.displayLarge.copyWith(
+                  style: DSTypography.displayLarge.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: TossTheme.primaryBlue,
+                    color: DSColors.accent,
                   ),
                 ).animate()
                   .fadeIn()
@@ -70,8 +68,8 @@ class MovingBudgetPage extends StatelessWidget {
                           value: entry.value.toDouble(),
                           title: '$percentage%',
                           radius: 40,
-                          titleStyle: TossTheme.caption.copyWith(
-                            color: TossDesignSystem.white,
+                          titleStyle: DSTypography.labelSmall.copyWith(
+                            color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
                         );
@@ -88,7 +86,7 @@ class MovingBudgetPage extends StatelessWidget {
           // 항목별 상세
           Text(
             '항목별 상세',
-            style: TossTheme.heading3,
+            style: DSTypography.headingMedium,
           ),
           const SizedBox(height: 12),
 
@@ -99,8 +97,8 @@ class MovingBudgetPage extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white,
-                  border: Border.all(color: TossTheme.borderGray200),
+                  color: Colors.white,
+                  border: Border.all(color: DSColors.border),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -120,13 +118,13 @@ class MovingBudgetPage extends StatelessWidget {
                         children: [
                           Text(
                             entry.key,
-                            style: TossTheme.body2,
+                            style: DSTypography.bodyMedium,
                           ),
                           const SizedBox(height: 4),
                           Text(
                             '전체의 $percentage%',
-                            style: TossTheme.caption.copyWith(
-                              color: TossTheme.textGray500,
+                            style: DSTypography.labelSmall.copyWith(
+                              color: DSColors.textSecondary,
                             ),
                           ),
                         ],
@@ -134,7 +132,7 @@ class MovingBudgetPage extends StatelessWidget {
                     ),
                     Text(
                       '${entry.value}만원',
-                      style: TossTheme.heading4,
+                      style: DSTypography.headingSmall,
                     ),
                   ],
                 ),
@@ -148,14 +146,14 @@ class MovingBudgetPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+              color: DSColors.warning.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.savings_rounded,
-                  color: TossDesignSystem.warningOrange,
+                  color: DSColors.warning,
                   size: 24,
                 ),
                 const SizedBox(width: 12),
@@ -165,15 +163,15 @@ class MovingBudgetPage extends StatelessWidget {
                     children: [
                       Text(
                         '절약 TIP',
-                        style: TossTheme.heading4.copyWith(
-                          color: TossDesignSystem.warningOrange,
+                        style: DSTypography.headingSmall.copyWith(
+                          color: DSColors.warning,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '평일 이사 시 약 20% 절약 가능합니다',
-                        style: TossTheme.body2.copyWith(
-                          color: TossTheme.textGray600,
+                        style: DSTypography.bodyMedium.copyWith(
+                          color: DSColors.textSecondary,
                         ),
                       ),
                     ],

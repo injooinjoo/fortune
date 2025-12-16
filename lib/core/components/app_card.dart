@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
-/// TOSS 스타일 카드 컴포넌트
+/// ChatGPT 스타일 카드 컴포넌트
 class AppCard extends StatelessWidget {
   final Widget child;
   final EdgeInsets? padding;
@@ -23,29 +22,30 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    final colors = context.colors;
+    final shadows = context.shadows;
+
     Widget card = Container(
       margin: margin,
       decoration: BoxDecoration(
-        color: _getBackgroundColor(isDark),
+        color: _getBackgroundColor(colors),
         borderRadius: BorderRadius.circular(_getBorderRadius()),
-        border: _getBorder(isDark),
-        boxShadow: _getBoxShadow(isDark),
+        border: _getBorder(colors),
+        boxShadow: _getBoxShadow(shadows),
       ),
       child: Material(
-        color: TossDesignSystem.white.withValues(alpha: 0.0),
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(_getBorderRadius()),
         child: InkWell(
           onTap: onTap != null ? () {
             if (enableHaptic) {
-              HapticFeedback.lightImpact();
+              DSHaptics.light();
             }
             onTap!();
           } : null,
           borderRadius: BorderRadius.circular(_getBorderRadius()),
           child: Padding(
-            padding: padding ?? EdgeInsets.all(TossDesignSystem.spacingM),
+            padding: padding ?? const EdgeInsets.all(DSSpacing.md),
             child: child,
           ),
         ),
@@ -55,40 +55,38 @@ class AppCard extends StatelessWidget {
     return card;
   }
 
-  Color _getBackgroundColor(bool isDark) {
+  Color _getBackgroundColor(DSColorScheme colors) {
     switch (style) {
       case AppCardStyle.elevated:
       case AppCardStyle.outlined:
       case AppCardStyle.filled:
-        return isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white;
+        return colors.surface;
       case AppCardStyle.transparent:
-        return TossDesignSystem.white.withValues(alpha: 0.0);
+        return Colors.transparent;
       case AppCardStyle.glassmorphism:
-        return (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white)
-            .withValues(alpha: 0.7);
+        return colors.surface.withValues(alpha: 0.7);
     }
   }
 
   double _getBorderRadius() {
     switch (style) {
       case AppCardStyle.glassmorphism:
-        return TossDesignSystem.radiusXL;
+        return DSRadius.xl;
       default:
-        return TossDesignSystem.radiusM;
+        return DSRadius.md;
     }
   }
 
-  BoxBorder? _getBorder(bool isDark) {
+  BoxBorder? _getBorder(DSColorScheme colors) {
     switch (style) {
       case AppCardStyle.outlined:
         return Border.all(
-          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: colors.border,
           width: 1,
         );
       case AppCardStyle.glassmorphism:
         return Border.all(
-          color: (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray100)
-              .withValues(alpha: 0.2),
+          color: colors.border.withValues(alpha: 0.2),
           width: 1,
         );
       default:
@@ -96,24 +94,12 @@ class AppCard extends StatelessWidget {
     }
   }
 
-  List<BoxShadow>? _getBoxShadow(bool isDark) {
+  List<BoxShadow>? _getBoxShadow(DSShadowScheme shadows) {
     switch (style) {
       case AppCardStyle.elevated:
-        return [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ];
+        return [shadows.card];
       case AppCardStyle.glassmorphism:
-        return [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ];
+        return [shadows.modal];
       default:
         return null;
     }
@@ -128,8 +114,8 @@ enum AppCardStyle {
   glassmorphism,
 }
 
-/// 리스트 아이템용 TOSS 스타일 카드
-class TossListCard extends StatelessWidget {
+/// 리스트 아이템용 카드
+class AppListCard extends StatelessWidget {
   final Widget? leading;
   final Widget title;
   final Widget? subtitle;
@@ -139,7 +125,7 @@ class TossListCard extends StatelessWidget {
   final EdgeInsets? margin;
   final AppCardStyle style;
 
-  const TossListCard({
+  const AppListCard({
     super.key,
     required this.title,
     this.leading,
@@ -153,35 +139,36 @@ class TossListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     return AppCard(
       style: style,
-      padding: padding ?? EdgeInsets.all(TossDesignSystem.spacingM),
+      padding: padding ?? const EdgeInsets.all(DSSpacing.md),
       margin: margin,
       onTap: onTap,
       child: Row(
         children: [
           if (leading != null) ...[
             leading!,
-            SizedBox(width: TossDesignSystem.spacingM),
+            const SizedBox(width: DSSpacing.md),
           ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 DefaultTextStyle(
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                   child: title,
                 ),
                 if (subtitle != null) ...[
-                  SizedBox(height: TossDesignSystem.spacingXS),
+                  const SizedBox(height: DSSpacing.xs),
                   DefaultTextStyle(
-                    style: TossDesignSystem.body3.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray400,
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                     child: subtitle!,
                   ),
@@ -190,7 +177,7 @@ class TossListCard extends StatelessWidget {
             ),
           ),
           if (trailing != null) ...[
-            SizedBox(width: TossDesignSystem.spacingM),
+            const SizedBox(width: DSSpacing.md),
             trailing!,
           ],
         ],
@@ -199,8 +186,11 @@ class TossListCard extends StatelessWidget {
   }
 }
 
+/// @deprecated Use [AppListCard] instead
+typedef TossListCard = AppListCard;
+
 /// 섹션 카드 컴포넌트
-class TossSectionCard extends StatelessWidget {
+class AppSectionCard extends StatelessWidget {
   final String? title;
   final String? subtitle;
   final Widget child;
@@ -208,7 +198,7 @@ class TossSectionCard extends StatelessWidget {
   final EdgeInsets? margin;
   final AppCardStyle style;
 
-  const TossSectionCard({
+  const AppSectionCard({
     super.key,
     this.title,
     this.subtitle,
@@ -220,11 +210,12 @@ class TossSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     return AppCard(
       style: style,
-      padding: padding ?? EdgeInsets.all(TossDesignSystem.spacingM),
+      padding: padding ?? const EdgeInsets.all(DSSpacing.md),
       margin: margin,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,20 +223,20 @@ class TossSectionCard extends StatelessWidget {
           if (title != null) ...[
             Text(
               title!,
-              style: TossDesignSystem.heading4.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.gray900,
+              style: typography.headingSmall.copyWith(
+                color: colors.textPrimary,
               ),
             ),
             if (subtitle != null) ...[
-              SizedBox(height: TossDesignSystem.spacingXS),
+              const SizedBox(height: DSSpacing.xs),
               Text(
                 subtitle!,
-                style: TossDesignSystem.body3.copyWith(
-                  color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray400,
+                style: typography.bodySmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
             ],
-            SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
           ],
           child,
         ],
@@ -253,3 +244,6 @@ class TossSectionCard extends StatelessWidget {
     );
   }
 }
+
+/// @deprecated Use [AppSectionCard] instead
+typedef TossSectionCard = AppSectionCard;

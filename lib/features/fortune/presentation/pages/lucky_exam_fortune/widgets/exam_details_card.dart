@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 import '../../../../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../../domain/models/conditions/lucky_exam_fortune_conditions.dart';
@@ -25,16 +25,16 @@ class ExamDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '시험 정보',
-          style: TossDesignSystem.body1.copyWith(
+          style: DSTypography.bodyLarge.copyWith(
             fontWeight: FontWeight.bold,
-            color: isDark ? TossDesignSystem.textPrimaryDark : null,
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 16),
@@ -57,10 +57,8 @@ class ExamDetailsCard extends StatelessWidget {
               // 목표 점수/등급 (선택사항)
               Text(
                 '목표 점수/등급 (선택사항)',
-                style: TossDesignSystem.caption.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.gray600,
+                style: DSTypography.labelSmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -68,19 +66,16 @@ class ExamDetailsCard extends StatelessWidget {
                 onChanged: onTargetScoreChanged,
                 decoration: InputDecoration(
                   hintText: '예: 1등급, 900점, 70점 이상',
-                  hintStyle: TossDesignSystem.body2.copyWith(
-                    color: TossDesignSystem.gray400,
+                  hintStyle: DSTypography.bodyMedium.copyWith(
+                    color: colors.textTertiary,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(
-                        color: isDark
-                            ? TossDesignSystem.gray600
-                            : TossDesignSystem.gray300),
+                    borderSide: BorderSide(color: colors.border),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: TossDesignSystem.tossBlue),
+                    borderSide: BorderSide(color: colors.accent),
                   ),
                 ),
               ),
@@ -90,10 +85,8 @@ class ExamDetailsCard extends StatelessWidget {
               // 준비 상태
               Text(
                 '현재 준비 상태',
-                style: TossDesignSystem.caption.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.gray600,
+                style: DSTypography.labelSmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
               const SizedBox(height: 12),
@@ -110,20 +103,16 @@ class ExamDetailsCard extends StatelessWidget {
                           horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? TossDesignSystem.warningOrange
-                            : (isDark
-                                ? TossDesignSystem.cardBackgroundDark
-                                : TossDesignSystem.gray100),
+                            ? DSColors.warning
+                            : colors.backgroundSecondary,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         status,
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: isSelected
-                              ? TossDesignSystem.white
-                              : (isDark
-                                  ? TossDesignSystem.textPrimaryDark
-                                  : TossDesignSystem.gray700),
+                              ? Colors.white
+                              : colors.textPrimary,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
                         ),

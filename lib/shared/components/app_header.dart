@@ -1,8 +1,8 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../glassmorphism/glass_container.dart';
 import 'token_balance_widget.dart';
 
@@ -111,6 +111,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = context.colors;
 
     return PreferredSize(
       preferredSize: preferredSize,
@@ -118,27 +119,27 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
         duration: const Duration(milliseconds: 200),
         child: Container(
           decoration: BoxDecoration(
-            color: backgroundColor ?? TossDesignSystem.transparent,
+            color: backgroundColor ?? Colors.transparent,
           ),
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingXS),
+              padding: const EdgeInsets.symmetric(horizontal: DSSpacing.xs),
               child: Row(
                 children: [
                   if (showBackButton)
                     IconButton(
                       icon: Icon(
                         Icons.arrow_back_ios_rounded,
-                        color: foregroundColor ?? theme.iconTheme.color),
+                        color: foregroundColor ?? colors.textPrimary),
                       onPressed: () => _handleBack(context)),
                   if (title != null)
                     Expanded(
                       child: Padding(
-                        padding: EdgeInsets.only(right: TossDesignSystem.spacingXS),
+                        padding: const EdgeInsets.only(right: DSSpacing.xs),
                         child: Text(
                           title!,
                           style: theme.textTheme.headlineSmall?.copyWith(
-                            color: foregroundColor),
+                            color: foregroundColor ?? colors.textPrimary),
                           textAlign: centerTitle ? TextAlign.center : TextAlign.left,
                           overflow: TextOverflow.ellipsis)))
                   else
@@ -147,18 +148,18 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                     _FontSizeSelector(
                       currentSize: currentFontSize,
                       onSizeChanged: onFontSizeChanged),
-                    const SizedBox(width: TossDesignSystem.spacingXS)],
+                    const SizedBox(width: DSSpacing.xs)],
                   if (showShareButton)
                     IconButton(
                       icon: Icon(
                         Icons.share_rounded,
-                        color: foregroundColor ?? theme.iconTheme.color),
+                        color: foregroundColor ?? colors.textPrimary),
                       onPressed: () => _handleShare(context)),
                   if (showCloseButton)
                     IconButton(
                       icon: Icon(
                         Icons.close,
-                        color: foregroundColor ?? theme.iconTheme.color),
+                        color: foregroundColor ?? colors.textPrimary),
                       onPressed: () {
                         if (onClosePressed != null) {
                           onClosePressed!();
@@ -168,7 +169,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                       }),
                   if (showTokenBalance) ...[
                     const TokenBalanceWidget(),
-                    const SizedBox(width: TossDesignSystem.spacingXS)],
+                    const SizedBox(width: DSSpacing.xs)],
                   if (showActions && actions != null) ...actions!,
                 ],
               ),
@@ -192,9 +193,9 @@ class _FontSizeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassContainer(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossDesignSystem.spacingS, 
-        vertical: TossDesignSystem.spacingXXS),
-      borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xxs),
+      borderRadius: BorderRadius.circular(DSRadius.xl),
       blur: 10,
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -204,13 +205,13 @@ class _FontSizeSelector extends StatelessWidget {
             size: FontSize.small,
             isSelected: currentSize == FontSize.small,
             onTap: () => onSizeChanged?.call(FontSize.small)),
-          const SizedBox(width: TossDesignSystem.spacingXS),
+          const SizedBox(width: DSSpacing.xs),
           _SizeButton(
             label: '가',
             size: FontSize.medium,
             isSelected: currentSize == FontSize.medium,
             onTap: () => onSizeChanged?.call(FontSize.medium)),
-          const SizedBox(width: TossDesignSystem.spacingXS),
+          const SizedBox(width: DSSpacing.xs),
           _SizeButton(
             label: '가',
             size: FontSize.large,
@@ -248,26 +249,26 @@ class _SizeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+      borderRadius: BorderRadius.circular(DSRadius.md),
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: TossDesignSystem.spacingXS, 
-          vertical: TossDesignSystem.spacingXXS),
+          horizontal: DSSpacing.xs,
+          vertical: DSSpacing.xxs),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.primaryColor.withValues(alpha: 0.2)
-              : TossDesignSystem.transparent,
-          borderRadius: BorderRadius.circular(TossDesignSystem.radiusM)),
+              ? colors.accent.withValues(alpha: 0.2)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(DSRadius.md)),
         child: Text(
           label,
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? theme.primaryColor : theme.textTheme.bodyLarge?.color,
+            color: isSelected ? colors.accent : colors.textPrimary,
           ),
         ),
       ),

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class LoveScoreCircle extends StatefulWidget {
   final int score;
@@ -54,11 +53,11 @@ class _LoveScoreCircleState extends State<LoveScoreCircle>
     if (score >= 90) {
       return const Color(0xFF10B981); // Success green
     } else if (score >= 80) {
-      return TossTheme.primaryBlue;
+      return DSColors.accent;
     } else if (score >= 70) {
-      return TossTheme.warning;
+      return DSColors.warning;
     } else {
-      return TossTheme.error;
+      return DSColors.error;
     }
   }
 
@@ -102,9 +101,9 @@ class _LoveScoreCircleState extends State<LoveScoreCircle>
             height: 180,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: TossTheme.backgroundSecondary,
+              color: DSColors.backgroundSecondary,
               border: Border.all(
-                color: TossTheme.borderGray200,
+                color: DSColors.border,
                 width: 2,
               ),
             ),
@@ -120,27 +119,27 @@ class _LoveScoreCircleState extends State<LoveScoreCircle>
               children: [
                 Text(
                   emoji,
-                  style: TypographyUnified.numberLarge,
+                  style: DSTypography.numberLarge,
                 ),
                 SizedBox(height: 8),
                 Text(
                   '$currentScore',
-                  style: TossTheme.heading1.copyWith(
+                  style: DSTypography.headingLarge.copyWith(
                     color: color,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
                 Text(
                   '점',
-                  style: TossTheme.body1.copyWith(
-                    color: TossTheme.textGray600,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: DSColors.textSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
             progressColor: color,
-            backgroundColor: TossTheme.borderGray200,
+            backgroundColor: DSColors.border,
             circularStrokeCap: CircularStrokeCap.round,
             animation: false,
           ),

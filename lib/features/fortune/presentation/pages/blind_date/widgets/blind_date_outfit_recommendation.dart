@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 /// 스타일링 추천 위젯
@@ -107,8 +107,8 @@ class BlindDateOutfitRecommendation extends StatelessWidget {
                                   color:
                                       (color['color'] as Color).computeLuminance() >
                                               0.5
-                                          ? TossDesignSystem.black
-                                          : TossDesignSystem.white,
+                                          ? Colors.black
+                                          : Colors.white,
                                 ),
                               ),
                             ),
@@ -140,9 +140,9 @@ class BlindDateOutfitRecommendation extends StatelessWidget {
 
   List<Map<String, dynamic>> _getLuckyColors() {
     return [
-      {'name': '블루', 'color': TossDesignSystem.tossBlue},
-      {'name': '화이트', 'color': TossDesignSystem.white},
-      {'name': '핑크', 'color': TossDesignSystem.pinkPrimary},
+      {'name': '블루', 'color': const Color(0xFF3182F6)},
+      {'name': '화이트', 'color': Colors.white},
+      {'name': '핑크', 'color': const Color(0xFFEC4899)},
     ];
   }
 }

@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
-import '../../../../../../core/theme/app_theme.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 
 class HealthScoreCard extends StatelessWidget {
   final Map<String, dynamic> healthScore;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const HealthScoreCard({
     super.key,
     required this.healthScore,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -31,9 +29,9 @@ class HealthScoreCard extends StatelessWidget {
         children: [
           Text(
             '커리어 건강도',
-            style: context.heading3.copyWith(
+            style: DSTypography.headingMedium.copyWith(
               fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 24),
@@ -49,10 +47,8 @@ class HealthScoreCard extends StatelessWidget {
                   size: const Size(180, 180),
                   painter: CircularScorePainter(
                     score: overallScore,
-                    gradientColors: [
-                      TossDesignSystem.tossBlue,
-                      TossDesignSystem.successGreen,
-                    ],
+                    accentColor: colors.accent,
+                    borderColor: colors.border,
                   ),
                 ),
                 Column(
@@ -60,15 +56,15 @@ class HealthScoreCard extends StatelessWidget {
                   children: [
                     Text(
                       '$overallScore',
-                      style: context.displayMedium.copyWith(
+                      style: DSTypography.displayMedium.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: TossDesignSystem.tossBlue,
+                        color: colors.accent,
                       ),
                     ),
                     Text(
                       _getScoreLabel(level),
-                      style: context.bodyMedium.copyWith(
-                        color: TossDesignSystem.gray600,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],
@@ -83,10 +79,10 @@ class HealthScoreCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildSubScore(context, '성장', growthScore, TossDesignSystem.successGreen),
-              _buildSubScore(context, '만족도', satisfactionScore, TossDesignSystem.warningOrange),
-              _buildSubScore(context, '시장', marketScore, TossDesignSystem.tossBlue),
-              _buildSubScore(context, '워라벨', balanceScore, AppTheme.primaryColor),
+              _buildSubScore('성장', growthScore, DSColors.success),
+              _buildSubScore('만족도', satisfactionScore, DSColors.warning),
+              _buildSubScore('시장', marketScore, colors.accent),
+              _buildSubScore('워라벨', balanceScore, colors.accent),
             ],
           ),
         ],
@@ -94,13 +90,13 @@ class HealthScoreCard extends StatelessWidget {
     ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1);
   }
 
-  Widget _buildSubScore(BuildContext context, String label, int score, Color color) {
+  Widget _buildSubScore(String label, int score, Color color) {
     return Column(
       children: [
         Text(
           label,
-          style: context.labelMedium.copyWith(
-            color: TossDesignSystem.gray600,
+          style: DSTypography.labelMedium.copyWith(
+            color: colors.textSecondary,
           ),
         ),
         const SizedBox(height: 8),
@@ -114,7 +110,7 @@ class HealthScoreCard extends StatelessWidget {
           child: Center(
             child: Text(
               '$score',
-              style: context.bodyLarge.copyWith(
+              style: DSTypography.bodyLarge.copyWith(
                 fontWeight: FontWeight.bold,
                 color: color,
               ),
@@ -139,11 +135,13 @@ class HealthScoreCard extends StatelessWidget {
 // Custom Painter for Circular Score
 class CircularScorePainter extends CustomPainter {
   final int score;
-  final List<Color> gradientColors;
+  final Color accentColor;
+  final Color borderColor;
 
   CircularScorePainter({
     required this.score,
-    required this.gradientColors,
+    required this.accentColor,
+    required this.borderColor,
   });
 
   @override
@@ -153,7 +151,7 @@ class CircularScorePainter extends CustomPainter {
 
     // Background circle
     final backgroundPaint = Paint()
-      ..color = TossDesignSystem.gray200
+      ..color = borderColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12;
 
@@ -162,7 +160,7 @@ class CircularScorePainter extends CustomPainter {
     // Progress arc
     final progressPaint = Paint()
       ..shader = SweepGradient(
-        colors: gradientColors,
+        colors: [accentColor, DSColors.success],
         startAngle: -math.pi / 2,
         endAngle: -math.pi / 2 + (2 * math.pi * score / 100),
       ).createShader(Rect.fromCircle(center: center, radius: radius))

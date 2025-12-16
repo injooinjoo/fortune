@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/widgets/voice_input_text_field.dart';
 
 /// Simplified input view for tarot questions
@@ -43,7 +42,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
         // Title
         Text(
           '무엇이 궁금하신가요?',
-          style: context.heading2.copyWith(
+          style: context.typography.headingLarge.copyWith(
             fontWeight: FontWeight.bold,
             letterSpacing: -0.5,
           ),
@@ -51,7 +50,7 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
         const SizedBox(height: 8),
         Text(
           '마음을 가라앉히고 질문에 집중해주세요',
-          style: context.buttonMedium.copyWith(
+          style: context.typography.labelLarge.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
@@ -68,26 +67,26 @@ class _TarotInputViewState extends ConsumerState<TarotInputView> {
 
         // Tip
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(DSSpacing.md),
           decoration: BoxDecoration(
-            color: TossDesignSystem.purple.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
+            color: DSColors.accentSecondary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(DSRadius.md),
             border: Border.all(
-              color: TossDesignSystem.purple.withValues(alpha: 0.3),
+              color: DSColors.accentSecondary.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
             children: [
               Icon(
                 Icons.info_outline,
-                color: TossDesignSystem.purple,
+                color: DSColors.accentSecondary,
                 size: 20,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   '질문이 없으시다면 오늘의 전반적인 운세를 봐드립니다',
-                  style: context.bodySmall.copyWith(
+                  style: context.typography.bodySmall.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),

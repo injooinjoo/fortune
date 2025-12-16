@@ -2,9 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/utils/logger.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
-import '../../../../core/theme/font_size_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
 
@@ -187,13 +185,13 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                color: DSColors.accent.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Center(
                 child: Text(
                   icon,
-                  style: TextStyle(fontSize: FontSizeSystem.heading4),
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
             ),
@@ -219,7 +217,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                           if (title != null) ...[
                             Text(
                               title,
-                              style: TypographyUnified.heading4.copyWith(
+                              style: DSTypography.headingSmall.copyWith(
                                 color: isDark ? Colors.white : Colors.black,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -228,7 +226,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                           ],
                           GptStyleTypingText(
                             text: content,
-                            style: (isTitle ? TypographyUnified.heading2 : TypographyUnified.bodyMedium).copyWith(
+                            style: (isTitle ? DSTypography.headingLarge : DSTypography.bodyMedium).copyWith(
                               color: isDark ? Colors.white.withValues(alpha: 0.87) : Colors.black.withValues(alpha: 0.87),
                               height: 1.6,
                             ),
@@ -266,7 +264,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                color: DSColors.accent.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Center(
@@ -293,7 +291,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                     // 제목은 항상 표시
                     Text(
                       '🔮 상징 분석',
-                      style: TypographyUnified.heading4.copyWith(
+                      style: DSTypography.headingSmall.copyWith(
                         color: isDark ? Colors.indigo.shade300 : Colors.indigo,
                         fontWeight: FontWeight.w600,
                       ),
@@ -307,7 +305,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                             imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                             child: Text(
                               symbolAnalysis.map((s) => '${s['symbol']}: ${s['meaning']}').join('\n'),
-                              style: TypographyUnified.bodyMedium.copyWith(color: Colors.grey),
+                              style: DSTypography.bodyMedium.copyWith(color: Colors.grey),
                             ),
                           ),
                           Positioned.fill(
@@ -341,13 +339,13 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                                  color: DSColors.accent.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
                                   symbolName,
-                                  style: TypographyUnified.bodySmall.copyWith(
-                                    color: TossDesignSystem.tossBlue,
+                                  style: DSTypography.bodySmall.copyWith(
+                                    color: DSColors.accent,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -356,7 +354,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                               Expanded(
                                 child: Text(
                                   meaning,
-                                  style: TypographyUnified.bodyMedium.copyWith(
+                                  style: DSTypography.bodyMedium.copyWith(
                                     color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.87),
                                     height: 1.5,
                                   ),
@@ -396,7 +394,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                color: DSColors.accent.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Center(
@@ -423,7 +421,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                     // 제목은 항상 표시
                     Text(
                       '✨ 행동 조언',
-                      style: TypographyUnified.heading4.copyWith(
+                      style: DSTypography.headingSmall.copyWith(
                         color: isDark ? Colors.pink.shade300 : Colors.pink,
                         fontWeight: FontWeight.w600,
                       ),
@@ -437,7 +435,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                             imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                             child: Text(
                               actionAdvice.join('\n'),
-                              style: TypographyUnified.bodyMedium.copyWith(color: Colors.grey),
+                              style: DSTypography.bodyMedium.copyWith(color: Colors.grey),
                             ),
                           ),
                           Positioned.fill(
@@ -472,14 +470,14 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                                 width: 24,
                                 height: 24,
                                 decoration: BoxDecoration(
-                                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                                  color: DSColors.accent.withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Center(
                                   child: Text(
                                     '${index + 1}',
-                                    style: TypographyUnified.bodySmall.copyWith(
-                                      color: TossDesignSystem.tossBlue,
+                                    style: DSTypography.bodySmall.copyWith(
+                                      color: DSColors.accent,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -489,7 +487,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
                               Expanded(
                                 child: Text(
                                   advice,
-                                  style: TypographyUnified.bodyMedium.copyWith(
+                                  style: DSTypography.bodyMedium.copyWith(
                                     color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.87),
                                     height: 1.5,
                                   ),
@@ -523,12 +521,12 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
         if (title != null) ...[
           Text(
             title,
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               color: title.startsWith('🧠') ? (isDark ? Colors.purple.shade300 : Colors.purple) :
                      title.startsWith('💡') ? (isDark ? Colors.orange.shade300 : Colors.orange) :
                      title.startsWith('🔮') ? (isDark ? Colors.indigo.shade300 : Colors.indigo) :
                      title.startsWith('✨') ? (isDark ? Colors.pink.shade300 : Colors.pink) :
-                     TossDesignSystem.tossBlue,
+                     DSColors.accent,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -542,7 +540,7 @@ class _DreamResultWidgetState extends State<DreamResultWidget> {
               imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Text(
                 content,
-                style: TypographyUnified.bodyMedium.copyWith(
+                style: DSTypography.bodyMedium.copyWith(
                   color: Colors.grey,
                   height: 1.6,
                 ),

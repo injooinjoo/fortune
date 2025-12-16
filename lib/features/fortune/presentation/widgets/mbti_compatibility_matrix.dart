@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/mbti_cognitive_functions_service.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class MbtiCompatibilityMatrix extends StatefulWidget {
   final String? selectedType1;
@@ -155,11 +152,11 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
     return Column(
       children: [
         _buildHeader(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildMatrix(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildSelectedInfo(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildLegend(),
       ],
     );
@@ -171,9 +168,9 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
       children: [
         Icon(
           Icons.grid_on,
-          color: TossDesignSystem.purple,
+          color: DSColors.accentSecondary,
           size: 24),
-        const SizedBox(width: AppSpacing.spacing2),
+        const SizedBox(width: 8),
         Text(
           'MBTI 궁합 매트릭스',
           style: Theme.of(context).textTheme.bodyMedium),
@@ -190,13 +187,13 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: GlassContainer(
-              padding: AppSpacing.paddingAll20,
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   // 상단 헤더
                   Row(
                     children: [
-                      const SizedBox(width: AppSpacing.spacing15), // 왼쪽 여백
+                      const SizedBox(width: 60), // 왼쪽 여백
                       ..._mbtiTypes.map((type) {
                         return SizedBox(
                           width: 45,
@@ -211,7 +208,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                           ),
                         );
                       })]),
-                  const SizedBox(height: AppSpacing.spacing2 * 1.25),
+                  const SizedBox(height: 10),
                   // 매트릭스 본체
                   ..._mbtiTypes.map((type1) {
                     final row = _mbtiTypes.indexOf(type1);
@@ -243,18 +240,18 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                                 _hoveredCol = null;
                               }),
                               child: AnimatedContainer(
-                                duration: AppAnimations.durationShort,
+                                duration: DSAnimation.durationQuick,
                                 width: 45,
                                 height: 35,
                                 margin: const EdgeInsets.all(1),
                                 decoration: BoxDecoration(
                                   color: _getCompatibilityColor(score)
                                       .withValues(alpha: _fadeAnimation.value * 0.8),
-                                  borderRadius: AppDimensions.borderRadiusSmall,
+                                  borderRadius: BorderRadius.circular(DSRadius.sm),
                                   border: Border.all(
                                     color: isSelected
-                                        ? TossDesignSystem.white
-                                        : TossDesignSystem.transparent,
+                                        ? Colors.white
+                                        : Colors.transparent,
                                     width: isSelected ? 2 : 0),
                                   boxShadow: (isSelected || isHovered) ? [
                                     BoxShadow(
@@ -270,7 +267,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                                       fontWeight: isHovered
                                           ? FontWeight.bold
                                           : FontWeight.normal,
-                                      color: TossDesignSystem.white,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
@@ -293,11 +290,11 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
   Widget _buildSelectedInfo() {
     if (widget.selectedType1 == null || widget.selectedType2 == null) {
       return Container(
-        padding: AppSpacing.paddingAll20,
+        padding: const EdgeInsets.all(20),
         child: Text(
           '매트릭스에서 두 MBTI 유형을 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
-            color: TossDesignSystem.white.withValues(alpha: 0.6),
+            color: Colors.white.withValues(alpha: 0.6),
             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
           textAlign: TextAlign.center),
       );
@@ -307,7 +304,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
     final analysis = _getCompatibilityAnalysis(widget.selectedType1!, widget.selectedType2!);
 
     return GlassContainer(
-      padding: AppSpacing.paddingAll20,
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           Row(
@@ -315,24 +312,24 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
             children: [
               _buildTypeInfo(widget.selectedType1!),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
                     Icon(
                       Icons.favorite,
                       color: _getCompatibilityColor(score),
                       size: 32),
-                    const SizedBox(height: AppSpacing.spacing1),
+                    const SizedBox(height: 4),
                     Text(
                       '${(score * 100).toInt()}%',
                       style: Theme.of(context).textTheme.bodyMedium)])),
               _buildTypeInfo(widget.selectedType2!)]),
-          const SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: 20),
           Container(
-            padding: AppSpacing.paddingAll16,
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: _getCompatibilityColor(score).withValues(alpha: 0.1),
-              borderRadius: AppDimensions.borderRadiusMedium,
+              borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
                 color: _getCompatibilityColor(score).withValues(alpha: 0.3),
                 width: 1)),
@@ -341,12 +338,12 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                 Text(
                   analysis['title']!,
                   style: Theme.of(context).textTheme.bodyMedium),
-                const SizedBox(height: AppSpacing.spacing2),
+                const SizedBox(height: 8),
                 Text(
                   analysis['description']!,
                   style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center)])),
-          const SizedBox(height: AppSpacing.spacing4),
+          const SizedBox(height: 16),
           _buildCognitiveFunctionComparison()]));
   }
 
@@ -358,7 +355,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
       children: [
         Container(
           width: 60,
-          height: AppSpacing.spacing15,
+          height: 60,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
@@ -376,7 +373,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
               style: Theme.of(context).textTheme.bodyMedium),
           ),
         ),
-        const SizedBox(height: AppSpacing.spacing2),
+        const SizedBox(height: 8),
         Text(
           info['title']!,
           style: Theme.of(context).textTheme.bodyMedium,
@@ -404,7 +401,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           '인지기능 비교',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: AppSpacing.spacing3),
+        const SizedBox(height: 12),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -416,15 +413,15 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                     widget.selectedType1!,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  const SizedBox(height: AppSpacing.spacing1),
+                  const SizedBox(height: 4),
                   ...functions1.map((func) => Padding(
                     padding: const EdgeInsets.only(bottom: 4 * 0.5),
                     child: Text(
                       func,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: commonFunctions.contains(func)
-                            ? TossDesignSystem.successGreen
-                            : TossDesignSystem.white.withValues(alpha: 0.8),
+                            ? DSColors.success
+                            : Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                   )),
@@ -433,9 +430,9 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
             ),
             Container(
               width: 1,
-              height: AppSpacing.spacing20,
-              color: TossDesignSystem.white.withValues(alpha: 0.2),
-              margin: AppSpacing.paddingHorizontal16),
+              height: 80,
+              color: Colors.white.withValues(alpha: 0.2),
+              margin: const EdgeInsets.symmetric(horizontal: 16)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -444,15 +441,15 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                     widget.selectedType2!,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  const SizedBox(height: AppSpacing.spacing1),
+                  const SizedBox(height: 4),
                   ...functions2.map((func) => Padding(
                     padding: const EdgeInsets.only(bottom: 4 * 0.5),
                     child: Text(
                       func,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: commonFunctions.contains(func)
-                            ? TossDesignSystem.successGreen
-                            : TossDesignSystem.white.withValues(alpha: 0.8),
+                            ? DSColors.success
+                            : Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                   )),
@@ -462,23 +459,23 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           ],
         ),
         if (commonFunctions.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: 12),
           Container(
-            padding: AppSpacing.paddingAll12,
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
-              borderRadius: AppDimensions.borderRadiusSmall,
+              color: DSColors.success.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(DSRadius.sm),
               border: Border.all(
-                color: TossDesignSystem.successGreen.withValues(alpha: 0.3),
+                color: DSColors.success.withValues(alpha: 0.3),
                 width: 1)),
             child: Row(
               children: [
                 Icon(
                   Icons.sync,
-                  color: TossDesignSystem.successGreen,
+                  color: DSColors.success,
                   size: 16,
                 ),
-                const SizedBox(width: AppSpacing.spacing2),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '인지기능: ${commonFunctions.join(', ')}',
@@ -495,24 +492,24 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
 
   Widget _buildLegend() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white.withValues(alpha: 0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: TossDesignSystem.white.withValues(alpha: 0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildLegendItem('최고 궁합', TossDesignSystem.successGreen, '85% 이상'),
-          const SizedBox(width: AppSpacing.spacing5),
-          _buildLegendItem('좋은 궁합', TossDesignSystem.tossBlue, '70-84%'),
-          const SizedBox(width: AppSpacing.spacing5),
-          _buildLegendItem('보통 궁합', TossDesignSystem.warningYellow, '55-69%'),
-          const SizedBox(width: AppSpacing.spacing5),
-          _buildLegendItem('도전적 관계', TossDesignSystem.warningOrange, '55% 미만')]));
+          _buildLegendItem('최고 궁합', DSColors.success, '85% 이상'),
+          const SizedBox(width: 20),
+          _buildLegendItem('좋은 궁합', DSColors.accent, '70-84%'),
+          const SizedBox(width: 20),
+          _buildLegendItem('보통 궁합', DSColors.warning, '55-69%'),
+          const SizedBox(width: 20),
+          _buildLegendItem('도전적 관계', DSColors.warning, '55% 미만')]));
   }
 
   Widget _buildLegendItem(String label, Color color, String range) {
@@ -520,11 +517,11 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
       children: [
         Container(
           width: 12,
-          height: AppSpacing.spacing3,
+          height: 12,
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle)),
-        const SizedBox(width: AppSpacing.spacing1),
+        const SizedBox(width: 4),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -534,31 +531,31 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
             Text(
               range,
               style: TextStyle(
-                color: TossDesignSystem.white.withValues(alpha: 0.6),
+                color: Colors.white.withValues(alpha: 0.6),
                 fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))])]);
   }
 
   Color _getCompatibilityColor(double score) {
-    if (score >= 0.85) return TossDesignSystem.successGreen;
-    if (score >= 0.7) return TossDesignSystem.tossBlue;
-    if (score >= 0.55) return TossDesignSystem.warningYellow;
-    return TossDesignSystem.warningOrange;
+    if (score >= 0.85) return DSColors.success;
+    if (score >= 0.7) return DSColors.accent;
+    if (score >= 0.55) return DSColors.warning;
+    return DSColors.warning;
 }
 
   Color _getTypeColor(String type) {
     // 타입별 색상
-    if (type.contains('NT')) return TossDesignSystem.purple; // 분석가
-    if (type.contains('NF')) return TossDesignSystem.tossBlue;   // 외교관
-    if (type.contains('SJ')) return TossDesignSystem.successGreen;  // 수호자
-    if (type.contains('SP')) return TossDesignSystem.warningOrange; // 탐험가
+    if (type.contains('NT')) return DSColors.accentSecondary; // 분석가
+    if (type.contains('NF')) return DSColors.accent;   // 외교관
+    if (type.contains('SJ')) return DSColors.success;  // 수호자
+    if (type.contains('SP')) return DSColors.warning; // 탐험가
     
     // 더 세부적인 분류
-    if (['INTJ', 'INTP', 'ENTJ', 'ENTP'].contains(type)) return TossDesignSystem.purple;
-    if (['INFJ', 'INFP', 'ENFJ', 'ENFP'].contains(type)) return TossDesignSystem.tossBlue;
-    if (['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'].contains(type)) return TossDesignSystem.successGreen;
-    if (['ISTP', 'ISFP', 'ESTP', 'ESFP'].contains(type)) return TossDesignSystem.warningOrange;
+    if (['INTJ', 'INTP', 'ENTJ', 'ENTP'].contains(type)) return DSColors.accentSecondary;
+    if (['INFJ', 'INFP', 'ENFJ', 'ENFP'].contains(type)) return DSColors.accent;
+    if (['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'].contains(type)) return DSColors.success;
+    if (['ISTP', 'ISFP', 'ESTP', 'ESFP'].contains(type)) return DSColors.warning;
     
-    return TossDesignSystem.gray400;
+    return DSColors.textTertiary;
 }
 
   Map<String, String> _getCompatibilityAnalysis(String type1, String type2) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/widgets/info_banner.dart';
 
 /// 캘린더 동기화 배너 위젯
@@ -15,9 +15,11 @@ class CalendarSyncBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return InfoBanner(
       icon: Icons.calendar_month,
-      iconColor: TossDesignSystem.tossBlue,
+      iconColor: colors.accent,
       title: '캘린더 연동해서 이벤트운세받기',
       subtitle: '일정 기반 맞춤 운세를 받아보세요',
       onTap: onTap,

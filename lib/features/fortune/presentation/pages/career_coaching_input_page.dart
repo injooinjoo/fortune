@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 import '../../domain/models/career_coaching_model.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../../../../core/widgets/unified_button.dart';
@@ -262,7 +262,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
               _currentRole = role.id;
               _updateAccordionSection('currentRole', role.id, role.title);
             });
-            HapticFeedback.mediumImpact();
+            ref.read(fortuneHapticServiceProvider).selection();
             onComplete(role.id);
           },
           child: Container(
@@ -324,7 +324,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                 _primaryConcern = concern.id;
                 _updateAccordionSection('primaryConcern', concern.id, concern.title);
               });
-              HapticFeedback.mediumImpact();
+              ref.read(fortuneHapticServiceProvider).selection();
               onComplete(concern.id);
             },
           ),
@@ -346,7 +346,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
               _shortTermGoal = goal.id;
               _updateAccordionSection('shortTermGoal', goal.id, goal.title);
             });
-            HapticFeedback.mediumImpact();
+            ref.read(fortuneHapticServiceProvider).selection();
             onComplete(goal.id);
           },
         ),
@@ -367,7 +367,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
               _coreValue = value.id;
               _updateAccordionSection('coreValue', value.id, value.title);
             });
-            HapticFeedback.mediumImpact();
+            ref.read(fortuneHapticServiceProvider).selection();
             onComplete(value.id);
           },
         ),
@@ -419,7 +419,7 @@ class _CareerCoachingInputPageState extends ConsumerState<CareerCoachingInputPag
                             _skillsToImprove.join(', '),
                           );
                         });
-                        HapticFeedback.mediumImpact();
+                        ref.read(fortuneHapticServiceProvider).selection();
                         onComplete(_skillsToImprove.toList());
                       },
                     ),

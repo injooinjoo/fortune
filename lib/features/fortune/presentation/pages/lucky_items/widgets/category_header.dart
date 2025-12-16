@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import 'category_model.dart';
 
 /// 카테고리 헤더 - ChatGPT 스타일 미니멀 디자인
@@ -11,7 +10,7 @@ class CategoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Row(
       children: [
@@ -20,13 +19,13 @@ class CategoryHeader extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray100,
+            color: colors.backgroundSecondary,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
             category.icon,
             size: 20,
-            color: isDark ? TossDesignSystem.gray300 : TossDesignSystem.gray700,
+            color: colors.textSecondary,
           ),
         ),
         const SizedBox(width: 14),
@@ -36,16 +35,16 @@ class CategoryHeader extends StatelessWidget {
             children: [
               Text(
                 category.title,
-                style: TypographyUnified.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.gray100 : TossDesignSystem.gray900,
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 category.description,
-                style: TypographyUnified.caption.copyWith(
-                  color: TossDesignSystem.gray500,
+                style: DSTypography.labelSmall.copyWith(
+                  color: colors.textTertiary,
                 ),
               ),
             ],

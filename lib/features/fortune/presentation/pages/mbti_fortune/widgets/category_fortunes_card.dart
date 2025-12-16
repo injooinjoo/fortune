@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/components/app_card.dart';
 import 'package:fortune/core/models/fortune_result.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/utils/fortune_text_cleaner.dart';
 import 'package:fortune/core/widgets/gpt_style_typing_text.dart';
 
@@ -59,7 +58,7 @@ class _CategoryFortunesCardState extends State<CategoryFortunesCard> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final data = widget.fortuneResult.data as Map<String, dynamic>? ?? {};
 
     return Column(
@@ -107,9 +106,9 @@ class _CategoryFortunesCardState extends State<CategoryFortunesCard> {
                     const SizedBox(width: 8),
                     Text(
                       category,
-                      style: TypographyUnified.buttonMedium.copyWith(
+                      style: DSTypography.labelLarge.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ],
@@ -117,8 +116,8 @@ class _CategoryFortunesCardState extends State<CategoryFortunesCard> {
                 const SizedBox(height: 12),
                 GptStyleTypingText(
                   text: categoryText,
-                  style: TypographyUnified.bodySmall.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  style: DSTypography.bodySmall.copyWith(
+                    color: colors.textPrimary,
                     height: 1.5,
                   ),
                   startTyping: widget.startTyping && _currentTypingIndex >= index,

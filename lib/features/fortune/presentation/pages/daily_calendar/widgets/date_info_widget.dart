@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../../../core/components/app_card.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/models/holiday_models.dart';
 import '../../../../../../core/services/unified_calendar_service.dart';
 import 'device_event_item.dart';
@@ -30,7 +29,7 @@ class DateInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.colors;
     final eventInfo = events[DateTime(selectedDate.year, selectedDate.month, selectedDate.day)];
 
     return AppCard(
@@ -64,19 +63,19 @@ class DateInfoWidget extends StatelessWidget {
                   EventTag(
                     icon: Icons.celebration,
                     label: eventInfo.holidayName!,
-                    color: TossDesignSystem.errorRed,
+                    color: DSColors.error,
                   ),
                 if (eventInfo.specialName != null)
                   EventTag(
                     icon: Icons.star,
                     label: eventInfo.specialName!,
-                    color: TossDesignSystem.warningOrange,
+                    color: DSColors.warning,
                   ),
                 if (eventInfo.auspiciousName != null)
                   EventTag(
                     icon: Icons.home,
                     label: eventInfo.auspiciousName!,
-                    color: TossDesignSystem.warningOrange,
+                    color: DSColors.warning,
                     score: eventInfo.auspiciousScore,
                   ),
               ],
@@ -90,15 +89,15 @@ class DateInfoWidget extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                Icon(Icons.event_note, color: TossDesignSystem.tossBlue, size: 18),
+                Icon(Icons.event_note, color: colors.accent, size: 18),
                 const SizedBox(width: 6),
                 Text(
                   deviceEvents.isEmpty
                       ? '내 캘린더 일정'
                       : '내 캘린더 일정 (${deviceEvents.length})',
-                  style: context.bodyMedium.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: TossDesignSystem.tossBlue,
+                    color: colors.accent,
                   ),
                 ),
               ],
@@ -108,28 +107,24 @@ class DateInfoWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isDark ? TossDesignSystem.white.withValues(alpha: 0.1) : TossDesignSystem.gray900.withValues(alpha: 0.03),
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDark ? TossDesignSystem.white.withValues(alpha: 0.24) : TossDesignSystem.gray900.withValues(alpha: 0.12),
+                    color: colors.border,
                   ),
                 ),
                 child: Row(
                   children: [
                     Icon(
                       Icons.event_busy_outlined,
-                      color: isDark
-                          ? TossDesignSystem.textSecondaryDark
-                          : TossDesignSystem.textSecondaryLight,
+                      color: colors.textSecondary,
                       size: 20,
                     ),
                     const SizedBox(width: 12),
                     Text(
                       '선택한 날짜에 일정이 없습니다',
-                      style: context.bodyMedium.copyWith(
-                        color: isDark
-                            ? TossDesignSystem.textSecondaryDark
-                            : TossDesignSystem.textSecondaryLight,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],

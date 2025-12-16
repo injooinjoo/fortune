@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 소원 빌기 분수대 위젯
 class WishFountainWidget extends StatefulWidget {
@@ -132,16 +131,16 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
       children: [
         Text(
           '🌊 소원의 분수대 🌊',
-          style: TypographyUnified.heading1.copyWith(
+          style: DSTypography.headingLarge.copyWith(
             fontWeight: FontWeight.bold,
-            color: TossDesignSystem.white,
+            color: Colors.white,
           ),
         ),
         SizedBox(height: 12),
         Text(
           '간절한 마음으로 소원을 빌고\n분수대에 동전을 던져보세요',
-          style: TypographyUnified.buttonMedium.copyWith(
-            color: TossDesignSystem.white.withValues(alpha: 0.9),
+          style: DSTypography.bodyMedium.copyWith(
+            color: Colors.white.withValues(alpha: 0.9),
             height: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -152,10 +151,10 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: TossDesignSystem.white.withValues(alpha: 0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: TossDesignSystem.white.withValues(alpha: 0.3),
+              color: Colors.white.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -170,7 +169,7 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
               Text(
                 '분수대 동전: ${widget.coinCount}개',
                 style: const TextStyle(
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                   fontFamily: 'ZenSerif',
                   fontWeight: FontWeight.w500,
                 ),
@@ -243,10 +242,10 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.white.withValues(alpha: 0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.white.withValues(alpha: 0.2),
+                color: Colors.white.withValues(alpha: 0.2),
               ),
             ),
             child: Column(
@@ -255,26 +254,26 @@ class _WishFountainWidgetState extends State<WishFountainWidget>
                   children: [
                     Icon(
                       Icons.info_outline,
-                      color: TossDesignSystem.white.withValues(alpha: 0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       size: 20,
                     ),
                     SizedBox(width: 8),
                     Text(
                       '소원 빌기 가이드',
-                      style: TypographyUnified.buttonMedium.copyWith(
+                      style: DSTypography.bodyMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.white.withValues(alpha: 0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  widget.hasWish 
+                  widget.hasWish
                     ? '소원을 작성하셨군요! 이제 간절한 마음으로 동전을 던져보세요. 신이 당신의 소원을 들어주실 것입니다.'
                     : '1. 먼저 간절한 소원을 작성해주세요\n2. 소원을 작성한 후 동전을 던져보세요\n3. 신의 응답을 기다려보세요',
-                  style: TypographyUnified.bodySmall.copyWith(
-                    color: TossDesignSystem.white.withValues(alpha: 0.8),
+                  style: DSTypography.bodySmall.copyWith(
+                    color: Colors.white.withValues(alpha: 0.8),
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -335,7 +334,7 @@ class FountainPainter extends CustomPainter {
     canvas.drawCircle(center, 30, paint);
     
     // 하이라이트 효과
-    paint.color = TossDesignSystem.white.withValues(alpha: 0.3);
+    paint.color = Colors.white.withValues(alpha: 0.3);
     canvas.drawCircle(center + const Offset(-10, -10), 25, paint);
   }
 
@@ -345,12 +344,12 @@ class FountainPainter extends CustomPainter {
     canvas.drawCircle(center, 115, paint);
     
     // 물 하이라이트
-    paint.color = TossDesignSystem.white.withValues(alpha: 0.4);
+    paint.color = Colors.white.withValues(alpha: 0.4);
     canvas.drawCircle(center + const Offset(-20, -20), 100, paint);
   }
 
   void _drawWaterDrops(Canvas canvas, Offset center, Paint paint) {
-    paint.color = TossDesignSystem.white.withValues(alpha: 0.7);
+    paint.color = Colors.white.withValues(alpha: 0.7);
     
     // 중앙에서 분사되는 물방울들
     final dropCount = 8;
@@ -381,7 +380,7 @@ class FountainPainter extends CustomPainter {
   void _drawRipples(Canvas canvas, Offset center, Paint paint) {
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = 2;
-    paint.color = TossDesignSystem.white.withValues(alpha: 0.3 * (1 - rippleProgress));
+    paint.color = Colors.white.withValues(alpha: 0.3 * (1 - rippleProgress));
     
     // 여러 개의 동심원 물결
     for (int i = 0; i < 3; i++) {
@@ -408,15 +407,15 @@ class FountainPainter extends CustomPainter {
       final coinCenter = center + coinPositions[i] + Offset(0, coinFloatOffset + (i % 2 == 0 ? 2 : -2));
       
       // 동전 그림자
-      paint.color = TossDesignSystem.black.withValues(alpha: 0.2);
+      paint.color = Colors.black.withValues(alpha: 0.2);
       canvas.drawCircle(coinCenter + const Offset(2, 2), 6, paint);
-      
+
       // 동전 베이스
       paint.color = const Color(0xFFFFD700); // Gold
       canvas.drawCircle(coinCenter, 6, paint);
-      
+
       // 동전 하이라이트
-      paint.color = TossDesignSystem.white.withValues(alpha: 0.6);
+      paint.color = Colors.white.withValues(alpha: 0.6);
       canvas.drawCircle(coinCenter + const Offset(-2, -2), 3, paint);
       
       // 동전 무늬 (간단한 점)

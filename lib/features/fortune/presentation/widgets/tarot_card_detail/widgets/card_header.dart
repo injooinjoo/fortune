@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class TarotCardHeader extends StatelessWidget {
   final Map<String, dynamic> cardInfo;
@@ -27,7 +27,7 @@ class TarotCardHeader extends StatelessWidget {
     ];
 
     return Container(
-      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           Text(
@@ -35,14 +35,14 @@ class TarotCardHeader extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           if (position != null) ...[
-            const SizedBox(height: TossDesignSystem.spacingXS),
+            const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: TossDesignSystem.spacingM,
-                vertical: TossDesignSystem.spacingXXS * 1.5,
+                horizontal: 16,
+                vertical: 4 * 1.5,
               ),
               decoration: BoxDecoration(
-                color: TossDesignSystem.purple.withValues(alpha: 0.3),
+                color: DSColors.accentSecondary.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -51,7 +51,7 @@ class TarotCardHeader extends StatelessWidget {
               ),
             )
           ],
-          const SizedBox(height: TossDesignSystem.spacingXS),
+          const SizedBox(height: 8),
           Text(
             pageNames[currentPage],
             style: Theme.of(context).textTheme.titleMedium,

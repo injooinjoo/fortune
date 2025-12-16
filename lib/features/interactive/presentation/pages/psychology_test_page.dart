@@ -7,7 +7,7 @@ import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/providers/user_settings_provider.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 // Import domain models
 import '../../domain/models/psychology_test_models.dart';
@@ -185,7 +185,7 @@ class _TestInputView extends StatelessWidget {
           // Title
           Text(
             '당신의 심리 유형을 분석해드립니다',
-            style: context.heading2.copyWith(
+            style: DSTypography.headingMedium.copyWith(
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
@@ -200,14 +200,14 @@ class _TestInputView extends StatelessWidget {
                 children: [
                   Text(
                     '기본 정보',
-                    style: context.buttonMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: nameController,
-                    style: context.buttonMedium,
+                    style: DSTypography.labelMedium,
                     decoration: InputDecoration(
                       labelText: '이름',
                       hintText: '이름을 입력하세요',
@@ -238,7 +238,7 @@ class _TestInputView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text(
                     '테스트 시작하기',
-                    style: context.heading4.copyWith(
+                    style: DSTypography.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -272,7 +272,7 @@ class _TestInputView extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               '${currentQuestionIndex + 1} / ${psychologyQuestions.length}',
-              style: context.bodySmall.copyWith(
+              style: DSTypography.bodySmall.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
@@ -285,7 +285,7 @@ class _TestInputView extends StatelessWidget {
                 children: [
                   Text(
                     psychologyQuestions[currentQuestionIndex].question,
-                    style: context.heading3.copyWith(
+                    style: DSTypography.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -349,7 +349,7 @@ class _TestInputView extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   option.label,
-                                  style: context.buttonMedium.copyWith(
+                                  style: DSTypography.labelMedium.copyWith(
                                     fontWeight: isSelected ? FontWeight.bold : null,
                                   ),
                                 ),
@@ -380,7 +380,7 @@ class _TestInputView extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               '이전',
-                              style: context.buttonMedium,
+                              style: DSTypography.labelMedium,
                             ),
                           ],
                         ),
@@ -403,7 +403,7 @@ class _TestInputView extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               '결과 보기',
-                              style: context.buttonMedium.copyWith(
+                              style: DSTypography.labelMedium.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -460,7 +460,7 @@ class _TestResultView extends ConsumerWidget {
             SizedBox(height: 24),
             Text(
               '심리를 분석하고 있습니다...',
-              style: TypographyUnified.heading4),
+              style: DSTypography.headingSmall),
           ],
         ),
       ),
@@ -508,12 +508,12 @@ class _TestResultView extends ConsumerWidget {
                       children: [
                         Text(
                           '${input.name}님의 심리 테스트 결과',
-                          style: context.heading3,
+                          style: DSTypography.headingSmall,
                         ),
                         const SizedBox(height: 16),
                         Text(
                           '${result.overallLuck}점',
-                          style: context.numberXLarge.copyWith(
+                          style: DSTypography.displayLarge.copyWith(
                             fontWeight: FontWeight.bold,
                             color: _getLuckColor(result.overallLuck),
                           ),
@@ -527,7 +527,7 @@ class _TestResultView extends ConsumerWidget {
                           ),
                           child: Text(
                             _getLuckText(result.overallLuck),
-                            style: context.buttonMedium.copyWith(
+                            style: DSTypography.labelMedium.copyWith(
                               color: _getLuckColor(result.overallLuck),
                               fontWeight: FontWeight.bold,
                             ),
@@ -549,7 +549,7 @@ class _TestResultView extends ConsumerWidget {
                             SizedBox(width: 8),
                             Text(
                               '결과 유형',
-                              style: context.heading4.copyWith(
+                              style: DSTypography.headingSmall.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -570,7 +570,7 @@ class _TestResultView extends ConsumerWidget {
                           ),
                           child: Text(
                             result.testResultType,
-                            style: context.heading3.copyWith(
+                            style: DSTypography.headingSmall.copyWith(
                               fontWeight: FontWeight.bold,
                               color: theme.colorScheme.primary,
                             ),
@@ -580,13 +580,13 @@ class _TestResultView extends ConsumerWidget {
                         const SizedBox(height: 16),
                         Text(
                           '결과 요약',
-                          style: context.buttonMedium.copyWith(
+                          style: DSTypography.labelMedium.copyWith(
                             fontWeight: FontWeight.bold,
                           )),
                         const SizedBox(height: 8),
                         Text(
                           result.resultSummary,
-                          style: context.buttonMedium.copyWith(
+                          style: DSTypography.labelMedium.copyWith(
                             height: 1.5,
                           )),
                       ],
@@ -605,7 +605,7 @@ class _TestResultView extends ConsumerWidget {
                             SizedBox(width: 8),
                             Text(
                               '상세 분석',
-                              style: context.heading4.copyWith(
+                              style: DSTypography.headingSmall.copyWith(
                                 fontWeight: FontWeight.bold,
                               )),
                           ],
@@ -613,7 +613,7 @@ class _TestResultView extends ConsumerWidget {
                         const SizedBox(height: 16),
                         Text(
                           result.resultDetails,
-                          style: context.buttonMedium.copyWith(
+                          style: DSTypography.labelMedium.copyWith(
                             height: 1.5,
                           )),
                       ],
@@ -632,7 +632,7 @@ class _TestResultView extends ConsumerWidget {
                             SizedBox(width: 8),
                             Text(
                               '조언',
-                              style: context.heading4.copyWith(
+                              style: DSTypography.headingSmall.copyWith(
                                 fontWeight: FontWeight.bold,
                               )),
                           ],
@@ -640,7 +640,7 @@ class _TestResultView extends ConsumerWidget {
                         const SizedBox(height: 16),
                         Text(
                           result.advice,
-                          style: context.buttonMedium.copyWith(
+                          style: DSTypography.labelMedium.copyWith(
                             height: 1.5,
                           )),
                         if (result.luckyElements.isNotEmpty) ...[
@@ -651,7 +651,7 @@ class _TestResultView extends ConsumerWidget {
                               const SizedBox(width: 8),
                               Text(
                                 '행운 요소',
-                                style: context.buttonMedium.copyWith(
+                                style: DSTypography.labelMedium.copyWith(
                                   fontWeight: FontWeight.bold,
                                 )),
                           ],
@@ -674,7 +674,7 @@ class _TestResultView extends ConsumerWidget {
                                 ),
                                 child: Text(
                                   element,
-                                  style: context.bodySmall.copyWith(
+                                  style: DSTypography.bodySmall.copyWith(
                                     fontWeight: FontWeight.bold,
                                   )),
                               );
@@ -698,7 +698,7 @@ class _TestResultView extends ConsumerWidget {
                             const SizedBox(width: 8),
                             Text(
                               '다시 테스트하기',
-                              style: context.heading4.copyWith(
+                              style: DSTypography.headingSmall.copyWith(
                                 fontWeight: FontWeight.bold,
                               )),
                           ],

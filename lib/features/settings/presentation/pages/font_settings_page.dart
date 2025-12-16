@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:fortune/core/theme/typography_theme.dart';
 import 'package:fortune/core/providers/user_settings_provider.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 폰트 설정 페이지
 /// 사용자가 폰트 크기와 글꼴을 조절할 수 있습니다.
@@ -322,7 +322,7 @@ class _PresetButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: TypographyUnified.bodySmall.copyWith(
+          style: DSTypography.bodySmall.copyWith(
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             color: isSelected
                 ? TossDesignSystem.white

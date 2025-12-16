@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 import '../../../../domain/models/conditions/lucky_exam_fortune_conditions.dart';
 
@@ -20,7 +20,7 @@ class ExamCategorySelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final categories = LuckyExamFortuneConditions.getCategoryList();
 
     return Column(
@@ -28,9 +28,9 @@ class ExamCategorySelection extends StatelessWidget {
       children: [
         Text(
           '시험 카테고리 선택',
-          style: TossDesignSystem.body1.copyWith(
+          style: DSTypography.bodyLarge.copyWith(
             fontWeight: FontWeight.bold,
-            color: isDark ? TossDesignSystem.textPrimaryDark : null,
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 16),
@@ -41,10 +41,8 @@ class ExamCategorySelection extends StatelessWidget {
             children: [
               Text(
                 '어떤 시험을 준비하시나요?',
-                style: TossDesignSystem.caption.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.gray600,
+                style: DSTypography.labelSmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
               const SizedBox(height: 12),
@@ -63,24 +61,20 @@ class ExamCategorySelection extends StatelessWidget {
                           horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? TossDesignSystem.tossBlue
-                            : (isDark
-                                ? TossDesignSystem.cardBackgroundDark
-                                : TossDesignSystem.gray100),
+                            ? colors.accent
+                            : colors.backgroundSecondary,
                         borderRadius: BorderRadius.circular(20),
                         border: isSelected
                             ? Border.all(
-                                color: TossDesignSystem.tossBlue, width: 2)
+                                color: colors.accent, width: 2)
                             : null,
                       ),
                       child: Text(
                         category,
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: isSelected
-                              ? TossDesignSystem.white
-                              : (isDark
-                                  ? TossDesignSystem.textPrimaryDark
-                                  : TossDesignSystem.gray700),
+                              ? Colors.white
+                              : colors.textPrimary,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
@@ -93,17 +87,12 @@ class ExamCategorySelection extends StatelessWidget {
               // 세부 시험 선택 (카테고리 선택 시 표시)
               if (selectedCategory.isNotEmpty) ...[
                 const SizedBox(height: 20),
-                Divider(
-                    color: isDark
-                        ? TossDesignSystem.gray700
-                        : TossDesignSystem.gray300),
+                Divider(color: colors.border),
                 const SizedBox(height: 16),
                 Text(
                   '세부 시험 선택',
-                  style: TossDesignSystem.caption.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.gray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -121,20 +110,16 @@ class ExamCategorySelection extends StatelessWidget {
                             horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? TossDesignSystem.successGreen
-                              : (isDark
-                                  ? TossDesignSystem.cardBackgroundDark
-                                  : TossDesignSystem.gray100),
+                              ? DSColors.success
+                              : colors.backgroundSecondary,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
                           subType,
-                          style: TossDesignSystem.caption.copyWith(
+                          style: DSTypography.labelSmall.copyWith(
                             color: isSelected
-                                ? TossDesignSystem.white
-                                : (isDark
-                                    ? TossDesignSystem.textPrimaryDark
-                                    : TossDesignSystem.gray700),
+                                ? Colors.white
+                                : colors.textPrimary,
                             fontWeight: isSelected
                                 ? FontWeight.bold
                                 : FontWeight.normal,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import 'package:flutter/services.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 /// Section 1: 기본 정보 (나이, 성별, 연애 상태)
 class BasicInfoInput extends StatelessWidget {
@@ -26,7 +25,7 @@ class BasicInfoInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,18 +33,18 @@ class BasicInfoInput extends StatelessWidget {
         // 나이 슬라이더
         Text(
           '나이',
-          style: TypographyUnified.labelLarge.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.labelLarge.copyWith(
+            color: colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 12),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
-            activeTrackColor: TossDesignSystem.tossBlue,
-            inactiveTrackColor: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
-            thumbColor: TossDesignSystem.tossBlue,
-            overlayColor: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+            activeTrackColor: colors.accent,
+            inactiveTrackColor: colors.border,
+            thumbColor: colors.accent,
+            overlayColor: colors.accent.withValues(alpha: 0.2),
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
             trackHeight: 4,
           ),
@@ -61,13 +60,13 @@ class BasicInfoInput extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue,
+              color: colors.accent,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               '$age세',
-              style: TypographyUnified.bodyMedium.copyWith(
-                color: TossDesignSystem.white,
+              style: DSTypography.bodyMedium.copyWith(
+                color: Colors.white,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -78,8 +77,8 @@ class BasicInfoInput extends StatelessWidget {
         // 성별 선택
         Text(
           '성별',
-          style: TypographyUnified.labelLarge.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.labelLarge.copyWith(
+            color: colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -92,7 +91,7 @@ class BasicInfoInput extends StatelessWidget {
                 'male',
                 '남성',
                 Icons.male,
-                isDark,
+                colors,
               ),
             ),
             const SizedBox(width: 12),
@@ -102,7 +101,7 @@ class BasicInfoInput extends StatelessWidget {
                 'female',
                 '여성',
                 Icons.female,
-                isDark,
+                colors,
               ),
             ),
           ],
@@ -112,13 +111,13 @@ class BasicInfoInput extends StatelessWidget {
         // 연애 상태 선택
         Text(
           '현재 연애 상태',
-          style: TypographyUnified.labelLarge.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.labelLarge.copyWith(
+            color: colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 12),
-        ..._buildRelationshipStatusButtons(isDark),
+        ..._buildRelationshipStatusButtons(colors),
       ],
     );
   }
@@ -128,25 +127,23 @@ class BasicInfoInput extends StatelessWidget {
     String value,
     String label,
     IconData icon,
-    bool isDark,
+    DSColorScheme colors,
   ) {
     final isSelected = gender == value;
     return InkWell(
       onTap: () {
         onGenderChanged(value);
-        TossDesignSystem.hapticLight();
+        HapticFeedback.lightImpact();
         _checkComplete();
       },
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-              : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
+              ? colors.accent.withValues(alpha: 0.1)
+              : colors.surface,
           border: Border.all(
-            color: isSelected
-                ? TossDesignSystem.tossBlue
-                : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+            color: isSelected ? colors.accent : colors.border,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
@@ -155,18 +152,14 @@ class BasicInfoInput extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected
-                  ? TossDesignSystem.tossBlue
-                  : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
+              color: isSelected ? colors.accent : colors.textSecondary,
               size: 32,
             ),
             const SizedBox(height: 8),
             Text(
               label,
-              style: TypographyUnified.bodyMedium.copyWith(
-                color: isSelected
-                    ? TossDesignSystem.tossBlue
-                    : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
+              style: DSTypography.bodyMedium.copyWith(
+                color: isSelected ? colors.accent : colors.textSecondary,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
             ),
@@ -176,7 +169,7 @@ class BasicInfoInput extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildRelationshipStatusButtons(bool isDark) {
+  List<Widget> _buildRelationshipStatusButtons(DSColorScheme colors) {
     final statuses = [
       {'id': 'single', 'text': '싱글 (새로운 만남 희망)', 'emoji': '💫'},
       {'id': 'dating', 'text': '연애중 (관계 발전)', 'emoji': '💕'},
@@ -191,7 +184,7 @@ class BasicInfoInput extends StatelessWidget {
         child: InkWell(
           onTap: () {
             onRelationshipStatusChanged(status['id'] as String);
-            TossDesignSystem.hapticLight();
+            HapticFeedback.lightImpact();
             _checkComplete();
           },
           child: Container(
@@ -199,12 +192,10 @@ class BasicInfoInput extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isSelected
-                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                  : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
+                  ? colors.accent.withValues(alpha: 0.1)
+                  : colors.surface,
               border: Border.all(
-                color: isSelected
-                    ? TossDesignSystem.tossBlue
-                    : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                color: isSelected ? colors.accent : colors.border,
                 width: isSelected ? 2 : 1,
               ),
               borderRadius: BorderRadius.circular(12),
@@ -213,16 +204,14 @@ class BasicInfoInput extends StatelessWidget {
               children: [
                 Text(
                   status['emoji'] as String,
-                  style: TypographyUnified.displaySmall,
+                  style: DSTypography.displaySmall,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     status['text'] as String,
-                    style: TypographyUnified.bodyMedium.copyWith(
-                      color: isSelected
-                          ? TossDesignSystem.tossBlue
-                          : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                    style: DSTypography.bodyMedium.copyWith(
+                      color: isSelected ? colors.accent : colors.textPrimary,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
@@ -230,7 +219,7 @@ class BasicInfoInput extends StatelessWidget {
                 if (isSelected)
                   Icon(
                     Icons.check_circle,
-                    color: TossDesignSystem.tossBlue,
+                    color: colors.accent,
                     size: 20,
                   ),
               ],

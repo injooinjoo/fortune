@@ -10,12 +10,13 @@ import '../../../../core/theme/toss_theme.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../core/providers/user_settings_provider.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../presentation/providers/fortune_history_provider.dart';
 import '../../domain/models/fortune_history.dart';
 import '../widgets/statistics_dashboard.dart';
 import '../widgets/fortune_charts.dart';
 import '../widgets/timeline_view.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../widgets/fortune_calendar_view.dart';
 
 class FortuneHistoryPage extends ConsumerStatefulWidget {
@@ -88,9 +89,12 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                   children: [
                     Expanded(
                       child: AppCard(
-                        onTap: () => setState(() => _tabController.index = 0),
-                        style: _tabController.index == 0 
-                          ? AppCardStyle.filled 
+                        onTap: () {
+                          ref.read(fortuneHapticServiceProvider).selection();
+                          setState(() => _tabController.index = 0);
+                        },
+                        style: _tabController.index == 0
+                          ? AppCardStyle.filled
                           : AppCardStyle.outlined,
                         padding: const EdgeInsets.symmetric(
                           vertical: TossTheme.spacingS, 
@@ -111,9 +115,12 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                     const SizedBox(width: TossTheme.spacingS),
                     Expanded(
                       child: AppCard(
-                        onTap: () => setState(() => _tabController.index = 1),
-                        style: _tabController.index == 1 
-                          ? AppCardStyle.filled 
+                        onTap: () {
+                          ref.read(fortuneHapticServiceProvider).selection();
+                          setState(() => _tabController.index = 1);
+                        },
+                        style: _tabController.index == 1
+                          ? AppCardStyle.filled
                           : AppCardStyle.outlined,
                         padding: const EdgeInsets.symmetric(
                           vertical: TossTheme.spacingS, 
@@ -134,9 +141,12 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                     const SizedBox(width: TossTheme.spacingS),
                     Expanded(
                       child: AppCard(
-                        onTap: () => setState(() => _tabController.index = 2),
-                        style: _tabController.index == 2 
-                          ? AppCardStyle.filled 
+                        onTap: () {
+                          ref.read(fortuneHapticServiceProvider).selection();
+                          setState(() => _tabController.index = 2);
+                        },
+                        style: _tabController.index == 2
+                          ? AppCardStyle.filled
                           : AppCardStyle.outlined,
                         padding: const EdgeInsets.symmetric(
                           vertical: TossTheme.spacingS, 
@@ -157,9 +167,12 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                     const SizedBox(width: TossTheme.spacingS),
                     Expanded(
                       child: AppCard(
-                        onTap: () => setState(() => _tabController.index = 3),
-                        style: _tabController.index == 3 
-                          ? AppCardStyle.filled 
+                        onTap: () {
+                          ref.read(fortuneHapticServiceProvider).selection();
+                          setState(() => _tabController.index = 3);
+                        },
+                        style: _tabController.index == 3
+                          ? AppCardStyle.filled
                           : AppCardStyle.outlined,
                         padding: const EdgeInsets.symmetric(
                           horizontal: TossTheme.spacingM,
@@ -302,7 +315,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
         error: (error, stack) => Center(
           child: Text(
             '운세 기록을 불러올 수 없습니다',
-            style: context.buttonMedium,
+            style: DSTypography.labelMedium,
           ),
         ),
       ),
@@ -320,7 +333,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
             children: [
               Text(
                 '📜',
-                style: TypographyUnified.displayLarge,
+                style: DSTypography.displayLarge,
               ),
               const SizedBox(height: TossTheme.spacingL),
               Text(

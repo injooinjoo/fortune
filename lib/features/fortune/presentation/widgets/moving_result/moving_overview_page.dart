@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 import 'moving_fortune_data.dart';
 import 'circular_score_painter.dart';
 import 'moving_result_utils.dart';
@@ -34,7 +32,7 @@ class MovingOverviewPage extends StatelessWidget {
               children: [
                 Text(
                   '종합 이사운',
-                  style: TossTheme.heading3,
+                  style: DSTypography.headingMedium,
                 ),
                 const SizedBox(height: 24),
                 // 원형 점수 게이지
@@ -64,7 +62,7 @@ class MovingOverviewPage extends StatelessWidget {
                             builder: (context, child) {
                               return Text(
                                 '${(scoreAnimation.value * 100).toInt()}',
-                                style: TypographyUnified.displayLarge.copyWith(
+                                style: DSTypography.displayLarge.copyWith(
                                   fontWeight: FontWeight.w800,
                                   color: MovingResultUtils.getScoreColor(fortuneData.overallScore),
                                 ),
@@ -73,7 +71,7 @@ class MovingOverviewPage extends StatelessWidget {
                           ),
                           Text(
                             MovingResultUtils.getScoreDescription(fortuneData.overallScore),
-                            style: TossTheme.body2.copyWith(
+                            style: DSTypography.bodyMedium.copyWith(
                               fontWeight: FontWeight.w600,
                               color: MovingResultUtils.getScoreColor(fortuneData.overallScore),
                             ),
@@ -102,9 +100,9 @@ class MovingOverviewPage extends StatelessWidget {
                       Expanded(
                         child: Text(
                           MovingResultUtils.getMainAdvice(purpose, fortuneData.bestDirection),
-                          style: TossTheme.body2.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             height: 1.5,
-                            color: TossTheme.textBlack,
+                            color: DSColors.textPrimary,
                           ),
                         ),
                       ),
@@ -127,7 +125,7 @@ class MovingOverviewPage extends StatelessWidget {
                   '최적 방향',
                   fortuneData.bestDirection,
                   Icons.explore_rounded,
-                  TossTheme.primaryBlue,
+                  DSColors.accent,
                 ),
               ),
               const SizedBox(width: 12),
@@ -136,7 +134,7 @@ class MovingOverviewPage extends StatelessWidget {
                   '최적 시기',
                   '${fortuneData.luckyDates.first.month}월 ${fortuneData.luckyDates.first.day}일',
                   Icons.calendar_today_rounded,
-                  TossDesignSystem.warningOrange,
+                  DSColors.warning,
                 ),
               ),
             ],
@@ -153,7 +151,7 @@ class MovingOverviewPage extends StatelessWidget {
                   '추천 주거',
                   fortuneData.houseTypeScores.entries.first.key,
                   Icons.home_rounded,
-                  TossDesignSystem.success,
+                  DSColors.success,
                 ),
               ),
               const SizedBox(width: 12),
@@ -162,7 +160,7 @@ class MovingOverviewPage extends StatelessWidget {
                   '예상 비용',
                   '${fortuneData.budgetBreakdown.values.reduce((a, b) => a + b)}만원',
                   Icons.payments_rounded,
-                  TossDesignSystem.primaryBlue,
+                  DSColors.accent,
                 ),
               ),
             ],
@@ -188,8 +186,8 @@ class MovingOverviewPage extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: TossTheme.caption.copyWith(
-                  color: TossTheme.textGray600,
+                style: DSTypography.labelSmall.copyWith(
+                  color: DSColors.textSecondary,
                 ),
               ),
             ],
@@ -197,7 +195,7 @@ class MovingOverviewPage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: TossTheme.heading3,
+            style: DSTypography.headingMedium,
           ),
         ],
       ),

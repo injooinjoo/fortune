@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../theme/toss_design_system.dart';
-import '../theme/typography_unified.dart';
+import '../design_system/design_system.dart';
 import 'unified_date_picker.dart';
 
 /// 🎨 공통 운세 입력 위젯 라이브러리
@@ -70,125 +69,116 @@ class FortuneInputWidgets {
     required int? selectedHour,
     required ValueChanged<int> onHourSelected,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: context.labelMedium.copyWith(
-            color: isDark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+          style: typography.labelMedium.copyWith(
+            color: colors.textSecondary,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         InkWell(
           onTap: () async {
             await showModalBottomSheet(
               context: context,
               backgroundColor: Colors.transparent,
-              builder: (context) => Container(
-                height: 300,
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? TossDesignSystem.grayDark800
-                      : TossDesignSystem.gray50,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
+              builder: (ctx) {
+                final sheetColors = ctx.colors;
+                final sheetTypography = ctx.typography;
+                return Container(
+                  height: 300,
+                  decoration: BoxDecoration(
+                    color: sheetColors.surfaceSecondary,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(DSRadius.xl),
+                    ),
                   ),
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(
-                              '취소',
-                              style: context.bodyMedium.copyWith(
-                                color: TossDesignSystem.textSecondaryDark,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(DSSpacing.md),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: Text(
+                                '취소',
+                                style: sheetTypography.bodyMedium.copyWith(
+                                  color: sheetColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              '시간 선택',
+                              style: sheetTypography.headingSmall,
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: Text(
+                                '완료',
+                                style: sheetTypography.bodyMedium.copyWith(
+                                  color: sheetColors.accent,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: CupertinoPicker(
+                          scrollController: FixedExtentScrollController(
+                            initialItem: selectedHour ?? 0,
+                          ),
+                          itemExtent: 40,
+                          onSelectedItemChanged: onHourSelected,
+                          children: List.generate(
+                            24,
+                            (index) => Center(
+                              child: Text(
+                                '$index시',
+                                style: sheetTypography.bodyLarge,
                               ),
                             ),
                           ),
-                          Text(
-                            '시간 선택',
-                            style: context.heading4,
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(
-                              '완료',
-                              style: context.bodyMedium.copyWith(
-                                color: TossDesignSystem.tossBlue,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: CupertinoPicker(
-                        scrollController: FixedExtentScrollController(
-                          initialItem: selectedHour ?? 0,
-                        ),
-                        itemExtent: 40,
-                        onSelectedItemChanged: onHourSelected,
-                        children: List.generate(
-                          24,
-                          (index) => Center(
-                            child: Text(
-                              '$index시',
-                              style: context.bodyLarge,
-                            ),
-                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
+                    ],
+                  ),
+                );
+              },
             );
           },
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
-              color: isDark
-                  ? TossDesignSystem.grayDark800
-                  : TossDesignSystem.gray50,
-              borderRadius: BorderRadius.circular(12),
+              color: colors.surfaceSecondary,
+              borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
-                color: isDark
-                    ? TossDesignSystem.borderDark
-                    : TossDesignSystem.borderLight,
+                color: colors.border,
               ),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.access_time,
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.textSecondaryLight,
+                  color: colors.textSecondary,
                   size: 20,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: DSSpacing.sm + 4),
                 Text(
                   selectedHour != null
                       ? '$selectedHour시'
                       : '시간을 선택해주세요',
-                  style: context.bodyMedium.copyWith(
+                  style: typography.bodyMedium.copyWith(
                     color: selectedHour != null
-                        ? (isDark
-                            ? TossDesignSystem.textPrimaryDark
-                            : TossDesignSystem.textPrimaryLight)
-                        : (isDark
-                            ? TossDesignSystem.textSecondaryDark
-                            : TossDesignSystem.textSecondaryLight),
+                        ? colors.textPrimary
+                        : colors.textSecondary,
                   ),
                 ),
               ],
@@ -215,57 +205,50 @@ class FortuneInputWidgets {
     required T? selectedValue,
     required ValueChanged<T> onSelected,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: context.labelMedium.copyWith(
-            color: isDark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+          style: typography.labelMedium.copyWith(
+            color: colors.textSecondary,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: DSSpacing.sm,
+          runSpacing: DSSpacing.sm,
           children: options.entries.map((entry) {
             final isSelected = selectedValue == entry.key;
 
             return InkWell(
               onTap: () => onSelected(entry.key),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(DSRadius.md),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
+                  horizontal: DSSpacing.md,
+                  vertical: DSSpacing.sm + 4,
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue
-                      : (isDark
-                          ? TossDesignSystem.grayDark800
-                          : TossDesignSystem.gray50),
-                  borderRadius: BorderRadius.circular(12),
+                      ? colors.accent
+                      : colors.surfaceSecondary,
+                  borderRadius: BorderRadius.circular(DSRadius.md),
                   border: Border.all(
                     color: isSelected
-                        ? TossDesignSystem.tossBlue
-                        : (isDark
-                            ? TossDesignSystem.borderDark
-                            : TossDesignSystem.borderLight),
+                        ? colors.accent
+                        : colors.border,
                   ),
                 ),
                 child: Text(
                   entry.value,
-                  style: context.bodyMedium.copyWith(
+                  style: typography.bodyMedium.copyWith(
                     color: isSelected
                         ? Colors.white
-                        : (isDark
-                            ? TossDesignSystem.textPrimaryDark
-                            : TossDesignSystem.textPrimaryLight),
+                        : colors.textPrimary,
                     fontWeight:
                         isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
@@ -294,56 +277,47 @@ class FortuneInputWidgets {
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: context.labelMedium.copyWith(
-            color: isDark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+          style: typography.labelMedium.copyWith(
+            color: colors.textSecondary,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         TextField(
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
-          style: context.bodyMedium,
+          style: typography.bodyMedium,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: context.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+            hintStyle: typography.bodyMedium.copyWith(
+              color: colors.textTertiary,
             ),
             filled: true,
-            fillColor: isDark
-                ? TossDesignSystem.grayDark800
-                : TossDesignSystem.gray50,
+            fillColor: colors.surfaceSecondary,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(DSRadius.md),
               borderSide: BorderSide(
-                color: isDark
-                    ? TossDesignSystem.borderDark
-                    : TossDesignSystem.borderLight,
+                color: colors.border,
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(DSRadius.md),
               borderSide: BorderSide(
-                color: isDark
-                    ? TossDesignSystem.borderDark
-                    : TossDesignSystem.borderLight,
+                color: colors.border,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(DSRadius.md),
               borderSide: BorderSide(
-                color: TossDesignSystem.tossBlue,
+                color: colors.accent,
                 width: 2,
               ),
             ),
@@ -367,18 +341,21 @@ class FortuneInputWidgets {
     required VoidCallback? onPressed,
     bool isLoading = false,
   }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: TossDesignSystem.tossBlue,
-          disabledBackgroundColor: TossDesignSystem.textSecondaryLight,
+          backgroundColor: colors.accent,
+          disabledBackgroundColor: colors.textTertiary,
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(DSRadius.md),
           ),
         ),
         child: isLoading
@@ -392,8 +369,9 @@ class FortuneInputWidgets {
               )
             : Text(
                 label,
-                style: context.buttonMedium.copyWith(
+                style: typography.labelLarge.copyWith(
                   color: Colors.white,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
       ),

@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
 import '../../domain/models/talisman_models.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class TalismanDesignCanvas extends StatefulWidget {
   final TalismanResult result;
@@ -45,7 +43,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
       width: widget.size,
       height: widget.size * 1.2, // Slightly taller for traditional talisman shape
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -76,7 +74,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
             // Traditional paper texture overlay
             Container(
               decoration: BoxDecoration(
-                color: TossDesignSystem.white.withValues(alpha: 0.4),
+                color: Colors.white.withValues(alpha: 0.4),
               ),
               child: CustomPaint(
                 painter: _TalismanPaperTexturePainter(),
@@ -102,7 +100,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
                   // User info and wish
                   _buildUserInfo(),
 
-                  const SizedBox(height: AppSpacing.spacing5),
+                  const SizedBox(height: 20),
 
                   // Date and seal
                   _buildBottomSeal(),
@@ -137,15 +135,15 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
           style: TextStyle(
             fontSize: widget.size * 0.08,
             fontWeight: FontWeight.bold,
-            color: TossDesignSystem.white,
+            color: Colors.white,
             letterSpacing: 4,
           ),
         ),
-        const SizedBox(height: AppSpacing.spacing1),
+        const SizedBox(height: 4),
         Container(
           width: widget.size * 0.5,
           height: 4 * 0.5,
-          color: TossDesignSystem.white.withValues(alpha: 0.6),
+          color: Colors.white.withValues(alpha: 0.6),
         ),
       ],
     );
@@ -157,7 +155,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
       height: widget.size * 0.5,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: TossDesignSystem.white.withValues(alpha: 0.9),
+        color: Colors.white.withValues(alpha: 0.9),
         boxShadow: [
           BoxShadow(
             color: widget.result.design.primaryColor.withValues(alpha: 0.5),
@@ -194,7 +192,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
             child: Icon(
               widget.result.type.icon,
               size: widget.size * 0.15,
-              color: TossDesignSystem.white,
+              color: Colors.white,
             ),
           ).animate(onPlay: (controller) => controller.repeat())
             .rotate(duration: const Duration(milliseconds: 20000)),
@@ -208,9 +206,9 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
       children: [
         if (widget.result.design.personalText.isNotEmpty) ...[
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: TossDesignSystem.white.withValues(alpha: 0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -225,14 +223,14 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          const SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: 8),
         ],
 
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8 * 1.25),
           decoration: BoxDecoration(
-            color: TossDesignSystem.white.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(AppSpacing.spacing6 * 1.04),
+            color: Colors.white.withValues(alpha: 0.9),
+            borderRadius: BorderRadius.circular(24 * 1.04),
             border: Border.all(
               color: widget.result.design.primaryColor.withValues(alpha: 0.5),
               width: 2,
@@ -264,17 +262,17 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
           dateText,
           style: TextStyle(
             fontSize: widget.size * 0.04,
-            color: TossDesignSystem.white.withValues(alpha: 0.8),
+            color: Colors.white.withValues(alpha: 0.8),
             letterSpacing: 1,
           ),
         ),
-        const SizedBox(width: AppSpacing.spacing4),
+        const SizedBox(width: 16),
         // Seal
         Container(
           width: widget.size * 0.1,
           height: widget.size * 0.1,
           decoration: const BoxDecoration(
-            color: TossDesignSystem.errorRed,
+            color: DSColors.error,
             shape: BoxShape.circle,
           ),
           child: Center(
@@ -282,7 +280,7 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
               '符',
               style: TextStyle(
                 fontSize: widget.size * 0.05,
-                color: TossDesignSystem.white,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -297,7 +295,7 @@ class _TalismanPaperTexturePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = TossDesignSystem.gray400.withValues(alpha: 0.05)
+      ..color = DSColors.textTertiary.withValues(alpha: 0.05)
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke;
 
@@ -359,8 +357,8 @@ class _TalismanSymbolPainter extends CustomPainter {
 
       symbolPaint.text = TextSpan(
         text: symbols[i],
-        style: TypographyUnified.bodySmall.copyWith(
-          color: TossDesignSystem.white,
+        style: DSTypography.bodySmall.copyWith(
+          color: Colors.white,
         ),
       );
       symbolPaint.layout();

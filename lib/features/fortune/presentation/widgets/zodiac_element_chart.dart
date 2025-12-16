@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/zodiac_compatibility_service.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class ZodiacElementChart extends StatefulWidget {
   final String selectedZodiac;
@@ -31,7 +30,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
   // 오행 데이터
   final Map<String, ElementData> _elementData = {
     '목(木)': ElementData(
-      color: TossDesignSystem.successGreen,
+      color: DSColors.success,
       icon: Icons.park,
       zodiacs: ['호랑이', '토끼'],
       description: '생명력과 성장을 상징하며, 인내심과 유연성을 나타냅니다.',
@@ -39,7 +38,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
       season: '봄',
       direction: '동쪽'),
     '화(火)': ElementData(
-      color: TossDesignSystem.errorRed,
+      color: DSColors.error,
       icon: Icons.local_fire_department,
       zodiacs: ['뱀', '말'],
       description: '열정과 활력을 상징하며, 리더십과 표현력을 나타냅니다.',
@@ -47,7 +46,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
       season: '여름',
       direction: '남쪽'),
     '토(土)': ElementData(
-      color: TossDesignSystem.warningOrange,
+      color: DSColors.warning,
       icon: Icons.landscape,
       zodiacs: ['소', '용', '양', '개'],
       description: '안정과 신뢰를 상징하며, 실용성과 책임감을 나타냅니다.',
@@ -55,7 +54,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
       season: '환절기',
       direction: '중앙'),
     '금(金)': ElementData(
-      color: TossDesignSystem.gray400,
+      color: DSColors.textTertiary,
       icon: Icons.diamond,
       zodiacs: ['원숭이', '닭'],
       description: '정확성과 결단력을 상징하며, 정의감과 규율을 나타냅니다.',
@@ -63,7 +62,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
       season: '가을',
       direction: '서쪽'),
     '수(水)': ElementData(
-      color: TossDesignSystem.primaryBlue,
+      color: DSColors.accent,
       icon: Icons.water_drop,
       zodiacs: ['쥐', '돼지'],
       description: '지혜와 유동성을 상징하며, 적응력과 통찰력을 나타냅니다.',
@@ -141,15 +140,15 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
       children: [
         Icon(
           Icons.category,
-          color: TossDesignSystem.warningOrange,
+          color: DSColors.warning,
           size: 24,
         ),
         SizedBox(width: 8),
         Text(
           '오행 분석',
-          style: TypographyUnified.heading3.copyWith(
+          style: DSTypography.headingSmall.copyWith(
             fontWeight: FontWeight.bold,
-            color: TossDesignSystem.white,
+            color: Colors.white,
           ),
         ),
       ],
@@ -233,7 +232,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                   ],
                 ),
                 border: Border.all(
-                  color: isSelected ? TossDesignSystem.white : data.color,
+                  color: isSelected ? Colors.white : data.color,
                   width: isSelected ? 3 : 2,
                 ),
                 boxShadow: isSelected ? [
@@ -249,7 +248,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 children: [
                   Icon(
                     data.icon,
-                    color: TossDesignSystem.white,
+                    color: Colors.white,
                     size: isSelected ? 28 : 24,
                   ),
                   const SizedBox(height: 4),
@@ -258,7 +257,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                     style: TextStyle(
                       fontSize: isSelected ? 14 : 12,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: TossDesignSystem.white,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -298,13 +297,13 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
         children: [
           Text(
             widget.selectedZodiac,
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.bold,
-              color: TossDesignSystem.white)),
+              color: Colors.white)),
           SizedBox(height: 4),
           Text(
             _selectedElement!,
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: DSTypography.labelMedium.copyWith(
               color: data.color,
               fontWeight: FontWeight.bold)),
           if (isMyElement) ...[
@@ -317,8 +316,8 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
               ),
               child: Text(
                 '나의 오행',
-                style: TypographyUnified.labelTiny.copyWith(
-                  color: TossDesignSystem.white,
+                style: DSTypography.labelSmall.copyWith(
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -348,15 +347,15 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                   children: [
                     Text(
                       _selectedElement!,
-                      style: TypographyUnified.heading3.copyWith(
+                      style: DSTypography.headingSmall.copyWith(
                         fontWeight: FontWeight.bold,
                         color: data.color,
                       ),
                     ),
                     Text(
                       '${data.season} · ${data.direction}',
-                      style: TypographyUnified.bodySmall.copyWith(
-                        color: TossDesignSystem.white.withValues(alpha:0.8),
+                      style: DSTypography.bodySmall.copyWith(
+                        color: Colors.white.withValues(alpha:0.8),
                       ),
                     ),
                   ],
@@ -367,8 +366,8 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
           SizedBox(height: 16),
           Text(
             data.description,
-            style: TypographyUnified.buttonMedium.copyWith(
-              color: TossDesignSystem.white,
+            style: DSTypography.labelMedium.copyWith(
+              color: Colors.white,
               height: 1.5,
             ),
           ),
@@ -389,8 +388,8 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 ),
                 child: Text(
                   trait,
-                  style: TypographyUnified.bodySmall.copyWith(
-                    color: TossDesignSystem.white,
+                  style: DSTypography.bodySmall.copyWith(
+                    color: Colors.white,
                   ),
                 ),
               );
@@ -400,10 +399,10 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.white.withValues(alpha:0.05),
+              color: Colors.white.withValues(alpha:0.05),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: TossDesignSystem.white.withValues(alpha:0.1),
+                color: Colors.white.withValues(alpha:0.1),
                 width: 1,
               ),
             ),
@@ -417,8 +416,8 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 SizedBox(width: 8),
                 Text(
                   '띠: ',
-                  style: TypographyUnified.bodySmall.copyWith(
-                    color: TossDesignSystem.white.withValues(alpha:0.8),
+                  style: DSTypography.bodySmall.copyWith(
+                    color: Colors.white.withValues(alpha:0.8),
                   ),
                 ),
                 ...data.zodiacs.map((zodiac) {
@@ -427,9 +426,9 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                     padding: const EdgeInsets.only(left: 4),
                     child: Text(
                       zodiac,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         fontWeight: isCurrentZodiac ? FontWeight.bold : FontWeight.normal,
-                        color: isCurrentZodiac ? data.color : TossDesignSystem.white,
+                        color: isCurrentZodiac ? data.color : Colors.white,
                       ),
                     ),
                   );
@@ -452,15 +451,15 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
             children: [
               Icon(
                 Icons.sync_alt,
-                color: TossDesignSystem.warningOrange,
+                color: DSColors.warning,
                 size: 24,
               ),
               SizedBox(width: 8),
               Text(
                 '오행 상생상극',
-                style: TypographyUnified.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -469,14 +468,14 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
           _buildRelationshipRow(
             '상생',
             Icons.favorite,
-            TossDesignSystem.successGreen,
+            DSColors.success,
             _getGeneratingRelation(),
           ),
           const SizedBox(height: 12),
           _buildRelationshipRow(
             '상극',
             Icons.flash_on,
-            TossDesignSystem.errorRed,
+            DSColors.error,
             _getOvercomingRelation(),
           ),
         ],
@@ -502,15 +501,15 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
             children: [
               Text(
                 title,
-                style: TypographyUnified.bodySmall.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),
               ),
               Text(
                 relation,
-                style: TypographyUnified.bodySmall.copyWith(
-                  color: TossDesignSystem.white.withValues(alpha:0.8),
+                style: DSTypography.bodySmall.copyWith(
+                  color: Colors.white.withValues(alpha:0.8),
                 ),
               ),
             ],
@@ -599,7 +598,7 @@ class _ElementRelationshipPainter extends CustomPainter {
 
   void _drawGeneratingCycle(Canvas canvas, Map<String, Offset> positions, List<String> elements) {
     final paint = Paint()
-      ..color = TossDesignSystem.successGreen.withValues(alpha:0.3 * animationValue)
+      ..color = DSColors.success.withValues(alpha:0.3 * animationValue)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     
@@ -620,7 +619,7 @@ class _ElementRelationshipPainter extends CustomPainter {
 
   void _drawOvercomingCycle(Canvas canvas, Map<String, Offset> positions) {
     final paint = Paint()
-      ..color = TossDesignSystem.errorRed.withValues(alpha:0.2 * animationValue)
+      ..color = DSColors.error.withValues(alpha:0.2 * animationValue)
       ..strokeWidth = 1.5
      
    

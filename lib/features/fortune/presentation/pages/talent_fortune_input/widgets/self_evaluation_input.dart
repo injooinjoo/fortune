@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 class SelfEvaluationInput extends StatelessWidget {
   final TextEditingController strengthsController;
@@ -15,6 +15,8 @@ class SelfEvaluationInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       children: [
         TextField(
@@ -23,7 +25,7 @@ class SelfEvaluationInput extends StatelessWidget {
             labelText: '강점',
             hintText: '예: 책임감, 빠른 실행력, 창의적 사고...',
             filled: true,
-            fillColor: TossDesignSystem.gray100,
+            fillColor: colors.backgroundSecondary,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -39,7 +41,7 @@ class SelfEvaluationInput extends StatelessWidget {
             labelText: '약점',
             hintText: '예: 우유부단함, 쉽게 포기함, 조급함...',
             filled: true,
-            fillColor: TossDesignSystem.gray100,
+            fillColor: colors.backgroundSecondary,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,

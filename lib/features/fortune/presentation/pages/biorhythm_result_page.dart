@@ -1,18 +1,17 @@
 // ImageFilter.blur용
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../widgets/biorhythm_widgets.dart';
-import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 import '../../../../core/widgets/unified_button.dart';
 class BiorhythmResultPage extends ConsumerStatefulWidget {
@@ -61,6 +60,14 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
     _biorhythmData = BiorhythmData.fromApiResult(widget.birthDate, widget.fortuneResult);
     _fortuneResult = widget.fortuneResult;
     _fadeController.forward();
+
+    // 바이오리듬 결과 공개 햅틱
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final score = _fortuneResult.score ?? 70;
+        ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+      }
+    });
   }
 
   @override
@@ -74,7 +81,7 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
     setState(() {
       _currentPage = index;
     });
-    HapticFeedback.lightImpact();
+    ref.read(fortuneHapticServiceProvider).pageSnap();
   }
 
   // 광고 보고 블러 해제
@@ -146,20 +153,19 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: TossDesignSystem.transparent,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false, // 백버튼 제거
         title: Text(
           '바이오리듬 분석 결과',
-          style: theme.textTheme.titleLarge?.copyWith(
+          style: DSTypography.labelLarge.copyWith(
             fontWeight: FontWeight.w600,
-            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+            color: colors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -167,7 +173,7 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
           IconButton(
             icon: Icon(
               Icons.close,
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+              color: colors.textPrimary,
             ),
             onPressed: () => context.go('/fortune'),
           ),
@@ -212,7 +218,7 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
   }
 
   Widget _buildPageIndicator() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -226,8 +232,8 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
             height: 8,
             decoration: BoxDecoration(
               color: _currentPage == index
-                  ? TossTheme.primaryBlue
-                  : (isDark ? TossDesignSystem.grayDark400 : TossTheme.borderGray300),
+                  ? colors.accent
+                  : colors.border,
               borderRadius: BorderRadius.circular(4),
             ),
           );

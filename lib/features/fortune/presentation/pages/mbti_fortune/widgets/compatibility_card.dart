@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/components/app_card.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class CompatibilityCard extends StatelessWidget {
   final String selectedMbti;
@@ -43,7 +42,7 @@ class CompatibilityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final themeColors = context.colors;
     final compatibleTypes = _getCompatibleTypes(selectedMbti);
 
     return AppCard(
@@ -55,13 +54,13 @@ class CompatibilityCard extends StatelessWidget {
             children: [
               const Icon(Icons.people,
                 size: 20,
-                color: TossDesignSystem.purple),
+                color: Color(0xFF8B5CF6)),
               const SizedBox(width: 8),
               Text(
                 '오늘의 궁합',
-                style: TypographyUnified.buttonMedium.copyWith(
+                style: DSTypography.labelLarge.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: themeColors.textPrimary,
                 ),
               ),
             ],
@@ -88,7 +87,7 @@ class CompatibilityCard extends StatelessWidget {
                       child: Text(
                         type,
                         style: const TextStyle(
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                           fontFamily: 'ZenSerif',
                           fontWeight: FontWeight.w700,
                         ),
@@ -98,8 +97,8 @@ class CompatibilityCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     _getCompatibilityLabel(compatibleTypes.indexOf(type)),
-                    style: TypographyUnified.labelMedium.copyWith(
-                      color: TossDesignSystem.gray600,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: themeColors.textSecondary,
                     ),
                   ),
                 ],

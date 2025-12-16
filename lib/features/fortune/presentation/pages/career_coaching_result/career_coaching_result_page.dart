@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../domain/models/career_coaching_model.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/services/debug_premium_service.dart';
 import '../../../../../core/models/fortune_result.dart';
@@ -15,6 +14,7 @@ import '../../../../../services/ad_service.dart';
 import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../widgets/fortune_loading_skeleton.dart';
 import 'widgets/index.dart';
+import '../../../../../core/services/fortune_haptic_service.dart';
 
 class CareerCoachingResultPage extends ConsumerStatefulWidget {
   final CareerCoachingInput input;
@@ -110,6 +110,10 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
           _currentTypingSection = 0;
         });
 
+        // 커리어 코칭 결과 공개 햅틱
+        final score = result.score ?? 70;
+        ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+
         debugPrint('');
         debugPrint('✅ [커리어 코칭] 운세 생성 프로세스 완료!');
         if (result.isBlurred) {
@@ -189,11 +193,11 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     // 에러 발생
     if (_error != null) {
-      return _buildErrorView(isDark);
+      return _buildErrorView(colors);
     }
 
     // ✅ 결과 화면 (단일 컬럼)
@@ -204,16 +208,16 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
         }
       },
       child: Scaffold(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        backgroundColor: colors.background,
         appBar: AppBar(
-          backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+          backgroundColor: colors.background,
           elevation: 0,
           scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           title: Text(
             '커리어 코칭 결과',
-            style: context.heading3.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.headingMedium.copyWith(
+              color: colors.textPrimary,
             ),
           ),
           centerTitle: true,
@@ -221,7 +225,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
             IconButton(
               icon: Icon(
                 Icons.close,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                color: colors.textPrimary,
               ),
               onPressed: () => context.go('/fortune'),
             ),
@@ -235,18 +239,18 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
               child: _isLoading
                   ? FortuneResultSkeleton(
                       showScore: true,
-                      isDark: isDark,
+                      isDark: Theme.of(context).brightness == Brightness.dark,
                     )
                   : _fortuneResult == null
                       ? Center(
                           child: Text(
                             '결과를 불러올 수 없습니다',
-                            style: context.bodyMedium.copyWith(
-                              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                            style: DSTypography.bodyMedium.copyWith(
+                              color: colors.textSecondary,
                             ),
                           ),
                         )
-                      : _buildResultContent(isDark),
+                      : _buildResultContent(colors),
             ),
 
             // ✅ 광고 버튼 (블러 상태일 때만)
@@ -262,7 +266,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     );
   }
 
-  Widget _buildResultContent(bool isDark) {
+  Widget _buildResultContent(DSColorScheme colors) {
     final fortuneData = _fortuneResult!.data;
     final healthScore = fortuneData['health_score'] as Map<String, dynamic>?;
     final marketTrends = fortuneData['market_trends'] as Map<String, dynamic>?;
@@ -276,13 +280,13 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
       children: [
         // ✅ 1. 종합 - 커리어 건강도 (항상 표시)
         if (healthScore != null) ...[
-          HealthScoreCard(healthScore: healthScore, isDark: isDark),
+          HealthScoreCard(healthScore: healthScore, colors: colors),
           const SizedBox(height: 16),
         ],
 
         // ✅ 2. 시장 트렌드 (항상 표시)
         if (marketTrends != null) ...[
-          MarketTrendsCard(marketTrends: marketTrends, isDark: isDark),
+          MarketTrendsCard(marketTrends: marketTrends, colors: colors),
           const SizedBox(height: 16),
         ],
 
@@ -302,7 +306,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
                   child: InsightCard(
                     insight: insight,
                     index: index,
-                    isDark: isDark,
+                    colors: colors,
                     enableTyping: true,
                     startTyping: _currentTypingSection >= index,
                     onTypingComplete: () {
@@ -325,7 +329,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
             sectionKey: 'action_plan',
             child: Column(
               children: [
-                ActionPlanCard(actionPlan: actionPlan, isDark: isDark),
+                ActionPlanCard(actionPlan: actionPlan, colors: colors),
                 const SizedBox(height: 16),
               ],
             ),
@@ -340,7 +344,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
             sectionKey: 'growth_roadmap',
             child: Column(
               children: [
-                GrowthRoadmapCard(growthRoadmap: growthRoadmap, isDark: isDark),
+                GrowthRoadmapCard(growthRoadmap: growthRoadmap, colors: colors),
                 const SizedBox(height: 16),
               ],
             ),
@@ -355,7 +359,7 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
             sectionKey: 'recommendations',
             child: RecommendationsCard(
               skills: recommendations['skills'] as List,
-              isDark: isDark,
+              colors: colors,
             ),
           ),
         ],
@@ -365,16 +369,16 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
     );
   }
 
-  Widget _buildErrorView(bool isDark) {
+  Widget _buildErrorView(DSColorScheme colors) {
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        backgroundColor: colors.background,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            color: colors.textPrimary,
           ),
           onPressed: () => context.pop(),
         ),
@@ -385,14 +389,14 @@ class _CareerCoachingResultPageState extends ConsumerState<CareerCoachingResultP
           children: [
             Text(
               '운세 생성 실패',
-              style: context.heading3.copyWith(
-                color: TossDesignSystem.errorRed,
+              style: DSTypography.headingMedium.copyWith(
+                color: DSColors.error,
               ),
             ),
             const SizedBox(height: 16),
             Text(
               _error!,
-              style: context.bodyMedium,
+              style: DSTypography.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),

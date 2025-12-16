@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 class BirthTimeInput extends StatelessWidget {
   final TextEditingController controller;
@@ -14,15 +13,15 @@ class BirthTimeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'HH:MM 형식으로 입력해주세요 (예: 14:30)',
-          style: TypographyUnified.labelSmall.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+          style: DSTypography.labelSmall.copyWith(
+            color: colors.textSecondary,
           ),
         ),
         const SizedBox(height: 12),
@@ -33,7 +32,7 @@ class BirthTimeInput extends StatelessWidget {
             hintText: 'HH:MM',
             prefixIcon: Icon(Icons.access_time),
             filled: true,
-            fillColor: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray100,
+            fillColor: colors.backgroundSecondary,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../constants/fortune_constants.dart';
 import '../../models/user_profile.dart';
 import '../../services/storage_service.dart';
 import '../../utils/date_utils.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
+import '../../core/services/fortune_haptic_service.dart';
 import 'steps/name_input_step.dart';
 import 'steps/birth_input_step.dart';
 
-class OnboardingPage extends StatefulWidget {
+class OnboardingPage extends ConsumerStatefulWidget {
   final bool isPartialCompletion;
   
   const OnboardingPage({
@@ -18,10 +20,10 @@ class OnboardingPage extends StatefulWidget {
   });
 
   @override
-  State<OnboardingPage> createState() => _OnboardingPageState();
+  ConsumerState<OnboardingPage> createState() => _OnboardingPageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage> {
+class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   final PageController _pageController = PageController();
   final StorageService _storageService = StorageService();
 
@@ -134,11 +136,41 @@ class _OnboardingPageState extends State<OnboardingPage> {
         });
       }
 
-      // [App Store Guideline 4.0] Skip name step if name already exists from social login
-      // Apple Sign In and Google Sign In already provide user's name
-      if (_name.isNotEmpty && _name != '사용자' && mounted) {
-        debugPrint('📱 [Onboarding] Name already exists from social login: $_name');
-        debugPrint('📱 [Onboarding] Skipping to birth date step (App Store Guideline 4.0)');
+      // [App Store Guideline 4.0] Skip name step for social login users
+      // Apple Sign In only provides name on FIRST login, not on subsequent logins
+      // So we MUST skip name step for Apple/Google users regardless of whether name exists
+      final provider = _currentUser?.appMetadata['provider'] as String?;
+      final isSocialLogin = provider == 'apple' || provider == 'google';
+
+      debugPrint('📱 [Onboarding] Provider: $provider, isSocialLogin: $isSocialLogin');
+      debugPrint('📱 [Onboarding] Current name: $_name');
+
+      // For social login users: skip name step even if name is empty
+      // Use default name if needed (Apple/Google user or email prefix)
+      if (isSocialLogin && mounted) {
+        // If name is empty, use a default name based on provider or email
+        if (_name.isEmpty || _name == '사용자') {
+          _name = _currentUser?.email?.split('@').first ??
+                  (provider == 'apple' ? 'Apple 사용자' : 'Google 사용자');
+          debugPrint('📱 [Onboarding] Using default name for social login: $_name');
+        }
+
+        debugPrint('📱 [Onboarding] Skipping name step for social login (App Store Guideline 4.0)');
+
+        // Wait for widget to build, then skip to birth date step
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _currentStep == 0) {
+            setState(() {
+              _currentStep = 1;
+            });
+            _pageController.jumpToPage(1);
+          }
+        });
+      }
+      // For non-social login users: only skip if name already exists
+      else if (_name.isNotEmpty && _name != '사용자' && mounted) {
+        debugPrint('📱 [Onboarding] Name already exists: $_name');
+        debugPrint('📱 [Onboarding] Skipping to birth date step');
 
         // Wait for widget to build, then skip to birth date step
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -166,12 +198,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
       setState(() {
         _currentStep = 1;
       });
+      // 페이지 전환 햅틱
+      ref.read(fortuneHapticServiceProvider).pageSnap();
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut);
     } else if (_currentStep == 1 && _birthDate != null) {
       // Allow submission even if birth time is not provided (default to 12:00)
       _birthTime ??= const TimeOfDay(hour: 12, minute: 0);
+      // 온보딩 완료 햅틱
+      ref.read(fortuneHapticServiceProvider).sectionComplete();
       _handleSubmit();
     }
   }
@@ -282,9 +318,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       debugPrint('프로필 저장 오류: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: TossDesignSystem.errorRed));
+          SnackBar(
+            content: const Text('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.'),
+            backgroundColor: context.colors.error));
       }
     }
   }
@@ -293,9 +329,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Widget build(BuildContext context) {
     if (_isLoadingProfile) {
       return Scaffold(
-        backgroundColor: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark50
-            : TossDesignSystem.white,
+        backgroundColor: context.colors.background,
         body: const Center(
           child: CircularProgressIndicator(),
         ),
@@ -303,9 +337,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? TossDesignSystem.grayDark50
-          : TossDesignSystem.white,
+      backgroundColor: context.colors.background,
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),

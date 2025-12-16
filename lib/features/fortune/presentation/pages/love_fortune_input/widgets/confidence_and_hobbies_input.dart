@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import 'package:flutter/services.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 /// Section 8: 외모 자신감 & 취미
 class ConfidenceAndHobbiesInput extends StatelessWidget {
@@ -20,7 +19,7 @@ class ConfidenceAndHobbiesInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     final hobbyOptions = [
       {'id': 'exercise', 'text': '운동', 'emoji': '🏃'},
@@ -37,25 +36,25 @@ class ConfidenceAndHobbiesInput extends StatelessWidget {
         // 외모 자신감
         Text(
           '외모 자신감',
-          style: TypographyUnified.labelLarge.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.labelLarge.copyWith(
+            color: colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '1점 (전혀 자신 없음) ~ 10점 (매우 자신 있음)',
-          style: TypographyUnified.labelSmall.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+          style: DSTypography.labelSmall.copyWith(
+            color: colors.textSecondary,
           ),
         ),
         const SizedBox(height: 16),
         SliderTheme(
           data: SliderThemeData(
-            activeTrackColor: _getConfidenceColor(appearanceConfidence),
-            inactiveTrackColor: TossTheme.borderGray200,
-            thumbColor: _getConfidenceColor(appearanceConfidence),
-            overlayColor: _getConfidenceColor(appearanceConfidence).withValues(alpha: 0.2),
+            activeTrackColor: _getConfidenceColor(appearanceConfidence, colors),
+            inactiveTrackColor: colors.border,
+            thumbColor: _getConfidenceColor(appearanceConfidence, colors),
+            overlayColor: _getConfidenceColor(appearanceConfidence, colors).withValues(alpha: 0.2),
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
             trackHeight: 6,
           ),
@@ -73,13 +72,13 @@ class ConfidenceAndHobbiesInput extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: _getConfidenceColor(appearanceConfidence),
+                  color: _getConfidenceColor(appearanceConfidence, colors),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   '${appearanceConfidence.round()}점',
-                  style: TypographyUnified.bodyMedium.copyWith(
-                    color: TossDesignSystem.white,
+                  style: DSTypography.bodyMedium.copyWith(
+                    color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -87,8 +86,8 @@ class ConfidenceAndHobbiesInput extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 _getConfidenceText(appearanceConfidence),
-                style: TypographyUnified.labelMedium.copyWith(
-                  color: _getConfidenceColor(appearanceConfidence),
+                style: DSTypography.labelMedium.copyWith(
+                  color: _getConfidenceColor(appearanceConfidence, colors),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -100,16 +99,16 @@ class ConfidenceAndHobbiesInput extends StatelessWidget {
         // 취미
         Text(
           '취미',
-          style: TypographyUnified.labelLarge.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.labelLarge.copyWith(
+            color: colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '여러 개 선택 가능',
-          style: TypographyUnified.labelMedium.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+          style: DSTypography.labelMedium.copyWith(
+            color: colors.textSecondary,
           ),
         ),
         const SizedBox(height: 12),
@@ -122,19 +121,17 @@ class ConfidenceAndHobbiesInput extends StatelessWidget {
             return InkWell(
               onTap: () {
                 onHobbyToggled(hobbyId);
-                TossDesignSystem.hapticLight();
+                HapticFeedback.lightImpact();
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                      : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
+                      ? colors.accent.withValues(alpha: 0.1)
+                      : colors.surface,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isSelected
-                        ? TossDesignSystem.tossBlue
-                        : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                    color: isSelected ? colors.accent : colors.border,
                     width: isSelected ? 1.5 : 1,
                   ),
                 ),
@@ -143,15 +140,13 @@ class ConfidenceAndHobbiesInput extends StatelessWidget {
                   children: [
                     Text(
                       hobby['emoji'] as String,
-                      style: TypographyUnified.bodyMedium,
+                      style: DSTypography.bodyMedium,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       hobby['text'] as String,
-                      style: TypographyUnified.bodySmall.copyWith(
-                        color: isSelected
-                            ? TossDesignSystem.tossBlue
-                            : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                      style: DSTypography.bodySmall.copyWith(
+                        color: isSelected ? colors.accent : colors.textPrimary,
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                       ),
                     ),
@@ -165,15 +160,15 @@ class ConfidenceAndHobbiesInput extends StatelessWidget {
     );
   }
 
-  Color _getConfidenceColor(double confidence) {
+  Color _getConfidenceColor(double confidence, DSColorScheme colors) {
     if (confidence <= 3) {
-      return TossTheme.error;
+      return DSColors.error;
     } else if (confidence <= 5) {
-      return TossTheme.warning;
+      return DSColors.warning;
     } else if (confidence <= 7) {
-      return TossTheme.success;
+      return DSColors.success;
     } else {
-      return TossTheme.primaryBlue;
+      return colors.accent;
     }
   }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
 
@@ -91,20 +90,20 @@ class FaceZoneDetailCard extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: TypographyUnified.heading4.copyWith(
+                          style: DSTypography.labelLarge.copyWith(
                             color: isDark
-                                ? TossDesignSystem.grayDark900
-                                : TossDesignSystem.gray900,
+                                ? DSColors.textPrimary
+                                : DSColors.textPrimary,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           subtitle,
-                          style: TypographyUnified.caption.copyWith(
+                          style: DSTypography.labelSmall.copyWith(
                             color: isDark
-                                ? TossDesignSystem.grayDark600
-                                : TossDesignSystem.gray600,
+                                ? DSColors.textSecondary
+                                : DSColors.textSecondary,
                           ),
                         ),
                       ],
@@ -121,7 +120,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                       ),
                       child: Text(
                         '$score점',
-                        style: TypographyUnified.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: color,
                           fontWeight: FontWeight.w700,
                         ),
@@ -181,7 +180,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                     ),
                     child: Text(
                       period,
-                      style: TypographyUnified.caption.copyWith(
+                      style: DSTypography.labelSmall.copyWith(
                         color: color,
                         fontWeight: FontWeight.w600,
                       ),
@@ -191,10 +190,10 @@ class FaceZoneDetailCard extends StatelessWidget {
                 ],
                 Text(
                   description,
-                  style: TypographyUnified.body2.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     color: isDark
-                        ? TossDesignSystem.grayDark800
-                        : TossDesignSystem.gray800,
+                        ? DSColors.textPrimary
+                        : DSColors.textPrimary,
                     height: 1.6,
                   ),
                 ),
@@ -210,7 +209,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         '전성기: $peakAge',
-                        style: TypographyUnified.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: color,
                           fontWeight: FontWeight.w600,
                         ),
@@ -244,10 +243,10 @@ class FaceZoneDetailCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           advice,
-                          style: TypographyUnified.body2.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             color: isDark
-                                ? TossDesignSystem.grayDark800
-                                : TossDesignSystem.gray800,
+                                ? DSColors.textPrimary
+                                : DSColors.textPrimary,
                             height: 1.6,
                           ),
                         ),
@@ -274,7 +273,7 @@ class FaceZoneDetailCard extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TypographyUnified.caption.copyWith(
+          style: DSTypography.labelSmall.copyWith(
             color: color,
             fontWeight: FontWeight.w600,
           ),
@@ -282,10 +281,10 @@ class FaceZoneDetailCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           content,
-          style: TypographyUnified.body2.copyWith(
+          style: DSTypography.bodyMedium.copyWith(
             color: isDark
-                ? TossDesignSystem.grayDark800
-                : TossDesignSystem.gray800,
+                ? DSColors.textPrimary
+                : DSColors.textPrimary,
             height: 1.6,
           ),
         ),

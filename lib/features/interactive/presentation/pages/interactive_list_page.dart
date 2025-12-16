@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
-class InteractiveListPage extends StatelessWidget {
+class InteractiveListPage extends ConsumerWidget {
   const InteractiveListPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final interactiveFeatures = [
       _InteractiveFeature(
         title: '포춘 쿠키',
@@ -89,7 +91,13 @@ class InteractiveListPage extends StatelessWidget {
                   itemCount: interactiveFeatures.length,
                   itemBuilder: (context, index) {
                     final feature = interactiveFeatures[index];
-                    return _InteractiveFeatureCard(feature: feature);
+                    return _InteractiveFeatureCard(
+                      feature: feature,
+                      onTap: feature.isAvailable ? () {
+                        ref.read(fortuneHapticServiceProvider).selection();
+                        context.go(feature.route);
+                      } : null,
+                    );
                   },
                 ),
               ),
@@ -119,9 +127,11 @@ class _InteractiveFeature {
 
 class _InteractiveFeatureCard extends StatelessWidget {
   final _InteractiveFeature feature;
+  final VoidCallback? onTap;
 
   const _InteractiveFeatureCard({
     required this.feature,
+    this.onTap,
   });
 
   @override
@@ -129,7 +139,7 @@ class _InteractiveFeatureCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return GlassButton(
-      onPressed: feature.isAvailable ? () => context.go(feature.route) : null,
+      onPressed: onTap,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

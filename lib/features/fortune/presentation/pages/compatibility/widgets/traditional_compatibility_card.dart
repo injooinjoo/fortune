@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_theme.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/components/app_card.dart';
 import 'package:fortune/domain/entities/fortune.dart';
 import '../compatibility_utils.dart';
@@ -15,7 +14,7 @@ class TraditionalCompatibilityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return AppCard(
       padding: const EdgeInsets.all(24),
@@ -39,8 +38,8 @@ class TraditionalCompatibilityCard extends StatelessWidget {
               SizedBox(width: 12),
               Text(
                 '전통 궁합',
-                style: TossTheme.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -60,15 +59,15 @@ class TraditionalCompatibilityCard extends StatelessWidget {
                     children: [
                       Text(
                         '띠 궁합',
-                        style: TossTheme.caption.copyWith(
-                          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.textSecondary,
                         ),
                       ),
                       SizedBox(height: 4),
                       Text(
                         '${fortune.metadata!['zodiac_animal']['person1']} × ${fortune.metadata!['zodiac_animal']['person2']}',
-                        style: TossTheme.body2.copyWith(
-                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                        style: DSTypography.bodyMedium.copyWith(
+                          color: colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -83,7 +82,7 @@ class TraditionalCompatibilityCard extends StatelessWidget {
                   ),
                   child: Text(
                     '${fortune.metadata!['zodiac_animal']['score']}점',
-                    style: TossTheme.caption.copyWith(
+                    style: DSTypography.labelSmall.copyWith(
                       color: CompatibilityUtils.getScoreColor(fortune.metadata!['zodiac_animal']['score'] / 100),
                       fontWeight: FontWeight.w600,
                     ),
@@ -94,8 +93,8 @@ class TraditionalCompatibilityCard extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               fortune.metadata!['zodiac_animal']['message'],
-              style: TossTheme.body2.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
                 height: 1.5,
               ),
             ),
@@ -104,7 +103,7 @@ class TraditionalCompatibilityCard extends StatelessWidget {
           // 별자리 궁합
           if (fortune.metadata?['star_sign'] != null) ...[
             SizedBox(height: 16),
-            Divider(color: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200),
+            Divider(color: colors.border),
             SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,15 +114,15 @@ class TraditionalCompatibilityCard extends StatelessWidget {
                     children: [
                       Text(
                         '별자리 궁합',
-                        style: TossTheme.caption.copyWith(
-                          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: colors.textSecondary,
                         ),
                       ),
                       SizedBox(height: 4),
                       Text(
                         '${fortune.metadata!['star_sign']['person1']} × ${fortune.metadata!['star_sign']['person2']}',
-                        style: TossTheme.body2.copyWith(
-                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                        style: DSTypography.bodyMedium.copyWith(
+                          color: colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -138,7 +137,7 @@ class TraditionalCompatibilityCard extends StatelessWidget {
                   ),
                   child: Text(
                     '${fortune.metadata!['star_sign']['score']}점',
-                    style: TossTheme.caption.copyWith(
+                    style: DSTypography.labelSmall.copyWith(
                       color: CompatibilityUtils.getScoreColor(fortune.metadata!['star_sign']['score'] / 100),
                       fontWeight: FontWeight.w600,
                     ),
@@ -149,8 +148,8 @@ class TraditionalCompatibilityCard extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               fortune.metadata!['star_sign']['message'],
-              style: TossTheme.body2.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
                 height: 1.5,
               ),
             ),

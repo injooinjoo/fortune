@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../core/theme/toss_design_system.dart';
-import '../../core/theme/typography_unified.dart';
+import '../../core/design_system/design_system.dart';
 
 /// 숫자패드로 입력하는 날짜 선택 위젯
 /// YYYY-MM-DD 형식으로 입력
@@ -103,30 +102,33 @@ class _NumericDateInputState extends State<NumericDateInput> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.label.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: DSSpacing.sm),
             child: Text(
               widget.label,
-              style: TypographyUnified.labelLarge.copyWith(
+              style: typography.labelLarge.copyWith(
                 fontWeight: FontWeight.w600,
-                color: TossDesignSystem.textPrimaryLight,
+                color: colors.textPrimary,
               ),
             ),
           ),
         Container(
           decoration: BoxDecoration(
-            color: TossDesignSystem.gray100,
-            borderRadius: BorderRadius.circular(12),
+            color: colors.surfaceSecondary,
+            borderRadius: BorderRadius.circular(DSRadius.md),
             border: Border.all(
               color: _errorText != null
-                  ? TossDesignSystem.error
+                  ? colors.error
                   : _focusNode.hasFocus
-                      ? TossDesignSystem.primaryBlue
-                      : const Color(0xFFE5E5E5),
+                      ? colors.accent
+                      : colors.border,
               width: _focusNode.hasFocus ? 2 : 1,
             ),
           ),
@@ -139,27 +141,28 @@ class _NumericDateInputState extends State<NumericDateInput> {
               LengthLimitingTextInputFormatter(8),
               _DateTextInputFormatter(),
             ],
-            style: TypographyUnified.bodyMedium.copyWith(
+            style: typography.bodyMedium.copyWith(
               fontWeight: FontWeight.w500,
               letterSpacing: 1.2,
+              color: colors.textPrimary,
             ),
             decoration: InputDecoration(
               hintText: widget.hint,
-              hintStyle: TypographyUnified.bodyMedium.copyWith(
-                color: const Color(0xFF999999),
+              hintStyle: typography.bodyMedium.copyWith(
+                color: colors.textTertiary,
               ),
               prefixIcon: Icon(
                 Icons.calendar_today,
                 color: _focusNode.hasFocus
-                    ? TossDesignSystem.primaryBlue
-                    : const Color(0xFF999999),
+                    ? colors.accent
+                    : colors.textTertiary,
                 size: 20,
               ),
               suffixIcon: _controller.text.isNotEmpty
                   ? IconButton(
                       icon: Icon(
                         Icons.clear,
-                        color: Color(0xFF999999),
+                        color: colors.textTertiary,
                         size: 20,
                       ),
                       onPressed: () {
@@ -170,8 +173,8 @@ class _NumericDateInputState extends State<NumericDateInput> {
                   : null,
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 16,
+                horizontal: DSSpacing.md,
+                vertical: DSSpacing.md,
               ),
             ),
             onChanged: _validateAndNotify,
@@ -179,30 +182,30 @@ class _NumericDateInputState extends State<NumericDateInput> {
         ),
         if (_errorText != null)
           Padding(
-            padding: const EdgeInsets.only(top: 8, left: 12),
+            padding: const EdgeInsets.only(top: DSSpacing.sm, left: DSSpacing.sm),
             child: Row(
               children: [
                 Icon(
                   Icons.error_outline,
                   size: 14,
-                  color: TossDesignSystem.error,
+                  color: colors.error,
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: DSSpacing.xs),
                 Text(
                   _errorText!,
-                  style: TypographyUnified.labelSmall.copyWith(
-                    color: TossDesignSystem.error,
+                  style: typography.labelSmall.copyWith(
+                    color: colors.error,
                   ),
                 ),
               ],
             ),
           ),
         Padding(
-          padding: const EdgeInsets.only(top: 8, left: 12),
+          padding: const EdgeInsets.only(top: DSSpacing.sm, left: DSSpacing.sm),
           child: Text(
             '숫자 8자리 입력 (예: 19900101)',
-            style: TypographyUnified.labelSmall.copyWith(
-              color: Color(0xFF999999),
+            style: typography.labelSmall.copyWith(
+              color: colors.textTertiary,
             ),
           ),
         ),

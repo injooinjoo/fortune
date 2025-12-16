@@ -2,7 +2,7 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:fortune/core/widgets/unified_button.dart';
 import 'package:fortune/core/widgets/unified_button_enums.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'widgets/card_header.dart';
 import 'widgets/page_indicator.dart';
 import 'widgets/card_image_page.dart';
@@ -33,7 +33,7 @@ class TarotCardDetailModal extends StatefulWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       builder: (context) => TarotCardDetailModal(
         cardIndex: cardIndex,
         position: position,
@@ -59,7 +59,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     super.initState();
 
     _animationController = AnimationController(
-      duration: TossDesignSystem.durationMedium,
+      duration: DSAnimation.durationMedium,
       vsync: this,
     );
 
@@ -101,7 +101,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           child: Container(
             height: screenHeight * 0.9,
             decoration: BoxDecoration(
-              color: TossDesignSystem.gray900.withValues(alpha: 0.9),
+              color: DSColors.textPrimary.withValues(alpha: 0.9),
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(24)),
             ),
@@ -111,7 +111,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 Positioned.fill(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(color: TossDesignSystem.transparent),
+                    child: Container(color: Colors.transparent),
                   ),
                 ),
 
@@ -121,11 +121,11 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     // Handle
                     Container(
                       margin: const EdgeInsets.only(
-                          top: TossDesignSystem.spacingS),
+                          top: 8),
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.white.withValues(alpha: 0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(4 * 0.5),
                       ),
                     ),
@@ -187,19 +187,19 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                                   icon: Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: TossDesignSystem.gray900
+                                      color: DSColors.textPrimary
                                           .withValues(alpha: 0.5),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
                                       Icons.arrow_back_ios,
-                                      color: TossDesignSystem.white,
+                                      color: Colors.white,
                                       size: 20,
                                     ),
                                   ),
                                   onPressed: () {
                                     _pageController.previousPage(
-                                      duration: TossDesignSystem.durationMedium,
+                                      duration: DSAnimation.durationMedium,
                                       curve: Curves.easeInOut,
                                     );
                                   },
@@ -218,19 +218,19 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                                   icon: Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: TossDesignSystem.gray900
+                                      color: DSColors.textPrimary
                                           .withValues(alpha: 0.5),
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
                                       Icons.arrow_forward_ios,
-                                      color: TossDesignSystem.white,
+                                      color: Colors.white,
                                       size: 20,
                                     ),
                                   ),
                                   onPressed: () {
                                     _pageController.nextPage(
-                                      duration: TossDesignSystem.durationMedium,
+                                      duration: DSAnimation.durationMedium,
                                       curve: Curves.easeInOut,
                                     );
                                   },
@@ -252,7 +252,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       top: false,
                       child: Padding(
                         padding:
-                            const EdgeInsets.all(TossDesignSystem.spacingM),
+                            const EdgeInsets.all(16),
                         child: SizedBox(
                           width: double.infinity,
                           child: UnifiedButton(

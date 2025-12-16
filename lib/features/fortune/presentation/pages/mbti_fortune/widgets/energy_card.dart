@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/components/app_card.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class EnergyCard extends StatelessWidget {
   final double energyLevel;
@@ -15,7 +14,7 @@ class EnergyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final themeColors = context.colors;
 
     return AppCard(
       padding: const EdgeInsets.all(20),
@@ -30,9 +29,9 @@ class EnergyCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 '오늘의 에너지 레벨',
-                style: TypographyUnified.buttonMedium.copyWith(
+                style: DSTypography.labelLarge.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: themeColors.textPrimary,
                 ),
               ),
             ],
@@ -43,7 +42,7 @@ class EnergyCard extends StatelessWidget {
               Container(
                 height: 8,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.gray100,
+                  color: themeColors.border,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -62,7 +61,7 @@ class EnergyCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '${(energyLevel * 100).toInt()}% 충전됨',
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
               color: colors.first,
             ),

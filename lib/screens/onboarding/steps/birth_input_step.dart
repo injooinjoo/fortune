@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/theme/toss_design_system.dart';
+import '../../../core/design_system/design_system.dart';
 import '../../../core/providers/user_settings_provider.dart';
 
 class BirthInputStep extends ConsumerStatefulWidget {
@@ -39,6 +39,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
   final _timeFocus = FocusNode();
 
   // For backspace detection
+  // ignore: unused_field
   String _prevYear = '';
   String _prevMonth = '';
   String _prevDay = '';
@@ -229,22 +230,22 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
   @override
   Widget build(BuildContext context) {
     final typography = ref.watch(typographyThemeProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final inputStyle = typography.displaySmall.copyWith(
-      color: TossDesignSystem.gray900,
+      color: colors.textPrimary,
       fontWeight: FontWeight.w600,
     );
     final hintStyle = typography.displaySmall.copyWith(
-      color: TossDesignSystem.gray300,
+      color: colors.textTertiary,
       fontWeight: FontWeight.w600,
     );
     final labelStyle = typography.displaySmall.copyWith(
-      color: TossDesignSystem.gray400,
+      color: colors.textSecondary,
       fontWeight: FontWeight.w500,
     );
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      backgroundColor: colors.background,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -259,7 +260,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
               children: [
                 Text(
                   '생년월일을 알려주세요',
-                  style: typography.headingSmall.copyWith(color: TossDesignSystem.gray500),
+                  style: typography.headingSmall.copyWith(color: colors.textSecondary),
                 ).animate().fadeIn(duration: 500.ms),
 
                 const SizedBox(height: 48),
@@ -279,7 +280,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
                         style: inputStyle,
-                        cursorColor: TossDesignSystem.gray400,
+                        cursorColor: colors.textSecondary,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(4),
@@ -309,7 +310,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           style: inputStyle,
-                          cursorColor: TossDesignSystem.gray400,
+                          cursorColor: colors.textSecondary,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(2),
@@ -340,7 +341,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           style: inputStyle,
-                          cursorColor: TossDesignSystem.gray400,
+                          cursorColor: colors.textSecondary,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(2),
@@ -367,7 +368,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                   const SizedBox(height: 48),
                   Text(
                     '태어난 시간을 알려주세요',
-                    style: typography.headingSmall.copyWith(color: TossDesignSystem.gray500),
+                    style: typography.headingSmall.copyWith(color: colors.textSecondary),
                   ).animate().fadeIn(duration: 400.ms),
 
                   const SizedBox(height: 24),
@@ -385,7 +386,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           style: inputStyle,
-                          cursorColor: TossDesignSystem.gray400,
+                          cursorColor: colors.textSecondary,
                           enabled: !_isTimeUnknown,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -394,7 +395,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                           decoration: InputDecoration(
                             hintText: '00',
                             hintStyle: hintStyle.copyWith(
-                              color: _isTimeUnknown ? TossDesignSystem.gray200 : TossDesignSystem.gray300,
+                              color: _isTimeUnknown ? colors.border : colors.textTertiary,
                             ),
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -436,17 +437,17 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: _isTimeUnknown ? TossDesignSystem.primaryBlue : TossDesignSystem.gray400,
+                              color: _isTimeUnknown ? colors.accent : colors.textSecondary,
                               width: 2,
                             ),
-                            color: _isTimeUnknown ? TossDesignSystem.primaryBlue : Colors.transparent,
+                            color: _isTimeUnknown ? colors.accent : Colors.transparent,
                           ),
                           child: _isTimeUnknown
-                              ? Icon(Icons.check, size: 14, color: TossDesignSystem.white)
+                              ? const Icon(Icons.check, size: 14, color: Colors.white)
                               : null,
                         ),
                         const SizedBox(width: 8),
-                        Text('모르겠어요', style: typography.bodyMedium.copyWith(color: TossDesignSystem.gray500)),
+                        Text('모르겠어요', style: typography.bodyMedium.copyWith(color: colors.textSecondary)),
                       ],
                     ),
                   ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
@@ -462,16 +463,16 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                     child: ElevatedButton(
                       onPressed: widget.onNext,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: TossDesignSystem.primaryBlue,
-                        foregroundColor: TossDesignSystem.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        backgroundColor: colors.ctaBackground,
+                        foregroundColor: colors.ctaForeground,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DSRadius.md)),
                         elevation: 0,
                       ),
                       child: Text(
                         '다음',
                         style: typography.labelLarge.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: TossDesignSystem.white,
+                          color: colors.ctaForeground,
                         ),
                       ),
                     ),

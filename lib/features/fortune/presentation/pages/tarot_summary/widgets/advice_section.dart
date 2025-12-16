@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 class AdviceSection extends StatelessWidget {
@@ -19,8 +18,8 @@ class AdviceSection extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.successGreen.withValues(alpha: 0.2),
-          TossDesignSystem.successGreen.withValues(alpha: 0.2),
+          DSColors.success.withValues(alpha: 0.2),
+          DSColors.success.withValues(alpha: 0.2),
         ],
       ),
       child: Column(
@@ -28,14 +27,14 @@ class AdviceSection extends StatelessWidget {
           Icon(
             Icons.lightbulb,
             size: 36,
-            color: TossDesignSystem.successGreen,
+            color: DSColors.success,
           ),
           SizedBox(height: 12),
           Text(
             '조언',
-            style: TypographyUnified.heading4.copyWith(
-              fontSize: TypographyUnified.heading4.fontSize! * fontScale,
-              color: TossDesignSystem.white,
+            style: DSTypography.headingSmall.copyWith(
+              fontSize: DSTypography.headingSmall.fontSize! * fontScale,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 16),
@@ -46,17 +45,17 @@ class AdviceSection extends StatelessWidget {
                   children: [
                     Text(
                       '• ',
-                      style: TypographyUnified.bodyLarge.copyWith(
-                        fontSize: TypographyUnified.bodyLarge.fontSize! * fontScale,
-                        color: TossDesignSystem.successGreen,
+                      style: DSTypography.bodyLarge.copyWith(
+                        fontSize: DSTypography.bodyLarge.fontSize! * fontScale,
+                        color: DSColors.success,
                       ),
                     ),
                     Expanded(
                       child: Text(
                         item,
-                        style: TypographyUnified.bodySmall.copyWith(
-                          fontSize: TypographyUnified.bodySmall.fontSize! * fontScale,
-                          color: TossDesignSystem.white,
+                        style: DSTypography.bodySmall.copyWith(
+                          fontSize: DSTypography.bodySmall.fontSize! * fontScale,
+                          color: Colors.white,
                           height: 1.4,
                         ),
                       ),

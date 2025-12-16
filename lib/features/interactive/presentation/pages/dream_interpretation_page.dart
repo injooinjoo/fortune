@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../fortune/domain/models/conditions/dream_fortune_conditions.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
@@ -70,7 +70,7 @@ class _DreamInterpretationPageState
               ),
         title: Text(
           _showResult ? '꿈 해몽 결과' : '꿈 해몽',
-          style: TypographyUnified.heading4.copyWith(
+          style: DSTypography.headingSmall.copyWith(
             color: isDark
                 ? TossDesignSystem.textPrimaryDark
                 : TossDesignSystem.textPrimaryLight,
@@ -152,7 +152,7 @@ class _DreamInterpretationPageState
               children: [
                 Text(
                   '🌙 어떤 꿈을 꾸셨나요?',
-                  style: TypographyUnified.heading4.copyWith(
+                  style: DSTypography.headingSmall.copyWith(
                     color: isDark
                         ? TossDesignSystem.textPrimaryDark
                         : TossDesignSystem.textPrimaryLight,
@@ -161,7 +161,7 @@ class _DreamInterpretationPageState
                 const SizedBox(height: 8),
                 Text(
                   '꿈 버블을 터치하면 AI가 해몽해드려요',
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: isDark
                         ? TossDesignSystem.textSecondaryDark
                         : TossDesignSystem.textSecondaryLight,
@@ -192,7 +192,7 @@ class _DreamInterpretationPageState
             const SizedBox(height: 16),
             Text(
               '${_selectedTopic!.title} 해몽 중...',
-              style: TypographyUnified.heading4.copyWith(
+              style: DSTypography.headingSmall.copyWith(
                 color: isDark
                     ? TossDesignSystem.textPrimaryDark
                     : TossDesignSystem.textPrimaryLight,
@@ -213,7 +213,7 @@ class _DreamInterpretationPageState
           const SizedBox(height: 16),
           Text(
             'AI가 꿈을 분석하고 있어요',
-            style: TypographyUnified.bodyMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark
                   : TossDesignSystem.textSecondaryLight,
@@ -290,7 +290,7 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '${result.data['dreamType'] ?? '길몽'} 📖',
-            style: TypographyUnified.heading2.copyWith(
+            style: DSTypography.headingMedium.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
@@ -298,14 +298,14 @@ class _DreamInterpretationPageState
           const SizedBox(height: 8),
           Text(
             '행운 점수',
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: 4),
           Text(
             '$score점',
-            style: TypographyUnified.displayMedium.copyWith(
+            style: DSTypography.displayMedium.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
@@ -334,7 +334,7 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '🔮 주요 상징',
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               color: isDark
                   ? TossDesignSystem.textPrimaryDark
                   : TossDesignSystem.textPrimaryLight,
@@ -357,7 +357,7 @@ class _DreamInterpretationPageState
                 ),
                 child: Text(
                   symbol,
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: const Color(0xFF8B5CF6),
                     fontWeight: FontWeight.w600,
                   ),
@@ -387,7 +387,7 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '📖 꿈 해석',
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               color: isDark
                   ? TossDesignSystem.textPrimaryDark
                   : TossDesignSystem.textPrimaryLight,
@@ -397,7 +397,7 @@ class _DreamInterpretationPageState
           const SizedBox(height: 16),
           Text(
             interpretation,
-            style: TypographyUnified.bodyMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark
                   : TossDesignSystem.textSecondaryLight,
@@ -426,7 +426,7 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '💡 조언',
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               color: isDark
                   ? TossDesignSystem.textPrimaryDark
                   : TossDesignSystem.textPrimaryLight,
@@ -436,7 +436,7 @@ class _DreamInterpretationPageState
           const SizedBox(height: 16),
           Text(
             advice,
-            style: TypographyUnified.bodyMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark
                   : TossDesignSystem.textSecondaryLight,

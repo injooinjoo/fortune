@@ -6,8 +6,7 @@ import '../../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../../core/models/fortune_result.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../domain/models/conditions/lucky_items_fortune_conditions.dart';
-import '../../../../../core/theme/typography_unified.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../presentation/providers/auth_provider.dart';
 import '../../../../../presentation/providers/ad_provider.dart';
 import '../../../../../presentation/providers/token_provider.dart';
@@ -224,20 +223,20 @@ class _LuckyItemsPageState extends ConsumerState<LuckyItemsPage> {
               ),
               child: Column(
                 children: [
-                  Icon(Icons.stars, size: 64, color: TossDesignSystem.white),
+                  const Icon(Icons.stars, size: 64, color: Colors.white),
                   const SizedBox(height: 16),
                   Text(
                     '행운 아이템',
-                    style: TypographyUnified.heading2.copyWith(
+                    style: DSTypography.headingLarge.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: TossDesignSystem.white,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     '로또번호부터 오늘의 색상까지\n당신의 행운을 찾아보세요',
-                    style: TypographyUnified.bodyMedium.copyWith(
-                      color: TossDesignSystem.white.withValues(alpha: 0.9),
+                    style: DSTypography.bodyMedium.copyWith(
+                      color: Colors.white.withValues(alpha: 0.9),
                       height: 1.5,
                     ),
                     textAlign: TextAlign.center,

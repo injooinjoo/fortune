@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 import '../../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../../core/widgets/gpt_style_typing_text.dart';
@@ -145,7 +144,7 @@ class _ResultWidgetState extends State<ResultWidget> {
             key: 'personality',
             icon: Icons.psychology,
             title: '성격과 기질',
-            color: TossDesignSystem.purple,
+            color: DSColors.accent,
             delay: 500,
           ),
         ],
@@ -157,7 +156,7 @@ class _ResultWidgetState extends State<ResultWidget> {
             key: 'special_features',
             icon: Icons.auto_awesome,
             title: '특별한 관상 특징',
-            color: TossDesignSystem.tossBlue,
+            color: DSColors.accent,
             delay: 600,
           ),
         ],
@@ -198,14 +197,14 @@ class _ResultWidgetState extends State<ResultWidget> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            TossDesignSystem.purple.withValues(alpha: 0.15),
-            TossDesignSystem.tossBlue.withValues(alpha: 0.15),
+            DSColors.accent.withValues(alpha: 0.15),
+            DSColors.accent.withValues(alpha: 0.15),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.purple.withValues(alpha: 0.1),
+            color: DSColors.accent.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -220,11 +219,11 @@ class _ResultWidgetState extends State<ResultWidget> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
-                colors: [TossDesignSystem.purple, TossDesignSystem.tossBlue],
+                colors: [DSColors.accent, DSColors.accent],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: TossDesignSystem.purple.withValues(alpha: 0.3),
+                  color: DSColors.accent.withValues(alpha: 0.3),
                   blurRadius: 15,
                   offset: const Offset(0, 5),
                 ),
@@ -233,15 +232,15 @@ class _ResultWidgetState extends State<ResultWidget> {
             child: Icon(
               Icons.face,
               size: 48,
-              color: TossDesignSystem.white,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 20),
           // 관상 타입
           Text(
             data['face_type'] ?? '관상 분석 완료',
-            style: TossDesignSystem.heading2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            style: DSTypography.headingLarge.copyWith(
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -254,19 +253,19 @@ class _ResultWidgetState extends State<ResultWidget> {
             children: [
               Text(
                 '$luckScore',
-                style: TypographyUnified.displayLarge.copyWith(
+                style: DSTypography.displayLarge.copyWith(
                   fontWeight: FontWeight.w800,
                   foreground: Paint()
                     ..shader = LinearGradient(
-                      colors: [TossDesignSystem.purple, TossDesignSystem.tossBlue],
+                      colors: [DSColors.accent, DSColors.accent],
                     ).createShader(const Rect.fromLTWH(0, 0, 200, 70)),
                 ),
               ),
               const SizedBox(width: 4),
               Text(
                 '점',
-                style: TossDesignSystem.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                style: DSTypography.headingMedium.copyWith(
+                  color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                 ),
               ),
             ],
@@ -279,10 +278,10 @@ class _ResultWidgetState extends State<ResultWidget> {
               value: luckScore / 100,
               minHeight: 12,
               backgroundColor: isDark
-                  ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
-                  : TossDesignSystem.gray300.withValues(alpha: 0.3),
+                  ? DSColors.border.withValues(alpha: 0.3)
+                  : DSColors.border.withValues(alpha: 0.3),
               valueColor: AlwaysStoppedAnimation(
-                luckScore >= 80 ? TossDesignSystem.purple : TossDesignSystem.tossBlue,
+                luckScore >= 80 ? DSColors.accent : DSColors.accent,
               ),
             ),
           ),
@@ -292,8 +291,8 @@ class _ResultWidgetState extends State<ResultWidget> {
             Center(
               child: GptStyleTypingText(
                 text: FortuneTextCleaner.clean(data['overall_fortune']),
-                style: TossDesignSystem.body1.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                style: DSTypography.bodyLarge.copyWith(
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   height: 1.6,
                 ),
                 startTyping: _currentTypingSection >= 0,
@@ -352,7 +351,7 @@ class _ResultWidgetState extends State<ResultWidget> {
           title: '직업운',
           content: FortuneTextCleaner.clean(data['career_fortune']?.toString() ?? '새로운 기회가 찾아올 것입니다.'),
           score: 80,
-          color: TossDesignSystem.tossBlue,
+          color: DSColors.accent,
           isDark: isDark,
           result: result,
           sectionKey: 'career_fortune',
@@ -378,12 +377,12 @@ class _ResultWidgetState extends State<ResultWidget> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.linear_scale, color: TossDesignSystem.tossBlue, size: 28),
+                    Icon(Icons.linear_scale, color: DSColors.accent, size: 28),
                     const SizedBox(width: 8),
                     Text(
                       '삼정(三停) 분석',
-                      style: TossDesignSystem.heading3.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      style: DSTypography.headingMedium.copyWith(
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -392,15 +391,15 @@ class _ResultWidgetState extends State<ResultWidget> {
                 const SizedBox(height: 8),
                 Text(
                   '상정(초년운), 중정(중년운), 하정(말년운)',
-                  style: TossDesignSystem.caption.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 16),
                 GptStyleTypingText(
                   text: FortuneTextCleaner.clean(data['samjeong'].toString()),
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.7,
                   ),
                   startTyping: _currentTypingSection >= 1,
@@ -433,12 +432,12 @@ class _ResultWidgetState extends State<ResultWidget> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.grid_view, color: TossDesignSystem.purple, size: 28),
+                    Icon(Icons.grid_view, color: DSColors.accent, size: 28),
                     const SizedBox(width: 8),
                     Text(
                       '십이궁(十二宮) 분석',
-                      style: TossDesignSystem.heading3.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      style: DSTypography.headingMedium.copyWith(
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -447,15 +446,15 @@ class _ResultWidgetState extends State<ResultWidget> {
                 const SizedBox(height: 8),
                 Text(
                   '얼굴 12개 영역의 상세 분석',
-                  style: TossDesignSystem.caption.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 16),
                 GptStyleTypingText(
                   text: FortuneTextCleaner.clean(data['sibigung'].toString()),
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.7,
                   ),
                   startTyping: _currentTypingSection >= 2,
@@ -522,8 +521,8 @@ class _ResultWidgetState extends State<ResultWidget> {
               const SizedBox(width: 12),
               Text(
                 '당신과 닮은 유명인',
-                style: TossDesignSystem.heading3.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                style: DSTypography.headingMedium.copyWith(
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -564,8 +563,8 @@ class _ResultWidgetState extends State<ResultWidget> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark
-            ? TossDesignSystem.grayDark100.withValues(alpha: 0.5)
-            : TossDesignSystem.white.withValues(alpha: 0.8),
+            ? DSColors.backgroundSecondary.withValues(alpha: 0.5)
+            : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -594,8 +593,8 @@ class _ResultWidgetState extends State<ResultWidget> {
                   ),
                   child: Text(
                     '1위',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: TossDesignSystem.white,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 10,
                     ),
@@ -613,8 +612,8 @@ class _ResultWidgetState extends State<ResultWidget> {
               children: [
                 Text(
                   name,
-                  style: TossDesignSystem.heading4.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  style: DSTypography.headingMedium.copyWith(
+                    color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -627,13 +626,13 @@ class _ResultWidgetState extends State<ResultWidget> {
                     children: matchedFeatures.take(4).map((feature) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                        color: DSColors.accent.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         feature,
-                        style: TossDesignSystem.caption.copyWith(
-                          color: TossDesignSystem.tossBlue,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: DSColors.accent,
                           fontSize: 11,
                         ),
                       ),
@@ -665,8 +664,8 @@ class _ResultWidgetState extends State<ResultWidget> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark
-            ? TossDesignSystem.grayDark100.withValues(alpha: 0.3)
-            : TossDesignSystem.white.withValues(alpha: 0.6),
+            ? DSColors.backgroundSecondary.withValues(alpha: 0.3)
+            : Colors.white.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -685,8 +684,8 @@ class _ResultWidgetState extends State<ResultWidget> {
                   ),
                   child: Text(
                     '$rank위',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: TossDesignSystem.white,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 9,
                     ),
@@ -699,8 +698,8 @@ class _ResultWidgetState extends State<ResultWidget> {
           Expanded(
             child: Text(
               name,
-              style: TossDesignSystem.body3.copyWith(
-                color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+              style: DSTypography.labelSmall.copyWith(
+                color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
               maxLines: 1,
@@ -761,14 +760,14 @@ class _ResultWidgetState extends State<ResultWidget> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
-          colors: [TossDesignSystem.purple, TossDesignSystem.tossBlue],
+          colors: [DSColors.accent, DSColors.accent],
         ),
       ),
       child: Center(
         child: Text(
           initial,
-          style: TossDesignSystem.heading4.copyWith(
-            color: TossDesignSystem.white,
+          style: DSTypography.headingMedium.copyWith(
+            color: Colors.white,
             fontWeight: FontWeight.w700,
             fontSize: size * 0.4,
           ),
@@ -792,8 +791,8 @@ class _ResultWidgetState extends State<ResultWidget> {
               backgroundColor: Colors.transparent,
               valueColor: AlwaysStoppedAnimation(
                 isDark
-                    ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
-                    : TossDesignSystem.gray300.withValues(alpha: 0.3),
+                    ? DSColors.border.withValues(alpha: 0.3)
+                    : DSColors.border.withValues(alpha: 0.3),
               ),
             ),
           ),
@@ -807,8 +806,8 @@ class _ResultWidgetState extends State<ResultWidget> {
                 score >= 80
                     ? const Color(0xFFFFD700)
                     : score >= 60
-                        ? TossDesignSystem.tossBlue
-                        : TossDesignSystem.gray500,
+                        ? DSColors.accent
+                        : DSColors.textTertiary,
               ),
             ),
           ),
@@ -816,8 +815,8 @@ class _ResultWidgetState extends State<ResultWidget> {
           Center(
             child: Text(
               '$score%',
-              style: TossDesignSystem.caption.copyWith(
-                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              style: DSTypography.labelSmall.copyWith(
+                color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 fontWeight: FontWeight.w700,
                 fontSize: size * 0.24,
               ),
@@ -853,12 +852,12 @@ class _ResultWidgetState extends State<ResultWidget> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.purple.withValues(alpha: 0.1),
+                    color: DSColors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     Icons.visibility,
-                    color: TossDesignSystem.purple,
+                    color: DSColors.accent,
                     size: 24,
                   ),
                 ),
@@ -869,15 +868,15 @@ class _ResultWidgetState extends State<ResultWidget> {
                     children: [
                       Text(
                         '첫인상 분석',
-                        style: TossDesignSystem.heading4.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                        style: DSTypography.headingMedium.copyWith(
+                          color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Text(
                         '타인이 당신을 처음 볼 때 느끼는 인상',
-                        style: TossDesignSystem.caption.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                         ),
                       ),
                     ],
@@ -895,7 +894,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     icon: Icons.handshake,
                     label: '신뢰감',
                     score: trustScore,
-                    color: TossDesignSystem.tossBlue,
+                    color: DSColors.accent,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -904,7 +903,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     icon: Icons.sentiment_satisfied,
                     label: '친근감',
                     score: approachScore,
-                    color: TossDesignSystem.successGreen,
+                    color: DSColors.success,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -913,7 +912,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                     icon: Icons.flash_on,
                     label: '카리스마',
                     score: charismaScore,
-                    color: TossDesignSystem.purple,
+                    color: DSColors.accent,
                   ),
                 ),
               ],
@@ -947,15 +946,15 @@ class _ResultWidgetState extends State<ResultWidget> {
           const SizedBox(height: 8),
           Text(
             label,
-            style: TossDesignSystem.caption.copyWith(
-              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+            style: DSTypography.labelSmall.copyWith(
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             '$score점',
-            style: TossDesignSystem.heading4.copyWith(
+            style: DSTypography.headingMedium.copyWith(
               color: color,
               fontWeight: FontWeight.w700,
             ),
@@ -1006,15 +1005,15 @@ class _ResultWidgetState extends State<ResultWidget> {
                     children: [
                       Text(
                         '궁합운 - 이상형 관상',
-                        style: TossDesignSystem.heading4.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                        style: DSTypography.headingMedium.copyWith(
+                          color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Text(
                         '당신과 어울리는 상대의 관상 특징',
-                        style: TossDesignSystem.caption.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                         ),
                       ),
                     ],
@@ -1031,8 +1030,8 @@ class _ResultWidgetState extends State<ResultWidget> {
                   ),
                   child: Text(
                     '$compatibilityScore점',
-                    style: TossDesignSystem.body3.copyWith(
-                      color: TossDesignSystem.white,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: Colors.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -1061,7 +1060,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                         const SizedBox(width: 8),
                         Text(
                           '이상형 관상',
-                          style: TossDesignSystem.body3.copyWith(
+                          style: DSTypography.labelSmall.copyWith(
                             color: Colors.pink,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1071,8 +1070,8 @@ class _ResultWidgetState extends State<ResultWidget> {
                     const SizedBox(height: 8),
                     Text(
                       idealPartnerType,
-                      style: TossDesignSystem.body2.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1086,8 +1085,8 @@ class _ResultWidgetState extends State<ResultWidget> {
             if (idealPartnerDescription.isNotEmpty)
               Text(
                 idealPartnerDescription,
-                style: TossDesignSystem.body2.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                style: DSTypography.bodyMedium.copyWith(
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   height: 1.6,
                 ),
               ),
@@ -1139,15 +1138,15 @@ class _ResultWidgetState extends State<ResultWidget> {
                     children: [
                       Text(
                         '결혼 적령기 예측',
-                        style: TossDesignSystem.heading4.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                        style: DSTypography.headingMedium.copyWith(
+                          color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Text(
                         '삼정(三停) 균형 기반 분석',
-                        style: TossDesignSystem.caption.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                         ),
                       ),
                     ],
@@ -1164,7 +1163,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                   child: _buildAgeCard(
                     label: '이른 결혼',
                     age: earlyAge,
-                    color: TossDesignSystem.tossBlue,
+                    color: DSColors.accent,
                     icon: Icons.flight_takeoff,
                   ),
                 ),
@@ -1173,7 +1172,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                   child: _buildAgeCard(
                     label: '최적 시기',
                     age: optimalAge,
-                    color: TossDesignSystem.successGreen,
+                    color: DSColors.success,
                     icon: Icons.star,
                     isHighlighted: true,
                   ),
@@ -1183,7 +1182,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                   child: _buildAgeCard(
                     label: '늦은 결혼',
                     age: lateAge,
-                    color: TossDesignSystem.purple,
+                    color: DSColors.accent,
                     icon: Icons.hourglass_empty,
                   ),
                 ),
@@ -1210,8 +1209,8 @@ class _ResultWidgetState extends State<ResultWidget> {
                     Expanded(
                       child: Text(
                         prediction,
-                        style: TossDesignSystem.body3.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                           height: 1.5,
                         ),
                       ),
@@ -1258,8 +1257,8 @@ class _ResultWidgetState extends State<ResultWidget> {
           const SizedBox(height: 6),
           Text(
             label,
-            style: TossDesignSystem.caption.copyWith(
-              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            style: DSTypography.labelSmall.copyWith(
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               fontSize: 10,
             ),
             textAlign: TextAlign.center,
@@ -1267,7 +1266,7 @@ class _ResultWidgetState extends State<ResultWidget> {
           const SizedBox(height: 4),
           Text(
             age.isNotEmpty ? age : '-',
-            style: TossDesignSystem.body3.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               color: color,
               fontWeight: FontWeight.w700,
               fontSize: isHighlighted ? 13 : 12,
@@ -1305,8 +1304,8 @@ class _ResultWidgetState extends State<ResultWidget> {
                     const SizedBox(width: 8),
                     Text(
                       title,
-                      style: TossDesignSystem.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      style: DSTypography.headingMedium.copyWith(
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -1323,7 +1322,7 @@ class _ResultWidgetState extends State<ResultWidget> {
                           const SizedBox(width: 4),
                           Text(
                             '프리미엄',
-                            style: TossDesignSystem.caption.copyWith(
+                            style: DSTypography.labelSmall.copyWith(
                               color: color,
                               fontWeight: FontWeight.w600,
                             ),
@@ -1336,8 +1335,8 @@ class _ResultWidgetState extends State<ResultWidget> {
                 const SizedBox(height: 16),
                 Text(
                   FortuneTextCleaner.clean(data[key].toString()),
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.7,
                   ),
                 ),
@@ -1365,12 +1364,12 @@ class _ResultWidgetState extends State<ResultWidget> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.description, color: TossDesignSystem.gray700),
+                    Icon(Icons.description, color: DSColors.textSecondary),
                     const SizedBox(width: 8),
                     Text(
                       '전체 분석',
-                      style: TossDesignSystem.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      style: DSTypography.headingMedium.copyWith(
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -1378,17 +1377,17 @@ class _ResultWidgetState extends State<ResultWidget> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.gray700.withValues(alpha: 0.1),
+                        color: DSColors.textSecondary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.lock, size: 12, color: TossDesignSystem.gray700),
+                          Icon(Icons.lock, size: 12, color: DSColors.textSecondary),
                           const SizedBox(width: 4),
                           Text(
                             '프리미엄',
-                            style: TossDesignSystem.caption.copyWith(
-                              color: TossDesignSystem.gray700,
+                            style: DSTypography.labelSmall.copyWith(
+                              color: DSColors.textSecondary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -1400,8 +1399,8 @@ class _ResultWidgetState extends State<ResultWidget> {
                 const SizedBox(height: 16),
                 Text(
                   data['full_analysis'].toString(),
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                  style: DSTypography.bodyLarge.copyWith(
+                    color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.7,
                   ),
                 ),
@@ -1425,12 +1424,12 @@ class _ResultWidgetState extends State<ResultWidget> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.psychology, color: TossDesignSystem.warningOrange),
+                  Icon(Icons.psychology, color: DSColors.warning),
                   const SizedBox(width: 8),
                   Text(
                     '성격 분석',
-                    style: TossDesignSystem.heading4.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    style: DSTypography.headingMedium.copyWith(
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     ),
                   ),
                 ],
@@ -1443,16 +1442,16 @@ class _ResultWidgetState extends State<ResultWidget> {
                     .map((trait) => Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+                            color: DSColors.warning.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: TossDesignSystem.warningOrange.withValues(alpha: 0.3),
+                              color: DSColors.warning.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Text(
                             trait.toString(),
-                            style: TossDesignSystem.body3.copyWith(
-                              color: TossDesignSystem.warningOrange,
+                            style: DSTypography.labelSmall.copyWith(
+                              color: DSColors.warning,
                             ),
                           ),
                         ))
@@ -1472,8 +1471,8 @@ class _ResultWidgetState extends State<ResultWidget> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            TossDesignSystem.successGreen.withValues(alpha: 0.1),
-            TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+            DSColors.success.withValues(alpha: 0.1),
+            DSColors.accent.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -1483,12 +1482,12 @@ class _ResultWidgetState extends State<ResultWidget> {
         children: [
           Row(
             children: [
-              Icon(Icons.tips_and_updates, color: TossDesignSystem.successGreen),
+              Icon(Icons.tips_and_updates, color: DSColors.success),
               const SizedBox(width: 8),
               Text(
                 '운세 개선 조언',
-                style: TossDesignSystem.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                style: DSTypography.headingMedium.copyWith(
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 ),
               ),
             ],
@@ -1502,14 +1501,14 @@ class _ResultWidgetState extends State<ResultWidget> {
                     Icon(
                       Icons.check_circle,
                       size: 20,
-                      color: TossDesignSystem.successGreen,
+                      color: DSColors.success,
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         rec,
-                        style: TossDesignSystem.body2.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                        style: DSTypography.bodyMedium.copyWith(
+                          color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         ),
                       ),
                     ),

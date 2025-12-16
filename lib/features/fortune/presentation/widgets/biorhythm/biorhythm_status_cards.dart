@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/theme/toss_theme.dart';
 import '../../pages/biorhythm_result_page.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 
 class TodayOverallStatusCard extends StatelessWidget {
   final BiorhythmData biorhythmData;
@@ -49,7 +47,7 @@ class TodayOverallStatusCard extends StatelessWidget {
                 Text(
                   '${biorhythmData.overallScore}',
                   style: theme.textTheme.headlineLarge?.copyWith(
-                    color: TossDesignSystem.white,
+                    color: Colors.white,
                     fontWeight: FontWeight.w900,
                     
                   ),
@@ -57,7 +55,7 @@ class TodayOverallStatusCard extends StatelessWidget {
                 Text(
                   '점',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: TossDesignSystem.white.withValues(alpha: 0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -70,7 +68,7 @@ class TodayOverallStatusCard extends StatelessWidget {
             biorhythmData.statusMessage,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+              color: isDark ? Colors.white : DSColors.textPrimary,
             ),
           ),
           SizedBox(height: 8),
@@ -78,7 +76,7 @@ class TodayOverallStatusCard extends StatelessWidget {
           Text(
             '오늘 ${DateTime.now().month}월 ${DateTime.now().day}일 컨디션',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             ),
           ),
         ],
@@ -164,16 +162,16 @@ class RhythmDetailCards extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TypographyUnified.buttonMedium.copyWith(
+                      style: DSTypography.buttonMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                        color: isDark ? Colors.white : DSColors.textPrimary,
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
                       status,
-                      style: TypographyUnified.bodySmall.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                      style: DSTypography.bodySmall.copyWith(
+                        color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                       ),
                     ),
                   ],
@@ -184,15 +182,15 @@ class RhythmDetailCards extends StatelessWidget {
                 children: [
                   Text(
                     '$score',
-                    style: TypographyUnified.displaySmall.copyWith(
+                    style: DSTypography.displaySmall.copyWith(
                       fontWeight: FontWeight.w700,
                       color: color,
                     ),
                   ),
                   Text(
                     '점',
-                    style: TypographyUnified.labelMedium.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                    style: DSTypography.labelMedium.copyWith(
+                      color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                     ),
                   ),
                 ],

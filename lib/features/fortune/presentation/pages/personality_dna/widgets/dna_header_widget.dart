@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class DnaHeaderWidget extends StatelessWidget {
   final PersonalityDNA dna;
@@ -13,12 +12,12 @@ class DnaHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -33,12 +32,12 @@ class DnaHeaderWidget extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.trending_up, color: TossDesignSystem.white, size: 16),
+                  const Icon(Icons.trending_up, color: Colors.white, size: 16),
                   const SizedBox(width: 4),
                   Text(
                     dna.popularityText,
                     style: const TextStyle(
-                      color: TossDesignSystem.white,
+                      color: Colors.white,
                       fontFamily: 'ZenSerif',
                       fontWeight: FontWeight.w600,
                     ),
@@ -48,12 +47,12 @@ class DnaHeaderWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
           ],
-          Text(dna.emoji, style: TypographyUnified.displayLarge),
+          Text(dna.emoji, style: DSTypography.displayLarge),
           const SizedBox(height: 16),
           Text(
             dna.title,
-            style: TypographyUnified.heading3.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
+            style: DSTypography.headingMedium.copyWith(
+              color: colors.textPrimary,
               fontWeight: FontWeight.w700,
               height: 1.3,
             ),
@@ -63,7 +62,7 @@ class DnaHeaderWidget extends StatelessWidget {
           Text(
             dna.description,
             style: TextStyle(
-              color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
+              color: colors.textSecondary,
               fontWeight: FontWeight.w400,
               height: 1.4,
             ),
@@ -73,13 +72,13 @@ class DnaHeaderWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark200 : const Color(0xFFF7F8FA),
+              color: colors.backgroundSecondary,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
               dna.dnaCode,
               style: TextStyle(
-                color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'monospace',
               ),

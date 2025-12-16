@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 
 class ActionPlanCard extends StatelessWidget {
   final Map<String, dynamic> actionPlan;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const ActionPlanCard({
     super.key,
     required this.actionPlan,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -30,12 +29,13 @@ class ActionPlanCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.flag, color: TossDesignSystem.warningOrange, size: 24),
+                  Icon(Icons.flag, color: DSColors.warning, size: 24),
                   const SizedBox(width: 8),
                   Text(
                     '30일 액션플랜',
-                    style: context.bodyLarge.copyWith(
+                    style: DSTypography.bodyLarge.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ],
@@ -43,24 +43,27 @@ class ActionPlanCard extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 focusArea,
-                style: context.bodyMedium.copyWith(height: 1.5),
+                style: DSTypography.bodyMedium.copyWith(
+                  height: 1.5,
+                  color: colors.textPrimary,
+                ),
               ),
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                  color: DSColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.emoji_events, color: TossDesignSystem.successGreen, size: 20),
+                    Icon(Icons.emoji_events, color: DSColors.success, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         '예상 성과: $expectedOutcome',
-                        style: context.labelMedium.copyWith(
-                          color: TossDesignSystem.successGreen,
+                        style: DSTypography.labelMedium.copyWith(
+                          color: DSColors.success,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -80,7 +83,7 @@ class ActionPlanCard extends StatelessWidget {
           final week = entry.value as Map<String, dynamic>;
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
-            child: WeekCard(week: week, index: index, isDark: isDark),
+            child: WeekCard(week: week, index: index, colors: colors),
           );
         }),
       ],
@@ -91,13 +94,13 @@ class ActionPlanCard extends StatelessWidget {
 class WeekCard extends StatelessWidget {
   final Map<String, dynamic> week;
   final int index;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const WeekCard({
     super.key,
     required this.week,
     required this.index,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -118,14 +121,14 @@ class WeekCard extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue,
+                  color: colors.accent,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
                   child: Text(
                     '$weekNumber주',
-                    style: context.labelMedium.copyWith(
-                      color: TossDesignSystem.white,
+                    style: DSTypography.labelMedium.copyWith(
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -135,8 +138,9 @@ class WeekCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   theme,
-                  style: context.bodyLarge.copyWith(
+                  style: DSTypography.bodyLarge.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -156,7 +160,7 @@ class WeekCard extends StatelessWidget {
                     margin: const EdgeInsets.only(top: 2),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: TossDesignSystem.gray400,
+                        color: colors.border,
                         width: 1.5,
                       ),
                       borderRadius: BorderRadius.circular(4),
@@ -166,7 +170,10 @@ class WeekCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       task.toString(),
-                      style: context.bodyMedium.copyWith(height: 1.5),
+                      style: DSTypography.bodyMedium.copyWith(
+                        height: 1.5,
+                        color: colors.textPrimary,
+                      ),
                     ),
                   ),
                 ],
@@ -179,18 +186,18 @@ class WeekCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: TossDesignSystem.gray100,
+              color: colors.backgroundSecondary,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
-                Icon(Icons.flag_outlined, color: TossDesignSystem.gray600, size: 16),
+                Icon(Icons.flag_outlined, color: colors.textSecondary, size: 16),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     milestone,
-                    style: context.labelMedium.copyWith(
-                      color: TossDesignSystem.gray600,
+                    style: DSTypography.labelMedium.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ),

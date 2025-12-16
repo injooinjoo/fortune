@@ -3,8 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/models.dart';
 import '../providers/trend_providers.dart';
 
@@ -75,59 +74,66 @@ class _TrendPageState extends ConsumerState<TrendPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final trendState = ref.watch(trendListProvider);
 
     return Scaffold(
-      backgroundColor:
-          isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: RefreshIndicator(
-          color: isDark ? TossDesignSystem.white : TossDesignSystem.tossBlue,
-          backgroundColor:
-              isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.white,
+          color: colors.accentSecondary, // Vermilion accent
+          backgroundColor: colors.surface,
           onRefresh: () => ref.read(trendListProvider.notifier).refresh(),
           child: CustomScrollView(
             controller: _scrollController,
             slivers: [
               // Header
               SliverToBoxAdapter(
-                child: _buildHeader(isDark),
+                child: _buildHeader(colors),
               ),
               // Filter chips
               SliverToBoxAdapter(
-                child: _buildFilterChips(isDark, trendState),
+                child: _buildFilterChips(colors, trendState),
               ),
               // Content list
               if (trendState.isLoading && trendState.contents.isEmpty)
-                const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
+                SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: colors.accentSecondary,
+                    ),
+                  ),
                 )
               else if (trendState.error != null && trendState.contents.isEmpty)
                 SliverFillRemaining(
-                  child: _buildErrorWidget(isDark, trendState.error!),
+                  child: _buildErrorWidget(colors, trendState.error!),
                 )
               else if (trendState.contents.isEmpty)
                 SliverFillRemaining(
-                  child: _buildEmptyWidget(isDark),
+                  child: _buildEmptyWidget(colors),
                 )
               else
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal, vertical: DSSpacing.sm),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         if (index >= trendState.contents.length) {
-                          return const Center(
+                          return Center(
                             child: Padding(
-                              padding: EdgeInsets.all(16),
-                              child: CircularProgressIndicator(),
+                              padding: const EdgeInsets.all(DSSpacing.md),
+                              child: CircularProgressIndicator(
+                                color: colors.accentSecondary,
+                              ),
                             ),
                           );
                         }
-                        return _buildContentCard(trendState.contents[index], isDark)
+                        return _buildContentCard(trendState.contents[index], colors)
                             .animate()
-                            .fadeIn(delay: Duration(milliseconds: 50 * index))
+                            .fadeIn(
+                              delay: Duration(milliseconds: 50 * index),
+                              duration: DSAnimation.durationMedium,
+                            )
                             .slideY(begin: 0.05, end: 0);
                       },
                       childCount: trendState.contents.length +
@@ -142,28 +148,26 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     );
   }
 
-  Widget _buildHeader(bool isDark) {
+  Widget _buildHeader(DSColorScheme colors) {
+    final typography = context.typography;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal, vertical: DSSpacing.sm),
       child: Row(
         children: [
           Text(
             '트렌드',
-            style: TypographyUnified.heading3.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+            style: typography.headingMedium.copyWith(
+              color: colors.textPrimary,
             ),
           ),
           const Spacer(),
           IconButton(
             icon: Icon(
               Icons.search,
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+              color: colors.textPrimary,
             ),
             onPressed: () {
+              DSHaptics.light();
               // TODO: Search functionality
             },
           ),
@@ -172,45 +176,45 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     );
   }
 
-  Widget _buildFilterChips(bool isDark, TrendListState state) {
+  Widget _buildFilterChips(DSColorScheme colors, TrendListState state) {
     return SizedBox(
       height: 48,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
         children: [
           _buildFilterChip(
             label: '전체',
             isSelected: state.selectedType == null,
             onTap: () => ref.read(trendListProvider.notifier).clearFilters(),
-            isDark: isDark,
+            colors: colors,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.sm),
           _buildFilterChip(
             label: '🧠 심리테스트',
             isSelected: state.selectedType == TrendContentType.psychologyTest,
             onTap: () => ref
                 .read(trendListProvider.notifier)
                 .setTypeFilter(TrendContentType.psychologyTest),
-            isDark: isDark,
+            colors: colors,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.sm),
           _buildFilterChip(
             label: '🏆 이상형 월드컵',
             isSelected: state.selectedType == TrendContentType.idealWorldcup,
             onTap: () => ref
                 .read(trendListProvider.notifier)
                 .setTypeFilter(TrendContentType.idealWorldcup),
-            isDark: isDark,
+            colors: colors,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.sm),
           _buildFilterChip(
             label: '⚖️ 밸런스 게임',
             isSelected: state.selectedType == TrendContentType.balanceGame,
             onTap: () => ref
                 .read(trendListProvider.notifier)
                 .setTypeFilter(TrendContentType.balanceGame),
-            isDark: isDark,
+            colors: colors,
           ),
         ],
       ),
@@ -221,36 +225,36 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     required String label,
     required bool isSelected,
     required VoidCallback onTap,
-    required bool isDark,
+    required DSColorScheme colors,
   }) {
+    final typography = context.typography;
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        DSHaptics.light();
+        onTap();
+      },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        duration: DSAnimation.durationFast,
+        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
         decoration: BoxDecoration(
+          // Korean Traditional: Vermilion for selected, hanji-like for unselected
           color: isSelected
-              ? TossDesignSystem.tossBlue
-              : isDark
-                  ? TossDesignSystem.grayDark700
-                  : TossDesignSystem.gray200,
-          borderRadius: BorderRadius.circular(20),
+              ? colors.accentSecondary
+              : colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(DSRadius.lg),
           border: Border.all(
             color: isSelected
-                ? TossDesignSystem.tossBlue
-                : isDark
-                    ? TossDesignSystem.grayDark600
-                    : TossDesignSystem.gray300,
+                ? colors.accentSecondary
+                : colors.border,
+            width: 1,
           ),
         ),
         child: Text(
           label,
-          style: TypographyUnified.labelMedium.copyWith(
+          style: typography.labelMedium.copyWith(
             color: isSelected
-                ? TossDesignSystem.white
-                : isDark
-                    ? TossDesignSystem.textSecondaryDark
-                    : TossDesignSystem.textSecondaryLight,
+                ? Colors.white
+                : colors.textSecondary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
           ),
         ),
@@ -258,14 +262,18 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     );
   }
 
-  Widget _buildContentCard(TrendContent content, bool isDark) {
+  Widget _buildContentCard(TrendContent content, DSColorScheme colors) {
     final gradients = _getGradientColors(content.type);
+    final typography = context.typography;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: DSSpacing.md),
       child: InkWell(
-        onTap: () => _navigateToContent(content),
-        borderRadius: BorderRadius.circular(20),
+        onTap: () {
+          DSHaptics.light();
+          _navigateToContent(content);
+        },
+        borderRadius: BorderRadius.circular(DSRadius.lg),
         child: Container(
           height: 180,
           decoration: BoxDecoration(
@@ -274,12 +282,14 @@ class _TrendPageState extends ConsumerState<TrendPage> {
               end: Alignment.bottomRight,
               colors: gradients,
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(DSRadius.lg),
+            // Ink-wash shadow effect
             boxShadow: [
               BoxShadow(
-                color: gradients[0].withValues(alpha: 0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
+                color: gradients[0].withValues(alpha: 0.25),
+                blurRadius: 8,
+                spreadRadius: 0,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -287,7 +297,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
             children: [
               // Content
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(DSSpacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -296,15 +306,15 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 4),
+                              horizontal: DSSpacing.sm + 4, vertical: DSSpacing.xs),
                           decoration: BoxDecoration(
-                            color: TossDesignSystem.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(DSRadius.lg),
                           ),
                           child: Text(
                             '${content.type.emoji} ${content.type.displayName}',
-                            style: TypographyUnified.labelSmall.copyWith(
-                              color: TossDesignSystem.white,
+                            style: typography.labelSmall.copyWith(
+                              color: Colors.white,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -313,20 +323,20 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                         if (content.isPremium)
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
+                                horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
                             decoration: BoxDecoration(
-                              color: Colors.amber.withValues(alpha: 0.9),
-                              borderRadius: BorderRadius.circular(12),
+                              color: colors.accentTertiary, // Gold accent
+                              borderRadius: BorderRadius.circular(DSRadius.sm),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Icon(Icons.star,
                                     color: Colors.white, size: 12),
-                                const SizedBox(width: 4),
+                                const SizedBox(width: DSSpacing.xs),
                                 Text(
                                   'PREMIUM',
-                                  style: TypographyUnified.labelSmall.copyWith(
+                                  style: typography.labelSmall.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 10,
@@ -337,12 +347,12 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                           ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    // Title and subtitle
+                    const SizedBox(height: DSSpacing.md),
+                    // Title and subtitle (Calligraphy style)
                     Text(
                       content.title,
-                      style: TypographyUnified.heading3.copyWith(
-                        color: TossDesignSystem.white,
+                      style: typography.headingMedium.copyWith(
+                        color: Colors.white,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
                       ),
@@ -350,11 +360,11 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (content.subtitle != null) ...[
-                      const SizedBox(height: 4),
+                      const SizedBox(height: DSSpacing.xs),
                       Text(
                         content.subtitle!,
-                        style: TypographyUnified.bodySmall.copyWith(
-                          color: TossDesignSystem.white.withValues(alpha: 0.9),
+                        style: typography.bodySmall.copyWith(
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontWeight: FontWeight.w400,
                         ),
                         maxLines: 1,
@@ -367,7 +377,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                       children: [
                         _buildStatItem(
                             Icons.people_outline, '${content.participantCount}명 참여'),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: DSSpacing.md),
                         _buildStatItem(
                             Icons.favorite_outline, '${content.likeCount}'),
                       ],
@@ -375,7 +385,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                   ],
                 ),
               ),
-              // Decorative elements
+              // Decorative elements (traditional circle motifs)
               Positioned(
                 right: -20,
                 bottom: -20,
@@ -384,7 +394,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                   height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: TossDesignSystem.white.withValues(alpha: 0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                   ),
                 ),
               ),
@@ -396,7 +406,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                   height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: TossDesignSystem.white.withValues(alpha: 0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                   ),
                 ),
               ),
@@ -408,15 +418,16 @@ class _TrendPageState extends ConsumerState<TrendPage> {
   }
 
   Widget _buildStatItem(IconData icon, String text) {
+    final typography = context.typography;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: TossDesignSystem.white, size: 14),
-        const SizedBox(width: 4),
+        Icon(icon, color: Colors.white, size: 14),
+        const SizedBox(width: DSSpacing.xs),
         Text(
           text,
-          style: TypographyUnified.labelSmall.copyWith(
-            color: TossDesignSystem.white,
+          style: typography.labelSmall.copyWith(
+            color: Colors.white,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -449,7 +460,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     }
   }
 
-  Widget _buildErrorWidget(bool isDark, String error) {
+  Widget _buildErrorWidget(DSColorScheme colors, String error) {
+    final typography = context.typography;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -457,30 +469,31 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           Icon(
             Icons.error_outline,
             size: 48,
-            color: isDark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+            color: colors.textSecondary,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             '콘텐츠를 불러올 수 없습니다',
-            style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+            style: typography.bodyMedium.copyWith(
+              color: colors.textSecondary,
             ),
           ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () => ref.read(trendListProvider.notifier).refresh(),
-            child: const Text('다시 시도'),
+          const SizedBox(height: DSSpacing.md),
+          DSButton.secondary(
+            text: '다시 시도',
+            fullWidth: false,
+            onPressed: () {
+              DSHaptics.light();
+              ref.read(trendListProvider.notifier).refresh();
+            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildEmptyWidget(bool isDark) {
+  Widget _buildEmptyWidget(DSColorScheme colors) {
+    final typography = context.typography;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -489,22 +502,18 @@ class _TrendPageState extends ConsumerState<TrendPage> {
             '🎯',
             style: TextStyle(fontSize: 48),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             '아직 콘텐츠가 없습니다',
-            style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+            style: typography.bodyMedium.copyWith(
+              color: colors.textSecondary,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '곧 재미있는 콘텐츠가 추가될 예정이에요!',
-            style: TypographyUnified.bodySmall.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textTertiaryDark
-                  : TossDesignSystem.textTertiaryLight,
+            style: typography.bodySmall.copyWith(
+              color: colors.textTertiary,
             ),
           ),
         ],

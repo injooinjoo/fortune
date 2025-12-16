@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'unified_button_enums.dart';
 import 'dart:async';
 
@@ -393,7 +393,7 @@ class _UnifiedButtonState extends State<UnifiedButton> {
     // Debounce 비활성화 시 바로 실행
     if (!widget.enableDebounce) {
       if (widget.enableHaptic) {
-        TossDesignSystem.hapticLight();
+        DSHaptics.light();
       }
       widget.onPressed?.call();
       return;
@@ -419,7 +419,7 @@ class _UnifiedButtonState extends State<UnifiedButton> {
     });
 
     if (widget.enableHaptic) {
-      TossDesignSystem.hapticLight();
+      DSHaptics.light();
     }
     widget.onPressed?.call();
   }
@@ -473,31 +473,22 @@ class _UnifiedButtonState extends State<UnifiedButton> {
   }
 
   Widget _buildProgressButton(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.colors;
     final effectiveEnabled =
         widget.isEnabled && !widget.isLoading && !_isProcessing && widget.onPressed != null;
 
     // 색상 정의
-    final backgroundColor = isDark
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray100;
+    final backgroundColor = colors.backgroundTertiary;
 
     final progressColor = widget.progressColor ??
-        (effectiveEnabled
-            ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
-            : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300));
+        (effectiveEnabled ? colors.accent : colors.textDisabled);
 
     // 프로그레스가 텍스트 위치를 넘었는지 여부
     final isProgressOverText = _progressPercentage >= 0.5;
 
     final textColor = effectiveEnabled
-        ? (isProgressOverText
-            ? TossDesignSystem.white
-            : (isDark
-                ? TossDesignSystem.textPrimaryDark
-                : TossDesignSystem.textPrimaryLight))
-        : (isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500);
+        ? (isProgressOverText ? colors.ctaForeground : colors.textPrimary)
+        : colors.textDisabled;
 
     return SizedBox(
       width: widget.width ?? double.infinity,
@@ -506,9 +497,9 @@ class _UnifiedButtonState extends State<UnifiedButton> {
         color: Colors.transparent,
         child: InkWell(
           onTap: effectiveEnabled ? _handleTap : null,
-          borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+          borderRadius: BorderRadius.circular(DSRadius.md),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+            borderRadius: BorderRadius.circular(DSRadius.md),
             child: Stack(
               children: [
                 // 배경 레이어
@@ -534,7 +525,7 @@ class _UnifiedButtonState extends State<UnifiedButton> {
                       ? _buildLoadingIndicator(textColor)
                       : AnimatedDefaultTextStyle(
                           duration: const Duration(milliseconds: 200),
-                          style: TossDesignSystem.button.copyWith(
+                          style: DSTypography.buttonLarge.copyWith(
                             color: textColor,
                           ),
                           child: Row(
@@ -543,7 +534,7 @@ class _UnifiedButtonState extends State<UnifiedButton> {
                             children: [
                               if (widget.icon != null) ...[
                                 widget.icon!,
-                                const SizedBox(width: TossDesignSystem.spacingXS),
+                                const SizedBox(width: DSSpacing.xs),
                               ],
                               Text(widget.text),
                             ],
@@ -559,13 +550,13 @@ class _UnifiedButtonState extends State<UnifiedButton> {
   }
 
   Widget _buildBasicButton(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.colors;
+    final isDark = context.isDark;
     final effectiveEnabled =
         widget.isEnabled && !widget.isLoading && !_isProcessing && widget.onPressed != null;
 
     Widget child = widget.isLoading
-        ? _buildLoadingIndicator(_getTextColor(isDark, effectiveEnabled))
+        ? _buildLoadingIndicator(_getTextColor(colors, isDark, effectiveEnabled))
         : Row(
             mainAxisSize: widget.width != null ? MainAxisSize.max : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -573,13 +564,13 @@ class _UnifiedButtonState extends State<UnifiedButton> {
               if (widget.icon != null) ...[
                 widget.icon!,
                 if (widget.text.isNotEmpty)
-                  const SizedBox(width: TossDesignSystem.spacingXS),
+                  const SizedBox(width: DSSpacing.xs),
               ],
               if (widget.text.isNotEmpty)
                 Flexible(
                   child: Text(
                     widget.text,
-                    style: _getTextStyle(isDark, effectiveEnabled),
+                    style: _getTextStyle(colors, isDark, effectiveEnabled),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -593,7 +584,7 @@ class _UnifiedButtonState extends State<UnifiedButton> {
       case UnifiedButtonStyle.primary:
         button = ElevatedButton(
           onPressed: effectiveEnabled ? _handleTap : null,
-          style: _getPrimaryButtonStyle(isDark, effectiveEnabled),
+          style: _getPrimaryButtonStyle(colors, effectiveEnabled),
           child: child,
         );
         break;
@@ -601,7 +592,7 @@ class _UnifiedButtonState extends State<UnifiedButton> {
       case UnifiedButtonStyle.secondary:
         button = ElevatedButton(
           onPressed: effectiveEnabled ? _handleTap : null,
-          style: _getSecondaryButtonStyle(isDark, effectiveEnabled),
+          style: _getSecondaryButtonStyle(colors, effectiveEnabled),
           child: child,
         );
         break;
@@ -609,7 +600,7 @@ class _UnifiedButtonState extends State<UnifiedButton> {
       case UnifiedButtonStyle.ghost:
         button = OutlinedButton(
           onPressed: effectiveEnabled ? _handleTap : null,
-          style: _getGhostButtonStyle(isDark, effectiveEnabled),
+          style: _getGhostButtonStyle(colors, effectiveEnabled),
           child: child,
         );
         break;
@@ -617,7 +608,7 @@ class _UnifiedButtonState extends State<UnifiedButton> {
       case UnifiedButtonStyle.text:
         button = TextButton(
           onPressed: effectiveEnabled ? _handleTap : null,
-          style: _getTextButtonStyle(isDark, effectiveEnabled),
+          style: _getTextButtonStyle(colors, effectiveEnabled),
           child: child,
         );
         break;
@@ -701,136 +692,115 @@ class _UnifiedButtonState extends State<UnifiedButton> {
   double _getHeight() {
     switch (widget.size) {
       case UnifiedButtonSize.large:
-        return TossDesignSystem.buttonHeightLarge;
+        return 56.0;
       case UnifiedButtonSize.medium:
-        return TossDesignSystem.buttonHeightMedium;
+        return 48.0;
       case UnifiedButtonSize.small:
-        return TossDesignSystem.buttonHeightSmall;
+        return 40.0;
     }
   }
 
   EdgeInsetsGeometry _getPadding() {
     switch (widget.size) {
       case UnifiedButtonSize.large:
-        return const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingL);
+        return const EdgeInsets.symmetric(horizontal: DSSpacing.lg);
       case UnifiedButtonSize.medium:
-        return const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM);
+        return const EdgeInsets.symmetric(horizontal: DSSpacing.md);
       case UnifiedButtonSize.small:
-        return const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingM);
+        return const EdgeInsets.symmetric(horizontal: DSSpacing.md);
     }
   }
 
-  TextStyle _getTextStyle(bool isDark, bool enabled) {
+  TextStyle _getTextStyle(DSColorScheme colors, bool isDark, bool enabled) {
     final baseStyle = widget.size == UnifiedButtonSize.small
-        ? TossDesignSystem.body3
-        : TossDesignSystem.button;
+        ? DSTypography.buttonSmall
+        : DSTypography.buttonLarge;
 
     return baseStyle.copyWith(
-      color: _getTextColor(isDark, enabled),
+      color: _getTextColor(colors, isDark, enabled),
     );
   }
 
-  Color _getTextColor(bool isDark, bool enabled) {
+  Color _getTextColor(DSColorScheme colors, bool isDark, bool enabled) {
     if (!enabled) {
-      return isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400;
+      return colors.textDisabled;
     }
 
     switch (widget.style) {
       case UnifiedButtonStyle.primary:
-        return TossDesignSystem.white;
+        return colors.ctaForeground;
       case UnifiedButtonStyle.secondary:
-        return isDark
-            ? TossDesignSystem.grayDark900
-            : TossDesignSystem.gray900;
+        return colors.textPrimary;
       case UnifiedButtonStyle.ghost:
-        return isDark
-            ? TossDesignSystem.tossBlueDark
-            : TossDesignSystem.tossBlue;
+        return colors.accent;
       case UnifiedButtonStyle.text:
-        return isDark
-            ? TossDesignSystem.tossBlueDark
-            : TossDesignSystem.tossBlue;
+        return colors.accent;
     }
   }
 
-  ButtonStyle _getPrimaryButtonStyle(bool isDark, bool enabled) {
+  ButtonStyle _getPrimaryButtonStyle(DSColorScheme colors, bool enabled) {
     return ElevatedButton.styleFrom(
       backgroundColor: enabled
-          ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
-          : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
-      foregroundColor: TossDesignSystem.white,
-      disabledBackgroundColor:
-          isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
-      disabledForegroundColor:
-          isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+          ? colors.ctaBackground
+          : colors.ctaBackground.withValues(alpha: 0.5),
+      foregroundColor: colors.ctaForeground,
+      disabledBackgroundColor: colors.backgroundTertiary,
+      disabledForegroundColor: colors.textDisabled,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      shadowColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      shadowColor: Colors.transparent,
       minimumSize: Size(0, _getHeight()),
       padding: _getPadding(),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+        borderRadius: BorderRadius.circular(DSRadius.md),
       ),
     );
   }
 
-  ButtonStyle _getSecondaryButtonStyle(bool isDark, bool enabled) {
+  ButtonStyle _getSecondaryButtonStyle(DSColorScheme colors, bool enabled) {
     return ElevatedButton.styleFrom(
-      backgroundColor:
-          isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
-      foregroundColor: enabled
-          ? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900)
-          : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
-      disabledBackgroundColor:
-          isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
-      disabledForegroundColor:
-          isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+      backgroundColor: colors.backgroundTertiary,
+      foregroundColor: enabled ? colors.textPrimary : colors.textDisabled,
+      disabledBackgroundColor: colors.backgroundTertiary,
+      disabledForegroundColor: colors.textDisabled,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      shadowColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      shadowColor: Colors.transparent,
       minimumSize: Size(0, _getHeight()),
       padding: _getPadding(),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+        borderRadius: BorderRadius.circular(DSRadius.md),
       ),
     );
   }
 
-  ButtonStyle _getGhostButtonStyle(bool isDark, bool enabled) {
+  ButtonStyle _getGhostButtonStyle(DSColorScheme colors, bool enabled) {
     return OutlinedButton.styleFrom(
-      foregroundColor: enabled
-          ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
-          : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
+      foregroundColor: enabled ? colors.accent : colors.textDisabled,
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
-      disabledForegroundColor:
-          isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+      disabledForegroundColor: colors.textDisabled,
       minimumSize: Size(0, _getHeight()),
       padding: _getPadding(),
       side: BorderSide(
-        color: enabled
-            ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
-            : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
+        color: enabled ? colors.accent : colors.border,
         width: 1,
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+        borderRadius: BorderRadius.circular(DSRadius.md),
       ),
     );
   }
 
-  ButtonStyle _getTextButtonStyle(bool isDark, bool enabled) {
+  ButtonStyle _getTextButtonStyle(DSColorScheme colors, bool enabled) {
     return TextButton.styleFrom(
-      foregroundColor: enabled
-          ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
-          : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
+      foregroundColor: enabled ? colors.accent : colors.textDisabled,
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
-      disabledForegroundColor:
-          isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
-      padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.spacingXS),
+      disabledForegroundColor: colors.textDisabled,
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.xs),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
     );
   }

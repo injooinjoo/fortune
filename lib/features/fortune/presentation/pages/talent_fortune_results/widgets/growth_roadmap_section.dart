@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/fortune_result.dart';
 import '../../../../../../core/utils/fortune_text_cleaner.dart';
 
 class GrowthRoadmapSection extends StatelessWidget {
   final FortuneResult? fortuneResult;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const GrowthRoadmapSection({
     super.key,
     required this.fortuneResult,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -21,8 +20,8 @@ class GrowthRoadmapSection extends StatelessWidget {
       return Center(
         child: Text(
           '성장 로드맵 데이터가 없습니다',
-          style: TypographyUnified.bodySmall.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+          style: DSTypography.bodySmall.copyWith(
+            color: colors.textSecondary,
           ),
         ),
       );
@@ -48,10 +47,10 @@ class GrowthRoadmapSection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray50,
+                color: colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                  color: colors.accent.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -61,13 +60,13 @@ class GrowthRoadmapSection extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.tossBlue,
+                      color: colors.accent,
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
                       periodNames[period] ?? period,
-                      style: TypographyUnified.labelSmall.copyWith(
-                        color: TossDesignSystem.white,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -76,9 +75,9 @@ class GrowthRoadmapSection extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       goal,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ],
@@ -89,13 +88,13 @@ class GrowthRoadmapSection extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.check_circle_outline, size: 14, color: TossDesignSystem.successGreen),
+                          Icon(Icons.check_circle_outline, size: 14, color: DSColors.success),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               milestone,
-                              style: TypographyUnified.bodySmall.copyWith(
-                                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                              style: DSTypography.bodySmall.copyWith(
+                                color: colors.textSecondary,
                               ),
                             ),
                           ),

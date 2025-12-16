@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 🌊 오행 밸런스 카드
 class FiveElementsCard extends StatelessWidget {
@@ -114,7 +114,7 @@ class FiveElementsCard extends StatelessWidget {
                       children: [
                         Text(
                           entry.key,
-                          style: TypographyUnified.bodySmall.copyWith(
+                          style: DSTypography.bodySmall.copyWith(
                             color: isDark ? Colors.white : Colors.black87,
                             fontWeight: FontWeight.w500,
                           ),

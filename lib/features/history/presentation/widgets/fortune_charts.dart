@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 // import '../../../../shared/glassmorphism/glass_container.dart'; // TODO: Remove if not needed
 import '../../domain/models/fortune_history.dart';
@@ -42,7 +42,7 @@ class CategoryPieChart extends StatelessWidget {
         children: [
           Text(
             '운세 유형별 분포',
-            style: context.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(
@@ -60,7 +60,7 @@ class CategoryPieChart extends StatelessWidget {
                           value: category.value.toDouble(),
                           title: '${percentage.toStringAsFixed(1)}%',
                           radius: 80,
-                          titleStyle: context.labelMedium.copyWith(
+                          titleStyle: DSTypography.labelMedium.copyWith(
                             fontWeight: FontWeight.bold,
                             color: TossDesignSystem.white,
                           ),
@@ -95,7 +95,7 @@ class CategoryPieChart extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             category.key,
-                            style: context.bodySmall,
+                            style: DSTypography.bodySmall,
                           ),
                         ],
                       ),
@@ -151,7 +151,7 @@ class MonthlyTrendChart extends StatelessWidget {
         children: [
           Text(
             '월별 운세 조회 추이',
-            style: context.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(
@@ -179,7 +179,7 @@ class MonthlyTrendChart extends StatelessWidget {
                         if (value.toInt() >= 0 && value.toInt() < months.length) {
                           return Text(
                             months[value.toInt()],
-                            style: TypographyUnified.labelMedium.copyWith(
+                            style: DSTypography.labelMedium.copyWith(
                               color: theme.colorScheme.onSurface.withValues(alpha: 0.6)));
                         }
                         return const Text('');
@@ -190,7 +190,7 @@ class MonthlyTrendChart extends StatelessWidget {
                       getTitlesWidget: (value, meta) {
                         return Text(
                           value.toInt().toString(),
-                          style: TypographyUnified.labelMedium.copyWith(
+                          style: DSTypography.labelMedium.copyWith(
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         );

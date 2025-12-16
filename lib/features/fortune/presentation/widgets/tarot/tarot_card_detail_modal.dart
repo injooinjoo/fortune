@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../domain/models/tarot_card_model.dart';
-import '../../../../../core/theme/typography_unified.dart';
 
 /// 타로 카드 상세 정보를 표시하는 모달
 ///
@@ -62,12 +61,14 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(width: 40), // 균형 유지
-                    Text(
-                      widget.card.cardNameKr,
-                      style: TossDesignSystem.heading3.copyWith(
-                        color: TossDesignSystem.black,
-                      ),
-                    ),
+                    Builder(builder: (context) {
+                      return Text(
+                        widget.card.cardNameKr,
+                        style: context.typography.headingSmall.copyWith(
+                          color: context.colors.textPrimary,
+                        ),
+                      );
+                    }),
                     GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
                       child: Container(
@@ -125,22 +126,27 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
-                    Text(
-                      widget.card.isReversed ? '역방향' : '정방향',
-                      style: TossDesignSystem.body1.copyWith(
-                        color: widget.card.isReversed
-                            ? TossDesignSystem.error
-                            : TossDesignSystem.bluePrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    Builder(builder: (context) {
+                      final typography = context.typography;
+                      return Text(
+                        widget.card.isReversed ? '역방향' : '정방향',
+                        style: typography.bodyMedium.copyWith(
+                          color: widget.card.isReversed
+                              ? DSColors.error
+                              : DSColors.accent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    }),
                     SizedBox(height: 8),
-                    Text(
-                      '탭하여 카드를 뒤집어보세요',
-                      style: TossDesignSystem.caption.copyWith(
-                        color: const Color(0xFF8B95A1),
-                      ),
-                    ),
+                    Builder(builder: (context) {
+                      return Text(
+                        '탭하여 카드를 뒤집어보세요',
+                        style: context.typography.bodySmall.copyWith(
+                          color: const Color(0xFF8B95A1),
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -196,13 +202,13 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
         aspectRatio: 0.65,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(DSRadius.md),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                TossDesignSystem.purple.withValues(alpha: 0.8),
-                TossDesignSystem.bluePrimary.withValues(alpha: 0.8),
+                DSColors.accentSecondary.withValues(alpha: 0.8),
+                DSColors.accent.withValues(alpha: 0.8),
               ],
             ),
           ),
@@ -216,14 +222,16 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal> {
                   color: Colors.white.withValues(alpha: 0.9),
                 ),
                 SizedBox(height: 16),
-                Text(
-                  'TAROT',
-                  style: TypographyUnified.displaySmall.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white.withValues(alpha: 0.9),
-                    letterSpacing: 4,
-                  ),
-                ),
+                Builder(builder: (context) {
+                  return Text(
+                    'TAROT',
+                    style: context.typography.headingLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white.withValues(alpha: 0.9),
+                      letterSpacing: 4,
+                    ),
+                  );
+                }),
               ],
             ),
           ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class TossSectionWidget extends StatelessWidget {
   final String title;
@@ -16,12 +15,12 @@ class TossSectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -32,16 +31,16 @@ class TossSectionWidget extends StatelessWidget {
               if (icon != null) ...[
                 Icon(
                   icon,
-                  color: TossDesignSystem.tossBlue,
+                  color: colors.accent,
                   size: 20,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
               ],
               Text(
                 title,
-                style: TypographyUnified.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
+                  color: colors.textPrimary,
                   height: 1.3,
                 ),
               ),

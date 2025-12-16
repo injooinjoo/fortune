@@ -1,8 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/toss_design_system.dart';
-import '../theme/typography_unified.dart';
+import '../design_system/design_system.dart';
 import '../../data/popular_dream_topics.dart';
 
 /// 몽글몽글 떠다니는 꿈 버블 위젯
@@ -45,7 +44,8 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
     final size = MediaQuery.of(context).size;
 
     return Stack(
@@ -56,17 +56,11 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
             gradient: RadialGradient(
               center: Alignment.center,
               radius: 1.5,
-              colors: isDark
-                  ? [
-                      const Color(0xFF1A1A2E),
-                      const Color(0xFF16213E),
-                      const Color(0xFF0F0F23),
-                    ]
-                  : [
-                      const Color(0xFFF8F0FF),
-                      const Color(0xFFE8E0F0),
-                      const Color(0xFFF0F0FF),
-                    ],
+              colors: [
+                colors.background,
+                colors.backgroundSecondary,
+                colors.surface,
+              ],
             ),
           ),
         ),
@@ -76,10 +70,10 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
           final index = entry.key;
           final topic = entry.value;
           return _buildFloatingBubble(
+            context: context,
             topic: topic,
             index: index,
             screenSize: size,
-            isDark: isDark,
           );
         }),
 
@@ -92,13 +86,10 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
             child: GestureDetector(
               onTap: refreshBubbles,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
                 decoration: BoxDecoration(
-                  color: (isDark
-                          ? TossDesignSystem.surfaceBackgroundDark
-                          : TossDesignSystem.white)
-                      .withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(30),
+                  color: colors.surface.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(DSRadius.xl + 6),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.1),
@@ -113,17 +104,13 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
                     Icon(
                       Icons.refresh_rounded,
                       size: 20,
-                      color: isDark
-                          ? TossDesignSystem.textSecondaryDark
-                          : TossDesignSystem.textSecondaryLight,
+                      color: colors.textSecondary,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: DSSpacing.sm),
                     Text(
                       '다른 꿈 보기',
-                      style: TypographyUnified.bodyMedium.copyWith(
-                        color: isDark
-                            ? TossDesignSystem.textSecondaryDark
-                            : TossDesignSystem.textSecondaryLight,
+                      style: typography.bodyMedium.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],
@@ -139,11 +126,13 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
   }
 
   Widget _buildFloatingBubble({
+    required BuildContext context,
     required DreamTopic topic,
     required int index,
     required Size screenSize,
-    required bool isDark,
   }) {
+    final typography = context.typography;
+
     // 버블 위치 계산 (화면 전체에 분산)
     final positions = _generateBubblePositions(screenSize, _displayedTopics.length);
     final position = positions[index];
@@ -167,7 +156,7 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
         child: _DreamBubble(
           topic: topic,
           size: baseSize,
-          isDark: isDark,
+          typography: typography,
         )
             .animate(onPlay: (controller) => controller.repeat(reverse: true))
             .moveX(
@@ -233,12 +222,12 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
 class _DreamBubble extends StatelessWidget {
   final DreamTopic topic;
   final double size;
-  final bool isDark;
+  final DSTypographyScheme typography;
 
   const _DreamBubble({
     required this.topic,
     required this.size,
-    required this.isDark,
+    required this.typography,
   });
 
   @override
@@ -287,10 +276,10 @@ class _DreamBubble extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: DSSpacing.xs),
               child: Text(
                 topic.title.replaceAll(' 꿈', ''),
-                style: TypographyUnified.caption.copyWith(
+                style: typography.bodySmall.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                   fontSize: size * 0.12,

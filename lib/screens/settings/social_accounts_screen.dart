@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
+import '../../core/providers/user_settings_provider.dart';
 import '../../services/social_auth_service.dart';
 import '../../presentation/widgets/social_accounts_section.dart';
 
@@ -19,41 +20,6 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
   bool isLoading = true;
   Map<String, dynamic>? userProfile;
   List<UserIdentity> userIdentities = [];
-
-  // TOSS Design System Helper Methods (프로필 페이지와 동일)
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
-  Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
-  }
-
-  Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.gray50;
-  }
-
-  Color _getCardColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark100
-        : TossDesignSystem.white;
-  }
-
-  Color _getDividerColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray200;
-  }
 
   @override
   void initState() {
@@ -130,17 +96,19 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
   }
 
   Widget _buildSectionHeader(String title) {
+    final colors = context.colors;
+    final typography = ref.watch(typographyThemeProvider);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingL,
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingS,
+        DSSpacing.pageHorizontal,
+        DSSpacing.lg,
+        DSSpacing.pageHorizontal,
+        DSSpacing.sm,
       ),
       child: Text(
         title,
-        style: TossDesignSystem.caption.copyWith(
-          color: _getSecondaryTextColor(context),
+        style: typography.labelSmall.copyWith(
+          color: colors.textSecondary,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
@@ -155,15 +123,17 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
     bool isPhone = false,
     bool isLast = false,
   }) {
+    final colors = context.colors;
+    final typography = ref.watch(typographyThemeProvider);
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossDesignSystem.marginHorizontal,
-        vertical: TossDesignSystem.spacingM,
+        horizontal: DSSpacing.pageHorizontal,
+        vertical: DSSpacing.md,
       ),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isLast ? Colors.transparent : _getDividerColor(context),
+            color: isLast ? Colors.transparent : colors.border,
             width: 0.5,
           ),
         ),
@@ -174,9 +144,9 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
           Icon(
             _getProviderIcon(provider),
             size: 22,
-            color: _getSecondaryTextColor(context),
+            color: colors.textSecondary,
           ),
-          const SizedBox(width: TossDesignSystem.spacingM),
+          const SizedBox(width: DSSpacing.md),
 
           // 제목 & 설명
           Expanded(
@@ -185,8 +155,8 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
               children: [
                 Text(
                   _getProviderName(provider),
-                  style: TossDesignSystem.body2.copyWith(
-                    color: _getTextColor(context),
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -194,8 +164,8 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                   const SizedBox(height: 2),
                   Text(
                     email,
-                    style: TossDesignSystem.caption.copyWith(
-                      color: _getSecondaryTextColor(context),
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
@@ -208,13 +178,13 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                color: colors.accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 '주 계정',
-                style: TossDesignSystem.caption.copyWith(
-                  color: TossDesignSystem.tossBlue,
+                style: typography.labelSmall.copyWith(
+                  color: colors.accent,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -228,8 +198,8 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
               ),
               child: Text(
                 '해제',
-                style: TossDesignSystem.caption.copyWith(
-                  color: TossDesignSystem.errorRed,
+                style: typography.labelSmall.copyWith(
+                  color: colors.error,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -240,40 +210,42 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
   }
 
   void _showUnlinkDialog(String provider) {
+    final colors = context.colors;
+    final typography = ref.watch(typographyThemeProvider);
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text(
           '계정 연동 해제',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
+          style: typography.headingSmall.copyWith(
+            color: colors.textPrimary,
           ),
         ),
         content: Text(
           '${_getProviderName(provider)} 계정 연동을 해제하시겠습니까?',
-          style: TossDesignSystem.body2.copyWith(
-            color: _getTextColor(context),
+          style: typography.bodySmall.copyWith(
+            color: colors.textPrimary,
           ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: Text(
               '취소',
-              style: TossDesignSystem.button.copyWith(
-                color: _getSecondaryTextColor(context),
+              style: typography.buttonMedium.copyWith(
+                color: colors.textSecondary,
               ),
             ),
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
               await _unlinkProvider(provider);
             },
             child: Text(
               '연동 해제',
-              style: TossDesignSystem.button.copyWith(
-                color: TossDesignSystem.errorRed,
+              style: typography.buttonMedium.copyWith(
+                color: colors.error,
               ),
             ),
           ),
@@ -283,19 +255,15 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
   }
 
   Future<void> _unlinkProvider(String provider) async {
+    final colors = context.colors;
     try {
       await _socialAuthService.unlinkProvider(provider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              '계정 연동이 해제되었습니다',
-              style: TossDesignSystem.body2.copyWith(
-                color: TossDesignSystem.white,
-              ),
-            ),
-            backgroundColor: TossDesignSystem.successGreen,
+            content: const Text('계정 연동이 해제되었습니다'),
+            backgroundColor: colors.success,
           ),
         );
         _loadUserData();
@@ -304,13 +272,8 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              e.toString().replaceAll('Exception: ', ''),
-              style: TossDesignSystem.body2.copyWith(
-                color: TossDesignSystem.white,
-              ),
-            ),
-            backgroundColor: TossDesignSystem.errorRed,
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: colors.error,
           ),
         );
       }
@@ -319,46 +282,49 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = ref.watch(typographyThemeProvider);
+
     if (isLoading) {
       return Scaffold(
-        backgroundColor: _getBackgroundColor(context),
+        backgroundColor: colors.backgroundSecondary,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-        scrolledUnderElevation: 0,
+          scrolledUnderElevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: _getTextColor(context)),
+            icon: Icon(Icons.arrow_back_ios, color: colors.textPrimary),
             onPressed: () => context.pop(),
           ),
           title: Text(
             '소셜 계정 연동',
-            style: TossDesignSystem.heading4.copyWith(
-              color: _getTextColor(context),
+            style: typography.headingSmall.copyWith(
+              color: colors.textPrimary,
             ),
           ),
         ),
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator(
-            color: TossDesignSystem.tossBlue,
+            color: colors.accent,
           ),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: colors.backgroundSecondary,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: _getTextColor(context)),
+          icon: Icon(Icons.arrow_back_ios, color: colors.textPrimary),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '소셜 계정 연동',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
+          style: typography.headingSmall.copyWith(
+            color: colors.textPrimary,
           ),
         ),
       ),
@@ -367,31 +333,31 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: TossDesignSystem.spacingM),
+              const SizedBox(height: DSSpacing.md),
 
               // 안내 메시지
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: TossDesignSystem.marginHorizontal),
+                    horizontal: DSSpacing.pageHorizontal),
                 child: Container(
-                  padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+                  padding: const EdgeInsets.all(DSSpacing.md),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    color: colors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.info_outline,
-                        color: TossDesignSystem.tossBlue,
+                        color: colors.accent,
                         size: 20,
                       ),
-                      const SizedBox(width: TossDesignSystem.spacingS),
+                      const SizedBox(width: DSSpacing.sm),
                       Expanded(
                         child: Text(
                           '여러 소셜 계정을 연동하면 어떤 방법으로든 로그인할 수 있습니다.',
-                          style: TossDesignSystem.caption.copyWith(
-                            color: TossDesignSystem.tossBlue,
+                          style: typography.labelSmall.copyWith(
+                            color: colors.accent,
                           ),
                         ),
                       ),
@@ -405,17 +371,17 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                 _buildSectionHeader('연동된 계정'),
                 Container(
                   margin: const EdgeInsets.symmetric(
-                      horizontal: TossDesignSystem.marginHorizontal),
+                      horizontal: DSSpacing.pageHorizontal),
                   decoration: BoxDecoration(
-                    color: _getCardColor(context),
-                    borderRadius: BorderRadius.circular(12),
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                     border: Border.all(
-                      color: _getDividerColor(context),
+                      color: colors.border,
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.black.withValues(alpha: 0.04),
+                        color: colors.textPrimary.withValues(alpha: 0.04),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -451,7 +417,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
               _buildSectionHeader('연동 가능한 계정'),
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: TossDesignSystem.marginHorizontal),
+                    horizontal: DSSpacing.pageHorizontal),
                 child: SocialAccountsSection(
                   linkedProviders: userIdentities
                       .map((identity) => identity.provider)
@@ -466,7 +432,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                 ),
               ),
 
-              const SizedBox(height: TossDesignSystem.spacingXXL),
+              const SizedBox(height: DSSpacing.xxl),
             ],
           ),
         ),

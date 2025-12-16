@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../theme/toss_design_system.dart';
-import '../../theme/typography_unified.dart';
+import '../../design_system/design_system.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_dimensions.dart';
 import 'date_picker_utils.dart';
@@ -238,7 +238,7 @@ class _NumericDateInputState extends State<NumericDateInput> {
             padding: const EdgeInsets.only(bottom: AppSpacing.small),
             child: Text(
               widget.label!,
-              style: context.labelMedium.copyWith(
+              style: DSTypography.labelMedium.copyWith(
                 color: isDark
                     ? TossDesignSystem.textSecondaryDark
                     : TossDesignSystem.textSecondaryLight,
@@ -285,13 +285,13 @@ class _NumericDateInputState extends State<NumericDateInput> {
                         FilteringTextInputFormatter.digitsOnly,
                         LengthLimitingTextInputFormatter(8),
                       ],
-                      style: context.bodyLarge.copyWith(
+                      style: DSTypography.bodyLarge.copyWith(
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1.2,
                       ),
                       decoration: InputDecoration(
                         hintText: widget.hintText ?? 'YYYY년 MM월 DD일',
-                        hintStyle: context.bodyLarge.copyWith(
+                        hintStyle: DSTypography.bodyLarge.copyWith(
                           color: isDark
                               ? TossDesignSystem.textSecondaryDark
                               : TossDesignSystem.textSecondaryLight,
@@ -329,7 +329,7 @@ class _NumericDateInputState extends State<NumericDateInput> {
                   padding: const EdgeInsets.only(top: AppSpacing.spacing2),
                   child: Text(
                     _getPlaceholder(),
-                    style: context.bodySmall.copyWith(
+                    style: DSTypography.bodySmall.copyWith(
                       color: isDark
                           ? TossDesignSystem.textSecondaryDark.withValues(alpha: 0.5)
                           : TossDesignSystem.textSecondaryLight.withValues(alpha: 0.5),
@@ -344,7 +344,7 @@ class _NumericDateInputState extends State<NumericDateInput> {
                   padding: const EdgeInsets.only(top: AppSpacing.spacing2),
                   child: Text(
                     '만 $age세',
-                    style: context.bodyMedium.copyWith(
+                    style: DSTypography.bodyMedium.copyWith(
                       color: TossDesignSystem.tossBlue,
                       fontWeight: FontWeight.w600,
                     ),
@@ -368,7 +368,7 @@ class _NumericDateInputState extends State<NumericDateInput> {
                 SizedBox(width: AppSpacing.spacing1),
                 Text(
                   _errorMessage!,
-                  style: context.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: TossDesignSystem.errorRed,
                   ),
                 ),
@@ -382,7 +382,7 @@ class _NumericDateInputState extends State<NumericDateInput> {
             padding: const EdgeInsets.only(top: AppSpacing.spacing2),
             child: Text(
               '예: 20001121 → 2000년 11월 21일',
-              style: context.bodySmall.copyWith(
+              style: DSTypography.bodySmall.copyWith(
                 color: isDark
                     ? TossDesignSystem.textSecondaryDark
                     : TossDesignSystem.textSecondaryLight,

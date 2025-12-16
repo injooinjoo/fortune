@@ -7,8 +7,7 @@ import '../../../../../core/constants/tarot_metadata.dart';
 import '../../../../../core/providers/user_settings_provider.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/loading_states.dart';
-import '../../../../../core/theme/typography_unified.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import 'tarot_card_widget.dart';
 
 /// Simplified tarot reading result view
@@ -110,13 +109,13 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
       children: [
         Text(
           '타로 리딩 결과',
-          style: context.heading2.copyWith(
+          style: context.typography.headingLarge.copyWith(
             fontWeight: FontWeight.bold)),
         if (widget.question != null && widget.question!.isNotEmpty) ...[
           const SizedBox(height: 8),
           Text(
             widget.question!,
-            style: context.buttonMedium.copyWith(
+            style: context.typography.labelLarge.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               fontStyle: FontStyle.italic),
             textAlign: TextAlign.center)]]);
@@ -148,7 +147,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 const SizedBox(height: 8),
                 Text(
                   _getPositionLabel(index),
-                  style: context.labelMedium.copyWith(
+                  style: context.typography.labelMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -189,7 +188,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                     const SizedBox(width: 8),
                     Text(
                       '당신의 질문에 대한 답',
-                      style: context.heading4.copyWith(
+                      style: context.typography.headingSmall.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -200,7 +199,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                   result != null && result['overallInterpretation'] != null
                       ? result['overallInterpretation']
                       : _generateDefaultInterpretation(),
-                  style: context.buttonMedium.copyWith(
+                  style: context.typography.labelLarge.copyWith(
                     height: 1.6,
                   ),
                 ),
@@ -216,7 +215,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               const SizedBox(width: 8),
               Text(
                 '카드별 상세 해석',
-                style: context.heading4.copyWith(
+                style: context.typography.headingSmall.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -252,7 +251,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                             borderRadius: BorderRadius.circular(8),
                             boxShadow: [
                               BoxShadow(
-                                color: TossDesignSystem.black.withValues(alpha: 0.2),
+                                color: Colors.black.withValues(alpha: 0.2),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
@@ -296,7 +295,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                                     ),
                                     child: Text(
                                       _getPositionLabel(index),
-                                      style: context.labelMedium.copyWith(
+                                      style: context.typography.labelMedium.copyWith(
                                         fontWeight: FontWeight.w600,
                                         color: theme.colorScheme.primary,
                                       ),
@@ -308,7 +307,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                               // 카드 이름
                               Text(
                                 cardInfo?.name ?? 'Card ${cardIndex + 1}',
-                                style: context.heading4.copyWith(
+                                style: context.typography.headingSmall.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -317,7 +316,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                                 const SizedBox(height: 4),
                                 Text(
                                   cardInfo!.keywords.join(' • '),
-                                  style: context.labelSmall.copyWith(
+                                  style: context.typography.labelSmall.copyWith(
                                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                     fontStyle: FontStyle.italic,
                                   ),
@@ -346,7 +345,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                     // 해석 내용 - 스토리텔링 포맷
                     Text(
                       interpretation['interpretation'] ?? interpretation['meaning'] ?? '',
-                      style: context.bodyMedium.copyWith(
+                      style: context.typography.bodyMedium.copyWith(
                         height: 1.8,
                         letterSpacing: 0.2,
                       ),
@@ -402,7 +401,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                       const SizedBox(width: 8),
                       Text(
                         '조언',
-                        style: context.heading4.copyWith(
+                        style: context.typography.headingSmall.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -411,7 +410,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                   const SizedBox(height: 16),
                   Text(
                     result['advice'],
-                    style: context.buttonMedium.copyWith(
+                    style: context.typography.labelLarge.copyWith(
                       height: 1.5,
                     ),
                   ),
@@ -586,7 +585,7 @@ $interpretation''';
           const SizedBox(width: 4),
           Text(
             label,
-            style: context.labelSmall.copyWith(
+            style: context.typography.labelSmall.copyWith(
               color: color,
               fontWeight: FontWeight.w500,
             ),

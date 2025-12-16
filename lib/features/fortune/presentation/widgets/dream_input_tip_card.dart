@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 꿈 해몽 입력 도움말 카드
 class DreamInputTipCard extends StatelessWidget {
@@ -12,7 +11,7 @@ class DreamInputTipCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -20,47 +19,47 @@ class DreamInputTipCard extends StatelessWidget {
             children: [
               Icon(
                 Icons.tips_and_updates,
-                color: TossTheme.primaryBlue,
+                color: DSColors.accent,
                 size: 24,
               ),
-              const SizedBox(width: TossTheme.spacingS),
+              const SizedBox(width: 8),
               Text(
                 '📝 Tip. 꿈 내용을 이렇게 작성해보세요!',
-                style: TossTheme.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: 16),
 
           _buildTipItem(
             isDark: isDark,
             number: '1',
             text: '누가 나왔는지 구체적으로 적어주세요.',
           ),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: 8),
 
           _buildTipItem(
             isDark: isDark,
             number: '2',
             text: '꿈의 장소와 배경을 묘사해주세요.',
           ),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: 8),
 
           _buildTipItem(
             isDark: isDark,
             number: '3',
             text: '꿈 속에서 벌어진 사건을 순서대로 적어주세요.',
           ),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: 8),
 
           _buildTipItem(
             isDark: isDark,
             number: '4',
             text: '꿈에 나타난 상징적인 요소들을 빠짐없이 적어주세요.',
           ),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: 8),
 
           _buildTipItem(
             isDark: isDark,
@@ -84,25 +83,25 @@ class DreamInputTipCard extends StatelessWidget {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+            color: DSColors.accent.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Center(
             child: Text(
               number,
-              style: TossTheme.body3.copyWith(
-                color: TossTheme.primaryBlue,
+              style: DSTypography.bodySmall.copyWith(
+                color: DSColors.accent,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
         ),
-        const SizedBox(width: TossTheme.spacingS),
+        const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
-            style: TossTheme.body3.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+            style: DSTypography.bodySmall.copyWith(
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               height: 1.5,
             ),
           ),

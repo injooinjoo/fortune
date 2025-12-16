@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/zodiac_compatibility_service.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 class ZodiacCompatibilityWheel extends StatefulWidget {
   final String selectedZodiac;
@@ -73,12 +72,12 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
       children: [
         Icon(
           Icons.stars,
-          color: TossDesignSystem.warningYellow,
+          color: DSColors.accentTertiary,
           size: 24),
         SizedBox(width: 8),
         Text(
           '띠별 궁합 관계도',
-          style: TypographyUnified.heading3.copyWith(
+          style: DSTypography.headingMedium.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.onSurface)),
       ],
@@ -145,8 +144,8 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
             shape: BoxShape.circle,
             color: _getCompatibilityColor(compatibility).withValues(alpha: 0.2),
             border: Border.all(
-              color: isSelected 
-                  ? TossDesignSystem.warningYellow 
+              color: isSelected
+                  ? DSColors.accentTertiary
                   : _getCompatibilityColor(compatibility),
               width: isSelected ? 3 : 2),
             boxShadow: (isSelected || isHovered) ? [
@@ -166,7 +165,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
                 style: TextStyle(
                   fontSize: isSelected ? 12 : 10,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: TossDesignSystem.white)),
+                  color: Colors.white)),
             ],
           ),
         ),
@@ -176,7 +175,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
 
   Widget _buildCenterInfo() {
     final info = ZodiacCompatibilityService.zodiacInfo[widget.selectedZodiac]!;
-    
+
     return Container(
       width: 120,
       height: 120,
@@ -184,31 +183,31 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            TossDesignSystem.warningYellow.withValues(alpha: 0.3),
-            TossDesignSystem.warningYellow.withValues(alpha: 0.1)]),
+            DSColors.accentTertiary.withValues(alpha: 0.3),
+            DSColors.accentTertiary.withValues(alpha: 0.1)]),
         border: Border.all(
-          color: TossDesignSystem.warningYellow.withValues(alpha: 0.5),
+          color: DSColors.accentTertiary.withValues(alpha: 0.5),
           width: 2)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             _getZodiacEmoji(widget.selectedZodiac),
-            style: TypographyUnified.numberLarge),
+            style: DSTypography.displayMedium),
           Text(
             widget.selectedZodiac,
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: DSTypography.labelMedium.copyWith(
               fontWeight: FontWeight.bold,
-              color: TossDesignSystem.white)),
+              color: Colors.white)),
           Text(
             info['hanja'],
-            style: TypographyUnified.bodySmall.copyWith(
-              color: TossDesignSystem.white.withValues(alpha: 0.8)),
+            style: DSTypography.bodySmall.copyWith(
+              color: Colors.white.withValues(alpha: 0.8)),
           ),
           Text(
             info['element'],
-            style: TypographyUnified.labelMedium.copyWith(
-              color: TossDesignSystem.warningYellow)),
+            style: DSTypography.labelMedium.copyWith(
+              color: DSColors.accentTertiary)),
         ],
       ),
     );
@@ -218,22 +217,22 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white.withValues(alpha: 0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: TossDesignSystem.white.withValues(alpha: 0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildLegendItem('육합', TossDesignSystem.successGreen, '최고 궁합'),
+          _buildLegendItem('육합', DSColors.success, '최고 궁합'),
           const SizedBox(width: 20),
-          _buildLegendItem('삼합', TossDesignSystem.tossBlue, '좋은 궁합'),
+          _buildLegendItem('삼합', DSColors.accent, '좋은 궁합'),
           const SizedBox(width: 20),
-          _buildLegendItem('육해', TossDesignSystem.errorRed, '주의 필요'),
+          _buildLegendItem('육해', DSColors.error, '주의 필요'),
           const SizedBox(width: 20),
-          _buildLegendItem('보통', TossDesignSystem.gray400, '노력 필요'),
+          _buildLegendItem('보통', DSColors.textTertiary, '노력 필요'),
         ],
       ),
     );
@@ -255,13 +254,12 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
             Text(
               label,
               style: TextStyle(
-                color: TossDesignSystem.white,
-                
+                color: Colors.white,
                 fontWeight: FontWeight.bold)),
             Text(
               description,
-              style: TypographyUnified.labelTiny.copyWith(
-                color: TossDesignSystem.white.withValues(alpha: 0.6))),
+              style: DSTypography.labelSmall.copyWith(
+                color: Colors.white.withValues(alpha: 0.6))),
           ],
         ),
       ],
@@ -269,11 +267,11 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
   }
 
   Color _getCompatibilityColor(double compatibility) {
-    if (compatibility >= 0.9) return TossDesignSystem.successGreen;
-    if (compatibility >= 0.8) return TossDesignSystem.tossBlue;
-    if (compatibility >= 0.6) return TossDesignSystem.warningYellow;
-    if (compatibility >= 0.4) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (compatibility >= 0.9) return DSColors.success;
+    if (compatibility >= 0.8) return DSColors.accent;
+    if (compatibility >= 0.6) return DSColors.accentTertiary;
+    if (compatibility >= 0.4) return DSColors.warning;
+    return DSColors.error;
   }
 
   String _getZodiacEmoji(String zodiac) {
@@ -326,7 +324,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final bestMatchIndex = ZodiacCompatibilityService.zodiacAnimals.indexOf(bestMatch);
     
     final paint = Paint()
-      ..color = TossDesignSystem.successGreen.withValues(alpha: 0.6 * animationValue)
+      ..color = DSColors.success.withValues(alpha: 0.6 * animationValue)
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
     
@@ -347,7 +345,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     for (final group in ZodiacCompatibilityService.harmonyGroups) {
       if (group.contains(selectedZodiac)) {
         final paint = Paint()
-          ..color = TossDesignSystem.tossBlue.withValues(alpha: 0.4 * animationValue)
+          ..color = DSColors.accent.withValues(alpha: 0.4 * animationValue)
           ..strokeWidth = 2
           ..style = PaintingStyle.stroke;
         
@@ -384,7 +382,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final conflictIndex = ZodiacCompatibilityService.zodiacAnimals.indexOf(conflict);
     
     final paint = Paint()
-      ..color = TossDesignSystem.errorRed.withValues(alpha: 0.5 * animationValue)
+      ..color = DSColors.error.withValues(alpha: 0.5 * animationValue)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;

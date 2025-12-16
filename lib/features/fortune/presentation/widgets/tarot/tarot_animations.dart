@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:fortune/core/theme/app_animations.dart';
+import '../../../../../core/design_system/design_system.dart';
 
 /// Shared animation utilities for tarot card interactions
 class TarotAnimations {
@@ -8,10 +8,10 @@ class TarotAnimations {
   TarotAnimations._();
 
   /// Standard durations
-  static const Duration cardFlipDuration = AppAnimations.durationXLong;
+  static const Duration cardFlipDuration = DSAnimation.durationXLong;
   static const Duration fanSpreadDuration = Duration(milliseconds: 1500);
   static const Duration cardSelectionDuration = Duration(milliseconds: 600);
-  static const Duration hoverDuration = AppAnimations.durationShort;
+  static const Duration hoverDuration = DSAnimation.durationQuick;
   static const Duration shuffleDuration = Duration(milliseconds: 2000);
 
   /// Standard curves

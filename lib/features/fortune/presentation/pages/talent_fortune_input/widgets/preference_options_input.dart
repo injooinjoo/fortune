@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import 'package:flutter/services.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 class PreferenceOptionsInput extends StatelessWidget {
   final List<String> options;
@@ -16,6 +16,8 @@ class PreferenceOptionsInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       children: options.map((option) {
         final isSelected = selectedValue == option;
@@ -23,18 +25,18 @@ class PreferenceOptionsInput extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 8),
           child: InkWell(
             onTap: () {
-              TossDesignSystem.hapticLight();
+              HapticFeedback.lightImpact();
               onSelect(option);
             },
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                    : TossDesignSystem.gray100,
+                    ? colors.accent.withValues(alpha: 0.1)
+                    : colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
+                  color: isSelected ? colors.accent : Colors.transparent,
                   width: 2,
                 ),
               ),
@@ -43,16 +45,16 @@ class PreferenceOptionsInput extends StatelessWidget {
                   Expanded(
                     child: Text(
                       option,
-                      style: TypographyUnified.buttonMedium.copyWith(
+                      style: DSTypography.labelLarge.copyWith(
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                        color: isSelected ? TossDesignSystem.tossBlue : null,
+                        color: isSelected ? colors.accent : null,
                       ),
                     ),
                   ),
                   if (isSelected)
                     Icon(
                       Icons.check_circle,
-                      color: TossDesignSystem.tossBlue,
+                      color: colors.accent,
                       size: 24,
                     ),
                 ],

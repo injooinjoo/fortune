@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 
-/// 토스 스타일 리스트 타일
-/// 아이콘, 타이틀, 서브타이틀, 트레일링 위젯을 지원
+/// Korean Traditional style list tile
+/// Supports icon, title, subtitle, and trailing widget
 class AppListTile extends StatelessWidget {
   final Widget? leading;
   final String title;
@@ -29,32 +29,34 @@ class AppListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
+    final colors = context.colors;
+    final typography = context.typography;
+
     final Widget content = Container(
-      color: backgroundColor ?? (isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white),
+      color: backgroundColor ?? colors.surface,
       child: Column(
         children: [
           Material(
-            color: TossDesignSystem.transparent,
+            color: Colors.transparent,
             child: InkWell(
               onTap: isEnabled ? () {
                 if (onTap != null) {
-                  TossDesignSystem.hapticLight();
+                  DSHaptics.light();
                   onTap!();
                 }
               } : null,
+              splashColor: colors.accentSecondary.withValues(alpha: 0.1),
+              highlightColor: colors.accentSecondary.withValues(alpha: 0.05),
               child: Padding(
                 padding: padding ?? const EdgeInsets.symmetric(
-                  horizontal: TossDesignSystem.spacingL,
-                  vertical: TossDesignSystem.spacingM,
+                  horizontal: DSSpacing.lg,
+                  vertical: DSSpacing.md,
                 ),
                 child: Row(
                   children: [
                     if (leading != null) ...[
                       _buildLeading(context),
-                      const SizedBox(width: TossDesignSystem.spacingM),
+                      const SizedBox(width: DSSpacing.md),
                     ],
                     Expanded(
                       child: Column(
@@ -62,19 +64,19 @@ class AppListTile extends StatelessWidget {
                         children: [
                           Text(
                             title,
-                            style: TossDesignSystem.body1.copyWith(
-                              color: isEnabled 
-                                ? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900)
-                                : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
+                            style: typography.bodyMedium.copyWith(
+                              color: isEnabled
+                                ? colors.textPrimary
+                                : colors.textTertiary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           if (subtitle != null) ...[
-                            const SizedBox(height: TossDesignSystem.spacingXXS),
+                            const SizedBox(height: DSSpacing.xxs),
                             Text(
                               subtitle!,
-                              style: TossDesignSystem.body3.copyWith(
-                                color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
+                              style: typography.bodySmall.copyWith(
+                                color: colors.textSecondary,
                               ),
                             ),
                           ],
@@ -82,7 +84,7 @@ class AppListTile extends StatelessWidget {
                       ),
                     ),
                     if (trailing != null) ...[
-                      const SizedBox(width: TossDesignSystem.spacingM),
+                      const SizedBox(width: DSSpacing.md),
                       trailing!,
                     ],
                   ],
@@ -94,38 +96,37 @@ class AppListTile extends StatelessWidget {
             Divider(
               height: 1,
               thickness: 1,
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
-              indent: leading != null ? TossDesignSystem.spacingL + 40 + TossDesignSystem.spacingM : TossDesignSystem.spacingL,
-              endIndent: TossDesignSystem.spacingL,
+              color: colors.divider,
+              indent: leading != null ? DSSpacing.lg + 40 + DSSpacing.md : DSSpacing.lg,
+              endIndent: DSSpacing.lg,
             ),
         ],
       ),
     );
-    
+
     return content;
   }
-  
+
   Widget _buildLeading(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
+    final colors = context.colors;
+
     if (leading is Icon) {
       final icon = leading as Icon;
       return Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100,
-          borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+          color: colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(DSRadius.md),
         ),
         child: Icon(
           icon.icon,
-          color: icon.color ?? (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700),
+          color: icon.color ?? colors.textSecondary,
           size: 20,
         ),
       );
     }
-    
+
     return SizedBox(
       width: 40,
       height: 40,
@@ -134,7 +135,7 @@ class AppListTile extends StatelessWidget {
   }
 }
 
-/// 토스 스타일 섹션 헤더
+/// Korean Traditional style section header
 class TossListSection extends StatelessWidget {
   final String title;
   final String? subtitle;
@@ -151,16 +152,16 @@ class TossListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Container(
-      color: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
+      color: colors.backgroundSecondary,
       padding: padding ?? const EdgeInsets.fromLTRB(
-        TossDesignSystem.spacingL,
-        TossDesignSystem.spacingM,
-        TossDesignSystem.spacingL,
-        TossDesignSystem.spacingS,
+        DSSpacing.lg,
+        DSSpacing.md,
+        DSSpacing.lg,
+        DSSpacing.sm,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -171,17 +172,17 @@ class TossListSection extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TossDesignSystem.caption.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  style: typography.labelSmall.copyWith(
+                    color: colors.textSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 if (subtitle != null) ...[
-                  const SizedBox(height: TossDesignSystem.spacingXXS),
+                  const SizedBox(height: DSSpacing.xxs),
                   Text(
                     subtitle!,
-                    style: TossDesignSystem.small.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textTertiary,
                     ),
                   ),
                 ],
@@ -195,7 +196,7 @@ class TossListSection extends StatelessWidget {
   }
 }
 
-/// 토스 스타일 리스트 아이템 (더 복잡한 레이아웃)
+/// Korean Traditional style complex list tile
 class TossComplexListTile extends StatelessWidget {
   final Widget? icon;
   final String title;
@@ -222,24 +223,26 @@ class TossComplexListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Material(
-      color: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      color: colors.surface,
       child: InkWell(
         onTap: onTap != null ? () {
-          TossDesignSystem.hapticLight();
+          DSHaptics.light();
           onTap!();
         } : null,
+        splashColor: colors.accentSecondary.withValues(alpha: 0.1),
+        highlightColor: colors.accentSecondary.withValues(alpha: 0.05),
         child: Container(
-          padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+          padding: const EdgeInsets.all(DSSpacing.lg),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (icon != null) ...[
                 icon!,
-                const SizedBox(width: TossDesignSystem.spacingM),
+                const SizedBox(width: DSSpacing.md),
               ],
               Expanded(
                 child: Column(
@@ -249,23 +252,23 @@ class TossComplexListTile extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: TossDesignSystem.body1.copyWith(
-                            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                          style: typography.bodyMedium.copyWith(
+                            color: colors.textPrimary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         if (badge != null) ...[
-                          const SizedBox(width: TossDesignSystem.spacingXS),
+                          const SizedBox(width: DSSpacing.xs),
                           badge!,
                         ],
                       ],
                     ),
                     if (subtitle != null) ...[
-                      const SizedBox(height: TossDesignSystem.spacingXXS),
+                      const SizedBox(height: DSSpacing.xxs),
                       Text(
                         subtitle!,
-                        style: TossDesignSystem.body3.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -273,25 +276,29 @@ class TossComplexListTile extends StatelessWidget {
                 ),
               ),
               if (value != null || valueLabel != null) ...[
-                const SizedBox(width: TossDesignSystem.spacingM),
+                const SizedBox(width: DSSpacing.md),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     if (value != null)
                       Text(
                         value!,
-                        style: TossDesignSystem.body1.copyWith(
-                          color: valueColor ?? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
-                          fontWeight: FontWeight.w600,
-                          fontFamily: value!.contains(RegExp(r'\d')) ? TossDesignSystem.fontFamilyNumber : null,
-                        ),
+                        style: value!.contains(RegExp(r'\d'))
+                          ? typography.numberMedium.copyWith(
+                              color: valueColor ?? colors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            )
+                          : typography.bodyMedium.copyWith(
+                              color: valueColor ?? colors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     if (valueLabel != null) ...[
-                      const SizedBox(height: TossDesignSystem.spacingXXS),
+                      const SizedBox(height: DSSpacing.xxs),
                       Text(
                         valueLabel!,
-                        style: TossDesignSystem.caption.copyWith(
-                          color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+                        style: typography.labelSmall.copyWith(
+                          color: colors.textTertiary,
                         ),
                       ),
                     ],
@@ -299,11 +306,11 @@ class TossComplexListTile extends StatelessWidget {
                 ),
               ],
               if (showArrow && onTap != null) ...[
-                const SizedBox(width: TossDesignSystem.spacingS),
+                const SizedBox(width: DSSpacing.sm),
                 Icon(
                   Icons.chevron_right_rounded,
                   size: 20,
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                  color: colors.textTertiary,
                 ),
               ],
             ],
@@ -314,7 +321,7 @@ class TossComplexListTile extends StatelessWidget {
   }
 }
 
-/// 토스 스타일 배지
+/// Korean Traditional style badge (seal-like design)
 class TossBadge extends StatelessWidget {
   final String text;
   final Color? backgroundColor;
@@ -329,19 +336,22 @@ class TossBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossDesignSystem.spacingXS,
+        horizontal: DSSpacing.xs,
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: backgroundColor ?? TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusXS),
+        color: backgroundColor ?? colors.accent.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(DSRadius.xs),
       ),
       child: Text(
         text,
-        style: TossDesignSystem.small.copyWith(
-          color: textColor ?? TossDesignSystem.tossBlue,
+        style: typography.labelSmall.copyWith(
+          color: textColor ?? colors.accent,
           fontWeight: FontWeight.w600,
         ),
       ),

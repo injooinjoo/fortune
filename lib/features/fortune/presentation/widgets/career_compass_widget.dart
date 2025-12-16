@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 
 
@@ -123,7 +122,7 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
               child: Text(
                 widget.centerText,
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold),
               ),
             ),
@@ -153,7 +152,7 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
     
     showModalBottomSheet(
       context: context,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
@@ -165,46 +164,46 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
           children: [
             Container(
               width: 40,
-              height: TossDesignSystem.spacingXS,
+              height: 4,
               decoration: BoxDecoration(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4 * 0.5),
               ),
             ),
-            const SizedBox(height: TossDesignSystem.spacingL),
+            const SizedBox(height: 24),
             Icon(
               data.icon,
               size: 48,
               color: data.color),
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: 16),
             Text(
               data.label,
               style: theme.textTheme.headlineSmall),
-            const SizedBox(height: TossDesignSystem.spacingS),
+            const SizedBox(height: 8),
             Text(
               '${data.direction} 방향',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
             ),
-            const SizedBox(height: TossDesignSystem.spacingL),
+            const SizedBox(height: 24),
             LinearProgressIndicator(
               value: data.value / 100,
               backgroundColor: data.color.withValues(alpha: 0.2),
               valueColor: AlwaysStoppedAnimation<Color>(data.color),
               minHeight: 8),
-            const SizedBox(height: TossDesignSystem.spacingS),
+            const SizedBox(height: 8),
             Text(
               '${data.value.toInt()}%',
               style: theme.textTheme.headlineMedium?.copyWith(
                 color: data.color,
                 fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: 16),
             Text(
               _getDescription(data),
               style: theme.textTheme.bodyLarge,
               textAlign: TextAlign.center),
-            const SizedBox(height: TossDesignSystem.spacingXL),
+            const SizedBox(height: 32),
           ],
         ),
       ),
@@ -349,7 +348,7 @@ class _CompassPainter extends CustomPainter {
     
     // Draw direction labels
     final directions = ['북', '동', '남', '서'];
-    final textStyle = TypographyUnified.bodySmall.copyWith(color: textColor);
+    final textStyle = DSTypography.bodySmall.copyWith(color: textColor);
     
     for (int i = 0; i < directions.length; i++) {
       final angle = (i * math.pi / 2) - math.pi / 2;

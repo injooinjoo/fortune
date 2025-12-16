@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../shared/components/toast.dart';
@@ -242,7 +242,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         ),
         title: Text(
           '프로필 인증',
-          style: context.heading3.copyWith(
+          style: DSTypography.headingSmall.copyWith(
             color: TossDesignSystem.gray900,
           ),
         ),
@@ -292,7 +292,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                           children: [
                             Text(
                               '현재 인증 상태',
-                              style: context.bodySmall.copyWith(
+                              style: DSTypography.bodySmall.copyWith(
                                 color: TossDesignSystem.gray600,
                               ),
                             ),
@@ -310,7 +310,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                   ),
                                   child: Text(
                                     verificationBadge,
-                                    style: context.bodySmall.copyWith(
+                                    style: DSTypography.bodySmall.copyWith(
                                       fontWeight: FontWeight.w600,
                                       color: TossDesignSystem.white,
                                     ),
@@ -319,7 +319,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                 const SizedBox(width: 8),
                                 Text(
                                   'Lv.$verificationLevel',
-                                  style: context.buttonMedium.copyWith(
+                                  style: DSTypography.labelMedium.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: verificationColor,
                                   ),
@@ -341,13 +341,13 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         children: [
                           Text(
                             '인증 진행도',
-                            style: context.labelMedium.copyWith(
+                            style: DSTypography.labelMedium.copyWith(
                               color: TossDesignSystem.gray600,
                             ),
                           ),
                           Text(
                             '$verificationLevel/3',
-                            style: context.labelMedium.copyWith(
+                            style: DSTypography.labelMedium.copyWith(
                               fontWeight: FontWeight.w600,
                               color: verificationColor,
                             ),
@@ -378,7 +378,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                 children: [
                   Text(
                     '인증 혜택',
-                    style: context.heading4.copyWith(
+                    style: DSTypography.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: TossDesignSystem.gray900,
                     ),
@@ -418,7 +418,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                 children: [
                   Text(
                     '인증 단계',
-                    style: context.heading4.copyWith(
+                    style: DSTypography.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: TossDesignSystem.gray900,
                     ),
@@ -441,10 +441,10 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         TextField(
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
-                          style: context.bodySmall,
+                          style: DSTypography.bodySmall,
                           decoration: InputDecoration(
                             hintText: '010-0000-0000',
-                            hintStyle: context.bodySmall.copyWith(
+                            hintStyle: DSTypography.bodySmall.copyWith(
                               color: TossDesignSystem.gray600,
                             ),
                             prefixIcon: const Icon(Icons.phone, size: 20),
@@ -485,7 +485,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                   )
                                 : Text(
                                     '인증번호 발송',
-                                    style: context.buttonSmall.copyWith(
+                                    style: DSTypography.labelSmall.copyWith(
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -512,7 +512,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         children: [
                           Text(
                             '인증번호 입력',
-                            style: context.bodySmall.copyWith(
+                            style: DSTypography.bodySmall.copyWith(
                               fontWeight: FontWeight.w600,
                               color: TossDesignSystem.gray900,
                             ),
@@ -522,10 +522,10 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             controller: _verificationCodeController,
                             keyboardType: TextInputType.number,
                             maxLength: 6,
-                            style: context.bodySmall,
+                            style: DSTypography.bodySmall,
                             decoration: InputDecoration(
                               hintText: '6자리 인증번호',
-                              hintStyle: context.bodySmall.copyWith(
+                              hintStyle: DSTypography.bodySmall.copyWith(
                                 color: TossDesignSystem.gray600,
                               ),
                               counterText: '',
@@ -562,7 +562,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                   ),
                                   child: Text(
                                     '취소',
-                                    style: context.buttonSmall.copyWith(
+                                    style: DSTypography.labelSmall.copyWith(
                                       color: TossDesignSystem.gray600,
                                     ),
                                   ),
@@ -590,7 +590,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                         )
                                       : Text(
                                           '확인',
-                                          style: context.buttonSmall.copyWith(
+                                          style: DSTypography.labelSmall.copyWith(
                                             fontWeight: FontWeight.w600,
                                             color: TossDesignSystem.white,
                                           ),
@@ -622,10 +622,10 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         TextField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
-                          style: context.bodySmall,
+                          style: DSTypography.bodySmall,
                           decoration: InputDecoration(
                             hintText: 'example@email.com',
-                            hintStyle: context.bodySmall.copyWith(
+                            hintStyle: DSTypography.bodySmall.copyWith(
                               color: TossDesignSystem.gray600,
                             ),
                             prefixIcon: const Icon(Icons.email, size: 20),
@@ -666,7 +666,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                   )
                                 : Text(
                                     '인증 이메일 발송',
-                                    style: context.buttonSmall.copyWith(
+                                    style: DSTypography.labelSmall.copyWith(
                                       fontWeight: FontWeight.w600,
                                       color: TossDesignSystem.white,
                                     ),
@@ -735,7 +735,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
               children: [
                 Text(
                   title,
-                  style: context.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: TossDesignSystem.gray900,
                   ),
@@ -743,7 +743,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: context.labelMedium.copyWith(
+                  style: DSTypography.labelMedium.copyWith(
                     color: TossDesignSystem.gray600,
                     height: 1.4,
                   ),
@@ -826,7 +826,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                       children: [
                         Text(
                           title,
-                          style: context.buttonMedium.copyWith(
+                          style: DSTypography.labelMedium.copyWith(
                             fontWeight: FontWeight.w600,
                             color: isLocked ? TossDesignSystem.gray600 : TossDesignSystem.gray900,
                           ),
@@ -834,7 +834,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         const SizedBox(height: 4),
                         Text(
                           description,
-                          style: context.labelMedium.copyWith(
+                          style: DSTypography.labelMedium.copyWith(
                             color: TossDesignSystem.gray600,
                           ),
                         ),
@@ -850,7 +850,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                       ),
                       child: Text(
                         '완료',
-                        style: context.labelMedium.copyWith(
+                        style: DSTypography.labelMedium.copyWith(
                           fontWeight: FontWeight.w600,
                           color: TossDesignSystem.success,
                         ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../../core/services/fortune_haptic_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
@@ -11,8 +12,7 @@ import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../../core/widgets/date_picker/numeric_date_input.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/services/debug_premium_service.dart';
 import '../../../../../core/models/fortune_result.dart';
@@ -129,25 +129,19 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return Scaffold(
-      backgroundColor: isDark
-          ? TossDesignSystem.backgroundDark
-          : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       appBar: _fortuneResult != null
           ? AppBar(
-              backgroundColor: isDark
-                  ? TossDesignSystem.backgroundDark
-                  : TossDesignSystem.backgroundLight,
+              backgroundColor: colors.background,
               elevation: 0,
               scrolledUnderElevation: 0,
               leading: const SizedBox.shrink(),
               title: Text(
                 '소개팅 운세',
-                style: TypographyUnified.heading3.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textPrimaryDark
-                      : TossDesignSystem.textPrimaryLight,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
               centerTitle: true,
@@ -155,9 +149,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: isDark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                   onPressed: () => GoRouter.of(context).go('/fortune'),
                 ),
@@ -186,7 +178,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
                     onAdFailed: () async => await _generateFortune(),
                   );
                 },
-                icon: Icon(Icons.auto_awesome_rounded, color: TossDesignSystem.white),
+                icon: Icon(Icons.auto_awesome_rounded, color: Colors.white),
               ),
           ],
         ),
@@ -195,19 +187,16 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   }
 
   Widget _buildErrorState() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Center(
       child: Container(
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: isDark
-              ? TossDesignSystem.cardBackgroundDark
-              : TossDesignSystem.gray50,
-          borderRadius: BorderRadius.circular(12),
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color:
-                isDark ? TossDesignSystem.borderDark : TossDesignSystem.gray200,
+            color: colors.border,
             width: 1,
           ),
         ),
@@ -352,6 +341,14 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
         _fortuneResult = fortuneResult;
         _isLoading = false;
         _currentTypingSection = 0;  // 타이핑 섹션 리셋
+      });
+
+      // 소개팅 운세 결과 공개 햅틱 (하트비트 + 점수)
+      final haptic = ref.read(fortuneHapticServiceProvider);
+      final score = fortuneResult.score ?? 70;
+      haptic.loveHeartbeat();
+      Future.delayed(const Duration(milliseconds: 300), () {
+        haptic.scoreReveal(score);
       });
     } catch (e, stackTrace) {
       Logger.error('[BlindDateFortunePage] 운세 생성 실패', e, stackTrace);
@@ -764,7 +761,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
             label: '첫 소개팅인가요?',
             value: _isFirstBlindDate,
             onChanged: (value) {
-              setState(() => _isFirstBlindDate = value ?? false);
+              setState(() => _isFirstBlindDate = value == true);
               HapticFeedback.selectionClick();
             },
           ),
@@ -853,56 +850,49 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   }
 
   Widget _buildMainFortuneContent() {
-    final theme = Theme.of(context);
+    final colors = context.colors;
     final fortuneData = _fortuneResult!.data;
     final content = fortuneData['content'] as String? ?? '';
     final score = _fortuneResult!.score;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GlassCard(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '소개팅 운세 결과',
-            style: theme.textTheme.headlineMedium?.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.headingMedium.copyWith(
+              color: colors.textPrimary,
             ),
           ),
           if (score != null) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: DSSpacing.md),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   '$score',
-                  style: theme.textTheme.displayLarge?.copyWith(
+                  style: DSTypography.displayLarge.copyWith(
                     color: _getScoreColor(score),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   '/100',
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.textSecondaryLight,
+                  style: DSTypography.headingMedium.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
             ),
           ],
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           // ✅ GPT 스타일 타이핑 효과 적용
           GptStyleTypingText(
             text: content,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.bodyLarge.copyWith(
+              color: colors.textPrimary,
             ),
             startTyping: _currentTypingSection >= 0,
             showGhostText: true,
@@ -916,10 +906,10 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accent;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 
   Future<void> _showAdAndUnblur() async {
@@ -940,7 +930,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
-                backgroundColor: TossDesignSystem.errorRed,
+                backgroundColor: DSColors.error,
               ),
             );
           }
@@ -976,7 +966,7 @@ class _BlindDateFortunePageState extends ConsumerState<BlindDateFortunePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
-            backgroundColor: TossDesignSystem.warningOrange,
+            backgroundColor: DSColors.warning,
           ),
         );
       }

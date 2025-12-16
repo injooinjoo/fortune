@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 
 /// 🔮 사주 인사이트 카드
@@ -72,7 +72,7 @@ class SajuInsightCard extends StatelessWidget {
                 child: Text(
                   FortuneTextCleaner.clean(sajuData['insight']?.toString() ??
                   '당신의 사주는 균형잡힌 에너지를 가지고 있습니다. 오늘은 본래의 성향을 잘 활용하면 좋은 결과를 얻을 수 있습니다.'),
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: Colors.white,
                     height: 1.5,
                     fontSize: 13,

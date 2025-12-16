@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 class QuestionTypeStep extends StatelessWidget {
   final String? selectedCelebrityName;
@@ -22,7 +20,7 @@ class QuestionTypeStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -31,17 +29,17 @@ class QuestionTypeStep extends StatelessWidget {
         children: [
           Text(
             '어떤 것이 궁금하신가요?',
-            style: TypographyUnified.heading1.copyWith(
+            style: DSTypography.headingLarge.copyWith(
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              color: colors.textPrimary,
               height: 1.3,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             '${selectedCelebrityName ?? '선택한 유명인'}님과의 관계에서\n궁금한 부분을 선택해주세요',
-            style: TypographyUnified.bodySmall.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
+            style: DSTypography.bodySmall.copyWith(
+              color: colors.textSecondary,
               height: 1.4,
             ),
           ),
@@ -50,9 +48,9 @@ class QuestionTypeStep extends StatelessWidget {
           // Connection type
           Text(
             '관계 유형',
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -89,9 +87,9 @@ class QuestionTypeStep extends StatelessWidget {
           // Question type
           Text(
             '궁금한 영역',
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -158,22 +156,22 @@ class ConnectionOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.05) : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white),
+          color: isSelected ? colors.accent.withValues(alpha: 0.05) : colors.surface,
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+            color: isSelected ? colors.accent : colors.border,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: TossDesignSystem.black.withValues(alpha: 0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -185,10 +183,10 @@ class ConnectionOption extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
+                color: isSelected ? colors.accent : colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: isSelected ? TossDesignSystem.white : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600), size: 20),
+              child: Icon(icon, color: isSelected ? Colors.white : colors.textSecondary, size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -197,22 +195,22 @@ class ConnectionOption extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: DSTypography.labelLarge.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                      color: colors.textPrimary,
                     ),
                   ),
                   Text(
                     description,
-                    style: TypographyUnified.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle, color: TossTheme.primaryBlue, size: 20),
+              Icon(Icons.check_circle, color: colors.accent, size: 20),
           ],
         ),
       ),
@@ -240,22 +238,23 @@ class QuestionOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    const accentColor = Color(0xFFFF6B6B);
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? Color(0xFFFF6B6B).withValues(alpha: 0.05) : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white),
+          color: isSelected ? accentColor.withValues(alpha: 0.05) : colors.surface,
           border: Border.all(
-            color: isSelected ? Color(0xFFFF6B6B) : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+            color: isSelected ? accentColor : colors.border,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: TossDesignSystem.black.withValues(alpha: 0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -267,10 +266,10 @@ class QuestionOption extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: isSelected ? Color(0xFFFF6B6B) : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
+                color: isSelected ? accentColor : colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: isSelected ? TossDesignSystem.white : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600), size: 20),
+              child: Icon(icon, color: isSelected ? Colors.white : colors.textSecondary, size: 20),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -279,22 +278,22 @@ class QuestionOption extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: DSTypography.labelLarge.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                      color: colors.textPrimary,
                     ),
                   ),
                   Text(
                     description,
-                    style: TypographyUnified.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle, color: Color(0xFFFF6B6B), size: 20),
+              Icon(Icons.check_circle, color: accentColor, size: 20),
           ],
         ),
       ),

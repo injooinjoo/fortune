@@ -7,7 +7,7 @@ import '../../core/theme/toss_design_system.dart';
 import '../../core/services/personality_dna_service.dart';
 import '../../core/models/personality_dna_model.dart';
 import '../../presentation/providers/auth_provider.dart';
-import '../../core/theme/typography_unified.dart';
+import '../../core/design_system/design_system.dart';
 
 /// 성격 DNA 입력을 위한 BottomSheet
 class PersonalityDNABottomSheet extends ConsumerStatefulWidget {
@@ -95,7 +95,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                     children: [
                       Text(
                         _showDetailedView ? '성격 DNA 정보 입력' : '성격 DNA 분석',
-                        style: TypographyUnified.displaySmall.copyWith(
+                        style: DSTypography.displaySmall.copyWith(
                           fontWeight: FontWeight.w700,
                           color: Theme.of(context).brightness == Brightness.dark
                               ? TossDesignSystem.grayDark900
@@ -108,7 +108,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                         _showDetailedView
                             ? '4가지 정보를 선택해 주세요'
                             : '현재 설정을 확인하고 DNA 분석을 시작하세요',
-                        style: TypographyUnified.buttonMedium.copyWith(
+                        style: DSTypography.labelMedium.copyWith(
                           fontWeight: FontWeight.w400,
                           color: Theme.of(context).brightness == Brightness.dark
                               ? TossDesignSystem.grayDark400
@@ -218,7 +218,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
         children: [
           Text(
             '현재 설정된 정보',
-            style: TypographyUnified.heading3.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.w600,
               color: Theme.of(context).brightness == Brightness.dark
                   ? TossDesignSystem.grayDark900
@@ -252,7 +252,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
               children: [
                 Text(
                   '💡 성격 DNA란?',
-                  style: TypographyUnified.buttonMedium.copyWith(
+                  style: DSTypography.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: Theme.of(context).brightness == Brightness.dark
                         ? TossDesignSystem.grayDark900
@@ -262,7 +262,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                 SizedBox(height: 8),
                 Text(
                   'MBTI, 혈액형, 별자리, 띠를 조합하여 당신만의 독특한 성격 분석 결과를 만들어드립니다.',
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     fontWeight: FontWeight.w400,
                     color: Theme.of(context).brightness == Brightness.dark
                         ? TossDesignSystem.grayDark600
@@ -317,7 +317,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
             child: Center(
               child: Text(
                 emoji,
-                style: TypographyUnified.heading3,
+                style: DSTypography.headingSmall,
               ),
             ),
           ),
@@ -328,7 +328,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
               children: [
                 Text(
                   title,
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     fontWeight: FontWeight.w500,
                     color: Theme.of(context).brightness == Brightness.dark
                         ? TossDesignSystem.grayDark600
@@ -338,7 +338,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                 SizedBox(height: 4),
                 Text(
                   value,
-                  style: TypographyUnified.buttonMedium.copyWith(
+                  style: DSTypography.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isSet
                         ? (Theme.of(context).brightness == Brightness.dark
@@ -404,7 +404,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
         children: [
           Text(
             'MBTI 유형',
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.w600,
               color: Theme.of(context).brightness == Brightness.dark
                   ? TossDesignSystem.grayDark900
@@ -450,7 +450,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                   child: Center(
                     child: Text(
                       mbti,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSelected
                             ? TossDesignSystem.white
@@ -489,7 +489,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
         children: [
           Text(
             '혈액형',
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.w600,
               color: Theme.of(context).brightness == Brightness.dark
                   ? TossDesignSystem.grayDark900
@@ -533,7 +533,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                       child: Center(
                         child: Text(
                           '$bloodType형',
-                          style: TypographyUnified.buttonMedium.copyWith(
+                          style: DSTypography.labelMedium.copyWith(
                             fontWeight: FontWeight.w600,
                             color: isSelected
                                 ? TossDesignSystem.white
@@ -574,7 +574,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
         children: [
           Text(
             '별자리',
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.w600,
               color: Theme.of(context).brightness == Brightness.dark
                   ? TossDesignSystem.grayDark900
@@ -620,7 +620,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                   child: Center(
                     child: Text(
                       zodiac,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSelected
                             ? TossDesignSystem.white
@@ -659,7 +659,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
         children: [
           Text(
             '띠 (12지)',
-            style: TypographyUnified.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.w600,
               color: Theme.of(context).brightness == Brightness.dark
                   ? TossDesignSystem.grayDark900
@@ -705,7 +705,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                   child: Center(
                     child: Text(
                       animal,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSelected
                             ? TossDesignSystem.white

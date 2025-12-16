@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 
 class ProfileVerificationPage extends ConsumerStatefulWidget {
   const ProfileVerificationPage({super.key});
@@ -15,52 +15,38 @@ class _ProfileVerificationPageState
     extends ConsumerState<ProfileVerificationPage> {
   String _selectedMethod = 'phone'; // 'phone' or 'identity'
 
-  // TOSS Design System Helper Methods (프로필 페이지와 동일)
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
+  // Design System Helper Methods
   Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
+    return context.colors.textPrimary;
   }
 
   Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
+    return context.colors.textSecondary;
   }
 
   Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.gray50;
+    return context.colors.background;
   }
 
   Color _getCardColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark100
-        : TossDesignSystem.white;
+    return context.colors.surface;
   }
 
   Color _getDividerColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray200;
+    return context.colors.border;
   }
 
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingL,
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingS,
+        DSSpacing.pageHorizontal,
+        DSSpacing.lg,
+        DSSpacing.pageHorizontal,
+        DSSpacing.sm,
       ),
       child: Text(
         title,
-        style: TossDesignSystem.caption.copyWith(
+        style: DSTypography.labelSmall.copyWith(
           color: _getSecondaryTextColor(context),
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
@@ -88,8 +74,8 @@ class _ProfileVerificationPageState
         },
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: TossDesignSystem.marginHorizontal,
-            vertical: TossDesignSystem.spacingM,
+            horizontal: DSSpacing.pageHorizontal,
+            vertical: DSSpacing.md,
           ),
           decoration: BoxDecoration(
             border: Border(
@@ -106,10 +92,10 @@ class _ProfileVerificationPageState
                 icon,
                 size: 22,
                 color: isSelected
-                    ? TossDesignSystem.tossBlue
+                    ? context.colors.accent
                     : _getSecondaryTextColor(context),
               ),
-              const SizedBox(width: TossDesignSystem.spacingM),
+              const SizedBox(width: DSSpacing.md),
 
               // 제목 & 설명
               Expanded(
@@ -118,7 +104,7 @@ class _ProfileVerificationPageState
                   children: [
                     Text(
                       title,
-                      style: TossDesignSystem.body2.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         color: _getTextColor(context),
                         fontWeight: FontWeight.w600,
                       ),
@@ -126,7 +112,7 @@ class _ProfileVerificationPageState
                     const SizedBox(height: 2),
                     Text(
                       description,
-                      style: TossDesignSystem.caption.copyWith(
+                      style: DSTypography.labelSmall.copyWith(
                         color: _getSecondaryTextColor(context),
                       ),
                     ),
@@ -145,7 +131,7 @@ class _ProfileVerificationPageState
                     });
                   }
                 },
-                activeColor: TossDesignSystem.tossBlue,
+                activeColor: context.colors.accent,
               ),
             ],
           ),
@@ -162,8 +148,8 @@ class _ProfileVerificationPageState
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossDesignSystem.marginHorizontal,
-        vertical: TossDesignSystem.spacingM,
+        horizontal: DSSpacing.pageHorizontal,
+        vertical: DSSpacing.md,
       ),
       decoration: BoxDecoration(
         border: Border(
@@ -179,16 +165,16 @@ class _ProfileVerificationPageState
           Icon(
             icon,
             size: 22,
-            color: TossDesignSystem.tossBlue,
+            color: context.colors.accent,
           ),
-          const SizedBox(width: TossDesignSystem.spacingM),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TossDesignSystem.body2.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: _getTextColor(context),
                     fontWeight: FontWeight.w600,
                   ),
@@ -196,7 +182,7 @@ class _ProfileVerificationPageState
                 const SizedBox(height: 2),
                 Text(
                   description,
-                  style: TossDesignSystem.caption.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     color: _getSecondaryTextColor(context),
                   ),
                 ),
@@ -212,26 +198,26 @@ class _ProfileVerificationPageState
     // TODO: 실제 인증 로직 구현
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text(
           '준비 중',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
+          style: DSTypography.headingSmall.copyWith(
+            color: dialogContext.colors.textPrimary,
           ),
         ),
         content: Text(
           '본인 인증 기능은 곧 추가될 예정입니다.',
-          style: TossDesignSystem.body2.copyWith(
-            color: _getTextColor(context),
+          style: DSTypography.bodySmall.copyWith(
+            color: dialogContext.colors.textPrimary,
           ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: Text(
               '확인',
-              style: TossDesignSystem.button.copyWith(
-                color: TossDesignSystem.tossBlue,
+              style: DSTypography.labelMedium.copyWith(
+                color: dialogContext.colors.accent,
               ),
             ),
           ),
@@ -253,7 +239,7 @@ class _ProfileVerificationPageState
         ),
         title: Text(
           '프로필 인증',
-          style: TossDesignSystem.heading4.copyWith(
+          style: DSTypography.headingSmall.copyWith(
             color: _getTextColor(context),
           ),
         ),
@@ -266,31 +252,31 @@ class _ProfileVerificationPageState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: TossDesignSystem.spacingM),
+                    const SizedBox(height: DSSpacing.md),
 
                     // 안내 메시지
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: TossDesignSystem.marginHorizontal),
+                          horizontal: DSSpacing.pageHorizontal),
                       child: Container(
-                        padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+                        padding: const EdgeInsets.all(DSSpacing.md),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                          color: context.colors.accent.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
                           children: [
                             Icon(
                               Icons.verified_user,
-                              color: TossDesignSystem.tossBlue,
+                              color: context.colors.accent,
                               size: 20,
                             ),
-                            const SizedBox(width: TossDesignSystem.spacingS),
+                            const SizedBox(width: DSSpacing.sm),
                             Expanded(
                               child: Text(
                                 '본인 인증을 완료하면 더 많은 프리미엄 기능을 이용할 수 있습니다.',
-                                style: TossDesignSystem.caption.copyWith(
-                                  color: TossDesignSystem.tossBlue,
+                                style: DSTypography.labelSmall.copyWith(
+                                  color: context.colors.accent,
                                 ),
                               ),
                             ),
@@ -303,17 +289,17 @@ class _ProfileVerificationPageState
                     _buildSectionHeader('인증 방법 선택'),
                     Container(
                       margin: const EdgeInsets.symmetric(
-                          horizontal: TossDesignSystem.marginHorizontal),
+                          horizontal: DSSpacing.pageHorizontal),
                       decoration: BoxDecoration(
                         color: _getCardColor(context),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(DSRadius.md),
                         border: Border.all(
                           color: _getDividerColor(context),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: TossDesignSystem.black.withValues(alpha: 0.04),
+                            color: Colors.black.withValues(alpha: 0.04),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -342,17 +328,17 @@ class _ProfileVerificationPageState
                     _buildSectionHeader('인증 혜택'),
                     Container(
                       margin: const EdgeInsets.symmetric(
-                          horizontal: TossDesignSystem.marginHorizontal),
+                          horizontal: DSSpacing.pageHorizontal),
                       decoration: BoxDecoration(
                         color: _getCardColor(context),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(DSRadius.md),
                         border: Border.all(
                           color: _getDividerColor(context),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: TossDesignSystem.black.withValues(alpha: 0.04),
+                            color: Colors.black.withValues(alpha: 0.04),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -385,7 +371,7 @@ class _ProfileVerificationPageState
                       ),
                     ),
 
-                    const SizedBox(height: TossDesignSystem.spacingXXL),
+                    const SizedBox(height: DSSpacing.xxl),
                   ],
                 ),
               ),
@@ -393,7 +379,7 @@ class _ProfileVerificationPageState
 
             // 하단 인증 시작 버튼
             Container(
-              padding: const EdgeInsets.all(TossDesignSystem.marginHorizontal),
+              padding: const EdgeInsets.all(DSSpacing.pageHorizontal),
               decoration: BoxDecoration(
                 color: _getCardColor(context),
                 border: Border(
@@ -411,17 +397,17 @@ class _ProfileVerificationPageState
                   child: ElevatedButton(
                     onPressed: _handleVerification,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: TossDesignSystem.tossBlue,
-                      foregroundColor: TossDesignSystem.white,
+                      backgroundColor: context.colors.ctaBackground,
+                      foregroundColor: context.colors.ctaForeground,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(DSRadius.md),
                       ),
                     ),
                     child: Text(
                       _selectedMethod == 'phone' ? '휴대폰 인증 시작' : '신분증 인증 시작',
-                      style: TossDesignSystem.button.copyWith(
-                        color: TossDesignSystem.white,
+                      style: DSTypography.labelMedium.copyWith(
+                        color: Colors.white,
                         fontWeight: FontWeight.w700,
                       ),
                     ),

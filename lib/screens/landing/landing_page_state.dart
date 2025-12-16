@@ -9,7 +9,7 @@ import '../../services/storage_service.dart';
 import '../../core/utils/url_cleaner_stub.dart'
     if (dart.library.html) '../../core/utils/url_cleaner_web.dart';
 import '../../core/utils/profile_validation.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 
 /// State management for LandingPage
 /// Extracted from _LandingPageState to separate concerns
@@ -108,8 +108,8 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('로그인 성공!'),
-            backgroundColor: TossDesignSystem.successGreen,
+            content: const Text('로그인 성공!'),
+            backgroundColor: context.colors.success,
           ),
         );
       }
@@ -422,7 +422,7 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(message),
-            backgroundColor: TossDesignSystem.errorRed));
+            backgroundColor: context.colors.error));
 
         if (kIsWeb) {
           final cleanUrl = uri.path;

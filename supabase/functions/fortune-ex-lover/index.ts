@@ -6,11 +6,20 @@
  * @endpoint POST /fortune-ex-lover
  *
  * @requestBody
- * - userId: string - 사용자 ID
- * - userBirthDate: string - 본인 생년월일
- * - exBirthDate: string - 전 연인 생년월일
- * - breakupReason?: string - 이별 사유
- * - currentFeelings?: string - 현재 감정
+ * - name: string - 사용자 이름
+ * - ex_name?: string - 전 연인 이름/닉네임
+ * - ex_mbti?: string - 전 연인 MBTI
+ * - ex_birth_date?: string - 전 연인 생년월일
+ * - relationship_duration: string - 관계 기간
+ * - time_since_breakup: string - 이별 후 경과 시간
+ * - breakup_initiator: string - 이별 통보자 (me/them/mutual)
+ * - contact_status: string - 현재 연락 상태
+ * - breakup_reason?: string - 이별 이유 (선택지)
+ * - breakup_detail?: string - 이별 이유 상세 (자유 텍스트)
+ * - current_emotion: string - 현재 감정
+ * - main_curiosity: string - 가장 궁금한 것
+ * - chat_history?: string - 카톡/대화 내용
+ * - isPremium?: boolean - 프리미엄 사용자 여부
  *
  * @response ExLoverResponse
  * - reunion_probability: number - 재회 가능성
@@ -43,16 +52,90 @@ async function createHash(text: string): Promise<string> {
 interface ExLoverFortuneRequest {
   fortune_type?: string
   name: string
-  birth_date?: string
-  gender?: string
-  mbti?: string
+  // 상대방 정보
+  ex_name?: string
+  ex_mbti?: string
+  ex_birth_date?: string
+  // 관계 정보
   relationship_duration: string
-  breakup_reason: string
-  time_since_breakup?: string
-  current_feeling?: string
-  still_in_contact?: boolean
-  has_unresolved_feelings?: boolean
-  isPremium?: boolean // ✅ 프리미엄 사용자 여부
+  time_since_breakup: string
+  breakup_initiator: string // me, them, mutual
+  contact_status: string // blocked, noContact, sometimes, often, stillMeeting
+  // 이별 상세
+  breakup_reason?: string
+  breakup_detail?: string // STT/타이핑으로 입력한 상세 이유
+  // 감정 정보
+  current_emotion: string // miss, anger, sadness, relief, acceptance
+  main_curiosity: string // theirFeelings, reunionChance, newLove, healing
+  // 추가 정보
+  chat_history?: string // 카톡/대화 내용
+  isPremium?: boolean
+}
+
+// 한글 변환 헬퍼 함수들
+function getRelationshipDurationKorean(duration: string): string {
+  const map: Record<string, string> = {
+    'lessThan1Month': '1개월 미만',
+    '1to3Months': '1-3개월',
+    '3to6Months': '3-6개월',
+    '6to12Months': '6개월-1년',
+    '1to2Years': '1-2년',
+    '2to3Years': '2-3년',
+    'moreThan3Years': '3년 이상',
+  }
+  return map[duration] || duration
+}
+
+function getTimeSinceBreakupKorean(time: string): string {
+  const map: Record<string, string> = {
+    'recent': '1개월 미만 (매우 최근)',
+    'short': '1-3개월',
+    'medium': '3-6개월',
+    'long': '6개월-1년',
+    'verylong': '1년 이상',
+  }
+  return map[time] || time
+}
+
+function getBreakupInitiatorKorean(initiator: string): string {
+  const map: Record<string, string> = {
+    'me': '내가 먼저 이별을 말함',
+    'them': '상대가 먼저 이별을 말함',
+    'mutual': '서로 합의하에 헤어짐',
+  }
+  return map[initiator] || initiator
+}
+
+function getContactStatusKorean(status: string): string {
+  const map: Record<string, string> = {
+    'blocked': '완전 차단 상태',
+    'noContact': '연락 없음',
+    'sometimes': '가끔 연락함',
+    'often': '자주 연락함',
+    'stillMeeting': '아직 만나고 있음',
+  }
+  return map[status] || status
+}
+
+function getCurrentEmotionKorean(emotion: string): string {
+  const map: Record<string, string> = {
+    'miss': '그리움 (아직도 그 사람이 보고 싶음)',
+    'anger': '분노 (배신감과 분노를 느낌)',
+    'sadness': '슬픔 (너무 슬프고 외로움)',
+    'relief': '안도 (헤어진 게 다행)',
+    'acceptance': '받아들임 (이제는 받아들일 수 있음)',
+  }
+  return map[emotion] || emotion
+}
+
+function getMainCuriosityKorean(curiosity: string): string {
+  const map: Record<string, string> = {
+    'theirFeelings': '상대방 마음 (그 사람도 나를 생각할까?)',
+    'reunionChance': '재회 가능성 (우리 다시 만날 수 있을까?)',
+    'newLove': '새로운 사랑 (언제 새로운 사랑을 시작할까?)',
+    'healing': '치유 방법 (어떻게 마음을 치유할까?)',
+  }
+  return map[curiosity] || curiosity
 }
 
 serve(async (req) => {
@@ -70,23 +153,36 @@ serve(async (req) => {
     const requestData: ExLoverFortuneRequest = await req.json()
     const {
       name = '',
+      ex_name,
+      ex_mbti,
       relationship_duration = '',
-      breakup_reason = '',
       time_since_breakup = '',
-      current_feeling = '',
-      still_in_contact = false,
-      isPremium = false // ✅ 프리미엄 사용자 여부
+      breakup_initiator = '',
+      contact_status = '',
+      breakup_reason,
+      breakup_detail,
+      current_emotion = '',
+      main_curiosity = '',
+      chat_history,
+      isPremium = false
     } = requestData
 
     console.log('💎 [ExLover] Premium 상태:', isPremium)
 
-    if (!name || !breakup_reason) {
-      throw new Error('이름과 이별 이유를 입력해주세요.')
+    // 필수 필드 검증
+    if (!name || !relationship_duration || !breakup_initiator || !contact_status || !current_emotion || !main_curiosity) {
+      throw new Error('필수 정보를 입력해주세요.')
     }
 
-    console.log('Ex-lover fortune request:', { name, relationship_duration })
+    // breakup_detail이 없으면 에러
+    if (!breakup_detail || breakup_detail.trim() === '') {
+      throw new Error('이별 이유를 상세히 입력해주세요.')
+    }
 
-    const hash = await createHash(`${name}_${relationship_duration}_${breakup_reason}`)
+    console.log('Ex-lover fortune request:', { name, relationship_duration, breakup_initiator })
+
+    // 캐시 키 생성 (상세 내용 제외 - 재사용 가능하게)
+    const hash = await createHash(`${name}_${current_emotion}_${time_since_breakup}_${main_curiosity}_${breakup_initiator}_${contact_status}`)
     const cacheKey = `ex_lover_fortune_${hash}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
@@ -100,7 +196,7 @@ serve(async (req) => {
       console.log('Cache hit for ex-lover fortune')
       fortuneData = cachedResult.result
     } else {
-      console.log('Cache miss, calling OpenAI API')
+      console.log('Cache miss, calling LLM API')
 
       // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
       const llm = await LLMFactory.createFromConfigAsync('ex-lover')
@@ -120,6 +216,7 @@ serve(async (req) => {
 2. **공감**: 이별의 아픔에 깊이 공감하며 따뜻한 위로 전달
 3. **실용성**: 즉시 실천 가능한 구체적 조언
 4. **전문성**: 심리학 + 동양철학 용어를 적절히 혼합하되 쉽게 풀어 설명
+5. **맞춤형**: 사용자가 제공한 상세 정보(이별 이유, 대화 내용 등)를 적극 반영
 
 # 출력 형식 (반드시 JSON 형식으로)
 {
@@ -181,24 +278,59 @@ serve(async (req) => {
 
 # 주의사항
 - 사용자 정보를 면밀히 분석하여 맞춤형 조언 제공
+- 특히 이별 이유 상세(breakup_detail)와 대화 내용(chat_history)을 적극 분석하여 구체적 조언 제공
 - 모호한 점술 표현 금지 (예: "때가 되면 알게 됩니다" → 구체적 시기와 조건 명시)
 - 부정적 단정 금지 (예: "재회는 불가능합니다" → "현재 조건에서는 어려우나, ~하면 가능성이 열립니다")
 - 반드시 유효한 JSON 형식으로 출력`
 
-      const userPrompt = `# 상담 요청 정보
+      // 사용자 프롬프트 생성
+      let userPromptParts = [
+        `# 상담 요청 정보`,
+        ``,
+        `## 사용자 정보`,
+        `- 이름: ${name}`,
+        ``,
+        `## 상대방 정보`,
+        `- 이름/닉네임: ${ex_name || '미입력'}`,
+        `- MBTI: ${ex_mbti && ex_mbti !== 'unknown' ? ex_mbti : '모름'}`,
+        ``,
+        `## 관계 정보`,
+        `- 교제 기간: ${getRelationshipDurationKorean(relationship_duration)}`,
+        `- 이별 후 경과: ${getTimeSinceBreakupKorean(time_since_breakup)}`,
+        `- 이별 통보자: ${getBreakupInitiatorKorean(breakup_initiator)}`,
+        `- 현재 연락 상태: ${getContactStatusKorean(contact_status)}`,
+        ``,
+        `## 이별 이유`,
+        `${breakup_detail}`,
+        ``,
+        `## 현재 감정 상태`,
+        `${getCurrentEmotionKorean(current_emotion)}`,
+        ``,
+        `## 가장 궁금한 것`,
+        `${getMainCuriosityKorean(main_curiosity)}`,
+      ]
 
-## 사용자 정보
-- 이름: ${name}
+      // 대화 내용이 있으면 추가
+      if (chat_history && chat_history.trim() !== '') {
+        userPromptParts.push(
+          ``,
+          `## 카톡/대화 내용`,
+          `\`\`\``,
+          chat_history,
+          `\`\`\``,
+          ``,
+          `(위 대화 내용을 분석하여 두 사람의 관계 패턴, 숨겨진 감정, 재회 가능성 등을 파악해주세요)`
+        )
+      }
 
-## 관계 정보
-- 교제 기간: ${relationship_duration || '정보 없음'}
-- 이별 이유: ${breakup_reason}
-- 이별 후 경과: ${time_since_breakup || '정보 없음'}
-- 현재 감정 상태: ${current_feeling || '복잡한 감정'}
-- 연락 여부: ${still_in_contact ? '연락 유지 중' : '연락 단절'}
+      userPromptParts.push(
+        ``,
+        `위 정보를 바탕으로 전문적이고 상세한 전 애인 운세 분석을 JSON 형식으로 제공해주세요.`,
+        `특히 ${name}님의 상황에 맞는 구체적이고 실용적인 조언을 부탁드립니다.`,
+        `가장 궁금해하는 "${getMainCuriosityKorean(main_curiosity)}"에 대해 특히 자세히 분석해주세요.`
+      )
 
-위 정보를 바탕으로 전문적이고 상세한 전 애인 운세 분석을 JSON 형식으로 제공해주세요.
-특히 ${name}님의 상황에 맞는 구체적이고 실용적인 조언을 부탁드립니다.`
+      const userPrompt = userPromptParts.join('\n')
 
       const response = await llm.generate([
         {
@@ -223,7 +355,17 @@ serve(async (req) => {
         provider: response.provider,
         model: response.model,
         response: response,
-        metadata: { name, relationship_duration, breakup_reason, still_in_contact, isPremium }
+        metadata: {
+          name,
+          ex_name,
+          relationship_duration,
+          breakup_initiator,
+          contact_status,
+          current_emotion,
+          main_curiosity,
+          has_chat_history: !!chat_history,
+          isPremium
+        }
       })
 
       if (!response.content) throw new Error('LLM API 응답을 받을 수 없습니다.')
@@ -245,7 +387,8 @@ serve(async (req) => {
         fortune_type: 'ex_lover',
         name,
         relationship_duration,
-        breakup_reason,
+        breakup_initiator,
+        contact_status,
         // ✅ 무료: 공개 섹션
         score: parsedResponse.score || Math.floor(Math.random() * 25) + 70,
         overall_fortune: parsedResponse.overall_fortune || '이별은 끝이 아닌 새로운 시작입니다.',

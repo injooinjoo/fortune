@@ -7,7 +7,7 @@ import '../../../core/widgets/unified_button.dart';
 import '../../../core/widgets/unified_button_enums.dart';
 import '../../../core/theme/toss_theme.dart';
 import '../../../core/theme/toss_design_system.dart';
-import '../../../core/theme/typography_unified.dart';
+import '../../../core/design_system/design_system.dart';
 
 class CelebrityCrawlingPage extends ConsumerStatefulWidget {
   const CelebrityCrawlingPage({super.key});
@@ -90,7 +90,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               SizedBox(width: 8),
               Text(
                 '크롤링 현황',
-                style: TypographyUnified.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -147,13 +147,13 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
       children: [
         Text(
           label,
-          style: TypographyUnified.bodySmall.copyWith(
+          style: DSTypography.bodySmall.copyWith(
             color: TossDesignSystem.gray600,
           ),
         ),
         Text(
           value,
-          style: TypographyUnified.buttonMedium.copyWith(
+          style: DSTypography.labelMedium.copyWith(
             fontWeight: FontWeight.w600,
             color: color,
           ),
@@ -177,7 +177,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               SizedBox(width: 8),
               Text(
                 '단일 크롤링',
-                style: TypographyUnified.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -245,7 +245,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               SizedBox(width: 8),
               Text(
                 '일괄 크롤링',
-                style: TypographyUnified.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -336,7 +336,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               SizedBox(width: 8),
               Text(
                 _getStatusTitle(state.status),
-                style: TypographyUnified.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: statusColor,
                 ),
@@ -348,7 +348,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
           if (state.message != null)
             Text(
               state.message!,
-              style: TypographyUnified.bodySmall.copyWith(
+              style: DSTypography.bodySmall.copyWith(
                 color: TossDesignSystem.gray700,
               ),
             ),
@@ -360,13 +360,13 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               children: [
                 Text(
                   '진행률',
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: TossDesignSystem.gray600,
                   ),
                 ),
                 Text(
                   '${state.current}/${state.total}',
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -425,7 +425,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
       children: [
         Text(
           value,
-          style: TypographyUnified.heading3.copyWith(
+          style: DSTypography.headingSmall.copyWith(
             fontWeight: FontWeight.w600,
             color: color,
           ),
@@ -433,7 +433,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
         SizedBox(height: 4),
         Text(
           label,
-          style: TypographyUnified.labelMedium.copyWith(
+          style: DSTypography.labelMedium.copyWith(
             color: TossDesignSystem.gray600,
           ),
         ),

@@ -89,12 +89,14 @@ class GongMangInfo {
 class GongMangCalculator {
   GongMangCalculator._();
 
-  /// 천간 목록
+  /// 천간 목록 (참조용)
+  // ignore: unused_field
   static const List<String> _tianGan = [
     '갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'
   ];
 
-  /// 지지 목록
+  /// 지지 목록 (참조용)
+  // ignore: unused_field
   static const List<String> _diZhi = [
     '자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해'
   ];

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 
 class RecommendationsCard extends StatelessWidget {
   final List skills;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const RecommendationsCard({
     super.key,
     required this.skills,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -23,13 +22,13 @@ class RecommendationsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.school, color: TossDesignSystem.warningOrange, size: 24),
+              Icon(Icons.school, color: DSColors.warning, size: 24),
               const SizedBox(width: 8),
               Text(
                 '추천 스킬',
-                style: context.bodyLarge.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -41,15 +40,16 @@ class RecommendationsCard extends StatelessWidget {
             final name = skillMap['name'] as String? ?? '';
             final priority = skillMap['priority'] as String? ?? '';
             final reason = skillMap['reason'] as String? ?? '';
+            final priorityColor = _getPriorityColor(priority);
 
             return Container(
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: _getPriorityColor(priority).withValues(alpha: 0.05),
+                color: priorityColor.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: _getPriorityColor(priority).withValues(alpha: 0.3),
+                  color: priorityColor.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -60,21 +60,22 @@ class RecommendationsCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           name,
-                          style: context.bodyMedium.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: _getPriorityColor(priority),
+                          color: priorityColor,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           _getPriorityLabel(priority),
-                          style: context.labelSmall.copyWith(
-                            color: TossDesignSystem.white,
+                          style: DSTypography.labelSmall.copyWith(
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -83,8 +84,8 @@ class RecommendationsCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     reason,
-                    style: context.labelMedium.copyWith(
-                      color: TossDesignSystem.gray600,
+                    style: DSTypography.labelMedium.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
@@ -98,11 +99,11 @@ class RecommendationsCard extends StatelessWidget {
 
   Color _getPriorityColor(String priority) {
     switch (priority) {
-      case 'critical': return TossDesignSystem.errorRed;
-      case 'high': return TossDesignSystem.warningOrange;
-      case 'medium': return TossDesignSystem.tossBlue;
-      case 'low': return TossDesignSystem.gray600;
-      default: return TossDesignSystem.gray600;
+      case 'critical': return DSColors.error;
+      case 'high': return DSColors.warning;
+      case 'medium': return colors.accent;
+      case 'low': return colors.textSecondary;
+      default: return colors.textSecondary;
     }
   }
 

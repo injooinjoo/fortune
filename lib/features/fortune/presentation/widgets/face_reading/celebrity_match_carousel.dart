@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 
 /// Celebrity Match Carousel
 /// 닮은꼴 연예인 스와이프 캐러셀
@@ -58,11 +57,11 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
           end: Alignment.bottomRight,
           colors: isDark
               ? [
-                  TossDesignSystem.grayDark200.withValues(alpha: 0.5),
-                  TossDesignSystem.grayDark100.withValues(alpha: 0.5),
+                  DSColors.backgroundSecondary.withValues(alpha: 0.5),
+                  DSColors.surface.withValues(alpha: 0.5),
                 ]
               : [
-                  TossDesignSystem.warningOrange.withValues(alpha: 0.05),
+                  DSColors.warning.withValues(alpha: 0.05),
                   Colors.amber.withValues(alpha: 0.05),
                 ],
         ),
@@ -81,12 +80,12 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                   height: 44,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [TossDesignSystem.warningOrange, Colors.amber],
+                      colors: [DSColors.warning, Colors.amber],
                     ),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.warningOrange.withValues(alpha: 0.3),
+                        color: DSColors.warning.withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -105,20 +104,20 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                     children: [
                       Text(
                         '닮은꼴 유명인',
-                        style: TypographyUnified.heading3.copyWith(
+                        style: DSTypography.headingSmall.copyWith(
                           color: isDark
-                              ? TossDesignSystem.grayDark900
-                              : TossDesignSystem.gray900,
+                              ? DSColors.textPrimary
+                              : DSColors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '스와이프하여 더 보기',
-                        style: TypographyUnified.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: isDark
-                              ? TossDesignSystem.grayDark600
-                              : TossDesignSystem.gray600,
+                              ? DSColors.textSecondary
+                              : DSColors.textSecondary,
                         ),
                       ),
                     ],
@@ -128,13 +127,13 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
+                    color: DSColors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '${_currentPage + 1}/${widget.celebrities.length}',
-                    style: TypographyUnified.caption.copyWith(
-                      color: TossDesignSystem.warningOrange,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: DSColors.warning,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -173,10 +172,10 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                   height: 8,
                   decoration: BoxDecoration(
                     color: _currentPage == index
-                        ? TossDesignSystem.warningOrange
+                        ? DSColors.warning
                         : (isDark
-                            ? TossDesignSystem.grayDark400
-                            : TossDesignSystem.gray400),
+                            ? DSColors.textTertiary
+                            : DSColors.textTertiary),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -215,7 +214,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? TossDesignSystem.grayDark200 : Colors.white,
+          color: isDark ? DSColors.backgroundSecondary : Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -245,10 +244,10 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                         // 이름
                         Text(
                           name,
-                          style: TypographyUnified.heading3.copyWith(
+                          style: DSTypography.headingSmall.copyWith(
                             color: isDark
-                                ? TossDesignSystem.grayDark900
-                                : TossDesignSystem.gray900,
+                                ? DSColors.textPrimary
+                                : DSColors.textPrimary,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -266,7 +265,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                           ),
                           child: Text(
                             _getTypeLabel(type),
-                            style: TypographyUnified.caption.copyWith(
+                            style: DSTypography.labelSmall.copyWith(
                               color: accentColor,
                               fontWeight: FontWeight.w600,
                             ),
@@ -281,13 +280,13 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                               Icon(
                                 Icons.auto_awesome,
                                 size: 16,
-                                color: TossDesignSystem.warningOrange,
+                                color: DSColors.warning,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 '유사도 $similarityScore%',
-                                style: TypographyUnified.body2.copyWith(
-                                  color: TossDesignSystem.warningOrange,
+                                style: DSTypography.bodyMedium.copyWith(
+                                  color: DSColors.warning,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -309,16 +308,16 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: isDark
-                                      ? TossDesignSystem.grayDark300
-                                      : TossDesignSystem.gray200,
+                                      ? DSColors.border
+                                      : DSColors.surface,
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
                                   feature.trim(),
-                                  style: TypographyUnified.caption.copyWith(
+                                  style: DSTypography.labelSmall.copyWith(
                                     color: isDark
-                                        ? TossDesignSystem.grayDark700
-                                        : TossDesignSystem.gray700,
+                                        ? DSColors.textSecondary
+                                        : DSColors.textSecondary,
                                     fontSize: 11,
                                   ),
                                 ),
@@ -331,10 +330,10 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                           const SizedBox(height: 8),
                           Text(
                             reason,
-                            style: TypographyUnified.body3.copyWith(
+                            style: DSTypography.bodySmall.copyWith(
                               color: isDark
-                                  ? TossDesignSystem.grayDark700
-                                  : TossDesignSystem.gray700,
+                                  ? DSColors.textSecondary
+                                  : DSColors.textSecondary,
                               height: 1.4,
                             ),
                             maxLines: 2,
@@ -375,7 +374,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                 child: Center(
                   child: Text(
                     '${index + 1}',
-                    style: TypographyUnified.caption.copyWith(
+                    style: DSTypography.labelSmall.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w800,
                     ),
@@ -463,7 +462,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
       child: Center(
         child: Text(
           name.isNotEmpty ? name[0] : '?',
-          style: TypographyUnified.displaySmall.copyWith(
+          style: DSTypography.displaySmall.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w700,
           ),
@@ -475,16 +474,16 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
   Color _getAccentColor(String type) {
     final lowerType = type.toLowerCase();
     if (lowerType.contains('actor') || lowerType.contains('배우')) {
-      return TossDesignSystem.purple;
+      return DSColors.accentSecondary;
     } else if (lowerType.contains('singer') ||
         lowerType.contains('idol') ||
         lowerType.contains('가수') ||
         lowerType.contains('아이돌')) {
-      return TossDesignSystem.tossBlue;
+      return DSColors.accent;
     } else if (lowerType.contains('athlete') ||
         lowerType.contains('운동') ||
         lowerType.contains('스포츠')) {
-      return TossDesignSystem.successGreen;
+      return DSColors.success;
     } else if (lowerType.contains('streamer') ||
         lowerType.contains('gamer') ||
         lowerType.contains('게이머')) {
@@ -494,7 +493,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
     } else if (lowerType.contains('politician') || lowerType.contains('정치')) {
       return const Color(0xFF1ABC9C);
     } else {
-      return TossDesignSystem.warningOrange;
+      return DSColors.warning;
     }
   }
 

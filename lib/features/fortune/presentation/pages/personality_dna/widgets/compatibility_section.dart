@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/models/personality_dna_model.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'toss_section_widget.dart';
 
 class CompatibilitySection extends StatelessWidget {
@@ -55,11 +54,11 @@ class _CompatibilityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark200 : const Color(0xFFF7F8FA),
+        color: colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -69,34 +68,34 @@ class _CompatibilityCard extends StatelessWidget {
             children: [
               Text(
                 type,
-                style: TypographyUnified.bodySmall.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.textSecondaryDark : const Color(0xFF8B95A1),
+                  color: colors.textSecondary,
                 ),
               ),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue,
+                  color: colors.accent,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   mbti,
-                  style: TypographyUnified.labelMedium.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: TossDesignSystem.white,
+                    color: Colors.white,
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             description,
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               fontWeight: FontWeight.w400,
-              color: isDark ? TossDesignSystem.textPrimaryDark : const Color(0xFF191F28),
+              color: colors.textPrimary,
               height: 1.4,
             ),
           ),

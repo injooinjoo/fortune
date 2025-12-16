@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 2단계: 이사 정보 입력
 class MovingInputStep2 extends StatefulWidget {
@@ -66,19 +65,19 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: TossTheme.spacingXL),
+          const SizedBox(height: DSSpacing.xl),
           
           // 제목
           Text(
             '어디서 어디로\n이사하시나요?',
-            style: TossTheme.heading2,
+            style: DSTypography.headingMedium,
           ),
           
-          const SizedBox(height: TossTheme.spacingXXL),
+          const SizedBox(height: DSSpacing.xxl),
           
           Expanded(
             child: SingleChildScrollView(
@@ -88,99 +87,99 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
                   // 현재 거주지
                   Text(
                     '현재 살고 있는 곳',
-                    style: TossTheme.body1.copyWith(
+                    style: DSTypography.bodyLarge.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: TossTheme.spacingM),
+                  const SizedBox(height: DSSpacing.md),
                   AppCard(
                     onTap: () => _showAreaSelector(true),
-                    padding: const EdgeInsets.all(TossTheme.spacingM),
+                    padding: const EdgeInsets.all(DSSpacing.md),
                     child: Row(
                       children: [
                         Icon(
                           Icons.home_outlined,
                           color: _currentArea != null 
-                              ? TossTheme.primaryBlue 
-                              : TossTheme.textGray400,
+                              ? DSColors.accent 
+                              : DSColors.textTertiary,
                           size: 20,
                         ),
-                        const SizedBox(width: TossTheme.spacingM),
+                        const SizedBox(width: DSSpacing.md),
                         Expanded(
                           child: Text(
                             _currentArea ?? '현재 거주지를 선택하세요',
                             style: _currentArea != null
-                                ? TossTheme.inputStyle
-                                : TossTheme.hintStyle,
+                                ? DSTypography.bodyMedium
+                                : DSTypography.bodyMedium.copyWith(color: DSColors.textTertiary),
                           ),
                         ),
                         Icon(
                           Icons.chevron_right,
-                          color: TossTheme.textGray400,
+                          color: DSColors.textTertiary,
                         ),
                       ],
                     ),
                   ),
                   
-                  const SizedBox(height: TossTheme.spacingXL),
+                  const SizedBox(height: DSSpacing.xl),
                   
                   // 이사 희망지
                   Text(
                     '이사하고 싶은 곳',
-                    style: TossTheme.body1.copyWith(
+                    style: DSTypography.bodyLarge.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: TossTheme.spacingM),
+                  const SizedBox(height: DSSpacing.md),
                   AppCard(
                     onTap: () => _showAreaSelector(false),
-                    padding: const EdgeInsets.all(TossTheme.spacingM),
+                    padding: const EdgeInsets.all(DSSpacing.md),
                     child: Row(
                       children: [
                         Icon(
                           Icons.location_on_outlined,
                           color: _targetArea != null 
-                              ? TossTheme.primaryBlue 
-                              : TossTheme.textGray400,
+                              ? DSColors.accent 
+                              : DSColors.textTertiary,
                           size: 20,
                         ),
-                        const SizedBox(width: TossTheme.spacingM),
+                        const SizedBox(width: DSSpacing.md),
                         Expanded(
                           child: Text(
                             _targetArea ?? '이사할 곳을 선택하세요',
                             style: _targetArea != null
-                                ? TossTheme.inputStyle
-                                : TossTheme.hintStyle,
+                                ? DSTypography.bodyMedium
+                                : DSTypography.bodyMedium.copyWith(color: DSColors.textTertiary),
                           ),
                         ),
                         Icon(
                           Icons.chevron_right,
-                          color: TossTheme.textGray400,
+                          color: DSColors.textTertiary,
                         ),
                       ],
                     ),
                   ),
                   
-                  const SizedBox(height: TossTheme.spacingXL),
+                  const SizedBox(height: DSSpacing.xl),
                   
                   // 이사 시기
                   Text(
                     '언제 이사하시나요?',
-                    style: TossTheme.body1.copyWith(
+                    style: DSTypography.bodyLarge.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: TossTheme.spacingM),
+                  const SizedBox(height: DSSpacing.md),
                   
                   ..._periods.map((period) => Padding(
-                    padding: const EdgeInsets.only(bottom: TossTheme.spacingS),
+                    padding: const EdgeInsets.only(bottom: DSSpacing.sm),
                     child: AppCard(
                       onTap: () {
                         setState(() {
                           _movingPeriod = period['title']!;
                         });
                       },
-                      padding: const EdgeInsets.all(TossTheme.spacingM),
+                      padding: const EdgeInsets.all(DSSpacing.md),
                       child: Row(
                         children: [
                           Container(
@@ -190,34 +189,34 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: _movingPeriod == period['title']
-                                    ? TossTheme.primaryBlue
-                                    : TossTheme.borderGray300,
+                                    ? DSColors.accent
+                                    : DSColors.border,
                                 width: 2,
                               ),
                               color: _movingPeriod == period['title']
-                                  ? TossTheme.primaryBlue
-                                  : TossDesignSystem.transparent,
+                                  ? DSColors.accent
+                                  : Colors.transparent,
                             ),
                             child: _movingPeriod == period['title']
                                 ? const Icon(
                                     Icons.check,
-                                    color: TossDesignSystem.white,
+                                    color: Colors.white,
                                     size: 14,
                                   )
                                 : null,
                           ),
-                          const SizedBox(width: TossTheme.spacingM),
+                          const SizedBox(width: DSSpacing.md),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   period['title']!,
-                                  style: TossTheme.body2,
+                                  style: DSTypography.bodyMedium,
                                 ),
                                 Text(
                                   period['subtitle']!,
-                                  style: TossTheme.caption,
+                                  style: DSTypography.labelSmall,
                                 ),
                               ],
                             ),
@@ -252,7 +251,7 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.white,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
@@ -271,17 +270,17 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: TossTheme.borderGray300,
+                color: DSColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             
             // Header
             Padding(
-              padding: const EdgeInsets.all(TossTheme.spacingL),
+              padding: const EdgeInsets.all(DSSpacing.lg),
               child: Text(
                 isCurrentArea ? '현재 거주지 선택' : '이사할 곳 선택',
-                style: TossTheme.heading2,
+                style: DSTypography.headingMedium,
               ),
             ),
             
@@ -295,7 +294,7 @@ class _MovingInputStep2State extends State<MovingInputStep2> {
                   return ListTile(
                     title: Text(
                       area,
-                      style: TossTheme.body2,
+                      style: DSTypography.bodyMedium,
                     ),
                     onTap: () {
                       setState(() {

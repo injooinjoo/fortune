@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../domain/models/saju/sinsal_data.dart';
@@ -47,38 +46,38 @@ class SajuSinsalWidget extends StatelessWidget {
         sinsals.where((s) => s.category == SinsalCategory.neutral).toList();
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
             _buildTitle(isDark),
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
           ],
           // 길신 섹션
           if (luckySinsals.isNotEmpty) ...[
             _buildSectionHeader('길신', '吉神', SinsalCategory.lucky, isDark),
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             ...luckySinsals.map((s) => _buildSinsalItem(s, isDark)),
-            const SizedBox(height: TossTheme.spacingM),
+            const SizedBox(height: DSSpacing.md),
           ],
           // 중립 섹션 (도화살 등)
           if (neutralSinsals.isNotEmpty) ...[
             _buildSectionHeader('중립', '中立', SinsalCategory.neutral, isDark),
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             ...neutralSinsals.map((s) => _buildSinsalItem(s, isDark)),
-            const SizedBox(height: TossTheme.spacingM),
+            const SizedBox(height: DSSpacing.md),
           ],
           // 흉신 섹션
           if (unluckySinsals.isNotEmpty) ...[
             _buildSectionHeader('흉신', '凶神', SinsalCategory.unlucky, isDark),
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             ...unluckySinsals.map((s) => _buildSinsalItem(s, isDark)),
           ],
           // 종합 해석
           if (sinsals.isNotEmpty) ...[
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
             _buildSummary(luckySinsals.length, unluckySinsals.length, isDark),
           ],
         ],
@@ -91,25 +90,25 @@ class SajuSinsalWidget extends StatelessWidget {
       children: [
         Icon(
           Icons.stars_outlined,
-          color: TossTheme.brandBlue,
+          color: DSColors.accent,
           size: 20,
         ),
-        const SizedBox(width: TossTheme.spacingXS),
+        const SizedBox(width: DSSpacing.xs),
         Row(
           children: [
             Text(
               '신살',
-              style: TossTheme.heading3.copyWith(
+              style: DSTypography.headingMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(width: 4),
             Text(
               '神殺',
-              style: TossTheme.caption.copyWith(
+              style: DSTypography.labelSmall.copyWith(
                 color: isDark
-                    ? TossTheme.textGray400
-                    : TossTheme.textGray600,
+                    ? DSColors.textTertiary
+                    : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -129,12 +128,12 @@ class SajuSinsalWidget extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingM,
-        vertical: TossTheme.spacingS,
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
       ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: color.withValues(alpha: 0.3),
           width: 1,
@@ -152,10 +151,10 @@ class SajuSinsalWidget extends StatelessWidget {
             color: color,
             size: 16,
           ),
-          const SizedBox(width: TossTheme.spacingXS),
+          const SizedBox(width: DSSpacing.xs),
           Text(
             title,
-            style: TossTheme.body2.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -163,7 +162,7 @@ class SajuSinsalWidget extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             hanja,
-            style: TossTheme.caption.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               color: color.withValues(alpha: 0.8),
               fontWeight: FontWeight.w500,
             ),
@@ -177,13 +176,13 @@ class SajuSinsalWidget extends StatelessWidget {
     final color = sinsal.getColor(isDark: isDark);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: TossTheme.spacingXS),
-      padding: const EdgeInsets.all(TossTheme.spacingS),
+      margin: const EdgeInsets.only(bottom: DSSpacing.xs),
+      padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
-            ? TossDesignSystem.cardBackgroundDark
-            : TossTheme.backgroundPrimary,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+            ? DSColors.surface
+            : DSColors.background,
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: color.withValues(alpha: 0.3),
           width: 1,
@@ -200,7 +199,7 @@ class SajuSinsalWidget extends StatelessWidget {
                 height: 36,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(TossTheme.radiusS),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
                 ),
                 child: Center(
                   child: Text(
@@ -215,7 +214,7 @@ class SajuSinsalWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: TossTheme.spacingS),
+              const SizedBox(width: DSSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,7 +223,7 @@ class SajuSinsalWidget extends StatelessWidget {
                       children: [
                         Text(
                           sinsal.name,
-                          style: TossTheme.body2.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             fontWeight: FontWeight.bold,
                             color: color,
                           ),
@@ -232,10 +231,10 @@ class SajuSinsalWidget extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           sinsal.hanja,
-                          style: TossTheme.caption.copyWith(
+                          style: DSTypography.labelSmall.copyWith(
                             color: isDark
-                                ? TossTheme.textGray400
-                                : TossTheme.textGray600,
+                                ? DSColors.textTertiary
+                                : DSColors.textSecondary,
                             fontSize: 10,
                           ),
                         ),
@@ -243,10 +242,10 @@ class SajuSinsalWidget extends StatelessWidget {
                     ),
                     Text(
                       sinsal.meaning,
-                      style: TossTheme.caption.copyWith(
+                      style: DSTypography.labelSmall.copyWith(
                         color: isDark
-                            ? TossDesignSystem.grayDark600
-                            : TossDesignSystem.gray700,
+                            ? DSColors.textTertiary
+                            : DSColors.textSecondary,
                         fontWeight: FontWeight.w500,
                         fontSize: 11,
                       ),
@@ -267,7 +266,7 @@ class SajuSinsalWidget extends StatelessWidget {
                   ),
                   child: Text(
                     sinsal.position!,
-                    style: TossTheme.caption.copyWith(
+                    style: DSTypography.labelSmall.copyWith(
                       color: color,
                       fontWeight: FontWeight.bold,
                       fontSize: 10,
@@ -277,44 +276,44 @@ class SajuSinsalWidget extends StatelessWidget {
             ],
           ),
           if (showDetails) ...[
-            const SizedBox(height: TossTheme.spacingXS),
+            const SizedBox(height: DSSpacing.xs),
             // 상세 설명
             Text(
               sinsal.description,
-              style: TossTheme.caption.copyWith(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              style: DSTypography.labelSmall.copyWith(
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontSize: 11,
               ),
             ),
-            const SizedBox(height: TossTheme.spacingXS),
+            const SizedBox(height: DSSpacing.xs),
             // 해소/활용법
             Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: TossTheme.spacingS,
-                vertical: TossTheme.spacingXS,
+                horizontal: DSSpacing.sm,
+                vertical: DSSpacing.xs,
               ),
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.black.withValues(alpha: 0.2)
                     : Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(TossTheme.radiusS),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
-                    color: TossTheme.warning,
+                    color: DSColors.warning,
                     size: 12,
                   ),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       sinsal.remedy,
-                      style: TossTheme.caption.copyWith(
+                      style: DSTypography.labelSmall.copyWith(
                         color: isDark
-                            ? TossDesignSystem.grayDark600
-                            : TossDesignSystem.gray700,
+                            ? DSColors.textTertiary
+                            : DSColors.textSecondary,
                         fontSize: 10,
                       ),
                     ),
@@ -353,8 +352,8 @@ class SajuSinsalWidget extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossTheme.spacingS,
-        vertical: TossTheme.spacingXS,
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -365,7 +364,7 @@ class SajuSinsalWidget extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: summaryColor.withValues(alpha: 0.3),
           width: 1,
@@ -378,13 +377,13 @@ class SajuSinsalWidget extends StatelessWidget {
             color: summaryColor,
             size: 18,
           ),
-          const SizedBox(width: TossTheme.spacingS),
+          const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Text(
               summaryText,
-              style: TossTheme.caption.copyWith(
+              style: DSTypography.labelSmall.copyWith(
                 color:
-                    isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                    isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontSize: 11,
               ),
             ),

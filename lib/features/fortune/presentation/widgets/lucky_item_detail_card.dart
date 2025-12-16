@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/constants/fortune_detailed_metadata.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class LuckyItemDetailCard extends StatefulWidget {
   final String mainLuckyItem;
@@ -29,11 +27,11 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeader(context),
-        const SizedBox(height: AppSpacing.spacing6),
+        const SizedBox(height: 24),
         _buildMainItemDisplay(context),
-        const SizedBox(height: AppSpacing.spacing6),
+        const SizedBox(height: 24),
         _buildCategoryTabs(context, categories),
-        const SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: 16),
         _buildCategoryGrid(context, categories)
       ]
     );
@@ -41,7 +39,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: AppSpacing.paddingHorizontal16,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -49,11 +47,11 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
             '오늘의 행운 아이템',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold)),
-          const SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: 8),
           Text(
             '작은 아이템이 큰 행운을 가져다줄 거예요',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: TossDesignSystem.gray600))
+                  color: DSColors.textSecondary))
         ])
     );
   }
@@ -62,24 +60,24 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
     return Center(
       child: GlassCard(
         child: Container(
-          padding: const EdgeInsets.all(AppSpacing.spacing8),
+          padding: const EdgeInsets.all(32),
           child: Column(
             children: [
               Container(
                 width: 120,
-                height: AppSpacing.spacing24 * 1.25,
+                height: 96 * 1.25,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      TossDesignSystem.purple.withValues(alpha: 0.8),
-                      TossDesignSystem.purple
+                      DSColors.accentSecondary.withValues(alpha: 0.8),
+                      DSColors.accentSecondary
                     ]),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.purple.withValues(alpha: 0.3),
+                      color: DSColors.accentSecondary.withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 10))
                   ]),
@@ -87,33 +85,33 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   child: Icon(
                     _getItemIcon(widget.mainLuckyItem),
                     size: 60,
-                    color: TossDesignSystem.white))),
-              const SizedBox(height: AppSpacing.spacing4),
+                    color: Colors.white))),
+              const SizedBox(height: 16),
               Text(
                 widget.mainLuckyItem,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold)),
-              const SizedBox(height: AppSpacing.spacing2),
+              const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      TossDesignSystem.purple.withValues(alpha: 0.1),
-                      TossDesignSystem.purple.withValues(alpha: 0.1)]),
-                  borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge)),
+                      DSColors.accentSecondary.withValues(alpha: 0.1),
+                      DSColors.accentSecondary.withValues(alpha: 0.1)]),
+                  borderRadius: BorderRadius.circular(DSRadius.xl)),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.auto_awesome,
                       size: 16,
-                      color: TossDesignSystem.purple),
-                    const SizedBox(width: AppSpacing.spacing1),
+                      color: DSColors.accentSecondary),
+                    const SizedBox(width: 4),
                     Text(
                       '오늘의 핵심 아이템',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: TossDesignSystem.purple,
+                            color: DSColors.accentSecondary,
                             fontWeight: FontWeight.w600))
                   ])
               )
@@ -128,16 +126,16 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
     BuildContext context,
     Map<String, LuckyItemCategory> categories) {
     return SizedBox(
-      height: AppDimensions.buttonHeightSmall,
+      height: 36,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: AppSpacing.paddingHorizontal16,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: categories.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) {
             final isSelected = _selectedCategory == null;
             return Padding(
-              padding: const EdgeInsets.only(right: AppSpacing.spacing2),
+              padding: const EdgeInsets.only(right: 8),
               child: FilterChip(
                 label: Text('전체'),
                 selected: isSelected,
@@ -146,10 +144,10 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     _selectedCategory = null;
                   });
                 },
-                backgroundColor: TossDesignSystem.gray100,
-                selectedColor: TossDesignSystem.purple,
+                backgroundColor: DSColors.backgroundSecondary,
+                selectedColor: DSColors.accentSecondary,
                 labelStyle: TextStyle(
-                  color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray900,
+                  color: isSelected ? Colors.white : DSColors.textPrimary,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
           }
 
@@ -158,7 +156,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
           final isSelected = _selectedCategory == categoryKey;
 
           return Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.spacing2),
+            padding: const EdgeInsets.only(right: 8),
             child: FilterChip(
               label: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -166,8 +164,8 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   Icon(
                     category.icon,
                     size: 16,
-                    color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray900),
-                  const SizedBox(width: AppSpacing.spacing1),
+                    color: isSelected ? Colors.white : DSColors.textPrimary),
+                  const SizedBox(width: 4),
                   Text(category.title)
                 ]),
               selected: isSelected,
@@ -176,10 +174,10 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   _selectedCategory = categoryKey;
                 });
               },
-              backgroundColor: TossDesignSystem.gray100,
-              selectedColor: TossDesignSystem.purple,
+              backgroundColor: DSColors.backgroundSecondary,
+              selectedColor: DSColors.accentSecondary,
               labelStyle: TextStyle(
-                color: isSelected ? TossDesignSystem.white : TossDesignSystem.gray900,
+                color: isSelected ? Colors.white : DSColors.textPrimary,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
         })
     );
@@ -195,7 +193,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: AppSpacing.paddingHorizontal16,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12,
@@ -221,27 +219,27 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
     return GlassCard(
       child: InkWell(
         onTap: () => _showCategoryDetail(context, category, items),
-        borderRadius: AppDimensions.borderRadiusLarge,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
         child: Padding(
-          padding: AppSpacing.paddingAll16,
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   Container(
-                    padding: AppSpacing.paddingAll8,
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          TossDesignSystem.purple.withValues(alpha: 0.1),
-                          TossDesignSystem.purple.withValues(alpha: 0.1)]),
-                      borderRadius: AppDimensions.borderRadiusSmall),
+                          DSColors.accentSecondary.withValues(alpha: 0.1),
+                          DSColors.accentSecondary.withValues(alpha: 0.1)]),
+                      borderRadius: BorderRadius.circular(DSRadius.sm)),
                     child: Icon(
                       category.icon,
                       size: 24,
-                      color: TossDesignSystem.purple)),
-                  const SizedBox(width: AppSpacing.spacing3),
+                      color: DSColors.accentSecondary)),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       category.title,
@@ -250,29 +248,29 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis))
                 ]),
-              const SizedBox(height: AppSpacing.spacing3),
+              const SizedBox(height: 12),
               if (items.isNotEmpty) ...[
                 Row(
                   children: [
                     Icon(
                       _getItemIcon(items.first.value),
                       size: 20,
-                      color: TossDesignSystem.purple),
-                    const SizedBox(width: AppSpacing.spacing2),
+                      color: DSColors.accentSecondary),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         items.first.value,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: TossDesignSystem.purple,
+                              color: DSColors.accentSecondary,
                               fontWeight: FontWeight.w600),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis))
                   ]),
-                const SizedBox(height: AppSpacing.spacing1),
+                const SizedBox(height: 4),
                 Text(
                   items.first.reason,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: TossDesignSystem.gray600,
+                        color: DSColors.textSecondary,
                         fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis)
@@ -281,7 +279,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   child: Text(
                     category.description,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: TossDesignSystem.gray600),
+                          color: DSColors.textSecondary),
                     maxLines: 4,
                     overflow: TextOverflow.ellipsis)),
               const Spacer(),
@@ -292,7 +290,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     Text(
                       '${items.length}개 아이템',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: TossDesignSystem.gray500,
+                            color: DSColors.textTertiary,
                             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
                   else
                     const SizedBox(),
@@ -301,13 +299,13 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                       Text(
                         '자세히',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: TossDesignSystem.purple,
+                              color: DSColors.accentSecondary,
                               fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
-                      const SizedBox(width: AppSpacing.spacing1),
+                      const SizedBox(width: 4),
                       Icon(
                         Icons.arrow_forward_ios,
                         size: 12,
-                        color: TossDesignSystem.purple)
+                        color: DSColors.accentSecondary)
                     ]
                   )
                 ]
@@ -326,7 +324,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.75,
         minChildSize: 0.5,
@@ -340,18 +338,18 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
             children: [
               Container(
                 width: 40,
-                height: AppSpacing.spacing1,
-                margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
+                height: 4,
+                margin: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.gray500.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+                  color: DSColors.textTertiary.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2 * 0.5))),
               Expanded(
                 child: ListView(
                   controller: scrollController,
-                  padding: AppSpacing.paddingAll24,
+                  padding: const EdgeInsets.all(24),
                   children: [
                     _buildDetailHeader(context, category),
-                    const SizedBox(height: AppSpacing.spacing6),
+                    const SizedBox(height: 24),
                     if (items.isEmpty) ...[
                       _buildExampleItems(context, category)
                     ] else ...[
@@ -368,33 +366,33 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
 
   Widget _buildDetailHeader(BuildContext context, LuckyItemCategory category) {
     return Container(
-      padding: AppSpacing.paddingAll20,
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            TossDesignSystem.purple.withValues(alpha: 0.1),
-            TossDesignSystem.purple.withValues(alpha: 0.05)]),
-        borderRadius: AppDimensions.borderRadiusLarge),
+            DSColors.accentSecondary.withValues(alpha: 0.1),
+            DSColors.accentSecondary.withValues(alpha: 0.05)]),
+        borderRadius: BorderRadius.circular(DSRadius.lg)),
       child: Row(
         children: [
           Container(
-            padding: AppSpacing.paddingAll16,
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.white,
+              color: Colors.white,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: TossDesignSystem.purple.withValues(alpha: 0.2),
+                  color: DSColors.accentSecondary.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 4))
               ]),
             child: Icon(
               category.icon,
               size: 36,
-              color: TossDesignSystem.purple)),
-          const SizedBox(width: AppSpacing.spacing5),
+              color: DSColors.accentSecondary)),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -403,11 +401,11 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   category.title,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold)),
-                const SizedBox(height: AppSpacing.spacing1),
+                const SizedBox(height: 4),
                 Text(
                   category.description,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: TossDesignSystem.gray600))
+                        color: DSColors.textSecondary))
               ]
             )
           )
@@ -426,23 +424,23 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
           '추천 아이템 예시',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold)),
-        const SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: 16),
         ...category.examples.map(
           (example) => Container(
-            margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.gray100,
-              borderRadius: AppDimensions.borderRadiusMedium),
+              color: DSColors.backgroundSecondary,
+              borderRadius: BorderRadius.circular(DSRadius.md)),
             child: Row(
               children: [
                 Container(
                   width: 8,
-                  height: AppSpacing.spacing2,
+                  height: 8,
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.purple,
+                    color: DSColors.accentSecondary,
                     shape: BoxShape.circle)),
-                const SizedBox(width: AppSpacing.spacing3),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     example,
@@ -463,7 +461,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
           '오늘의 추천 아이템 (${items.length}개)',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold)),
-        const SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: 16),
         ...items.asMap().entries.map(
           (entry) => _buildDetailItem(context, entry.value, index: entry.key + 1))
       ]
@@ -472,13 +470,13 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
 
   Widget _buildDetailItem(BuildContext context, DetailedLuckyItem item, {int? index}) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.spacing4),
+      margin: const EdgeInsets.only(bottom: 16),
       child: GlassCard(
         child: InkWell(
           onTap: () => _showItemDetail(context, item),
-          borderRadius: AppDimensions.borderRadiusLarge,
+          borderRadius: BorderRadius.circular(DSRadius.lg),
           child: Padding(
-            padding: AppSpacing.paddingAll16,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -486,21 +484,21 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   children: [
                     Container(
                       width: 56,
-                      height: AppDimensions.buttonHeightLarge,
+                      height: 56,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            TossDesignSystem.purple.withValues(alpha: 0.1),
-                            TossDesignSystem.purple.withValues(alpha: 0.2)]),
-                        borderRadius: AppDimensions.borderRadiusMedium),
+                            DSColors.accentSecondary.withValues(alpha: 0.1),
+                            DSColors.accentSecondary.withValues(alpha: 0.2)]),
+                        borderRadius: BorderRadius.circular(DSRadius.md)),
                       child: Center(
                         child: Icon(
                           _getItemIcon(item.value),
                           size: 32,
-                          color: TossDesignSystem.purple))),
-                    const SizedBox(width: AppSpacing.spacing4),
+                          color: DSColors.accentSecondary))),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -510,16 +508,16 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                               if (index != null)
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.spacing2,
-                                    vertical: AppSpacing.spacing0 * 0.5),
-                                  margin: const EdgeInsets.only(right: AppSpacing.spacing2),
+                                    horizontal: 8,
+                                    vertical: 2 * 0.5),
+                                  margin: const EdgeInsets.only(right: 8),
                                   decoration: BoxDecoration(
-                                    color: TossDesignSystem.purple.withValues(alpha: 0.1),
-                                    borderRadius: AppDimensions.borderRadiusMedium),
+                                    color: DSColors.accentSecondary.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(DSRadius.md)),
                                   child: Text(
                                     '$index',
                                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                          color: TossDesignSystem.purple,
+                                          color: DSColors.accentSecondary,
                                           fontWeight: FontWeight.bold,
                                           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))),
                               Expanded(
@@ -528,33 +526,33 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                         fontWeight: FontWeight.bold)))
                             ]),
-                          const SizedBox(height: AppSpacing.spacing1),
+                          const SizedBox(height: 4),
                           Row(
                             children: [
                               if (item.priority != null)
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.spacing2,
-                                    vertical: AppSpacing.spacing0 * 0.5),
+                                    horizontal: 8,
+                                    vertical: 2 * 0.5),
                                   decoration: BoxDecoration(
                                     color: _getPriorityColor(item.priority!),
-                                    borderRadius: AppDimensions.borderRadiusMedium),
+                                    borderRadius: BorderRadius.circular(DSRadius.md)),
                                   child: Text(
                                     _getPriorityText(item.priority!),
                                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                          color: TossDesignSystem.white,
+                                          color: Colors.white,
                                           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))),
                               if (item.timeRange != null) ...[
-                                if (item.priority != null) const SizedBox(width: AppSpacing.spacing2),
+                                if (item.priority != null) const SizedBox(width: 8),
                                 Icon(
                                   Icons.access_time,
                                   size: 14,
-                                  color: TossDesignSystem.gray600),
-                                const SizedBox(width: AppSpacing.spacing1),
+                                  color: DSColors.textSecondary),
+                                const SizedBox(width: 4),
                                 Text(
                                   item.timeRange!,
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: TossDesignSystem.gray600,
+                                        color: DSColors.textSecondary,
                                         fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
                               ]
                             ]
@@ -565,13 +563,13 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     Icon(
                       Icons.arrow_forward_ios,
                       size: 16,
-                      color: TossDesignSystem.gray400)
+                      color: DSColors.textTertiary)
                   ]),
-                const SizedBox(height: AppSpacing.spacing3),
+                const SizedBox(height: 12),
                 Text(
                   item.reason,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: TossDesignSystem.gray700),
+                        color: DSColors.textSecondary),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis)
               ]
@@ -587,110 +585,110 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
       context: context,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge)),
+          borderRadius: BorderRadius.circular(DSRadius.xl)),
         child: Container(
-          padding: AppSpacing.paddingAll24,
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 width: 80,
-                height: AppSpacing.spacing20,
+                height: 80,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      TossDesignSystem.purple.withValues(alpha: 0.2),
-                      TossDesignSystem.purple.withValues(alpha: 0.3)]),
+                      DSColors.accentSecondary.withValues(alpha: 0.2),
+                      DSColors.accentSecondary.withValues(alpha: 0.3)]),
                   shape: BoxShape.circle),
                 child: Center(
                   child: Icon(
                     _getItemIcon(item.value),
                     size: 48,
-                    color: TossDesignSystem.purple))),
-              const SizedBox(height: AppSpacing.spacing5),
+                    color: DSColors.accentSecondary))),
+              const SizedBox(height: 20),
               Text(
                 item.value,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center),
               if (item.priority != null) ...[
-                const SizedBox(height: AppSpacing.spacing3),
+                const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.spacing4,
-                    vertical: AppSpacing.spacing1 * 1.5),
+                    horizontal: 16,
+                    vertical: 4 * 1.5),
                   decoration: BoxDecoration(
                     color: _getPriorityColor(item.priority!),
-                    borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge)),
+                    borderRadius: BorderRadius.circular(DSRadius.xl)),
                   child: Text(
                     _getPriorityText(item.priority!),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold)))
               ],
-              const SizedBox(height: AppSpacing.spacing5),
+              const SizedBox(height: 20),
               Text(
                 item.reason,
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center),
               if (item.timeRange != null) ...[
-                const SizedBox(height: AppSpacing.spacing4),
+                const SizedBox(height: 16),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.spacing5,
-                    vertical: AppSpacing.spacing2),
+                    horizontal: 20,
+                    vertical: 8),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.primaryBlue.withValues(alpha: 0.1),
-                    borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge)),
+                    color: DSColors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(DSRadius.xl)),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         Icons.access_time,
                         size: 18,
-                        color: TossDesignSystem.primaryBlue),
-                      const SizedBox(width: AppSpacing.spacing2),
+                        color: DSColors.accent),
+                      const SizedBox(width: 8),
                       Text(
                         item.timeRange!,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: TossDesignSystem.primaryBlue,
+                              color: DSColors.accent,
                               fontWeight: FontWeight.w500))
                     ]
                   )
                 )
               ],
               if (item.situation != null) ...[
-                const SizedBox(height: AppSpacing.spacing3),
+                const SizedBox(height: 12),
                 Container(
-                  padding: AppSpacing.paddingAll12,
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.warningOrange.withValues(alpha: 0.1),
-                    borderRadius: AppDimensions.borderRadiusMedium),
+                    color: DSColors.warning.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(DSRadius.md)),
                   child: Row(
                     children: [
                       Icon(
                         Icons.tips_and_updates,
                         size: 18,
-                        color: TossDesignSystem.warningOrange),
-                      const SizedBox(width: AppSpacing.spacing2),
+                        color: DSColors.warning),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           item.situation!,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: TossDesignSystem.warningOrange)))
+                                color: DSColors.warning)))
                     ]
                   )
                 )
               ],
-              const SizedBox(height: AppSpacing.spacing6),
+              const SizedBox(height: 24),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.spacing8,
-                    vertical: AppSpacing.spacing3)),
+                    horizontal: 32,
+                    vertical: 12)),
                 child: const Text('닫기'))
             ]
           )
@@ -746,13 +744,13 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
   Color _getPriorityColor(int priority) {
     switch (priority) {
       case 1:
-        return TossDesignSystem.errorRed;
+        return DSColors.error;
       case 2:
-        return TossDesignSystem.warningOrange;
+        return DSColors.warning;
       case 3:
-        return TossDesignSystem.successGreen;
+        return DSColors.success;
       default:
-        return TossDesignSystem.gray500;
+        return DSColors.textTertiary;
     }
   }
 

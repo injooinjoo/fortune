@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../data/models/celebrity_simple.dart';
 
 class CategorySelectionStep extends StatelessWidget {
@@ -17,7 +15,7 @@ class CategorySelectionStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -26,17 +24,17 @@ class CategorySelectionStep extends StatelessWidget {
         children: [
           Text(
             '어떤 분야의 유명인과\n궁합을 보고 싶으신가요?',
-            style: TypographyUnified.heading1.copyWith(
+            style: DSTypography.headingLarge.copyWith(
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              color: colors.textPrimary,
               height: 1.3,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             '관심 있는 분야를 선택해주세요',
-            style: TypographyUnified.bodySmall.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
+            style: DSTypography.bodySmall.copyWith(
+              color: colors.textSecondary,
               height: 1.4,
             ),
           ),
@@ -136,16 +134,16 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.08) : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundWhite),
+          color: isSelected ? colors.accent.withValues(alpha: 0.08) : colors.surface,
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+            color: isSelected ? colors.accent : colors.border,
             width: isSelected ? 1.5 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
@@ -156,12 +154,12 @@ class CategoryCard extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
+                color: isSelected ? colors.accent : colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
-                color: isSelected ? TossDesignSystem.white : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500),
+                color: isSelected ? Colors.white : colors.textSecondary,
                 size: 22,
               ),
             ),
@@ -172,16 +170,16 @@ class CategoryCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TypographyUnified.heading4.copyWith(
+                    style: DSTypography.headingSmall.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                      color: isSelected ? colors.accent : colors.textPrimary,
                     ),
                   ),
                   SizedBox(height: 2),
                   Text(
                     description,
-                    style: TypographyUnified.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
@@ -190,7 +188,7 @@ class CategoryCard extends StatelessWidget {
             if (isSelected)
               Icon(
                 Icons.check_circle,
-                color: TossTheme.primaryBlue,
+                color: colors.accent,
                 size: 24,
               ),
           ],

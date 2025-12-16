@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 
 class CardImagePage extends StatelessWidget {
@@ -19,7 +19,7 @@ class CardImagePage extends StatelessWidget {
     return ScaleTransition(
       scale: scaleAnimation,
       child: Padding(
-        padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
             // Card image
@@ -29,10 +29,10 @@ class CardImagePage extends StatelessWidget {
                   constraints: const BoxConstraints(maxWidth: 300),
                   decoration: BoxDecoration(
                     borderRadius:
-                        BorderRadius.circular(TossDesignSystem.radiusL),
+                        BorderRadius.circular(DSRadius.lg),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.purple.withValues(alpha: 0.3),
+                        color: DSColors.accentSecondary.withValues(alpha: 0.3),
                         blurRadius: 20,
                         spreadRadius: 5,
                       )
@@ -40,7 +40,7 @@ class CardImagePage extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius:
-                        BorderRadius.circular(TossDesignSystem.radiusL),
+                        BorderRadius.circular(DSRadius.lg),
                     child: Image.asset(
                       'assets/images/tarot/$imagePath',
                       fit: BoxFit.contain,
@@ -50,15 +50,15 @@ class CardImagePage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingL),
+            const SizedBox(height: 24),
 
             // Basic info
             GlassContainer(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingS),
+              padding: const EdgeInsets.all(8),
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.purple.withValues(alpha: 0.1),
-                  TossDesignSystem.primaryBlue.withValues(alpha: 0.1)
+                  DSColors.accentSecondary.withValues(alpha: 0.1),
+                  DSColors.accent.withValues(alpha: 0.1)
                 ],
               ),
               child: Row(
@@ -101,12 +101,12 @@ class CardImagePage extends StatelessWidget {
   }) {
     return Column(
       children: [
-        Icon(icon, color: TossDesignSystem.purple, size: 24),
-        const SizedBox(height: TossDesignSystem.spacingXXS),
+        Icon(icon, color: DSColors.accentSecondary, size: 24),
+        const SizedBox(height: 4),
         Text(
           label,
           style: TextStyle(
-            color: TossDesignSystem.white.withValues(alpha: 0.7),
+            color: Colors.white.withValues(alpha: 0.7),
             fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
           ),
         ),

@@ -10,14 +10,12 @@ import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../presentation/providers/ad_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
-import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
-import '../../../../core/theme/toss_design_system.dart';
 import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/fortune_loading_skeleton.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/conditions/family_fortune_conditions.dart';
 
 // 5가지 가족 운세 관심사
@@ -113,9 +111,9 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundSecondary,
+      backgroundColor: colors.background,
       appBar: const StandardFortuneAppBar(
         title: '가족 운세',
       ),
@@ -159,47 +157,47 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
   // Step 1: 주요 관심사 선택
   Widget _buildStep1ConcernSelection() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '가장 궁금한\n가족 운세를 선택해주세요',
-            style: TypographyUnified.displaySmall.copyWith(
+            style: DSTypography.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              color: colors.textPrimary,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '가족의 행복과 안녕을 위한 맞춤 운세를 제공해드려요',
-            style: TypographyUnified.buttonMedium.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+            style: DSTypography.buttonMedium.copyWith(
+              color: colors.textSecondary,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: DSSpacing.xxl),
 
           ...FamilyConcern.values.map((concern) {
             final isSelected = _selectedConcern == concern;
             return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.only(bottom: DSSpacing.md),
               child: GestureDetector(
                 onTap: () => setState(() => _selectedConcern = concern),
                 child: Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(DSSpacing.lg),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? concern.gradientColors[0].withValues(alpha: 0.05)
-                        : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.backgroundPrimary),
+                        : colors.surface,
                     border: Border.all(
                       color: isSelected
                           ? concern.gradientColors[0]
-                          : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                          : colors.border,
                       width: isSelected ? 2 : 1,
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                   ),
                   child: Row(
                     children: [
@@ -208,31 +206,31 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                         height: 48,
                         decoration: BoxDecoration(
                           color: concern.gradientColors[0].withValues(alpha: isSelected ? 1.0 : 0.1),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(DSRadius.md),
                         ),
                         child: Icon(
                           concern.icon,
-                          color: isSelected ? TossDesignSystem.white : concern.gradientColors[0],
+                          color: isSelected ? Colors.white : concern.gradientColors[0],
                           size: 24,
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: DSSpacing.md),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               concern.label,
-                              style: TypographyUnified.heading4.copyWith(
+                              style: DSTypography.labelLarge.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                                color: colors.textPrimary,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: DSSpacing.xs),
                             Text(
                               concern.description,
-                              style: TypographyUnified.bodySmall.copyWith(
-                                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                              style: DSTypography.labelSmall.copyWith(
+                                color: colors.textSecondary,
                               ),
                             ),
                           ],
@@ -260,12 +258,12 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
   Widget _buildStep2DetailedQuestions() {
     if (_selectedConcern == null) return const SizedBox.shrink();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final questions = concernQuestions[_selectedConcern]!;
     final concernColor = _selectedConcern!.gradientColors[0];
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -280,26 +278,26 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                 ),
                 child: Icon(_selectedConcern!.icon, color: concernColor, size: 22),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: DSSpacing.md),
               Expanded(
                 child: Text(
                   '${_selectedConcern!.label}에서\n궁금한 점을 선택해주세요',
-                  style: TypographyUnified.heading3.copyWith(
+                  style: DSTypography.headingSmall.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '최대 3개까지 선택할 수 있어요',
-            style: TypographyUnified.buttonMedium.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+            style: DSTypography.buttonMedium.copyWith(
+              color: colors.textSecondary,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: DSSpacing.xxl),
 
           ...questions.map((question) {
             final questionId = question['id']!;
@@ -307,7 +305,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
             final canSelect = _selectedQuestions.length < 3 || isSelected;
 
             return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.only(bottom: DSSpacing.md),
               child: GestureDetector(
                 onTap: canSelect
                     ? () {
@@ -326,14 +324,14 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   decoration: BoxDecoration(
                     color: isSelected
                         ? concernColor.withValues(alpha: 0.05)
-                        : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.backgroundPrimary),
+                        : colors.surface,
                     border: Border.all(
                       color: isSelected
                           ? concernColor
-                          : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                          : colors.border,
                       width: isSelected ? 2 : 1,
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                   ),
                   child: Row(
                     children: [
@@ -343,24 +341,24 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                         decoration: BoxDecoration(
                           color: isSelected ? concernColor : Colors.transparent,
                           border: Border.all(
-                            color: isSelected ? concernColor : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400),
+                            color: isSelected ? concernColor : colors.textTertiary,
                             width: 2,
                           ),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: isSelected
-                            ? Icon(Icons.check, color: TossDesignSystem.white, size: 16)
+                            ? const Icon(Icons.check, color: Colors.white, size: 16)
                             : null,
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: DSSpacing.md),
                       Expanded(
                         child: Text(
                           question['label']!,
-                          style: TypographyUnified.buttonMedium.copyWith(
+                          style: DSTypography.buttonMedium.copyWith(
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                             color: canSelect
-                                ? (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)
-                                : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400),
+                                ? colors.textPrimary
+                                : colors.textTertiary,
                           ),
                         ),
                       ),
@@ -378,53 +376,53 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
   // Step 3: 가족 구성원 정보
   Widget _buildStep3FamilyInfo() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '가족 구성원에 대해\n알려주세요',
-            style: TypographyUnified.displaySmall.copyWith(
+            style: DSTypography.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              color: colors.textPrimary,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '더 정확한 운세를 위한 정보예요',
-            style: TypographyUnified.buttonMedium.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+            style: DSTypography.buttonMedium.copyWith(
+              color: colors.textSecondary,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: DSSpacing.xxl),
 
           // 가족 구성원 수
           AppCard(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(DSSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '함께 사는 가족 구성원',
-                  style: TypographyUnified.buttonMedium.copyWith(
+                  style: DSTypography.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                    color: colors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: DSSpacing.md),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
                   decoration: BoxDecoration(
-                    border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
-                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: colors.border),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                   ),
                   child: Row(
                     children: [
                       IconButton(
-                        icon: Icon(Icons.remove, color: TossTheme.primaryBlue),
+                        icon: Icon(Icons.remove, color: colors.accent),
                         onPressed: () {
                           if (_familyMemberCount > 1) setState(() => _familyMemberCount--);
                         },
@@ -432,15 +430,15 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                       Expanded(
                         child: Text(
                           '$_familyMemberCount명',
-                          style: TypographyUnified.heading4.copyWith(
+                          style: DSTypography.labelLarge.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                            color: colors.textPrimary,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.add, color: TossTheme.primaryBlue),
+                        icon: Icon(Icons.add, color: colors.accent),
                         onPressed: () {
                           if (_familyMemberCount < 10) setState(() => _familyMemberCount++);
                         },
@@ -451,22 +449,22 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 나와의 관계
           AppCard(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(DSSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '운세를 보고 싶은 대상',
-                  style: TypographyUnified.buttonMedium.copyWith(
+                  style: DSTypography.buttonMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                    color: colors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: DSSpacing.md),
                 ...[
                   {'value': 'self', 'label': '나 자신', 'icon': Icons.person},
                   {'value': 'parent', 'label': '부모님', 'icon': Icons.elderly},
@@ -475,44 +473,44 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                 ].map((rel) {
                   final isSelected = _relationship == rel['value'];
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.only(bottom: DSSpacing.sm),
                     child: GestureDetector(
                       onTap: () => setState(() => _relationship = rel['value'] as String),
                       child: Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(DSSpacing.md),
                         decoration: BoxDecoration(
-                          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.1) : null,
+                          color: isSelected ? colors.accent.withValues(alpha: 0.1) : null,
                           border: Border.all(
                             color: isSelected
-                                ? TossTheme.primaryBlue
-                                : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                                ? colors.accent
+                                : colors.border,
                             width: isSelected ? 2 : 1,
                           ),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(DSRadius.md),
                         ),
                         child: Row(
                           children: [
                             Icon(
                               rel['icon'] as IconData,
                               color: isSelected
-                                  ? TossTheme.primaryBlue
-                                  : (isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
+                                  ? colors.accent
+                                  : colors.textSecondary,
                             ),
-                            const SizedBox(width: 12),
+                            const SizedBox(width: DSSpacing.md),
                             Text(
                               rel['label'] as String,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: isSelected
-                                    ? TossTheme.primaryBlue
-                                    : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                                    ? colors.accent
+                                    : colors.textPrimary,
                               ),
                             ),
                             const Spacer(),
                             if (isSelected)
                               Icon(
                                 Icons.check_circle,
-                                color: TossTheme.primaryBlue,
+                                color: colors.accent,
                                 size: 20,
                               ),
                           ],
@@ -532,72 +530,71 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
   // Step 4: 특별히 궁금한 점 (선택사항)
   Widget _buildStep4SpecialQuestion() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '특별히 궁금한 점이\n있으신가요?',
-            style: TypographyUnified.displaySmall.copyWith(
+            style: DSTypography.displaySmall.copyWith(
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              color: colors.textPrimary,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '선택사항이에요. 운세에 반영해드릴게요',
-            style: TypographyUnified.buttonMedium.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+            style: DSTypography.buttonMedium.copyWith(
+              color: colors.textSecondary,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: DSSpacing.xxl),
 
           AppCard(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(DSSpacing.lg),
             child: TextField(
               controller: _questionController,
               style: TextStyle(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
-                
+                color: colors.textPrimary,
               ),
               maxLines: 6,
               decoration: InputDecoration(
                 hintText: '예: 올해 가족 여행 가기 좋은 시기는 언제인가요?\n예: 아이 학원을 바꾸려고 하는데 괜찮을까요?',
-                hintStyle: TypographyUnified.bodySmall.copyWith(
-                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
+                hintStyle: DSTypography.labelSmall.copyWith(
+                  color: colors.textTertiary,
                 ),
                 border: InputBorder.none,
               ),
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
-              color: TossTheme.primaryBlue.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
+              color: colors.accent.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
-                color: TossTheme.primaryBlue.withValues(alpha: 0.2),
+                color: colors.accent.withValues(alpha: 0.2),
               ),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.info_outline,
-                  color: TossTheme.primaryBlue,
+                  color: colors.accent,
                   size: 20,
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: DSSpacing.md),
                 Expanded(
                   child: Text(
                     '질문을 남기지 않아도 운세를 볼 수 있어요',
-                    style: TypographyUnified.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: colors.textPrimary,
                     ),
                   ),
                 ),
@@ -756,26 +753,26 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
 
   Widget _buildResultScreen() {
     if (_fortuneResult == null || _selectedConcern == null) return const SizedBox.shrink();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final concernColor = _selectedConcern!.gradientColors[0];
 
     return Stack(
       children: [
         SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(DSSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
           // Concern header
           Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(DSSpacing.lg),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: _selectedConcern!.gradientColors,
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(DSRadius.lg),
               boxShadow: [
                 BoxShadow(
                   color: concernColor.withValues(alpha: 0.3),
@@ -790,32 +787,32 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(DSRadius.lg),
                   ),
-                  child: Icon(
-                    _selectedConcern!.icon,
-                    color: TossDesignSystem.white,
+                  child: const Icon(
+                    Icons.favorite,
+                    color: Colors.white,
                     size: 32,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: DSSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         _selectedConcern!.label,
-                        style: TypographyUnified.heading3.copyWith(
+                        style: DSTypography.headingSmall.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: DSSpacing.xs),
                       Text(
                         _selectedConcern!.description,
-                        style: TypographyUnified.buttonMedium.copyWith(
-                          color: TossDesignSystem.white.withValues(alpha: 0.9),
+                        style: DSTypography.buttonMedium.copyWith(
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -824,7 +821,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
 
           // Fortune content
           UnifiedBlurWrapper(
@@ -832,28 +829,28 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
             blurredSections: _fortuneResult!.blurredSections,
             sectionKey: 'fortune_content',
             child: AppCard(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(DSSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(Icons.auto_awesome, color: concernColor, size: 24),
-                      SizedBox(width: 8),
+                      const SizedBox(width: DSSpacing.sm),
                       Text(
                         '오늘의 운세',
-                        style: TypographyUnified.heading3.copyWith(
+                        style: DSTypography.headingSmall.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                          color: colors.textPrimary,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: DSSpacing.md),
                   Text(
                     _fortuneResult!.data['content'] as String? ?? '',
-                    style: TypographyUnified.buttonMedium.copyWith(
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                    style: DSTypography.buttonMedium.copyWith(
+                      color: colors.textPrimary,
                       height: 1.6,
                     ),
                   ),
@@ -861,7 +858,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: DSSpacing.lg),
 
           // Action buttons
           Row(
@@ -883,7 +880,7 @@ class _FamilyFortuneUnifiedPageState extends ConsumerState<FamilyFortuneUnifiedP
                   }),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: DSSpacing.md),
               Expanded(
                 child: UnifiedButton(
                   text: '공유하기',

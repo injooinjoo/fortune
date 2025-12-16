@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../domain/entities/fortune.dart';
 import 'fortune_card.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 
@@ -119,13 +118,13 @@ class PetFortuneResultCard extends StatelessWidget {
         children: [
           Text(
             emoji,
-            style: TypographyUnified.displayLarge,
+            style: DSTypography.displayLarge,
           ),
           SizedBox(height: 12),
           Text(
             '$petName의 오늘 운세',
-            style: TossDesignSystem.heading2.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            style: DSTypography.headingLarge.copyWith(
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
             textAlign: TextAlign.center,
@@ -134,13 +133,13 @@ class PetFortuneResultCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+              color: DSColors.accent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               '$petSpecies • $petAge살',
-              style: TossDesignSystem.body3.copyWith(
-                color: TossDesignSystem.tossBlue,
+              style: DSTypography.bodySmall.copyWith(
+                color: DSColors.accent,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -170,15 +169,15 @@ class PetFortuneResultCard extends StatelessWidget {
               children: [
                 Text(
                   '$score',
-                  style: TossDesignSystem.display2.copyWith(
+                  style: DSTypography.displayMedium.copyWith(
                     color: scoreColor,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
                   '점',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  style: DSTypography.bodyMedium.copyWith(
+                    color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                   ),
                 ),
               ],
@@ -190,7 +189,7 @@ class PetFortuneResultCard extends StatelessWidget {
           SizedBox(height: 20),
           Text(
             compatibilityResult['level'] ?? '좋은 궁합',
-            style: TossDesignSystem.heading3.copyWith(
+            style: DSTypography.headingMedium.copyWith(
               color: scoreColor,
               fontWeight: FontWeight.w600,
             ),
@@ -198,8 +197,8 @@ class PetFortuneResultCard extends StatelessWidget {
           SizedBox(height: 12),
           Text(
             compatibilityResult['message'] ?? fortune.content,
-            style: TossDesignSystem.body3.copyWith(
-              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+            style: DSTypography.bodySmall.copyWith(
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               height: 1.6,
             ),
             textAlign: TextAlign.center,
@@ -209,7 +208,7 @@ class PetFortuneResultCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+                color: DSColors.accent.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -217,15 +216,15 @@ class PetFortuneResultCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
-                    color: TossDesignSystem.tossBlue,
+                    color: DSColors.accent,
                     size: 20,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       compatibilityResult['advice'],
-                      style: TossDesignSystem.body3.copyWith(
-                        color: TossDesignSystem.tossBlue,
+                      style: DSTypography.bodySmall.copyWith(
+                        color: DSColors.accent,
                         height: 1.5,
                       ),
                     ),
@@ -248,10 +247,10 @@ class PetFortuneResultCard extends StatelessWidget {
       child: Column(
         children: [
           // 건강 지표
-          _buildHealthIndicator('에너지', scores['energy'] ?? 0, TossDesignSystem.successGreen, isDark),
-          _buildHealthIndicator('식욕', scores['appetite'] ?? 0, TossDesignSystem.warningOrange, isDark),
-          _buildHealthIndicator('기분', scores['mood'] ?? 0, TossDesignSystem.tossBlue, isDark),
-          _buildHealthIndicator('활동성', scores['activity'] ?? 0, TossDesignSystem.purple, isDark),
+          _buildHealthIndicator('에너지', scores['energy'] ?? 0, DSColors.success, isDark),
+          _buildHealthIndicator('식욕', scores['appetite'] ?? 0, DSColors.warning, isDark),
+          _buildHealthIndicator('기분', scores['mood'] ?? 0, DSColors.accent, isDark),
+          _buildHealthIndicator('활동성', scores['activity'] ?? 0, DSColors.accentSecondary, isDark),
           
           const SizedBox(height: 16),
           
@@ -259,7 +258,7 @@ class PetFortuneResultCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.successGreen.withValues(alpha: 0.05),
+              color: DSColors.success.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -267,15 +266,15 @@ class PetFortuneResultCard extends StatelessWidget {
               children: [
                 Icon(
                   Icons.health_and_safety,
-                  color: TossDesignSystem.successGreen,
+                  color: DSColors.success,
                   size: 20,
                 ),
                 SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     healthFortune['mainAdvice'] ?? '',
-                    style: TossDesignSystem.body3.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                       height: 1.5,
                     ),
                   ),
@@ -294,15 +293,15 @@ class PetFortuneResultCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.check_circle_outline,
-                    color: TossDesignSystem.gray500,
+                    color: DSColors.textTertiary,
                     size: 16,
                   ),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       point.toString(),
-                      style: TossDesignSystem.caption.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                         height: 1.4,
                       ),
                     ),
@@ -325,8 +324,8 @@ class PetFortuneResultCard extends StatelessWidget {
             width: 60,
             child: Text(
               label,
-              style: TossDesignSystem.caption.copyWith(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              style: DSTypography.labelSmall.copyWith(
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
               ),
             ),
           ),
@@ -344,7 +343,7 @@ class PetFortuneResultCard extends StatelessWidget {
           SizedBox(width: 12),
           Text(
             '$score',
-            style: TossDesignSystem.body3.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               color: color,
               fontWeight: FontWeight.w600,
             ),
@@ -364,7 +363,7 @@ class PetFortuneResultCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.purple.withValues(alpha: 0.05),
+              color: DSColors.accentSecondary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -374,14 +373,14 @@ class PetFortuneResultCard extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.schedule,
-                      color: TossDesignSystem.purple,
+                      color: DSColors.accentSecondary,
                       size: 20,
                     ),
                     SizedBox(width: 8),
                     Text(
                       '${activityFortune['bestTime'] ?? '지금'} 추천',
-                      style: TossDesignSystem.caption.copyWith(
-                        color: TossDesignSystem.purple,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: DSColors.accentSecondary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -390,8 +389,8 @@ class PetFortuneResultCard extends StatelessWidget {
                 SizedBox(height: 8),
                 Text(
                   activityFortune['recommended'] ?? '',
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                  style: DSTypography.bodyMedium.copyWith(
+                    color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.5,
                   ),
                 ),
@@ -407,8 +406,8 @@ class PetFortuneResultCard extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    TossDesignSystem.tossBlue.withValues(alpha: 0.05),
-                    TossDesignSystem.purple.withValues(alpha: 0.05),
+                    DSColors.accent.withValues(alpha: 0.05),
+                    DSColors.accentSecondary.withValues(alpha: 0.05),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -417,15 +416,15 @@ class PetFortuneResultCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.star,
-                    color: TossDesignSystem.warningOrange,
+                    color: DSColors.warning,
                     size: 20,
                   ),
                   SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       activityFortune['special'],
-                      style: TossDesignSystem.body3.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                      style: DSTypography.bodySmall.copyWith(
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         height: 1.5,
                       ),
                     ),
@@ -460,7 +459,7 @@ class PetFortuneResultCard extends StatelessWidget {
                 child: Center(
                   child: Text(
                     '$moodScore',
-                    style: TossDesignSystem.heading3.copyWith(
+                    style: DSTypography.headingMedium.copyWith(
                       color: moodColor,
                       fontWeight: FontWeight.w700,
                     ),
@@ -474,16 +473,16 @@ class PetFortuneResultCard extends StatelessWidget {
                   children: [
                     Text(
                       '오늘의 감정: ${emotionalState['primary'] ?? '평온한'}',
-                      style: TossDesignSystem.body2.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
                       emotionalState['advice'] ?? '',
-                      style: TossDesignSystem.caption.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                         height: 1.4,
                       ),
                     ),
@@ -546,8 +545,8 @@ class PetFortuneResultCard extends StatelessWidget {
                   children: [
                     Text(
                       label,
-                      style: TossDesignSystem.body3.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      style: DSTypography.bodySmall.copyWith(
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -560,7 +559,7 @@ class PetFortuneResultCard extends StatelessWidget {
                       ),
                       child: Text(
                         '$score점',
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: color,
                           fontWeight: FontWeight.w600,
                         ),
@@ -571,8 +570,8 @@ class PetFortuneResultCard extends StatelessWidget {
                 SizedBox(height: 2),
                 Text(
                   event['advice'] ?? '',
-                  style: TossDesignSystem.caption.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                   ),
                 ),
               ],
@@ -587,7 +586,7 @@ class PetFortuneResultCard extends StatelessWidget {
     return FortuneCard(
       title: '💡 오늘의 케어 포인트',
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      backgroundColor: TossDesignSystem.warningOrange.withValues(alpha: 0.03),
+      backgroundColor: DSColors.warning.withValues(alpha: 0.03),
       child: Column(
         children: carePoints.map((point) => Padding(
           padding: const EdgeInsets.symmetric(vertical: 6),
@@ -596,15 +595,15 @@ class PetFortuneResultCard extends StatelessWidget {
             children: [
               Icon(
                 Icons.pets,
-                color: TossDesignSystem.warningOrange,
+                color: DSColors.warning,
                 size: 16,
               ),
               SizedBox(width: 12),
               Expanded(
                 child: Text(
                   point.toString(),
-                  style: TossDesignSystem.body3.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                  style: DSTypography.bodySmall.copyWith(
+                    color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     height: 1.5,
                   ),
                 ),
@@ -622,16 +621,16 @@ class PetFortuneResultCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Column(
         children: [
-          _buildLuckyItem('색상', luckyItems['color'], Icons.palette, TossDesignSystem.purple, isDark),
-          _buildLuckyItem('아이템', luckyItems['item'], Icons.shopping_bag, TossDesignSystem.tossBlue, isDark),
-          _buildLuckyItem('활동', luckyItems['activity'], Icons.directions_run, TossDesignSystem.successGreen, isDark),
-          _buildLuckyItem('간식', luckyItems['food'], Icons.restaurant, TossDesignSystem.warningOrange, isDark),
+          _buildLuckyItem('색상', luckyItems['color'], Icons.palette, DSColors.accentSecondary, isDark),
+          _buildLuckyItem('아이템', luckyItems['item'], Icons.shopping_bag, DSColors.accent, isDark),
+          _buildLuckyItem('활동', luckyItems['activity'], Icons.directions_run, DSColors.success, isDark),
+          _buildLuckyItem('간식', luckyItems['food'], Icons.restaurant, DSColors.warning, isDark),
           if (luckyItems['toy'] != null)
-            _buildLuckyItem('장난감', luckyItems['toy'], Icons.toys, TossDesignSystem.errorRed, isDark),
+            _buildLuckyItem('장난감', luckyItems['toy'], Icons.toys, DSColors.error, isDark),
           if (luckyItems['spot'] != null)
-            _buildLuckyItem('장소', luckyItems['spot'], Icons.place, TossDesignSystem.purple, isDark),
+            _buildLuckyItem('장소', luckyItems['spot'], Icons.place, DSColors.accentSecondary, isDark),
           if (luckyItems['time'] != null)
-            _buildLuckyItem('시간', luckyItems['time'], Icons.schedule, TossDesignSystem.tossBlue, isDark),
+            _buildLuckyItem('시간', luckyItems['time'], Icons.schedule, DSColors.accent, isDark),
         ],
       ),
     );
@@ -664,15 +663,15 @@ class PetFortuneResultCard extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TossDesignSystem.caption.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                   ),
                 ),
                 SizedBox(height: 2),
                 Text(
                   value.toString(),
-                  style: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  style: DSTypography.bodyMedium.copyWith(
+                    color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -719,9 +718,9 @@ class PetFortuneResultCard extends StatelessWidget {
   }
   
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accent;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 }

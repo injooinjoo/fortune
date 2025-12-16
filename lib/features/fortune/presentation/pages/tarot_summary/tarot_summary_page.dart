@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/widgets/unified_button.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/constants/tarot_metadata.dart';
 import '../../../../../core/providers/user_settings_provider.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
@@ -210,7 +210,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
     final fontScale = ref.watch(userSettingsProvider).fontScale;
 
     return Scaffold(
-      backgroundColor: TossDesignSystem.black,
+      backgroundColor: DSColors.textPrimary,
       appBar: StandardFortuneAppBar(
         title: '타로 리딩 완료',
         actions: [
@@ -266,7 +266,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   context.goNamed('interactive-tarot');
                 },
                 isEnabled: true,
-                icon: Icon(Icons.refresh, color: TossDesignSystem.white),
+                icon: Icon(Icons.refresh, color: Colors.white),
               ),
             ],
           ),

@@ -5,22 +5,21 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/wish_fortune_result.dart';
 import './wish_fortune_result_page.dart';
 import '../../../../services/ad_service.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/accordion_input_section.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/widgets/voice_input_text_field.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
-  love('💕', '사랑', '연애, 결혼, 짝사랑', TossDesignSystem.errorRed),
-  money('💰', '돈', '재물, 투자, 사업', TossDesignSystem.successGreen),
-  health('🌿', '건강', '건강, 회복, 장수', TossDesignSystem.successGreen),
-  success('🏆', '성공', '취업, 승진, 성취', TossDesignSystem.warningOrange),
-  family('👨‍👩‍👧‍👦', '가족', '가족, 화목, 관계', TossDesignSystem.tossBlue),
-  study('📚', '학업', '시험, 공부, 성적', TossDesignSystem.infoBlue),
-  other('🌟', '기타', '소원이 있으시면', TossDesignSystem.purple);
+  love('💕', '사랑', '연애, 결혼, 짝사랑', DSColors.error),
+  money('💰', '돈', '재물, 투자, 사업', DSColors.success),
+  health('🌿', '건강', '건강, 회복, 장수', DSColors.success),
+  success('🏆', '성공', '취업, 승진, 성취', DSColors.warning),
+  family('👨‍👩‍👧‍👦', '가족', '가족, 화목, 관계', DSColors.accent),
+  study('📚', '학업', '시험, 공부, 성적', DSColors.accent),
+  other('🌟', '기타', '소원이 있으시면', DSColors.accentTertiary);
 
   const WishCategory(this.emoji, this.name, this.description, this.color);
 
@@ -292,29 +291,29 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
+        backgroundColor: colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         // ✅ 좌측 백 버튼 추가 (타로 페이지 패턴)
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            color: colors.textPrimary,
           ),
           onPressed: () => context.pop(),
         ),
         iconTheme: IconThemeData(
-          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          color: colors.textPrimary,
         ),
         title: Text(
           '소원 빌기',
           style: TextStyle(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            color: colors.textPrimary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -323,7 +322,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
           IconButton(
             icon: Icon(
               Icons.help_outline,
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+              color: colors.textSecondary,
             ),
             onPressed: () => _showHelpDialog(),
           ),
@@ -335,7 +334,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
               children: [
                 // ✅ Accordion 폼
                 AccordionInputFormWithHeader(
-                  header: _buildTitleSection(isDark),
+                  header: _buildTitleSection(colors),
                   sections: _accordionSections,
                   onAllCompleted: null,
                   completionButtonText: '✨ 소원 빌기',
@@ -353,23 +352,23 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
     );
   }
 
-  Widget _buildTitleSection(bool isDark) {
+  Widget _buildTitleSection(DSColorScheme colors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '🌟 소원을 빌어보세요',
-          style: TypographyUnified.heading1.copyWith(
+          style: DSTypography.headingLarge.copyWith(
             fontWeight: FontWeight.w700,
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            color: colors.textPrimary,
             height: 1.3,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         Text(
           '간절한 마음으로 소원을 작성하면\n신의 특별한 응답을 받을 수 있어요',
-          style: TypographyUnified.bodySmall.copyWith(
-            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
+          style: DSTypography.labelSmall.copyWith(
+            color: colors.textSecondary,
             height: 1.4,
           ),
         ),
@@ -380,19 +379,20 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   // ===== 입력 위젯들 =====
 
   Widget _buildCategoryInput(Function(dynamic) onComplete) {
+    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '복수 선택 불가',
-          style: TypographyUnified.labelMedium.copyWith(
-            color: TossDesignSystem.gray600,
+          style: DSTypography.labelMedium.copyWith(
+            color: colors.textSecondary,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: DSSpacing.md),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: DSSpacing.sm,
+          runSpacing: DSSpacing.sm,
           children: WishCategory.values.map((category) {
             final isSelected = _selectedCategory == category;
             return InkWell(
@@ -405,18 +405,17 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
                     '${category.emoji} ${category.name}',
                   );
                 });
-                TossDesignSystem.hapticLight();
                 onComplete(category);
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                      : TossDesignSystem.gray100,
+                      ? colors.accent.withValues(alpha: 0.1)
+                      : colors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isSelected ? TossDesignSystem.tossBlue : Colors.transparent,
+                    color: isSelected ? colors.accent : Colors.transparent,
                     width: 1.5,
                   ),
                 ),
@@ -425,14 +424,14 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
                   children: [
                     Text(
                       category.emoji,
-                      style: TypographyUnified.buttonMedium,
+                      style: DSTypography.buttonMedium,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       category.name,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.labelSmall.copyWith(
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                        color: isSelected ? TossDesignSystem.tossBlue : null,
+                        color: isSelected ? colors.accent : colors.textPrimary,
                       ),
                     ),
                   ],
@@ -446,7 +445,7 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
   }
 
   Widget _buildWishInput(Function(dynamic) onComplete) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -464,16 +463,16 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
           hintText: '소원을 말하거나 적어주세요',
           transcribingText: '듣고 있어요...',
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         // 글자수 표시
         Padding(
-          padding: const EdgeInsets.only(left: 8),
+          padding: const EdgeInsets.only(left: DSSpacing.sm),
           child: Text(
             '${_wishController.text.length}/10자',
-            style: TypographyUnified.labelSmall.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               color: _wishController.text.length >= 10
-                  ? TossDesignSystem.successGreen
-                  : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray400),
+                  ? colors.success
+                  : colors.textTertiary,
             ),
           ),
         ),
@@ -483,28 +482,29 @@ class _WishFortunePageState extends ConsumerState<WishFortunePage> {
 
   /// 도움말 다이얼로그
   void _showHelpDialog() {
+    final colors = context.colors;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
         ),
         title: Row(
           children: [
-            Icon(Icons.help_outline, color: TossDesignSystem.tossBlue),
-            const SizedBox(width: 8),
-            Text('소원 빌기란?', style: TypographyUnified.heading3),
+            Icon(Icons.help_outline, color: colors.accent),
+            const SizedBox(width: DSSpacing.sm),
+            Text('소원 빌기란?', style: DSTypography.headingSmall),
           ],
         ),
         content: Text(
           '소원 빌기는 운세를 보는 것이 아니라, 당신의 간절한 소원을 신에게 전달하고 신의 응답과 격려를 받는 특별한 경험입니다.\n\n'
           '소원을 작성하면 신이 당신만을 위한 맞춤형 응답과 조언을 주실 것입니다.',
-          style: TypographyUnified.bodyMedium.copyWith(height: 1.5),
+          style: DSTypography.bodyLarge.copyWith(height: 1.5),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('확인', style: TypographyUnified.buttonMedium),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text('확인', style: DSTypography.buttonMedium),
           ),
         ],
       ),

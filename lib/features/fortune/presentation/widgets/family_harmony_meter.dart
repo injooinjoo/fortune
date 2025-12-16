@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 가족 화합도 측정기 - 토스 디자인 시스템
 class FamilyHarmonyMeter extends StatelessWidget {
@@ -47,10 +46,10 @@ class FamilyHarmonyMeter extends StatelessWidget {
           // Title
           Text(
             '오늘의 가족 화합도',
-            style: TossDesignSystem.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             ),
           ),
           const SizedBox(height: 24),
@@ -67,7 +66,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
               children: [
                 Text(
                   '$score',
-                  style: TossDesignSystem.display1.copyWith(
+                  style: DSTypography.displayLarge.copyWith(
                     color: scoreColor,
                     fontWeight: FontWeight.w800,
                     
@@ -75,7 +74,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
                 ),
                 Text(
                   '%',
-                  style: TossDesignSystem.body2.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     color: scoreColor,
                     fontWeight: FontWeight.w600,
                   ),
@@ -98,7 +97,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
             ),
             child: Text(
               level,
-              style: TossDesignSystem.heading4.copyWith(
+              style: DSTypography.headingSmall.copyWith(
                 color: scoreColor,
                 fontWeight: FontWeight.w700,
                 
@@ -111,8 +110,8 @@ class FamilyHarmonyMeter extends StatelessWidget {
           // Description
           Text(
             description,
-            style: TossDesignSystem.body3.copyWith(
-              color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+            style: DSTypography.bodySmall.copyWith(
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               height: 1.5,
             ),
             textAlign: TextAlign.center,
@@ -138,7 +137,7 @@ class FamilyHarmonyMeter extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Text(
         emoji,
-        style: TypographyUnified.displaySmall,
+        style: DSTypography.displaySmall,
       ).animate()
           .fadeIn(delay: Duration(milliseconds: emojis.indexOf(emoji) * 100))
           .scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1)),
@@ -146,10 +145,10 @@ class FamilyHarmonyMeter extends StatelessWidget {
   }
   
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accent;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 }
 
@@ -169,10 +168,10 @@ class FamilyCategoryChart extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        color: isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: isDark ? DSColors.border : DSColors.border,
           width: 1,
         ),
       ),
@@ -181,10 +180,10 @@ class FamilyCategoryChart extends StatelessWidget {
         children: [
           Text(
             '카테고리별 점수',
-            style: TossDesignSystem.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             ),
           ),
           const SizedBox(height: 20),
@@ -212,15 +211,15 @@ class FamilyCategoryChart extends StatelessWidget {
                       SizedBox(width: 8),
                       Text(
                         label,
-                        style: TossDesignSystem.body3.copyWith(
+                        style: DSTypography.bodySmall.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+                          color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         ),
                       ),
                       const Spacer(),
                       Text(
                         '$score점',
-                        style: TossDesignSystem.body3.copyWith(
+                        style: DSTypography.bodySmall.copyWith(
                           fontWeight: FontWeight.w700,
                           color: color,
                         ),
@@ -241,8 +240,8 @@ class FamilyCategoryChart extends StatelessWidget {
                   SizedBox(height: 4),
                   Text(
                     advice,
-                    style: TossDesignSystem.caption.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: isDark ? DSColors.textTertiary : DSColors.textTertiary,
                     ),
                   ),
                 ],
@@ -276,12 +275,12 @@ class FamilyCategoryChart extends StatelessWidget {
   
   Color _getCategoryColor(String key) {
     final colors = {
-      'communication': TossDesignSystem.tossBlue,
-      'affection': TossDesignSystem.errorRed,
-      'cooperation': TossDesignSystem.successGreen,
-      'growth': TossDesignSystem.purple,
+      'communication': DSColors.accent,
+      'affection': DSColors.error,
+      'cooperation': DSColors.success,
+      'growth': DSColors.accentSecondary,
     };
-    return colors[key] ?? TossDesignSystem.gray600;
+    return colors[key] ?? DSColors.textTertiary;
   }
 }
 
@@ -303,10 +302,10 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        color: isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: isDark ? DSColors.border : DSColors.border,
           width: 1,
         ),
       ),
@@ -315,10 +314,10 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
         children: [
           Text(
             '이번 주 가족 운세',
-            style: TossDesignSystem.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             ),
           ),
           const SizedBox(height: 20),
@@ -345,11 +344,11 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                       ),
                       child: Text(
                         day,
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
                           color: isToday 
                               ? color
-                              : isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                              : isDark ? DSColors.textTertiary : DSColors.textTertiary,
                         ),
                       ),
                     ),
@@ -380,7 +379,7 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                     SizedBox(height: 8),
                     Text(
                       '$score',
-                      style: TossDesignSystem.caption.copyWith(
+                      style: DSTypography.labelSmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: color,
                       ),
@@ -388,8 +387,8 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
                     SizedBox(height: 4),
                     Text(
                       keyword,
-                      style: TypographyUnified.labelTiny.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: isDark ? DSColors.textTertiary : DSColors.textTertiary,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -404,9 +403,9 @@ class FamilyWeeklyTrendChart extends StatelessWidget {
   }
   
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accent;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_theme.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/components/app_card.dart';
 import 'package:fortune/domain/entities/fortune.dart';
 
@@ -18,7 +17,7 @@ class NumericCompatibilityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return AppCard(
       padding: const EdgeInsets.all(24),
@@ -30,20 +29,20 @@ class NumericCompatibilityCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                  color: DSColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.calculate,
-                  color: Color(0xFFF59E0B),
+                  color: DSColors.warning,
                   size: 20,
                 ),
               ),
               SizedBox(width: 12),
               Text(
                 '숫자 궁합',
-                style: TossTheme.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -62,15 +61,15 @@ class NumericCompatibilityCard extends StatelessWidget {
                   children: [
                     Text(
                       '이름 궁합',
-                      style: TossTheme.caption.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
                       '$person1Name ♥ $person2Name',
-                      style: TossTheme.body2.copyWith(
-                        color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -79,13 +78,13 @@ class NumericCompatibilityCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                    color: DSColors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     '${fortune.metadata!['name_compatibility']}%',
-                    style: TossTheme.heading4.copyWith(
-                      color: const Color(0xFFF59E0B),
+                    style: DSTypography.headingSmall.copyWith(
+                      color: DSColors.warning,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -97,15 +96,15 @@ class NumericCompatibilityCard extends StatelessWidget {
           // 운명수
           if (fortune.metadata?['destiny_number'] != null) ...[
             SizedBox(height: 16),
-            Divider(color: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200),
+            Divider(color: colors.border),
             SizedBox(height: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '두 사람의 운명수',
-                  style: TossTheme.caption.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
                 SizedBox(height: 8),
@@ -115,14 +114,14 @@ class NumericCompatibilityCard extends StatelessWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                        color: DSColors.warning.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: Text(
                           '${fortune.metadata!['destiny_number']['number']}',
-                          style: TossTheme.heading3.copyWith(
-                            color: const Color(0xFFF59E0B),
+                          style: DSTypography.headingMedium.copyWith(
+                            color: DSColors.warning,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -132,8 +131,8 @@ class NumericCompatibilityCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         fortune.metadata!['destiny_number']['meaning'],
-                        style: TossTheme.body2.copyWith(
-                          color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                        style: DSTypography.bodyMedium.copyWith(
+                          color: colors.textPrimary,
                           height: 1.5,
                         ),
                       ),

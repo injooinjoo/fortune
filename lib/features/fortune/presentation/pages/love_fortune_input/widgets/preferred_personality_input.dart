@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import 'package:flutter/services.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 /// Section 5: 선호 성격 (다중 선택, 최대 4개)
 class PreferredPersonalityInput extends StatelessWidget {
@@ -16,7 +15,7 @@ class PreferredPersonalityInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     final traits = [
       '활발한', '차분한', '유머러스한', '진중한', '외향적인', '내향적인',
@@ -29,13 +28,13 @@ class PreferredPersonalityInput extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: TossTheme.primaryBlue.withValues(alpha: 0.1),
+            color: colors.accent.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             '최대 4개까지 선택',
-            style: TypographyUnified.labelMedium.copyWith(
-              color: TossTheme.primaryBlue,
+            style: DSTypography.labelMedium.copyWith(
+              color: colors.accent,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -51,31 +50,31 @@ class PreferredPersonalityInput extends StatelessWidget {
               onTap: canSelect
                   ? () {
                       onPersonalityToggled(trait);
-                      TossDesignSystem.hapticLight();
+                      HapticFeedback.lightImpact();
                     }
                   : null,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                      : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
+                      ? colors.accent.withValues(alpha: 0.1)
+                      : colors.surface,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isSelected
-                        ? TossDesignSystem.tossBlue
-                        : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                        ? colors.accent
+                        : colors.border,
                     width: isSelected ? 1.5 : 1,
                   ),
                 ),
                 child: Text(
                   trait,
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: isSelected
-                        ? TossDesignSystem.tossBlue
+                        ? colors.accent
                         : canSelect
-                            ? (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)
-                            : TossTheme.textGray400,
+                            ? colors.textPrimary
+                            : colors.textTertiary,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),

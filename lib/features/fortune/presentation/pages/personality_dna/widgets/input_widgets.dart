@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class GridSelectionWidget extends StatelessWidget {
   final List<String> options;
@@ -53,7 +52,7 @@ class OptionChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return GestureDetector(
       onTap: () {
@@ -62,25 +61,19 @@ class OptionChip extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: isSelected
-              ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
-              : (isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray50),
+          color: isSelected ? colors.accent : colors.backgroundSecondary,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue)
-                : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray200),
+            color: isSelected ? colors.accent : colors.border,
             width: 1.5,
           ),
         ),
         child: Center(
           child: Text(
             option,
-            style: TypographyUnified.bodyMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: isSelected
-                  ? TossDesignSystem.white
-                  : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
+              color: isSelected ? Colors.white : colors.textPrimary,
             ),
           ),
         ),
@@ -105,22 +98,23 @@ class TitleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '당신만의 성격 DNA를\n발견해보세요',
-          style: TypographyUnified.heading1.copyWith(
+          style: DSTypography.displayLarge.copyWith(
             fontWeight: FontWeight.w700,
-            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            color: colors.textPrimary,
             height: 1.3,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           'MBTI, 혈액형, 별자리, 띠를 조합하여\n특별한 성격 분석 결과를 확인하세요',
-          style: TypographyUnified.bodySmall.copyWith(
-            color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray600,
+          style: DSTypography.bodySmall.copyWith(
+            color: colors.textSecondary,
             height: 1.4,
           ),
         ),

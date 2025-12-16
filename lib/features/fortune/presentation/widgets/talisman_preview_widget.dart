@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/talisman_models.dart';
 
 class TalismanPreviewWidget extends StatefulWidget {
@@ -81,13 +81,13 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: TossDesignSystem.black.withValues(alpha: 0.1),
+              color: Colors.black.withValues(alpha: 0.1),
             ),
             child: CustomPaint(
               size: Size(widget.size, widget.size),
               painter: _TalismanPatternPainter(
                 style: widget.symbol,
-                color: TossDesignSystem.white.withValues(alpha: 0.2),
+                color: Colors.white.withValues(alpha: 0.2),
               ),
             ),
           ),
@@ -103,10 +103,10 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                   height: widget.size * 0.6,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: TossDesignSystem.white.withValues(alpha: 0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.black.withValues(alpha: 0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 10,
                         spreadRadius: 2,
                       ),
@@ -130,11 +130,11 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: TossDesignSystem.white.withValues(alpha: 0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: TossDesignSystem.black.withValues(alpha: 0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -174,7 +174,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
             width: 30,
             height: 30,
             decoration: BoxDecoration(
-              color: TossDesignSystem.white.withValues(alpha: 0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               borderRadius: BorderRadius.only(
                 topLeft: pos.top != null && pos.left != null
                     ? const Radius.circular(0)

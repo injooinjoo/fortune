@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// Fortune 기능의 버튼 위치 및 간격 표준 상수
 class FortuneButtonSpacing {
@@ -38,10 +38,10 @@ class FortuneButtonSpacing {
   
   // 하단 고정 버튼 컨테이너 데코레이션
   static BoxDecoration get bottomButtonDecoration => BoxDecoration(
-    color: TossDesignSystem.white,
+    color: Colors.white,
     boxShadow: [
       BoxShadow(
-        color: TossDesignSystem.black.withValues(alpha: 0.05),
+        color: Colors.black.withValues(alpha: 0.05),
         blurRadius: 10,
         offset: const Offset(0, -2),
       ),

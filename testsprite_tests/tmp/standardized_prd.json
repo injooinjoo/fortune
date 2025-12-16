@@ -1,0 +1,230 @@
+{
+  "product": {
+    "name": "Fortune - AI 운세 서비스",
+    "description": "Korean AI-powered fortune telling app with saju, tarot, MBTI, and compatibility analysis",
+    "platform": "Flutter (iOS, Android, Web)",
+    "base_url": "https://fortune2-463710.web.app"
+  },
+  "user_flows": [
+    {
+      "id": "auth-login",
+      "name": "Authentication - OAuth Login",
+      "priority": "P0",
+      "steps": [
+        {"action": "navigate", "target": "/", "description": "Open landing page"},
+        {"action": "wait", "target": "login-buttons", "description": "Wait for login options to load"},
+        {"action": "verify", "target": "kakao-login-button", "description": "Verify Kakao login button visible"},
+        {"action": "verify", "target": "google-login-button", "description": "Verify Google login button visible"}
+      ],
+      "expected_results": [
+        "Landing page loads successfully",
+        "All OAuth login buttons are visible",
+        "Page is responsive and interactive"
+      ]
+    },
+    {
+      "id": "onboarding-complete",
+      "name": "Onboarding - Profile Setup",
+      "priority": "P0",
+      "preconditions": ["User is authenticated"],
+      "steps": [
+        {"action": "navigate", "target": "/onboarding/toss-style", "description": "Open onboarding page"},
+        {"action": "input", "target": "name-field", "value": "테스트유저", "description": "Enter name"},
+        {"action": "select", "target": "birth-date", "value": "1990-01-01", "description": "Select birth date"},
+        {"action": "select", "target": "gender", "value": "male", "description": "Select gender"},
+        {"action": "click", "target": "complete-button", "description": "Complete onboarding"}
+      ],
+      "expected_results": [
+        "Profile saved successfully",
+        "Redirected to home page",
+        "Saju pillars calculated"
+      ]
+    },
+    {
+      "id": "home-dashboard",
+      "name": "Home - Dashboard Load",
+      "priority": "P0",
+      "preconditions": ["User is authenticated", "Profile is complete"],
+      "steps": [
+        {"action": "navigate", "target": "/home", "description": "Open home page"},
+        {"action": "wait", "target": "fortune-cards", "description": "Wait for fortune cards to load"},
+        {"action": "verify", "target": "overall-card", "description": "Verify overall fortune card visible"},
+        {"action": "swipe", "target": "card-container", "direction": "up", "description": "Swipe to next card"}
+      ],
+      "expected_results": [
+        "Home page loads within 3 seconds",
+        "Fortune cards display correctly",
+        "Swipe navigation works"
+      ]
+    },
+    {
+      "id": "fortune-list",
+      "name": "Fortune - Browse Categories",
+      "priority": "P1",
+      "preconditions": ["User is authenticated"],
+      "steps": [
+        {"action": "navigate", "target": "/fortune", "description": "Open fortune list"},
+        {"action": "wait", "target": "fortune-list", "description": "Wait for list to load"},
+        {"action": "verify", "target": "saju-category", "description": "Verify saju category visible"},
+        {"action": "verify", "target": "tarot-category", "description": "Verify tarot category visible"},
+        {"action": "click", "target": "mbti-fortune", "description": "Select MBTI fortune"}
+      ],
+      "expected_results": [
+        "Fortune list displays 30+ categories",
+        "Categories are clickable",
+        "Navigation to fortune page works"
+      ]
+    },
+    {
+      "id": "mbti-fortune-flow",
+      "name": "Fortune - MBTI Reading",
+      "priority": "P1",
+      "preconditions": ["User is authenticated"],
+      "steps": [
+        {"action": "navigate", "target": "/fortune/mbti", "description": "Open MBTI fortune page"},
+        {"action": "wait", "target": "mbti-selector", "description": "Wait for MBTI selector"},
+        {"action": "select", "target": "mbti-type", "value": "INTJ", "description": "Select MBTI type"},
+        {"action": "click", "target": "submit-button", "description": "Submit for reading"},
+        {"action": "wait", "target": "result", "timeout": 15000, "description": "Wait for result"}
+      ],
+      "expected_results": [
+        "MBTI selector works correctly",
+        "Fortune generates within 15 seconds",
+        "Result displays fortune reading"
+      ]
+    },
+    {
+      "id": "tarot-fortune-flow",
+      "name": "Fortune - Tarot Reading",
+      "priority": "P1",
+      "preconditions": ["User is authenticated"],
+      "steps": [
+        {"action": "navigate", "target": "/interactive/tarot", "description": "Open tarot page"},
+        {"action": "wait", "target": "tarot-deck", "description": "Wait for deck selection"},
+        {"action": "select", "target": "deck", "value": "rider-waite", "description": "Select deck"},
+        {"action": "input", "target": "question", "value": "오늘의 운세", "description": "Enter question"},
+        {"action": "click", "target": "start-reading", "description": "Start tarot reading"}
+      ],
+      "expected_results": [
+        "Deck selection works",
+        "Cards animate correctly",
+        "Interpretation displays"
+      ]
+    },
+    {
+      "id": "premium-page",
+      "name": "Premium - View Plans",
+      "priority": "P0",
+      "preconditions": ["User is authenticated"],
+      "steps": [
+        {"action": "navigate", "target": "/premium", "description": "Open premium page"},
+        {"action": "wait", "target": "subscription-plans", "description": "Wait for plans to load"},
+        {"action": "verify", "target": "monthly-plan", "description": "Verify monthly plan visible"},
+        {"action": "verify", "target": "yearly-plan", "description": "Verify yearly plan visible"}
+      ],
+      "expected_results": [
+        "Premium page loads correctly",
+        "Subscription plans display",
+        "Prices shown correctly"
+      ]
+    },
+    {
+      "id": "token-purchase",
+      "name": "Payment - Token Purchase UI",
+      "priority": "P0",
+      "preconditions": ["User is authenticated"],
+      "steps": [
+        {"action": "navigate", "target": "/token-purchase", "description": "Open token purchase page"},
+        {"action": "wait", "target": "token-packages", "description": "Wait for packages to load"},
+        {"action": "verify", "target": "token-balance", "description": "Verify current balance shown"},
+        {"action": "verify", "target": "purchase-buttons", "description": "Verify purchase buttons visible"}
+      ],
+      "expected_results": [
+        "Token packages display correctly",
+        "Current balance shown",
+        "Purchase buttons are clickable"
+      ]
+    },
+    {
+      "id": "profile-view",
+      "name": "Profile - View Profile",
+      "priority": "P1",
+      "preconditions": ["User is authenticated", "Profile is complete"],
+      "steps": [
+        {"action": "navigate", "target": "/profile", "description": "Open profile page"},
+        {"action": "wait", "target": "profile-info", "description": "Wait for profile to load"},
+        {"action": "verify", "target": "user-name", "description": "Verify name displayed"},
+        {"action": "verify", "target": "birth-date", "description": "Verify birth date displayed"},
+        {"action": "click", "target": "saju-detail", "description": "View saju details"}
+      ],
+      "expected_results": [
+        "Profile info displays correctly",
+        "Saju summary visible",
+        "Navigation to details works"
+      ]
+    },
+    {
+      "id": "saju-detail",
+      "name": "Profile - Saju Detail",
+      "priority": "P1",
+      "preconditions": ["User is authenticated", "Profile is complete"],
+      "steps": [
+        {"action": "navigate", "target": "/profile/saju", "description": "Open saju detail page"},
+        {"action": "wait", "target": "saju-pillars", "description": "Wait for saju data"},
+        {"action": "verify", "target": "four-pillars", "description": "Verify four pillars table"},
+        {"action": "verify", "target": "five-elements", "description": "Verify five elements chart"}
+      ],
+      "expected_results": [
+        "Saju detail page loads",
+        "Four pillars table displays",
+        "Five elements analysis shows"
+      ]
+    },
+    {
+      "id": "navigation-bar",
+      "name": "Navigation - Bottom Bar",
+      "priority": "P0",
+      "preconditions": ["User is authenticated"],
+      "steps": [
+        {"action": "navigate", "target": "/home", "description": "Start at home"},
+        {"action": "click", "target": "nav-fortune", "description": "Tap fortune tab"},
+        {"action": "verify", "target": "fortune-page", "description": "Verify fortune page"},
+        {"action": "click", "target": "nav-trend", "description": "Tap trend tab"},
+        {"action": "verify", "target": "trend-page", "description": "Verify trend page"},
+        {"action": "click", "target": "nav-profile", "description": "Tap profile tab"},
+        {"action": "verify", "target": "profile-page", "description": "Verify profile page"}
+      ],
+      "expected_results": [
+        "All navigation tabs work",
+        "Correct pages load",
+        "Active tab highlighted"
+      ]
+    },
+    {
+      "id": "blur-unlock",
+      "name": "Premium - Blur/Unlock System",
+      "priority": "P0",
+      "preconditions": ["User is authenticated", "User is not premium"],
+      "steps": [
+        {"action": "navigate", "target": "/fortune/mbti", "description": "Open fortune page"},
+        {"action": "complete_fortune_flow", "description": "Complete fortune reading"},
+        {"action": "verify", "target": "blurred-content", "description": "Verify premium content is blurred"},
+        {"action": "verify", "target": "unlock-button", "description": "Verify unlock button visible"}
+      ],
+      "expected_results": [
+        "Premium content is blurred for free users",
+        "Unlock button is visible",
+        "Basic content is visible"
+      ]
+    }
+  ],
+  "test_configuration": {
+    "base_url": "https://fortune2-463710.web.app",
+    "timeout": 30000,
+    "viewport": {"width": 390, "height": 844},
+    "test_account": {
+      "email": "test@fortune.com",
+      "password": "TestFortuneApp2025!@#SecurePassword"
+    }
+  }
+}

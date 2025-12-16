@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/toss_design_system.dart';
-import '../../../core/theme/typography_unified.dart';
+import '../../../core/design_system/design_system.dart';
 
 /// Miscellaneous widgets for fortune infographic
 class MiscWidgets {
@@ -71,7 +71,7 @@ class MiscWidgets {
                   const SizedBox(width: 8),
                   Text(
                     '날씨 운세',
-                    style: TypographyUnified.heading4.copyWith(
+                    style: DSTypography.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
@@ -81,7 +81,7 @@ class MiscWidgets {
               const SizedBox(height: 16),
               Text(
                 weatherSummary?['description'] ?? '오늘의 날씨와 함께하는 운세를 확인해보세요.',
-                style: TypographyUnified.bodySmall.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray700,
                   height: 1.5,
                 ),
@@ -96,7 +96,7 @@ class MiscWidgets {
                   ),
                   child: Text(
                     '온도: ${weatherSummary!['temperature']}°C',
-                    style: TypographyUnified.labelMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       color: TossDesignSystem.tossBlue,
                       fontWeight: FontWeight.w600,
                     ),
@@ -277,7 +277,7 @@ class MiscWidgets {
                   const SizedBox(width: 8),
                   Text(
                     '$userAge세 운세',
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
@@ -292,7 +292,7 @@ class MiscWidgets {
                       ),
                       child: Text(
                         '$ageScore점',
-                        style: TypographyUnified.labelMedium.copyWith(
+                        style: DSTypography.labelMedium.copyWith(
                           fontWeight: FontWeight.w600,
                           color: TossDesignSystem.tossBlue,
                         ),
@@ -304,7 +304,7 @@ class MiscWidgets {
               const SizedBox(height: 12),
               Text(
                 ageDescription ?? '나이별 운세 정보를 준비 중입니다.',
-                style: TypographyUnified.bodySmall.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
                   height: 1.4,
                 ),
@@ -346,7 +346,7 @@ class MiscWidgets {
                   const SizedBox(width: 8),
                   Text(
                     '운세 공유하기',
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
@@ -408,7 +408,7 @@ class MiscWidgets {
             const SizedBox(width: 8),
             Text(
               label,
-              style: TypographyUnified.buttonSmall.copyWith(
+              style: DSTypography.labelSmall.copyWith(
                 color: TossDesignSystem.tossBlue,
                 fontWeight: FontWeight.w600,
               ),

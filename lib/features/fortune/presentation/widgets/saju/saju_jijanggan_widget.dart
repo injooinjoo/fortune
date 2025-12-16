@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../domain/models/saju/ji_jang_gan_data.dart';
@@ -33,14 +32,14 @@ class SajuJijangganWidget extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
             _buildTitle(isDark),
-            const SizedBox(height: TossTheme.spacingS),
+            const SizedBox(height: DSSpacing.sm),
           ],
           _buildJijangganTable(isDark),
         ],
@@ -53,25 +52,25 @@ class SajuJijangganWidget extends StatelessWidget {
       children: [
         Icon(
           Icons.layers_outlined,
-          color: TossTheme.brandBlue,
+          color: DSColors.accent,
           size: 20,
         ),
-        const SizedBox(width: TossTheme.spacingXS),
+        const SizedBox(width: DSSpacing.xs),
         Row(
           children: [
             Text(
               '지장간',
-              style: TossTheme.heading3.copyWith(
+              style: DSTypography.headingMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(width: 4),
             Text(
               '支藏干',
-              style: TossTheme.caption.copyWith(
+              style: DSTypography.labelSmall.copyWith(
                 color: isDark
-                    ? TossTheme.textGray400
-                    : TossTheme.textGray600,
+                    ? DSColors.textTertiary
+                    : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -91,9 +90,9 @@ class SajuJijangganWidget extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+          color: isDark ? DSColors.border : DSColors.border,
         ),
       ),
       child: Column(
@@ -102,11 +101,11 @@ class SajuJijangganWidget extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: isDark
-                  ? TossDesignSystem.cardBackgroundDark
-                  : TossTheme.backgroundSecondary,
+                  ? DSColors.surface
+                  : DSColors.backgroundSecondary,
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(TossTheme.radiusM),
-                topRight: Radius.circular(TossTheme.radiusM),
+                topLeft: Radius.circular(DSRadius.md),
+                topRight: Radius.circular(DSRadius.md),
               ),
             ),
             child: Row(
@@ -120,31 +119,31 @@ class SajuJijangganWidget extends StatelessWidget {
                 return Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      vertical: TossTheme.spacingS,
+                      vertical: DSSpacing.sm,
                     ),
                     decoration: BoxDecoration(
                       border: Border(
                         right: index < pillars.length - 1
                             ? BorderSide(
                                 color: isDark
-                                    ? TossDesignSystem.borderDark
-                                    : TossTheme.borderPrimary,
+                                    ? DSColors.border
+                                    : DSColors.border,
                                 width: 1,
                               )
                             : BorderSide.none,
                       ),
                       color: isDay
-                          ? TossTheme.brandBlue.withValues(alpha: 0.1)
+                          ? DSColors.accent.withValues(alpha: 0.1)
                           : null,
                     ),
                     child: Column(
                       children: [
                         Text(
                           pillar['hanja']!,
-                          style: TossTheme.caption.copyWith(
+                          style: DSTypography.labelSmall.copyWith(
                             color: isDark
-                                ? TossTheme.textGray400
-                                : TossTheme.textGray600,
+                                ? DSColors.textTertiary
+                                : DSColors.textSecondary,
                             fontSize: 10,
                           ),
                         ),
@@ -171,28 +170,28 @@ class SajuJijangganWidget extends StatelessWidget {
 
               return Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(TossTheme.spacingS),
+                  padding: const EdgeInsets.all(DSSpacing.sm),
                   decoration: BoxDecoration(
                     border: Border(
                       right: index < pillars.length - 1
                           ? BorderSide(
                               color: isDark
-                                  ? TossDesignSystem.borderDark
-                                  : TossTheme.borderPrimary,
+                                  ? DSColors.border
+                                  : DSColors.border,
                               width: 1,
                             )
                           : BorderSide.none,
                     ),
                     color: isDay
-                        ? TossTheme.brandBlue.withValues(alpha: 0.05)
+                        ? DSColors.accent.withValues(alpha: 0.05)
                         : null,
                     borderRadius: index == 0
                         ? const BorderRadius.only(
-                            bottomLeft: Radius.circular(TossTheme.radiusM),
+                            bottomLeft: Radius.circular(DSRadius.md),
                           )
                         : index == pillars.length - 1
                             ? const BorderRadius.only(
-                                bottomRight: Radius.circular(TossTheme.radiusM),
+                                bottomRight: Radius.circular(DSRadius.md),
                               )
                             : null,
                   ),
@@ -230,15 +229,15 @@ class SajuJijangganWidget extends StatelessWidget {
           style: TextStyle(
             fontSize: isDay ? 22 : 18,
             fontWeight: FontWeight.bold,
-            color: isDay ? TossTheme.brandBlue : color,
+            color: isDay ? DSColors.accent : color,
           ),
           textAlign: TextAlign.center,
         ),
         // 한글 작게
         Text(
           name,
-          style: TossTheme.caption.copyWith(
-            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+          style: DSTypography.labelSmall.copyWith(
+            color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
             fontWeight: FontWeight.w500,
             fontSize: 10,
           ),

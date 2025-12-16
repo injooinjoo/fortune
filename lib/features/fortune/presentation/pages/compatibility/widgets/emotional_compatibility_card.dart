@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_theme.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/components/app_card.dart';
 import 'package:fortune/domain/entities/fortune.dart';
 
@@ -14,7 +13,7 @@ class EmotionalCompatibilityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return AppCard(
       padding: const EdgeInsets.all(24),
@@ -38,8 +37,8 @@ class EmotionalCompatibilityCard extends StatelessWidget {
               SizedBox(width: 12),
               Text(
                 '감성 궁합',
-                style: TossTheme.heading4.copyWith(
-                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                style: DSTypography.headingSmall.copyWith(
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -58,15 +57,15 @@ class EmotionalCompatibilityCard extends StatelessWidget {
                   children: [
                     Text(
                       '계절 궁합',
-                      style: TossTheme.caption.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
                       '${fortune.metadata!['season']['person1']} × ${fortune.metadata!['season']['person2']}',
-                      style: TossTheme.body2.copyWith(
-                        color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -77,8 +76,8 @@ class EmotionalCompatibilityCard extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               fortune.metadata!['season']['message'],
-              style: TossTheme.body2.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
                 height: 1.5,
               ),
             ),
@@ -87,7 +86,7 @@ class EmotionalCompatibilityCard extends StatelessWidget {
           // 나이차 분석
           if (fortune.metadata?['age_difference'] != null) ...[
             SizedBox(height: 16),
-            Divider(color: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200),
+            Divider(color: colors.border),
             SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,8 +96,8 @@ class EmotionalCompatibilityCard extends StatelessWidget {
                   children: [
                     Text(
                       '나이 차이',
-                      style: TossTheme.caption.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                     SizedBox(height: 4),
@@ -106,8 +105,8 @@ class EmotionalCompatibilityCard extends StatelessWidget {
                       fortune.metadata!['age_difference']['years'] == 0
                           ? '동갑'
                           : '${fortune.metadata!['age_difference']['years'].abs()}살 차이',
-                      style: TossTheme.body2.copyWith(
-                        color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                      style: DSTypography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -118,8 +117,8 @@ class EmotionalCompatibilityCard extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               fortune.metadata!['age_difference']['message'],
-              style: TossTheme.body2.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
                 height: 1.5,
               ),
             ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 
 /// 이사운 결과 페이지 헤더
 class MovingResultHeader extends StatelessWidget {
@@ -30,11 +29,11 @@ class MovingResultHeader extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -43,7 +42,7 @@ class MovingResultHeader extends StatelessWidget {
                 child: Icon(
                   Icons.arrow_back_ios_rounded,
                   size: 20,
-                  color: TossTheme.textBlack,
+                  color: DSColors.textPrimary,
                 ),
               ),
             ),
@@ -53,16 +52,16 @@ class MovingResultHeader extends StatelessWidget {
             children: [
               Text(
                 '$name님의',
-                style: TossTheme.heading3.copyWith(
-                  color: TossTheme.textGray600,
+                style: DSTypography.headingMedium.copyWith(
+                  color: DSColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 '이사운 분석 완료',
-                style: TossTheme.heading1.copyWith(
+                style: DSTypography.headingLarge.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: TossTheme.textBlack,
+                  color: DSColors.textPrimary,
                 ),
               ).animate()
                 .fadeIn(duration: 600.ms)

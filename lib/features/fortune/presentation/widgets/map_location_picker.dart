@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 class MapLocationPicker extends StatefulWidget {
   final Function(LatLng, String) onLocationSelected;
@@ -174,10 +171,10 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
 }
     
     final directions = {
-      '동쪽': {'angle': 0.0, 'color': TossDesignSystem.primaryBlue},
-      '서쪽': {'angle': 180.0, 'color': TossDesignSystem.warningOrange},
-      '남쪽': {'angle': 90.0, 'color': TossDesignSystem.errorRed},
-      '북쪽': {'angle': 270.0, 'color': TossDesignSystem.purple}};
+      '동쪽': {'angle': 0.0, 'color': DSColors.accent},
+      '서쪽': {'angle': 180.0, 'color': DSColors.warning},
+      '남쪽': {'angle': 90.0, 'color': DSColors.error},
+      '북쪽': {'angle': 270.0, 'color': DSColors.accentSecondary}};
     
     return Positioned.fill(
       child: IgnorePointer(
@@ -197,7 +194,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
       children: [
         // 검색 바
         Container(
-          padding: AppSpacing.paddingAll16,
+          padding: EdgeInsets.all(16),
           child: Row(
             children: [
               Expanded(
@@ -213,21 +210,21 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                       },
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
+                      borderRadius: BorderRadius.circular(DSRadius.md),
                     ),
                     filled: true,
-                    fillColor: TossDesignSystem.gray400.withValues(alpha:0.9),
+                    fillColor: DSColors.textTertiary.withValues(alpha:0.9),
                   ),
                   onSubmitted: _searchLocation,
                 ),
               ),
-              const SizedBox(width: AppSpacing.spacing2),
+              const SizedBox(width: 8),
               IconButton(
                 icon: const Icon(Icons.my_location),
                 onPressed: _isLoading ? null : _getCurrentLocation,
                 style: IconButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: TossDesignSystem.white,
+                  foregroundColor: Colors.white,
                 ),
               ),
             ],
@@ -272,7 +269,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
               _buildDirectionOverlay(),
               if (_isLoading)
                 Container(
-                  color: TossDesignSystem.black.withValues(alpha: 0.26),
+                  color: Colors.black.withValues(alpha: 0.26),
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -285,12 +282,12 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
         if (_selectedAddress.isNotEmpty)
           Container(
             width: double.infinity,
-            padding: AppSpacing.paddingAll16,
+            padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: TossDesignSystem.gray400.withValues(alpha:0.9),
+              color: DSColors.textTertiary.withValues(alpha:0.9),
               border: Border(
                 top: BorderSide(
-                  color: TossDesignSystem.gray400.withValues(alpha:0.5),
+                  color: DSColors.textTertiary.withValues(alpha:0.5),
                 ),
               ),
             ),
@@ -301,7 +298,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                   '선택된 주소',
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
-                const SizedBox(height: AppSpacing.spacing1),
+                const SizedBox(height: 4),
                 Text(
                   _selectedAddress,
                   style: Theme.of(context)
@@ -340,7 +337,7 @@ class DirectionOverlayPainter extends CustomPainter {
       final paint = Paint()
         ..color = isAuspicious 
             ? color.withValues(alpha:0.4) 
-            : TossDesignSystem.gray400.withValues(alpha:0.2)
+            : DSColors.textTertiary.withValues(alpha:0.2)
         ..style = PaintingStyle.fill;
       
       // 방향별 섹터 그리기
@@ -360,8 +357,8 @@ class DirectionOverlayPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: TextSpan(
           text: direction,
-          style: TypographyUnified.bodySmall.copyWith(
-            color: TossDesignSystem.black,
+          style: DSTypography.bodySmall.copyWith(
+            color: Colors.black,
             fontWeight: FontWeight.bold)),
         textDirection: TextDirection.ltr);
       textPainter.layout();

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class HealingProgressWidget extends StatefulWidget {
   final int currentStage;
@@ -25,11 +22,11 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
   late Animation<double> _progressAnimation;
   
   final stages = [
-    {'name': '부정', 'icon': Icons.block, 'color': TossDesignSystem.errorRed},
-    {'name': '분노', 'icon': Icons.bolt, 'color': TossDesignSystem.warningOrange},
-    {'name': '타협', 'icon': Icons.handshake, 'color': TossDesignSystem.warningYellow},
-    {'name': '우울', 'icon': Icons.water_drop, 'color': TossDesignSystem.primaryBlue},
-    {'name': '수용', 'icon': Icons.favorite, 'color': TossDesignSystem.successGreen},
+    {'name': '부정', 'icon': Icons.block, 'color': DSColors.error},
+    {'name': '분노', 'icon': Icons.bolt, 'color': DSColors.warning},
+    {'name': '타협', 'icon': Icons.handshake, 'color': DSColors.warning},
+    {'name': '우울', 'icon': Icons.water_drop, 'color': DSColors.accent},
+    {'name': '수용', 'icon': Icons.favorite, 'color': DSColors.success},
   ];
 
   @override
@@ -79,13 +76,13 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
-        padding: AppSpacing.paddingAll20,
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface.withValues(alpha: 0.8),
-          borderRadius: AppDimensions.borderRadiusLarge,
+          borderRadius: BorderRadius.circular(DSRadius.lg),
           boxShadow: [
             BoxShadow(
-              color: TossDesignSystem.black.withValues(alpha: 0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -117,17 +114,17 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.spacing6),
+            const SizedBox(height: 24),
             
             // Progress bar with stages
             Stack(
               children: [
                 // Background line
                 Container(
-                  height: AppSpacing.spacing2,
+                  height: 8,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                    borderRadius: AppDimensions.borderRadiusSmall,
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
                   ),
                 ),
                 
@@ -136,8 +133,8 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                   animation: _progressAnimation,
                   builder: (context, child) {
                     return Container(
-                      height: AppSpacing.spacing2,
-                      width: MediaQuery.of(context).size.width * 
+                      height: 8,
+                      width: MediaQuery.of(context).size.width *
                              _progressAnimation.value * 0.8,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -146,7 +143,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                             theme.colorScheme.secondary,
                           ],
                         ),
-                        borderRadius: AppDimensions.borderRadiusSmall,
+                        borderRadius: BorderRadius.circular(DSRadius.sm),
                       ),
                     );
                   },
@@ -164,7 +161,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                     left: MediaQuery.of(context).size.width * position * 0.75,
                     top: -16,
                     child: AnimatedContainer(
-                      duration: AppAnimations.durationMedium,
+                      duration: DSAnimation.durationMedium,
                       width: 40,
                       height: 32,
                       decoration: BoxDecoration(
@@ -193,7 +190,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                           stage['icon'] as IconData,
                           size: 20,
                           color: isCompleted || isCurrent
-                              ? TossDesignSystem.white
+                              ? Colors.white
                               : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
@@ -203,7 +200,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
               ],
             ),
             
-            const SizedBox(height: AppSpacing.spacing8),
+            const SizedBox(height: 32),
             
             // Stage names
             Row(
@@ -228,24 +225,24 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
               }).toList(),
             ),
             
-            const SizedBox(height: AppSpacing.spacing4),
-            
+            const SizedBox(height: 16),
+
             // Current stage description
             AnimatedSwitcher(
-              duration: AppAnimations.durationMedium,
+              duration: DSAnimation.durationMedium,
               child: Container(
                 key: ValueKey(widget.currentStage),
-                padding: AppSpacing.paddingAll12,
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: AppDimensions.borderRadiusSmall),
+                  borderRadius: BorderRadius.circular(DSRadius.sm)),
                 child: Row(
                   children: [
                     Icon(
                       Icons.info_outline,
                       size: 20,
                       color: theme.colorScheme.primary),
-                    const SizedBox(width: AppSpacing.spacing2),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         _getStageDescription(widget.currentStage),

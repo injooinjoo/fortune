@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 
 class AdvicePage extends StatelessWidget {
@@ -13,7 +13,7 @@ class AdvicePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -21,16 +21,16 @@ class AdvicePage extends StatelessWidget {
             '실천 조언',
             style: Theme.of(context).textTheme.titleMedium,
           ),
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: 16),
 
           // Main advice
           if (cardInfo['advice'] != null) ...[
             GlassContainer(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+              padding: const EdgeInsets.all(24),
               gradient: LinearGradient(
                 colors: [
-                  TossDesignSystem.warningOrange.withValues(alpha: 0.1),
-                  TossDesignSystem.warningOrange.withValues(alpha: 0.1)
+                  DSColors.warning.withValues(alpha: 0.1),
+                  DSColors.warning.withValues(alpha: 0.1)
                 ],
               ),
               child: Column(
@@ -38,9 +38,9 @@ class AdvicePage extends StatelessWidget {
                   const Icon(
                     Icons.lightbulb,
                     size: 48,
-                    color: TossDesignSystem.warningOrange,
+                    color: DSColors.warning,
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingM),
+                  const SizedBox(height: 16),
                   Text(
                     cardInfo['advice'],
                     style: Theme.of(context).textTheme.bodyLarge,
@@ -49,22 +49,22 @@ class AdvicePage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: TossDesignSystem.spacingXL)
+            const SizedBox(height: 32)
           ],
 
           // Questions for reflection
           if (cardInfo['questions'] != null) ...[
             _buildSectionTitle(context, '성찰을 위한 질문'),
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: 16),
             ...(cardInfo['questions'] as List).map((question) {
               return Container(
-                margin: const EdgeInsets.only(bottom: TossDesignSystem.spacingS),
-                padding: const EdgeInsets.all(TossDesignSystem.spacingS),
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.primaryBlue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+                  color: DSColors.accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
                   border: Border.all(
-                    color: TossDesignSystem.primaryBlue.withValues(alpha: 0.3),
+                    color: DSColors.accent.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -74,9 +74,9 @@ class AdvicePage extends StatelessWidget {
                     const Icon(
                       Icons.help_outline,
                       size: 20,
-                      color: TossDesignSystem.primaryBlue,
+                      color: DSColors.accent,
                     ),
-                    const SizedBox(width: TossDesignSystem.spacingS),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         question,

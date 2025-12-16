@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import 'info_item.dart';
 
 /// 로또/복권 컨텐츠 - ChatGPT 스타일 미니멀 디자인
@@ -17,15 +16,15 @@ class LottoContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.gray900 : TossDesignSystem.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray200,
+          color: colors.border,
         ),
       ),
       child: Column(
@@ -34,9 +33,9 @@ class LottoContent extends StatelessWidget {
           // 섹션 타이틀
           Text(
             '오늘의 행운 번호',
-            style: TypographyUnified.bodyMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.gray300 : TossDesignSystem.gray700,
+              color: colors.textSecondary,
             ),
           ),
           const SizedBox(height: 16),
@@ -54,14 +53,14 @@ class LottoContent extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray100,
+                  color: colors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
                   child: Text(
                     '$number',
-                    style: TypographyUnified.heading4.copyWith(
-                      color: isDark ? TossDesignSystem.gray100 : TossDesignSystem.gray900,
+                    style: DSTypography.headingSmall.copyWith(
+                      color: colors.textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -80,13 +79,13 @@ class LottoContent extends StatelessWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: (isDark ? TossDesignSystem.gray900 : TossDesignSystem.white).withValues(alpha: 0.5),
+                        color: colors.surface.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.lock_outline_rounded,
                         size: 20,
-                        color: isDark ? TossDesignSystem.gray500 : TossDesignSystem.gray400,
+                        color: colors.textTertiary,
                       ),
                     ),
                   ],
@@ -98,7 +97,7 @@ class LottoContent extends StatelessWidget {
           ),
 
           const SizedBox(height: 20),
-          Divider(color: isDark ? TossDesignSystem.gray800 : TossDesignSystem.gray200),
+          Divider(color: colors.border),
           const SizedBox(height: 16),
 
           // 추가 정보

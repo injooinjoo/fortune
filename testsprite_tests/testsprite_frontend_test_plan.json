@@ -1,0 +1,462 @@
+[
+  {
+    "id": "TC001",
+    "title": "OAuth Login Success for Each Provider",
+    "description": "Verify that users can successfully authenticate via Kakao, Naver, Google, and Apple OAuth providers, with correct session persistence after app restart.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Launch the app and navigate to the login screen."
+      },
+      {
+        "type": "action",
+        "description": "Select Kakao OAuth login and complete authentication."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify successful login and that user is navigated to onboarding if new, or home dashboard if existing."
+      },
+      {
+        "type": "action",
+        "description": "Restart the app."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify session is persisted; user remains logged in."
+      },
+      {
+        "type": "action",
+        "description": "Logout and repeat steps for Naver OAuth login."
+      },
+      {
+        "type": "action",
+        "description": "Repeat steps for Google OAuth login."
+      },
+      {
+        "type": "action",
+        "description": "Repeat steps for Apple OAuth login."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Email/Password Signup and Login Flow",
+    "description": "Validate signing up with valid email and password, error handling for invalid or duplicate emails, and login flow with session persistence.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to signup screen."
+      },
+      {
+        "type": "action",
+        "description": "Input valid email and password, complete signup."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify account creation success and navigation to onboarding."
+      },
+      {
+        "type": "action",
+        "description": "Logout and navigate to login screen."
+      },
+      {
+        "type": "action",
+        "description": "Attempt login with correct email/password."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify login success and navigation to home dashboard."
+      },
+      {
+        "type": "action",
+        "description": "Restart app and verify session persistence."
+      },
+      {
+        "type": "action",
+        "description": "Attempt signup with an invalid email format."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify appropriate validation error message is shown."
+      },
+      {
+        "type": "action",
+        "description": "Attempt signup with an email already registered."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify duplicate email error message is shown."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "User Onboarding Profile Input Validation and Saving",
+    "description": "Verify multi-step onboarding with name, birth info, gender, and MBTI selection accepts valid inputs, validates invalid inputs, and saves to profile for personalized fortune generation.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Start onboarding after first login."
+      },
+      {
+        "type": "action",
+        "description": "Input valid name and proceed."
+      },
+      {
+        "type": "assertion",
+        "description": "Name accepted; next step displayed."
+      },
+      {
+        "type": "action",
+        "description": "Input invalid birth date (e.g., February 30) and verify validation."
+      },
+      {
+        "type": "assertion",
+        "description": "Validation error displayed; cannot proceed."
+      },
+      {
+        "type": "action",
+        "description": "Input valid birth date and valid birth time."
+      },
+      {
+        "type": "action",
+        "description": "Select gender and optional MBTI from provided options."
+      },
+      {
+        "type": "action",
+        "description": "Complete onboarding."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user profile data is saved and used to customize fortune results."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Home Dashboard Cards Rendering and Swipe Functionality",
+    "description": "Check the home dashboard loads 11 different swipeable fortune cards with daily updated content based on user profile, verifying smooth swiping navigation and data accuracy.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as a user with completed profile."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify home dashboard loads with 11 different fortune cards."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify each card displays personalized fortune data accurate to user profile."
+      },
+      {
+        "type": "action",
+        "description": "Perform swipe left and swipe right gestures on the cards."
+      },
+      {
+        "type": "assertion",
+        "description": "Cards switch fluidly without lag or rendering errors."
+      },
+      {
+        "type": "action",
+        "description": "Restart the app and verify dashboard data updates daily and persists."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Fortune Input Validation and AI Result Generation Performance",
+    "description": "Test all 30+ fortune types input forms accept valid inputs, reject invalid inputs with error messages, and generate AI-based results within 15 seconds performance benchmark.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to fortune list."
+      },
+      {
+        "type": "action",
+        "description": "Select a representative fortune type with required inputs (e.g., traditional saju)."
+      },
+      {
+        "type": "action",
+        "description": "Enter valid inputs and submit."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify AI-generated reading is displayed within 15 seconds."
+      },
+      {
+        "type": "action",
+        "description": "Enter invalid or missing inputs."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify form validation prevents submission and displays appropriate errors."
+      },
+      {
+        "type": "action",
+        "description": "Repeat for other fortune types including tarot, MBTI, compatibility, career, health, and love."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Premium Content Access and In-App Purchase Flow",
+    "description": "Verify that premium content is blurred initially, purchases correctly unlock premium content, and token balances update immediately with server receipt verification.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access premium fortune content section as a non-premium user."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify premium content is blurred and access is restricted."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to purchase screen and buy a premium subscription or token package."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify purchase completes successfully with server receipt verification."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify premium status is updated and locked content is unlocked immediately."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify token balance on user profile and token widget updates accordingly."
+      },
+      {
+        "type": "action",
+        "description": "Access premium content again and verify full accessibility."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Profile Management Edit and Data Persistence",
+    "description": "Verify users can view and edit their profile data, including saju details and fortune history, and settings changes persist across app restarts.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to profile screen."
+      },
+      {
+        "type": "action",
+        "description": "View current profile information and saju details."
+      },
+      {
+        "type": "action",
+        "description": "Edit profile fields such as name, birth info, and gender."
+      },
+      {
+        "type": "action",
+        "description": "Save changes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify updated data is reflected immediately."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to fortune history."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify history records are accurate and load correctly."
+      },
+      {
+        "type": "action",
+        "description": "Modify app settings like notification preferences."
+      },
+      {
+        "type": "action",
+        "description": "Restart the app."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify profile edits and settings persist after restart."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Error Handling on API Failures and Input Errors",
+    "description": "Test graceful handling of API failures in fortune generation, payment verification, and profile saving with user-friendly error messages and retry options.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate network failure or API timeout during fortune generation."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user receives informative error message and option to retry."
+      },
+      {
+        "type": "action",
+        "description": "Simulate failed receipt verification after in-app purchase."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify purchase failure is communicated clearly and user balance is not updated."
+      },
+      {
+        "type": "action",
+        "description": "Attempt profile data save with invalid inputs."
+      },
+      {
+        "type": "assertion",
+        "description": "Validate input errors are shown preventing save."
+      },
+      {
+        "type": "action",
+        "description": "Force app crash or restart during critical process, verify data is not lost or corrupted."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Security Validation for OAuth, Payments, and Data Protection",
+    "description": "Ensure OAuth authentication tokens are securely stored and invalidated on logout, payments go through secure receipt verification, and user data is encrypted at rest and in transit.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Authenticate with each OAuth provider."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tokens stored securely in session and cleared completely on logout."
+      },
+      {
+        "type": "action",
+        "description": "Perform a purchase flow and intercept network traffic."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify receipt data is transmitted securely and only valid receipts update user status."
+      },
+      {
+        "type": "action",
+        "description": "Check database or local storage to verify sensitive user data is encrypted."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm all network APIs use secure HTTPS endpoints."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Performance Testing: Launch Time and Fortune Generation",
+    "description": "Verify that app launches within 3 seconds on supported devices and all fortune AI results generate within 15 seconds as per performance targets.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Launch the app on distinct supported platforms (iOS, Android, Web) under normal network conditions."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify time from launch to home screen visible is under 3 seconds."
+      },
+      {
+        "type": "action",
+        "description": "Request AI-generated fortune reading for multiple fortune types."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify each reading returns results within 15 seconds."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Navigation and Deep Link Functionality",
+    "description": "Test in-app routing and navigation using GoRouter, validate bottom navigation bar functionality, and deep link support for over 100 routes.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Start app and navigate through all major sections using the bottom navigation bar."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify each section loads correctly without errors."
+      },
+      {
+        "type": "action",
+        "description": "Enter deep links manually or simulate external links targeting specific app pages (including fortunes, profile, premium)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify app routes to correct page with accurate state and data."
+      },
+      {
+        "type": "action",
+        "description": "Verify back navigation and shell route behavior maintain expected app navigation state."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Interactive Features Accessibility and Functionality",
+    "description": "Verify dream interpretation, fortune cookie, psychology tests, and worry bead features are accessible, allow valid input, and generate appropriate outputs.",
+    "category": "functional",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to interactive features menu."
+      },
+      {
+        "type": "action",
+        "description": "Select dream interpretation and input valid dream description."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify meaningful interpretation result is displayed."
+      },
+      {
+        "type": "action",
+        "description": "Access fortune cookie feature and request fortune."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify fortune cookie displays varied fortunes randomly."
+      },
+      {
+        "type": "action",
+        "description": "Complete a psychology test with valid answers."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify test result matches inputs and shows useful insights."
+      },
+      {
+        "type": "action",
+        "description": "Use worry bead feature and verify interactive experience functions without errors."
+      }
+    ]
+  }
+]

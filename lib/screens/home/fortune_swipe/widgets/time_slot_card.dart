@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// ⏰ 시간대별 조언 카드 - ChatGPT Pulse 스타일
 class TimeSlotCard extends StatelessWidget {
@@ -161,7 +161,7 @@ class _TimeSlotItem extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         color: isDark ? Colors.white : Colors.black87,
                         fontWeight: FontWeight.w600,
                       ),

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Center(
       child: Column(
@@ -27,16 +26,16 @@ class LoadingScreen extends StatelessWidget {
             ),
             child: const Icon(
               Icons.auto_awesome,
-              color: TossDesignSystem.white,
+              color: Colors.white,
               size: 40,
             ),
           ),
           const SizedBox(height: 24),
           Text(
             '카드를 뽑고 있어요...',
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: DSTypography.labelLarge.copyWith(
               fontWeight: FontWeight.w500,
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+              color: colors.textSecondary,
             ),
           ),
         ],

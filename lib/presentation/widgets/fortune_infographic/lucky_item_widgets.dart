@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/toss_design_system.dart';
-import '../../../core/theme/typography_unified.dart';
+import '../../../core/design_system/design_system.dart';
 import 'helpers.dart';
 
 /// Lucky item display widgets for fortune infographic
@@ -76,7 +76,7 @@ class LuckyItemWidgets {
                   const SizedBox(height: 8),
                   Text(
                     title,
-                    style: TypographyUnified.bodySmall.copyWith(
+                    style: DSTypography.bodySmall.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
@@ -85,7 +85,7 @@ class LuckyItemWidgets {
                   const SizedBox(height: 4),
                   Text(
                     value,
-                    style: TypographyUnified.labelMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                     ),
                     textAlign: TextAlign.center,
@@ -170,7 +170,7 @@ class LuckyItemWidgets {
                   const SizedBox(width: 8),
                   Text(
                     '행운 아이템',
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
@@ -206,13 +206,13 @@ class LuckyItemWidgets {
                           children: [
                             Text(
                               tag['label'] as String,
-                              style: TypographyUnified.labelSmall.copyWith(
+                              style: DSTypography.labelSmall.copyWith(
                                 color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
                               ),
                             ),
                             Text(
                               tag['value'] as String,
-                              style: TypographyUnified.bodySmall.copyWith(
+                              style: DSTypography.bodySmall.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: tag['color'] as Color,
                               ),
@@ -263,7 +263,7 @@ class LuckyItemWidgets {
                   const SizedBox(width: 8),
                   Text(
                     '오늘의 추천 스타일',
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
                       color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                     ),
@@ -274,7 +274,7 @@ class LuckyItemWidgets {
               if (outfitDescription != null)
                 Text(
                   outfitDescription,
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
                     height: 1.4,
                   ),
@@ -300,7 +300,7 @@ class LuckyItemWidgets {
                       ),
                       child: Text(
                         item,
-                        style: TypographyUnified.labelMedium.copyWith(
+                        style: DSTypography.labelMedium.copyWith(
                           color: TossDesignSystem.tossBlue,
                           fontWeight: FontWeight.w500,
                         ),

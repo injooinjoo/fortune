@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/theme/toss_theme.dart';
 import '../../pages/biorhythm_result_page.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 
 class TodayRecommendationCard extends StatelessWidget {
   final BiorhythmData biorhythmData;
@@ -31,7 +29,7 @@ class TodayRecommendationCard extends StatelessWidget {
             children: [
               Icon(
                 Icons.lightbulb_rounded,
-                color: TossTheme.primaryBlue,
+                color: DSColors.accent,
                 size: 24,
               ),
               SizedBox(width: 8),
@@ -39,7 +37,7 @@ class TodayRecommendationCard extends StatelessWidget {
                 '오늘의 추천',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                  color: isDark ? Colors.white : DSColors.textPrimary,
                 ),
               ),
             ],
@@ -60,7 +58,7 @@ class TodayRecommendationCard extends StatelessWidget {
                     height: 6,
                     margin: const EdgeInsets.only(top: 8, right: 12),
                     decoration: BoxDecoration(
-                      color: TossTheme.primaryBlue,
+                      color: DSColors.accent,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -68,7 +66,7 @@ class TodayRecommendationCard extends StatelessWidget {
                     child: Text(
                       recommendation,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                        color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                         height: 1.5,
                       ),
                     ),
@@ -143,7 +141,7 @@ class WeeklyActivityGuide extends StatelessWidget {
             '이번 주 활동 가이드',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+              color: isDark ? Colors.white : DSColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -176,15 +174,15 @@ class WeeklyActivityGuide extends StatelessWidget {
                       children: [
                         Text(
                           activity['title'] as String,
-                          style: TypographyUnified.bodySmall.copyWith(
+                          style: DSTypography.bodySmall.copyWith(
                             fontWeight: FontWeight.w500,
-                            color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                            color: isDark ? Colors.white : DSColors.textPrimary,
                           ),
                         ),
                         Text(
                           activity['description'] as String,
-                          style: TypographyUnified.bodySmall.copyWith(
-                            color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                          style: DSTypography.bodySmall.copyWith(
+                            color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                           ),
                         ),
                       ],

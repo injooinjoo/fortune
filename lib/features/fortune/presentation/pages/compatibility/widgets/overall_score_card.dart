@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:fortune/core/theme/toss_theme.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/components/app_card.dart';
 import 'package:fortune/domain/entities/fortune.dart';
 import '../compatibility_utils.dart';
@@ -22,7 +21,7 @@ class OverallScoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return AppCard(
       padding: const EdgeInsets.all(24),
@@ -33,8 +32,8 @@ class OverallScoreCard extends StatelessWidget {
             children: [
               Text(
                 '$person1Name ❤️ $person2Name',
-                style: TossTheme.heading3.copyWith(
-                  color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                style: DSTypography.headingMedium.copyWith(
+                  color: colors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -43,13 +42,13 @@ class OverallScoreCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                    color: DSColors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '이름 ${fortune.metadata!['name_compatibility']}%',
-                    style: TossTheme.caption.copyWith(
-                      color: const Color(0xFFF59E0B),
+                    style: DSTypography.labelSmall.copyWith(
+                      color: DSColors.warning,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -69,21 +68,21 @@ class OverallScoreCard extends StatelessWidget {
               children: [
                 Text(
                   '${(overallScore * 100).round()}점',
-                  style: TossTheme.heading1.copyWith(
+                  style: DSTypography.displayLarge.copyWith(
                     color: CompatibilityUtils.getScoreColor(overallScore),
                     fontWeight: FontWeight.w800,
                   ),
                 ),
                 Text(
                   CompatibilityUtils.getScoreText(overallScore),
-                  style: TossTheme.caption.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark400 : TossTheme.textGray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
             ),
             progressColor: CompatibilityUtils.getScoreColor(overallScore),
-            backgroundColor: isDark ? TossDesignSystem.grayDark600 : TossTheme.borderGray200,
+            backgroundColor: colors.border,
             circularStrokeCap: CircularStrokeCap.round,
             animation: true,
             animationDuration: 1200,
@@ -93,7 +92,7 @@ class OverallScoreCard extends StatelessWidget {
 
           Text(
             fortune.summary ?? '궁합 분석 결과',
-            style: TossTheme.body1.copyWith(
+            style: DSTypography.bodyLarge.copyWith(
               color: CompatibilityUtils.getScoreColor(overallScore),
               fontWeight: FontWeight.w600,
             ),

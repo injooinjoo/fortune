@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 운세 로딩 스켈레톤 UI - 토스 디자인 시스템 적용
 class FortuneLoadingSkeleton extends StatelessWidget {
@@ -26,7 +26,7 @@ class FortuneLoadingSkeleton extends StatelessWidget {
         if (showHeader)
           _buildHeaderSkeleton(isDark)
               .animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 1500.ms, color: TossDesignSystem.white.withValues(alpha: 0.3)),
+              .shimmer(duration: 1500.ms, color: Colors.white.withValues(alpha: 0.3)),
         
         // 로딩 메시지
         if (loadingMessage != null || loadingMessages != null)
@@ -41,7 +41,7 @@ class FortuneLoadingSkeleton extends StatelessWidget {
                 delay: Duration(milliseconds: i * 100),
                 onPlay: (controller) => controller.repeat(),
               )
-              .shimmer(duration: 1500.ms, color: TossDesignSystem.white.withValues(alpha: 0.3)),
+              .shimmer(duration: 1500.ms, color: Colors.white.withValues(alpha: 0.3)),
       ],
     );
   }
@@ -55,7 +55,7 @@ class FortuneLoadingSkeleton extends StatelessWidget {
             width: 200,
             height: 32,
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.border,
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -64,7 +64,7 @@ class FortuneLoadingSkeleton extends StatelessWidget {
             width: 120,
             height: 20,
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.border,
               borderRadius: BorderRadius.circular(6),
             ),
           ),
@@ -92,10 +92,10 @@ class FortuneLoadingSkeleton extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        color: isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: isDark ? DSColors.border : DSColors.border,
           width: 1,
         ),
       ),
@@ -107,7 +107,7 @@ class FortuneLoadingSkeleton extends StatelessWidget {
             width: 120,
             height: 24,
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.border,
               borderRadius: BorderRadius.circular(6),
             ),
           ),
@@ -120,7 +120,7 @@ class FortuneLoadingSkeleton extends StatelessWidget {
               height: 16,
               margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                color: isDark ? DSColors.border : DSColors.border,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
@@ -131,7 +131,7 @@ class FortuneLoadingSkeleton extends StatelessWidget {
             width: 200,
             height: 16,
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.border,
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -212,10 +212,10 @@ class _LoadingMessageRotatorState extends State<LoadingMessageRotator>
             opacity: _fadeAnimation.value,
             child: Text(
               widget.messages[_currentIndex],
-              style: TossDesignSystem.body2.copyWith(
+              style: DSTypography.bodyMedium.copyWith(
                 color: widget.isDark
-                    ? TossDesignSystem.grayDark700
-                    : TossDesignSystem.gray600,
+                    ? DSColors.textSecondary
+                    : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
@@ -254,7 +254,7 @@ class CelebritySearchSkeleton extends StatelessWidget {
               delay: Duration(milliseconds: index * 50),
               onPlay: (controller) => controller.repeat(),
             )
-            .shimmer(duration: 1500.ms, color: TossDesignSystem.white.withValues(alpha: 0.3));
+            .shimmer(duration: 1500.ms, color: Colors.white.withValues(alpha: 0.3));
       },
     );
   }
@@ -262,10 +262,10 @@ class CelebritySearchSkeleton extends StatelessWidget {
   Widget _buildCelebrityCardSkeleton(bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        color: isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: isDark ? DSColors.border : DSColors.border,
           width: 1,
         ),
       ),
@@ -276,7 +276,7 @@ class CelebritySearchSkeleton extends StatelessWidget {
             flex: 3,
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                color: isDark ? DSColors.border : DSColors.border,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(16),
                 ),
@@ -294,7 +294,7 @@ class CelebritySearchSkeleton extends StatelessWidget {
                     width: 80,
                     height: 16,
                     decoration: BoxDecoration(
-                      color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                      color: isDark ? DSColors.border : DSColors.border,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -303,7 +303,7 @@ class CelebritySearchSkeleton extends StatelessWidget {
                     width: 60,
                     height: 12,
                     decoration: BoxDecoration(
-                      color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                      color: isDark ? DSColors.border : DSColors.border,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -340,10 +340,10 @@ class FortuneResultSkeleton extends StatelessWidget {
               margin: const EdgeInsets.all(20),
               height: 200,
               decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                color: isDark ? DSColors.surface : Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                  color: isDark ? DSColors.border : DSColors.border,
                   width: 1,
                 ),
               ),
@@ -353,13 +353,13 @@ class FortuneResultSkeleton extends StatelessWidget {
                   height: 160,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                    color: isDark ? DSColors.border : DSColors.border,
                   ),
                 ),
               ),
             )
                 .animate(onPlay: (controller) => controller.repeat())
-                .shimmer(duration: 1500.ms, color: TossDesignSystem.white.withValues(alpha: 0.3)),
+                .shimmer(duration: 1500.ms, color: Colors.white.withValues(alpha: 0.3)),
           
           // 콘텐츠 스켈레톤
           for (int i = 0; i < 3; i++)
@@ -367,10 +367,10 @@ class FortuneResultSkeleton extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                color: isDark ? DSColors.surface : Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                  color: isDark ? DSColors.border : DSColors.border,
                   width: 1,
                 ),
               ),
@@ -381,7 +381,7 @@ class FortuneResultSkeleton extends StatelessWidget {
                     width: 100,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                      color: isDark ? DSColors.border : DSColors.border,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -392,7 +392,7 @@ class FortuneResultSkeleton extends StatelessWidget {
                       height: 14,
                       margin: const EdgeInsets.only(bottom: 6),
                       decoration: BoxDecoration(
-                        color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                        color: isDark ? DSColors.border : DSColors.border,
                         borderRadius: BorderRadius.circular(3),
                       ),
                     ),
@@ -403,7 +403,7 @@ class FortuneResultSkeleton extends StatelessWidget {
                   delay: Duration(milliseconds: 100 + (i * 100)),
                   onPlay: (controller) => controller.repeat(),
                 )
-                .shimmer(duration: 1500.ms, color: TossDesignSystem.white.withValues(alpha: 0.3)),
+                .shimmer(duration: 1500.ms, color: Colors.white.withValues(alpha: 0.3)),
         ],
       ),
     );

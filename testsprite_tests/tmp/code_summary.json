@@ -1,0 +1,194 @@
+{
+  "tech_stack": [
+    "Dart",
+    "Flutter",
+    "Supabase (PostgreSQL + Auth + Edge Functions)",
+    "Riverpod (State Management)",
+    "GoRouter (Navigation)",
+    "Hive (Local Storage)",
+    "Firebase (Analytics, Remote Config)",
+    "In-App Purchase (Google Play, App Store)"
+  ],
+  "features": [
+    {
+      "name": "Authentication",
+      "description": "OAuth login with Kakao, Naver, Google, Apple. Email/password signup. Session management via Supabase Auth.",
+      "files": [
+        "lib/screens/landing/landing_page.dart",
+        "lib/screens/auth/signup_screen.dart",
+        "lib/screens/auth/callback_page.dart",
+        "lib/screens/auth/oauth_webview_bottom_sheet.dart",
+        "lib/screens/auth/native_auth_callback_handler.dart"
+      ]
+    },
+    {
+      "name": "Onboarding",
+      "description": "Multi-step user profile setup including name, birth date, birth time, gender, and MBTI selection.",
+      "files": [
+        "lib/screens/onboarding/onboarding_page.dart",
+        "lib/screens/onboarding/steps/birth_input_step.dart",
+        "lib/screens/onboarding/steps/name_input_step.dart",
+        "lib/screens/onboarding/steps/phone_verification_step.dart",
+        "lib/screens/onboarding/widgets/numeric_keypad.dart",
+        "lib/screens/onboarding/widgets/bottom_sheet_mbti_picker.dart"
+      ]
+    },
+    {
+      "name": "Home Dashboard",
+      "description": "Main fortune dashboard with swipeable cards showing daily fortune, saju insights, weekly trends, and lucky items.",
+      "files": [
+        "lib/screens/home/story_home/story_home_screen.dart",
+        "lib/screens/home/fortune_swipe/fortune_swipe_page.dart",
+        "lib/screens/home/fortune_swipe/widgets/overall_card.dart",
+        "lib/screens/home/fortune_swipe/widgets/radar_card.dart",
+        "lib/screens/home/fortune_swipe/widgets/time_slot_card.dart",
+        "lib/screens/home/fortune_swipe/widgets/weekly_trend_card.dart",
+        "lib/screens/home/fortune_swipe/widgets/saju_insight_card.dart"
+      ]
+    },
+    {
+      "name": "Fortune List",
+      "description": "Catalog of 30+ fortune types including traditional saju, tarot, MBTI, compatibility, career, health, and more.",
+      "files": [
+        "lib/features/fortune/presentation/pages/fortune_list_page.dart",
+        "lib/features/fortune/presentation/widgets/fortune_list_card.dart",
+        "lib/features/fortune/presentation/widgets/fortune_list_tile.dart"
+      ]
+    },
+    {
+      "name": "Traditional Saju Fortune",
+      "description": "Korean traditional four pillars (사주팔자) fortune reading based on birth date and time.",
+      "files": [
+        "lib/features/fortune/presentation/pages/traditional_saju_page.dart",
+        "lib/features/fortune/presentation/widgets/saju/saju_pillar_table_pro.dart",
+        "lib/features/fortune/presentation/widgets/saju/saju_hapchung_widget.dart",
+        "lib/features/fortune/presentation/widgets/saju/saju_sinsal_widget.dart"
+      ]
+    },
+    {
+      "name": "Tarot Fortune",
+      "description": "Interactive tarot card reading with multiple deck selections, card spreads, and AI-generated interpretations.",
+      "files": [
+        "lib/features/fortune/presentation/pages/tarot/tarot_page.dart",
+        "lib/features/fortune/presentation/pages/tarot_summary/tarot_summary_page.dart",
+        "lib/features/fortune/presentation/widgets/tarot/tarot_card_widget.dart",
+        "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart"
+      ]
+    },
+    {
+      "name": "Compatibility Fortune",
+      "description": "Two-person compatibility analysis including romantic, friendship, and work relationships.",
+      "files": [
+        "lib/features/fortune/presentation/pages/compatibility/compatibility_page.dart",
+        "lib/features/fortune/presentation/pages/compatibility/widgets/overall_score_card.dart",
+        "lib/features/fortune/presentation/pages/compatibility/widgets/compatibility_analysis_card.dart"
+      ]
+    },
+    {
+      "name": "MBTI Fortune",
+      "description": "MBTI-based fortune reading with personality insights and compatibility analysis.",
+      "files": [
+        "lib/features/fortune/presentation/pages/mbti_fortune/mbti_fortune_page.dart",
+        "lib/features/fortune/presentation/pages/mbti_fortune/widgets/main_fortune_card.dart",
+        "lib/features/fortune/presentation/pages/mbti_fortune/widgets/compatibility_card.dart"
+      ]
+    },
+    {
+      "name": "Love Fortune",
+      "description": "Comprehensive love fortune with multi-step input form and detailed relationship predictions.",
+      "files": [
+        "lib/features/fortune/presentation/pages/love_fortune_input/love_fortune_input_page.dart",
+        "lib/features/fortune/presentation/pages/love/love_fortune_result_page.dart",
+        "lib/features/fortune/presentation/widgets/love/love_score_circle.dart"
+      ]
+    },
+    {
+      "name": "Career Coaching",
+      "description": "AI-powered career guidance with market trends, growth roadmap, and action plans.",
+      "files": [
+        "lib/features/fortune/presentation/pages/career_coaching_input_page.dart",
+        "lib/features/fortune/presentation/pages/career_coaching_result/career_coaching_result_page.dart",
+        "lib/features/fortune/presentation/pages/career_coaching_result/widgets/growth_roadmap_card.dart"
+      ]
+    },
+    {
+      "name": "Daily Calendar Fortune",
+      "description": "Calendar-based daily fortune with device calendar sync and event-specific predictions.",
+      "files": [
+        "lib/features/fortune/presentation/pages/daily_calendar/daily_calendar_fortune_page.dart",
+        "lib/features/fortune/presentation/pages/daily_calendar/widgets/calendar_view_widget.dart",
+        "lib/features/fortune/presentation/pages/daily_calendar/widgets/fortune_result_sections.dart"
+      ]
+    },
+    {
+      "name": "Face Reading Fortune",
+      "description": "AI-powered face analysis with interactive face map and celebrity matching.",
+      "files": [
+        "lib/features/fortune/presentation/pages/face_reading_fortune_page.dart",
+        "lib/features/fortune/presentation/pages/face_reading_fortune/face_reading_result_page.dart",
+        "lib/features/fortune/presentation/widgets/face_reading/interactive_face_map.dart"
+      ]
+    },
+    {
+      "name": "Premium & Payment",
+      "description": "In-app purchases for premium subscription and token packages. Blur/unlock system for premium content.",
+      "files": [
+        "lib/screens/premium/premium_screen.dart",
+        "lib/screens/subscription/subscription_page.dart",
+        "lib/features/payment/presentation/pages/token_purchase_page.dart",
+        "lib/shared/components/token_balance_widget.dart",
+        "lib/core/widgets/unified_blur_wrapper.dart"
+      ]
+    },
+    {
+      "name": "Profile Management",
+      "description": "User profile view and edit, saju details, fortune history, and settings.",
+      "files": [
+        "lib/screens/profile/profile_screen.dart",
+        "lib/screens/profile/profile_edit_page.dart",
+        "lib/screens/profile/saju_detail_page.dart",
+        "lib/screens/profile/saju_summary_page.dart",
+        "lib/features/history/presentation/pages/fortune_history_page.dart"
+      ]
+    },
+    {
+      "name": "Interactive Features",
+      "description": "Engaging fortune experiences including dream interpretation, fortune cookie, psychology tests, and worry beads.",
+      "files": [
+        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
+        "lib/features/interactive/presentation/pages/fortune_cookie_page.dart",
+        "lib/features/interactive/presentation/pages/psychology_test_page.dart",
+        "lib/features/interactive/presentation/pages/worry_bead_page.dart"
+      ]
+    },
+    {
+      "name": "Trend Content",
+      "description": "Trending content including balance games, ideal worldcup, and viral psychology tests.",
+      "files": [
+        "lib/features/trend/presentation/pages/trend_page.dart",
+        "lib/features/trend/presentation/pages/trend_balance_game_page.dart",
+        "lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart"
+      ]
+    },
+    {
+      "name": "Routing & Navigation",
+      "description": "GoRouter-based navigation with 100+ routes, shell routes for bottom navigation, and deep link support.",
+      "files": [
+        "lib/routes/route_config.dart",
+        "lib/routes/routes/fortune_routes.dart",
+        "lib/routes/routes/auth_routes.dart",
+        "lib/shared/layouts/main_shell.dart"
+      ]
+    },
+    {
+      "name": "State Management",
+      "description": "Riverpod-based state management with StateNotifier pattern for user, fortune, token, and theme states.",
+      "files": [
+        "lib/core/providers/user_provider.dart",
+        "lib/core/providers/fortune_provider.dart",
+        "lib/core/providers/token_provider.dart",
+        "lib/core/providers/theme_provider.dart"
+      ]
+    }
+  ]
+}

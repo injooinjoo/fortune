@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../services/storage_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../domain/models/conditions/biorhythm_fortune_conditions.dart';
@@ -124,7 +123,7 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
   void _analyzeBiorhythm() async {
     if (_selectedDate == null) return;
 
-    HapticFeedback.mediumImpact();
+    ref.read(fortuneHapticServiceProvider).sectionComplete();
 
     // 로딩 시작
     setState(() {
@@ -212,11 +211,10 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    final colors = context.colors;
+
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
+      backgroundColor: colors.background,
       appBar: const StandardFortuneAppBar(
         title: '바이오리듬 분석',
       ),
@@ -255,8 +253,8 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
                                             colors: [
-                                              TossTheme.primaryBlue,
-                                              const Color(0xFF00C896),
+                                              colors.accent,
+                                              DSColors.success,
                                             ],
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
@@ -264,15 +262,15 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: TossTheme.primaryBlue.withValues(alpha: 0.3),
+                                              color: colors.accent.withValues(alpha: 0.3),
                                               blurRadius: 20,
                                               offset: const Offset(0, 8),
                                             ),
                                           ],
                                         ),
-                                        child: const Icon(
+                                        child: Icon(
                                           Icons.timeline_rounded,
-                                          color: TossDesignSystem.white,
+                                          color: Colors.white,
                                           size: 36,
                                         ),
                                       ),
@@ -282,9 +280,9 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
 
                                   Text(
                                     '당신의 생체 리듬을 분석하고\n최적의 타이밍을 찾아드릴게요',
-                                    style: theme.textTheme.titleMedium?.copyWith(
+                                    style: DSTypography.labelLarge.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                                      color: colors.textPrimary,
                                       height: 1.4,
                                     ),
                                     textAlign: TextAlign.center,
@@ -293,8 +291,8 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
 
                                   Text(
                                     '신체·감정·지적 리듬의 3가지 주기를 분석해\n오늘의 컨디션과 앞으로의 흐름을 알려드려요',
-                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                      color: TossTheme.textGray600,
+                                    style: DSTypography.bodyLarge.copyWith(
+                                      color: colors.textSecondary,
                                       height: 1.5,
                                     ),
                                     textAlign: TextAlign.center,
@@ -317,9 +315,9 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                                 children: [
                                   Text(
                                     '생년월일',
-                                    style: theme.textTheme.titleSmall?.copyWith(
+                                    style: DSTypography.labelLarge.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                                      color: colors.textPrimary,
                                     ),
                                   ),
                                   const SizedBox(height: 16),
@@ -341,8 +339,8 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                           // 안내 문구
                           Text(
                             '분석 결과는 참고용으로만 활용해 주세요',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: isDark ? TossDesignSystem.grayDark100 : TossTheme.textGray600,
+                            style: DSTypography.labelSmall.copyWith(
+                              color: colors.textSecondary,
                             ),
                             textAlign: TextAlign.center,
                           ),

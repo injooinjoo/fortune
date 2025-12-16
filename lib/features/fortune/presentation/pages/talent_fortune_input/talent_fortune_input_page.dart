@@ -10,8 +10,9 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/widgets/unified_button.dart';
+import '../../../../../../core/services/fortune_haptic_service.dart';
 import '../../../domain/models/talent_input_model.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
 import '../../../../../../services/ad_service.dart';
@@ -610,7 +611,10 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
 
       Logger.info('[TalentFortune] ✅ API 호출 완료');
 
-      // 4. 광고 표시
+      // 4. 입력 완료 햅틱
+      ref.read(fortuneHapticServiceProvider).sectionComplete();
+
+      // 5. 광고 표시
       Logger.info('[TalentFortune] 📺 광고 표시 시작');
       await AdService.instance.showInterstitialAdWithCallback(
         onAdCompleted: () async {
@@ -644,7 +648,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('재능 분석 중 오류가 발생했습니다: $e'),
-            backgroundColor: TossDesignSystem.error,
+            backgroundColor: DSColors.error,
           ),
         );
         setState(() {
@@ -686,7 +690,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final canGenerate = _canGenerate();
     final buttonEnabled = canGenerate && !_isGenerating;
 
@@ -696,7 +700,7 @@ class _TalentFortuneInputPageState extends ConsumerState<TalentFortuneInputPage>
     Logger.debug('[TalentFortune] 🎨 buttonEnabled: $buttonEnabled');
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
+      backgroundColor: colors.background,
       appBar: StandardFortuneAppBar(
         title: '재능 발견',
       ),

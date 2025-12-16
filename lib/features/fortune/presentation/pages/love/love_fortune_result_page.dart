@@ -4,15 +4,14 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/models/fortune_result.dart';
 import '../../../../../core/widgets/blurred_fortune_content.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../services/ad_service.dart'; // ✅ RewardedAd용
 import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../core/utils/logger.dart'; // ✅ 로그용
+import '../../../../../core/services/fortune_haptic_service.dart';
 
 /// 연애운 결과 페이지 (프리미엄/블러 시스템 적용)
 ///
@@ -37,17 +36,33 @@ class LoveFortuneResultPage extends ConsumerStatefulWidget {
 
 class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
   late FortuneResult _fortuneResult;
+  bool _hapticTriggered = false;
 
   @override
   void initState() {
     super.initState();
     _fortuneResult = widget.fortuneResult;
     debugPrint('[연애운] 결과 페이지 초기화 - isBlurred: ${_fortuneResult.isBlurred}');
+
+    // 연애운 결과 공개 햅틱 (하트비트 + 점수)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !_hapticTriggered) {
+        _hapticTriggered = true;
+        final haptic = ref.read(fortuneHapticServiceProvider);
+        final loveScore = _fortuneResult.data['loveScore'] as int? ?? 70;
+        // 하트비트 패턴으로 두근두근 느낌
+        haptic.loveHeartbeat();
+        // 점수에 따른 차별화 햅틱
+        Future.delayed(const Duration(milliseconds: 300), () {
+          haptic.scoreReveal(loveScore);
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
@@ -56,16 +71,16 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
+        backgroundColor: colors.background,
         appBar: AppBar(
-          backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
+          backgroundColor: colors.background,
           elevation: 0,
           scrolledUnderElevation: 0,
           automaticallyImplyLeading: false, // 백버튼 제거
           title: Text(
             '연애운세 결과',
-            style: context.heading3.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+            style: DSTypography.headingMedium.copyWith(
+              color: colors.textPrimary,
             ),
           ),
           centerTitle: true,
@@ -73,7 +88,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
             IconButton(
               icon: Icon(
                 Icons.close,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                color: colors.textPrimary,
               ),
               onPressed: () => context.go('/fortune'),
             ),
@@ -87,48 +102,52 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
               // 1. 메인 점수 카드 (공개)
-              _buildMainScoreCard(),
+              _buildMainScoreCard(colors),
               const SizedBox(height: 24),
 
               // 2. 연애 성향 (공개)
-              _buildLoveStyleSection(),
+              _buildLoveStyleSection(colors),
 
               // 3. 매력 포인트 (공개)
-              _buildCharmPointsSection(),
+              _buildCharmPointsSection(colors),
 
               // 4. 개선 포인트 (공개)
-              _buildImprovementSection(),
+              _buildImprovementSection(colors),
 
               // 5. 궁합 인사이트 (블러)
               _buildBlurredSection(
                 title: '궁합 인사이트',
                 icon: Icons.people_rounded,
                 color: const Color(0xFF9C27B0),
-                contentBuilder: () => _buildCompatibilityInsightsContent(),
+                contentBuilder: () => _buildCompatibilityInsightsContent(colors),
+                colors: colors,
               ),
 
               // 6. 미래 예측 (블러)
               _buildBlurredSection(
                 title: '미래 예측',
                 icon: Icons.calendar_today_rounded,
-                color: TossTheme.primaryBlue,
-                contentBuilder: () => _buildPredictionsContent(),
+                color: colors.accent,
+                contentBuilder: () => _buildPredictionsContent(colors),
+                colors: colors,
               ),
 
               // 7. 실천 계획 (블러)
               _buildBlurredSection(
                 title: '실천 계획',
                 icon: Icons.checklist_rounded,
-                color: TossTheme.success,
-                contentBuilder: () => _buildActionPlanContent(),
+                color: DSColors.success,
+                contentBuilder: () => _buildActionPlanContent(colors),
+                colors: colors,
               ),
 
               // 8. 주의사항 (블러)
               _buildBlurredSection(
                 title: '⚠️ 주의사항',
                 icon: Icons.warning_rounded,
-                color: TossTheme.error,
-                contentBuilder: () => _buildWarningContent(),
+                color: DSColors.error,
+                contentBuilder: () => _buildWarningContent(colors),
+                colors: colors,
               ),
 
               const SizedBox(height: 80), // Floating Button 공간
@@ -152,7 +171,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
 
   // ===== 공개 섹션 빌더 =====
 
-  Widget _buildMainScoreCard() {
+  Widget _buildMainScoreCard(DSColorScheme colors) {
     final data = _fortuneResult.data;
     final loveScore = data['loveScore'] as int? ?? 70;
     final mainMessage = FortuneTextCleaner.clean(data['mainMessage'] as String? ?? '');
@@ -181,29 +200,29 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
         children: [
           const Icon(
             Icons.favorite_rounded,
-            color: TossDesignSystem.white,
+            color: Colors.white,
             size: 48,
           ),
           const SizedBox(height: 16),
           Text(
             '오늘의 연애운',
-            style: context.bodyMedium.copyWith(
-              color: TossDesignSystem.white.withValues(alpha: 0.9),
+            style: DSTypography.bodyMedium.copyWith(
+              color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '$loveScore점',
-            style: context.displayLarge.copyWith(
-              color: TossDesignSystem.white,
+            style: DSTypography.displayLarge.copyWith(
+              color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 16),
           Text(
             mainMessage,
-            style: context.bodyLarge.copyWith(
-              color: TossDesignSystem.white,
+            style: DSTypography.bodyLarge.copyWith(
+              color: Colors.white,
               height: 1.5,
             ),
             textAlign: TextAlign.center,
@@ -213,7 +232,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
     ).animate().fadeIn(duration: 600.ms).scale(delay: 200.ms);
   }
 
-  Widget _buildLoveStyleSection() {
+  Widget _buildLoveStyleSection(DSColorScheme colors) {
     final data = _fortuneResult.data;
     final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
     final loveStyle = detailedAnalysis['loveStyle'] as Map<String, dynamic>? ?? {};
@@ -224,11 +243,12 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
       '연애 성향',
       description,
       Icons.psychology_rounded,
-      TossTheme.primaryBlue,
+      colors.accent,
+      colors,
     );
   }
 
-  Widget _buildCharmPointsSection() {
+  Widget _buildCharmPointsSection(DSColorScheme colors) {
     final data = _fortuneResult.data;
     final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
     final charmPoints = detailedAnalysis['charmPoints'] as Map<String, dynamic>? ?? {};
@@ -244,11 +264,12 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
       '매력 포인트',
       content.isEmpty ? '당신만의 특별한 매력을 가지고 있어요.' : content,
       Icons.star_rounded,
-      TossTheme.warning,
+      DSColors.warning,
+      colors,
     );
   }
 
-  Widget _buildImprovementSection() {
+  Widget _buildImprovementSection(DSColorScheme colors) {
     final data = _fortuneResult.data;
     final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
     final improvementAreas = detailedAnalysis['improvementAreas'] as Map<String, dynamic>? ?? {};
@@ -264,7 +285,8 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
       '개선 포인트',
       content.isEmpty ? '자신의 감정을 솔직하게 표현해보세요.' : content,
       Icons.trending_up_rounded,
-      TossTheme.success,
+      DSColors.success,
+      colors,
     );
   }
 
@@ -276,17 +298,16 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
     required IconData icon,
     required Color color,
     required Widget Function() contentBuilder,
+    required DSColorScheme colors,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
+          color: colors.border,
         ),
       ),
       child: Column(
@@ -306,7 +327,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: context.heading4.copyWith(fontWeight: FontWeight.w700),
+                style: DSTypography.headingSmall.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -326,7 +347,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
 
   // 블러 섹션 내용 빌더들
 
-  Widget _buildCompatibilityInsightsContent() {
+  Widget _buildCompatibilityInsightsContent(DSColorScheme colors) {
     final data = _fortuneResult.data;
     final detailedAnalysis = data['detailedAnalysis'] as Map<String, dynamic>? ?? {};
     final compatibilityInsights = detailedAnalysis['compatibilityInsights'] as Map<String, dynamic>? ?? {};
@@ -344,17 +365,16 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
 ${tips.isNotEmpty ? '• ${tips.join('\n• ')}' : '서로를 존중하고 이해하는 관계를 만들어가세요.'}
 ''';
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Text(
       content,
-      style: context.bodyMedium.copyWith(
-        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+      style: DSTypography.bodyMedium.copyWith(
+        color: colors.textSecondary,
         height: 1.6,
       ),
     );
   }
 
-  Widget _buildPredictionsContent() {
+  Widget _buildPredictionsContent(DSColorScheme colors) {
     final data = _fortuneResult.data;
     final predictions = data['predictions'] as Map<String, dynamic>? ?? {};
 
@@ -370,17 +390,16 @@ ${tips.isNotEmpty ? '• ${tips.join('\n• ')}' : '서로를 존중하고 이�
 📅 앞으로 3개월: $nextThreeMonths
 ''';
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Text(
       content,
-      style: context.bodyMedium.copyWith(
-        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+      style: DSTypography.bodyMedium.copyWith(
+        color: colors.textSecondary,
         height: 1.6,
       ),
     );
   }
 
-  Widget _buildActionPlanContent() {
+  Widget _buildActionPlanContent(DSColorScheme colors) {
     final data = _fortuneResult.data;
     final actionPlan = data['actionPlan'] as Map<String, dynamic>? ?? {};
 
@@ -399,26 +418,24 @@ ${shortTerm.isNotEmpty ? '• ${shortTerm.join('\n• ')}' : '상대방과의 �
 ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 함께 그려보세요.'}
 ''';
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Text(
       content,
-      style: context.bodyMedium.copyWith(
-        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+      style: DSTypography.bodyMedium.copyWith(
+        color: colors.textSecondary,
         height: 1.6,
       ),
     );
   }
 
-  Widget _buildWarningContent() {
+  Widget _buildWarningContent(DSColorScheme colors) {
     final data = _fortuneResult.data;
     final todaysAdvice = data['todaysAdvice'] as Map<String, dynamic>? ?? {};
     final warningArea = FortuneTextCleaner.clean(todaysAdvice['warningArea'] as String? ?? '과도한 기대는 실망으로 이어질 수 있으니 주의하세요.');
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Text(
       warningArea,
-      style: context.bodyMedium.copyWith(
-        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+      style: DSTypography.bodyMedium.copyWith(
+        color: colors.textSecondary,
         height: 1.6,
       ),
     );
@@ -432,17 +449,16 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
     String content,
     IconData icon,
     Color color,
+    DSColorScheme colors,
   ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
+          color: colors.border,
         ),
       ),
       child: Column(
@@ -461,15 +477,15 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
               const SizedBox(width: 12),
               Text(
                 title,
-                style: context.heading4.copyWith(fontWeight: FontWeight.w700),
+                style: DSTypography.headingSmall.copyWith(fontWeight: FontWeight.w700),
               ),
             ],
           ),
           const SizedBox(height: 16),
           Text(
             content,
-            style: context.bodyMedium.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+            style: DSTypography.bodyMedium.copyWith(
+              color: colors.textSecondary,
               height: 1.6,
             ),
           ),
@@ -504,9 +520,9 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
           debugPrint('[연애운] ❌ RewardedAd 로드 타임아웃');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
-                backgroundColor: TossDesignSystem.errorRed,
+              SnackBar(
+                content: const Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: DSColors.error,
               ),
             );
           }
@@ -546,9 +562,9 @@ ${longTerm.isNotEmpty ? '• ${longTerm.join('\n• ')}' : '서로의 미래를 
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
-            backgroundColor: TossDesignSystem.warningOrange,
+          SnackBar(
+            content: const Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'),
+            backgroundColor: DSColors.warning,
           ),
         );
       }

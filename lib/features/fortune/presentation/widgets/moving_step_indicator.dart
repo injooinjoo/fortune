@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 토스 스타일 단계 진행 표시기
 class MovingStepIndicator extends StatelessWidget {
@@ -24,8 +24,8 @@ class MovingStepIndicator extends StatelessWidget {
           height: 8,
           decoration: BoxDecoration(
             color: index <= currentStep 
-                ? TossTheme.primaryBlue 
-                : TossTheme.borderGray200,
+                ? DSColors.accent 
+                : DSColors.border,
             shape: BoxShape.circle,
           ),
         ),

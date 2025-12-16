@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/widgets/accordion_input_section.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
 import '../../../../../core/services/debug_premium_service.dart';
+import '../../../../../core/services/fortune_haptic_service.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../presentation/providers/user_profile_notifier.dart';
@@ -496,6 +496,9 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
           _isLoading = false;
         });
 
+        // 입력 완료 햅틱
+        ref.read(fortuneHapticServiceProvider).sectionComplete();
+
         // 5. 결과 페이지로 이동
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -535,10 +538,10 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.white,
+      backgroundColor: colors.background,
       appBar: const StandardFortuneAppBar(
         title: '연애운',
       ),
@@ -548,7 +551,7 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
             _accordionSections.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : AccordionInputFormWithHeader(
-                    header: _buildTitleSection(isDark),
+                    header: _buildTitleSection(context),
                     sections: _accordionSections,
                     onAllCompleted: null,
                     completionButtonText: '연애운세 보기',
@@ -566,7 +569,8 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
     );
   }
 
-  Widget _buildTitleSection(bool isDark) {
+  Widget _buildTitleSection(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -574,15 +578,15 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
         children: [
           Text(
             '연애운세',
-            style: TypographyUnified.heading1.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.displayLarge.copyWith(
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '솔직하게 답할수록 정확한 조언을 드려요',
-            style: TypographyUnified.bodyMedium.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+            style: DSTypography.bodyMedium.copyWith(
+              color: colors.textSecondary,
             ),
           ),
         ],

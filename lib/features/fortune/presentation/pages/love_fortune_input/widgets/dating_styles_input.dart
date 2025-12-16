@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import 'package:flutter/services.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 /// Section 2: 연애 스타일 (다중 선택)
 class DatingStylesInput extends StatelessWidget {
@@ -16,7 +15,7 @@ class DatingStylesInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     final styles = [
       {'id': 'active', 'text': '적극적', 'emoji': '🔥'},
@@ -34,8 +33,8 @@ class DatingStylesInput extends StatelessWidget {
       children: [
         Text(
           '여러 개 선택 가능',
-          style: TypographyUnified.labelMedium.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+          style: DSTypography.labelMedium.copyWith(
+            color: colors.textSecondary,
           ),
         ),
         const SizedBox(height: 12),
@@ -52,19 +51,19 @@ class DatingStylesInput extends StatelessWidget {
             return InkWell(
               onTap: () {
                 onStyleToggled(styleId);
-                TossDesignSystem.hapticLight();
+                HapticFeedback.lightImpact();
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? TossDesignSystem.tossBlue
-                      : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary),
+                      ? colors.accent
+                      : colors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
-                        ? TossDesignSystem.tossBlue
-                        : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+                        ? colors.accent
+                        : colors.border,
                     width: isSelected ? 2 : 1,
                   ),
                 ),
@@ -73,16 +72,16 @@ class DatingStylesInput extends StatelessWidget {
                   children: [
                     Text(
                       style['emoji'] as String,
-                      style: TypographyUnified.heading4,
+                      style: DSTypography.headingSmall,
                     ),
                     const SizedBox(width: 8),
                     Flexible(
                       child: Text(
                         style['text'] as String,
-                        style: TypographyUnified.bodyMedium.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           color: isSelected
-                              ? TossDesignSystem.white
-                              : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                              ? Colors.white
+                              : colors.textPrimary,
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                         ),
                         textAlign: TextAlign.center,

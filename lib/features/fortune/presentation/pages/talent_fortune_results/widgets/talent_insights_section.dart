@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/fortune_result.dart';
 import '../../../../../../core/utils/fortune_text_cleaner.dart';
 
 class TalentInsightsSection extends StatelessWidget {
   final FortuneResult? fortuneResult;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const TalentInsightsSection({
     super.key,
     required this.fortuneResult,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -22,8 +21,8 @@ class TalentInsightsSection extends StatelessWidget {
       return Center(
         child: Text(
           '재능 인사이트 데이터가 없습니다',
-          style: TypographyUnified.bodySmall.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+          style: DSTypography.bodySmall.copyWith(
+            color: colors.textSecondary,
           ),
         ),
       );
@@ -49,10 +48,10 @@ class TalentInsightsSection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray50,
+                color: colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+                  color: colors.accent.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -66,17 +65,17 @@ class TalentInsightsSection extends StatelessWidget {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              TossDesignSystem.tossBlue,
-                              TossDesignSystem.tossBlueDark,
+                              colors.accent,
+                              colors.accent.withValues(alpha: 0.8),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           '#${index + 1}',
-                          style: TypographyUnified.labelSmall.copyWith(
+                          style: DSTypography.labelSmall.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: TossDesignSystem.white,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -84,17 +83,17 @@ class TalentInsightsSection extends StatelessWidget {
                       Expanded(
                         child: Text(
                           talent,
-                          style: TypographyUnified.heading4.copyWith(
+                          style: DSTypography.headingSmall.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
                       Text(
                         '$potential점',
-                        style: TypographyUnified.buttonMedium.copyWith(
+                        style: DSTypography.labelLarge.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: TossDesignSystem.tossBlue,
+                          color: colors.accent,
                         ),
                       ),
                     ],
@@ -103,9 +102,9 @@ class TalentInsightsSection extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       description,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         height: 1.6,
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],
@@ -114,7 +113,7 @@ class TalentInsightsSection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+                        color: colors.accent.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(
@@ -122,17 +121,17 @@ class TalentInsightsSection extends StatelessWidget {
                         children: [
                           Text(
                             '📈 6개월 개발 로드맵',
-                            style: TypographyUnified.labelMedium.copyWith(
+                            style: DSTypography.labelMedium.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: TossDesignSystem.tossBlue,
+                              color: colors.accent,
                             ),
                           ),
                           SizedBox(height: 6),
                           Text(
                             developmentPath,
-                            style: TypographyUnified.bodySmall.copyWith(
+                            style: DSTypography.bodySmall.copyWith(
                               height: 1.5,
-                              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -143,9 +142,9 @@ class TalentInsightsSection extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       '💼 실전 활용법',
-                      style: TypographyUnified.labelMedium.copyWith(
+                      style: DSTypography.labelMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.warningOrange,
+                        color: DSColors.warning,
                       ),
                     ),
                     SizedBox(height: 6),
@@ -154,12 +153,12 @@ class TalentInsightsSection extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('• ', style: TypographyUnified.bodySmall),
+                          Text('• ', style: DSTypography.bodySmall),
                           Expanded(
                             child: Text(
                               app,
-                              style: TypographyUnified.bodySmall.copyWith(
-                                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                              style: DSTypography.bodySmall.copyWith(
+                                color: colors.textSecondary,
                               ),
                             ),
                           ),
@@ -172,7 +171,7 @@ class TalentInsightsSection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.successGreen.withValues(alpha: 0.05),
+                        color: DSColors.success.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(
@@ -180,17 +179,17 @@ class TalentInsightsSection extends StatelessWidget {
                         children: [
                           Text(
                             '💰 수익화 전략',
-                            style: TypographyUnified.labelMedium.copyWith(
+                            style: DSTypography.labelMedium.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: TossDesignSystem.successGreen,
+                              color: DSColors.success,
                             ),
                           ),
                           SizedBox(height: 6),
                           Text(
                             monetizationStrategy,
-                            style: TypographyUnified.bodySmall.copyWith(
+                            style: DSTypography.bodySmall.copyWith(
                               height: 1.5,
-                              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -202,7 +201,7 @@ class TalentInsightsSection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.warningOrange.withValues(alpha: 0.05),
+                        color: DSColors.warning.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(
@@ -210,17 +209,17 @@ class TalentInsightsSection extends StatelessWidget {
                         children: [
                           Text(
                             '📁 포트폴리오 구축',
-                            style: TypographyUnified.labelMedium.copyWith(
+                            style: DSTypography.labelMedium.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: TossDesignSystem.warningOrange,
+                              color: DSColors.warning,
                             ),
                           ),
                           SizedBox(height: 6),
                           Text(
                             portfolioBuilding,
-                            style: TypographyUnified.bodySmall.copyWith(
+                            style: DSTypography.bodySmall.copyWith(
                               height: 1.5,
-                              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -231,9 +230,9 @@ class TalentInsightsSection extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       '📚 추천 리소스',
-                      style: TypographyUnified.labelMedium.copyWith(
+                      style: DSTypography.labelMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: TossDesignSystem.tossBlue,
+                        color: colors.accent,
                       ),
                     ),
                     SizedBox(height: 6),
@@ -242,12 +241,12 @@ class TalentInsightsSection extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('• ', style: TypographyUnified.bodySmall),
+                          Text('• ', style: DSTypography.bodySmall),
                           Expanded(
                             child: Text(
                               resource,
-                              style: TypographyUnified.bodySmall.copyWith(
-                                color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                              style: DSTypography.bodySmall.copyWith(
+                                color: colors.textSecondary,
                               ),
                             ),
                           ),

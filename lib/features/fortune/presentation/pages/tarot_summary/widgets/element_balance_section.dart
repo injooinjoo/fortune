@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../../core/constants/tarot/tarot_helper.dart';
 
@@ -26,9 +25,9 @@ class ElementBalanceSection extends StatelessWidget {
         children: [
           Text(
             '원소 균형',
-            style: TypographyUnified.heading4.copyWith(
-              fontSize: TypographyUnified.heading4.fontSize! * fontScale,
-              color: TossDesignSystem.white,
+            style: DSTypography.headingSmall.copyWith(
+              fontSize: DSTypography.headingSmall.fontSize! * fontScale,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 16),
@@ -48,9 +47,9 @@ class ElementBalanceSection extends StatelessWidget {
                     width: 60,
                     child: Text(
                       entry.key,
-                      style: TypographyUnified.bodySmall.copyWith(
-                        fontSize: TypographyUnified.bodySmall.fontSize! * fontScale,
-                        color: TossDesignSystem.white,
+                      style: DSTypography.bodySmall.copyWith(
+                        fontSize: DSTypography.bodySmall.fontSize! * fontScale,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -58,7 +57,7 @@ class ElementBalanceSection extends StatelessWidget {
                     child: Container(
                       height: 20,
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.white.withValues(alpha: 0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: FractionallySizedBox(
@@ -76,9 +75,9 @@ class ElementBalanceSection extends StatelessWidget {
                   SizedBox(width: 8),
                   Text(
                     '$percentage%',
-                    style: TypographyUnified.bodySmall.copyWith(
-                      fontSize: TypographyUnified.bodySmall.fontSize! * fontScale,
-                      color: TossDesignSystem.white.withValues(alpha: 0.7),
+                    style: DSTypography.bodySmall.copyWith(
+                      fontSize: DSTypography.bodySmall.fontSize! * fontScale,
+                      color: Colors.white.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -89,9 +88,9 @@ class ElementBalanceSection extends StatelessWidget {
             SizedBox(height: 12),
             Text(
               '$dominantElement 원소가 우세합니다',
-              style: TypographyUnified.bodySmall.copyWith(
-                fontSize: TypographyUnified.bodySmall.fontSize! * fontScale,
-                color: TossDesignSystem.purple.withValues(alpha: 0.6),
+              style: DSTypography.bodySmall.copyWith(
+                fontSize: DSTypography.bodySmall.fontSize! * fontScale,
+                color: const Color(0xFF9333EA).withValues(alpha: 0.6),
                 fontStyle: FontStyle.italic,
               ),
             ),

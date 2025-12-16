@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/components/app_card.dart';
 import 'event_category_selector.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 /// 감정 상태 정의
 enum EmotionState {
-  anxious('불안함', Icons.sentiment_dissatisfied, TossDesignSystem.warningOrange),
-  excited('기대됨', Icons.sentiment_very_satisfied, TossDesignSystem.successGreen),
-  worried('걱정됨', Icons.sentiment_neutral, TossDesignSystem.gray600),
-  nervous('떨림', Icons.favorite, TossDesignSystem.errorRed),
-  fearful('두려움', Icons.sentiment_very_dissatisfied, TossDesignSystem.purple);
+  anxious('불안함', Icons.sentiment_dissatisfied, DSColors.warning),
+  excited('기대됨', Icons.sentiment_very_satisfied, DSColors.success),
+  worried('걱정됨', Icons.sentiment_neutral, DSColors.textTertiary),
+  nervous('떨림', Icons.favorite, DSColors.error),
+  fearful('두려움', Icons.sentiment_very_dissatisfied, DSColors.accentTertiary);
 
   final String label;
   final IconData icon;
@@ -51,8 +50,8 @@ class EventDetailInputForm extends StatelessWidget {
           // 질문/고민 입력
           Text(
             '질문이나 고민을 입력해주세요 (선택)',
-            style: TossDesignSystem.heading4.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            style: DSTypography.headingSmall.copyWith(
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -63,10 +62,10 @@ class EventDetailInputForm extends StatelessWidget {
             decoration: InputDecoration(
               hintText: '예: 이번 면접에서 좋은 결과가 나올까요?',
               hintStyle: TextStyle(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               ),
               filled: true,
-              fillColor: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100,
+              fillColor: isDark ? DSColors.surface : DSColors.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -85,8 +84,8 @@ class EventDetailInputForm extends StatelessWidget {
           // 감정 상태 선택
           Text(
             '현재 감정 상태',
-            style: TossDesignSystem.heading4.copyWith(
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            style: DSTypography.headingSmall.copyWith(
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -104,12 +103,12 @@ class EventDetailInputForm extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? emotion.color.withValues(alpha: 0.15)
-                        : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100),
+                        : (isDark ? DSColors.surface : DSColors.surface),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isSelected
                           ? emotion.color
-                          : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
+                          : (isDark ? DSColors.border : DSColors.border),
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -121,16 +120,16 @@ class EventDetailInputForm extends StatelessWidget {
                         size: 18,
                         color: isSelected
                             ? emotion.color
-                            : (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600),
+                            : (isDark ? DSColors.textSecondary : DSColors.textSecondary),
                       ),
                       SizedBox(width: 6),
                       Text(
                         emotion.label,
-                        style: TypographyUnified.bodySmall.copyWith(
+                        style: DSTypography.bodySmall.copyWith(
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                           color: isSelected
                               ? emotion.color
-                              : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
+                              : (isDark ? DSColors.textPrimary : DSColors.textPrimary),
                         ),
                       ),
                     ],
@@ -144,7 +143,7 @@ class EventDetailInputForm extends StatelessWidget {
           if (category == EventCategory.dating || category == EventCategory.relationship) ...[
             const SizedBox(height: 24),
             Divider(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+              color: isDark ? DSColors.border : DSColors.border,
             ),
             const SizedBox(height: 16),
             InkWell(
@@ -153,10 +152,10 @@ class EventDetailInputForm extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100,
+                  color: isDark ? DSColors.surface : DSColors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300,
+                    color: isDark ? DSColors.border : DSColors.border,
                   ),
                 ),
                 child: Row(
@@ -173,16 +172,16 @@ class EventDetailInputForm extends StatelessWidget {
                         children: [
                           Text(
                             '상대방 정보 추가하기',
-                            style: TossDesignSystem.heading4.copyWith(
-                              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                            style: DSTypography.headingSmall.copyWith(
+                              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           SizedBox(height: 4),
                           Text(
                             '궁합 분석을 받을 수 있어요',
-                            style: TossDesignSystem.body3.copyWith(
-                              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                            style: DSTypography.bodySmall.copyWith(
+                              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                             ),
                           ),
                         ],
@@ -190,7 +189,7 @@ class EventDetailInputForm extends StatelessWidget {
                     ),
                     Icon(
                       Icons.arrow_forward_ios,
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                       size: 16,
                     ),
                   ],

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import 'moving_fortune_data.dart';
 import 'moving_result_utils.dart';
 
@@ -25,7 +24,7 @@ class MovingTimingPage extends StatelessWidget {
         children: [
           Text(
             '3개월 이사운 흐름',
-            style: TossTheme.heading2,
+            style: DSTypography.headingLarge,
           ),
           const SizedBox(height: 20),
 
@@ -44,7 +43,7 @@ class MovingTimingPage extends StatelessWidget {
                         horizontalInterval: 20,
                         getDrawingHorizontalLine: (value) {
                           return FlLine(
-                            color: TossTheme.borderGray200,
+                            color: DSColors.border,
                             strokeWidth: 1,
                           );
                         },
@@ -61,7 +60,7 @@ class MovingTimingPage extends StatelessWidget {
                               final date = DateTime.now().add(Duration(days: value.toInt()));
                               return Text(
                                 '${date.month}/${date.day}',
-                                style: TossTheme.caption,
+                                style: DSTypography.labelSmall,
                               );
                             },
                           ),
@@ -73,7 +72,7 @@ class MovingTimingPage extends StatelessWidget {
                             getTitlesWidget: (value, meta) {
                               return Text(
                                 '${value.toInt()}',
-                                style: TossTheme.caption,
+                                style: DSTypography.labelSmall,
                               );
                             },
                           ),
@@ -92,8 +91,8 @@ class MovingTimingPage extends StatelessWidget {
                           isCurved: true,
                           gradient: LinearGradient(
                             colors: [
-                              TossTheme.primaryBlue.withValues(alpha: 0.8),
-                              TossTheme.primaryBlue,
+                              DSColors.accent.withValues(alpha: 0.8),
+                              DSColors.accent,
                             ],
                           ),
                           barWidth: 3,
@@ -103,8 +102,8 @@ class MovingTimingPage extends StatelessWidget {
                             show: true,
                             gradient: LinearGradient(
                               colors: [
-                                TossTheme.primaryBlue.withValues(alpha: 0.1),
-                                TossTheme.primaryBlue.withValues(alpha: 0.0),
+                                DSColors.accent.withValues(alpha: 0.1),
+                                DSColors.accent.withValues(alpha: 0.0),
                               ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
@@ -120,10 +119,10 @@ class MovingTimingPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildLegend('매우 좋음', TossDesignSystem.success),
-                    _buildLegend('좋음', TossTheme.primaryBlue),
-                    _buildLegend('보통', TossDesignSystem.warningOrange),
-                    _buildLegend('주의', TossDesignSystem.error),
+                    _buildLegend('매우 좋음', DSColors.success),
+                    _buildLegend('좋음', DSColors.accent),
+                    _buildLegend('보통', DSColors.warning),
+                    _buildLegend('주의', DSColors.error),
                   ],
                 ),
               ],
@@ -135,7 +134,7 @@ class MovingTimingPage extends StatelessWidget {
           // 추천 날짜 리스트
           Text(
             '추천 이사 날짜 TOP 5',
-            style: TossTheme.heading3,
+            style: DSTypography.headingMedium,
           ),
           const SizedBox(height: 12),
 
@@ -153,15 +152,15 @@ class MovingTimingPage extends StatelessWidget {
                       height: 40,
                       decoration: BoxDecoration(
                         color: index == 0
-                            ? TossDesignSystem.warningOrange.withValues(alpha: 0.2)
-                            : TossTheme.primaryBlue.withValues(alpha: 0.1),
+                            ? DSColors.warning.withValues(alpha: 0.2)
+                            : DSColors.accent.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Center(
                         child: Text(
                           '${index + 1}',
-                          style: TossTheme.heading3.copyWith(
-                            color: index == 0 ? TossDesignSystem.warningOrange : TossTheme.primaryBlue,
+                          style: DSTypography.headingMedium.copyWith(
+                            color: index == 0 ? DSColors.warning : DSColors.accent,
                           ),
                         ),
                       ),
@@ -173,12 +172,12 @@ class MovingTimingPage extends StatelessWidget {
                         children: [
                           Text(
                             '${date.month}월 ${date.day}일 (${MovingResultUtils.getWeekdayName(date.weekday)})',
-                            style: TossTheme.heading4,
+                            style: DSTypography.headingSmall,
                           ),
                           const SizedBox(height: 4),
                           Text(
                             index == 0 ? '최고의 이사 날짜입니다' : '좋은 기운이 가득한 날입니다',
-                            style: TossTheme.caption,
+                            style: DSTypography.labelSmall,
                           ),
                         ],
                       ),
@@ -186,7 +185,7 @@ class MovingTimingPage extends StatelessWidget {
                     if (index == 0)
                       Icon(
                         Icons.star_rounded,
-                        color: TossDesignSystem.warningOrange,
+                        color: DSColors.warning,
                         size: 24,
                       ),
                   ],
@@ -215,7 +214,7 @@ class MovingTimingPage extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 4),
-        Text(label, style: TossTheme.caption),
+        Text(label, style: DSTypography.labelSmall),
       ],
     );
   }

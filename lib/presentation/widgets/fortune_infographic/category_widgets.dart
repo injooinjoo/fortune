@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/toss_design_system.dart';
-import '../../../core/theme/typography_unified.dart';
+import '../../../core/design_system/design_system.dart';
 import 'helpers.dart';
 
 /// Category display widgets for fortune infographic
@@ -138,7 +138,7 @@ class CategoryWidgets {
             children: [
               Text(
                 '오늘의 총운',
-                style: TypographyUnified.buttonMedium.copyWith(
+                style: DSTypography.labelMedium.copyWith(
                   fontWeight: FontWeight.w600,
                   color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
                 ),
@@ -151,7 +151,7 @@ class CategoryWidgets {
                 ),
                 child: Text(
                   '$score점',
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     fontWeight: FontWeight.w700,
                     color: scoreColor,
                   ),
@@ -175,7 +175,7 @@ class CategoryWidgets {
               ),
               child: Text(
                 idiom,
-                style: TypographyUnified.heading1.copyWith(
+                style: DSTypography.displaySmall.copyWith(
                   fontWeight: FontWeight.w800,
                   color: scoreColor,
                   letterSpacing: 2,
@@ -190,7 +190,7 @@ class CategoryWidgets {
           // 설명 텍스트
           Text(
             description,
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray700,
               height: 1.5,
             ),
@@ -227,7 +227,7 @@ class CategoryWidgets {
               Expanded(
                 child: Text(
                   title,
-                  style: TypographyUnified.buttonMedium.copyWith(
+                  style: DSTypography.labelMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
                   ),
@@ -241,7 +241,7 @@ class CategoryWidgets {
                 ),
                 child: Text(
                   '$score점',
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                     color: scoreColor,
                   ),
@@ -253,7 +253,7 @@ class CategoryWidgets {
           // 높이 제한 없이 자연스럽게 표시 (300자 설명 모두 보임)
           Text(
             description,
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
               height: 1.5,
             ),
@@ -305,7 +305,7 @@ class CategoryWidgets {
                   Expanded(
                     child: Text(
                       title,
-                      style: TypographyUnified.buttonMedium.copyWith(
+                      style: DSTypography.labelMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
                       ),
@@ -319,7 +319,7 @@ class CategoryWidgets {
                     ),
                     child: Text(
                       '$score점',
-                      style: TypographyUnified.labelMedium.copyWith(
+                      style: DSTypography.labelMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: FortuneInfographicHelpers.getCategoryScoreColor(score, isDark),
                       ),
@@ -330,7 +330,7 @@ class CategoryWidgets {
               const SizedBox(height: 12),
               Text(
                 summary,
-                style: TypographyUnified.bodySmall.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   height: 1.4,
                   color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
                 ),
@@ -371,7 +371,7 @@ class CategoryWidgets {
       ),
       child: Text(
         text,
-        style: TypographyUnified.labelMedium.copyWith(
+        style: DSTypography.labelMedium.copyWith(
           fontWeight: FontWeight.w500,
           color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
         ),

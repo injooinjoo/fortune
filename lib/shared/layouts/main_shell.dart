@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../components/bottom_navigation_bar.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../routes/navigation_helper.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 
 /// Main shell widget that provides persistent navigation
 /// This widget wraps around all main pages and maintains the bottom navigation bar
@@ -127,41 +127,44 @@ class _MainShellState extends ConsumerState<MainShell>
       }
     });
 
-    return Scaffold(
-      backgroundColor: TossDesignSystem.transparent,
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      resizeToAvoidBottomInset: false, // Prevent navigation bar from moving with keyboard
-      body: Stack(
-        children: [
-          // Main content with animated padding
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _paddingAnimation,
-              builder: (context, child) {
-                final totalNavHeight = _navBarHeight + bottomPadding;
-                // Add bottom padding when navigation bar is visible
-                final bottomPaddingValue = navigationState.isVisible ? totalNavHeight * _paddingAnimation.value : 0.0;
-                return Padding(
-                  padding: EdgeInsets.only(bottom: bottomPaddingValue),
-                  child: widget.child);
-              },
-            ),
-          ),
-          // Navigation bar
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: _navBarHeight + bottomPadding, // Add explicit height
-            child: SlideTransition(
-              position: _slideAnimation,
-              child: FortuneBottomNavigationBar(
-                currentIndex: selectedIndex,
+    // Wrap entire shell with HanjiBackground for Korean traditional aesthetic
+    return HanjiBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        resizeToAvoidBottomInset: false, // Prevent navigation bar from moving with keyboard
+        body: Stack(
+          children: [
+            // Main content with animated padding
+            Positioned.fill(
+              child: AnimatedBuilder(
+                animation: _paddingAnimation,
+                builder: (context, child) {
+                  final totalNavHeight = _navBarHeight + bottomPadding;
+                  // Add bottom padding when navigation bar is visible
+                  final bottomPaddingValue = navigationState.isVisible ? totalNavHeight * _paddingAnimation.value : 0.0;
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: bottomPaddingValue),
+                    child: widget.child);
+                },
               ),
             ),
-          ),
-        ],
+            // Navigation bar with ink-wash shadow
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: _navBarHeight + bottomPadding, // Add explicit height
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: FortuneBottomNavigationBar(
+                  currentIndex: selectedIndex,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

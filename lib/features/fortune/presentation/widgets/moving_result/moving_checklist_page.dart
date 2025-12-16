@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import 'moving_fortune_data.dart';
 import 'moving_result_utils.dart';
 
@@ -24,12 +23,12 @@ class MovingChecklistPage extends StatelessWidget {
         children: [
           Text(
             '이사 준비 체크리스트',
-            style: TossTheme.heading2,
+            style: DSTypography.headingLarge,
           ),
           const SizedBox(height: 8),
           Text(
             '시기별로 준비해야 할 사항들입니다',
-            style: TossTheme.body2.copyWith(color: TossTheme.textGray600),
+            style: DSTypography.bodyMedium.copyWith(color: DSColors.textSecondary),
           ),
           const SizedBox(height: 20),
 
@@ -50,18 +49,18 @@ class MovingChecklistPage extends StatelessWidget {
                       height: 40,
                       decoration: BoxDecoration(
                         color: item.isCompleted
-                            ? TossDesignSystem.success
-                            : TossTheme.primaryBlue.withValues(alpha: 0.1),
+                            ? DSColors.success
+                            : DSColors.accent.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Center(
                         child: item.isCompleted
-                            ? Icon(Icons.check, color: TossDesignSystem.white, size: 20)
+                            ? Icon(Icons.check, color: Colors.white, size: 20)
                             : Text(
                                 '${index + 1}',
-                                style: TossTheme.body2.copyWith(
+                                style: DSTypography.bodyMedium.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  color: TossTheme.primaryBlue,
+                                  color: DSColors.accent,
                                 ),
                               ),
                       ),
@@ -70,7 +69,7 @@ class MovingChecklistPage extends StatelessWidget {
                       Container(
                         width: 2,
                         height: 60,
-                        color: TossTheme.borderGray200,
+                        color: DSColors.border,
                       ),
                   ],
                 ),
@@ -97,7 +96,7 @@ class MovingChecklistPage extends StatelessWidget {
                                 ),
                                 child: Text(
                                   item.timing,
-                                  style: TossTheme.caption.copyWith(
+                                  style: DSTypography.labelSmall.copyWith(
                                     color: MovingResultUtils.getTimeColor(item.timing),
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -107,8 +106,8 @@ class MovingChecklistPage extends StatelessWidget {
                               if (item.isCompleted)
                                 Text(
                                   '완료',
-                                  style: TossTheme.caption.copyWith(
-                                    color: TossDesignSystem.success,
+                                  style: DSTypography.labelSmall.copyWith(
+                                    color: DSColors.success,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -117,13 +116,13 @@ class MovingChecklistPage extends StatelessWidget {
                           const SizedBox(height: 8),
                           Text(
                             item.task,
-                            style: TossTheme.body2.copyWith(
+                            style: DSTypography.bodyMedium.copyWith(
                               decoration: item.isCompleted
                                   ? TextDecoration.lineThrough
                                   : null,
                               color: item.isCompleted
-                                  ? TossTheme.textGray400
-                                  : TossTheme.textBlack,
+                                  ? DSColors.textTertiary
+                                  : DSColors.textPrimary,
                             ),
                           ),
                         ],

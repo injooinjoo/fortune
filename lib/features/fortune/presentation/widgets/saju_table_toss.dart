@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/toss_design_system.dart';
 
 /// 토스 스타일 사주팔자 명식 테이블
 class SajuTableToss extends StatefulWidget {
@@ -55,7 +54,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
       animation: widget.animationController,
       builder: (context, child) {
         return AppCard(
-          padding: const EdgeInsets.all(TossTheme.spacingL),
+          padding: const EdgeInsets.all(DSSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -66,13 +65,13 @@ class _SajuTableTossState extends State<SajuTableToss> {
                   children: [
                     Icon(
                       Icons.table_chart_outlined,
-                      color: TossTheme.brandBlue,
+                      color: DSColors.accent,
                       size: 24,
                     ),
-                    const SizedBox(width: TossTheme.spacingS),
+                    const SizedBox(width: DSSpacing.sm),
                     Text(
                       '사주팔자',
-                      style: TossTheme.heading2.copyWith(
+                      style: DSTypography.headingLarge.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -80,24 +79,24 @@ class _SajuTableTossState extends State<SajuTableToss> {
                 ),
               ),
               
-              const SizedBox(height: TossTheme.spacingS),
+              const SizedBox(height: DSSpacing.sm),
               
               FadeTransition(
                 opacity: _titleAnimation,
                 child: Text(
                   '당신의 타고난 명식입니다',
-                  style: TossTheme.caption.copyWith(
-                    color: TossTheme.textGray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: DSColors.textSecondary,
                   ),
                 ),
               ),
               
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               
               // 사주 테이블
               _buildSajuTable(),
               
-              const SizedBox(height: TossTheme.spacingM),
+              const SizedBox(height: DSSpacing.md),
               
               // 일간 설명
               FadeTransition(
@@ -121,18 +120,18 @@ class _SajuTableTossState extends State<SajuTableToss> {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
-        border: Border.all(color: TossTheme.borderPrimary),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(color: DSColors.border),
       ),
       child: Column(
         children: [
           // 헤더
           Container(
             decoration: BoxDecoration(
-              color: TossTheme.backgroundSecondary,
+              color: DSColors.backgroundSecondary,
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(TossTheme.radiusM),
-                topRight: Radius.circular(TossTheme.radiusM),
+                topLeft: Radius.circular(DSRadius.md),
+                topRight: Radius.circular(DSRadius.md),
               ),
             ),
             child: Row(
@@ -143,19 +142,19 @@ class _SajuTableTossState extends State<SajuTableToss> {
                 
                 return Expanded(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingM),
+                    padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
                     decoration: BoxDecoration(
                       border: Border(
                         right: index < pillars.length - 1 
-                          ? BorderSide(color: TossTheme.borderPrimary, width: 1)
+                          ? BorderSide(color: DSColors.border, width: 1)
                           : BorderSide.none,
                       ),
                     ),
                     child: Text(
                       pillar['title']!,
-                      style: TossTheme.body2.copyWith(
+                      style: DSTypography.bodyMedium.copyWith(
                         fontWeight: isDay ? FontWeight.bold : FontWeight.w600,
-                        color: isDay ? TossTheme.brandBlue : TossTheme.textBlack,
+                        color: isDay ? DSColors.accent : DSColors.textPrimary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -169,7 +168,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
           Container(
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: TossTheme.borderPrimary, width: 1),
+                bottom: BorderSide(color: DSColors.border, width: 1),
               ),
             ),
             child: Row(
@@ -188,15 +187,15 @@ class _SajuTableTossState extends State<SajuTableToss> {
                     child: ScaleTransition(
                       scale: _pillarAnimations[index],
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingL),
+                        padding: const EdgeInsets.symmetric(vertical: DSSpacing.lg),
                         decoration: BoxDecoration(
                           border: Border(
                             right: index < pillars.length - 1 
-                              ? BorderSide(color: TossTheme.borderPrimary, width: 1)
+                              ? BorderSide(color: DSColors.border, width: 1)
                               : BorderSide.none,
                           ),
                           color: isDay 
-                            ? TossTheme.brandBlue.withValues(alpha: 0.08)
+                            ? DSColors.accent.withValues(alpha: 0.08)
                             : null,
                         ),
                         child: _buildStemCell(pillarData?['cheongan'], isDay),
@@ -225,23 +224,23 @@ class _SajuTableTossState extends State<SajuTableToss> {
                   child: ScaleTransition(
                     scale: _pillarAnimations[index],
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: TossTheme.spacingL),
+                      padding: const EdgeInsets.symmetric(vertical: DSSpacing.lg),
                       decoration: BoxDecoration(
                         border: Border(
                           right: index < pillars.length - 1 
-                            ? BorderSide(color: TossTheme.borderPrimary, width: 1)
+                            ? BorderSide(color: DSColors.border, width: 1)
                             : BorderSide.none,
                         ),
                         color: isDay 
-                          ? TossTheme.brandBlue.withValues(alpha: 0.08)
+                          ? DSColors.accent.withValues(alpha: 0.08)
                           : null,
                         borderRadius: index == pillars.length - 1 
                           ? const BorderRadius.only(
-                              bottomRight: Radius.circular(TossTheme.radiusM),
+                              bottomRight: Radius.circular(DSRadius.md),
                             )
                           : index == 0 
                             ? const BorderRadius.only(
-                                bottomLeft: Radius.circular(TossTheme.radiusM),
+                                bottomLeft: Radius.circular(DSRadius.md),
                               )
                             : null,
                       ),
@@ -276,9 +275,9 @@ class _SajuTableTossState extends State<SajuTableToss> {
           children: [
             Text(
               name,
-              style: TossTheme.body1.copyWith(
+              style: DSTypography.bodyLarge.copyWith(
                 fontWeight: isDay ? FontWeight.bold : FontWeight.w600,
-                color: isDay ? TossTheme.brandBlue : color,
+                color: isDay ? DSColors.accent : color,
                 fontSize: isDay ? 20 : 18,
               ),
             ),
@@ -288,7 +287,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                 hanja,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: isDay ? TossTheme.brandBlue : TossTheme.textBlack,
+                  color: isDay ? DSColors.accent : DSColors.textPrimary,
                   fontSize: isDay ? 18 : 16,
                 ),
               ),
@@ -305,7 +304,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
           ),
           child: Text(
             element,
-            style: TossTheme.caption.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               color: color,
               
               fontWeight: FontWeight.bold,
@@ -336,9 +335,9 @@ class _SajuTableTossState extends State<SajuTableToss> {
           children: [
             Text(
               name,
-              style: TossTheme.body1.copyWith(
+              style: DSTypography.bodyLarge.copyWith(
                 fontWeight: isDay ? FontWeight.bold : FontWeight.w600,
-                color: isDay ? TossTheme.brandBlue : TossTheme.textBlack,
+                color: isDay ? DSColors.accent : DSColors.textPrimary,
                 fontSize: isDay ? 20 : 18,
               ),
             ),
@@ -348,7 +347,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
                 hanja,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: isDay ? TossTheme.brandBlue : TossTheme.textBlack,
+                  color: isDay ? DSColors.accent : DSColors.textPrimary,
                   fontSize: isDay ? 18 : 16,
                 ),
               ),
@@ -359,8 +358,8 @@ class _SajuTableTossState extends State<SajuTableToss> {
         // 동물 띠
         Text(
           animal,
-          style: TossTheme.caption.copyWith(
-            color: isDay ? TossTheme.brandBlue.withValues(alpha: 0.8) : TossTheme.textGray600,
+          style: DSTypography.labelSmall.copyWith(
+            color: isDay ? DSColors.accent.withValues(alpha: 0.8) : DSColors.textSecondary,
             fontSize: isDay ? 12 : 11,
             fontWeight: FontWeight.w600,
           ),
@@ -376,7 +375,7 @@ class _SajuTableTossState extends State<SajuTableToss> {
           ),
           child: Text(
             element,
-            style: TossTheme.caption.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               color: color,
               
               fontWeight: FontWeight.bold,
@@ -400,34 +399,34 @@ class _SajuTableTossState extends State<SajuTableToss> {
     final color = _getElementColor(element);
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(TossTheme.spacingS),
+            padding: const EdgeInsets.all(DSSpacing.sm),
             decoration: BoxDecoration(
               color: color,
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.star,
-              color: TossDesignSystem.white,
+              color: Colors.white,
               size: 16,
             ),
           ),
-          const SizedBox(width: TossTheme.spacingM),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '일간: $stemName($stemHanja) · $element 오행',
-                  style: TossTheme.body2.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     color: color,
                   ),
@@ -435,8 +434,8 @@ class _SajuTableTossState extends State<SajuTableToss> {
                 const SizedBox(height: 4),
                 Text(
                   '당신의 본질을 나타내는 핵심 요소입니다',
-                  style: TossTheme.caption.copyWith(
-                    color: TossTheme.textGray600,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: DSColors.textSecondary,
                   ),
                 ),
               ],
@@ -450,17 +449,17 @@ class _SajuTableTossState extends State<SajuTableToss> {
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
-        return TossTheme.success;
+        return DSColors.success;
       case '화':
-        return TossTheme.error;
+        return DSColors.error;
       case '토':
-        return TossTheme.warning;
+        return DSColors.warning;
       case '금':
-        return TossTheme.textGray600;
+        return DSColors.textSecondary;
       case '수':
-        return TossTheme.brandBlue;
+        return DSColors.accent;
       default:
-        return TossTheme.textGray500;
+        return DSColors.textTertiary;
     }
   }
 }

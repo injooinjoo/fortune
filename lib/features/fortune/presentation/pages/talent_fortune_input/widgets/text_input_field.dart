@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 class TextInputField extends StatelessWidget {
   final TextEditingController controller;
@@ -20,14 +19,16 @@ class TextInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (helperText != null) ...[
           Text(
             helperText!,
-            style: TypographyUnified.labelMedium.copyWith(
-              color: TossDesignSystem.gray600,
+            style: DSTypography.labelMedium.copyWith(
+              color: colors.textSecondary,
             ),
           ),
           const SizedBox(height: 12),
@@ -37,7 +38,7 @@ class TextInputField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             filled: true,
-            fillColor: TossDesignSystem.gray100,
+            fillColor: colors.backgroundSecondary,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,

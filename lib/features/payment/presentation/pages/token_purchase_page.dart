@@ -1,12 +1,12 @@
-import '../../../../core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/design_system/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../../../../presentation/widgets/common/app_header.dart';
 import '../../../../services/in_app_purchase_service.dart';
 import '../../../../core/utils/logger.dart';
-import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../presentation/widgets/common/custom_card.dart';
@@ -69,8 +69,10 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Scaffold(
-      backgroundColor: TossDesignSystem.white,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -88,13 +90,15 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
 
   Widget _buildContent() {
     if (!_purchaseService.isAvailable) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(32),
+          padding: const EdgeInsets.all(32),
           child: Text(
             '인앱결제를 사용할 수 없습니다.\\n앱스토어 설정을 확인해주세요.',
             textAlign: TextAlign.center,
-            style: TossDesignSystem.body1,
+            style: DSTypography.bodyLarge.copyWith(
+              color: context.colors.textPrimary,
+            ),
           ),
         ),
       );
@@ -124,7 +128,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
 
   Widget _buildCurrentBalance() {
     final tokenBalance = ref.watch(tokenBalanceProvider);
-    
+    final colors = context.colors;
+
     if (tokenBalance == null) {
       return const CustomCard(
         padding: EdgeInsets.all(20),
@@ -133,7 +138,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
         ),
       );
     }
-    
+
     return CustomCard(
       padding: const EdgeInsets.all(20),
       child: Row(
@@ -144,28 +149,28 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             children: [
               Text(
                 '현재 보유 토큰',
-                style: TossDesignSystem.caption.copyWith(
-                  color: TossDesignSystem.gray600,
+                style: DSTypography.labelSmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
               const SizedBox(height: 4),
               Row(
                 children: [
                   Text(
-                    tokenBalance.hasUnlimitedAccess 
-                      ? '무제한' 
+                    tokenBalance.hasUnlimitedAccess
+                      ? '무제한'
                       : '${tokenBalance.remainingTokens}',
-                    style: TossDesignSystem.heading2.copyWith(
-                      color: TossDesignSystem.tossBlue,
+                    style: DSTypography.headingMedium.copyWith(
+                      color: colors.accent,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  if (!tokenBalance.hasUnlimitedAccess) ...[ 
+                  if (!tokenBalance.hasUnlimitedAccess) ...[
                     const SizedBox(width: 4),
                     Text(
                       '개',
-                      style: TossDesignSystem.body1.copyWith(
-                        color: TossDesignSystem.gray600,
+                      style: DSTypography.bodyLarge.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],
@@ -174,11 +179,11 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             ],
           ),
           Icon(
-            tokenBalance.hasUnlimitedAccess 
-              ? Icons.all_inclusive 
+            tokenBalance.hasUnlimitedAccess
+              ? Icons.all_inclusive
               : Icons.toll,
             size: 40,
-            color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+            color: colors.accent.withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -188,6 +193,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   }
 
   Widget _buildPackageList({bool useMockData = false}) {
+    final colors = context.colors;
     // Mock 데이터 사용 시 InAppProducts.productDetails에서 소모성 상품만 가져오기
     final mockProducts = InAppProducts.consumableIds
         .map((id) => InAppProducts.productDetails[id])
@@ -201,8 +207,9 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       children: [
         Text(
           '토큰 패키지 선택',
-          style: TossDesignSystem.heading3.copyWith(
+          style: DSTypography.headingSmall.copyWith(
             fontWeight: FontWeight.bold,
+            color: colors.textPrimary,
           ),
         ),
         if (useMockData) ...[
@@ -210,13 +217,13 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+              color: colors.accent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               '미리보기 모드 (App Store 검토 대기 중)',
-              style: TossDesignSystem.caption.copyWith(
-                color: TossDesignSystem.tossBlue,
+              style: DSTypography.labelSmall.copyWith(
+                color: colors.accent,
               ),
             ),
           ),
@@ -252,7 +259,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               productInfo: productInfo,
               isSelected: isSelected,
               onTap: () {
-                HapticUtils.lightImpact();
+                ref.read(fortuneHapticServiceProvider).selection();
                 setState(() {
                   _selectedPackageIndex = index;
                 });
@@ -274,6 +281,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
+    final colors = context.colors;
     final isSubscription = productInfo?.isSubscription ?? false;
 
     return GestureDetector(
@@ -284,20 +292,20 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           gradient: isSelected
             ? LinearGradient(
                 colors: [
-                  TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                  TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+                  colors.accent.withValues(alpha: 0.1),
+                  colors.accent.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               )
             : null,
           border: Border.all(
-            color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray300,
+            color: isSelected ? colors.accent : colors.border,
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
         ),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(DSSpacing.lg),
         child: Row(
           children: [
             Container(
@@ -305,34 +313,35 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               height: 60,
               decoration: BoxDecoration(
                 color: isSelected
-                  ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                  : TossDesignSystem.gray50,
-                borderRadius: BorderRadius.circular(12),
+                  ? colors.accent.withValues(alpha: 0.1)
+                  : colors.backgroundSecondary,
+                borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Center(
                 child: Icon(
                   isSubscription ? Icons.all_inclusive : Icons.toll,
                   size: 28,
-                  color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray600,
+                  color: isSelected ? colors.accent : colors.textSecondary,
                 ),
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: DSSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: TossDesignSystem.body1.copyWith(
+                    style: DSTypography.bodyLarge.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: TossDesignSystem.caption.copyWith(
-                      color: TossDesignSystem.gray600,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
@@ -343,16 +352,16 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               children: [
                 Text(
                   price,
-                  style: TossDesignSystem.heading3.copyWith(
+                  style: DSTypography.headingSmall.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isSelected ? TossDesignSystem.tossBlue : TossDesignSystem.gray900,
+                    color: isSelected ? colors.accent : colors.textPrimary,
                   ),
                 ),
                 if (isSubscription) ...[
                   Text(
                     '/월',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: TossDesignSystem.gray600,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
@@ -385,17 +394,20 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   }
 
   Widget _buildDescription() {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '구매 안내',
-          style: TossDesignSystem.body2.copyWith(
+          style: DSTypography.bodyMedium.copyWith(
             fontWeight: FontWeight.bold,
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
-        ...const [
+        ...[
           '• 토큰은 운세를 볼 때 사용됩니다',
           '• 구매한 토큰은 즉시 계정에 추가됩니다',
           '• 무제한 구독은 매월 자동 갱신됩니다',
@@ -405,8 +417,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
             text,
-            style: TossDesignSystem.caption.copyWith(
-              color: TossDesignSystem.gray600,
+            style: DSTypography.labelSmall.copyWith(
+              color: colors.textSecondary,
             ),
           ),
         )),
@@ -418,8 +430,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     if (_selectedPackageIndex == null) return;
     
     setState(() => _isProcessing = true);
-    HapticUtils.mediumImpact();
-    
+    ref.read(fortuneHapticServiceProvider).jackpot();
+
     try {
       final product = _products[_selectedPackageIndex!];
       final success = await _purchaseService.purchaseProduct(product.id);
@@ -459,8 +471,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
 
   Future<void> _handleRestore() async {
     setState(() => _isProcessing = true);
-    HapticUtils.lightImpact();
-    
+    ref.read(fortuneHapticServiceProvider).selection();
+
     try {
       await _purchaseService.restorePurchases();
 

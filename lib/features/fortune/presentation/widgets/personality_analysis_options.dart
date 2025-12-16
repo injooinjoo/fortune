@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 
 class PersonalityAnalysisOptions extends StatelessWidget {
   final bool wantRelationshipAnalysis;
@@ -31,7 +28,7 @@ class PersonalityAnalysisOptions extends StatelessWidget {
         'title': '인간관계 분석',
         'description': '대인관계 패턴과 소통 방식 분석',
         'icon': Icons.people_alt_rounded,
-        'color': TossDesignSystem.purple,
+        'color': DSColors.accentSecondary,
         'value': wantRelationshipAnalysis,
       },
       {
@@ -39,7 +36,7 @@ class PersonalityAnalysisOptions extends StatelessWidget {
         'title': '직업 가이드',
         'description': '성격에 맞는 직업과 커리어 조언',
         'icon': Icons.work_rounded,
-        'color': TossDesignSystem.primaryBlue,
+        'color': DSColors.accent,
         'value': wantCareerGuidance,
       },
       {
@@ -47,7 +44,7 @@ class PersonalityAnalysisOptions extends StatelessWidget {
         'title': '성장 조언',
         'description': '개인 성장과 자기계발 방향',
         'icon': Icons.trending_up_rounded,
-        'color': TossDesignSystem.successGreen,
+        'color': DSColors.success,
         'value': wantPersonalGrowth,
       },
       {
@@ -55,7 +52,7 @@ class PersonalityAnalysisOptions extends StatelessWidget {
         'title': '궁합 분석',
         'description': '다른 성격 유형과의 궁합',
         'icon': Icons.favorite_rounded,
-        'color': TossDesignSystem.errorRed,
+        'color': DSColors.error,
         'value': wantCompatibility,
       },
       {
@@ -63,7 +60,7 @@ class PersonalityAnalysisOptions extends StatelessWidget {
         'title': '일일 조언',
         'description': '오늘의 성격 운세와 조언',
         'icon': Icons.today_rounded,
-        'color': TossDesignSystem.warningOrange,
+        'color': DSColors.warning,
         'value': wantDailyAdvice,
       },
     ];
@@ -74,7 +71,7 @@ class PersonalityAnalysisOptions extends StatelessWidget {
         final option = entry.value;
         
         return Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.spacing3),
+          padding: const EdgeInsets.only(bottom: 12),
           child: _AnalysisOptionCard(
             title: option['title'] as String,
             description: option['description'] as String,
@@ -162,8 +159,8 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
           return Transform.scale(
             scale: _scaleAnimation.value,
             child: AnimatedContainer(
-              duration: AppAnimations.durationMedium,
-              padding: AppSpacing.paddingAll16,
+              duration: DSAnimation.durationMedium,
+              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: widget.value
                     ? LinearGradient(
@@ -178,7 +175,7 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
                 color: !widget.value
                     ? Theme.of(context).colorScheme.surfaceContainerHighest
                     : null,
-                borderRadius: AppDimensions.borderRadiusLarge,
+                borderRadius: BorderRadius.circular(DSRadius.lg),
                 border: Border.all(
                   color: widget.value
                       ? widget.color
@@ -205,7 +202,7 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
                       color: widget.value
                           ? widget.color.withValues(alpha: 0.2)
                           : widget.color.withValues(alpha: 0.1),
-                      borderRadius: AppDimensions.borderRadiusMedium,
+                      borderRadius: BorderRadius.circular(DSRadius.md),
                     ),
                     child: Icon(
                       widget.icon,
@@ -213,7 +210,7 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
                       color: widget.color,
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.spacing4),
+                  const SizedBox(width: 16),
                   
                   // Text content
                   Expanded(
@@ -246,7 +243,7 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
                       onChanged: (value) => widget.onChanged(value ?? false),
                       activeColor: widget.color,
                       shape: RoundedRectangleBorder(
-                        borderRadius: AppDimensions.borderRadiusSmall,
+                        borderRadius: BorderRadius.circular(DSRadius.sm),
                       ),
                     ),
                   ),

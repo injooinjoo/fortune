@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 💫 주간 트렌드 카드
 class WeeklyTrendCard extends StatelessWidget {
@@ -75,7 +75,7 @@ class WeeklyTrendCard extends StatelessWidget {
                 ),
                 child: Text(
                   '이번 주는 전반적으로 상승세를 타고 있습니다. 특히 수요일부터 금요일까지가 가장 좋은 시기입니다. 새로운 도전이나 중요한 결정을 내리기에 최적의 타이밍입니다.',
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: Colors.white,
                     height: 1.5,
                     fontSize: 12,

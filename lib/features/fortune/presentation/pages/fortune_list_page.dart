@@ -6,8 +6,9 @@ import '../../../../presentation/providers/providers.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/providers/user_settings_provider.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../presentation/providers/fortune_recommendation_provider.dart';
 import '../providers/fortune_order_provider.dart';
 import '../widgets/fortune_list_tile.dart';
@@ -505,8 +506,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   @override
   Widget build(BuildContext context) {
     final orderState = ref.watch(fortuneOrderProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final typography = ref.watch(typographyThemeProvider);
+    final colors = context.colors;
+    final typography = context.typography;
 
     // 정렬된 전체 카테고리 리스트 가져오기 (오늘 조회 여부 포함)
     final allCategories = _categories.map((category) {
@@ -527,17 +528,15 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     final showFavoriteSection = orderState.currentSort == SortOption.favoriteFirst && favoriteCategories.isNotEmpty;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? TossDesignSystem.grayDark50
-          : TossDesignSystem.white,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+        backgroundColor: colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
           '운세',
           style: typography.headingMedium.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            color: colors.textPrimary,
           ),
         ),
         actions: [
@@ -545,7 +544,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
           IconButton(
             icon: Icon(
               Icons.sort_rounded,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              color: colors.textPrimary,
             ),
             onPressed: () => _showSortOptions(context),
           ),
@@ -591,13 +590,11 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                         ],
                       );
                     }),
-                    // 얇은 구분선
+                    // 얇은 구분선 (ink-wash style)
                     Container(
                       height: 1,
                       margin: const EdgeInsets.symmetric(vertical: 8),
-                      color: isDark
-                          ? TossDesignSystem.textTertiaryDark.withValues(alpha: 0.2)
-                          : TossDesignSystem.textTertiaryLight.withValues(alpha: 0.2),
+                      color: colors.textTertiary.withValues(alpha: 0.2),
                     ),
                   ],
                 ),
@@ -639,17 +636,17 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   }
 
 
-  // 정렬 옵션 선택 바텀시트
+  // 정렬 옵션 선택 바텀시트 (Korean Traditional style)
   void _showSortOptions(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final currentSort = ref.read(fortuneOrderProvider).currentSort;
-    final typography = ref.read(typographyThemeProvider);
+    final typography = context.typography;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(DSRadius.lg)),
       ),
       isScrollControlled: true,
       builder: (context) => Container(
@@ -658,13 +655,13 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 제목
+              // 제목 (Calligraphy style)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
                   '정렬 방식',
                   style: typography.headingSmall.copyWith(
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -706,7 +703,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     );
   }
 
-  // 정렬 옵션 아이템
+  // 정렬 옵션 아이템 (Korean Traditional style with vermilion accent)
   Widget _buildSortOption(
     BuildContext context,
     String title,
@@ -714,14 +711,17 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     SortOption option,
     bool isSelected,
   ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final typography = ref.watch(typographyThemeProvider);
+    final colors = context.colors;
+    final typography = context.typography;
 
     return InkWell(
       onTap: () {
+        DSHaptics.light();
         ref.read(fortuneOrderProvider.notifier).changeSortOption(option);
         Navigator.pop(context);
       },
+      splashColor: colors.accentSecondary.withValues(alpha: 0.1),
+      highlightColor: colors.accentSecondary.withValues(alpha: 0.05),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(
@@ -733,7 +733,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   Text(
                     title,
                     style: typography.labelLarge.copyWith(
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      color: colors.textPrimary,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
@@ -741,7 +741,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   Text(
                     description,
                     style: typography.bodySmall.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
@@ -750,7 +750,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
             if (isSelected)
               Icon(
                 Icons.check_circle_rounded,
-                color: TossDesignSystem.tossBlue,
+                color: colors.accentSecondary, // Vermilion seal color
                 size: 24,
               ),
           ],
@@ -761,6 +761,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
 
   // 카테고리 탭 처리
   void _handleCategoryTap(FortuneCategory category) {
+    ref.read(fortuneHapticServiceProvider).buttonTap();
     String fortuneType = category.type;
 
     // Record visit for recommendation system

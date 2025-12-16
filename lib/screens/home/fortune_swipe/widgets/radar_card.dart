@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../presentation/widgets/fortune_infographic_widgets.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
@@ -83,7 +83,7 @@ class RadarCard extends StatelessWidget {
                         flex: 2,
                         child: Text(
                           entry.key,
-                          style: TypographyUnified.bodySmall.copyWith(
+                          style: DSTypography.bodySmall.copyWith(
                             color: isDark ? Colors.white : Colors.black87,
                             fontWeight: FontWeight.w500,
                           ),

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 import 'moving_fortune_data.dart';
 
 /// 페이지 3: 방향별 운세
@@ -26,7 +24,7 @@ class MovingDirectionPage extends StatelessWidget {
         children: [
           Text(
             '방향별 이사운',
-            style: TossTheme.heading2,
+            style: DSTypography.headingLarge,
           ),
           const SizedBox(height: 20),
 
@@ -40,16 +38,16 @@ class MovingDirectionPage extends StatelessWidget {
                   child: RadarChart(
                     RadarChartData(
                       radarShape: RadarShape.polygon,
-                      radarBorderData: BorderSide(color: TossTheme.borderGray300),
-                      gridBorderData: BorderSide(color: TossTheme.borderGray200),
-                      tickBorderData: BorderSide(color: TossTheme.borderGray200),
-                      titleTextStyle: TossTheme.body2,
+                      radarBorderData: BorderSide(color: DSColors.border),
+                      gridBorderData: BorderSide(color: DSColors.border.withValues(alpha: 0.5)),
+                      tickBorderData: BorderSide(color: DSColors.border.withValues(alpha: 0.5)),
+                      titleTextStyle: DSTypography.bodyMedium,
                       tickCount: 5,
-                      ticksTextStyle: TypographyUnified.labelTiny,
+                      ticksTextStyle: DSTypography.labelSmall,
                       dataSets: [
                         RadarDataSet(
-                          fillColor: TossTheme.primaryBlue.withValues(alpha: 0.2),
-                          borderColor: TossTheme.primaryBlue,
+                          fillColor: DSColors.accent.withValues(alpha: 0.2),
+                          borderColor: DSColors.accent,
                           borderWidth: 2,
                           dataEntries: fortuneData.directionScores.values
                               .map((score) => RadarEntry(value: score.toDouble()))
@@ -73,8 +71,8 @@ class MovingDirectionPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        TossTheme.primaryBlue.withValues(alpha: 0.1),
-                        TossTheme.primaryBlue.withValues(alpha: 0.05),
+                        DSColors.accent.withValues(alpha: 0.1),
+                        DSColors.accent.withValues(alpha: 0.05),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -85,12 +83,12 @@ class MovingDirectionPage extends StatelessWidget {
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
-                          color: TossTheme.primaryBlue,
+                          color: DSColors.accent,
                           borderRadius: BorderRadius.circular(24),
                         ),
                         child: Icon(
                           Icons.navigation_rounded,
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                           size: 24,
                         ),
                       ),
@@ -101,13 +99,13 @@ class MovingDirectionPage extends StatelessWidget {
                           children: [
                             Text(
                               '최적 방향: ${fortuneData.bestDirection}쪽',
-                              style: TossTheme.heading3,
+                              style: DSTypography.headingMedium,
                             ),
                             const SizedBox(height: 4),
                             Text(
                               '$currentArea에서 ${fortuneData.bestDirection}쪽 방향이 가장 좋습니다',
-                              style: TossTheme.body2.copyWith(
-                                color: TossTheme.textGray600,
+                              style: DSTypography.bodyMedium.copyWith(
+                                color: DSColors.textSecondary,
                               ),
                             ),
                           ],
@@ -125,7 +123,7 @@ class MovingDirectionPage extends StatelessWidget {
           // 방향별 상세 점수
           Text(
             '방향별 상세 분석',
-            style: TossTheme.heading3,
+            style: DSTypography.headingMedium,
           ),
           const SizedBox(height: 12),
 
@@ -136,9 +134,9 @@ class MovingDirectionPage extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isBest ? TossTheme.primaryBlue.withValues(alpha: 0.05) : TossDesignSystem.white,
+                  color: isBest ? DSColors.accent.withValues(alpha: 0.05) : Colors.white,
                   border: Border.all(
-                    color: isBest ? TossTheme.primaryBlue : TossTheme.borderGray200,
+                    color: isBest ? DSColors.accent : DSColors.border,
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -146,17 +144,17 @@ class MovingDirectionPage extends StatelessWidget {
                   children: [
                     Text(
                       entry.key,
-                      style: TossTheme.heading4.copyWith(
-                        color: isBest ? TossTheme.primaryBlue : TossTheme.textBlack,
+                      style: DSTypography.headingSmall.copyWith(
+                        color: isBest ? DSColors.accent : DSColors.textPrimary,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: LinearProgressIndicator(
                         value: entry.value / 100,
-                        backgroundColor: TossTheme.borderGray200,
+                        backgroundColor: DSColors.border,
                         valueColor: AlwaysStoppedAnimation(
-                          isBest ? TossTheme.primaryBlue : TossTheme.textGray400,
+                          isBest ? DSColors.accent : DSColors.textTertiary,
                         ),
                         minHeight: 8,
                       ),
@@ -164,9 +162,9 @@ class MovingDirectionPage extends StatelessWidget {
                     const SizedBox(width: 12),
                     Text(
                       '${entry.value}점',
-                      style: TossTheme.body2.copyWith(
+                      style: DSTypography.bodyMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isBest ? TossTheme.primaryBlue : TossTheme.textGray600,
+                        color: isBest ? DSColors.accent : DSColors.textSecondary,
                       ),
                     ),
                     if (isBest) ...[
@@ -174,13 +172,13 @@ class MovingDirectionPage extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: TossTheme.primaryBlue,
+                          color: DSColors.accent,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           '최적',
-                          style: TossTheme.caption.copyWith(
-                            color: TossDesignSystem.white,
+                          style: DSTypography.labelSmall.copyWith(
+                            color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

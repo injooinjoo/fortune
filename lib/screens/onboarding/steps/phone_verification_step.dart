@@ -1,5 +1,5 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'package:flutter/material.dart';
+import '../../../core/design_system/design_system.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import '../../../core/theme/app_theme_extensions.dart';
@@ -143,7 +143,7 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0), // Keep transparent for overlay
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
@@ -237,7 +237,7 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.fortuneTheme.primaryText,
-                    foregroundColor: context.isDarkMode ? TossDesignSystem.gray900 : TossDesignSystem.grayDark900,
+                    foregroundColor: context.colors.ctaForeground,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4)),
                     elevation: 0),
@@ -245,8 +245,8 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                       ? SizedBox(
                           width: context.fortuneTheme.socialSharing.shareIconSize,
                           height: context.fortuneTheme.socialSharing.shareIconSize,
-                          child: const CircularProgressIndicator(
-                            color: TossDesignSystem.grayDark900,
+                          child: CircularProgressIndicator(
+                            color: context.colors.ctaForeground,
                             strokeWidth: 2),
                         )
                       : Text(

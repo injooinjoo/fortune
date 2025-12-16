@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme_extensions.dart';
-import '../../../core/theme/toss_design_system.dart';
 
 class BottomSheetMbtiPicker extends StatelessWidget {
   final String dimension;
@@ -27,7 +26,7 @@ class BottomSheetMbtiPicker extends StatelessWidget {
   }) {
     return showModalBottomSheet<String>(
       context: context,
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0), // Keep transparent for overlay
+      backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => BottomSheetMbtiPicker(
         dimension: dimension,

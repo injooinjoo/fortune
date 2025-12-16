@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 /// Section 4: 선호 나이대 (RangeSlider)
 class PreferredAgeRangeInput extends StatelessWidget {
@@ -16,7 +14,7 @@ class PreferredAgeRangeInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,40 +24,48 @@ class PreferredAgeRangeInput extends StatelessWidget {
           children: [
             Text(
               '18세',
-              style: TypographyUnified.bodySmall.copyWith(
-                color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
+              style: DSTypography.bodySmall.copyWith(
+                color: colors.textTertiary,
               ),
             ),
             Text(
               '45세',
-              style: TypographyUnified.bodySmall.copyWith(
-                color: isDark ? TossDesignSystem.textTertiaryDark : TossTheme.textGray500,
+              style: DSTypography.bodySmall.copyWith(
+                color: colors.textTertiary,
               ),
             ),
           ],
         ),
         const SizedBox(height: 8),
-        RangeSlider(
-          values: preferredAgeRange,
-          min: 18,
-          max: 45,
-          divisions: 27,
-          activeColor: TossDesignSystem.tossBlue,
-          inactiveColor: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
-          onChanged: onAgeRangeChanged,
+        SliderTheme(
+          data: SliderThemeData(
+            activeTrackColor: colors.accent,
+            inactiveTrackColor: colors.border,
+            thumbColor: colors.accent,
+            overlayColor: colors.accent.withValues(alpha: 0.2),
+            rangeThumbShape: const RoundRangeSliderThumbShape(enabledThumbRadius: 10),
+            trackHeight: 4,
+          ),
+          child: RangeSlider(
+            values: preferredAgeRange,
+            min: 18,
+            max: 45,
+            divisions: 27,
+            onChanged: onAgeRangeChanged,
+          ),
         ),
         const SizedBox(height: 8),
         Center(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue,
+              color: colors.accent,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               '${preferredAgeRange.start.round()}세 ~ ${preferredAgeRange.end.round()}세',
-              style: TypographyUnified.bodyMedium.copyWith(
-                color: TossDesignSystem.white,
+              style: DSTypography.bodyMedium.copyWith(
+                color: Colors.white,
                 fontWeight: FontWeight.w600,
               ),
             ),

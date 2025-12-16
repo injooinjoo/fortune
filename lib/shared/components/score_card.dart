@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import 'dart:math' as math;
 
-/// 토스 스타일 점수/수치 표시 카드
-/// Toss 신용점수 화면처럼 큰 숫자와 원형 프로그레스를 표시
+/// Korean Traditional style score/metric display card
+/// Similar to traditional fortune scoring displays
 class ScoreCard extends StatelessWidget {
   final String title;
   final String score;
@@ -30,76 +30,77 @@ class ScoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
+    final colors = context.colors;
+    final typography = context.typography;
+    final brightness = Theme.of(context).brightness;
+
     Widget content = Container(
-      decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
-        boxShadow: isDark ? null : TossDesignSystem.shadowS,
+      decoration: DSShadows.getInkWashDecoration(
+        brightness,
+        backgroundColor: colors.surface,
+        borderRadius: DSRadius.lg,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // 상단 타이틀 영역
+          // Title area
           Padding(
             padding: const EdgeInsets.fromLTRB(
-              TossDesignSystem.spacingL,
-              TossDesignSystem.spacingL,
-              TossDesignSystem.spacingL,
-              TossDesignSystem.spacingM,
+              DSSpacing.lg,
+              DSSpacing.lg,
+              DSSpacing.lg,
+              DSSpacing.md,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   title,
-                  style: TossDesignSystem.body1.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
                 if (icon != null) icon!,
               ],
             ),
           ),
-          
-          // 중앙 점수 표시 영역
+
+          // Central score display area
           Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: TossDesignSystem.spacingL,
+              horizontal: DSSpacing.lg,
             ),
             child: progress != null
                 ? _buildProgressScore(context)
                 : _buildSimpleScore(context),
           ),
-          
-          // 하단 설명 영역
+
+          // Description area
           if (description != null)
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                TossDesignSystem.spacingL,
-                TossDesignSystem.spacingM,
-                TossDesignSystem.spacingL,
-                TossDesignSystem.spacingL,
+                DSSpacing.lg,
+                DSSpacing.md,
+                DSSpacing.lg,
+                DSSpacing.lg,
               ),
               child: Text(
                 description!,
-                style: TossDesignSystem.body2.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
+                style: typography.bodySmall.copyWith(
+                  color: colors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
-          
-          // 추가 정보 영역
+
+          // Additional info area
           if (additionalInfo != null && additionalInfo!.isNotEmpty) ...[
             Divider(
               height: 1,
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: colors.divider,
             ),
             Padding(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingL),
+              padding: const EdgeInsets.all(DSSpacing.lg),
               child: Column(
                 children: additionalInfo!,
               ),
@@ -108,42 +109,46 @@ class ScoreCard extends StatelessWidget {
         ],
       ),
     );
-    
+
     if (onTap != null) {
       return Material(
-        color: TossDesignSystem.transparent,
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
         child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(TossDesignSystem.radiusXL),
+          onTap: () {
+            DSHaptics.light();
+            onTap!();
+          },
+          borderRadius: BorderRadius.circular(DSRadius.lg),
+          splashColor: colors.accentSecondary.withValues(alpha: 0.1),
+          highlightColor: colors.accentSecondary.withValues(alpha: 0.05),
           child: content,
         ),
       );
     }
-    
+
     return content;
   }
-  
+
   Widget _buildSimpleScore(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Column(
       children: [
         Text(
           score,
-          style: TossDesignSystem.display1.copyWith(
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-            fontFamily: TossDesignSystem.fontFamilyNumber,
+          style: typography.displayLarge.copyWith(
+            color: colors.textPrimary,
           ),
         ),
         if (subtitle != null)
           Padding(
-            padding: const EdgeInsets.only(top: TossDesignSystem.spacingXS),
+            padding: const EdgeInsets.only(top: DSSpacing.xs),
             child: Text(
               subtitle!,
-              style: TossDesignSystem.body2.copyWith(
-                color: progressColor ?? TossDesignSystem.tossBlue,
+              style: typography.bodySmall.copyWith(
+                color: progressColor ?? colors.accent,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -151,28 +156,28 @@ class ScoreCard extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildProgressScore(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final color = progressColor ?? TossDesignSystem.tossBlue;
-    
+    final colors = context.colors;
+    final typography = context.typography;
+    final color = progressColor ?? colors.accent;
+
     return SizedBox(
       width: 200,
       height: 200,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // 배경 원
+          // Background circle
           CustomPaint(
             size: const Size(200, 200),
             painter: _CircleProgressPainter(
               progress: 1.0,
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: colors.surfaceSecondary,
               strokeWidth: 12,
             ),
           ),
-          // 진행률 원
+          // Progress circle
           CustomPaint(
             size: const Size(200, 200),
             painter: _CircleProgressPainter(
@@ -181,21 +186,20 @@ class ScoreCard extends StatelessWidget {
               strokeWidth: 12,
             ),
           ),
-          // 중앙 텍스트
+          // Center text
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 score,
-                style: TossDesignSystem.display2.copyWith(
-                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
-                  fontFamily: TossDesignSystem.fontFamilyNumber,
+                style: typography.displayMedium.copyWith(
+                  color: colors.textPrimary,
                 ),
               ),
               if (subtitle != null)
                 Text(
                   subtitle!,
-                  style: TossDesignSystem.body2.copyWith(
+                  style: typography.bodySmall.copyWith(
                     color: color,
                     fontWeight: FontWeight.w600,
                   ),
@@ -223,13 +227,13 @@ class _CircleProgressPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (size.width - strokeWidth) / 2;
-    
+
     final paint = Paint()
       ..color = color
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
-    
+
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       -math.pi / 2,
@@ -243,7 +247,7 @@ class _CircleProgressPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
-/// 작은 점수 카드 (리스트용)
+/// Small score card (for lists)
 class ScoreCardMini extends StatelessWidget {
   final String label;
   final String value;
@@ -260,14 +264,14 @@ class ScoreCardMini extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Container(
-      padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray50,
-        borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+        color: colors.surfaceSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.md),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,22 +281,21 @@ class ScoreCardMini extends StatelessWidget {
             children: [
               if (icon != null) ...[
                 icon!,
-                const SizedBox(width: TossDesignSystem.spacingXS),
+                const SizedBox(width: DSSpacing.xs),
               ],
               Text(
                 label,
-                style: TossDesignSystem.caption.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray600,
+                style: typography.labelSmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossDesignSystem.spacingXS),
+          const SizedBox(height: DSSpacing.xs),
           Text(
             value,
-            style: TossDesignSystem.heading3.copyWith(
-              color: color ?? (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
-              fontFamily: TossDesignSystem.fontFamilyNumber,
+            style: typography.headingSmall.copyWith(
+              color: color ?? colors.textPrimary,
             ),
           ),
         ],

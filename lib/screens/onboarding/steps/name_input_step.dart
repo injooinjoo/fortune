@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/theme/toss_design_system.dart';
+import '../../../core/design_system/design_system.dart';
 import '../../../services/social_auth_service.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/providers/user_settings_provider.dart';
@@ -78,17 +78,16 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
   }
 
   void _showSocialLoginBottomSheet(BuildContext context) {
+    final colors = context.colors;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      backgroundColor: Colors.transparent,
       builder: (context) => Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height * 0.6,
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark100
-              : TossDesignSystem.white,
+          color: colors.surface,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(25),
             topRight: Radius.circular(25),
@@ -105,7 +104,8 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
 
   Widget _buildBottomSheetContent(StateSetter setBottomSheetState) {
     final typography = ref.watch(typographyThemeProvider);
-    
+    final colors = context.colors;
+
     return Column(
       children: [
         // Drag handle
@@ -114,9 +114,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
           width: 40,
           height: 4,
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark300
-                : TossDesignSystem.gray300,
+            color: colors.border,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -190,7 +188,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                 Text(
                   '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
                   style: typography.labelMedium.copyWith(
-                    color: TossDesignSystem.gray600,
+                    color: colors.textSecondary,
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -261,7 +259,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('$provider 로그인 실패: $errorMessage'),
-            backgroundColor: TossDesignSystem.errorRed,
+            backgroundColor: context.colors.error,
             duration: const Duration(seconds: 5),
           ),
         );
@@ -276,29 +274,26 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
     required VoidCallback onTap,
   }) {
     final typography = ref.watch(typographyThemeProvider);
+    final colors = context.colors;
     return Material(
-      color: TossDesignSystem.white.withValues(alpha: 0.0),
+      color: Colors.transparent,
       child: InkWell(
         onTap: () {
           // Debug: Immediate feedback
           debugPrint('Button tapped: $label');
           onTap();
         },
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(DSRadius.md),
         child: Container(
         width: double.infinity,
         height: 52,
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark100
-              : TossDesignSystem.white,
+          color: colors.surface,
           border: Border.all(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark300
-                : TossDesignSystem.gray300,
+            color: colors.border,
             width: 1,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(DSRadius.md),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -308,14 +303,12 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
               width: 24,
               height: 24,
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Text(
               label,
               style: typography.buttonMedium.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.white
-                    : TossDesignSystem.gray900,
+                color: colors.textPrimary,
               ),
             ),
           ],
@@ -330,11 +323,10 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final isKeyboardVisible = keyboardHeight > 0;
     final typography = ref.watch(typographyThemeProvider);
-    
+    final colors = context.colors;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? TossDesignSystem.grayDark50
-          : TossDesignSystem.white,
+      backgroundColor: colors.background,
       resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () {
@@ -357,17 +349,13 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                           focusNode: _focusNode,
                           style: typography.headingMedium.copyWith(
                             fontWeight: FontWeight.w500,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? TossDesignSystem.white
-                                : TossDesignSystem.gray900,
+                            color: colors.textPrimary,
                           ),
                           textAlign: TextAlign.center,
                           autofocus: true,
                           keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.done,
-                          cursorColor: Theme.of(context).brightness == Brightness.dark
-                              ? TossDesignSystem.tossBlueDark
-                              : TossDesignSystem.tossBlue,
+                          cursorColor: colors.accent,
                           showCursor: true,
                           enableInteractiveSelection: true,
                           onTap: () {
@@ -384,9 +372,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                             hintText: '이름을 알려주세요',
                             hintStyle: typography.headingMedium.copyWith(
                               fontWeight: FontWeight.w400,
-                              color: Theme.of(context).brightness == Brightness.dark
-                                  ? TossDesignSystem.grayDark400
-                                  : TossDesignSystem.gray400,
+                              color: colors.textTertiary,
                             ),
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -395,7 +381,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                             disabledBorder: InputBorder.none,
                             focusedErrorBorder: InputBorder.none,
                             contentPadding: EdgeInsets.zero,
-                            fillColor: TossDesignSystem.white.withValues(alpha: 0.0),
+                            fillColor: Colors.transparent,
                             filled: true,
                           ),
                           textCapitalization: TextCapitalization.words,
@@ -424,10 +410,10 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                     child: ElevatedButton(
                       onPressed: _isValid ? widget.onNext : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _isValid ? TossDesignSystem.primaryBlue : TossDesignSystem.gray300,
-                        foregroundColor: TossDesignSystem.white,
+                        backgroundColor: _isValid ? colors.ctaBackground : colors.border,
+                        foregroundColor: colors.ctaForeground,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(DSRadius.lg),
                         ),
                         elevation: 0,
                         textStyle: typography.headingSmall.copyWith(fontWeight: FontWeight.w700),
@@ -436,9 +422,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                         '다음',
                         style: typography.headingSmall.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark100
-              : TossDesignSystem.white,
+                          color: colors.ctaForeground,
                         ),
                       ),
                     ),
@@ -458,9 +442,9 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                       child: Text(
                         '계정이 있어요',
                         style: typography.bodySmall.copyWith(
-                          color: TossDesignSystem.gray600,
+                          color: colors.textSecondary,
                           decoration: TextDecoration.underline,
-                          decorationColor: TossDesignSystem.gray600,
+                          decorationColor: colors.textSecondary,
                         ),
                       ),
                     ),

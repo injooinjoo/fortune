@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class HealthScoreCard extends StatefulWidget {
   final int score; // 0-100
@@ -165,12 +165,12 @@ class _HealthScoreCardState extends State<HealthScoreCard>
                         children: [
                           Text(
                             _scoreEmoji,
-                            style: TypographyUnified.displaySmall,
+                            style: DSTypography.displaySmall,
                           ),
                           const SizedBox(height: 8),
                           Text(
                             '${(widget.score * _progressAnimation.value).round()}',
-                            style: TypographyUnified.heading1.copyWith(
+                            style: DSTypography.displaySmall.copyWith(
                               fontWeight: FontWeight.w800,
                               color: _scoreColor,
                             ),

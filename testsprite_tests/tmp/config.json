@@ -1,0 +1,16 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "executionArgs": {
+    "projectName": "fortune",
+    "projectPath": "/Users/jacobmac/Desktop/Dev/fortune",
+    "testIds": [],
+    "additionalInstruction": "This is a Korean Flutter Web app. User will manually log in via OAuth (Kakao/Google) when the login screen appears. Tests should wait for user interaction on login. The app uses Flutter Canvas rendering (CanvasKit), so use accessibility selectors or wait for specific routes. Korean UI - look for Korean text patterns.",
+    "envs": {
+      "API_KEY": "sk-user-ReVqfB1Cz77IMSEzTR-cDdasK9X-3-8LP5l9uIZlH2HihJ9K0ijyr5VkiP1oF8SPEtIjgPC86VjJ0JZUkxr23SedEQi0IA1eEC98qsl8JgTxVRz9SbDNhRqrY6L5nCo602E"
+    }
+  },
+  "proxy": "http://a1c96cb4-447e-48f7-ba76-6e6b687fa05f:tGxyfgy0aw6GENxGmCCVmOMaOQFdiKox@tun.testsprite.com:8080"
+}

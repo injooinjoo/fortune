@@ -5,13 +5,12 @@ import '../../../../core/widgets/unified_fortune_base_widget.dart';
 import '../../../../core/widgets/app_widgets.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../domain/models/conditions/avoid_people_fortune_conditions.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
@@ -217,14 +216,14 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                           children: [
                             Text(
                               '피해야 할 사람 분석 결과',
-                              style: context.heading2,
+                              style: DSTypography.headingMedium,
                             ),
                             if (result.score != null) ...[
                               const SizedBox(height: 16),
                               Text(
                                 '주의 지수: ${result.score}/100',
-                                style: context.heading3.copyWith(
-                                  color: TossDesignSystem.warningOrange,
+                                style: DSTypography.headingSmall.copyWith(
+                                  color: DSColors.warning,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -232,7 +231,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                             const SizedBox(height: 16),
                             Text(
                               content.split('\n\n').first,
-                              style: context.bodyMedium,
+                              style: DSTypography.bodyMedium,
                             ),
                           ],
                         ),
@@ -251,18 +250,18 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.person_off, color: TossDesignSystem.errorRed, size: 28),
+                                  const Icon(Icons.person_off, color: DSColors.error, size: 28),
                                   const SizedBox(width: 12),
                                   Text(
                                     '피해야 할 사람 유형',
-                                    style: context.heading3,
+                                    style: DSTypography.headingSmall,
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 16),
                               Text(
                                 FortuneTextCleaner.clean(result.data['people_types'] as String? ?? '오늘 특별히 주의해야 할 사람 유형 정보'),
-                                style: context.bodyMedium,
+                                style: DSTypography.bodyMedium,
                               ),
                             ],
                           ),
@@ -282,18 +281,18 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.lightbulb, color: TossDesignSystem.tossBlue, size: 28),
+                                  const Icon(Icons.lightbulb, color: DSColors.accent, size: 28),
                                   const SizedBox(width: 12),
                                   Text(
                                     '상황별 대처 방법',
-                                    style: context.heading3,
+                                    style: DSTypography.headingSmall,
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 16),
                               Text(
                                 FortuneTextCleaner.clean(result.data['situation_tips'] as String? ?? '상황별 대처 방법 정보'),
-                                style: context.bodyMedium,
+                                style: DSTypography.bodyMedium,
                               ),
                             ],
                           ),
@@ -313,18 +312,18 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.tips_and_updates, color: TossDesignSystem.successGreen, size: 28),
+                                  const Icon(Icons.tips_and_updates, color: DSColors.success, size: 28),
                                   const SizedBox(width: 12),
                                   Text(
                                     '오늘의 조언',
-                                    style: context.heading3,
+                                    style: DSTypography.headingSmall,
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 16),
                               Text(
                                 FortuneTextCleaner.clean(result.data['advice'] as String? ?? '오늘의 조언 정보'),
-                                style: context.bodyMedium,
+                                style: DSTypography.bodyMedium,
                               ),
                             ],
                           ),
@@ -515,7 +514,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                       label: '중요한 결정을 해야 함',
                       value: _hasImportantDecision,
                       onChanged: (v) {
-                        setState(() => _hasImportantDecision = v!);
+                        setState(() => _hasImportantDecision = v);
                         HapticFeedback.selectionClick();
                       },
                     ),
@@ -523,7 +522,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                       label: '민감한 대화가 예상됨',
                       value: _hasSensitiveConversation,
                       onChanged: (v) {
-                        setState(() => _hasSensitiveConversation = v!);
+                        setState(() => _hasSensitiveConversation = v);
                         HapticFeedback.selectionClick();
                       },
                     ),
@@ -531,7 +530,7 @@ class _AvoidPeopleFortunePageState extends ConsumerState<AvoidPeopleFortunePage>
                       label: '팀 프로젝트가 있음',
                       value: _hasTeamProject,
                       onChanged: (v) {
-                        setState(() => _hasTeamProject = v!);
+                        setState(() => _hasTeamProject = v);
                         HapticFeedback.selectionClick();
                       },
                     ),

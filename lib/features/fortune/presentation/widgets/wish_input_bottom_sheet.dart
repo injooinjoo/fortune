@@ -3,22 +3,21 @@ import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/voice_input_text_field.dart';
 
 /// 소원 카테고리 정의
 enum WishCategory {
-  love('💕', '사랑', '연애, 결혼, 짝사랑', TossDesignSystem.errorRed),
-  money('💰', '돈', '재물, 투자, 사업', TossDesignSystem.success),
-  health('🌿', '건강', '건강, 회복, 장수', TossDesignSystem.successGreen),
-  success('🏆', '성공', '취업, 승진, 성취', TossDesignSystem.warningOrange),
-  family('👨‍👩‍👧‍👦', '가족', '가족, 화목, 관계', TossDesignSystem.primaryBlue),
-  study('📚', '학업', '시험, 공부, 성적', TossDesignSystem.primaryBlue),
-  other('🌟', '기타', '소원이 있으시면', TossDesignSystem.primaryBlue);
+  love('💕', '사랑', '연애, 결혼, 짝사랑', DSColors.error),
+  money('💰', '돈', '재물, 투자, 사업', DSColors.success),
+  health('🌿', '건강', '건강, 회복, 장수', DSColors.success),
+  success('🏆', '성공', '취업, 승진, 성취', DSColors.warning),
+  family('👨‍👩‍👧‍👦', '가족', '가족, 화목, 관계', DSColors.accent),
+  study('📚', '학업', '시험, 공부, 성적', DSColors.accent),
+  other('🌟', '기타', '소원이 있으시면', DSColors.accent);
 
   const WishCategory(this.emoji, this.name, this.description, this.color);
-  
+
   final String emoji;
   final String name;
   final String description;
@@ -46,7 +45,7 @@ class WishInputBottomSheet extends ConsumerStatefulWidget {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      backgroundColor: Colors.white.withValues(alpha: 0.0),
       // 키보드가 올라와도 바텀시트가 키보드 위에 위치하도록 설정
       useSafeArea: false,
       builder: (context) => WishInputBottomSheet(
@@ -105,13 +104,14 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
     // 키보드가 올라왔을 때 바텀시트 높이를 조정
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     final screenHeight = MediaQuery.of(context).size.height;
+    final colors = context.colors;
+    final typography = context.typography;
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 100),
       height: screenHeight * 0.85 - (bottomInset > 0 ? 0 : 0),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.backgroundDark : const Color(0xFFF7F8FA),
+        color: colors.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -122,20 +122,19 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
             height: 4,
             margin: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFFE5E5E5),
+              color: colors.border,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          
+
           // Header
           Container(
             padding: const EdgeInsets.all(20),
             child: Text(
               '소원을 빌어주세요',
-              style: TypographyUnified.heading3.copyWith(
+              style: typography.headingSmall.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF191F28),
-                fontFamily: 'TossProductSans',
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -180,29 +179,30 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
   }
 
   Widget _buildCategorySelection() {
+    final colors = context.colors;
+    final typography = context.typography;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '어떤 소원인가요?',
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: typography.labelLarge.copyWith(
               fontWeight: FontWeight.w600,
-              color: Color(0xFF191F28),
-              fontFamily: 'TossProductSans',
+              color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: DSSpacing.sm,
+            runSpacing: DSSpacing.sm,
             children: WishCategory.values.map((category) {
               final isSelected = _selectedCategory == category;
               return GestureDetector(
@@ -214,10 +214,10 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFF1F4EF5) : const Color(0xFFF7F8FA),
+                    color: isSelected ? colors.accent : colors.surfaceSecondary,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: isSelected ? const Color(0xFF1F4EF5) : const Color(0xFFE5E5E5),
+                      color: isSelected ? colors.accent : colors.border,
                     ),
                   ),
                   child: Row(
@@ -225,15 +225,14 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
                     children: [
                       Text(
                         category.emoji,
-                        style: TypographyUnified.buttonMedium,
+                        style: typography.labelMedium,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         category.name,
-                        style: TextStyle(
-                          color: isSelected ? TossDesignSystem.white : const Color(0xFF8B95A1),
+                        style: typography.labelMedium.copyWith(
+                          color: isSelected ? Colors.white : colors.textSecondary,
                           fontWeight: FontWeight.w500,
-                          fontFamily: 'TossProductSans',
                         ),
                       ),
                     ],
@@ -248,26 +247,27 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
   }
 
   Widget _buildWishInput() {
+    final colors = context.colors;
+    final typography = context.typography;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '소원을 자세히 적어주세요',
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: typography.labelLarge.copyWith(
               fontWeight: FontWeight.w600,
-              color: Color(0xFF191F28),
-              fontFamily: 'TossProductSans',
+              color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           VoiceInputTextField(
             controller: _wishController,
             onSubmit: (text) {
@@ -283,26 +283,27 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
   }
 
   Widget _buildUrgencyLevel() {
+    final colors = context.colors;
+    final typography = context.typography;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '얼마나 간절한가요?',
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: typography.labelLarge.copyWith(
               fontWeight: FontWeight.w600,
-              color: Color(0xFF191F28),
-              fontFamily: 'TossProductSans',
+              color: colors.textPrimary,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Row(
             children: [
               Expanded(
@@ -311,7 +312,7 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
                   min: 1,
                   max: 5,
                   divisions: 4,
-                  activeColor: const Color(0xFF1F4EF5),
+                  activeColor: colors.accent,
                   onChanged: (value) {
                     setState(() {
                       _urgencyLevel = value.round();
@@ -323,9 +324,8 @@ class _WishInputBottomSheetState extends ConsumerState<WishInputBottomSheet> {
           ),
           Text(
             _getUrgencyText(_urgencyLevel),
-            style: const TextStyle(
-              color: Color(0xFF8B95A1),
-              fontFamily: 'TossProductSans',
+            style: typography.bodySmall.copyWith(
+              color: colors.textTertiary,
             ),
           ),
         ],

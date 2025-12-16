@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 /// DO's & DON'Ts 위젯
@@ -52,10 +52,10 @@ class BlindDateDosDonts extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.successGreen.withValues(alpha: 0.05),
+                  color: DSColors.success.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: TossDesignSystem.successGreen.withValues(alpha: 0.3),
+                    color: DSColors.success.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -66,14 +66,14 @@ class BlindDateDosDonts extends StatelessWidget {
                         Icon(
                           Icons.check_circle,
                           size: 20,
-                          color: TossDesignSystem.successGreen,
+                          color: DSColors.success,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'DO\'s - 꼭 하세요',
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: TossDesignSystem.successGreen,
+                            color: DSColors.success,
                           ),
                         ),
                       ],
@@ -102,10 +102,10 @@ class BlindDateDosDonts extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.errorRed.withValues(alpha: 0.05),
+                  color: DSColors.error.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: TossDesignSystem.errorRed.withValues(alpha: 0.3),
+                    color: DSColors.error.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -116,14 +116,14 @@ class BlindDateDosDonts extends StatelessWidget {
                         Icon(
                           Icons.cancel,
                           size: 20,
-                          color: TossDesignSystem.errorRed,
+                          color: DSColors.error,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'DON\'Ts - 피하세요',
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: TossDesignSystem.errorRed,
+                            color: DSColors.error,
                           ),
                         ),
                       ],
@@ -154,8 +154,8 @@ class BlindDateDosDonts extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      TossDesignSystem.warningYellow.withValues(alpha: 0.1),
-                      TossDesignSystem.warningOrange.withValues(alpha: 0.1)
+                      DSColors.warning.withValues(alpha: 0.1),
+                      DSColors.warning.withValues(alpha: 0.15)
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
@@ -164,7 +164,7 @@ class BlindDateDosDonts extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.auto_awesome,
-                      color: TossDesignSystem.warningYellow,
+                      color: DSColors.warning,
                     ),
                     const SizedBox(width: 12),
                     Expanded(

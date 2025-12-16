@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/theme/toss_design_system.dart';
 
 /// Animated blur effects for landing page background
 class LandingAnimatedBlurEffects extends StatelessWidget {
@@ -33,7 +32,7 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
                 colors: [
                   Color(0xFFE8B4FF).withValues(alpha: 0.6), // 보라색 (진하게)
                   Color(0xFFE8B4FF).withValues(alpha: 0.3),
-                  TossDesignSystem.white.withValues(alpha: 0.0),
+                  Colors.transparent,
                 ],
               ),
             ),
@@ -68,7 +67,7 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
                 colors: [
                   Color(0xFFFFB4B4).withValues(alpha: 0.6), // 분홍색 (진하게)
                   Color(0xFFFFB4B4).withValues(alpha: 0.3),
-                  TossDesignSystem.white.withValues(alpha: 0.0),
+                  Colors.transparent,
                 ],
               ),
             ),
@@ -104,7 +103,7 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
                   colors: [
                     Color(0xFFFFE4B4).withValues(alpha: 0.5), // 노란색 (진하게)
                     Color(0xFFFFE4B4).withValues(alpha: 0.25),
-                    TossDesignSystem.white.withValues(alpha: 0.0),
+                    Colors.transparent,
                   ],
                 ),
               ),
@@ -148,7 +147,7 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
                 colors: [
                   Color(0xFF6B46C1).withValues(alpha: 0.15), // 보라색
                   Color(0xFF6B46C1).withValues(alpha: 0.08),
-                  TossDesignSystem.white.withValues(alpha: 0.0),
+                  Colors.transparent,
                 ],
               ),
             ),
@@ -178,7 +177,7 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
                 colors: [
                   Color(0xFF2563EB).withValues(alpha: 0.15), // 파란색
                   Color(0xFF2563EB).withValues(alpha: 0.08),
-                  TossDesignSystem.white.withValues(alpha: 0.0),
+                  Colors.transparent,
                 ],
               ),
             ),

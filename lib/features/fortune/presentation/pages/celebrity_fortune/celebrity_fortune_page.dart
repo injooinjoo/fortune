@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../presentation/providers/fortune_provider.dart';
 import '../../../../../presentation/providers/auth_provider.dart';
 import '../../../../../core/widgets/unified_button.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../domain/entities/fortune.dart';
 import '../../../../../data/models/celebrity_simple.dart';
 import '../../../../../core/utils/logger.dart';
@@ -43,10 +42,10 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundSecondary,
+      backgroundColor: colors.background,
       appBar: const StandardFortuneAppBar(
         title: '유명인 운세',
       ),
@@ -176,7 +175,7 @@ class _CelebrityFortuneEnhancedPageState extends ConsumerState<CelebrityFortuneE
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('운세 생성에 실패했습니다. 다시 시도해주세요.'),
-            backgroundColor: TossDesignSystem.error,
+            backgroundColor: DSColors.error,
           ),
         );
       }

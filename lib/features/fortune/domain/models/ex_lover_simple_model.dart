@@ -1,20 +1,40 @@
 /// 헤어진 애인 운세 간소화 모델
 class ExLoverSimpleInput {
-  // Step 1: 핵심 질문
+  // 상대방 정보
+  final String? exName; // 상대방 이름/닉네임
+  final String? exMbti; // 상대방 MBTI (16개 + unknown)
+  final DateTime? exBirthDate;
+
+  // 관계 정보
+  final String relationshipDuration; // lessThan1Month, 1to3Months, 3to6Months, 6to12Months, 1to2Years, 2to3Years, moreThan3Years
   final String timeSinceBreakup; // recent(1개월 미만), short(1-3개월), medium(3-6개월), long(6개월-1년), verylong(1년 이상)
+  final String breakupInitiator; // me(내가), them(상대가), mutual(서로 합의)
+  final String contactStatus; // blocked(완전 차단), noContact(연락 안 함), sometimes(가끔 연락), often(자주 연락), stillMeeting(아직 만남)
+
+  // 이별 상세
+  final String? breakupReason; // differentValues(가치관), timing(시기), communication(소통), trust(신뢰), other(기타)
+  final String? breakupDetail; // STT/타이핑으로 입력한 상세 이유
+
+  // 감정 정보
   final String currentEmotion; // miss(그리움), anger(분노), sadness(슬픔), relief(안도), acceptance(받아들임)
   final String mainCuriosity; // theirFeelings(상대방 마음), reunionChance(재회 가능성), newLove(새로운 사랑), healing(치유 방법)
-  
-  // Step 2: 선택 정보
-  final DateTime? exBirthDate;
-  final String? breakupReason; // differentValues(가치관), timing(시기), communication(소통), trust(신뢰), other(기타)
-  
+
+  // 추가 정보 (선택)
+  final String? chatHistory; // 카톡/대화 내용
+
   ExLoverSimpleInput({
+    this.exName,
+    this.exMbti,
+    this.exBirthDate,
+    required this.relationshipDuration,
     required this.timeSinceBreakup,
+    required this.breakupInitiator,
+    required this.contactStatus,
+    this.breakupReason,
+    this.breakupDetail,
     required this.currentEmotion,
     required this.mainCuriosity,
-    this.exBirthDate,
-    this.breakupReason,
+    this.chatHistory,
   });
 }
 
@@ -246,4 +266,89 @@ const List<CuriosityCard> curiosityCards = [
     icon: '🌱',
     description: '어떻게 마음을 치유할까?',
   ),
+];
+
+/// 이별 통보자 카드
+class BreakupInitiatorCard {
+  final String id;
+  final String title;
+  final String emoji;
+  final String description;
+
+  const BreakupInitiatorCard({
+    required this.id,
+    required this.title,
+    required this.emoji,
+    required this.description,
+  });
+}
+
+const List<BreakupInitiatorCard> breakupInitiatorCards = [
+  BreakupInitiatorCard(
+    id: 'me',
+    title: '내가 먼저',
+    emoji: '💔',
+    description: '내가 먼저 이별을 말했어요',
+  ),
+  BreakupInitiatorCard(
+    id: 'them',
+    title: '상대가 먼저',
+    emoji: '😢',
+    description: '상대가 먼저 이별을 말했어요',
+  ),
+  BreakupInitiatorCard(
+    id: 'mutual',
+    title: '서로 합의',
+    emoji: '🤝',
+    description: '서로 합의해서 헤어졌어요',
+  ),
+];
+
+/// 관계 기간 선택지
+class RelationshipDurationOption {
+  final String id;
+  final String label;
+
+  const RelationshipDurationOption({
+    required this.id,
+    required this.label,
+  });
+}
+
+const List<RelationshipDurationOption> relationshipDurationOptions = [
+  RelationshipDurationOption(id: 'lessThan1Month', label: '1개월 미만'),
+  RelationshipDurationOption(id: '1to3Months', label: '1-3개월'),
+  RelationshipDurationOption(id: '3to6Months', label: '3-6개월'),
+  RelationshipDurationOption(id: '6to12Months', label: '6개월-1년'),
+  RelationshipDurationOption(id: '1to2Years', label: '1-2년'),
+  RelationshipDurationOption(id: '2to3Years', label: '2-3년'),
+  RelationshipDurationOption(id: 'moreThan3Years', label: '3년 이상'),
+];
+
+/// 현재 연락 상태 선택지
+class ContactStatusOption {
+  final String id;
+  final String label;
+
+  const ContactStatusOption({
+    required this.id,
+    required this.label,
+  });
+}
+
+const List<ContactStatusOption> contactStatusOptions = [
+  ContactStatusOption(id: 'blocked', label: '완전 차단'),
+  ContactStatusOption(id: 'noContact', label: '연락 안 함'),
+  ContactStatusOption(id: 'sometimes', label: '가끔 연락'),
+  ContactStatusOption(id: 'often', label: '자주 연락'),
+  ContactStatusOption(id: 'stillMeeting', label: '아직 만남'),
+];
+
+/// MBTI 선택지
+const List<String> mbtiOptions = [
+  'ISTJ', 'ISFJ', 'INFJ', 'INTJ',
+  'ISTP', 'ISFP', 'INFP', 'INTP',
+  'ESTP', 'ESFP', 'ENFP', 'ENTP',
+  'ESTJ', 'ESFJ', 'ENFJ', 'ENTJ',
+  'unknown', // 모름
 ];

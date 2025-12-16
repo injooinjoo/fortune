@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/toss_theme.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/components/app_card.dart';
 import 'package:fortune/core/widgets/unified_blur_wrapper.dart';
 import 'package:fortune/core/widgets/gpt_style_typing_text.dart';
@@ -24,7 +23,7 @@ class RelationshipAdviceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return UnifiedBlurWrapper(
       isBlurred: isBlurred,
@@ -40,20 +39,20 @@ class RelationshipAdviceCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: TossTheme.success.withValues(alpha: 0.1),
+                    color: DSColors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.lightbulb,
-                    color: TossTheme.success,
+                    color: DSColors.success,
                     size: 20,
                   ),
                 ),
                 SizedBox(width: 12),
                 Text(
                   '관계 개선 조언',
-                  style: TossTheme.heading4.copyWith(
-                    color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+                  style: DSTypography.headingSmall.copyWith(
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -64,8 +63,8 @@ class RelationshipAdviceCard extends StatelessWidget {
 
             GptStyleTypingText(
               text: fortune.advice!,
-              style: TossTheme.body2.copyWith(
-                color: isDark ? TossDesignSystem.white : TossTheme.textBlack,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textPrimary,
                 height: 1.6,
               ),
               startTyping: startTyping,

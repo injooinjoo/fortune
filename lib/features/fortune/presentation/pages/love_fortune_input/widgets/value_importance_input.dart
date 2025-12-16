@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 /// Section 3: 중요한 가치 (5개 슬라이더)
 class ValueImportanceInput extends StatelessWidget {
@@ -16,7 +14,7 @@ class ValueImportanceInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,13 +22,13 @@ class ValueImportanceInput extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: TossTheme.success.withValues(alpha: 0.1),
+            color: DSColors.success.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             '1~5점으로 평가',
-            style: TypographyUnified.labelMedium.copyWith(
-              color: TossTheme.success,
+            style: DSTypography.labelMedium.copyWith(
+              color: DSColors.success,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -38,19 +36,19 @@ class ValueImportanceInput extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           '각 항목이 연애할 때 얼마나 중요한지 점수를 매겨주세요',
-          style: TypographyUnified.bodySmall.copyWith(
-            color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+          style: DSTypography.bodySmall.copyWith(
+            color: colors.textSecondary,
           ),
         ),
         const SizedBox(height: 20),
         ...valueImportance.entries.map((entry) {
-          return _buildValueSlider(entry.key, entry.value, isDark);
+          return _buildValueSlider(entry.key, entry.value, colors);
         }),
       ],
     );
   }
 
-  Widget _buildValueSlider(String label, double value, bool isDark) {
+  Widget _buildValueSlider(String label, double value, DSColorScheme colors) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -61,21 +59,21 @@ class ValueImportanceInput extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: TypographyUnified.bodyMedium.copyWith(
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                style: DSTypography.bodyMedium.copyWith(
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: _getScoreColor(value).withValues(alpha: 0.1),
+                  color: _getScoreColor(value, colors).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${value.round()}점',
-                  style: TypographyUnified.labelLarge.copyWith(
-                    color: _getScoreColor(value),
+                  style: DSTypography.labelLarge.copyWith(
+                    color: _getScoreColor(value, colors),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -85,10 +83,10 @@ class ValueImportanceInput extends StatelessWidget {
           const SizedBox(height: 8),
           SliderTheme(
             data: SliderThemeData(
-              activeTrackColor: _getScoreColor(value),
-              inactiveTrackColor: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200,
-              thumbColor: _getScoreColor(value),
-              overlayColor: _getScoreColor(value).withValues(alpha: 0.2),
+              activeTrackColor: _getScoreColor(value, colors),
+              inactiveTrackColor: colors.border,
+              thumbColor: _getScoreColor(value, colors),
+              overlayColor: _getScoreColor(value, colors).withValues(alpha: 0.2),
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
               trackHeight: 4,
             ),
@@ -107,15 +105,15 @@ class ValueImportanceInput extends StatelessWidget {
     );
   }
 
-  Color _getScoreColor(double score) {
+  Color _getScoreColor(double score, DSColorScheme colors) {
     if (score <= 2) {
-      return TossTheme.textGray500;
+      return colors.textSecondary;
     } else if (score <= 3) {
-      return TossTheme.warning;
+      return DSColors.warning;
     } else if (score <= 4) {
-      return TossTheme.success;
+      return DSColors.success;
     } else {
-      return TossTheme.primaryBlue;
+      return colors.accent;
     }
   }
 }

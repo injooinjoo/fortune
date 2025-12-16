@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 
 /// 정보 아이템 위젯 - ChatGPT 스타일
 class InfoItem extends StatelessWidget {
@@ -11,7 +10,7 @@ class InfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -22,8 +21,8 @@ class InfoItem extends StatelessWidget {
             width: 90,
             child: Text(
               label,
-              style: TypographyUnified.bodySmall.copyWith(
-                color: TossDesignSystem.gray500,
+              style: DSTypography.bodySmall.copyWith(
+                color: colors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -32,8 +31,8 @@ class InfoItem extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: TypographyUnified.bodyMedium.copyWith(
-                color: isDark ? TossDesignSystem.gray200 : TossDesignSystem.gray800,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),

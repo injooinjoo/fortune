@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 /// 얼굴 부위 터치 영역 데이터
 class FaceZoneTouchArea {
@@ -124,7 +123,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : Colors.white,
+        color: isDark ? DSColors.surface : Colors.white,
         boxShadow: isCollapsed
             ? [
                 BoxShadow(
@@ -168,7 +167,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                 height: 44,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [TossDesignSystem.purple, TossDesignSystem.tossBlue],
+                    colors: [DSColors.accentSecondary, DSColors.accent],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -185,20 +184,20 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                   children: [
                     Text(
                       '관상 부위별 분석',
-                      style: TypographyUnified.heading4.copyWith(
+                      style: DSTypography.labelLarge.copyWith(
                         color: isDark
-                            ? TossDesignSystem.grayDark900
-                            : TossDesignSystem.gray900,
+                            ? DSColors.textPrimary
+                            : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       '부위를 터치하여 상세 분석 보기',
-                      style: TypographyUnified.caption.copyWith(
+                      style: DSTypography.labelSmall.copyWith(
                         color: isDark
-                            ? TossDesignSystem.grayDark600
-                            : TossDesignSystem.gray600,
+                            ? DSColors.textSecondary
+                            : DSColors.textSecondary,
                       ),
                     ),
                   ],
@@ -255,7 +254,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                                 children: [
                                   Text(
                                     area.name.split('(')[0],
-                                    style: TypographyUnified.caption.copyWith(
+                                    style: DSTypography.labelSmall.copyWith(
                                       color: area.color,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 9,
@@ -268,7 +267,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                                       width: 5,
                                       height: 5,
                                       decoration: BoxDecoration(
-                                        color: TossDesignSystem.successGreen,
+                                        color: DSColors.success,
                                         shape: BoxShape.circle,
                                       ),
                                     ),
@@ -301,7 +300,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
               height: 44,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [TossDesignSystem.purple, TossDesignSystem.tossBlue],
+                  colors: [DSColors.accentSecondary, DSColors.accent],
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -315,10 +314,10 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
             Expanded(
               child: Text(
                 '관상 분석 결과',
-                style: TypographyUnified.heading4.copyWith(
+                style: DSTypography.labelLarge.copyWith(
                   color: isDark
-                      ? TossDesignSystem.grayDark900
-                      : TossDesignSystem.gray900,
+                      ? DSColors.textPrimary
+                      : DSColors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -326,7 +325,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: TossDesignSystem.purple.withValues(alpha: 0.1),
+                color: DSColors.accentSecondary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -334,14 +333,14 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                 children: [
                   Icon(
                     Icons.keyboard_arrow_up,
-                    color: TossDesignSystem.purple,
+                    color: DSColors.accentSecondary,
                     size: 18,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '맵 보기',
-                    style: TypographyUnified.caption.copyWith(
-                      color: TossDesignSystem.purple,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: DSColors.accentSecondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -359,7 +358,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
       size: Size(constraints.maxWidth * 0.8, constraints.maxHeight * 0.9),
       painter: _FaceOutlinePainter(
         color:
-            isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+            isDark ? DSColors.textTertiary : DSColors.textTertiary,
       ),
     );
   }

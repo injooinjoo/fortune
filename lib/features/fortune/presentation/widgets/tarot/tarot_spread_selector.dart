@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/widgets/unified_button.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
-import '../../../../../core/theme/font_size_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/constants/tarot/tarot_helper.dart';
 
 class TarotSpreadSelector extends StatefulWidget {
@@ -65,6 +63,8 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -75,9 +75,9 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
             // 스크롤 가능한 컨텐츠
             SingleChildScrollView(
               padding: const EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 20,
+                left: DSSpacing.lg,
+                right: DSSpacing.lg,
+                top: DSSpacing.lg,
                 bottom: 100, // FloatingBottomButton을 위한 공간
               ),
               child: Column(
@@ -86,9 +86,9 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                   // 제목
                   Text(
                     '스프레드를 선택하세요',
-                    style: TypographyUnified.displaySmall.copyWith(
+                    style: typography.headingLarge.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      color: colors.textPrimary,
                       height: 1.2,
                     ),
                   ),
@@ -98,9 +98,9 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                   // 부제목
                   Text(
                     '질문: ${widget.question}',
-                    style: TypographyUnified.bodySmall.copyWith(
+                    style: typography.bodySmall.copyWith(
                       fontWeight: FontWeight.w400,
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      color: colors.textSecondary,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -172,22 +172,24 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
     required bool isDark,
   }) {
     final isSelected = _selectedSpread == spread;
+    final colors = context.colors;
+    final typography = context.typography;
 
     return Material(
-      color: TossDesignSystem.white.withValues(alpha: 0.0),
-      borderRadius: BorderRadius.circular(16),
+      color: Colors.white.withValues(alpha: 0.0),
+      borderRadius: BorderRadius.circular(DSRadius.lg),
       child: Ink(
         decoration: BoxDecoration(
           color: isSelected
               ? color.withValues(alpha: 0.1)
-              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight),
+              : colors.surface,
           border: Border.all(
             color: isSelected
                 ? color
-                : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
+                : colors.border,
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
           boxShadow: isSelected
               ? [
                   BoxShadow(
@@ -204,11 +206,11 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
               _selectedSpread = spread;
             });
           },
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
           splashColor: color.withValues(alpha: 0.1),
           highlightColor: color.withValues(alpha: 0.05),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(DSSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -224,12 +226,12 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                       ),
                       child: Icon(
                         icon,
-                        color: isSelected ? TossDesignSystem.white : color,
-                        size: FontSizeSystem.heading2,
+                        color: isSelected ? Colors.white : color,
+                        size: 24,
                       ),
                     ),
 
-                    const SizedBox(width: 16),
+                    const SizedBox(width: DSSpacing.md),
 
                     // 제목과 설명
                     Expanded(
@@ -240,11 +242,11 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                             children: [
                               Text(
                                 spread.displayName,
-                                style: TypographyUnified.heading4.copyWith(
+                                style: typography.labelLarge.copyWith(
                                   fontWeight: FontWeight.w600,
                                   color: isSelected
                                       ? color
-                                      : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
+                                      : colors.textPrimary,
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -255,11 +257,11 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                                 ),
                                 decoration: BoxDecoration(
                                   color: color.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(DSRadius.md),
                                 ),
                                 child: Text(
                                   '${spread.cardCount}장',
-                                  style: TypographyUnified.labelMedium.copyWith(
+                                  style: typography.labelMedium.copyWith(
                                     fontWeight: FontWeight.w500,
                                     color: color,
                                   ),
@@ -270,9 +272,9 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                           SizedBox(height: 4),
                           Text(
                             spread.description,
-                            style: TypographyUnified.bodySmall.copyWith(
+                            style: typography.bodySmall.copyWith(
                               fontWeight: FontWeight.w400,
-                              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -284,7 +286,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                       Icon(
                         Icons.check_circle,
                         color: color,
-                        size: FontSizeSystem.heading2,
+                        size: 24,
                       ),
                   ],
                 ),
@@ -298,8 +300,8 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight,
-                    borderRadius: BorderRadius.circular(8),
+                    color: colors.surfaceSecondary,
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -312,9 +314,9 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                       SizedBox(width: 6),
                       Text(
                         recommended,
-                        style: TypographyUnified.labelMedium.copyWith(
+                        style: typography.labelMedium.copyWith(
                           fontWeight: FontWeight.w500,
-                          color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -323,7 +325,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
 
                 // 스프레드 미리보기
                 if (spread != TarotSpreadType.single) ...[
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DSSpacing.md),
                   _buildSpreadPreview(spread, color, isDark),
                 ],
               ],
@@ -366,7 +368,7 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                       const SizedBox(height: 4),
                       Text(
                         labels[index],
-                        style: TypographyUnified.labelSmall.copyWith(
+                        style: context.typography.labelSmall.copyWith(
                           fontWeight: FontWeight.w600,
                           color: color,
                         ),
@@ -404,9 +406,10 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                       const SizedBox(height: 4),
                       Text(
                         labels[index],
-                        style: TypographyUnified.labelTiny.copyWith(
+                        style: context.typography.labelSmall.copyWith(
                           fontWeight: FontWeight.w600,
                           color: color,
+                          fontSize: 10,
                         ),
                       ),
                     ],

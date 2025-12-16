@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/constants/tarot_deck_metadata.dart';
@@ -396,6 +397,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
               ref.read(tarotReadingStateProvider.notifier).setQuestion(question);
             },
             onProceed: () {
+              ref.read(fortuneHapticServiceProvider).pageSnap();
               ref.read(tarotReadingStateProvider.notifier).proceedToSelection();
             },
           ),
@@ -408,6 +410,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
           question: state.question,
           spreadType: state.spreadType,
           onSelectionComplete: (selectedCards) {
+            ref.read(fortuneHapticServiceProvider).cardSelect();
             ref.read(tarotReadingStateProvider.notifier).setSelectedCards(selectedCards);
             _performReading(selectedCards);
           },

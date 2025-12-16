@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/widgets/unified_button.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 
 class TarotQuestionSelector extends StatefulWidget {
   final Function(String) onQuestionSelected;
@@ -111,6 +110,8 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
   Widget build(BuildContext context) {
     debugPrint('🟠 TarotQuestionSelector build - selectedQuestion: ${widget.selectedQuestion}');
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
+    final typography = context.typography;
     final hasSelection = widget.selectedQuestion != null ||
                         (widget.customQuestion?.isNotEmpty == true);
     final hasCustomInput = widget.customQuestion?.isNotEmpty == true;
@@ -135,21 +136,21 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                   // 제목
                   Text(
                     '어떤 것이 궁금하신가요?',
-                    style: TypographyUnified.displaySmall.copyWith(
+                    style: typography.displaySmall.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      color: colors.textPrimary,
                       height: 1.2,
                     ),
                   ),
 
-                  SizedBox(height: 8),
+                  const SizedBox(height: DSSpacing.sm),
 
                   // 부제목
                   Text(
                     '카드가 답해드릴게요',
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: typography.labelLarge.copyWith(
                       fontWeight: FontWeight.w400,
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                      color: colors.textSecondary,
                     ),
                   ),
 
@@ -182,36 +183,36 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                     );
                   }),
 
-                  SizedBox(height: 24),
+                  const SizedBox(height: DSSpacing.lg),
 
                   // 직접 입력 섹션
                   Text(
                     '직접 입력하기',
-                    style: TypographyUnified.heading4.copyWith(
+                    style: typography.headingSmall.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      color: colors.textPrimary,
                     ),
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: DSSpacing.md),
 
                   // 직접 입력 텍스트 필드
                   Container(
                     decoration: BoxDecoration(
                       color: hasCustomInput
-                          ? const Color(0xFF3182F6).withValues(alpha: 0.05)
-                          : (isDark ? TossDesignSystem.surfaceBackgroundDark : TossDesignSystem.surfaceBackgroundLight),
+                          ? DSColors.accent.withValues(alpha: 0.05)
+                          : colors.surfaceSecondary,
                       border: Border.all(
                         color: hasCustomInput || _focusNode.hasFocus
-                            ? const Color(0xFF3182F6)
-                            : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
+                            ? DSColors.accent
+                            : colors.border,
                         width: hasCustomInput || _focusNode.hasFocus ? 2 : 1,
                       ),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(DSRadius.md),
                       boxShadow: hasCustomInput
                           ? [
                               BoxShadow(
-                                color: const Color(0xFF3182F6).withValues(alpha: 0.1),
+                                color: DSColors.accent.withValues(alpha: 0.1),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -233,16 +234,15 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                       decoration: InputDecoration(
                         hintText: '궁금한 것을 자유롭게 입력해주세요\n예: 새로운 직장에서 잘 적응할 수 있을까요?',
                         hintStyle: TextStyle(
-                          color: isDark ? TossDesignSystem.textTertiaryDark : TossDesignSystem.textTertiaryLight,
-                          
+                          color: colors.textTertiary,
                           height: 1.4,
                         ),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.all(16),
+                        contentPadding: const EdgeInsets.all(DSSpacing.md),
                         counterText: '',
                       ),
-                      style: TypographyUnified.buttonMedium.copyWith(
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                      style: typography.labelLarge.copyWith(
+                        color: colors.textPrimary,
                         height: 1.4,
                       ),
                     ),
@@ -271,21 +271,22 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
     required VoidCallback onTap,
     required bool isDark,
   }) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Material(
-      color: TossDesignSystem.white.withValues(alpha: 0.0),
-      borderRadius: BorderRadius.circular(12),
+      color: Colors.white.withValues(alpha: 0.0),
+      borderRadius: BorderRadius.circular(DSRadius.md),
       child: Ink(
         decoration: BoxDecoration(
           color: isSelected
               ? color.withValues(alpha: 0.1)
-              : (isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight),
+              : colors.surface,
           border: Border.all(
-            color: isSelected
-                ? color
-                : (isDark ? TossDesignSystem.borderDark : TossDesignSystem.borderLight),
+            color: isSelected ? color : colors.border,
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(DSRadius.md),
           boxShadow: isSelected
               ? [
                   BoxShadow(
@@ -298,54 +299,52 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
         ),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(DSRadius.md),
           splashColor: color.withValues(alpha: 0.1),
           highlightColor: color.withValues(alpha: 0.05),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(DSSpacing.md),
             child: Row(
-          children: [
-            // 아이콘
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected
-                    ? color
-                    : color.withValues(alpha: 0.1),
-              ),
-              child: Icon(
-                icon,
-                color: isSelected ? TossDesignSystem.white : color,
-                size: 20,
-              ),
-            ),
-
-            SizedBox(width: 16),
-
-            // 질문 텍스트
-            Expanded(
-              child: Text(
-                question,
-                style: TypographyUnified.buttonMedium.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: isSelected
-                      ? color
-                      : (isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight),
+              children: [
+                // 아이콘
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected
+                        ? color
+                        : color.withValues(alpha: 0.1),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: isSelected ? Colors.white : color,
+                    size: 20,
+                  ),
                 ),
-              ),
-            ),
 
-            // 선택 표시
-            if (isSelected)
-              Icon(
-                Icons.check_circle,
-                color: color,
-                size: 20,
-              ),
-          ],
+                const SizedBox(width: DSSpacing.md),
+
+                // 질문 텍스트
+                Expanded(
+                  child: Text(
+                    question,
+                    style: typography.labelLarge.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: isSelected ? color : colors.textPrimary,
+                    ),
+                  ),
+                ),
+
+                // 선택 표시
+                if (isSelected)
+                  Icon(
+                    Icons.check_circle,
+                    color: color,
+                    size: 20,
+                  ),
+              ],
             ),
           ),
         ),

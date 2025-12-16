@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/widgets/unified_button.dart';
 import '../../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
@@ -31,7 +31,7 @@ class BlindDatePhotoAnalysis extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Column(
       children: [
@@ -52,7 +52,7 @@ class BlindDatePhotoAnalysis extends StatelessWidget {
                     Text(
                       '내 사진 분석',
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ],
@@ -87,7 +87,7 @@ class BlindDatePhotoAnalysis extends StatelessWidget {
                     Text(
                       '상대방 정보 (선택)',
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        color: isDark ? TossDesignSystem.textPrimaryDark : null,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ],
@@ -147,6 +147,7 @@ class BlindDatePhotoAnalysisResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = context.colors;
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -231,10 +232,10 @@ class BlindDatePhotoAnalysisResult extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  color: colors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                    color: colors.accent.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -245,14 +246,14 @@ class BlindDatePhotoAnalysisResult extends StatelessWidget {
                         Icon(
                           Icons.tips_and_updates,
                           size: 16,
-                          color: TossDesignSystem.tossBlue,
+                          color: colors.accent,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'AI 추천 포인트',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: TossDesignSystem.tossBlue,
+                            color: colors.accent,
                           ),
                         ),
                       ],
@@ -360,8 +361,8 @@ class BlindDatePhotoAnalysisResult extends StatelessWidget {
   }
 
   Color _getSuccessColor(int rate) {
-    if (rate >= 80) return TossDesignSystem.successGreen;
-    if (rate >= 60) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (rate >= 80) return DSColors.success;
+    if (rate >= 60) return DSColors.warning;
+    return DSColors.error;
   }
 }

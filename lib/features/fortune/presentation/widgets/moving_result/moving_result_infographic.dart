@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../../core/theme/toss_theme.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import 'moving_fortune_data.dart';
 import 'moving_fortune_generator.dart';
@@ -90,7 +90,7 @@ class _MovingResultInfographicState extends State<MovingResultInfographic>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TossTheme.backgroundPrimary,
+      backgroundColor: DSColors.background,
       body: SafeArea(
         child: Stack(
           children: [

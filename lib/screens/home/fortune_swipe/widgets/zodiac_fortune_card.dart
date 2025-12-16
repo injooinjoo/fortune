@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
 /// 🐉 띠별 운세 카드
@@ -80,7 +80,7 @@ class ZodiacFortuneCard extends StatelessWidget {
                             children: [
                               Text(
                                 '${fortune['year']}년생 ${fortune['name']}띠',
-                                style: TypographyUnified.bodySmall.copyWith(
+                                style: DSTypography.bodySmall.copyWith(
                                   color: isDark ? Colors.white : Colors.black87,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -128,7 +128,7 @@ class ZodiacFortuneCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   fortune['description'] as String,
-                  style: TypographyUnified.bodySmall.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: isDark ? Colors.white.withValues(alpha: 0.87) : Colors.black.withValues(alpha: 0.87),
                     height: 1.5,
                     fontSize: 12,

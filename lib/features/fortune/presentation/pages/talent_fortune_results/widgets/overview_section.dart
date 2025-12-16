@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 import '../../../../../../core/models/fortune_result.dart';
 import '../../../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../../../core/widgets/gpt_style_typing_text.dart';
 
 class OverviewSection extends StatelessWidget {
   final FortuneResult? fortuneResult;
-  final bool isDark;
+  final DSColorScheme colors;
   final bool enableTyping;
   final bool startTyping;
   final VoidCallback? onTypingComplete;
@@ -16,7 +15,7 @@ class OverviewSection extends StatelessWidget {
   const OverviewSection({
     super.key,
     required this.fortuneResult,
-    required this.isDark,
+    required this.colors,
     this.enableTyping = false,
     this.startTyping = true,
     this.onTypingComplete,
@@ -33,8 +32,8 @@ class OverviewSection extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-            TossDesignSystem.tossBlueDark.withValues(alpha: 0.05),
+            colors.accent.withValues(alpha: 0.1),
+            colors.accent.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -55,16 +54,16 @@ class OverviewSection extends StatelessWidget {
                     children: [
                       Text(
                         '재능 발견 운세',
-                        style: TypographyUnified.heading1.copyWith(
+                        style: DSTypography.displayLarge.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: 4),
                       Text(
                         'LLM이 분석한 당신의 재능과 잠재력',
-                        style: TypographyUnified.bodySmall.copyWith(
-                          color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                        style: DSTypography.bodySmall.copyWith(
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -76,8 +75,8 @@ class OverviewSection extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        TossDesignSystem.tossBlue,
-                        TossDesignSystem.tossBlueDark,
+                        colors.accent,
+                        colors.accent.withValues(alpha: 0.8),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(20),
@@ -86,15 +85,15 @@ class OverviewSection extends StatelessWidget {
                     children: [
                       Text(
                         '$score점',
-                        style: TypographyUnified.heading2.copyWith(
+                        style: DSTypography.headingLarge.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                         ),
                       ),
                       Text(
                         '재능 점수',
-                        style: TypographyUnified.labelSmall.copyWith(
-                          color: TossDesignSystem.white.withValues(alpha: 0.9),
+                        style: DSTypography.labelSmall.copyWith(
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -114,15 +113,15 @@ class OverviewSection extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.auto_awesome,
-                          color: TossDesignSystem.tossBlue,
+                          color: colors.accent,
                           size: 24,
                         ),
                         SizedBox(width: 8),
                         Text(
                           'AI 재능 브리핑',
-                          style: TypographyUnified.heading3.copyWith(
+                          style: DSTypography.headingMedium.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ],
@@ -131,9 +130,9 @@ class OverviewSection extends StatelessWidget {
                     enableTyping
                         ? GptStyleTypingText(
                             text: content,
-                            style: TypographyUnified.bodyMedium.copyWith(
+                            style: DSTypography.bodyMedium.copyWith(
                               height: 1.7,
-                              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                              color: colors.textPrimary,
                             ),
                             showGhostText: true,
                             startTyping: startTyping,
@@ -141,9 +140,9 @@ class OverviewSection extends StatelessWidget {
                           )
                         : Text(
                             content,
-                            style: TypographyUnified.bodyMedium.copyWith(
+                            style: DSTypography.bodyMedium.copyWith(
                               height: 1.7,
-                              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                              color: colors.textPrimary,
                             ),
                           ),
                   ],
@@ -162,24 +161,24 @@ class OverviewSection extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.stars,
-                          color: TossDesignSystem.warningOrange,
+                          color: DSColors.warning,
                           size: 24,
                         ),
                         SizedBox(width: 8),
                         Text(
                           '행운 아이템',
-                          style: TypographyUnified.heading3.copyWith(
+                          style: DSTypography.headingMedium.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    _buildLuckyItem('색상', luckyItems['color'] as String? ?? '', Icons.palette, isDark),
-                    _buildLuckyItem('숫자', '${luckyItems['number'] ?? ''}', Icons.filter_9_plus, isDark),
-                    _buildLuckyItem('방향', luckyItems['direction'] as String? ?? '', Icons.explore, isDark),
-                    _buildLuckyItem('도구', luckyItems['tool'] as String? ?? '', Icons.build_circle, isDark),
+                    _buildLuckyItem('색상', luckyItems['color'] as String? ?? '', Icons.palette, colors),
+                    _buildLuckyItem('숫자', '${luckyItems['number'] ?? ''}', Icons.filter_9_plus, colors),
+                    _buildLuckyItem('방향', luckyItems['direction'] as String? ?? '', Icons.explore, colors),
+                    _buildLuckyItem('도구', luckyItems['tool'] as String? ?? '', Icons.build_circle, colors),
                   ],
                 ),
               ),
@@ -189,7 +188,7 @@ class OverviewSection extends StatelessWidget {
     );
   }
 
-  Widget _buildLuckyItem(String label, String value, IconData icon, bool isDark) {
+  Widget _buildLuckyItem(String label, String value, IconData icon, DSColorScheme colors) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -198,10 +197,10 @@ class OverviewSection extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+              color: colors.accent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, size: 20, color: TossDesignSystem.tossBlue),
+            child: Icon(icon, size: 20, color: colors.accent),
           ),
           SizedBox(width: 12),
           Expanded(
@@ -210,15 +209,15 @@ class OverviewSection extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TypographyUnified.labelSmall.copyWith(
-                    color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                  style: DSTypography.labelSmall.copyWith(
+                    color: colors.textSecondary,
                   ),
                 ),
                 Text(
                   value,
-                  style: TypographyUnified.bodyMedium.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                 ),
               ],

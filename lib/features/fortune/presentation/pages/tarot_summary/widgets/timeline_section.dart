@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 class TimelineSection extends StatelessWidget {
@@ -19,8 +18,8 @@ class TimelineSection extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          TossDesignSystem.tossBlue.withValues(alpha: 0.2),
-          TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+          const Color(0xFF3182F6).withValues(alpha: 0.2),
+          const Color(0xFF3182F6).withValues(alpha: 0.2),
         ],
       ),
       child: Row(
@@ -28,7 +27,7 @@ class TimelineSection extends StatelessWidget {
           Icon(
             Icons.schedule,
             size: 36,
-            color: TossDesignSystem.tossBlue,
+            color: const Color(0xFF3182F6),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -37,18 +36,18 @@ class TimelineSection extends StatelessWidget {
               children: [
                 Text(
                   '예상 시기',
-                  style: TypographyUnified.bodyLarge.copyWith(
-                    fontSize: TypographyUnified.bodyLarge.fontSize! * fontScale,
+                  style: DSTypography.bodyLarge.copyWith(
+                    fontSize: DSTypography.bodyLarge.fontSize! * fontScale,
                     fontWeight: FontWeight.bold,
-                    color: TossDesignSystem.white,
+                    color: Colors.white,
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
                   timeline,
-                  style: TypographyUnified.bodySmall.copyWith(
-                    fontSize: TypographyUnified.bodySmall.fontSize! * fontScale,
-                    color: TossDesignSystem.white.withValues(alpha: 0.7),
+                  style: DSTypography.bodySmall.copyWith(
+                    fontSize: DSTypography.bodySmall.fontSize! * fontScale,
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                 ),
               ],

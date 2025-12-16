@@ -26,6 +26,9 @@ class TestAuthService {
     return const String.fromEnvironment('BYPASS_AUTH') == 'true';
   }
 
+  /// Public method to check if auth should be bypassed (for testing)
+  static bool shouldBypassAuth() => _shouldBypassAuth();
+
   /// Auto-login with test account
   Future<bool> autoLoginTestAccount() async {
     if (!isTestMode()) return false;

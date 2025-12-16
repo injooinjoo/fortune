@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class MbtiQuestCard extends StatefulWidget {
   final List<dynamic> dailyQuests;
@@ -36,13 +35,13 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: widget.isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        color: widget.isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: widget.isDark
-              ? TossDesignSystem.black.withValues(alpha: 0.2)
-              : TossDesignSystem.gray400.withValues(alpha: 0.08),
+              ? Colors.black.withValues(alpha: 0.2)
+              : DSColors.textTertiary.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -56,12 +55,12 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.orange.withValues(alpha: 0.1),
+                  color: DSColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.emoji_events,
-                  color: TossDesignSystem.orange,
+                  color: DSColors.warning,
                   size: 24,
                 ),
               ),
@@ -72,16 +71,16 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                   children: [
                     Text(
                       '오늘의 퀘스트',
-                      style: TossDesignSystem.heading3.copyWith(
-                        color: widget.isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      style: DSTypography.headingSmall.copyWith(
+                        color: widget.isDark ? DSColors.textPrimary : DSColors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     SizedBox(height: 2),
                     Text(
                       '완료하고 성장 포인트를 획득하세요',
-                      style: TossDesignSystem.caption.copyWith(
-                        color: widget.isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: widget.isDark ? DSColors.textSecondary : DSColors.textSecondary,
                       ),
                     ),
                   ],
@@ -95,10 +94,10 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+              color: DSColors.accent.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                color: DSColors.accent.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -109,14 +108,14 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                   children: [
                     Text(
                       '진행도',
-                      style: TossDesignSystem.body3.copyWith(
-                        color: widget.isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                      style: DSTypography.bodySmall.copyWith(
+                        color: widget.isDark ? DSColors.textSecondary : DSColors.textSecondary,
                       ),
                     ),
                     Text(
                       '$completedCount / $totalCount 완료',
-                      style: TossDesignSystem.body3.copyWith(
-                        color: TossDesignSystem.tossBlue,
+                      style: DSTypography.bodySmall.copyWith(
+                        color: DSColors.accent,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -127,8 +126,8 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progress,
-                    backgroundColor: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-                    valueColor: AlwaysStoppedAnimation(TossDesignSystem.tossBlue),
+                    backgroundColor: DSColors.accent.withValues(alpha: 0.1),
+                    valueColor: AlwaysStoppedAnimation(DSColors.accent),
                     minHeight: 8,
                   ),
                 ),
@@ -173,16 +172,16 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isCompleted 
-            ? TossDesignSystem.successGreen.withValues(alpha: 0.05)
-            : (widget.isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50),
+          color: isCompleted
+            ? DSColors.success.withValues(alpha: 0.05)
+            : (widget.isDark ? DSColors.surface : DSColors.surface),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isCompleted 
-              ? TossDesignSystem.successGreen.withValues(alpha: 0.3)
-              : (widget.isDark 
-                ? TossDesignSystem.grayDark200.withValues(alpha: 0.5)
-                : TossDesignSystem.gray200.withValues(alpha: 0.5)),
+            color: isCompleted
+              ? DSColors.success.withValues(alpha: 0.3)
+              : (widget.isDark
+                ? DSColors.border.withValues(alpha: 0.5)
+                : DSColors.border.withValues(alpha: 0.5)),
             width: 1,
           ),
         ),
@@ -198,7 +197,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
               child: Center(
                 child: Text(
                   icon,
-                  style: TypographyUnified.heading3,
+                  style: DSTypography.headingSmall,
                 ),
               ),
             ),
@@ -212,8 +211,8 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                       Expanded(
                         child: Text(
                           title,
-                          style: TossDesignSystem.body2.copyWith(
-                            color: widget.isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                          style: DSTypography.bodyMedium.copyWith(
+                            color: widget.isDark ? DSColors.textPrimary : DSColors.textPrimary,
                             fontWeight: FontWeight.w500,
                             decoration: isCompleted ? TextDecoration.lineThrough : null,
                           ),
@@ -225,8 +224,8 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                   SizedBox(height: 4),
                   Text(
                     description,
-                    style: TossDesignSystem.caption.copyWith(
-                      color: widget.isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: widget.isDark ? DSColors.textSecondary : DSColors.textSecondary,
                       decoration: isCompleted ? TextDecoration.lineThrough : null,
                     ),
                   ),
@@ -237,7 +236,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
             if (isCompleted)
               Icon(
                 Icons.check_circle,
-                color: TossDesignSystem.successGreen,
+                color: DSColors.success,
                 size: 24,
               )
             else
@@ -249,7 +248,7 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
                 ),
                 child: Text(
                   '+$points',
-                  style: TossDesignSystem.body3.copyWith(
+                  style: DSTypography.bodySmall.copyWith(
                     color: _getDifficultyColor(difficulty),
                     fontWeight: FontWeight.bold,
                   ),
@@ -302,10 +301,10 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
           SizedBox(width: 3),
           Text(
             label,
-            style: TossDesignSystem.caption.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               color: color,
               fontWeight: FontWeight.w600,
-              
+
             ),
           ),
         ],
@@ -316,15 +315,15 @@ class _MbtiQuestCardState extends State<MbtiQuestCard> {
   Color _getDifficultyColor(String difficulty) {
     switch (difficulty.toLowerCase()) {
       case 'easy':
-        return TossDesignSystem.successGreen;
+        return DSColors.success;
       case 'medium':
-        return TossDesignSystem.tossBlue;
+        return DSColors.accent;
       case 'hard':
-        return TossDesignSystem.orange;
+        return DSColors.warning;
       case 'legendary':
-        return TossDesignSystem.purple;
+        return DSColors.accentSecondary;
       default:
-        return TossDesignSystem.gray600;
+        return DSColors.textSecondary;
     }
   }
 }

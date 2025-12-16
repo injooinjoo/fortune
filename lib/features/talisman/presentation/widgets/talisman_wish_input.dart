@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/talisman_wish.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/talisman_generation_service.dart' as ai_talisman;
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/voice_input_text_field.dart';
@@ -103,7 +103,7 @@ class TalismanWishInputState extends State<TalismanWishInput> {
             children: [
               Text(
                 widget.selectedCategory.emoji,
-                style: TypographyUnified.heading3,
+                style: DSTypography.headingSmall,
               ),
               SizedBox(width: 12),
               Text(

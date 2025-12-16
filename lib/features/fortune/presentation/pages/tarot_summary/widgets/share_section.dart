@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 class ShareSection extends StatelessWidget {
@@ -29,7 +28,7 @@ class ShareSection extends StatelessWidget {
       ),
       borderRadius: BorderRadius.circular(16),
       border: Border.all(
-        color: TossDesignSystem.white.withValues(alpha: 0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         width: 1,
       ),
       child: Column(
@@ -39,16 +38,16 @@ class ShareSection extends StatelessWidget {
             children: [
               Icon(
                 Icons.share,
-                color: TossDesignSystem.white.withValues(alpha: 0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 size: 20,
               ),
               SizedBox(width: 8),
               Text(
                 '친구와 공유하기',
-                style: TypographyUnified.buttonMedium.copyWith(
-                  fontSize: TypographyUnified.buttonMedium.fontSize! * fontScale,
+                style: DSTypography.labelLarge.copyWith(
+                  fontSize: DSTypography.labelLarge.fontSize! * fontScale,
                   fontWeight: FontWeight.bold,
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -116,8 +115,8 @@ class ShareSection extends StatelessWidget {
             SizedBox(height: 4),
             Text(
               label,
-              style: TypographyUnified.labelMedium.copyWith(
-                fontSize: TypographyUnified.labelMedium.fontSize! * fontScale,
+              style: DSTypography.labelMedium.copyWith(
+                fontSize: DSTypography.labelMedium.fontSize! * fontScale,
                 color: color,
                 fontWeight: FontWeight.w500,
               ),

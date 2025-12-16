@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -13,6 +13,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 /// 건강운세 결과 페이지 (프리미엄/블러 시스템 적용)
 ///
@@ -42,6 +43,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
   // GPT 스타일 타이핑 효과 섹션 관리
   int _currentTypingSection = 0;
+  bool _hapticTriggered = false;
 
   @override
   void initState() {
@@ -49,6 +51,15 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
     _fortuneResult = widget.fortuneResult;
     _currentTypingSection = 0;
     Logger.info('[건강운] 결과 페이지 초기화 - isBlurred: ${_fortuneResult.isBlurred}');
+
+    // 건강운 결과 공개 햅틱
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !_hapticTriggered) {
+        _hapticTriggered = true;
+        final score = _fortuneResult.score ?? 70;
+        ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+      }
+    });
   }
 
   @override
@@ -70,7 +81,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
           automaticallyImplyLeading: false,
           title: Text(
             '건강운세 결과',
-            style: context.heading3.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
             ),
           ),
@@ -200,14 +211,14 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
           const SizedBox(height: 16),
           Text(
             '오늘의 건강운',
-            style: context.bodyMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               color: TossDesignSystem.white.withValues(alpha: 0.9),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '$healthScore점',
-            style: context.displayLarge.copyWith(
+            style: DSTypography.displayLarge.copyWith(
               color: TossDesignSystem.white,
               fontWeight: FontWeight.w700,
             ),
@@ -215,7 +226,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
           const SizedBox(height: 12),
           Text(
             _getHealthEmoji(healthScore),
-            style: context.bodyLarge.copyWith(
+            style: DSTypography.bodyLarge.copyWith(
               color: TossDesignSystem.white,
             ),
           ),
@@ -261,7 +272,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
               const SizedBox(width: 12),
               Text(
                 '전반적인 건강운',
-                style: context.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                 ),
               ),
@@ -270,7 +281,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
           const SizedBox(height: 16),
           GptStyleTypingText(
             text: overallHealth,
-            style: context.bodyMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
               height: 1.5,
             ),
@@ -326,7 +337,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
               const SizedBox(width: 12),
               Text(
                 title,
-                style: context.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                 ),
               ),
@@ -365,7 +376,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
               children: [
                 Text(
                   '${entry.key}:',
-                  style: context.bodyMedium.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
                     fontWeight: FontWeight.w600,
                   ),
@@ -373,7 +384,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
                 const SizedBox(height: 4),
                 Text(
                   FortuneTextCleaner.clean(entry.value.toString()),
-                  style: context.bodyMedium.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     height: 1.5,
                   ),
@@ -391,7 +402,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
     );
     return Text(
       bodyPartAdvice,
-      style: context.bodyMedium.copyWith(
+      style: DSTypography.bodyMedium.copyWith(
         color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
         height: 1.5,
       ),
@@ -413,12 +424,12 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
             children: [
               Text(
                 '⚠️ ',
-                style: context.bodyMedium,
+                style: DSTypography.bodyMedium,
               ),
               Expanded(
                 child: Text(
                   FortuneTextCleaner.clean(caution.toString()),
-                  style: context.bodyMedium.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
                     height: 1.5,
                   ),
@@ -450,7 +461,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
           ),
           child: Text(
             activity.toString(),
-            style: context.bodyMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               color: const Color(0xFF2196F3),
               fontWeight: FontWeight.w600,
             ),
@@ -470,7 +481,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
     return Text(
       dietAdvice,
-      style: context.bodyMedium.copyWith(
+      style: DSTypography.bodyMedium.copyWith(
         color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
         height: 1.5,
       ),
@@ -487,7 +498,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
 
     return Text(
       exerciseAdvice,
-      style: context.bodyMedium.copyWith(
+      style: DSTypography.bodyMedium.copyWith(
         color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
         height: 1.5,
       ),
@@ -518,7 +529,7 @@ class _HealthFortuneResultPageState extends ConsumerState<HealthFortuneResultPag
           const SizedBox(width: 12),
           Text(
             healthKeyword,
-            style: context.heading3.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               color: TossDesignSystem.white,
               fontWeight: FontWeight.w700,
             ),

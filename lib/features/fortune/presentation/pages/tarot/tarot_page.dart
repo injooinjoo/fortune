@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../../presentation/providers/token_provider.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../widgets/tarot/tarot_question_selector.dart';
 import '../../widgets/tarot/tarot_spread_selector.dart';
@@ -85,7 +85,7 @@ class _TarotPageState extends ConsumerState<TarotPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     // Navigation bar is automatically hidden by Scaffold structure
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -95,7 +95,7 @@ class _TarotPageState extends ConsumerState<TarotPage>
     });
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       appBar: _buildAppBar(),
       body: SafeArea(
         child: Stack(
@@ -133,17 +133,17 @@ class _TarotPageState extends ConsumerState<TarotPage>
   }
 
   PreferredSizeWidget _buildAppBar() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return AppBar(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: _currentState != TarotFlowState.result
           ? IconButton(
               icon: Icon(
                 Icons.arrow_back_ios,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                color: colors.textPrimary,
               ),
               onPressed: () {
                 // 질문 화면에서 뒤로가면 덱 선택으로
@@ -163,13 +163,12 @@ class _TarotPageState extends ConsumerState<TarotPage>
           : null,
       automaticallyImplyLeading: false,
       iconTheme: IconThemeData(
-        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+        color: colors.textPrimary,
       ),
       title: Text(
         '타로 카드',
-        style: TextStyle(
-          color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-          fontWeight: FontWeight.w600,
+        style: DSTypography.headingSmall.copyWith(
+          color: colors.textPrimary,
         ),
       ),
       centerTitle: true,
@@ -178,7 +177,7 @@ class _TarotPageState extends ConsumerState<TarotPage>
               IconButton(
                 icon: Icon(
                   Icons.close,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
                 onPressed: () => context.go('/fortune'),
               ),

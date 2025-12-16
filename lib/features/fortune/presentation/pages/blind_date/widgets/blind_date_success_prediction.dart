@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../shared/glassmorphism/glass_container.dart';
 
 /// 소개팅 성공 예측 위젯
@@ -96,9 +96,9 @@ class BlindDateSuccessPrediction extends StatelessWidget {
   }
 
   Color _getSuccessColor(int rate) {
-    if (rate >= 80) return TossDesignSystem.successGreen;
-    if (rate >= 60) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (rate >= 80) return DSColors.success;
+    if (rate >= 60) return DSColors.warning;
+    return DSColors.error;
   }
 
   String _getSuccessMessage(int rate) {

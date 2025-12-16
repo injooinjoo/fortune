@@ -3,9 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/models/fortune_result.dart';
-import '../../../../core/theme/toss_theme.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -13,6 +11,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/widgets/gpt_style_typing_text.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 
 /// 투자운세 결과 페이지 v2 (리서치 기반 새 구조)
 ///
@@ -40,17 +39,33 @@ class InvestmentFortuneResultPage extends ConsumerStatefulWidget {
 class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneResultPage> {
   late FortuneResult _fortuneResult;
   int _currentTypingSection = 0;
+  bool _hapticTriggered = false;
 
   @override
   void initState() {
     super.initState();
     _fortuneResult = widget.fortuneResult;
     Logger.info('[투자운 v2] 결과 페이지 초기화 - isBlurred: ${_fortuneResult.isBlurred}');
+
+    // 투자운 결과 공개 햅틱 (동전 패턴 + 점수)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !_hapticTriggered) {
+        _hapticTriggered = true;
+        final haptic = ref.read(fortuneHapticServiceProvider);
+        final score = _fortuneResult.score ?? 70;
+        // 동전 떨어지는 패턴
+        haptic.investmentCoin();
+        // 점수에 따른 차별화 햅틱
+        Future.delayed(const Duration(milliseconds: 400), () {
+          haptic.scoreReveal(score);
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
@@ -59,16 +74,16 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         }
       },
       child: Scaffold(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
+        backgroundColor: colors.background,
         appBar: AppBar(
-          backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
+          backgroundColor: colors.background,
           elevation: 0,
           scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           title: Text(
             '투자 운세 결과',
-            style: context.heading3.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+            style: DSTypography.headingSmall.copyWith(
+              color: colors.textPrimary,
             ),
           ),
           centerTitle: true,
@@ -76,7 +91,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             IconButton(
               icon: Icon(
                 Icons.close,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                color: colors.textPrimary,
               ),
               onPressed: () => context.go('/fortune'),
             ),
@@ -160,30 +175,30 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       ),
       child: Column(
         children: [
-          const Icon(Icons.trending_up_rounded, color: TossDesignSystem.white, size: 48),
+          const Icon(Icons.trending_up_rounded, color: Colors.white, size: 48),
           const SizedBox(height: 16),
           Text(
             '투자 운세 점수',
-            style: context.bodyMedium.copyWith(color: TossDesignSystem.white.withValues(alpha: 0.9)),
+            style: DSTypography.bodyMedium.copyWith(color: Colors.white.withValues(alpha: 0.9)),
           ),
           const SizedBox(height: 8),
           Text(
             '$score점',
-            style: context.displayLarge.copyWith(color: TossDesignSystem.white, fontWeight: FontWeight.w700),
+            style: DSTypography.displayLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
-          Text(_getScoreEmoji(score), style: context.bodyLarge.copyWith(color: TossDesignSystem.white)),
+          Text(_getScoreEmoji(score), style: DSTypography.bodyLarge.copyWith(color: Colors.white)),
           if (_fortuneResult.percentile != null && _fortuneResult.isPercentileValid) ...[
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: TossDesignSystem.white.withValues(alpha: 0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 '상위 ${_fortuneResult.percentile}%',
-                style: context.bodySmall.copyWith(color: TossDesignSystem.white, fontWeight: FontWeight.w600),
+                style: DSTypography.bodySmall.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
               ),
             ),
           ],
@@ -193,32 +208,32 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
   }
 
   Widget _buildTickerInfoSection() {
+    final colors = context.colors;
     final data = _fortuneResult.data;
     final ticker = data['ticker'] as Map<String, dynamic>? ?? {};
     final tickerName = ticker['name'] as String? ?? '종목';
     final tickerSymbol = ticker['symbol'] as String? ?? '';
     final category = ticker['category'] as String? ?? '';
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
           Container(
             width: 48, height: 48,
             decoration: BoxDecoration(
-              color: TossDesignSystem.primaryBlue.withValues(alpha: 0.1),
+              color: colors.accent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
               child: Text(
                 tickerSymbol.isNotEmpty ? tickerSymbol.substring(0, tickerSymbol.length > 2 ? 2 : tickerSymbol.length) : '📈',
-                style: context.heading4.copyWith(color: TossDesignSystem.primaryBlue),
+                style: DSTypography.labelLarge.copyWith(color: colors.accent),
               ),
             ),
           ),
@@ -227,9 +242,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(tickerName, style: context.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+                Text(tickerName, style: DSTypography.labelLarge.copyWith(color: colors.textPrimary)),
                 const SizedBox(height: 4),
-                Text('${_getCategoryLabel(category)} • $tickerSymbol', style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600)),
+                Text('${_getCategoryLabel(category)} • $tickerSymbol', style: DSTypography.bodySmall.copyWith(color: colors.textSecondary)),
               ],
             ),
           ),
@@ -239,18 +254,18 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
   }
 
   Widget _buildContentSection() {
+    final colors = context.colors;
     final data = _fortuneResult.data;
     final content = FortuneTextCleaner.clean(data['content'] as String? ?? '투자 분석 결과입니다.');
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return _buildSectionCard(
       title: '투자 요약',
       icon: Icons.summarize_rounded,
-      color: TossDesignSystem.primaryBlue,
+      color: colors.accent,
       child: GptStyleTypingText(
         text: content,
-        style: context.bodyMedium.copyWith(
-          color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+        style: DSTypography.bodyMedium.copyWith(
+          color: colors.textSecondary,
           height: 1.6,
         ),
         startTyping: _currentTypingSection >= 0,
@@ -263,9 +278,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
   }
 
   Widget _buildLuckyItemsSection() {
+    final colors = context.colors;
     final data = _fortuneResult.data;
     final luckyItems = data['luckyItems'] as Map<String, dynamic>? ?? data['lucky_items'] as Map<String, dynamic>? ?? {};
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (luckyItems.isEmpty) return const SizedBox.shrink();
 
@@ -277,16 +292,16 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         spacing: 8,
         runSpacing: 8,
         children: [
-          if (luckyItems['color'] != null) _buildLuckyChip('🎨', '색상', luckyItems['color'].toString(), isDark),
-          if (luckyItems['number'] != null) _buildLuckyChip('🔢', '숫자', luckyItems['number'].toString(), isDark),
-          if (luckyItems['direction'] != null) _buildLuckyChip('🧭', '방향', luckyItems['direction'].toString(), isDark),
-          if (luckyItems['timing'] != null) _buildLuckyChip('⏰', '시간', luckyItems['timing'].toString(), isDark),
+          if (luckyItems['color'] != null) _buildLuckyChip('🎨', '색상', luckyItems['color'].toString(), colors),
+          if (luckyItems['number'] != null) _buildLuckyChip('🔢', '숫자', luckyItems['number'].toString(), colors),
+          if (luckyItems['direction'] != null) _buildLuckyChip('🧭', '방향', luckyItems['direction'].toString(), colors),
+          if (luckyItems['timing'] != null) _buildLuckyChip('⏰', '시간', luckyItems['timing'].toString(), colors),
         ],
       ),
     );
   }
 
-  Widget _buildLuckyChip(String emoji, String label, String value, bool isDark) {
+  Widget _buildLuckyChip(String emoji, String label, String value, DSColorScheme colors) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -298,7 +313,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         children: [
           Text(emoji, style: const TextStyle(fontSize: 16)),
           const SizedBox(width: 6),
-          Text(value, style: context.bodySmall.copyWith(fontWeight: FontWeight.w600, color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+          Text(value, style: DSTypography.bodySmall.copyWith(fontWeight: FontWeight.w600, color: colors.textPrimary)),
         ],
       ),
     );
@@ -307,9 +322,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
   // ===== 프리미엄 섹션 (블러) =====
 
   Widget _buildTimingSection() {
+    final colors = context.colors;
     final data = _fortuneResult.data;
     final timing = data['timing'] as Map<String, dynamic>? ?? {};
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return _buildBlurredSectionCard(
       title: '🎯 타이밍 운세',
@@ -320,11 +335,11 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 매수 시그널
-          _buildSignalBadge(timing['buySignal'] as String? ?? 'moderate', isDark),
+          _buildSignalBadge(timing['buySignal'] as String? ?? 'moderate'),
           const SizedBox(height: 12),
           Text(
             timing['buySignalText'] as String? ?? '매수 타이밍을 분석 중입니다.',
-            style: context.bodyMedium.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, height: 1.5),
+            style: DSTypography.bodyMedium.copyWith(color: colors.textSecondary, height: 1.5),
           ),
           const SizedBox(height: 16),
 
@@ -336,7 +351,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               Expanded(
                 child: Text(
                   '최적 시간: ${timing['bestTimeSlotText'] ?? '오후 시간대'}',
-                  style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
+                  style: DSTypography.bodySmall.copyWith(color: colors.textSecondary),
                 ),
               ),
             ],
@@ -351,7 +366,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
               Expanded(
                 child: Text(
                   timing['holdAdvice'] as String? ?? '상황을 지켜보세요.',
-                  style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600),
+                  style: DSTypography.bodySmall.copyWith(color: colors.textSecondary),
                 ),
               ),
             ],
@@ -361,7 +376,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
     );
   }
 
-  Widget _buildSignalBadge(String signal, bool isDark) {
+  Widget _buildSignalBadge(String signal) {
     final config = {
       'strong': {'label': '매수 추천', 'color': const Color(0xFF4CAF50), 'icon': Icons.arrow_upward_rounded},
       'moderate': {'label': '관망 추천', 'color': const Color(0xFF2196F3), 'icon': Icons.remove_rounded},
@@ -381,16 +396,16 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         children: [
           Icon(c['icon'] as IconData, color: c['color'] as Color, size: 20),
           const SizedBox(width: 8),
-          Text(c['label'] as String, style: context.bodyMedium.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w700)),
+          Text(c['label'] as String, style: DSTypography.bodyMedium.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w700)),
         ],
       ),
     );
   }
 
   Widget _buildOutlookSection() {
+    final colors = context.colors;
     final data = _fortuneResult.data;
     final outlook = data['outlook'] as Map<String, dynamic>? ?? {};
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return _buildBlurredSectionCard(
       title: '📈 전망 운세',
@@ -399,17 +414,17 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       sectionKey: 'outlook',
       child: Column(
         children: [
-          _buildOutlookRow('1주일', outlook['shortTerm'] as Map<String, dynamic>? ?? {}, isDark),
+          _buildOutlookRow('1주일', outlook['shortTerm'] as Map<String, dynamic>? ?? {}, colors),
           const SizedBox(height: 12),
-          _buildOutlookRow('1개월', outlook['midTerm'] as Map<String, dynamic>? ?? {}, isDark),
+          _buildOutlookRow('1개월', outlook['midTerm'] as Map<String, dynamic>? ?? {}, colors),
           const SizedBox(height: 12),
-          _buildOutlookRow('3개월+', outlook['longTerm'] as Map<String, dynamic>? ?? {}, isDark),
+          _buildOutlookRow('3개월+', outlook['longTerm'] as Map<String, dynamic>? ?? {}, colors),
         ],
       ),
     );
   }
 
-  Widget _buildOutlookRow(String label, Map<String, dynamic> data, bool isDark) {
+  Widget _buildOutlookRow(String label, Map<String, dynamic> data, DSColorScheme colors) {
     final score = (data['score'] as num?)?.toInt() ?? 50;
     final trend = data['trend'] as String? ?? 'neutral';
     final text = data['text'] as String? ?? '분석 중...';
@@ -421,31 +436,31 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
       children: [
         SizedBox(
           width: 60,
-          child: Text(label, style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, fontWeight: FontWeight.w600)),
+          child: Text(label, style: DSTypography.bodySmall.copyWith(color: colors.textSecondary, fontWeight: FontWeight.w600)),
         ),
         Icon(trendIcon, size: 18, color: trendColor),
         const SizedBox(width: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(color: trendColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-          child: Text('$score점', style: context.bodySmall.copyWith(color: trendColor, fontWeight: FontWeight.w600)),
+          child: Text('$score점', style: DSTypography.bodySmall.copyWith(color: trendColor, fontWeight: FontWeight.w600)),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Text(text, style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600), overflow: TextOverflow.ellipsis),
+          child: Text(text, style: DSTypography.bodySmall.copyWith(color: colors.textSecondary), overflow: TextOverflow.ellipsis),
         ),
       ],
     );
   }
 
   Widget _buildRisksSection() {
+    final colors = context.colors;
     final data = _fortuneResult.data;
     final risks = data['risks'] as Map<String, dynamic>? ?? {};
     final warnings = risks['warnings'] as List? ?? [];
     final avoidActions = risks['avoidActions'] as List? ?? [];
     final volatilityLevel = risks['volatilityLevel'] as String? ?? 'medium';
     final volatilityText = risks['volatilityText'] as String? ?? '';
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return _buildBlurredSectionCard(
       title: '⚠️ 리스크 경고',
@@ -456,12 +471,12 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 변동성 수준
-          _buildVolatilityBadge(volatilityLevel, volatilityText, isDark),
+          _buildVolatilityBadge(volatilityLevel, volatilityText, colors),
           const SizedBox(height: 16),
 
           // 주의사항
           if (warnings.isNotEmpty) ...[
-            Text('주의사항', style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, fontWeight: FontWeight.w600)),
+            Text('주의사항', style: DSTypography.bodySmall.copyWith(color: colors.textSecondary, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             ...warnings.map((w) => Padding(
               padding: const EdgeInsets.only(bottom: 6),
@@ -469,7 +484,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('• ', style: TextStyle(color: Color(0xFFF44336))),
-                  Expanded(child: Text(w.toString(), style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, height: 1.4))),
+                  Expanded(child: Text(w.toString(), style: DSTypography.bodySmall.copyWith(color: colors.textSecondary, height: 1.4))),
                 ],
               ),
             )),
@@ -478,7 +493,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           // 피해야 할 행동
           if (avoidActions.isNotEmpty) ...[
             const SizedBox(height: 12),
-            Text('피해야 할 행동', style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, fontWeight: FontWeight.w600)),
+            Text('피해야 할 행동', style: DSTypography.bodySmall.copyWith(color: colors.textSecondary, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             ...avoidActions.map((a) => Padding(
               padding: const EdgeInsets.only(bottom: 6),
@@ -486,7 +501,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('❌ '),
-                  Expanded(child: Text(a.toString(), style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, height: 1.4))),
+                  Expanded(child: Text(a.toString(), style: DSTypography.bodySmall.copyWith(color: colors.textSecondary, height: 1.4))),
                 ],
               ),
             )),
@@ -496,7 +511,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
     );
   }
 
-  Widget _buildVolatilityBadge(String level, String text, bool isDark) {
+  Widget _buildVolatilityBadge(String level, String text, DSColorScheme colors) {
     final config = {
       'low': {'label': '낮음', 'color': const Color(0xFF4CAF50)},
       'medium': {'label': '보통', 'color': const Color(0xFFFF9800)},
@@ -515,25 +530,25 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             children: [
               const Icon(Icons.show_chart_rounded, size: 16, color: Color(0xFFF44336)),
               const SizedBox(width: 6),
-              Text('변동성 ${c['label']}', style: context.bodySmall.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w600)),
+              Text('변동성 ${c['label']}', style: DSTypography.bodySmall.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w600)),
             ],
           ),
         ),
         if (text.isNotEmpty) ...[
           const SizedBox(width: 12),
-          Expanded(child: Text(text, style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600))),
+          Expanded(child: Text(text, style: DSTypography.bodySmall.copyWith(color: colors.textSecondary))),
         ],
       ],
     );
   }
 
   Widget _buildMarketMoodSection() {
+    final colors = context.colors;
     final data = _fortuneResult.data;
     final marketMood = data['marketMood'] as Map<String, dynamic>? ?? {};
     final categoryMood = marketMood['categoryMood'] as String? ?? 'neutral';
     final categoryMoodText = marketMood['categoryMoodText'] as String? ?? '';
     final investorSentiment = marketMood['investorSentiment'] as String? ?? '';
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return _buildBlurredSectionCard(
       title: '🌊 시장 기운',
@@ -546,14 +561,14 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           _buildMoodBadge(categoryMood),
           const SizedBox(height: 12),
           if (categoryMoodText.isNotEmpty)
-            Text(categoryMoodText, style: context.bodyMedium.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, height: 1.5)),
+            Text(categoryMoodText, style: DSTypography.bodyMedium.copyWith(color: colors.textSecondary, height: 1.5)),
           if (investorSentiment.isNotEmpty) ...[
             const SizedBox(height: 12),
             Row(
               children: [
                 const Icon(Icons.people_outline_rounded, size: 18, color: Color(0xFF3F51B5)),
                 const SizedBox(width: 8),
-                Expanded(child: Text(investorSentiment, style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600))),
+                Expanded(child: Text(investorSentiment, style: DSTypography.bodySmall.copyWith(color: colors.textSecondary))),
               ],
             ),
           ],
@@ -573,15 +588,15 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(color: (c['color'] as Color).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
-      child: Text(c['label'] as String, style: context.bodyMedium.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w700)),
+      child: Text(c['label'] as String, style: DSTypography.bodyMedium.copyWith(color: c['color'] as Color, fontWeight: FontWeight.w700)),
     );
   }
 
   Widget _buildAdviceSection() {
+    final colors = context.colors;
     final data = _fortuneResult.data;
     final advice = data['advice'] as String? ?? '';
     final psychologyTip = data['psychologyTip'] as String? ?? '';
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (advice.isEmpty && psychologyTip.isEmpty) return const SizedBox.shrink();
 
@@ -594,7 +609,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (advice.isNotEmpty) ...[
-            Text(FortuneTextCleaner.clean(advice), style: context.bodyMedium.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600, height: 1.6)),
+            Text(FortuneTextCleaner.clean(advice), style: DSTypography.bodyMedium.copyWith(color: colors.textSecondary, height: 1.6)),
           ],
           if (psychologyTip.isNotEmpty) ...[
             const SizedBox(height: 16),
@@ -606,7 +621,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                   const Icon(Icons.psychology_rounded, size: 20, color: Color(0xFF9C27B0)),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Text(FortuneTextCleaner.clean(psychologyTip), style: context.bodySmall.copyWith(color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600)),
+                    child: Text(FortuneTextCleaner.clean(psychologyTip), style: DSTypography.bodySmall.copyWith(color: colors.textSecondary)),
                   ),
                 ],
               ),
@@ -620,15 +635,15 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
   // ===== 공통 빌더 =====
 
   Widget _buildSectionCard({required String title, required IconData icon, required Color color, required Widget child}) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -641,7 +656,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 child: Icon(icon, color: color, size: 24),
               ),
               const SizedBox(width: 12),
-              Text(title, style: context.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+              Text(title, style: DSTypography.labelLarge.copyWith(color: colors.textPrimary)),
             ],
           ),
           const SizedBox(height: 16),
@@ -652,15 +667,15 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
   }
 
   Widget _buildBlurredSectionCard({required String title, required IconData icon, required Color color, required String sectionKey, required Widget child}) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -673,7 +688,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
                 child: Icon(icon, color: color, size: 24),
               ),
               const SizedBox(width: 12),
-              Text(title, style: context.heading4.copyWith(color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack)),
+              Text(title, style: DSTypography.labelLarge.copyWith(color: colors.textPrimary)),
             ],
           ),
           const SizedBox(height: 16),
@@ -734,7 +749,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         if (!adService.isRewardedAdReady) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'), backgroundColor: TossDesignSystem.errorRed),
+              const SnackBar(content: Text('광고를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.'), backgroundColor: DSColors.error),
             );
           }
           return;
@@ -764,7 +779,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           _fortuneResult = _fortuneResult.copyWith(isBlurred: false, blurredSections: []);
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'), backgroundColor: TossDesignSystem.warningOrange),
+          const SnackBar(content: Text('광고 표시 중 오류가 발생했지만, 콘텐츠를 확인하실 수 있습니다.'), backgroundColor: DSColors.warning),
         );
       }
     }

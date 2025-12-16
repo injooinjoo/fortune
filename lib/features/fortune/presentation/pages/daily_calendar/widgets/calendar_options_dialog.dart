@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/theme/app_theme.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 
 /// 캘린더 연동 옵션 다이얼로그
 class CalendarOptionsDialog extends StatelessWidget {
@@ -22,11 +21,11 @@ class CalendarOptionsDialog extends StatelessWidget {
     required VoidCallback onSyncComplete,
     required VoidCallback onPermissionDenied,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -41,7 +40,7 @@ class CalendarOptionsDialog extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? TossDesignSystem.white.withValues(alpha: 0.24) : TossDesignSystem.gray900.withValues(alpha: 0.12),
+                  color: colors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -49,15 +48,15 @@ class CalendarOptionsDialog extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               '캘린더 연동 방법 선택',
-              style: context.heading3,
+              style: DSTypography.headingMedium.copyWith(
+                color: colors.textPrimary,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               '일정을 불러올 캘린더를 선택해주세요',
-              style: context.bodyMedium.copyWith(
-                color: isDark
-                    ? TossDesignSystem.textSecondaryDark
-                    : TossDesignSystem.textSecondaryLight,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
               ),
             ),
             const SizedBox(height: 24),
@@ -65,7 +64,7 @@ class CalendarOptionsDialog extends StatelessWidget {
             // iOS/Android 기본 캘린더
             CalendarOptionTile(
               icon: Icons.phone_iphone,
-              iconColor: TossDesignSystem.tossBlue,
+              iconColor: colors.accent,
               title: 'iOS 기본 캘린더',
               subtitle: '기기에 연동된 모든 캘린더',
               onTap: () async {
@@ -77,7 +76,7 @@ class CalendarOptionsDialog extends StatelessWidget {
                   onPermissionDenied();
                 }
               },
-              isDark: isDark,
+              colors: colors,
             ),
             const SizedBox(height: 12),
 
@@ -91,7 +90,7 @@ class CalendarOptionsDialog extends StatelessWidget {
                 Navigator.pop(context);
                 onGoogleCalendarSelected();
               },
-              isDark: isDark,
+              colors: colors,
               trailing: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
@@ -100,7 +99,7 @@ class CalendarOptionsDialog extends StatelessWidget {
                 ),
                 child: Text(
                   '추천',
-                  style: context.labelSmall.copyWith(
+                  style: DSTypography.labelSmall.copyWith(
                     color: const Color(0xFF4285F4),
                     fontWeight: FontWeight.bold,
                   ),
@@ -127,7 +126,7 @@ class CalendarOptionTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final VoidCallback onTap;
-  final bool isDark;
+  final DSColorScheme colors;
   final Widget? trailing;
 
   const CalendarOptionTile({
@@ -137,7 +136,7 @@ class CalendarOptionTile extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.onTap,
-    required this.isDark,
+    required this.colors,
     this.trailing,
   });
 
@@ -149,10 +148,10 @@ class CalendarOptionTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? TossDesignSystem.white.withValues(alpha: 0.1) : TossDesignSystem.gray900.withValues(alpha: 0.03),
+          color: colors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark ? TossDesignSystem.white.withValues(alpha: 0.24) : TossDesignSystem.gray900.withValues(alpha: 0.12),
+            color: colors.border,
           ),
         ),
         child: Row(
@@ -173,20 +172,16 @@ class CalendarOptionTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: context.bodyLarge.copyWith(
+                    style: DSTypography.bodyLarge.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark
-                          ? TossDesignSystem.textPrimaryDark
-                          : TossDesignSystem.textPrimaryLight,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: context.bodySmall.copyWith(
-                      color: isDark
-                          ? TossDesignSystem.textSecondaryDark
-                          : TossDesignSystem.textSecondaryLight,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
@@ -196,7 +191,7 @@ class CalendarOptionTile extends StatelessWidget {
             const SizedBox(width: 8),
             Icon(
               Icons.chevron_right,
-              color: isDark ? TossDesignSystem.white.withValues(alpha: 0.38) : TossDesignSystem.gray900.withValues(alpha: 0.38),
+              color: colors.textTertiary,
             ),
           ],
         ),
@@ -210,19 +205,21 @@ class PermissionDeniedDialog extends StatelessWidget {
   const PermissionDeniedDialog({super.key});
 
   static void show(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.lock_outline, color: TossDesignSystem.errorRed, size: 24),
+            Icon(Icons.lock_outline, color: DSColors.error, size: 24),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 '캘린더 접근 권한 필요',
-                style: context.heading3,
+                style: DSTypography.headingMedium.copyWith(
+                  color: colors.textPrimary,
+                ),
               ),
             ),
           ],
@@ -234,16 +231,19 @@ class PermissionDeniedDialog extends StatelessWidget {
             children: [
               Text(
                 '일정 기반 맞춤 운세를 보려면 캘린더 접근 권한이 필요합니다.',
-                style: context.bodyMedium.copyWith(height: 1.5),
+                style: DSTypography.bodyMedium.copyWith(
+                  height: 1.5,
+                  color: colors.textPrimary,
+                ),
               ),
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  color: colors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                    color: colors.accent.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -253,15 +253,15 @@ class PermissionDeniedDialog extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.lightbulb_outline,
-                          color: TossDesignSystem.tossBlue,
+                          color: colors.accent,
                           size: 18,
                         ),
                         const SizedBox(width: 6),
                         Text(
                           'Google Calendar 사용하시나요?',
-                          style: context.bodyMedium.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: TossDesignSystem.tossBlue,
+                            color: colors.accent,
                           ),
                         ),
                       ],
@@ -270,30 +270,32 @@ class PermissionDeniedDialog extends StatelessWidget {
                     Text(
                       'iOS에서 Google Calendar를 보려면\n'
                       '먼저 계정을 추가해주세요:',
-                      style: context.bodySmall.copyWith(height: 1.4),
+                      style: DSTypography.bodySmall.copyWith(
+                        height: 1.4,
+                        color: colors.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    _buildStepItem('설정 앱 열기 → Calendar', isDark, context),
-                    _buildStepItem('Accounts → Add Account', isDark, context),
-                    _buildStepItem('Google 선택 → 계정 로그인', isDark, context),
-                    _buildStepItem('Calendars 동기화 ON', isDark, context),
+                    _buildStepItem('설정 앱 열기 → Calendar', colors),
+                    _buildStepItem('Accounts → Add Account', colors),
+                    _buildStepItem('Google 선택 → 계정 로그인', colors),
+                    _buildStepItem('Calendars 동기화 ON', colors),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
               Text(
                 '그 다음 Fortune 앱 권한을 허용하세요:',
-                style: context.bodyMedium.copyWith(
+                style: DSTypography.bodyMedium.copyWith(
                   fontWeight: FontWeight.w600,
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 '설정 > 개인정보 보호 > 캘린더 > Fortune',
-                style: context.bodySmall.copyWith(
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.textSecondaryLight,
+                style: DSTypography.bodySmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
             ],
@@ -320,7 +322,7 @@ class PermissionDeniedDialog extends StatelessWidget {
     );
   }
 
-  static Widget _buildStepItem(String text, bool isDark, BuildContext context) {
+  static Widget _buildStepItem(String text, DSColorScheme colors) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, top: 4),
       child: Row(
@@ -329,7 +331,7 @@ class PermissionDeniedDialog extends StatelessWidget {
             width: 4,
             height: 4,
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue,
+              color: colors.accent,
               shape: BoxShape.circle,
             ),
           ),
@@ -337,10 +339,8 @@ class PermissionDeniedDialog extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: context.labelMedium.copyWith(
-                color: isDark
-                    ? TossDesignSystem.textSecondaryDark
-                    : TossDesignSystem.textSecondaryLight,
+              style: DSTypography.labelMedium.copyWith(
+                color: colors.textSecondary,
               ),
             ),
           ),

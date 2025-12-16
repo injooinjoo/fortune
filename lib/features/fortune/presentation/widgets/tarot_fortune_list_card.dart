@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/constants/fortune_card_images.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 import 'package:fortune/core/theme/fortune_colors.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class TarotFortuneListCard extends ConsumerStatefulWidget {
   final String title;
@@ -61,7 +58,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
       children: [
         // Use the actual tarot image
         ClipRRect(
-          borderRadius: AppDimensions.borderRadiusLarge,
+          borderRadius: BorderRadius.circular(DSRadius.lg),
           child: Image.asset(
             FortuneCardImages.getImagePath('tarot'),
             fit: BoxFit.cover,
@@ -71,7 +68,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
               // Fallback to gradient container if image fails
               return Container(
                 decoration: BoxDecoration(
-                  borderRadius: AppDimensions.borderRadiusLarge,
+                  borderRadius: BorderRadius.circular(DSRadius.lg),
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -84,7 +81,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                   child: Icon(
                     Icons.style_rounded,
                     size: 60,
-                    color: TossDesignSystem.white.withValues(alpha: 0.5)),
+                    color: Colors.white.withValues(alpha: 0.5)),
                 ),
               );
             },
@@ -96,10 +93,10 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
           builder: (context, child) {
             return Container(
               decoration: BoxDecoration(
-                borderRadius: AppDimensions.borderRadiusLarge,
+                borderRadius: BorderRadius.circular(DSRadius.lg),
                 boxShadow: [
                   BoxShadow(
-                    color: TossDesignSystem.purple.withValues(alpha: 0.3 * _glowAnimation.value),
+                    color: DSColors.accentSecondary.withValues(alpha: 0.3 * _glowAnimation.value),
                     blurRadius: 20,
                     spreadRadius: 5),
                 ],
@@ -114,11 +111,11 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: TossDesignSystem.warningYellow.withValues(alpha: 0.9),
+                color: DSColors.warning.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: TossDesignSystem.warningYellow.withValues(alpha: 0.5),
+                    color: DSColors.warning.withValues(alpha: 0.5),
                     blurRadius: 8,
                     spreadRadius: 1),
                 ],
@@ -126,7 +123,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
               child: const Icon(
                 Icons.star_rounded,
                 size: 20,
-                color: TossDesignSystem.white),
+                color: Colors.white),
             ),
           ),
         // Title overlay
@@ -135,7 +132,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
           left: 0,
           right: 0,
           child: Container(
-            padding: AppSpacing.paddingAll16,
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(16),
@@ -144,9 +141,9 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  TossDesignSystem.transparent,
-                  TossDesignSystem.black.withValues(alpha: 0.7),
-                  TossDesignSystem.black.withValues(alpha: 0.9)],
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.7),
+                  Colors.black.withValues(alpha: 0.9)],
               ),
             ),
             child: Column(
@@ -155,14 +152,14 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                 Text(
                   widget.title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: TossDesignSystem.white,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: AppSpacing.spacing1),
+                const SizedBox(height: 4),
                 Text(
                   widget.description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: TossDesignSystem.white.withValues(alpha: 0.8)),
+                    color: Colors.white.withValues(alpha: 0.8)),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -187,15 +184,15 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
             });
           },
           icon: AnimatedSwitcher(
-            duration: AppAnimations.durationMedium,
+            duration: DSAnimation.durationMedium,
             child: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,
               key: ValueKey(isFavorite),
-              color: isFavorite ? TossDesignSystem.errorRed : theme.colorScheme.onSurface)),
+              color: isFavorite ? DSColors.error : theme.colorScheme.onSurface)),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
         ),
-        const SizedBox(width: AppSpacing.spacing4),
+        const SizedBox(width: 16),
         IconButton(
           onPressed: widget.onTap,
           icon: Icon(
@@ -204,7 +201,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
         ),
-        const SizedBox(width: AppSpacing.spacing4),
+        const SizedBox(width: 16),
         IconButton(
           onPressed: _handleShare,
           icon: Icon(
@@ -216,16 +213,16 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
         const Spacer(),
         // Soul cost badge
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: widget.soulCost == 0
-                  ? [TossDesignSystem.successGreen, TossDesignSystem.tossBlue]
+                  ? [DSColors.success, DSColors.accent]
                   : [FortuneColors.spiritualPrimary, FortuneColors.spiritualDark]),
-            borderRadius: AppDimensions.borderRadiusLarge,
+            borderRadius: BorderRadius.circular(DSRadius.lg),
             boxShadow: [
               BoxShadow(
-                color: (widget.soulCost == 0 ? TossDesignSystem.successGreen : FortuneColors.spiritualPrimary)
+                color: (widget.soulCost == 0 ? DSColors.success : FortuneColors.spiritualPrimary)
                     .withValues(alpha: 0.3),
                 blurRadius: 8,
                 spreadRadius: 1),
@@ -237,12 +234,12 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
               Icon(
                 Icons.auto_awesome_rounded,
                 size: 14,
-                color: TossDesignSystem.white),
-              const SizedBox(width: AppSpacing.spacing1),
+                color: Colors.white),
+              const SizedBox(width: 4),
               Text(
                 widget.soulCost == 0 ? '무료' : '${widget.soulCost}소울',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                   fontWeight: FontWeight.w600),
               ),
             ],
@@ -275,7 +272,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: AppSpacing.spacing5),
+        margin: const EdgeInsets.only(bottom: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -289,12 +286,12 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
             // Content section
             Container(
               color: theme.scaffoldBackgroundColor,
-              padding: AppSpacing.paddingAll16,
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildActionButtons(),
-                  const SizedBox(height: AppSpacing.spacing3),
+                  const SizedBox(height: 12),
                   // Hashtags
                   Wrap(
                     spacing: 8,

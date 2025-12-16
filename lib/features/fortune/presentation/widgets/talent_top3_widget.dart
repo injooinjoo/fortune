@@ -9,10 +9,9 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/components/app_card.dart';
 import '../../domain/models/sipseong_talent.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 class TalentTop3Widget extends StatelessWidget {
   final List<SipseongTalent> top3Talents;
@@ -45,17 +44,17 @@ class TalentTop3Widget extends StatelessWidget {
           // 제목
           Text(
             'TOP 3 재능',
-            style: TypographyUnified.heading3.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             ),
           ),
           SizedBox(height: 8),
           Text(
             '사주팔자 십성 분석 결과, 당신에게 가장 강한 3가지 재능입니다',
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               height: 1.5,
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             ),
           ),
           const SizedBox(height: 24),
@@ -140,12 +139,12 @@ class _TalentRankCard extends StatelessWidget {
                   children: [
                     Text(
                       _getRankBadge(rank),
-                      style: TypographyUnified.buttonMedium,
+                      style: DSTypography.labelMedium,
                     ),
                     SizedBox(width: 4),
                     Text(
                       'TOP $rank',
-                      style: TypographyUnified.labelMedium.copyWith(
+                      style: DSTypography.labelMedium.copyWith(
                         fontWeight: FontWeight.w700,
                         color: rankColor,
                       ),
@@ -156,7 +155,7 @@ class _TalentRankCard extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 talent.emoji,
-                style: TypographyUnified.displaySmall,
+                style: DSTypography.displaySmall,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -165,16 +164,16 @@ class _TalentRankCard extends StatelessWidget {
                   children: [
                     Text(
                       talent.title,
-                      style: TypographyUnified.buttonMedium.copyWith(
+                      style: DSTypography.labelMedium.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                       ),
                     ),
                     Text(
                       '${talent.name}(十星)',
-                      style: TypographyUnified.labelMedium.copyWith(
+                      style: DSTypography.labelMedium.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+                        color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                       ),
                     ),
                   ],
@@ -223,7 +222,7 @@ class _TalentRankCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark300 : Colors.white,
+        color: isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -233,14 +232,14 @@ class _TalentRankCard extends StatelessWidget {
             children: [
               Text(
                 icon,
-                style: TypographyUnified.buttonMedium,
+                style: DSTypography.labelMedium,
               ),
               SizedBox(width: 8),
               Text(
                 title,
-                style: TypographyUnified.bodySmall.copyWith(
+                style: DSTypography.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 ),
               ),
             ],
@@ -248,9 +247,9 @@ class _TalentRankCard extends StatelessWidget {
           SizedBox(height: 8),
           Text(
             content,
-            style: TypographyUnified.bodySmall.copyWith(
+            style: DSTypography.bodySmall.copyWith(
               height: 1.6,
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.textSecondaryLight,
+              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
             ),
           ),
         ],
@@ -277,15 +276,15 @@ class TalentTop3Summary extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-            TossDesignSystem.tossBlueDark.withValues(alpha: 0.05),
+            DSColors.accent.withValues(alpha: 0.1),
+            DSColors.accentDark.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: TossDesignSystem.tossBlue.withValues(alpha: 0.2),
+          color: DSColors.accent.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -294,9 +293,9 @@ class TalentTop3Summary extends StatelessWidget {
         children: [
           Text(
             '당신의 TOP 3 재능',
-            style: TypographyUnified.buttonMedium.copyWith(
+            style: DSTypography.labelMedium.copyWith(
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -311,19 +310,19 @@ class TalentTop3Summary extends StatelessWidget {
                     width: 24,
                     height: 24,
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                      color: DSColors.accent.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: TossDesignSystem.tossBlue,
+                        color: DSColors.accent,
                         width: 1.5,
                       ),
                     ),
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: TypographyUnified.labelMedium.copyWith(
+                        style: DSTypography.labelMedium.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: TossDesignSystem.tossBlue,
+                          color: DSColors.accent,
                         ),
                       ),
                     ),
@@ -331,15 +330,15 @@ class TalentTop3Summary extends StatelessWidget {
                   const SizedBox(width: 12),
                   Text(
                     talent.emoji,
-                    style: TypographyUnified.heading3,
+                    style: DSTypography.headingSmall,
                   ),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       talent.title,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                       ),
                     ),
                   ),

@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import '../../shared/glassmorphism/glass_container.dart';
-import '../../core/theme/typography_unified.dart';
 
 class PremiumScreen extends StatelessWidget {
   const PremiumScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+        backgroundColor: colors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
           '프리미엄',
-          style: TypographyUnified.heading3.copyWith(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.headingSmall.copyWith(
+            color: colors.textPrimary,
           ),
         ),
       ),
@@ -32,7 +30,7 @@ class PremiumScreen extends StatelessWidget {
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 // 프리미엄 사주 카드만 표시
-                _buildPremiumSajuCard(context, theme, isDark),
+                _buildPremiumSajuCard(context),
               ]),
             ),
           ),
@@ -41,7 +39,8 @@ class PremiumScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPremiumSajuCard(BuildContext context, ThemeData theme, bool isDark) {
+  Widget _buildPremiumSajuCard(BuildContext context) {
+    final colors = context.colors;
     return GlassContainer(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -49,21 +48,21 @@ class PremiumScreen extends StatelessWidget {
           Icon(
             Icons.auto_stories_rounded,
             size: 64,
-            color: theme.colorScheme.primary,
+            color: colors.accent,
           ),
           const SizedBox(height: 16),
           Text(
             '프리미엄 사주',
-            style: TypographyUnified.heading2.copyWith(
+            style: DSTypography.headingMedium.copyWith(
               fontWeight: FontWeight.bold,
-              color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '만화로 보는 재미있는 사주 풀이',
-            style: TypographyUnified.body1.copyWith(
-              color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+            style: DSTypography.bodyLarge.copyWith(
+              color: colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -74,7 +73,6 @@ class PremiumScreen extends StatelessWidget {
             icon: Icons.brush,
             title: '아름다운 일러스트',
             description: '전문 작가의 손길로 그려진 당신만의 이야기',
-            isDark: isDark,
           ),
           const SizedBox(height: 16),
           _buildFeatureItem(
@@ -82,7 +80,6 @@ class PremiumScreen extends StatelessWidget {
             icon: Icons.book,
             title: '스토리텔링',
             description: '지루하지 않은 재미있는 사주 해석',
-            isDark: isDark,
           ),
           const SizedBox(height: 16),
           _buildFeatureItem(
@@ -90,7 +87,6 @@ class PremiumScreen extends StatelessWidget {
             icon: Icons.insights,
             title: '심층 분석',
             description: '더 깊이 있는 운세 분석 제공',
-            isDark: isDark,
           ),
           const SizedBox(height: 24),
           SizedBox(
@@ -102,18 +98,18 @@ class PremiumScreen extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: TossDesignSystem.white,
+                backgroundColor: colors.ctaBackground,
+                foregroundColor: colors.ctaForeground,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(DSRadius.md),
                 ),
                 elevation: 0,
               ),
               child: Text(
                 '프리미엄 사주 시작하기',
-                style: TypographyUnified.buttonMedium.copyWith(
+                style: DSTypography.buttonMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: TossDesignSystem.white,
+                  color: colors.ctaForeground,
                 ),
               ),
             ),
@@ -128,41 +124,40 @@ class PremiumScreen extends StatelessWidget {
     required IconData icon,
     required String title,
     required String description,
-    required bool isDark,
   }) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
 
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(DSSpacing.sm),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
+            color: colors.accent.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(DSRadius.md),
           ),
           child: Icon(
             icon,
-            color: theme.colorScheme.primary,
+            color: colors.accent,
             size: 24,
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: DSSpacing.md),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: TypographyUnified.body1.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 description,
-                style: TypographyUnified.caption.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                style: DSTypography.labelSmall.copyWith(
+                  color: colors.textSecondary,
                 ),
               ),
             ],

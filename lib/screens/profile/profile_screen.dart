@@ -4,13 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/storage_service.dart';
 import '../../presentation/providers/theme_provider.dart';
-import '../../core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import '../../data/services/fortune_api_service.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../presentation/providers/auth_provider.dart';
 import '../../data/models/user_profile.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../core/services/debug_premium_service.dart';
+import '../../core/services/fortune_haptic_service.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../presentation/providers/subscription_provider.dart';
 import '../../shared/components/settings_list_tile.dart';
@@ -39,27 +40,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   double _lastScrollOffset = 0.0;
   bool _isScrollingDown = false;
 
-  // TOSS Design System Helper Methods
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
+  // Design System Helper Methods
   Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
+    return context.colors.textPrimary;
   }
 
   Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
+    return context.colors.textSecondary;
   }
 
   Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.white;
+    return context.colors.surface;
   }
 
   // Helper methods
@@ -274,43 +265,47 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (isLoading) {
       return Scaffold(
         backgroundColor: _getBackgroundColor(context),
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator(
-            color: TossDesignSystem.tossBlue,
+            color: context.colors.accent,
           ),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.gray50,
+      backgroundColor: context.colors.backgroundSecondary,
       appBar: AppBar(
-        backgroundColor: isDarkMode ? TossDesignSystem.grayDark50 : TossDesignSystem.white,
+        backgroundColor: context.colors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
           '내 프로필',
           style: typography.headingMedium.copyWith(
-            color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            color: context.colors.textPrimary,
           ),
         ),
         actions: [
           IconButton(
             icon: Icon(
               isDarkMode ? Icons.light_mode : Icons.dark_mode,
-              color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              color: context.colors.textPrimary,
             ),
             onPressed: () {
+              ref.read(fortuneHapticServiceProvider).selection();
               ref.read(themeModeProvider.notifier).toggleTheme();
             },
           ),
           IconButton(
             icon: Icon(
               Icons.settings_outlined,
-              color: isDarkMode ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+              color: context.colors.textPrimary,
             ),
-            onPressed: () => context.push('/settings'),
+            onPressed: () {
+              ref.read(fortuneHapticServiceProvider).buttonTap();
+              context.push('/settings');
+            },
           ),
         ],
       ),
@@ -321,22 +316,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: TossDesignSystem.spacingM),
+              const SizedBox(height: DSSpacing.md),
 
               // 프로필 요약 카드
               if (userProfile != null || localProfile != null)
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                  margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                    borderRadius: BorderRadius.circular(12),
+                    color: context.colors.surface,
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                     border: Border.all(
-                      color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                      color: context.colors.border,
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.black.withValues(alpha: 0.04),
+                        color: Colors.black.withValues(alpha: 0.04),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -385,17 +380,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           children: [
                             const SectionHeader(title: '테스트 계정'),
                             Container(
-                              margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                               decoration: BoxDecoration(
-                                color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                                borderRadius: BorderRadius.circular(12),
+                                color: context.colors.surface,
+                                borderRadius: BorderRadius.circular(DSRadius.md),
                                 border: Border.all(
-                                  color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                                  color: context.colors.border,
                                   width: 1,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: TossDesignSystem.black.withValues(alpha: 0.04),
+                                    color: Colors.black.withValues(alpha: 0.04),
                                     blurRadius: 10,
                                     offset: const Offset(0, 2),
                                   ),
@@ -409,13 +404,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     trailing: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: TossDesignSystem.successGreen.withValues(alpha: 0.1),
+                                        color: context.colors.success.withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Text(
                                         '활성화',
                                         style: typography.labelSmall.copyWith(
-                                          color: TossDesignSystem.successGreen,
+                                          color: context.colors.success,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -431,7 +426,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         await DebugPremiumService.togglePremium();
                                         setState(() {});
                                       },
-                                      activeColor: TossDesignSystem.tossBlue,
+                                      activeColor: context.colors.accent,
                                     ),
                                     isLast: true,
                                   ),
@@ -450,17 +445,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // 운세 활동 섹션
               const SectionHeader(title: '운세 활동'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                  borderRadius: BorderRadius.circular(12),
+                  color: context.colors.surface,
+                  borderRadius: BorderRadius.circular(DSRadius.md),
                   border: Border.all(
-                    color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                    color: context.colors.border,
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -527,17 +522,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               if (userProfile != null || localProfile != null) ...[
                 const SectionHeader(title: '정보'),
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                  margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                    borderRadius: BorderRadius.circular(12),
+                    color: context.colors.surface,
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                     border: Border.all(
-                      color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                      color: context.colors.border,
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.black.withValues(alpha: 0.04),
+                        color: Colors.black.withValues(alpha: 0.04),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -621,17 +616,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               if (userProfile != null || localProfile != null) ...[
                 const SectionHeader(title: '사주 & 분석'),
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                  margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                    borderRadius: BorderRadius.circular(12),
+                    color: context.colors.surface,
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                     border: Border.all(
-                      color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                      color: context.colors.border,
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: TossDesignSystem.black.withValues(alpha: 0.04),
+                        color: Colors.black.withValues(alpha: 0.04),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -680,17 +675,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               // 도구 섹션
               const SectionHeader(title: '도구'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                  borderRadius: BorderRadius.circular(12),
+                  color: context.colors.surface,
+                  borderRadius: BorderRadius.circular(DSRadius.md),
                   border: Border.all(
-                    color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                    color: context.colors.border,
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -754,6 +749,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Future<void> _navigateToProfileEdit() async {
+    ref.read(fortuneHapticServiceProvider).buttonTap();
     final result = await context.push<bool>('/profile/edit');
     if (result == true && mounted) {
       _loadUserData();
@@ -768,22 +764,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Column(
       children: [
-        const SizedBox(height: TossDesignSystem.spacingM),
+        const SizedBox(height: DSSpacing.md),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+          margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                TossDesignSystem.tossBlue,
-                TossDesignSystem.tossBlue.withValues(alpha: 0.8),
+                context.colors.accent,
+                context.colors.accent.withValues(alpha: 0.8),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(DSRadius.lg),
             boxShadow: [
               BoxShadow(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                color: context.colors.accent.withValues(alpha: 0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -793,7 +789,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             color: Colors.transparent,
             child: InkWell(
               onTap: () => context.push('/token-purchase'),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(DSRadius.lg),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
@@ -801,12 +797,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(DSRadius.md),
                       ),
                       child: Icon(
                         hasUnlimited ? Icons.all_inclusive : Icons.toll_rounded,
-                        color: TossDesignSystem.white,
+                        color: Colors.white,
                         size: 24,
                       ),
                     ),
@@ -818,7 +814,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           Text(
                             '보유 토큰',
                             style: typography.labelSmall.copyWith(
-                              color: TossDesignSystem.white.withValues(alpha: 0.8),
+                              color: Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -827,7 +823,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               Text(
                                 hasUnlimited ? '무제한' : '$remainingTokens개',
                                 style: typography.headingSmall.copyWith(
-                                  color: TossDesignSystem.white,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -836,13 +832,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: TossDesignSystem.white.withValues(alpha: 0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
                                     '충전하기',
                                     style: typography.labelSmall.copyWith(
-                                      color: TossDesignSystem.white,
+                                      color: Colors.white,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -855,7 +851,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     Icon(
                       Icons.chevron_right,
-                      color: TossDesignSystem.white.withValues(alpha: 0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ],
                 ),
@@ -867,12 +863,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         if (!isPremium) ...[
           const SizedBox(height: 12),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+            margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
             decoration: BoxDecoration(
-              color: isDarkMode ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-              borderRadius: BorderRadius.circular(12),
+              color: context.colors.surface,
+              borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                color: context.colors.accent.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -880,14 +876,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               color: Colors.transparent,
               child: InkWell(
                 onTap: () => context.push('/subscription'),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(DSRadius.md),
                 child: Padding(
                   padding: const EdgeInsets.all(14),
                   child: Row(
                     children: [
                       Icon(
                         Icons.workspace_premium_rounded,
-                        color: TossDesignSystem.tossBlue,
+                        color: context.colors.accent,
                         size: 22,
                       ),
                       const SizedBox(width: 10),
@@ -895,7 +891,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         child: Text(
                           '프리미엄 구독으로 무제한 이용하기',
                           style: typography.bodyMedium.copyWith(
-                            color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
+                            color: context.colors.textPrimary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),

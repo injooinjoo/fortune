@@ -1,10 +1,7 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../glassmorphism/glass_container.dart';
-import 'package:fortune/core/theme/app_animations.dart';
+import '../../core/design_system/design_system.dart';
 
 class KoreanDatePicker extends StatefulWidget {
   final DateTime? initialDate;
@@ -25,7 +22,8 @@ class KoreanDatePicker extends StatefulWidget {
     this.label,
     this.showAge = true,
     this.minDate,
-    this.maxDate}) : assert(
+    this.maxDate,
+  }) : assert(
           onDateSelected != null || onDateChanged != null,
           'Either onDateSelected or onDateChanged must be provided');
 
@@ -41,7 +39,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
 
   final List<int> years = List.generate(
     100,
-    (index) => DateTime.now().year - 99 + index
+    (index) => DateTime.now().year - 99 + index,
   );
 
   List<int> get months => List.generate(12, (index) => index + 1);
@@ -77,18 +75,19 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
     final now = DateTime.now();
     final selectedDate = DateTime(selectedYear, selectedMonth, selectedDay);
     int age = now.year - selectedDate.year;
-    
+
     if (now.month < selectedDate.month ||
         (now.month == selectedDate.month && now.day < selectedDate.day)) {
       age--;
     }
-    
+
     return age;
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
+    final typography = context.typography;
     final age = _calculateAge();
 
     return Column(
@@ -96,46 +95,50 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
       children: [
         if (widget.label != null)
           Padding(
-            padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
+            padding: const EdgeInsets.only(bottom: DSSpacing.xs),
             child: Text(
               widget.label!,
-              style: theme.textTheme.bodyLarge?.copyWith(
+              style: typography.bodyLarge.copyWith(
                 fontWeight: FontWeight.w600,
+                color: colors.textPrimary,
               ),
             ),
           ),
-        
+
         GestureDetector(
           onTap: () {
+            DSHaptics.light();
             setState(() {
               isExpanded = !isExpanded;
             });
           },
           child: GlassContainer(
-            padding: AppSpacing.paddingAll16,
-            borderRadius: AppDimensions.borderRadiusLarge,
+            padding: const EdgeInsets.all(DSSpacing.md),
+            borderRadius: BorderRadius.circular(DSRadius.lg),
             blur: 10,
             child: Row(
               children: [
                 Icon(
                   Icons.calendar_today_rounded,
-                  color: theme.colorScheme.primary),
-                SizedBox(width: AppSpacing.spacing3),
+                  color: colors.accent,
+                ),
+                const SizedBox(width: DSSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         '$selectedYear년 $selectedMonth월 $selectedDay일',
-                        style: theme.textTheme.bodyLarge?.copyWith(
+                        style: typography.bodyLarge.copyWith(
                           fontWeight: FontWeight.w600,
+                          color: colors.textPrimary,
                         ),
                       ),
                       if (widget.showAge && age >= 0)
                         Text(
                           '만 $age세',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          style: typography.bodySmall.copyWith(
+                            color: colors.textSecondary,
                           ),
                         ),
                     ],
@@ -143,10 +146,10 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                 ),
                 AnimatedRotation(
                   turns: isExpanded ? 0.5 : 0,
-                  duration: AppAnimations.durationShort,
+                  duration: DSAnimation.durationFast,
                   child: Icon(
                     Icons.expand_more_rounded,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
@@ -155,16 +158,16 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
         ),
 
         AnimatedContainer(
-          duration: AppAnimations.durationMedium,
+          duration: DSAnimation.durationMedium,
           height: isExpanded ? null : 0,
           child: AnimatedOpacity(
-            duration: AppAnimations.durationShort,
+            duration: DSAnimation.durationFast,
             opacity: isExpanded ? 1 : 0,
             child: Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.small),
+              padding: const EdgeInsets.only(top: DSSpacing.sm),
               child: GlassContainer(
-                padding: AppSpacing.paddingAll16,
-                borderRadius: AppDimensions.borderRadiusLarge,
+                padding: const EdgeInsets.all(DSSpacing.md),
+                borderRadius: BorderRadius.circular(DSRadius.lg),
                 blur: 10,
                 child: Column(
                   children: [
@@ -184,7 +187,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                             suffix: '년',
                           ),
                         ),
-                        SizedBox(width: AppSpacing.spacing3),
+                        const SizedBox(width: DSSpacing.md),
                         Expanded(
                           child: _buildDropdown(
                             label: '월',
@@ -199,7 +202,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                             suffix: '월',
                           ),
                         ),
-                        SizedBox(width: AppSpacing.spacing3),
+                        const SizedBox(width: DSSpacing.md),
                         Expanded(
                           child: _buildDropdown(
                             label: '일',
@@ -217,24 +220,26 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                       ],
                     ),
                     if (widget.showAge && age >= 0) ...[
-                      SizedBox(height: AppSpacing.spacing4),
+                      const SizedBox(height: DSSpacing.lg),
                       Container(
-                        padding: AppSpacing.paddingAll12,
+                        padding: const EdgeInsets.all(DSSpacing.sm),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                          borderRadius: AppDimensions.borderRadiusMedium),
+                          color: colors.accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(DSRadius.md),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.cake_rounded,
-                              size: AppDimensions.iconSizeSmall,
-                              color: theme.colorScheme.primary),
-                            SizedBox(width: AppSpacing.spacing2),
+                              size: 18,
+                              color: colors.accent,
+                            ),
+                            const SizedBox(width: DSSpacing.sm),
                             Text(
                               '나이: $age세',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.primary,
+                              style: typography.bodyMedium.copyWith(
+                                color: colors.accent,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -260,26 +265,28 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
     required int value,
     required List<int> items,
     required Function(int?) onChanged,
-    required String suffix}) {
-    final theme = Theme.of(context);
+    required String suffix,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          style: typography.bodySmall.copyWith(
+            color: colors.textSecondary,
           ),
         ),
-        SizedBox(height: AppSpacing.spacing1),
+        const SizedBox(height: DSSpacing.xs),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3),
+          padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: AppDimensions.borderRadiusSmall,
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(DSRadius.sm),
             border: Border.all(
-              color: theme.colorScheme.outline.withValues(alpha: 0.2),
+              color: colors.border.withValues(alpha: 0.2),
             ),
           ),
           child: DropdownButton<int>(
@@ -292,7 +299,9 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                 value: item,
                 child: Text(
                   '$item$suffix',
-                  style: theme.textTheme.bodyMedium,
+                  style: typography.bodyMedium.copyWith(
+                    color: colors.textPrimary,
+                  ),
                 ),
               );
             }).toList(),
@@ -311,70 +320,85 @@ class BirthDatePreview extends StatelessWidget {
   const BirthDatePreview({
     super.key,
     required this.birthDate,
-    this.onTap});
+    this.onTap,
+  });
 
   int _calculateAge() {
     final now = DateTime.now();
     int age = now.year - birthDate.year;
-    
+
     if (now.month < birthDate.month ||
         (now.month == birthDate.month && now.day < birthDate.day)) {
       age--;
     }
-    
+
     return age;
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
+    final typography = context.typography;
     final age = _calculateAge();
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        if (onTap != null) {
+          DSHaptics.light();
+          onTap!();
+        }
+      },
       child: GlassContainer(
-        padding: AppSpacing.paddingAll20,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        borderRadius: BorderRadius.circular(DSRadius.xl),
         blur: 15,
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            theme.colorScheme.primary.withValues(alpha: 0.1),
-            theme.colorScheme.secondary.withValues(alpha: 0.05)]),
+            colors.accent.withValues(alpha: 0.1),
+            colors.accentSecondary.withValues(alpha: 0.05),
+          ],
+        ),
         child: Column(
           children: [
             Icon(
               Icons.cake_rounded,
               size: 48,
-              color: theme.colorScheme.primary),
-            SizedBox(height: AppSpacing.spacing4),
+              color: colors.accent,
+            ),
+            const SizedBox(height: DSSpacing.lg),
             Text(
               '${birthDate.year}년 ${birthDate.month}월 ${birthDate.day}일',
-              style: theme.textTheme.headlineSmall?.copyWith(
+              style: typography.headingSmall.copyWith(
                 fontWeight: FontWeight.bold,
+                color: colors.textPrimary,
               ),
             ),
-            SizedBox(height: AppSpacing.spacing2),
+            const SizedBox(height: DSSpacing.sm),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+              padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.lg,
+                vertical: DSSpacing.sm,
+              ),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
+                color: colors.accent.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(DSRadius.xl),
+              ),
               child: Text(
                 '만 $age세',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.primary,
+                style: typography.bodyLarge.copyWith(
+                  color: colors.accent,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
             if (onTap != null) ...[
-              SizedBox(height: AppSpacing.spacing3),
+              const SizedBox(height: DSSpacing.md),
               Text(
                 '탭하여 변경',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                style: typography.bodySmall.copyWith(
+                  color: colors.textTertiary,
                 ),
               ),
             ],

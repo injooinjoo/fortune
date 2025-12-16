@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/theme/toss_design_system.dart';
-import '../../core/providers/user_settings_provider.dart';
-import '../../core/theme/typography_theme.dart';
+import '../../core/design_system/design_system.dart';
 
 /// 재사용 가능한 소셜 로그인 BottomSheet
 /// Landing Page, Onboarding 등 여러 곳에서 사용 가능
@@ -29,15 +27,15 @@ class SocialLoginBottomSheet {
         debugPrint(
             '🌐 [BOTTOMSHEET] textTheme.bodyLarge.color: ${Theme.of(bottomSheetContext).textTheme.bodyLarge?.color}');
 
-        return Consumer(
-          builder: (context, ref, _) {
-            final typography = ref.watch(typographyThemeProvider);
+        return Builder(
+          builder: (context) {
+            final colors = context.colors;
 
             return Theme(
               data: ThemeData.light(),
               child: Container(
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white,
+                  color: colors.surface,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(25),
                     topRight: Radius.circular(25),
@@ -52,7 +50,7 @@ class SocialLoginBottomSheet {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.gray300,
+                        color: colors.border,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -68,14 +66,14 @@ class SocialLoginBottomSheet {
                           _buildSocialButton(
                               onPressed: isProcessing ? null : onGoogleLogin,
                               type: 'google',
-                              typography: typography),
+                              colors: colors),
                           const SizedBox(height: 12),
 
                           // Apple Login
                           _buildSocialButton(
                               onPressed: isProcessing ? null : onAppleLogin,
                               type: 'apple',
-                              typography: typography),
+                              colors: colors),
 
                           // Safe area bottom padding
                           SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
@@ -94,13 +92,13 @@ class SocialLoginBottomSheet {
 
   /// 소셜 로그인 버튼 빌더
   static Widget _buildSocialButton(
-      {required VoidCallback? onPressed, required String type, required TypographyTheme typography}) {
+      {required VoidCallback? onPressed, required String type, required DSColorScheme colors}) {
     Widget icon;
     String text;
 
     // BottomSheet는 항상 라이트 테마 (Theme.light()로 강제했음)
-    const backgroundColor = TossDesignSystem.gray100;
-    const borderColor = TossDesignSystem.gray300;
+    final backgroundColor = colors.backgroundSecondary;
+    final borderColor = colors.border;
 
     switch (type) {
       case 'apple':
@@ -157,10 +155,9 @@ class SocialLoginBottomSheet {
             SizedBox(width: 12),
             Text(
               text,
-              style: typography.labelLarge.copyWith(
+              style: DSTypography.labelLarge.copyWith(
                 fontWeight: FontWeight.w600,
-                color: TossDesignSystem.gray900,
-                fontFamily: 'TossProductSans',
+                color: colors.textPrimary,
               ),
             ),
           ],

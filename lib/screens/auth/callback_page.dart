@@ -10,7 +10,7 @@ import '../../services/storage_service.dart';
 import '../../core/utils/url_cleaner_stub.dart'
     if (dart.library.html) '../../core/utils/url_cleaner_web.dart';
 import '../../core/utils/profile_validation.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import '../../core/design_system/design_system.dart';
 
 class CallbackPage extends StatefulWidget {
   const CallbackPage({super.key});
@@ -240,7 +240,7 @@ class _CallbackPageState extends State<CallbackPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('로그인 실패: ${errorDescription ?? error}'),
-              backgroundColor: TossDesignSystem.errorRed,
+              backgroundColor: context.colors.error,
               duration: const Duration(seconds: 5)));
           context.go('/');
           return;
@@ -275,10 +275,10 @@ class _CallbackPageState extends State<CallbackPage> {
         if (authError.toString().contains('Invalid API key')) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Supabase API 키가 유효하지 않습니다. 관리자에게 문의하세요.'),
-                backgroundColor: TossDesignSystem.errorRed,
-                duration: Duration(seconds: 5)));
+              SnackBar(
+                content: const Text('Supabase API 키가 유효하지 않습니다. 관리자에게 문의하세요.'),
+                backgroundColor: context.colors.error,
+                duration: const Duration(seconds: 5)));
           }
         }
         rethrow;
@@ -328,27 +328,28 @@ class _CallbackPageState extends State<CallbackPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white, Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900, Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark100 : TossDesignSystem.white])),
+            colors: [colors.surface, colors.textPrimary, colors.surface])),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FortuneCompassIcon(
                 size: 64,
-                color: (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withValues(alpha: 0.87)),
+                color: colors.textPrimary.withValues(alpha: 0.87)),
               SizedBox(height: AppSpacing.spacing6),
               const CircularProgressIndicator(),
               SizedBox(height: AppSpacing.spacing4),
               Text(
                 '로그인 처리 중...',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
+                  color: colors.textSecondary,
                 ),
               ),
             ],

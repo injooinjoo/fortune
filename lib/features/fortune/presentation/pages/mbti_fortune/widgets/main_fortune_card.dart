@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/components/app_card.dart';
 import 'package:fortune/core/models/fortune_result.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/utils/fortune_text_cleaner.dart';
 import 'package:fortune/core/widgets/gpt_style_typing_text.dart';
 import 'lucky_items.dart';
@@ -25,7 +24,7 @@ class MainFortuneCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final themeColors = context.colors;
     final data = fortuneResult.data as Map<String, dynamic>? ?? {};
     // 폴백: todayFortune → summary['message'] → 기본 메시지
     final rawFortune = data['todayFortune'] as String? ??
@@ -51,7 +50,7 @@ class MainFortuneCard extends StatelessWidget {
             child: Text(
               '$selectedMbti 오늘의 운세',
               style: const TextStyle(
-                color: TossDesignSystem.white,
+                color: Colors.white,
                 fontFamily: 'ZenSerif',
                 fontWeight: FontWeight.w600,
               ),
@@ -60,8 +59,8 @@ class MainFortuneCard extends StatelessWidget {
           const SizedBox(height: 16),
           GptStyleTypingText(
             text: todayFortune,
-            style: TypographyUnified.bodySmall.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+            style: DSTypography.bodySmall.copyWith(
+              color: themeColors.textPrimary,
               height: 1.6,
             ),
             startTyping: startTyping,

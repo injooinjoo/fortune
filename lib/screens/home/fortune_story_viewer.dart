@@ -5,8 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 
 import '../../presentation/providers/navigation_visibility_provider.dart';
-import '../../core/theme/toss_design_system.dart';
-import '../../core/theme/typography_unified.dart';
+import '../../core/design_system/design_system.dart';
 
 /// 운세 스토리를 페이지별로 보여주는 뷰어
 class FortuneStoryViewer extends ConsumerStatefulWidget {
@@ -107,7 +106,7 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
                       Color(0xFF0f1624),  // 거의 검정
                     ]
                   : [
-                      TossDesignSystem.white,        // 흰색
+                      Colors.white,        // 흰색
                       Color(0xFFF8F9FA),   // 연한 회색
                       Color(0xFFF1F3F4),   // 더 연한 회색
                     ],
@@ -144,10 +143,10 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
                 },
                 child: Text(
                   '건너뛰기',
-                  style: context.bodyMedium.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     color: isDark
-                      ? TossDesignSystem.white.withValues(alpha: 0.5)
-                      : TossDesignSystem.black.withValues(alpha: 0.5),
+                      ? Colors.white.withValues(alpha: 0.5)
+                      : Colors.black.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -171,8 +170,8 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
               child: Icon(
                 Icons.swipe_up,
                 color: isDark
-                  ? TossDesignSystem.white.withValues(alpha: 0.3)
-                  : TossDesignSystem.black.withValues(alpha: 0.3),
+                  ? Colors.white.withValues(alpha: 0.3)
+                  : Colors.black.withValues(alpha: 0.3),
                 size: 24,
               ).animate(
                 onPlay: (controller) => controller.repeat(reverse: true),
@@ -259,7 +258,7 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
                 if (segment.emoji != null) ...[
                   Text(
                     segment.emoji!,
-                    style: TypographyUnified.displayLarge,
+                    style: DSTypography.displayLarge,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -268,8 +267,8 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
                 // 메인 텍스트
                 Text(
                   segment.text,
-                  style: context.displaySmall.copyWith(
-                    color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
+                  style: DSTypography.displaySmall.copyWith(
+                    color: isDark ? Colors.white : Colors.black,
                     fontSize: segment.fontSize,  // segment.fontSize가 있으면 사용, 없으면 displaySmall 기본값 사용
                     fontWeight: segment.isBold
                         ? FontWeight.w600
@@ -281,14 +280,14 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
                           Shadow(
                             offset: Offset(0, 2),
                             blurRadius: 4,
-                            color: TossDesignSystem.black.withValues(alpha: 0.3),
+                            color: Colors.black.withValues(alpha: 0.3),
                           ),
                         ]
                       : [
                           Shadow(
                             offset: Offset(0, 1),
                             blurRadius: 2,
-                            color: TossDesignSystem.gray400.withValues(alpha: 0.3),
+                            color: Colors.grey.withValues(alpha: 0.3),
                           ),
                         ],
                   ),
@@ -318,11 +317,11 @@ class _FortuneStoryViewerState extends ConsumerState<FortuneStoryViewer> {
             borderRadius: BorderRadius.circular(4),
             color: index == _currentPage
                 ? isDark
-                  ? TossDesignSystem.white.withValues(alpha: 0.8)
-                  : TossDesignSystem.black.withValues(alpha: 0.8)
+                  ? Colors.white.withValues(alpha: 0.8)
+                  : Colors.black.withValues(alpha: 0.8)
                 : isDark
-                  ? TossDesignSystem.white.withValues(alpha: 0.3)
-                  : TossDesignSystem.black.withValues(alpha: 0.3),
+                  ? Colors.white.withValues(alpha: 0.3)
+                  : Colors.black.withValues(alpha: 0.3),
           ),
         ),
       ),
@@ -419,7 +418,7 @@ class FortuneStory {
     // 오늘의 기운
     segments.add(StorySegment(
       text: '오늘의 운세를\n알려드릴게요.',
-      fontSize: TypographyUnified.displaySmall.fontSize!,
+      fontSize: DSTypography.displaySmall.fontSize!,
       fontWeight: FontWeight.w400,
     ));
 
@@ -433,7 +432,7 @@ class FortuneStory {
         if (line.isNotEmpty) {
           segments.add(StorySegment(
             text: line.trim() + (line.endsWith('.') ? '' : '.'),
-            fontSize: TypographyUnified.heading1.fontSize!,
+            fontSize: DSTypography.displaySmall.fontSize!,
             fontWeight: FontWeight.w300,
           ));
         }

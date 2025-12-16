@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../../core/constants/tarot/tarot_helper.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 
 /// Unified tarot card widget that handles both front and back display
 /// with flip animation support
@@ -34,7 +30,7 @@ class TarotCardWidget extends StatefulWidget {
     this.isHovered = false,
     this.selectionOrder,
     this.onTap,
-    this.flipDuration = AppAnimations.durationXLong,
+    this.flipDuration = DSAnimation.durationXLong,
     this.enableFlipAnimation = true,
   });
 
@@ -94,7 +90,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
     return GestureDetector(
       onTap: widget.onTap,
       child: AnimatedContainer(
-        duration: AppAnimations.durationShort,
+        duration: DSAnimation.durationQuick,
         width: widget.width,
         height: widget.height,
         transform: Matrix4.identity()
@@ -110,10 +106,10 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 ..rotateY(math.pi * _flipAnimation.value),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: AppDimensions.borderRadiusMedium,
+                  borderRadius: BorderRadius.circular(DSRadius.md),
                   boxShadow: _buildBoxShadow()),
                 child: ClipRRect(
-                  borderRadius: AppDimensions.borderRadiusMedium,
+                  borderRadius: BorderRadius.circular(DSRadius.md),
                   child: isShowingFront
                       ? Transform(
                           alignment: Alignment.center,
@@ -149,7 +145,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
     } else {
       return [
         BoxShadow(
-          color: TossDesignSystem.black.withValues(alpha: 0.3),
+          color: Colors.black.withValues(alpha: 0.3),
           blurRadius: 10,
           offset: const Offset(0, 5),
         ),
@@ -187,15 +183,15 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 Icon(
                   Icons.auto_awesome,
                   size: widget.width * 0.33,
-                  color: TossDesignSystem.white.withValues(alpha: 0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
-                const SizedBox(height: AppSpacing.spacing2),
+                const SizedBox(height: 8),
                 Text(
                   widget.deck.koreanName,
                   style: TextStyle(
                     fontSize: widget.width * 0.12,
                     fontWeight: FontWeight.bold,
-                    color: TossDesignSystem.white,
+                    color: Colors.white,
                     letterSpacing: 1),
                   textAlign: TextAlign.center,
                 ),
@@ -211,11 +207,11 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 width: 30,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white,
+                  color: Colors.white,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       blurRadius: 4,
                       offset: Offset(0, 2),
                     ),
@@ -224,7 +220,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 child: Center(
                   child: Text(
                     '${widget.selectionOrder}',
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: context.typography.labelLarge.copyWith(
                       fontWeight: FontWeight.bold,
                       color: widget.deck.primaryColor,
                     ),
@@ -246,7 +242,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
       children: [
         // 타로 카드 이미지
         ClipRRect(
-          borderRadius: AppDimensions.borderRadiusMedium,
+          borderRadius: BorderRadius.circular(DSRadius.md),
           child: Image.asset(
             imagePath,
             fit: BoxFit.cover,
@@ -258,8 +254,8 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      TossDesignSystem.white,
-                      TossDesignSystem.gray100,
+                      Colors.white,
+                      DSColors.surfaceSecondary,
                     ],
                   ),
                 ),
@@ -272,7 +268,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                         size: widget.width * 0.5,
                         color: widget.deck.primaryColor,
                       ),
-                      const SizedBox(height: AppSpacing.spacing4),
+                      const SizedBox(height: 16),
                       Text(
                         'Card ${widget.cardIndex + 1}',
                         style: TextStyle(
@@ -292,7 +288,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         if (widget.isSelected)
           Container(
             decoration: BoxDecoration(
-              borderRadius: AppDimensions.borderRadiusMedium,
+              borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
                 color: widget.deck.primaryColor,
                 width: 3,
@@ -329,14 +325,14 @@ class TarotCardBackPainter extends CustomPainter {
     final centerY = size.height / 2;
 
     // Outer circle
-    paint.color = TossDesignSystem.white.withValues(alpha: isHighlighted ? 0.4 : 0.2);
+    paint.color = Colors.white.withValues(alpha: isHighlighted ? 0.4 : 0.2);
     canvas.drawCircle(Offset(centerX, centerY), size.width * 0.3, paint);
 
     // Inner star pattern
     _drawStar(canvas, paint, centerX, centerY, size.width * 0.25);
 
     // Corner decorations
-    paint.color = TossDesignSystem.white.withValues(alpha: isHighlighted ? 0.5 : 0.3);
+    paint.color = Colors.white.withValues(alpha: isHighlighted ? 0.5 : 0.3);
     const cornerSize = 15.0;
     
     _drawCornerPattern(canvas, paint, 0, 0, cornerSize, false, false);
@@ -346,7 +342,7 @@ class TarotCardBackPainter extends CustomPainter {
 
     // Additional circles for highlighted state
     if (isHighlighted) {
-      paint.color = TossDesignSystem.white.withValues(alpha: 0.1);
+      paint.color = Colors.white.withValues(alpha: 0.1);
       for (int i = 1; i <= 3; i++) {
         canvas.drawCircle(Offset(centerX, centerY), size.width * 0.15 * i, paint);
       }

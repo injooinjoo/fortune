@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/fortune_result.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 
 class FaceReadingResultWidget extends StatelessWidget {
   final FortuneResult result;
@@ -24,11 +22,11 @@ class FaceReadingResultWidget extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: TossDesignSystem.gray50,
-        borderRadius: AppDimensions.borderRadiusLarge,
+        color: DSColors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -39,10 +37,10 @@ class FaceReadingResultWidget extends StatelessWidget {
         children: [
           // Header
           Container(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [TossDesignSystem.tossBlue, TossDesignSystem.gray600],
+                colors: [DSColors.accent, DSColors.textSecondary],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -56,13 +54,13 @@ class FaceReadingResultWidget extends StatelessWidget {
                 Icon(
                   Icons.face,
                   size: 48,
-                  color: TossDesignSystem.gray50,
+                  color: DSColors.surface,
                 ),
-                const SizedBox(height: AppSpacing.spacing3),
+                const SizedBox(height: 12),
                 Text(
                   '당신의 관상 분석 결과',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: TossDesignSystem.gray50,
+                    color: DSColors.surface,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -72,14 +70,14 @@ class FaceReadingResultWidget extends StatelessWidget {
 
           // Content sections
           Padding(
-            padding: AppSpacing.paddingAll20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Overall score or rating
                 if (sections.containsKey('score')) ...[
                   _buildScoreSection(context, sections['score']!),
-                  const SizedBox(height: AppSpacing.spacing6),
+                  const SizedBox(height: 24),
                 ],
 
                 // Main fortune
@@ -90,7 +88,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                     content: sections['fortune']!,
                     icon: Icons.auto_awesome,
                   ),
-                  const SizedBox(height: AppSpacing.spacing5),
+                  const SizedBox(height: 20),
                 ],
 
                 // Personality traits
@@ -101,7 +99,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                     content: sections['personality']!,
                     icon: Icons.psychology,
                   ),
-                  const SizedBox(height: AppSpacing.spacing5),
+                  const SizedBox(height: 20),
                 ],
 
                 // Career & wealth
@@ -112,7 +110,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                     content: sections['career']!,
                     icon: Icons.trending_up,
                   ),
-                  const SizedBox(height: AppSpacing.spacing5),
+                  const SizedBox(height: 20),
                 ],
 
                 // Love & relationships
@@ -123,7 +121,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                     content: sections['love']!,
                     icon: Icons.favorite,
                   ),
-                  const SizedBox(height: AppSpacing.spacing5),
+                  const SizedBox(height: 20),
                 ],
 
                 // Advice
@@ -173,7 +171,7 @@ class FaceReadingResultWidget extends StatelessWidget {
                 child: CircularProgressIndicator(
                   value: score / 100,
                   strokeWidth: 8,
-                  backgroundColor: TossDesignSystem.gray600.withValues(alpha: 0.1),
+                  backgroundColor: DSColors.textSecondary.withValues(alpha: 0.1),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     _getScoreColor(score),
                   ),
@@ -192,14 +190,14 @@ class FaceReadingResultWidget extends StatelessWidget {
                   Text(
                     '점',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: TossDesignSystem.gray600.withValues(alpha: 0.6),
+                      color: DSColors.textSecondary.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.spacing3),
+          const SizedBox(height: 12),
           Text(
             _getScoreDescription(score),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -225,25 +223,25 @@ class FaceReadingResultWidget extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: TossDesignSystem.tossBlue,
+              color: DSColors.accent,
               size: 24,
             ),
-            const SizedBox(width: AppSpacing.spacing2),
+            const SizedBox(width: 8),
             Text(
               title,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: TossDesignSystem.tossBlue,
+                color: DSColors.accent,
               ),
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.spacing3),
+        const SizedBox(height: 12),
         Container(
-          padding: AppSpacing.paddingAll16,
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
-            borderRadius: AppDimensions.borderRadiusSmall,
+            color: DSColors.accent.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(DSRadius.sm),
           ),
           child: Text(
             content,
@@ -315,10 +313,10 @@ class FaceReadingResultWidget extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.primaryBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accent;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 
   String _getScoreDescription(int score) {

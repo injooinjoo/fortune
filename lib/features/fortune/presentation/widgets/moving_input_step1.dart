@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/toss_theme.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 
 /// 1단계: 기본 정보 입력
@@ -41,50 +41,50 @@ class _MovingInputStep1State extends State<MovingInputStep1> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: TossTheme.spacingXL),
+          const SizedBox(height: DSSpacing.xl),
           
           // 제목
           Text(
             '안녕하세요!\n이사운을 알아보기 위해\n기본 정보를 입력해 주세요',
-            style: TossTheme.heading2,
+            style: DSTypography.headingMedium,
           ),
           
-          const SizedBox(height: TossTheme.spacingXXL),
+          const SizedBox(height: DSSpacing.xxl),
           
           // 이름 입력
           Text(
             '이름',
-            style: TossTheme.body1.copyWith(
+            style: DSTypography.bodyLarge.copyWith(
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: TossTheme.spacingM),
+          const SizedBox(height: DSSpacing.md),
           AppCard(
             padding: const EdgeInsets.symmetric(
-              horizontal: TossTheme.spacingM,
-              vertical: TossTheme.spacingS,
+              horizontal: DSSpacing.md,
+              vertical: DSSpacing.sm,
             ),
             child: TextField(
               controller: _nameController,
-              style: TossTheme.inputStyle,
+              style: DSTypography.bodyLarge,
               decoration: InputDecoration(
                 hintText: '이름을 입력하세요',
-                hintStyle: TossTheme.hintStyle,
+                hintStyle: DSTypography.bodyLarge.copyWith(color: DSColors.textTertiary),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: const EdgeInsets.symmetric(
-                  vertical: TossTheme.spacingM,
+                  vertical: DSSpacing.md,
                 ),
               ),
               onChanged: (value) => setState(() {}),
             ),
           ),
           
-          const SizedBox(height: TossTheme.spacingXL),
+          const SizedBox(height: DSSpacing.xl),
           
           // 생년월일 선택
           NumericDateInput(

@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 import '../../../../domain/models/fortune_result.dart';
 
@@ -55,8 +55,8 @@ class FortuneSectionWidget extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TossDesignSystem.heading4.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                      style: DSTypography.headingSmall.copyWith(
+                        color: DSColors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -70,9 +70,7 @@ class FortuneSectionWidget extends StatelessWidget {
                             child: LinearProgressIndicator(
                               value: score / 100,
                               minHeight: 6,
-                              backgroundColor: isDark
-                                  ? TossDesignSystem.grayDark300.withValues(alpha: 0.3)
-                                  : TossDesignSystem.gray300.withValues(alpha: 0.3),
+                              backgroundColor: DSColors.border.withValues(alpha: 0.3),
                               valueColor: AlwaysStoppedAnimation(color),
                             ),
                           ),
@@ -80,7 +78,7 @@ class FortuneSectionWidget extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           '$score점',
-                          style: TossDesignSystem.body2.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             color: color,
                             fontWeight: FontWeight.w600,
                           ),
@@ -95,8 +93,8 @@ class FortuneSectionWidget extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             content,
-            style: TossDesignSystem.body1.copyWith(
-              color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+            style: DSTypography.bodyLarge.copyWith(
+              color: DSColors.textPrimary,
               height: 1.6,
             ),
           ),
@@ -126,14 +124,8 @@ class FortuneSectionWidget extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  (isDark
-                      ? TossDesignSystem.backgroundDark
-                      : TossDesignSystem.backgroundLight)
-                      .withValues(alpha: 0.3),
-                  (isDark
-                      ? TossDesignSystem.backgroundDark
-                      : TossDesignSystem.backgroundLight)
-                      .withValues(alpha: 0.8),
+                  DSColors.background.withValues(alpha: 0.3),
+                  DSColors.background.withValues(alpha: 0.8),
                 ],
               ),
             ),
@@ -146,12 +138,9 @@ class FortuneSectionWidget extends StatelessWidget {
             child: Icon(
               Icons.lock_outline,
               size: 40,
-              color: (isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight)
-                  .withValues(alpha: 0.4),
+              color: DSColors.textPrimary.withValues(alpha: 0.4),
             ).animate(onPlay: (controller) => controller.repeat())
-                .shimmer(duration: 2000.ms, color: TossDesignSystem.tossBlue.withValues(alpha: 0.2)),
+                .shimmer(duration: 2000.ms, color: DSColors.accent.withValues(alpha: 0.2)),
           ),
         ),
       ],

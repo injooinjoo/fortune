@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_theme.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../data/models/celebrity_simple.dart';
 import '../../../../../../presentation/providers/celebrity_provider.dart';
 import '../../../../../../core/utils/logger.dart';
@@ -76,7 +74,7 @@ class _CelebritySelectionStepState extends ConsumerState<CelebritySelectionStep>
   }
 
   Widget _buildContent(List<Celebrity> celebrities) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final displayCelebrities = _searchResults.isNotEmpty
         ? _searchResults
         : celebrities;
@@ -88,17 +86,17 @@ class _CelebritySelectionStepState extends ConsumerState<CelebritySelectionStep>
         children: [
           Text(
             '궁합을 보고 싶은\n유명인을 선택해주세요',
-            style: TypographyUnified.heading1.copyWith(
+            style: DSTypography.headingLarge.copyWith(
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              color: colors.textPrimary,
               height: 1.3,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             '선택한 유명인과의 운세를 분석해드려요',
-            style: TypographyUnified.bodySmall.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
+            style: DSTypography.bodySmall.copyWith(
+              color: colors.textSecondary,
               height: 1.4,
             ),
           ),
@@ -109,22 +107,22 @@ class _CelebritySelectionStepState extends ConsumerState<CelebritySelectionStep>
             height: 48,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundSecondary,
+              color: colors.backgroundSecondary,
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(
               controller: _searchController,
-              style: TypographyUnified.bodySmall.copyWith(
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+              style: DSTypography.bodySmall.copyWith(
+                color: colors.textPrimary,
               ),
               decoration: InputDecoration(
                 hintText: '이름으로 검색',
-                hintStyle: TypographyUnified.bodySmall.copyWith(
-                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400,
+                hintStyle: DSTypography.bodySmall.copyWith(
+                  color: colors.textSecondary,
                 ),
                 prefixIcon: Icon(
                   Icons.search,
-                  color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400,
+                  color: colors.textSecondary,
                   size: 20,
                 ),
                 border: InputBorder.none,
@@ -177,7 +175,7 @@ class _CelebritySelectionStepState extends ConsumerState<CelebritySelectionStep>
   }
 
   Widget _buildErrorState(dynamic error) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     return Center(
       child: FortuneCard(
         margin: const EdgeInsets.all(20),
@@ -187,22 +185,22 @@ class _CelebritySelectionStepState extends ConsumerState<CelebritySelectionStep>
             Icon(
               Icons.error_outline,
               size: 64,
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+              color: colors.textSecondary,
             ),
             SizedBox(height: 24),
             Text(
               '유명인 정보를 불러올 수 없어요',
-              style: TypographyUnified.heading4.copyWith(
+              style: DSTypography.headingSmall.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                color: colors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 12),
             Text(
               '잠시 후 다시 시도해주세요',
-              style: TypographyUnified.bodySmall.copyWith(
-                color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
+              style: DSTypography.bodySmall.copyWith(
+                color: colors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -233,15 +231,15 @@ class CelebrityGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: isSelected ? TossTheme.primaryBlue.withValues(alpha: 0.08) : (isDark ? TossDesignSystem.cardBackgroundDark : TossTheme.backgroundWhite),
+          color: isSelected ? colors.accent.withValues(alpha: 0.08) : colors.surface,
           border: Border.all(
-            color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.borderDark : TossTheme.borderGray200),
+            color: isSelected ? colors.accent : colors.border,
             width: isSelected ? 1.5 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
@@ -254,7 +252,7 @@ class CelebrityGridItem extends StatelessWidget {
               height: 120,
               decoration: BoxDecoration(
                 color: celebrity.characterImageUrl != null
-                    ? (isDark ? TossDesignSystem.cardBackgroundDark : Colors.grey[100])
+                    ? colors.backgroundSecondary
                     : _getCelebrityColor(celebrity.name),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
               ),
@@ -269,18 +267,18 @@ class CelebrityGridItem extends StatelessWidget {
                               fit: BoxFit.contain,
                               errorBuilder: (context, error, stackTrace) => Text(
                                 celebrity.name.substring(0, 1),
-                                style: TypographyUnified.displayLarge.copyWith(
+                                style: DSTypography.displayLarge.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  color: TossDesignSystem.white,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
                           )
                         : Text(
                             celebrity.name.substring(0, 1),
-                            style: TypographyUnified.displayLarge.copyWith(
+                            style: DSTypography.displayLarge.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: TossDesignSystem.white,
+                              color: Colors.white,
                             ),
                           ),
                   ),
@@ -291,12 +289,12 @@ class CelebrityGridItem extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.check,
-                          color: TossTheme.primaryBlue,
+                          color: colors.accent,
                           size: 16,
                         ),
                       ),
@@ -314,9 +312,9 @@ class CelebrityGridItem extends StatelessWidget {
                   children: [
                     Text(
                       celebrity.displayName,
-                      style: TypographyUnified.bodySmall.copyWith(
+                      style: DSTypography.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isSelected ? TossTheme.primaryBlue : (isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack),
+                        color: isSelected ? colors.accent : colors.textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -324,16 +322,16 @@ class CelebrityGridItem extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       celebrity.celebrityType.displayName,
-                      style: TypographyUnified.labelMedium.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray500,
+                      style: DSTypography.labelMedium.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                     ...[
                     SizedBox(height: 2),
                     Text(
                       '${celebrity.age}세',
-                      style: TypographyUnified.labelMedium.copyWith(
-                        color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray400,
+                      style: DSTypography.labelMedium.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],

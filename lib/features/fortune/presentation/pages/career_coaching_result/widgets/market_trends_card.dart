@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 
 class MarketTrendsCard extends StatelessWidget {
   final Map<String, dynamic> marketTrends;
-  final bool isDark;
+  final DSColorScheme colors;
 
   const MarketTrendsCard({
     super.key,
     required this.marketTrends,
-    required this.isDark,
+    required this.colors,
   });
 
   @override
@@ -27,28 +26,28 @@ class MarketTrendsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.trending_up, color: TossDesignSystem.tossBlue, size: 24),
+              Icon(Icons.trending_up, color: colors.accent, size: 24),
               const SizedBox(width: 8),
               Text(
                 '시장 트렌드',
-                style: context.bodyLarge.copyWith(
+                style: DSTypography.bodyLarge.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
 
-          _buildTrendItem(context, '업계 전망', _getTrendLabel(industryOutlook), _getTrendColor(industryOutlook), isDark),
-          _buildTrendItem(context, '수요 수준', _getDemandLabel(demandLevel), _getDemandColor(demandLevel), isDark),
-          _buildTrendItem(context, '연봉 추세', salaryTrend, TossDesignSystem.gray800, isDark),
+          _buildTrendItem('업계 전망', _getTrendLabel(industryOutlook), _getTrendColor(industryOutlook)),
+          _buildTrendItem('수요 수준', _getDemandLabel(demandLevel), _getDemandColor(demandLevel)),
+          _buildTrendItem('연봉 추세', salaryTrend, colors.textPrimary),
         ],
       ),
     ).animate(delay: 100.ms).fadeIn(duration: 500.ms).slideY(begin: 0.1);
   }
 
-  Widget _buildTrendItem(BuildContext context, String label, String value, Color color, bool isDark) {
+  Widget _buildTrendItem(String label, String value, Color color) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -56,8 +55,8 @@ class MarketTrendsCard extends StatelessWidget {
         children: [
           Text(
             label,
-            style: context.bodyMedium.copyWith(
-              color: isDark ? TossDesignSystem.textSecondaryDark : TossDesignSystem.gray600,
+            style: DSTypography.bodyMedium.copyWith(
+              color: colors.textSecondary,
             ),
           ),
           Container(
@@ -68,7 +67,7 @@ class MarketTrendsCard extends StatelessWidget {
             ),
             child: Text(
               value,
-              style: context.labelMedium.copyWith(
+              style: DSTypography.labelMedium.copyWith(
                 color: color,
                 fontWeight: FontWeight.bold,
               ),
@@ -90,10 +89,10 @@ class MarketTrendsCard extends StatelessWidget {
 
   Color _getTrendColor(String outlook) {
     switch (outlook) {
-      case 'positive': return TossDesignSystem.successGreen;
-      case 'stable': return TossDesignSystem.tossBlue;
-      case 'challenging': return TossDesignSystem.warningOrange;
-      default: return TossDesignSystem.gray600;
+      case 'positive': return DSColors.success;
+      case 'stable': return colors.accent;
+      case 'challenging': return DSColors.warning;
+      default: return colors.textSecondary;
     }
   }
 
@@ -108,10 +107,10 @@ class MarketTrendsCard extends StatelessWidget {
 
   Color _getDemandColor(String level) {
     switch (level) {
-      case 'high': return TossDesignSystem.successGreen;
-      case 'moderate': return TossDesignSystem.tossBlue;
-      case 'low': return TossDesignSystem.warningOrange;
-      default: return TossDesignSystem.gray600;
+      case 'high': return DSColors.success;
+      case 'moderate': return colors.accent;
+      case 'low': return DSColors.warning;
+      default: return colors.textSecondary;
     }
   }
 }

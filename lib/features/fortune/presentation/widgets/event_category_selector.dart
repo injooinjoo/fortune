@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/components/app_card.dart';
 
 /// 이벤트 카테고리 정의
 enum EventCategory {
-  job('직업/면접', Icons.work, TossDesignSystem.tossBlue, '취업, 면접, 이직, 승진 등 커리어 관련'),
-  dating('연애/소개팅', Icons.favorite, TossDesignSystem.errorRed, '연애, 소개팅, 고백, 프러포즈 등'),
-  finance('금전/계약', Icons.attach_money, TossDesignSystem.successGreen, '투자, 계약, 대출, 부동산 거래 등'),
-  study('학업/시험', Icons.school, TossDesignSystem.warningOrange, '시험, 입학, 학업, 자격증 등'),
-  relationship('대인관계', Icons.people, TossDesignSystem.purple, '친구, 가족, 동료와의 관계');
+  job('직업/면접', Icons.work, DSColors.accent, '취업, 면접, 이직, 승진 등 커리어 관련'),
+  dating('연애/소개팅', Icons.favorite, DSColors.error, '연애, 소개팅, 고백, 프러포즈 등'),
+  finance('금전/계약', Icons.attach_money, DSColors.success, '투자, 계약, 대출, 부동산 거래 등'),
+  study('학업/시험', Icons.school, DSColors.warning, '시험, 입학, 학업, 자격증 등'),
+  relationship('대인관계', Icons.people, DSColors.accentSecondary, '친구, 가족, 동료와의 관계');
 
   final String label;
   final IconData icon;
@@ -43,8 +43,8 @@ class EventCategorySelector extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
               '이벤트 유형 선택',
-              style: TossDesignSystem.heading3.copyWith(
-                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              style: DSTypography.headingMedium.copyWith(
+                color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -54,8 +54,8 @@ class EventCategorySelector extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
               '운세를 확인하고 싶은 일의 종류를 선택해주세요',
-              style: TossDesignSystem.body2.copyWith(
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              style: DSTypography.bodyMedium.copyWith(
+                color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
               ),
             ),
           ),
@@ -99,12 +99,12 @@ class _CategoryCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? category.color.withValues(alpha: 0.08)
-              : (isDark ? TossDesignSystem.grayDark100.withValues(alpha: 0.5) : TossDesignSystem.gray50),
+              : (isDark ? DSColors.surface.withValues(alpha: 0.5) : DSColors.backgroundSecondary),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
                 ? category.color
-                : (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray200),
+                : (isDark ? DSColors.border : DSColors.border),
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -130,16 +130,16 @@ class _CategoryCard extends StatelessWidget {
                 children: [
                   Text(
                     category.label,
-                    style: TossDesignSystem.heading4.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    style: DSTypography.headingSmall.copyWith(
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                       fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     category.description,
-                    style: TossDesignSystem.body3.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark500 : TossDesignSystem.gray500,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: DSColors.textTertiary,
                       height: 1.3,
                     ),
                   ),

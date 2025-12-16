@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 운세 카드 컴포넌트 - 토스 디자인 시스템 적용
 class FortuneCard extends StatelessWidget {
@@ -52,8 +51,8 @@ class FortuneCard extends StatelessWidget {
       trailing: score != null ? _ScoreBadge(score: score, color: scoreColor) : null,
       child: Text(
         content,
-        style: TossDesignSystem.body2.copyWith(
-          color: TossDesignSystem.gray700,
+        style: DSTypography.bodyMedium.copyWith(
+          color: DSColors.textSecondary,
           height: 1.6,
         ),
       ),
@@ -75,7 +74,7 @@ class FortuneCard extends StatelessWidget {
       onTap: onTap,
       showBorder: true,
       backgroundColor: isSelected 
-          ? TossDesignSystem.tossBlue.withValues(alpha: 0.05)
+          ? DSColors.accent.withValues(alpha: 0.05)
           : null,
       leading: icon != null 
           ? Container(
@@ -83,8 +82,8 @@ class FortuneCard extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 color: isSelected 
-                    ? TossDesignSystem.tossBlue.withValues(alpha: 0.1)
-                    : TossDesignSystem.gray100,
+                    ? DSColors.accent.withValues(alpha: 0.1)
+                    : DSColors.surface,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(child: icon),
@@ -93,20 +92,20 @@ class FortuneCard extends StatelessWidget {
       trailing: isSelected 
           ? Icon(
               Icons.check_circle,
-              color: TossDesignSystem.tossBlue,
+              color: DSColors.accent,
               size: 24,
             )
           : badge != null 
               ? Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                    color: DSColors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     badge,
-                    style: TossDesignSystem.caption.copyWith(
-                      color: TossDesignSystem.tossBlue,
+                    style: DSTypography.labelSmall.copyWith(
+                      color: DSColors.accent,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -135,13 +134,13 @@ class FortuneCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: (iconColor ?? TossDesignSystem.tossBlue).withValues(alpha: 0.1),
+                color: (iconColor ?? DSColors.accent).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
                 child: IconTheme(
                   data: IconThemeData(
-                    color: iconColor ?? TossDesignSystem.tossBlue,
+                    color: iconColor ?? DSColors.accent,
                     size: 20,
                   ),
                   child: icon,
@@ -156,7 +155,7 @@ class FortuneCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TossDesignSystem.heading4.copyWith(
+                  style: DSTypography.headingSmall.copyWith(
                     
                     fontWeight: FontWeight.w600,
                   ),
@@ -164,8 +163,8 @@ class FortuneCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   content,
-                  style: TossDesignSystem.body3.copyWith(
-                    color: TossDesignSystem.gray600,
+                  style: DSTypography.bodySmall.copyWith(
+                    color: DSColors.textSecondary,
                     height: 1.5,
                   ),
                 ),
@@ -175,7 +174,7 @@ class FortuneCard extends StatelessWidget {
           if (showArrow)
             Icon(
               Icons.arrow_forward_ios,
-              color: TossDesignSystem.gray400,
+              color: DSColors.textTertiary,
               size: 16,
             ),
         ],
@@ -190,18 +189,18 @@ class FortuneCard extends StatelessWidget {
     Widget cardContent = Container(
       margin: margin ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
-        color: backgroundColor ?? (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white),
+        color: backgroundColor ?? (isDark ? DSColors.surface : Colors.white),
         borderRadius: BorderRadius.circular(16),
         border: showBorder 
             ? Border.all(
-                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                color: isDark ? DSColors.border : DSColors.border,
                 width: 1,
               )
             : null,
         boxShadow: elevation != null && elevation! > 0
             ? [
                 BoxShadow(
-                  color: TossDesignSystem.black.withValues(alpha: 0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   offset: const Offset(0, 2),
                   blurRadius: 8,
                   spreadRadius: 0,
@@ -210,7 +209,7 @@ class FortuneCard extends StatelessWidget {
             : null,
       ),
       child: Material(
-        color: TossDesignSystem.white.withValues(alpha: 0.0),
+        color: Colors.white.withValues(alpha: 0.0),
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
@@ -233,17 +232,17 @@ class FortuneCard extends StatelessWidget {
                             children: [
                               Text(
                                 title!,
-                                style: TypographyUnified.heading4.copyWith(
+                                style: DSTypography.headingSmall.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                                 ),
                               ),
                               if (subtitle != null) ...[
                                 const SizedBox(height: 4),
                                 Text(
                                   subtitle!,
-                                  style: TossDesignSystem.body3.copyWith(
-                                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                                  style: DSTypography.bodySmall.copyWith(
+                                    color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                                   ),
                                 ),
                               ],
@@ -293,10 +292,10 @@ class _ScoreBadge extends StatelessWidget {
   });
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accent;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 
   @override
@@ -320,7 +319,7 @@ class _ScoreBadge extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             '$score점',
-            style: TossDesignSystem.caption.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               color: scoreColor,
               fontWeight: FontWeight.w700,
             ),

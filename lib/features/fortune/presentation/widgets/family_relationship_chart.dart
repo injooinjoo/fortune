@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 가족 관계도 차트 - 토스 디자인 시스템
 class FamilyRelationshipChart extends StatelessWidget {
@@ -21,10 +20,10 @@ class FamilyRelationshipChart extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        color: isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: isDark ? DSColors.border : DSColors.border,
           width: 1,
         ),
       ),
@@ -35,16 +34,16 @@ class FamilyRelationshipChart extends StatelessWidget {
             children: [
               Icon(
                 Icons.account_tree,
-                color: TossDesignSystem.tossBlue,
+                color: DSColors.accent,
                 size: 24,
               ),
               SizedBox(width: 12),
               Text(
                 '우리 가족 관계도',
-                style: TossDesignSystem.heading4.copyWith(
+                style: DSTypography.headingSmall.copyWith(
                   
                   fontWeight: FontWeight.w700,
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                 ),
               ),
             ],
@@ -70,8 +69,8 @@ class FamilyRelationshipChart extends StatelessWidget {
     if (members.isEmpty) {
       return Text(
         '가족 구성원을 추가해주세요',
-        style: TossDesignSystem.body3.copyWith(
-          color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+        style: DSTypography.bodySmall.copyWith(
+          color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
         ),
       );
     }
@@ -127,7 +126,7 @@ class FamilyRelationshipChart extends StatelessWidget {
           child: Center(
             child: Text(
               member.emoji,
-              style: TypographyUnified.numberLarge,
+              style: DSTypography.displayMedium,
             ),
           ),
         ).animate()
@@ -141,9 +140,9 @@ class FamilyRelationshipChart extends StatelessWidget {
         
         Text(
           member.name,
-          style: TossDesignSystem.body3.copyWith(
+          style: DSTypography.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
-            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
           ),
         ),
         
@@ -157,7 +156,7 @@ class FamilyRelationshipChart extends StatelessWidget {
           ),
           child: Text(
             member.role,
-            style: TossDesignSystem.caption.copyWith(
+            style: DSTypography.labelSmall.copyWith(
               color: color,
               fontWeight: FontWeight.w600,
             ),
@@ -197,9 +196,9 @@ class FamilyRelationshipChart extends StatelessWidget {
       children: [
         Text(
           '관계 연결고리',
-          style: TossDesignSystem.body2.copyWith(
+          style: DSTypography.bodyMedium.copyWith(
             fontWeight: FontWeight.w700,
-            color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+            color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
           ),
         ),
         const SizedBox(height: 12),
@@ -246,7 +245,7 @@ class FamilyRelationshipChart extends StatelessWidget {
             ),
             child: Text(
               member1.emoji,
-              style: TypographyUnified.heading3,
+              style: DSTypography.headingMedium,
             ),
           ),
           
@@ -268,12 +267,12 @@ class FamilyRelationshipChart extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+                    color: isDark ? DSColors.surface : Colors.white,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     '$compatibility%',
-                    style: TossDesignSystem.caption.copyWith(
+                    style: DSTypography.labelSmall.copyWith(
                       color: color,
                       fontWeight: FontWeight.w700,
                     ),
@@ -292,7 +291,7 @@ class FamilyRelationshipChart extends StatelessWidget {
             ),
             child: Text(
               member2.emoji,
-              style: TypographyUnified.heading3,
+              style: DSTypography.headingMedium,
             ),
           ),
         ],
@@ -304,24 +303,24 @@ class FamilyRelationshipChart extends StatelessWidget {
   
   Color _getRoleColor(String role) {
     final colors = {
-      '아버지': TossDesignSystem.tossBlue,
-      '어머니': TossDesignSystem.errorRed,
-      '아들': TossDesignSystem.successGreen,
-      '딸': TossDesignSystem.purple,
-      '할아버지': TossDesignSystem.gray700,
-      '할머니': TossDesignSystem.warningOrange,
-      '형제': TossDesignSystem.tossBlue,
-      '자매': TossDesignSystem.purple,
+      '아버지': DSColors.accent,
+      '어머니': DSColors.error,
+      '아들': DSColors.success,
+      '딸': DSColors.accentSecondary,
+      '할아버지': DSColors.textSecondary,
+      '할머니': DSColors.warning,
+      '형제': DSColors.accent,
+      '자매': DSColors.accentSecondary,
     };
     
-    return colors[role] ?? TossDesignSystem.gray600;
+    return colors[role] ?? DSColors.textSecondary;
   }
   
   Color _getCompatibilityColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accent;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 }
 
@@ -359,18 +358,18 @@ class FamilyRelationshipMatrix extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+          color: isDark ? DSColors.surface : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            color: isDark ? DSColors.border : DSColors.border,
             width: 1,
           ),
         ),
         child: Center(
           child: Text(
             '가족 구성원이 2명 이상일 때 관계 매트릭스를 확인할 수 있습니다',
-            style: TossDesignSystem.body3.copyWith(
-              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            style: DSTypography.bodySmall.copyWith(
+              color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -381,10 +380,10 @@ class FamilyRelationshipMatrix extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
+        color: isDark ? DSColors.surface : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: isDark ? DSColors.border : DSColors.border,
           width: 1,
         ),
       ),
@@ -393,10 +392,10 @@ class FamilyRelationshipMatrix extends StatelessWidget {
         children: [
           Text(
             '관계 궁합 매트릭스',
-            style: TossDesignSystem.heading4.copyWith(
+            style: DSTypography.headingSmall.copyWith(
               
               fontWeight: FontWeight.w700,
-              color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             ),
           ),
           const SizedBox(height: 20),
@@ -404,14 +403,14 @@ class FamilyRelationshipMatrix extends StatelessWidget {
           // Matrix grid
           Table(
             border: TableBorder.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.border,
               width: 1,
             ),
             children: [
               // Header row
               TableRow(
                 decoration: BoxDecoration(
-                  color: (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100).withValues(alpha: 0.5),
+                  color: (isDark ? DSColors.surface : DSColors.backgroundSecondary).withValues(alpha: 0.5),
                 ),
                 children: [
                   const SizedBox(height: 40),
@@ -420,7 +419,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                       padding: const EdgeInsets.all(8),
                       child: Text(
                         member.emoji,
-                        style: TypographyUnified.heading3,
+                        style: DSTypography.headingMedium,
                       ),
                     ),
                   )),
@@ -433,11 +432,11 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
-                      color: (isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.gray100).withValues(alpha: 0.5),
+                      color: (isDark ? DSColors.surface : DSColors.backgroundSecondary).withValues(alpha: 0.5),
                       child: Center(
                         child: Text(
                           member1.emoji,
-                          style: TypographyUnified.heading3,
+                          style: DSTypography.headingMedium,
                         ),
                       ),
                     ),
@@ -445,7 +444,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                       if (member1 == member2) {
                         return Container(
                           padding: const EdgeInsets.all(8),
-                          color: TossDesignSystem.gray100.withValues(alpha: 0.3),
+                          color: DSColors.backgroundSecondary.withValues(alpha: 0.3),
                           child: Center(
                             child: Text('-'),
                           ),
@@ -461,7 +460,7 @@ class FamilyRelationshipMatrix extends StatelessWidget {
                         child: Center(
                           child: Text(
                             '$compatibility',
-                            style: TossDesignSystem.body3.copyWith(
+                            style: DSTypography.bodySmall.copyWith(
                               fontWeight: FontWeight.w700,
                               color: color,
                             ),
@@ -481,13 +480,13 @@ class FamilyRelationshipMatrix extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildLegendItem('매우 좋음', TossDesignSystem.successGreen),
+              _buildLegendItem('매우 좋음', DSColors.success),
               const SizedBox(width: 16),
-              _buildLegendItem('좋음', TossDesignSystem.tossBlue),
+              _buildLegendItem('좋음', DSColors.accent),
               const SizedBox(width: 16),
-              _buildLegendItem('보통', TossDesignSystem.warningOrange),
+              _buildLegendItem('보통', DSColors.warning),
               const SizedBox(width: 16),
-              _buildLegendItem('노력 필요', TossDesignSystem.errorRed),
+              _buildLegendItem('노력 필요', DSColors.error),
             ],
           ),
         ],
@@ -509,8 +508,8 @@ class FamilyRelationshipMatrix extends StatelessWidget {
         SizedBox(width: 4),
         Text(
           label,
-          style: TossDesignSystem.caption.copyWith(
-            color: TossDesignSystem.gray600,
+          style: DSTypography.labelSmall.copyWith(
+            color: DSColors.textSecondary,
           ),
         ),
       ],
@@ -533,9 +532,9 @@ class FamilyRelationshipMatrix extends StatelessWidget {
   }
   
   Color _getCompatibilityColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accent;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 }

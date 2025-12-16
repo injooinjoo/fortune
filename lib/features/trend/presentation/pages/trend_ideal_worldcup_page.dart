@@ -6,7 +6,7 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/models.dart';
 import '../providers/trend_providers.dart';
 
@@ -129,7 +129,7 @@ class _TrendIdealWorldcupPageState
             ),
             child: Text(
               roundName,
-              style: TypographyUnified.labelMedium.copyWith(
+              style: DSTypography.labelMedium.copyWith(
                 color: TossDesignSystem.tossBlue,
                 fontWeight: FontWeight.w600,
               ),
@@ -137,7 +137,7 @@ class _TrendIdealWorldcupPageState
           ),
           Text(
             matchProgress,
-            style: TypographyUnified.labelMedium.copyWith(
+            style: DSTypography.labelMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark
                   : TossDesignSystem.textSecondaryLight,
@@ -211,7 +211,7 @@ class _TrendIdealWorldcupPageState
               child: Center(
                 child: Text(
                   'VS',
-                  style: TypographyUnified.labelLarge.copyWith(
+                  style: DSTypography.labelLarge.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w800,
                   ),
@@ -294,7 +294,7 @@ class _TrendIdealWorldcupPageState
                 top: isTop ? 16 : null,
                 child: Text(
                   candidate.name,
-                  style: TypographyUnified.heading3.copyWith(
+                  style: DSTypography.headingSmall.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                     shadows: [
@@ -423,7 +423,7 @@ class _TrendIdealWorldcupPageState
                 const SizedBox(height: 20),
                 Text(
                   '나의 이상형',
-                  style: TypographyUnified.labelLarge.copyWith(
+                  style: DSTypography.labelLarge.copyWith(
                     color: isDark
                         ? TossDesignSystem.textSecondaryDark
                         : TossDesignSystem.textSecondaryLight,
@@ -475,7 +475,7 @@ class _TrendIdealWorldcupPageState
                             bottom: 16,
                             child: Text(
                               winner.name,
-                              style: TypographyUnified.heading2.copyWith(
+                              style: DSTypography.headingMedium.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -524,7 +524,7 @@ class _TrendIdealWorldcupPageState
                         ),
                         child: Text(
                           '다시 하기',
-                          style: TypographyUnified.bodyMedium.copyWith(
+                          style: DSTypography.bodyMedium.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
@@ -560,7 +560,7 @@ class _TrendIdealWorldcupPageState
         children: [
           Text(
             '전체 랭킹',
-            style: TypographyUnified.labelLarge.copyWith(
+            style: DSTypography.labelLarge.copyWith(
               color: isDark
                   ? TossDesignSystem.textPrimaryDark
                   : TossDesignSystem.textPrimaryLight,
@@ -607,7 +607,7 @@ class _TrendIdealWorldcupPageState
                     Expanded(
                       child: Text(
                         ranking.candidateName,
-                        style: TypographyUnified.bodyMedium.copyWith(
+                        style: DSTypography.bodyMedium.copyWith(
                           color: isDark
                               ? TossDesignSystem.textPrimaryDark
                               : TossDesignSystem.textPrimaryLight,
@@ -617,7 +617,7 @@ class _TrendIdealWorldcupPageState
                     ),
                     Text(
                       '${ranking.winRate.toStringAsFixed(1)}%',
-                      style: TypographyUnified.labelMedium.copyWith(
+                      style: DSTypography.labelMedium.copyWith(
                         color: TossDesignSystem.tossBlue,
                         fontWeight: FontWeight.w600,
                       ),
@@ -658,7 +658,7 @@ class _TrendIdealWorldcupPageState
       child: Center(
         child: Text(
           '$rank',
-          style: TypographyUnified.labelSmall.copyWith(
+          style: DSTypography.labelSmall.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w700,
           ),
@@ -695,7 +695,7 @@ class _TrendIdealWorldcupPageState
           const SizedBox(height: 16),
           Text(
             error,
-            style: TypographyUnified.bodyMedium.copyWith(
+            style: DSTypography.bodyMedium.copyWith(
               color: isDark
                   ? TossDesignSystem.textSecondaryDark
                   : TossDesignSystem.textSecondaryLight,

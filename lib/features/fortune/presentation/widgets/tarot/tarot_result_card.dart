@@ -3,8 +3,7 @@ import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../core/widgets/unified_button_enums.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
-import '../../../../../core/theme/toss_design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
+import '../../../../../core/design_system/design_system.dart';
 
 class TarotResultCard extends StatefulWidget {
   final Map<String, dynamic> result;
@@ -158,22 +157,29 @@ class _TarotResultCardState extends State<TarotResultCard>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '질문',
-                  style: TypographyUnified.bodySmall.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF7C3AED),
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  widget.question,
-                  style: TypographyUnified.buttonMedium.copyWith(
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF191919),
-                    height: 1.4,
-                  ),
-                ),
+                Builder(builder: (context) {
+                  final typography = context.typography;
+                  return Text(
+                    '질문',
+                    style: typography.bodySmall.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF7C3AED),
+                    ),
+                  );
+                }),
+                const SizedBox(height: 4),
+                Builder(builder: (context) {
+                  final colors = context.colors;
+                  final typography = context.typography;
+                  return Text(
+                    widget.question,
+                    style: typography.labelLarge.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: colors.textPrimary,
+                      height: 1.4,
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -212,15 +218,19 @@ class _TarotResultCardState extends State<TarotResultCard>
             opacity: _contentFadeAnimation,
             child: SlideTransition(
               position: _contentSlideAnimation,
-              child: Text(
-                widget.result['cardName'] ?? 'Unknown Card',
-                textAlign: TextAlign.center,
-                style: TypographyUnified.heading1.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF191919),
-                  height: 1.2,
-                ),
-              ),
+              child: Builder(builder: (context) {
+                final colors = context.colors;
+                final typography = context.typography;
+                return Text(
+                  widget.result['cardName'] ?? 'Unknown Card',
+                  textAlign: TextAlign.center,
+                  style: typography.headingLarge.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: colors.textPrimary,
+                    height: 1.2,
+                  ),
+                );
+              }),
             ),
           ),
           
@@ -249,13 +259,16 @@ class _TarotResultCardState extends State<TarotResultCard>
                           color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
                         ),
                       ),
-                      child: Text(
-                        keyword,
-                        style: TypographyUnified.bodySmall.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF7C3AED),
-                        ),
-                      ),
+                      child: Builder(builder: (context) {
+                        final typography = context.typography;
+                        return Text(
+                          keyword,
+                          style: typography.bodySmall.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF7C3AED),
+                          ),
+                        );
+                      }),
                     ),
                   ).toList(),
                 ),
@@ -416,13 +429,13 @@ class _TarotResultCardState extends State<TarotResultCard>
                       const Icon(
                         Icons.auto_awesome,
                         size: 60,
-                        color: TossDesignSystem.white,
+                        color: Colors.white,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         widget.result['cardName'] ?? 'The Fool',
                         style: const TextStyle(
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                           fontFamily: 'ZenSerif',
                           fontWeight: FontWeight.bold,
                         ),
@@ -446,9 +459,9 @@ class _TarotResultCardState extends State<TarotResultCard>
                         begin: Alignment(-1.0 + _shimmerController.value * 2, -1.0),
                         end: Alignment(1.0 + _shimmerController.value * 2, 1.0),
                         colors: [
-                          TossDesignSystem.white.withValues(alpha: 0.0),
-                          TossDesignSystem.white.withValues(alpha: 0.2),
-                          TossDesignSystem.white.withValues(alpha: 0.0),
+                          Colors.white.withValues(alpha: 0.0),
+                          Colors.white.withValues(alpha: 0.2),
+                          Colors.white.withValues(alpha: 0.0),
                         ],
                         stops: const [0.0, 0.5, 1.0],
                       ),
@@ -482,28 +495,35 @@ class _TarotResultCardState extends State<TarotResultCard>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 20),
-              SizedBox(width: 8),
-              Text(
-                title,
-                style: TypographyUnified.buttonMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: color,
+          Builder(builder: (context) {
+            final typography = context.typography;
+            return Row(
+              children: [
+                Icon(icon, color: color, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: typography.labelLarge.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            );
+          }),
           const SizedBox(height: 12),
-          Text(
-            content,
-            style: TypographyUnified.bodySmall.copyWith(
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF374151),
-              height: 1.6,
-            ),
-          ),
+          Builder(builder: (context) {
+            final colors = context.colors;
+            final typography = context.typography;
+            return Text(
+              content,
+              style: typography.bodySmall.copyWith(
+                fontWeight: FontWeight.w400,
+                color: colors.textSecondary,
+                height: 1.6,
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -537,7 +557,7 @@ class _TarotCardBackPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = TossDesignSystem.white.withValues(alpha: 0.3)
+      ..color = Colors.white.withValues(alpha: 0.3)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 

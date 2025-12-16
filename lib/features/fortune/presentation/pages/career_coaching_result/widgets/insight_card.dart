@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../../../core/theme/toss_design_system.dart';
-import '../../../../../../core/theme/typography_unified.dart';
-import '../../../../../../core/theme/app_theme.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/components/app_card.dart';
 import '../../../../../../core/widgets/gpt_style_typing_text.dart';
 
 class InsightCard extends StatelessWidget {
   final Map<String, dynamic> insight;
   final int index;
-  final bool isDark;
+  final DSColorScheme colors;
   final bool enableTyping;
   final bool startTyping;
   final VoidCallback? onTypingComplete;
@@ -18,7 +16,7 @@ class InsightCard extends StatelessWidget {
     super.key,
     required this.insight,
     required this.index,
-    required this.isDark,
+    required this.colors,
     this.enableTyping = false,
     this.startTyping = true,
     this.onTypingComplete,
@@ -47,7 +45,7 @@ class InsightCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
-                  child: Text(icon, style: context.displaySmall),
+                  child: Text(icon, style: DSTypography.headingLarge),
                 ),
               ),
               const SizedBox(width: 16),
@@ -60,8 +58,9 @@ class InsightCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             title,
-                            style: context.bodyLarge.copyWith(
+                            style: DSTypography.bodyLarge.copyWith(
                               fontWeight: FontWeight.bold,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ),
@@ -73,7 +72,7 @@ class InsightCard extends StatelessWidget {
                           ),
                           child: Text(
                             _getImpactLabel(impact),
-                            style: context.labelSmall.copyWith(
+                            style: DSTypography.labelSmall.copyWith(
                               color: _getImpactColor(impact),
                               fontWeight: FontWeight.bold,
                             ),
@@ -84,7 +83,7 @@ class InsightCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       _getCategoryLabel(category),
-                      style: context.labelMedium.copyWith(
+                      style: DSTypography.labelMedium.copyWith(
                         color: _getInsightColor(category),
                       ),
                     ),
@@ -97,9 +96,9 @@ class InsightCard extends StatelessWidget {
           enableTyping
               ? GptStyleTypingText(
                   text: description,
-                  style: context.bodyMedium.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     height: 1.6,
-                    color: TossDesignSystem.gray700,
+                    color: colors.textSecondary,
                   ),
                   showGhostText: true,
                   startTyping: startTyping,
@@ -107,9 +106,9 @@ class InsightCard extends StatelessWidget {
                 )
               : Text(
                   description,
-                  style: context.bodyMedium.copyWith(
+                  style: DSTypography.bodyMedium.copyWith(
                     height: 1.6,
-                    color: TossDesignSystem.gray700,
+                    color: colors.textSecondary,
                   ),
                 ),
         ],
@@ -121,11 +120,11 @@ class InsightCard extends StatelessWidget {
 
   Color _getInsightColor(String category) {
     switch (category) {
-      case 'opportunity': return TossDesignSystem.successGreen;
-      case 'warning': return TossDesignSystem.warningOrange;
-      case 'trend': return TossDesignSystem.tossBlue;
-      case 'advice': return AppTheme.primaryColor;
-      default: return TossDesignSystem.gray600;
+      case 'opportunity': return DSColors.success;
+      case 'warning': return DSColors.warning;
+      case 'trend': return colors.accent;
+      case 'advice': return colors.accent;
+      default: return colors.textSecondary;
     }
   }
 
@@ -141,10 +140,10 @@ class InsightCard extends StatelessWidget {
 
   Color _getImpactColor(String impact) {
     switch (impact) {
-      case 'high': return TossDesignSystem.errorRed;
-      case 'medium': return TossDesignSystem.warningOrange;
-      case 'low': return TossDesignSystem.gray600;
-      default: return TossDesignSystem.gray600;
+      case 'high': return DSColors.error;
+      case 'medium': return DSColors.warning;
+      case 'low': return colors.textSecondary;
+      default: return colors.textSecondary;
     }
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// ⏱️ 시간대별 점수 그래프 카드
 class HourlyScoreGraphCard extends StatelessWidget {
@@ -62,7 +62,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                     children: [
                       Text(
                         '베스트',
-                        style: TypographyUnified.labelSmall.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: const Color(0xFF10B981),
                           fontWeight: FontWeight.w600,
                           height: 1.0,
@@ -71,7 +71,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         '$bestHour시',
-                        style: TypographyUnified.buttonSmall.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: isDark ? Colors.white : Colors.black87,
                           fontWeight: FontWeight.w700,
                           height: 1.0,
@@ -97,7 +97,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                     children: [
                       Text(
                         '주의',
-                        style: TypographyUnified.labelSmall.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: const Color(0xFFEF4444),
                           fontWeight: FontWeight.w600,
                           height: 1.0,
@@ -106,7 +106,7 @@ class HourlyScoreGraphCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         '$worstHour시',
-                        style: TypographyUnified.buttonSmall.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: isDark ? Colors.white : Colors.black87,
                           fontWeight: FontWeight.w700,
                           height: 1.0,

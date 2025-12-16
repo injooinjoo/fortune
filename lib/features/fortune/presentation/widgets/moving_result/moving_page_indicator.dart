@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/toss_theme.dart';
+import '../../../../../core/design_system/design_system.dart';
 
 /// 페이지 인디케이터
 class MovingPageIndicator extends StatelessWidget {
@@ -26,7 +26,7 @@ class MovingPageIndicator extends StatelessWidget {
             width: isActive ? 32 : 8,
             height: 8,
             decoration: BoxDecoration(
-              color: isActive ? TossTheme.primaryBlue : TossTheme.borderGray300,
+              color: isActive ? DSColors.accent : DSColors.border,
               borderRadius: BorderRadius.circular(4),
             ),
           );

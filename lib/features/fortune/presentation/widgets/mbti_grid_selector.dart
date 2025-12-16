@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 
 class MbtiGridSelector extends StatelessWidget {
   final String? selectedType;
@@ -22,10 +22,10 @@ class MbtiGridSelector extends StatelessWidget {
   
   // 그룹별 색상
   static final Map<String, List<Color>> groupColors = {
-    'Analysts': [TossDesignSystem.purple, TossDesignSystem.purple],
-    'Diplomats': [TossDesignSystem.successGreen, TossDesignSystem.successGreen],
-    'Sentinels': [TossDesignSystem.tossBlue, TossDesignSystem.tossBlue],
-    'Explorers': [TossDesignSystem.warningOrange, TossDesignSystem.warningOrange],
+    'Analysts': [DSColors.accentSecondary, DSColors.accentSecondary],
+    'Diplomats': [DSColors.success, DSColors.success],
+    'Sentinels': [DSColors.accent, DSColors.accent],
+    'Explorers': [DSColors.warning, DSColors.warning],
   };
   
   // 타입별 아이콘
@@ -63,7 +63,7 @@ class MbtiGridSelector extends StatelessWidget {
             children: _buildMbtiGrid(context),
           ),
         ),
-        const SizedBox(height: TossDesignSystem.spacingM),
+        const SizedBox(height: 16),
         // Group legend
         _buildGroupLegend(context),
       ],
@@ -85,7 +85,7 @@ class MbtiGridSelector extends StatelessWidget {
     for (final type in typesList) {
       final groupName = _getGroupForType(type);
       final isSelected = selectedType == type;
-      final colors = groupColors[groupName] ?? [TossDesignSystem.gray400, TossDesignSystem.gray400];
+      final colors = groupColors[groupName] ?? [DSColors.textTertiary, DSColors.textTertiary];
       
       allTypes.add(
         _MbtiTypeCard(
@@ -128,10 +128,10 @@ class MbtiGridSelector extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: TossDesignSystem.spacingXS),
+            const SizedBox(width: 4),
             Text(
               groupNameKr,
-              style: TossDesignSystem.caption,
+              style: DSTypography.labelSmall,
             ),
           ],
         );
@@ -237,7 +237,7 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
           return Transform.scale(
             scale: _scaleAnimation.value,
             child: AnimatedContainer(
-              duration: TossDesignSystem.durationMedium,
+              duration: DSAnimation.durationMedium,
               decoration: BoxDecoration(
                 gradient: widget.isSelected
                     ? LinearGradient(
@@ -247,13 +247,13 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                       )
                     : null,
                 color: !widget.isSelected
-                    ? (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100)
+                    ? (isDark ? DSColors.surface : DSColors.backgroundSecondary)
                     : null,
-                borderRadius: BorderRadius.circular(TossDesignSystem.radiusM),
+                borderRadius: BorderRadius.circular(DSRadius.md),
                 border: Border.all(
                   color: widget.isSelected
                       ? widget.colors[0]
-                      : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200),
+                      : (isDark ? DSColors.border : DSColors.border),
                   width: widget.isSelected ? 2 : 1,
                 ),
                 boxShadow: widget.isSelected
@@ -276,16 +276,16 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                         widget.icon,
                         size: 24,
                         color: widget.isSelected
-                            ? TossDesignSystem.white
+                            ? Colors.white
                             : widget.colors[0],
                       ),
-                      const SizedBox(height: TossDesignSystem.spacingXS),
+                      const SizedBox(height: 4),
                       Text(
                         widget.type,
-                        style: TossDesignSystem.caption.copyWith(
+                        style: DSTypography.labelSmall.copyWith(
                           color: widget.isSelected
-                              ? TossDesignSystem.white
-                              : (isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900),
+                              ? Colors.white
+                              : (isDark ? DSColors.textPrimary : DSColors.textPrimary),
                         ),
                       ),
                     ],
@@ -298,7 +298,7 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                         width: 16,
                         height: 16,
                         decoration: const BoxDecoration(
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(

@@ -1,13 +1,12 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
-import '../../core/utils/haptic_utils.dart';
-import 'package:fortune/core/theme/app_animations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/services/fortune_haptic_service.dart';
+import '../../core/design_system/design_system.dart';
 
 /// A specialized snap scroll view for fortune cards with image headers
 /// Each card's image top snaps to the viewport top when scrolling
 /// Includes fade in/out effects during scroll transitions
-class FortuneSnapScrollView extends StatefulWidget {
+class FortuneSnapScrollView extends ConsumerStatefulWidget {
   final List<FortuneSnapCard> cards;
   final double imageHeight;
   final Duration snapDuration;
@@ -30,13 +29,14 @@ class FortuneSnapScrollView extends StatefulWidget {
     this.backgroundColor,
     this.enableFadeEffect = true,
     this.fadeStartOffset = 0.3,
-    this.fadeEndOffset = 0.7});
+    this.fadeEndOffset = 0.7,
+  });
 
   @override
-  State<FortuneSnapScrollView> createState() => _FortuneSnapScrollViewState();
+  ConsumerState<FortuneSnapScrollView> createState() => _FortuneSnapScrollViewState();
 }
 
-class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
+class _FortuneSnapScrollViewState extends ConsumerState<FortuneSnapScrollView>
     with SingleTickerProviderStateMixin {
   late ScrollController _scrollController;
   late AnimationController _animationController;
@@ -51,9 +51,9 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
     _scrollController = ScrollController();
     _animationController = AnimationController(
       vsync: this,
-      duration: widget.snapDuration
+      duration: widget.snapDuration,
     );
-    
+
     _scrollController.addListener(_onScroll);
   }
 
@@ -95,7 +95,7 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
     for (int i = 0; i < widget.cards.length; i++) {
       final cardOffset = _getCardOffset(i);
       final distance = (scrollOffset - cardOffset).abs();
-      
+
       if (distance < minDistance) {
         minDistance = distance;
         targetIndex = i;
@@ -126,14 +126,16 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
     });
 
     // Haptic feedback
-    HapticUtils.lightImpact();
+    ref.read(fortuneHapticServiceProvider).pageSnap();
 
     // Animate to target
     final animation = Tween<double>(
       begin: _scrollController.offset,
-      end: targetOffset).animate(CurvedAnimation(
+      end: targetOffset,
+    ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: widget.snapCurve));
+      curve: widget.snapCurve,
+    ));
 
     animation.addListener(() {
       if (_scrollController.hasClients) {
@@ -150,61 +152,61 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
 
   double _calculateCardOpacity(int index) {
     if (!widget.enableFadeEffect) return 1.0;
-    
+
     final scrollOffset = _scrollController.hasClients ? _scrollController.offset : 0;
     final cardOffset = _getCardOffset(index);
     final cardHeight = widget.cards[index].totalHeight;
-    
+
     // Calculate card's position relative to viewport
     final cardTop = cardOffset - scrollOffset;
     final cardBottom = cardTop + cardHeight;
     final viewportHeight = MediaQuery.of(context).size.height;
-    
+
     // 더 민감한 페이드 임계값 설정
     // 상단 20% 지점에서 페이드 아웃 시작
     final fadeOutThreshold = viewportHeight * 0.2;
     // 하단 80% 지점에서 페이드 인 시작
     final fadeInThreshold = viewportHeight * 0.8;
-    
+
     // Card is completely below viewport
     if (cardTop > viewportHeight) {
       return 0.0;
     }
-    
+
     // Card is completely above viewport
     if (cardBottom < 0) {
       return 0.0;
     }
-    
+
     // Card is entering from bottom (fade in - 더 일찍 시작)
     if (cardTop > fadeInThreshold) {
       final fadeInProgress = 1.0 - ((cardTop - fadeInThreshold) / (viewportHeight - fadeInThreshold));
       return Curves.fastOutSlowIn.transform(fadeInProgress.clamp(0.0, 1.0));
     }
-    
+
     // Card is exiting from top (fade out - 더 일찍 시작)
     if (cardBottom < fadeOutThreshold) {
       final fadeOutProgress = cardBottom / fadeOutThreshold;
       return Curves.fastOutSlowIn.transform(fadeOutProgress.clamp(0.0, 1.0));
     }
-    
+
     // Card가 화면 중앙 영역을 벗어나기 시작하면 페이드 처리
     final centerPoint = viewportHeight / 2;
-    
+
     // 위로 스크롤 중 (카드가 위로 올라감)
     if (cardTop < fadeOutThreshold && cardBottom > centerPoint) {
       // 카드 상단이 임계점을 넘으면 페이드 아웃 시작
       final fadeProgress = (cardTop - fadeOutThreshold).abs() / (centerPoint - fadeOutThreshold);
       return Curves.easeInOut.transform((1.0 - fadeProgress).clamp(0.0, 1.0));
     }
-    
+
     // 아래로 스크롤 중 (카드가 아래로 내려감)
     if (cardBottom > fadeInThreshold && cardTop < centerPoint) {
       // 카드 하단이 임계점을 넘으면 페이드 아웃 시작
       final fadeProgress = (cardBottom - fadeInThreshold) / (viewportHeight - fadeInThreshold);
       return Curves.easeInOut.transform((1.0 - fadeProgress).clamp(0.0, 1.0));
     }
-    
+
     // Card is in the safe zone - fully visible
     return 1.0;
   }
@@ -215,7 +217,7 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
       onNotification: (notification) {
         if (notification is ScrollEndNotification) {
           // Final snap check when scrolling ends
-          Future.delayed(AppAnimations.durationMicro, () {
+          Future.delayed(DSAnimation.durationFast, () {
             if (!_isSnapping) {
               _checkForSnap();
             }
@@ -232,7 +234,7 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
             children: widget.cards.asMap().entries.map((entry) {
               final index = entry.key;
               final card = entry.value;
-              
+
               return RepaintBoundary(
                 child: widget.enableFadeEffect
                     ? AnimatedBuilder(
@@ -274,18 +276,20 @@ class FortuneSnapCard extends StatelessWidget {
     required this.content,
     this.imageHeight = 300,
     this.contentPadding = 20,
-    this.onTap});
+    this.onTap,
+  });
 
   double get totalHeight => imageHeight + 150 + contentPadding * 2; // Approximate height
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = context.colors;
+    final typography = context.typography;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: AppSpacing.xxxSmall),
+        margin: const EdgeInsets.only(bottom: DSSpacing.xs),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -305,9 +309,9 @@ class FortuneSnapCard extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      TossDesignSystem.transparent,
-                      TossDesignSystem.gray900.withValues(alpha: 0.3),
-                      TossDesignSystem.gray900.withValues(alpha: 0.7),
+                      Colors.transparent,
+                      colors.background.withValues(alpha: 0.3),
+                      colors.background.withValues(alpha: 0.7),
                     ],
                     stops: const [0.5, 0.8, 1.0],
                   ),
@@ -320,21 +324,25 @@ class FortuneSnapCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        color: TossDesignSystem.grayDark900,
+                      style: typography.headingMedium.copyWith(
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.bold,
                         shadows: [
                           Shadow(
-                            color: TossDesignSystem.gray900.withValues(alpha: 0.8),
-                            blurRadius: 8)])),
-                    SizedBox(height: AppSpacing.spacing2),
+                            color: colors.background.withValues(alpha: 0.8),
+                            blurRadius: 8,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: DSSpacing.sm),
                     Text(
                       description,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: TossDesignSystem.grayDark900.withValues(alpha: 0.9),
+                      style: typography.bodyLarge.copyWith(
+                        color: colors.textPrimary.withValues(alpha: 0.9),
                         shadows: [
                           Shadow(
-                            color: TossDesignSystem.gray900.withValues(alpha: 0.8),
+                            color: colors.background.withValues(alpha: 0.8),
                             blurRadius: 6,
                           ),
                         ],
@@ -344,7 +352,7 @@ class FortuneSnapCard extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // Content Section
             Container(
               padding: EdgeInsets.all(contentPadding),
@@ -358,7 +366,7 @@ class FortuneSnapCard extends StatelessWidget {
 }
 
 /// Simple implementation using PageView for vertical snap scrolling
-class FortunePageSnapView extends StatefulWidget {
+class FortunePageSnapView extends ConsumerStatefulWidget {
   final List<Widget> pages;
   final ValueChanged<int>? onPageChanged;
   final bool enableHapticFeedback;
@@ -367,13 +375,14 @@ class FortunePageSnapView extends StatefulWidget {
     super.key,
     required this.pages,
     this.onPageChanged,
-    this.enableHapticFeedback = true});
+    this.enableHapticFeedback = true,
+  });
 
   @override
-  State<FortunePageSnapView> createState() => _FortunePageSnapViewState();
+  ConsumerState<FortunePageSnapView> createState() => _FortunePageSnapViewState();
 }
 
-class _FortunePageSnapViewState extends State<FortunePageSnapView> {
+class _FortunePageSnapViewState extends ConsumerState<FortunePageSnapView> {
   late PageController _pageController;
   int _currentPage = 0;
 
@@ -391,7 +400,7 @@ class _FortunePageSnapViewState extends State<FortunePageSnapView> {
 
   void _onPageChanged(int page) {
     if (page != _currentPage && widget.enableHapticFeedback) {
-      HapticUtils.lightImpact();
+      ref.read(fortuneHapticServiceProvider).pageSnap();
     }
     setState(() {
       _currentPage = page;
@@ -406,7 +415,7 @@ class _FortunePageSnapViewState extends State<FortunePageSnapView> {
       scrollDirection: Axis.vertical,
       onPageChanged: _onPageChanged,
       itemCount: widget.pages.length,
-      itemBuilder: (context, index) => widget.pages[index]
+      itemBuilder: (context, index) => widget.pages[index],
     );
   }
 }

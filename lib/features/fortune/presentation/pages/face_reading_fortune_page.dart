@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/fortune_result.dart';
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/components/image_upload_selector.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -40,23 +39,20 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark
-            ? TossDesignSystem.backgroundDark
-            : TossDesignSystem.backgroundLight,
+        backgroundColor: colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: _fortuneResult == null
             ? IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios,
-                  color: isDark
-                      ? TossDesignSystem.textPrimaryDark
-                      : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               )
@@ -64,10 +60,8 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         automaticallyImplyLeading: _fortuneResult == null,
         title: Text(
           '관상',
-          style: TypographyUnified.heading4.copyWith(
-            color: isDark
-                ? TossDesignSystem.textPrimaryDark
-                : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.labelLarge.copyWith(
+            color: colors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -76,9 +70,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: isDark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -218,7 +210,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString()),
-            backgroundColor: TossDesignSystem.errorRed,
+            backgroundColor: DSColors.error,
           ),
         );
         setState(() {

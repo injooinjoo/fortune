@@ -4,8 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fortune/core/models/fortune_result.dart';
 import 'package:fortune/features/fortune/domain/models/conditions/mbti_fortune_conditions.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/widgets/unified_button.dart';
 import 'package:fortune/core/services/unified_fortune_service.dart';
 import 'package:fortune/core/utils/logger.dart';
@@ -85,16 +84,12 @@ class _MbtiFortunePageState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? TossDesignSystem.backgroundDark
-          : TossDesignSystem.backgroundLight,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark
-            ? TossDesignSystem.backgroundDark
-            : TossDesignSystem.backgroundLight,
+        backgroundColor: colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
@@ -103,18 +98,14 @@ class _MbtiFortunePageState
             : IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios,
-                  color: isDark
-                      ? TossDesignSystem.textPrimaryDark
-                      : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
         title: Text(
           'MBTI 운세',
-          style: TypographyUnified.heading4.copyWith(
-            color: isDark
-                ? TossDesignSystem.textPrimaryDark
-                : TossDesignSystem.textPrimaryLight,
+          style: DSTypography.headingSmall.copyWith(
+            color: colors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -123,9 +114,7 @@ class _MbtiFortunePageState
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: isDark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),

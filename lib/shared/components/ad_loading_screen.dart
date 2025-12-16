@@ -1,12 +1,10 @@
-import 'package:fortune/core/theme/toss_design_system.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../presentation/providers/auth_provider.dart';
-// import '../../presentation/widgets/ads/common_ad_placements.dart';
 import '../../core/components/fortune_loading_screen.dart';
-import '../../core/theme/typography_unified.dart';
+import '../../core/design_system/design_system.dart';
 
 class AdLoadingScreen extends ConsumerStatefulWidget {
   final VoidCallback onComplete;
@@ -17,7 +15,8 @@ class AdLoadingScreen extends ConsumerStatefulWidget {
     super.key,
     required this.onComplete,
     required this.fortuneType,
-    this.canSkip = false});
+    this.canSkip = false,
+  });
 
   @override
   ConsumerState<AdLoadingScreen> createState() => _AdLoadingScreenState();
@@ -36,13 +35,16 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5));
+      duration: const Duration(seconds: 5),
+    );
 
     _progressAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0).animate(CurvedAnimation(
+      end: 1.0,
+    ).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.linear));
+      curve: Curves.linear,
+    ));
 
     _startCountdown();
     _controller.forward();
@@ -85,9 +87,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
     final userProfile = ref.watch(userProfileProvider).value;
     final isPremium = userProfile?.isPremiumActive ?? false;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     // Premium users can skip immediately
     if (isPremium) {
@@ -98,13 +101,13 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // 토스 스타일 로딩 화면
+          // 로딩 화면
           FortuneLoadingScreen(
             fortuneType: widget.fortuneType,
             duration: const Duration(seconds: 5),
             onComplete: widget.onComplete,
           ),
-          
+
           // 하단 광고 영역 (작게)
           if (!isPremium)
             Positioned(
@@ -122,54 +125,62 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                         height: 2,
                         child: LinearProgressIndicator(
                           value: _progressAnimation.value,
-                          backgroundColor: TossDesignSystem.gray400.withValues(alpha: 0.2),
+                          backgroundColor: colors.border.withValues(alpha: 0.2),
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            TossDesignSystem.gray600.withValues(alpha: 0.5),
+                            colors.textSecondary.withValues(alpha: 0.5),
                           ),
                         ),
                       );
                     },
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: DSSpacing.sm),
                   Text(
                     _countdown > 0 ? '$_countdown초' : '',
-                    style: TypographyUnified.labelSmall.copyWith(
-                      color: (isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withValues(alpha: 0.4),
+                    style: typography.labelSmall.copyWith(
+                      color: colors.textTertiary.withValues(alpha: 0.4),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  
+                  const SizedBox(height: DSSpacing.md),
+
                   // 실제 광고 배너 (플레이스홀더)
                   Container(
                     height: 50,
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.gray400.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(8),
+                      color: colors.border.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(DSRadius.sm),
                     ),
                     child: Center(
-                      child: Text('광고 영역', style: TextStyle(color: TossDesignSystem.gray500)),
+                      child: Text(
+                        '광고 영역',
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textTertiary,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-          
+
           // Skip 버튼 (우측 상단, 작게)
           if (widget.canSkip && _countdown <= 3)
             Positioned(
-              top: MediaQuery.of(context).padding.top + 16,
-              right: 16,
+              top: MediaQuery.of(context).padding.top + DSSpacing.md,
+              right: DSSpacing.md,
               child: TextButton(
                 onPressed: _skipAd,
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.sm,
+                    vertical: DSSpacing.xs,
+                  ),
                   minimumSize: Size.zero,
                 ),
                 child: Text(
                   '건너뛰기',
-                  style: TypographyUnified.bodySmall.copyWith(
-                    color: (isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900).withValues(alpha: 0.6),
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textSecondary.withValues(alpha: 0.6),
                   ),
                 ),
               ).animate().fadeIn(duration: 300.ms),
@@ -178,7 +189,6 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
       ),
     );
   }
-
 }
 
 // Provider for ad state

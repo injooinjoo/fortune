@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../../../../core/theme/toss_theme.dart';
-import '../../../../../core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class LoveTrendChart extends StatefulWidget {
   final List<Map<String, dynamic>> data;
@@ -61,7 +60,7 @@ class _LoveTrendChartState extends State<LoveTrendChart>
                 horizontalInterval: 20,
                 getDrawingHorizontalLine: (value) {
                   return FlLine(
-                    color: TossTheme.borderGray200,
+                    color: DSColors.border,
                     strokeWidth: 1,
                   );
                 },
@@ -75,8 +74,8 @@ class _LoveTrendChartState extends State<LoveTrendChart>
                     getTitlesWidget: (value, meta) {
                       return Text(
                         '${value.toInt()}',
-                        style: TossTheme.caption.copyWith(
-                          color: TossTheme.textGray600,
+                        style: DSTypography.labelSmall.copyWith(
+                          color: DSColors.textSecondary,
                         ),
                       );
                     },
@@ -93,8 +92,8 @@ class _LoveTrendChartState extends State<LoveTrendChart>
                           padding: const EdgeInsets.only(top: 8),
                           child: Text(
                             widget.data[index]['week'],
-                            style: TossTheme.caption.copyWith(
-                              color: TossTheme.textGray600,
+                            style: DSTypography.labelSmall.copyWith(
+                              color: DSColors.textSecondary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -118,8 +117,8 @@ class _LoveTrendChartState extends State<LoveTrendChart>
                   isCurved: true,
                   gradient: LinearGradient(
                     colors: [
-                      TossTheme.primaryBlue,
-                      TossTheme.primaryBlue.withValues(alpha: 0.7),
+                      DSColors.accent,
+                      DSColors.accent.withValues(alpha: 0.7),
                     ],
                   ),
                   barWidth: 4,
@@ -129,9 +128,9 @@ class _LoveTrendChartState extends State<LoveTrendChart>
                     getDotPainter: (spot, percent, barData, index) {
                       return FlDotCirclePainter(
                         radius: 6,
-                        color: TossTheme.primaryBlue,
+                        color: DSColors.accent,
                         strokeWidth: 3,
-                        strokeColor: TossTheme.backgroundPrimary,
+                        strokeColor: DSColors.background,
                       );
                     },
                   ),
@@ -139,8 +138,8 @@ class _LoveTrendChartState extends State<LoveTrendChart>
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        TossTheme.primaryBlue.withValues(alpha: 0.3),
-                        TossTheme.primaryBlue.withValues(alpha: 0.05),
+                        DSColors.accent.withValues(alpha: 0.3),
+                        DSColors.accent.withValues(alpha: 0.05),
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -151,7 +150,6 @@ class _LoveTrendChartState extends State<LoveTrendChart>
               lineTouchData: LineTouchData(
                 enabled: true,
                 touchTooltipData: LineTouchTooltipData(
-                  // backgroundColor: TossTheme.textBlack.withValues(alpha: 0.8),
                   tooltipRoundedRadius: 8,
                   tooltipPadding: const EdgeInsets.all(8),
                   getTooltipItems: (touchedSpots) {
@@ -160,8 +158,8 @@ class _LoveTrendChartState extends State<LoveTrendChart>
                       if (index >= 0 && index < widget.data.length) {
                         return LineTooltipItem(
                           '${widget.data[index]['week']}\n${spot.y.toInt()}점',
-                          TossTheme.caption.copyWith(
-                            color: TossDesignSystem.white,
+                          DSTypography.labelSmall.copyWith(
+                            color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
                         );

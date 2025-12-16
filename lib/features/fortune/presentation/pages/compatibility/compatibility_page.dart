@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fortune/core/theme/toss_theme.dart';
-import 'package:fortune/core/theme/toss_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/domain/entities/fortune.dart';
 import 'package:fortune/presentation/providers/auth_provider.dart';
 import 'package:fortune/presentation/providers/token_provider.dart';
 import 'package:fortune/core/services/unified_fortune_service.dart';
+import 'package:fortune/core/services/fortune_haptic_service.dart';
 import 'package:fortune/core/models/fortune_result.dart';
 import 'package:fortune/features/fortune/domain/models/conditions/compatibility_fortune_conditions.dart';
 import 'package:fortune/services/ad_service.dart';
@@ -75,7 +74,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('이름을 입력해주세요'),
-          backgroundColor: TossTheme.warning,
+          backgroundColor: DSColors.warning,
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
@@ -90,7 +89,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('생년월일을 선택해주세요'),
-          backgroundColor: TossTheme.warning,
+          backgroundColor: DSColors.warning,
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
@@ -100,6 +99,9 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       );
       return;
     }
+
+    // 분석 시작 햅틱
+    ref.read(fortuneHapticServiceProvider).analysisStart();
 
     setState(() {
       _isLoading = true;
@@ -196,7 +198,9 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       debugPrint('  ├─ _isBlurred: $_isBlurred');
       debugPrint('  └─ _blurredSections: $_blurredSections');
 
-      HapticFeedback.mediumImpact();
+      // 궁합 점수 공개 햅틱 (점수에 따른 차별화)
+      final overallScoreInt = (fortune.overallScore ?? 75);
+      ref.read(fortuneHapticServiceProvider).compatibilityReveal(overallScoreInt);
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -212,7 +216,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),
-            backgroundColor: TossTheme.error,
+            backgroundColor: DSColors.error,
             behavior: SnackBarBehavior.floating,
             margin: const EdgeInsets.all(16),
             shape: RoundedRectangleBorder(
@@ -226,13 +230,13 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
     final isResultView = _compatibilityData != null;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundPrimary,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossDesignSystem.backgroundLight,
+        backgroundColor: colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         // 결과 페이지에서는 뒤로가기 버튼 숨김
@@ -241,16 +245,14 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
             : IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios,
-                  color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
                 onPressed: () => context.pop(),
               ),
         title: Text(
           '궁합 분석',
-          style: TextStyle(
-            color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+          style: DSTypography.headingSmall.copyWith(
+            color: colors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -260,7 +262,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: isDark ? TossDesignSystem.textPrimaryDark : TossDesignSystem.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                   onPressed: () => context.pop(),
                 ),

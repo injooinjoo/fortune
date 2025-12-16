@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/toss_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 동전 던지기 애니메이션 위젯
 class CoinThrowAnimation extends StatefulWidget {
@@ -149,7 +148,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
         ),
       ),
       child: Scaffold(
-        backgroundColor: TossDesignSystem.transparent,
+        backgroundColor: Colors.transparent,
         body: Stack(
           children: [
             // 배경 분수대 (고정)
@@ -216,7 +215,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(2, 2),
                     ),
@@ -238,7 +237,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                       child: Text(
                         '¥',
                         style: TextStyle(
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                           
                           fontWeight: FontWeight.bold,
                         ),
@@ -281,11 +280,11 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               decoration: BoxDecoration(
-                color: TossDesignSystem.white.withValues(alpha: 0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(25),
                 boxShadow: [
                   BoxShadow(
-                    color: TossDesignSystem.black.withValues(alpha: 0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -295,7 +294,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                 children: [
                   Text(
                     _showSplash ? '🌊 소원이 분수대에 담겼습니다!' : '🪙 동전을 던지고 있어요...',
-                    style: TypographyUnified.heading4.copyWith(
+                    style: DSTypography.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1E3A8A),
                     ),
@@ -303,10 +302,10 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    _showSplash 
+                    _showSplash
                       ? '신이 당신의 소원을 들었습니다. 잠시만 기다려주세요.'
                       : '간절한 마음을 담아 동전이 날아가고 있어요.',
-                    style: TypographyUnified.bodySmall.copyWith(
+                    style: DSTypography.bodySmall.copyWith(
                       color: const Color(0xFF1E3A8A).withValues(alpha: 0.8),
                     ),
                     textAlign: TextAlign.center,
@@ -328,7 +327,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: TossDesignSystem.white.withValues(alpha: 0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(25),
             topRight: Radius.circular(25),
@@ -355,7 +354,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                 Expanded(
                   child: Text(
                     '당신의 소원',
-                    style: TypographyUnified.buttonMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF1E3A8A),
                     ),
@@ -369,7 +368,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
                   ),
                   child: Text(
                     _getCategoryName(),
-                    style: TypographyUnified.labelMedium.copyWith(
+                    style: DSTypography.labelMedium.copyWith(
                       fontWeight: FontWeight.w500,
                       color: _getCategoryColor(),
                     ),
@@ -380,7 +379,7 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
             SizedBox(height: 12),
             Text(
               widget.wishText,
-              style: TypographyUnified.bodySmall.copyWith(
+              style: DSTypography.bodySmall.copyWith(
                 color: Color(0xFF374151),
                 height: 1.5,
               ),
@@ -408,14 +407,14 @@ class _CoinThrowAnimationState extends State<CoinThrowAnimation>
 
   Color _getCategoryColor() {
     switch (widget.category) {
-      case '사랑': return TossDesignSystem.pinkPrimary;
-      case '돈': return TossDesignSystem.successGreen;
-      case '건강': return TossDesignSystem.successGreen;
-      case '성공': return TossDesignSystem.warningOrange;
-      case '가족': return TossDesignSystem.tossBlue;
-      case '학업': return TossDesignSystem.purple;
-      case '기타': return TossDesignSystem.purple;
-      default: return TossDesignSystem.tossBlue;
+      case '사랑': return DSColors.accentSecondary;
+      case '돈': return DSColors.success;
+      case '건강': return DSColors.success;
+      case '성공': return DSColors.warning;
+      case '가족': return DSColors.accent;
+      case '학업': return DSColors.accentSecondary;
+      case '기타': return DSColors.accentSecondary;
+      default: return DSColors.accent;
     }
   }
 }
@@ -440,9 +439,9 @@ class StaticFountainPainter extends CustomPainter {
     // 물 표면
     paint.color = const Color(0xFF87CEEB).withValues(alpha: 0.8);
     canvas.drawCircle(center, 115, paint);
-    
+
     // 물 하이라이트
-    paint.color = TossDesignSystem.white.withValues(alpha: 0.4);
+    paint.color = Colors.white.withValues(alpha: 0.4);
     canvas.drawCircle(center + const Offset(-20, -20), 100, paint);
   }
 
@@ -467,7 +466,7 @@ class SplashEffectPainter extends CustomPainter {
 
     // 물 튀는 효과
     if (splashProgress > 0) {
-      paint.color = TossDesignSystem.white.withValues(alpha: 0.8 * (1 - splashProgress));
+      paint.color = Colors.white.withValues(alpha: 0.8 * (1 - splashProgress));
       
       final splashCount = 12;
       for (int i = 0; i < splashCount; i++) {
@@ -494,7 +493,7 @@ class SplashEffectPainter extends CustomPainter {
       for (int i = 0; i < 4; i++) {
         final opacity = (1 - rippleProgress) * (1 - i * 0.2);
         if (opacity > 0) {
-          paint.color = TossDesignSystem.white.withValues(alpha: opacity);
+          paint.color = Colors.white.withValues(alpha: opacity);
           final radius = rippleProgress * 150 + (i * 20);
           canvas.drawCircle(center, radius, paint);
         }
