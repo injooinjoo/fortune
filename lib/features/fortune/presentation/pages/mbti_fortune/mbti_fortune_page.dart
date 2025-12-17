@@ -40,7 +40,6 @@ class _MbtiFortunePageState
   // ==================== State ====================
 
   String? _selectedMbti;
-  final List<String> _selectedCategories = [];
   bool _showAllGroups = true;
   final ScrollController _scrollController = ScrollController();
 
@@ -167,6 +166,8 @@ class _MbtiFortunePageState
   }
 
   Future<void> _generateFortune() async {
+    debugPrint('🧠 [MbtiPage] _generateFortune 시작: $_selectedMbti');
+
     // ✅ 1단계: 즉시 로딩 상태 표시 (버튼 애니메이션 시작)
     if (mounted) {
       setState(() {
@@ -182,10 +183,12 @@ class _MbtiFortunePageState
       final userProfile = ref.read(userProfileProvider).value;
       final userName = userProfile?.name ?? 'Unknown';
       final birthDateStr = userProfile?.birthDate?.toIso8601String().split('T')[0] ?? DateTime.now().toIso8601String().split('T')[0];
+      debugPrint('🧠 [MbtiPage] 프로필: name=$userName, birthDate=$birthDateStr');
 
       // 2. Premium 상태 확인
       final tokenState = ref.read(tokenProvider);
       final isPremium = tokenState.hasUnlimitedAccess;
+      debugPrint('🧠 [MbtiPage] isPremium: $isPremium');
 
       Logger.info('[MbtiFortunePage] Premium 상태: $isPremium');
 
@@ -196,8 +199,10 @@ class _MbtiFortunePageState
         name: userName,
         birthDate: birthDateStr,
       );
+      debugPrint('🧠 [MbtiPage] Conditions JSON: ${conditions.toJson()}');
 
       // 4. UnifiedFortuneService 호출
+      debugPrint('🧠 [MbtiPage] API 호출 시작...');
       final fortuneService = UnifiedFortuneService(
         Supabase.instance.client,
         enableOptimization: true,
@@ -211,6 +216,8 @@ class _MbtiFortunePageState
         isPremium: isPremium, // ✅ Premium 상태 전달
       );
 
+      debugPrint('🧠 [MbtiPage] API 응답: type=${result.type}, score=${result.score}, isBlurred=${result.isBlurred}');
+      debugPrint('🧠 [MbtiPage] data keys: ${result.data.keys.toList()}');
       Logger.info('[MbtiFortunePage] 운세 생성 완료: ${result.id}');
 
       // API 응답에서 energyLevel 추출
@@ -228,6 +235,7 @@ class _MbtiFortunePageState
         // ✅ MBTI 운세 결과 공개 시 햅틱 피드백
         final score = result.score ?? 70;
         ref.read(fortuneHapticServiceProvider).scoreReveal(score);
+        debugPrint('🧠 [MbtiPage] ✅ 결과 설정: score=$score, energyLevel=$energyLevelValue');
 
         setState(() {
           _fortuneResult = result;
@@ -236,8 +244,11 @@ class _MbtiFortunePageState
           _energyLevel = (energyLevelValue / 100).clamp(0.0, 1.0);
           _currentTypingSection = 0; // 타이핑 섹션 리셋
         });
+        debugPrint('🧠 [MbtiPage] ✅ 결과 화면 전환 완료');
       }
     } catch (error, stackTrace) {
+      debugPrint('🧠 [MbtiPage] ❌ 에러 발생: $error');
+      debugPrint('🧠 [MbtiPage] 스택: $stackTrace');
       Logger.error('[MbtiFortunePage] 운세 생성 실패', error, stackTrace);
 
       if (mounted) {
@@ -377,19 +388,6 @@ class _MbtiFortunePageState
               selectedMbti: _selectedMbti!,
               colors: _mbtiColors[_selectedMbti!]!,
             ),
-            const SizedBox(height: 24),
-            CategorySelection(
-              selectedCategories: _selectedCategories,
-              onCategoryToggle: (category) {
-                setState(() {
-                  if (_selectedCategories.contains(category)) {
-                    _selectedCategories.remove(category);
-                  } else {
-                    _selectedCategories.add(category);
-                  }
-                });
-              },
-            ),
           ],
         ],
       ),
@@ -428,23 +426,7 @@ class _MbtiFortunePageState
             const SizedBox(height: 16),
           ],
 
-          // Category Fortunes (블러 대상) - 타이핑 섹션 1
-          if (_selectedCategories.isNotEmpty) ...[
-            BlurredFortuneContent(
-              fortuneResult: result,
-              child: CategoryFortunesCard(
-                fortuneResult: result,
-                selectedCategories: _selectedCategories,
-                startTyping: _currentTypingSection >= 1,
-                onTypingComplete: () {
-                  if (mounted) setState(() => _currentTypingSection = 2);
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
-
-          // Compatibility (블러 대상)
+          // Compatibility (궁합 - 블러 대상)
           BlurredFortuneContent(
             fortuneResult: result,
             child: CompatibilityCard(

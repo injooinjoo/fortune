@@ -73,7 +73,7 @@ class InputStep1Widget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'AI 관상 분석',
+                '관상 분석',
                 style: DSTypography.headingMedium.copyWith(
                   color: isDark ? Colors.white : DSColors.textPrimary,
                   fontWeight: FontWeight.w700,
@@ -81,7 +81,7 @@ class InputStep1Widget extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                'GPT-4 Vision 기반',
+                '얼굴 특징 정밀 분석',
                 style: DSTypography.labelSmall.copyWith(
                   color: isDark ? const Color(0xFFCE93D8) : DSColors.accent,
                   fontWeight: FontWeight.w500,

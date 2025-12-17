@@ -103,7 +103,7 @@ class TitleSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '당신만의 성격 DNA를\n발견해보세요',
+          '🧬 나만의 성격 DNA',
           style: DSTypography.displayLarge.copyWith(
             fontWeight: FontWeight.w700,
             color: colors.textPrimary,
@@ -112,7 +112,7 @@ class TitleSection extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'MBTI, 혈액형, 별자리, 띠를 조합하여\n특별한 성격 분석 결과를 확인하세요',
+          'MBTI × 혈액형 × 별자리 × 띠\n4가지 조합으로 만드는 특별한 나',
           style: DSTypography.bodySmall.copyWith(
             color: colors.textSecondary,
             height: 1.4,

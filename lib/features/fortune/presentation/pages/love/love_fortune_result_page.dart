@@ -10,6 +10,7 @@ import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../services/ad_service.dart'; // ✅ RewardedAd용
 import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../presentation/providers/token_provider.dart';
+import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../../core/utils/logger.dart'; // ✅ 로그용
 import '../../../../../core/services/fortune_haptic_service.dart';
 
@@ -48,6 +49,19 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && !_hapticTriggered) {
         _hapticTriggered = true;
+
+        // ✅ 프리미엄 사용자는 블러 해제
+        final isPremium = ref.read(isPremiumProvider);
+        if (isPremium && _fortuneResult.isBlurred) {
+          setState(() {
+            _fortuneResult = _fortuneResult.copyWith(
+              isBlurred: false,
+              blurredSections: [],
+            );
+          });
+          debugPrint('[연애운] 프리미엄 사용자 - 블러 자동 해제');
+        }
+
         final haptic = ref.read(fortuneHapticServiceProvider);
         final loveScore = _fortuneResult.data['loveScore'] as int? ?? 70;
         // 하트비트 패턴으로 두근두근 느낌
@@ -155,8 +169,8 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
               ),
             ),
 
-            // 🎯 Floating Button
-            if (_fortuneResult.isBlurred)
+            // 🎯 Floating Button (블러 상태 + 비구독자만 표시)
+            if (_fortuneResult.isBlurred && !ref.watch(isPremiumProvider))
               UnifiedButton.floating(
                 text: '연애 조언 모두 보기',
                 onPressed: _showAdAndUnblur,

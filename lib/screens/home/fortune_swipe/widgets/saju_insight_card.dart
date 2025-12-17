@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
+import '../../../../core/utils/hanja_utils.dart';
 
 /// 🔮 사주 인사이트 카드
 class SajuInsightCard extends StatelessWidget {
@@ -101,6 +102,10 @@ class _SajuPillar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 한자 변환 (유효한 천간지지인 경우만)
+    final hanja = HanjaUtils.toHanja(value);
+    final hasHanja = hanja.isNotEmpty;
+
     return Column(
       children: [
         Text(
@@ -118,13 +123,31 @@ class _SajuPillar extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(6),
           ),
-          child: Text(
-            value,
-            style: TextStyle(
-              color: color,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 한글 천간지지
+              Text(
+                value,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              // 한자 (있는 경우)
+              if (hasHanja) ...[
+                const SizedBox(height: 2),
+                Text(
+                  hanja,
+                  style: TextStyle(
+                    color: color.withValues(alpha: 0.7),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ],

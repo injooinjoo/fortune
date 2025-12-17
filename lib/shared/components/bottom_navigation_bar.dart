@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
+import '../../presentation/providers/fortune_badge_provider.dart';
 
-class FortuneBottomNavigationBar extends StatelessWidget {
+class FortuneBottomNavigationBar extends ConsumerWidget {
   final int currentIndex;
 
   const FortuneBottomNavigationBar({
@@ -46,10 +48,11 @@ class FortuneBottomNavigationBar extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final currentPath = GoRouterState.of(context).uri.path;
     final activeIndex = _getIndexFromPath(currentPath);
     final colors = context.colors;
+    final showFortuneBadge = ref.watch(fortuneBadgeProvider);
 
     // Korean Traditional navigation bar with ink-wash top border
     return Container(
@@ -74,8 +77,13 @@ class FortuneBottomNavigationBar extends StatelessWidget {
               (index) => _NavItemWidget(
                 item: _items[index],
                 isSelected: index == activeIndex,
+                showBadge: index == 1 && showFortuneBadge, // 운세 탭(index 1)에만 배지 표시
                 onTap: () {
                   DSHaptics.light();
+                  // 운세 탭 클릭 시 배지 제거
+                  if (index == 1) {
+                    ref.read(fortuneBadgeProvider.notifier).markAsRead();
+                  }
                   // Only navigate if not already on the same route
                   if (currentPath != _items[index].route && !currentPath.startsWith(_items[index].route)) {
                     context.go(_items[index].route);
@@ -106,11 +114,13 @@ class _NavItem {
 class _NavItemWidget extends StatelessWidget {
   final _NavItem item;
   final bool isSelected;
+  final bool showBadge;
   final VoidCallback onTap;
 
   const _NavItemWidget({
     required this.item,
     required this.isSelected,
+    this.showBadge = false,
     required this.onTap});
 
   @override
@@ -127,11 +137,34 @@ class _NavItemWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icon with traditional ink color
-            Icon(
-              isSelected ? item.selectedIcon : item.icon,
-              size: 24,
-              color: isSelected ? colors.textPrimary : colors.textTertiary,
+            // Icon with traditional ink color + badge
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  isSelected ? item.selectedIcon : item.icon,
+                  size: 24,
+                  color: isSelected ? colors.textPrimary : colors.textTertiary,
+                ),
+                // 안읽음 배지 (빨간 점)
+                if (showBadge)
+                  Positioned(
+                    right: -4,
+                    top: -2,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: colors.accentSecondary,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: colors.surface,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             const SizedBox(height: 2),
             // Label with traditional typography

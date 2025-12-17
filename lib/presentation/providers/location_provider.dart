@@ -115,4 +115,26 @@ extension LocationProviderExtension on WidgetRef {
   bool get isFromGPS {
     return currentLocation?.isFromGPS ?? false;
   }
+
+  /// 표시 가능한 위치 여부 (실제 GPS 위치일 때만 true)
+  ///
+  /// 위치 권한 거부 시 기본값(강남구)이 반환되는데,
+  /// 이 경우 UI에 표시하면 사용자 혼란을 줄 수 있으므로
+  /// 실제 GPS 위치일 때만 true 반환
+  bool get hasDisplayableLocation {
+    final location = currentLocation;
+    return location != null && location.isFromGPS;
+  }
+
+  /// 표시용 위치명 (권한 거부 시 null)
+  ///
+  /// 권한 승인 → 실제 지역명 반환
+  /// 권한 거부 → null 반환 (UI에서 숨김 처리)
+  String? get displayableCityName {
+    final location = currentLocation;
+    if (location != null && location.isFromGPS) {
+      return location.cityName;
+    }
+    return null;
+  }
 }

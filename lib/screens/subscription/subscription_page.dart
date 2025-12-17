@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/theme/obangseok_colors.dart';
 import '../../core/services/fortune_haptic_service.dart';
 import '../../core/providers/user_settings_provider.dart';
 import '../../core/widgets/unified_button.dart';
@@ -82,19 +83,26 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           children: [
             const SizedBox(height: DSSpacing.md),
 
-            // Premium Benefits
+            // Premium Benefits - 황색(Hwang) 그라데이션으로 복/풍요의 느낌
             Container(
               padding: const EdgeInsets.all(DSSpacing.lg),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    colors.accent,
-                    colors.accent.withValues(alpha: 0.8),
+                    ObangseokColors.hwangLight,
+                    ObangseokColors.hwang,
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(DSRadius.lg),
+                boxShadow: [
+                  BoxShadow(
+                    color: ObangseokColors.hwang.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,14 +111,14 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     children: [
                       Icon(
                         Icons.workspace_premium,
-                        color: colors.ctaForeground,
+                        color: Colors.white,
                         size: 32,
                       ),
                       const SizedBox(width: DSSpacing.md),
                       Text(
-                        'Premium',
+                        '프리미엄운세',
                         style: typography.headingMedium.copyWith(
-                          color: colors.ctaForeground,
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -119,7 +127,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                   Text(
                     '무제한 운세와 프리미엄 기능을 경험하세요',
                     style: typography.bodySmall.copyWith(
-                      color: colors.ctaForeground.withValues(alpha: 0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -357,13 +365,14 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           color: colors.surface,
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: isSelected ? colors.accent : colors.border,
+            // 인주색(Inju) - 전통 도장 색상으로 선택 강조
+            color: isSelected ? ObangseokColors.inju : colors.border,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: colors.accent.withValues(alpha: 0.2),
+                    color: ObangseokColors.inju.withValues(alpha: 0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -378,16 +387,16 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? colors.accent : colors.border,
+                  color: isSelected ? ObangseokColors.inju : colors.border,
                   width: 2,
                 ),
-                color: isSelected ? colors.accent : Colors.transparent,
+                color: isSelected ? ObangseokColors.inju : Colors.transparent,
               ),
               child: isSelected
-                  ? Icon(
+                  ? const Icon(
                       Icons.check,
                       size: 16,
-                      color: colors.ctaForeground,
+                      color: Colors.white,
                     )
                   : null,
             ),
@@ -412,13 +421,14 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: colors.accent.withValues(alpha: 0.1),
+                            // 인주색으로 배지 강조
+                            color: ObangseokColors.inju.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             badge,
                             style: typography.labelSmall.copyWith(
-                              color: colors.accent,
+                              color: ObangseokColors.inju,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -488,7 +498,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           Icon(
             icon,
             size: 22,
-            color: colors.accent,
+            // 황색 - 프리미엄 혜택 아이콘
+            color: ObangseokColors.hwang,
           ),
           const SizedBox(width: DSSpacing.md),
           Expanded(

@@ -39,7 +39,7 @@ class InputStep2Widget extends StatelessWidget {
               const SizedBox(height: 8),
 
               Text(
-                'AI가 당신의 관상을 상세하게 분석합니다',
+                '당신의 관상을 상세하게 분석해 드립니다',
                 style: DSTypography.bodyMedium.copyWith(
                   color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                 ),
@@ -132,7 +132,7 @@ class InputStep2Widget extends StatelessWidget {
 
         // Floating Bottom Button
         UnifiedButton.floating(
-          text: isAnalyzing ? 'AI가 분석 중...' : 'AI 관상 분석 시작',
+          text: isAnalyzing ? '분석 중...' : '관상 분석 시작',
           isEnabled: !isAnalyzing,
           onPressed: isAnalyzing ? null : onStartAnalysis,
           isLoading: isAnalyzing,

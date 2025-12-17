@@ -92,7 +92,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
     return Scaffold(
       backgroundColor: colors.background,
       appBar: const StandardFortuneAppBar(
-        title: '타로 덱 선택',
+        title: '타로 카드 선택',
       ),
       body: MysticalBackground(
         child: SafeArea(
@@ -119,7 +119,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                '당신에게 맞는 타로 덱을 선택하세요',
+                                '당신에게 맞는 타로 카드를 선택하세요',
                                 style: DSTypography.headingMedium.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white),
@@ -155,7 +155,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                         ],
 
                         // 모든 덱 섹션
-                        _buildSectionTitle('모든 타로 덱', fontScale, colors),
+                        _buildSectionTitle('모든 타로 카드', fontScale, colors),
                         const SizedBox(height: 16),
                         _buildDeckGrid(
                           TarotDeckMetadata.getAllDecks(),

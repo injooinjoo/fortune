@@ -27,23 +27,22 @@ class CategoryDetailCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 헤더
+        // 헤더 (가운데 정렬)
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               emoji,
               style: const TextStyle(fontSize: 28),
             ),
             const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black87,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.5,
-                ),
+            Text(
+              title,
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.black87,
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.5,
               ),
             ),
           ],

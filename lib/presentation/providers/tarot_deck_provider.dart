@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/tarot_deck_metadata.dart';
 
-// 현재 선택된 타로 덱 ID를 관리하는 Provider
+// 현재 선택된 타로 카드 ID를 관리하는 Provider
 final selectedTarotDeckProvider = StateNotifierProvider<SelectedTarotDeckNotifier, String>((ref) {
   return SelectedTarotDeckNotifier();
 });
@@ -166,7 +166,7 @@ final recommendedDecksProvider = Provider<List<TarotDeck>>((ref) {
     });
 });
 
-// 타로 덱 사용 통계를 관리하는 Provider
+// 타로 카드 사용 통계를 관리하는 Provider
 final tarotDeckStatsProvider = StateNotifierProvider<TarotDeckStatsNotifier, Map<String, int>>((ref) {
   return TarotDeckStatsNotifier();
 });

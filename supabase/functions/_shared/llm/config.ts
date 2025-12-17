@@ -27,6 +27,7 @@ export const FORTUNE_SPECIFIC_MODELS: Record<string, string | undefined> = {
   'blind-date': 'gemini-2.0-flash-lite',
   'ex-lover': 'gemini-2.0-flash-lite',
   'lucky-series': 'gemini-2.0-flash-lite',
+  'fortune-celebrity': 'gemini-2.0-flash-lite',
 }
 
 export function getModelConfig(fortuneType: string) {

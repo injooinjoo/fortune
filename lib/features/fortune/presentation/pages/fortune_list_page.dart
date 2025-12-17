@@ -325,13 +325,13 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
 
     // ==================== Personal/Character-based Fortunes (통합) ====================
     FortuneCategory(
-      title: '성격',
+      title: '성격 DNA',
       route: '/personality-dna',
       type: 'personality-dna',
       icon: Icons.biotech_rounded,
       iconAsset: 'assets/icons/fortune/personality_dna.png',
       gradientColors: [Color(0xFF8B5CF6), Color(0xFFEC4899)],
-      description: '4가지 조합으로 만드는 당신만의 DNA',
+      description: 'MBTI × 혈액형 × 별자리 × 띠 조합 분석',
       category: 'lifestyle',
       isNew: true),
     FortuneCategory(

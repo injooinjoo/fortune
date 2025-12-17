@@ -32,11 +32,13 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
   final _monthController = TextEditingController();
   final _dayController = TextEditingController();
   final _timeController = TextEditingController();
+  final _minuteController = TextEditingController(); // ✅ 분 입력 컨트롤러
 
   final _yearFocus = FocusNode();
   final _monthFocus = FocusNode();
   final _dayFocus = FocusNode();
   final _timeFocus = FocusNode();
+  final _minuteFocus = FocusNode(); // ✅ 분 입력 포커스
 
   // For backspace detection
   // ignore: unused_field
@@ -44,6 +46,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
   String _prevMonth = '';
   String _prevDay = '';
   String _prevTime = '';
+  String _prevMinute = ''; // ✅ 분 백스페이스 감지용
 
   bool _showMonth = false;
   bool _showDay = false;
@@ -68,6 +71,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
     if (widget.initialTime != null) {
       _timeController.text = '${widget.initialTime!.hour}';
+      _minuteController.text = widget.initialTime!.minute.toString().padLeft(2, '0'); // ✅ 분 초기화
       _isTimeValid = true;
     }
 
@@ -166,7 +170,46 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
       }
 
       _prevTime = text;
+
+      // ✅ 시간 2자리 입력 시 분으로 자동 이동
+      if (text.length == 2 && _timeFocus.hasFocus) {
+        final hour = int.tryParse(text) ?? 0;
+        if (hour >= 0 && hour <= 23) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _minuteFocus.requestFocus();
+          });
+        }
+      }
+
       _onTimeChanged();
+    });
+
+    // ✅ 분 입력 리스너 추가
+    _minuteController.addListener(() {
+      final text = _minuteController.text;
+
+      // Backspace when empty → go back to hour AND delete last digit
+      if (text.isEmpty && _prevMinute.isNotEmpty && !_isTimeUnknown && _minuteFocus.hasFocus) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_timeController.text.isNotEmpty) {
+            _timeController.text = _timeController.text.substring(0, _timeController.text.length - 1);
+          }
+          _timeFocus.requestFocus();
+        });
+      }
+
+      _prevMinute = text;
+      _onTimeChanged();
+    });
+
+    // ✅ 분 포커스 해제 시 패딩 추가 (예: "5" → "05")
+    _minuteFocus.addListener(() {
+      if (!_minuteFocus.hasFocus && _minuteController.text.isNotEmpty) {
+        final minute = int.tryParse(_minuteController.text) ?? 0;
+        if (minute >= 0 && minute <= 59) {
+          _minuteController.text = minute.toString().padLeft(2, '0');
+        }
+      }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _yearFocus.requestFocus());
@@ -200,12 +243,17 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
   }
 
   void _onTimeChanged() {
-    final text = _timeController.text.replaceAll(RegExp(r'[^0-9]'), '');
-    if (text.isNotEmpty) {
-      final hour = int.tryParse(text) ?? 0;
-      if (hour >= 0 && hour <= 23) {
+    final hourText = _timeController.text.replaceAll(RegExp(r'[^0-9]'), '');
+    final minuteText = _minuteController.text.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (hourText.isNotEmpty) {
+      final hour = int.tryParse(hourText) ?? 0;
+      // ✅ 분은 입력하지 않아도 0으로 처리 (선택적 입력)
+      final minute = minuteText.isNotEmpty ? (int.tryParse(minuteText) ?? 0) : 0;
+
+      if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
         setState(() => _isTimeValid = true);
-        widget.onBirthTimeChanged?.call(TimeOfDay(hour: hour, minute: 0));
+        widget.onBirthTimeChanged?.call(TimeOfDay(hour: hour, minute: minute));
       } else {
         setState(() => _isTimeValid = false);
       }
@@ -220,10 +268,12 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
     _monthController.dispose();
     _dayController.dispose();
     _timeController.dispose();
+    _minuteController.dispose(); // ✅ 분 컨트롤러 정리
     _yearFocus.dispose();
     _monthFocus.dispose();
     _dayFocus.dispose();
     _timeFocus.dispose();
+    _minuteFocus.dispose(); // ✅ 분 포커스 정리
     super.dispose();
   }
 
@@ -378,8 +428,9 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                     crossAxisAlignment: CrossAxisAlignment.baseline,
                     textBaseline: TextBaseline.alphabetic,
                     children: [
+                      // 시간 입력
                       SizedBox(
-                        width: 60,
+                        width: 50,
                         child: TextField(
                           controller: _timeController,
                           focusNode: _timeFocus,
@@ -408,6 +459,39 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                         ),
                       ),
                       Text('시', style: labelStyle),
+
+                      // ✅ 분 입력 추가
+                      const SizedBox(width: 16),
+                      SizedBox(
+                        width: 50,
+                        child: TextField(
+                          controller: _minuteController,
+                          focusNode: _minuteFocus,
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          style: inputStyle,
+                          cursorColor: colors.textSecondary,
+                          enabled: !_isTimeUnknown,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(2),
+                          ],
+                          decoration: InputDecoration(
+                            hintText: '00',
+                            hintStyle: hintStyle.copyWith(
+                              color: _isTimeUnknown ? colors.border : colors.textTertiary,
+                            ),
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            filled: false,
+                            contentPadding: EdgeInsets.zero,
+                            isDense: true,
+                          ),
+                        ),
+                      ),
+                      Text('분', style: labelStyle),
                     ],
                   ).animate().fadeIn(duration: 400.ms),
 
@@ -419,6 +503,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                         _isTimeUnknown = !_isTimeUnknown;
                         if (_isTimeUnknown) {
                           _timeController.clear();
+                          _minuteController.clear(); // ✅ 분 컨트롤러도 초기화
                           _isTimeValid = true;
                           FocusScope.of(context).unfocus();
                           widget.onBirthTimeChanged?.call(const TimeOfDay(hour: 12, minute: 0));

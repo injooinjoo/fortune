@@ -36,28 +36,54 @@ class CompatibilityCard extends StatelessWidget {
   }
 
   String _getCompatibilityLabel(int index) {
-    const labels = ['Best Match', 'Good Match', 'Compatible'];
-    return index < labels.length ? labels[index] : 'Compatible';
+    const labels = ['찰떡궁합 💕', '좋은 궁합 ✨'];
+    return index < labels.length ? labels[index] : '좋은 궁합';
+  }
+
+  // 안맞는 유형 데이터
+  static const Map<String, List<String>> incompatibility = {
+    'INTJ': ['ESFP', 'ISFP'],
+    'INTP': ['ESFJ', 'ISFJ'],
+    'ENTJ': ['ISFP', 'INFP'],
+    'ENTP': ['ISFJ', 'ISTJ'],
+    'INFJ': ['ESTP', 'ISTP'],
+    'INFP': ['ESTJ', 'ISTJ'],
+    'ENFJ': ['ISTP', 'ESTP'],
+    'ENFP': ['ISTJ', 'ESTJ'],
+    'ISTJ': ['ENFP', 'INFP'],
+    'ISFJ': ['ENTP', 'INTP'],
+    'ESTJ': ['INFP', 'ENFP'],
+    'ESFJ': ['INTP', 'ISTP'],
+    'ISTP': ['ENFJ', 'INFJ'],
+    'ISFP': ['ENTJ', 'INTJ'],
+    'ESTP': ['INFJ', 'ENFJ'],
+    'ESFP': ['INTJ', 'INTP'],
+  };
+
+  List<String> _getIncompatibleTypes(String mbti) {
+    return incompatibility[mbti] ?? ['ESTJ', 'ISTJ'];
   }
 
   @override
   Widget build(BuildContext context) {
     final themeColors = context.colors;
     final compatibleTypes = _getCompatibleTypes(selectedMbti);
+    final incompatibleTypes = _getIncompatibleTypes(selectedMbti);
 
     return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 잘 맞는 유형 섹션
           Row(
             children: [
-              const Icon(Icons.people,
+              const Icon(Icons.favorite,
                 size: 20,
-                color: Color(0xFF8B5CF6)),
+                color: Color(0xFFEC4899)),
               const SizedBox(width: 8),
               Text(
-                '오늘의 궁합',
+                '잘 맞는 유형',
                 style: DSTypography.labelLarge.copyWith(
                   fontWeight: FontWeight.w600,
                   color: themeColors.textPrimary,
@@ -67,21 +93,28 @@ class CompatibilityCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: compatibleTypes.map((type) {
               final colors = mbtiColors[type]!;
               return Column(
                 children: [
                   Container(
-                    width: 60,
-                    height: 60,
+                    width: 56,
+                    height: 56,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: colors,
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(28),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colors[0].withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Center(
                       child: Text(
@@ -90,6 +123,7 @@ class CompatibilityCard extends StatelessWidget {
                           color: Colors.white,
                           fontFamily: 'ZenSerif',
                           fontWeight: FontWeight.w700,
+                          fontSize: 13,
                         ),
                       ),
                     ),
@@ -98,7 +132,69 @@ class CompatibilityCard extends StatelessWidget {
                   Text(
                     _getCompatibilityLabel(compatibleTypes.indexOf(type)),
                     style: DSTypography.labelSmall.copyWith(
-                      color: themeColors.textSecondary,
+                      color: const Color(0xFFEC4899),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+
+          const SizedBox(height: 24),
+
+          // 주의할 유형 섹션
+          Row(
+            children: [
+              Icon(Icons.warning_amber_rounded,
+                size: 20,
+                color: themeColors.textTertiary),
+              const SizedBox(width: 8),
+              Text(
+                '주의할 유형',
+                style: DSTypography.labelLarge.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: themeColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: incompatibleTypes.map((type) {
+              final colors = mbtiColors[type]!;
+              return Column(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: themeColors.surface,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: colors[0].withValues(alpha: 0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        type,
+                        style: TextStyle(
+                          color: themeColors.textSecondary,
+                          fontFamily: 'ZenSerif',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    '조심 ⚡',
+                    style: DSTypography.labelSmall.copyWith(
+                      color: themeColors.textTertiary,
+                      fontSize: 11,
                     ),
                   ),
                 ],

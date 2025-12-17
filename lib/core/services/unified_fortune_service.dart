@@ -107,6 +107,7 @@ class UnifiedFortuneService {
               final mergedPayload = {
                 ...payload,  // conditions.buildAPIPayload() 결과
                 ...inputConditions,  // 이미지 데이터 등 추가 조건
+                'isPremium': isPremium,  // ✅ Premium 상태 전달 (Edge Function에서 블러 처리용)
               };
 
               final result = await _generateFromAPI(fortuneType, mergedPayload);
@@ -486,6 +487,7 @@ class UnifiedFortuneService {
           // MBTI Edge Function 직접 호출 (FortuneApiService 패턴 사용)
           // Edge Function이 기대하는 필드명으로 변환: mbti_type → mbti, birth_date → birthDate
           // userId와 name 추가
+          final mbtiIsPremium = inputConditions['isPremium'] as bool? ?? false;
           final mbtiUser = _supabase.auth.currentUser;
           final mbtiUserProfile = mbtiUser != null
               ? await _supabase
@@ -501,6 +503,7 @@ class UnifiedFortuneService {
             'birthDate': inputConditions['birth_date'] ?? inputConditions['birthDate'],
             if (inputConditions['categories'] != null) 'categories': inputConditions['categories'],
             'userId': mbtiUser?.id ?? inputConditions['userId'] ?? 'anonymous',
+            'isPremium': mbtiIsPremium, // ✅ 프리미엄 상태 전달
           };
 
           final response = await _supabase.functions.invoke(
@@ -519,6 +522,7 @@ class UnifiedFortuneService {
             Logger.info('[UnifiedFortune] ✅ MBTI API 호출 성공');
 
             // Edge Function 응답을 FortuneResult 형식으로 변환
+            // ✅ isBlurred, blurredSections 포함
             return FortuneResult(
               type: 'mbti',
               title: 'MBTI 운세 - ${mbtiPayload['mbti']}',
@@ -526,6 +530,8 @@ class UnifiedFortuneService {
               data: fortuneData, // 전체 응답을 data 필드에 저장
               score: (fortuneData['energyLevel'] as num?)?.toInt() ?? 75,
               createdAt: DateTime.now(),
+              isBlurred: fortuneData['isBlurred'] as bool? ?? false,
+              blurredSections: List<String>.from(fortuneData['blurredSections'] ?? []),
             );
           } else {
             throw Exception('MBTI API 응답 형식 오류');

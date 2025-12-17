@@ -248,7 +248,10 @@
       "Bash(do if ! grep -q \"premiumUnlock\" \"$file\")",
       "Bash(then echo \"❌ 미적용: $file\" fi done)",
       "Bash(flutter pub get:*)",
-      "Bash(export LC_ALL=en_US.UTF-8:*)"
+      "Bash(export LC_ALL=en_US.UTF-8:*)",
+      "Bash(for suit in wands cups swords pentacles)",
+      "Bash(do echo \"=== $suit ===\" ls /Users/jacobmac/Desktop/Dev/fortune/assets/images/tarot/decks/before_tarot/$suit/)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Phase 1-3 버그 수정 및 기능 개선\n\n## Critical 버그 수정\n- [1.1] 해몽: 디버그 로깅 추가\n- [1.2] MBTI: 디버그 로깅 및 서버 검증\n- [1.3] 타로: Court Card 이미지 경로 수정 (11_page → page)\n- [1.4] 연애운: isPremium 블러 해제 로직 추가\n\n## Phase 2 개선\n- [2.3] 운세 탭: 안읽음 배지(빨간 점) 추가\n  - fortune_badge_provider.dart 생성\n  - bottom_navigation_bar.dart 배지 표시\n\n## Phase 3 개선\n- [3.2] 타로: \"타로 덱\" → \"타로 카드\" 명칭 변경\n- [3.3] 관상: AI 문구 제거 (AI 관상 → 관상)\n- [3.5] MBTI: 카테고리 선택 제거, 궁합 표시 개선 (한글화 + 주의 유형)\n- [3.9] 성격: 제목 리뉴얼 (\"성격\" → \"성격 DNA\")\n\n## 기타 개선\n- Secondary profiles 기능 추가\n- 생년월일 분 단위 입력 지원\n- 위치 권한 처리 개선\n- 홈 카드 UI 개선 (천간지지 한자, 제목 정렬, celebrity fallback)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": [],

@@ -152,7 +152,10 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
       left: position.dx,
       top: position.dy,
       child: GestureDetector(
-        onTap: () => widget.onTopicSelected(topic),
+        onTap: () {
+          debugPrint('🫧 [DreamBubbles] 버블 탭: ${topic.title} (${topic.id})');
+          widget.onTopicSelected(topic);
+        },
         child: _DreamBubble(
           topic: topic,
           size: baseSize,

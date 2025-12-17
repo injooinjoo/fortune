@@ -165,8 +165,8 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
   Widget build(BuildContext context) {
     return UnifiedFortuneBaseWidget(
       fortuneType: 'personality-dna',
-      title: '성격',
-      description: 'MBTI, 혈액형, 별자리, 띠를 조합한 특별한 성격 분석',
+      title: '성격 DNA',
+      description: 'MBTI × 혈액형 × 별자리 × 띠 조합 분석',
       dataSource: FortuneDataSource.api,
       inputBuilder: (context, onComplete) => _buildInputForm(() {
         debugPrint('🔵 [버튼클릭] _isGenerating = true 설정 시작');

@@ -186,8 +186,9 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
             children: [
               Consumer(
                 builder: (context, ref, child) {
-                  final cityName = ref.currentCityName;
-                  if (cityName != '위치 확인 중') {
+                  // 실제 GPS 위치일 때만 표시 (권한 거부 시 숨김)
+                  final cityName = ref.displayableCityName;
+                  if (cityName != null) {
                     return Row(
                       children: [
                         Text(

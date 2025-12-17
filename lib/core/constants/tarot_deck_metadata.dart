@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import '../theme/toss_design_system.dart';
 
 class TarotDeckMetadata {
-  // 사용 가능한 타로 덱 목록
+  // 사용 가능한 타로 카드 목록
   static const Map<String, TarotDeck> availableDecks = {
     'rider_waite': TarotDeck(
       id: 'rider_waite',
       code: 'RWSa',
       name: 'Rider-Waite-Smith',
       koreanName: '라이더-웨이트-스미스',
-      description: '가장 인기 있고 널리 사용되는 타로 덱으로, 1909년 Arthur Edward Waite와 Pamela Colman Smith가 만들었습니다.',
+      description: '가장 인기 있고 널리 사용되는 타로 카드로, 1909년 Arthur Edward Waite와 Pamela Colman Smith가 만들었습니다.',
       characteristics: [
         '직관적이고 상징적인 이미지',
         '초보자에게 적합한 명확한 상징',
@@ -29,7 +29,7 @@ class TarotDeckMetadata {
       code: 'Thot',
       name: 'Aleister Crowley Thoth',
       koreanName: '토트 타로',
-      description: 'Aleister Crowley가 디자인하고 Lady Frieda Harris가 그린 신비주의적이고 복잡한 타로 덱입니다.',
+      description: 'Aleister Crowley가 디자인하고 Lady Frieda Harris가 그린 신비주의적이고 복잡한 타로 카드입니다.',
       characteristics: [
         '깊은 상징과 신비주의적 요소',
         '카발라와 점성술 통합',
@@ -109,7 +109,7 @@ class TarotDeckMetadata {
       code: 'Cice',
       name: 'Golden Dawn Magical Tarot',
       koreanName: '골든 던 매지컬 타로 (시세로)',
-      description: 'Hermetic Order of the Golden Dawn의 전통을 따르는 정통 신비주의 타로 덱입니다.',
+      description: 'Hermetic Order of the Golden Dawn의 전통을 따르는 정통 신비주의 타로 카드입니다.',
       characteristics: [
         '황금새벽회 전통',
         '카발라와 연금술 상징',
@@ -149,7 +149,7 @@ class TarotDeckMetadata {
       code: 'GrEt',
       name: 'Grand Etteilla',
       koreanName: '그랑 에테이야',
-      description: '최초로 점술 목적으로 디자인된 역사적인 타로 덱으로, 1785년 Jean-Baptiste Alliette가 만들었습니다.',
+      description: '최초로 점술 목적으로 디자인된 역사적인 타로 카드로, 1785년 Jean-Baptiste Alliette가 만들었습니다.',
       characteristics: [
         '최초의 점술 전용 타로',
         '카드에 의미가 직접 쓰여 있음',
@@ -190,7 +190,7 @@ class TarotDeckMetadata {
   }
 }
 
-// 타로 덱 정보 클래스
+// 타로 카드 정보 클래스
 class TarotDeck {
   final String id;
   final String code;

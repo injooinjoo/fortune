@@ -452,12 +452,14 @@ class _DreamInterpretationPageState
 
   Future<void> _handleSubmit(DreamTopic topic) async {
     setState(() => _isLoading = true);
+    debugPrint('🌙 [DreamPage] _handleSubmit 시작: ${topic.title}');
 
     try {
       // 프리미엄 상태 확인
       final tokenState = ref.read(tokenProvider);
       final premiumOverride = await DebugPremiumService.getOverrideValue();
       final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
+      debugPrint('🌙 [DreamPage] isPremium: $isPremium');
 
       // Conditions 생성 (선택된 꿈 주제 기반)
       final conditions = DreamFortuneConditions(
@@ -467,20 +469,23 @@ class _DreamInterpretationPageState
       );
 
       // UnifiedFortuneService 호출
+      debugPrint('🌙 [DreamPage] API 호출 시작...');
       final supabase = Supabase.instance.client;
       final fortuneService = UnifiedFortuneService(supabase);
       var result = await fortuneService.getFortune(
         fortuneType: 'dream',
         dataSource: FortuneDataSource.api,
         inputConditions: {
+          'dream': topic.dreamContentForApi, // Edge Function이 기대하는 필드명
           'dream_topic_id': topic.id,
           'dream_topic_title': topic.title,
           'dream_topic_category': topic.category,
-          'dream_content': topic.dreamContentForApi,
+          'isPremium': isPremium,
         },
         conditions: conditions,
         isPremium: isPremium,
       );
+      debugPrint('🌙 [DreamPage] API 응답 받음: ${result.type}, score=${result.score}');
 
       // 일반 사용자는 블러 적용
       if (!isPremium) {
@@ -491,14 +496,18 @@ class _DreamInterpretationPageState
       }
 
       if (mounted) {
+        debugPrint('🌙 [DreamPage] 결과 설정 중: isBlurred=${result.isBlurred}, data keys=${result.data.keys.toList()}');
         setState(() {
           _fortuneResult = result;
           _showResult = true;
           _isLoading = false;
         });
+        debugPrint('🌙 [DreamPage] ✅ 결과 화면 전환 완료');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       Logger.error('[DreamInterpretationPage] Error: $e');
+      debugPrint('🌙 [DreamPage] ❌ 에러 발생: $e');
+      debugPrint('🌙 [DreamPage] 스택: $stackTrace');
       if (mounted) {
         setState(() => _isLoading = false);
         Toast.show(

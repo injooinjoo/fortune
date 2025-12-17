@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
@@ -144,6 +143,60 @@ class _CelebrityCardItem extends StatelessWidget {
     return const Color(0xFFEF4444);
   }
 
+  /// 이름 첫 글자로 아바타 배경색 결정
+  Color get _avatarColor {
+    final colors = [
+      const Color(0xFF9333EA), // 보라
+      const Color(0xFF3B82F6), // 파랑
+      const Color(0xFF10B981), // 초록
+      const Color(0xFFF59E0B), // 주황
+      const Color(0xFFEF4444), // 빨강
+      const Color(0xFF6366F1), // 인디고
+      const Color(0xFFEC4899), // 핑크
+    ];
+    return colors[name.hashCode.abs() % colors.length];
+  }
+
+  /// 프로필 아바타 위젯 (이미지 또는 이니셜)
+  Widget _buildProfileAvatar() {
+    final initial = name.isNotEmpty ? name.substring(0, 1) : '?';
+
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: imageUrl != null
+            ? (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1)
+            : _avatarColor.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: imageUrl != null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                imageUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _buildInitialAvatar(initial),
+              ),
+            )
+          : _buildInitialAvatar(initial),
+    );
+  }
+
+  /// 이니셜 아바타 위젯
+  Widget _buildInitialAvatar(String initial) {
+    return Center(
+      child: Text(
+        initial,
+        style: TextStyle(
+          color: _avatarColor,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -161,33 +214,8 @@ class _CelebrityCardItem extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // 프로필 이미지
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: imageUrl != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Icon(
-                        Icons.person,
-                        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
-                        size: 22,
-                      ),
-                    ),
-                  )
-                : Icon(
-                    Icons.person,
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
-                    size: 22,
-                  ),
-          ),
+          // 프로필 이미지 (이니셜 아바타 fallback)
+          _buildProfileAvatar(),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

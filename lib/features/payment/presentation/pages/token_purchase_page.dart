@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/theme/obangseok_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -247,7 +248,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                   Text(
                     '무제한',
                     style: DSTypography.headingMedium.copyWith(
-                      color: colors.accent,
+                      // 황색(Hwang) - 복/풍요를 상징
+                      color: ObangseokColors.hwang,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -256,7 +258,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               Icon(
                 Icons.all_inclusive,
                 size: 40,
-                color: colors.accent.withValues(alpha: 0.3),
+                color: ObangseokColors.hwang.withValues(alpha: 0.3),
               ),
             ],
           ),
@@ -286,7 +288,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                     Text(
                       '0',
                       style: DSTypography.headingMedium.copyWith(
-                        color: colors.accent,
+                        // 황색(Hwang) - 복/풍요를 상징
+                        color: ObangseokColors.hwang,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -304,7 +307,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             Icon(
               Icons.toll,
               size: 40,
-              color: colors.accent.withValues(alpha: 0.3),
+              color: ObangseokColors.hwang.withValues(alpha: 0.3),
             ),
           ],
         ),
@@ -335,7 +338,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                       ? '무제한'
                       : '${tokenBalance.remainingTokens}',
                     style: DSTypography.headingMedium.copyWith(
-                      color: colors.accent,
+                      // 황색(Hwang) - 복/풍요를 상징
+                      color: ObangseokColors.hwang,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -357,7 +361,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               ? Icons.all_inclusive
               : Icons.toll,
             size: 40,
-            color: colors.accent.withValues(alpha: 0.3),
+            color: ObangseokColors.hwang.withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -463,21 +467,31 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
+          // 황색(Hwang) - 복/풍요를 상징하는 전통 색상
           gradient: isSelected
             ? LinearGradient(
                 colors: [
-                  colors.accent.withValues(alpha: 0.1),
-                  colors.accent.withValues(alpha: 0.05),
+                  ObangseokColors.hwang.withValues(alpha: 0.1),
+                  ObangseokColors.hwang.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               )
             : null,
           border: Border.all(
-            color: isSelected ? colors.accent : colors.border,
+            color: isSelected ? ObangseokColors.hwang : colors.border,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(DSRadius.lg),
+          boxShadow: isSelected
+            ? [
+                BoxShadow(
+                  color: ObangseokColors.hwang.withValues(alpha: 0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
         ),
         padding: const EdgeInsets.all(DSSpacing.lg),
         child: Row(
@@ -487,7 +501,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               height: 60,
               decoration: BoxDecoration(
                 color: isSelected
-                  ? colors.accent.withValues(alpha: 0.1)
+                  ? ObangseokColors.hwang.withValues(alpha: 0.1)
                   : colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(DSRadius.md),
               ),
@@ -495,7 +509,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                 child: Icon(
                   isSubscription ? Icons.all_inclusive : Icons.toll,
                   size: 28,
-                  color: isSelected ? colors.accent : colors.textSecondary,
+                  color: isSelected ? ObangseokColors.hwang : colors.textSecondary,
                 ),
               ),
             ),
@@ -528,7 +542,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                   price,
                   style: DSTypography.headingSmall.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isSelected ? colors.accent : colors.textPrimary,
+                    // 황색(Hwang) - 선택 시 풍요를 상징
+                    color: isSelected ? ObangseokColors.hwangDark : colors.textPrimary,
                   ),
                 ),
                 if (isSubscription) ...[

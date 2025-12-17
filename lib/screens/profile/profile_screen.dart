@@ -17,6 +17,7 @@ import '../../presentation/providers/subscription_provider.dart';
 import '../../shared/components/settings_list_tile.dart';
 import '../../shared/components/section_header.dart';
 import '../../core/providers/user_settings_provider.dart';
+import 'widgets/profile_switcher_card.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -316,6 +317,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: DSSpacing.md),
+
+              // 프로필 스위처 (다른 사람 프로필 전환)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                child: ProfileSwitcherCard(),
+              ),
               const SizedBox(height: DSSpacing.md),
 
               // 프로필 요약 카드

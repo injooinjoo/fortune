@@ -122,19 +122,27 @@ serve(async (req) => {
     }
 
     // 유명인 정보 조회 (선택적)
-    let celebrityInfo = { name: celebrity_name, birthDate: null, profession: '' }
+    let celebrityInfo = { name: celebrity_name, birthDate: null as string | null, profession: '' }
     if (celebrity_id) {
-      const { data: celeb } = await supabaseClient
+      const { data: celeb, error: celebError } = await supabaseClient
         .from('celebrities')
-        .select('name, birth_date, profession, description')
+        .select('name, birth_date, celebrity_type, profession_data, notes')
         .eq('id', celebrity_id)
         .single()
 
+      if (celebError) {
+        console.warn('⚠️ [CelebrityFortune] 유명인 조회 실패:', celebError.message)
+      }
+
       if (celeb) {
+        // profession_data에서 직업 정보 추출 (jsonb)
+        const professionData = celeb.profession_data as Record<string, any> | null
+        const profession = professionData?.profession || professionData?.role || celeb.celebrity_type || ''
+
         celebrityInfo = {
           name: celeb.name,
           birthDate: celeb.birth_date,
-          profession: celeb.profession || '',
+          profession: profession,
         }
       }
     }

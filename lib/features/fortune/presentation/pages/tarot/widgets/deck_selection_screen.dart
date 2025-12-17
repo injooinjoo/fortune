@@ -57,7 +57,7 @@ class DeckSelectionScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '타로 덱 선택',
+                      '타로 카드 선택',
                       style: DSTypography.headingMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: colors.textPrimary,
@@ -65,7 +65,7 @@ class DeckSelectionScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '당신에게 맞는 타로 덱을 선택하세요',
+                      '당신에게 맞는 타로 카드를 선택하세요',
                       style: DSTypography.labelMedium.copyWith(
                         color: colors.textSecondary,
                       ),
