@@ -4,13 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/toss_design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
+import '../../../../services/ad_service.dart'; // ✅ 광고 서비스
+import '../../../fortune/presentation/widgets/face_reading/celebrity_match_carousel.dart'; // ✅ 닮은꼴 캐러셀
 
 class FaceReadingPage extends ConsumerStatefulWidget {
   const FaceReadingPage({super.key});
@@ -21,12 +27,61 @@ class FaceReadingPage extends ConsumerStatefulWidget {
 
 class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
   final ImagePicker _picker = ImagePicker();
+  final AdService _adService = AdService(); // ✅ 광고 서비스
   File? _selectedImage;
   bool _isAnalyzing = false;
   String? _analysisResult;
-  
-  // AI 분석에 필요한 토큰 수
+
+  // ✅ 프로필 사진 관련 상태
+  bool _isLoadingProfileImage = false;
+
+  // ✅ 닮은꼴 유명인 데이터
+  List<Map<String, dynamic>>? _similarCelebrities;
+
+  // 분석에 필요한 토큰 수
   static const int _requiredTokens = 5;
+
+  @override
+  void initState() {
+    super.initState();
+    // ✅ 페이지 진입 시 인터스티셜 광고 표시
+    _showEntryAd();
+    // ✅ 로그인 사용자 프로필 사진 자동 로드
+    _loadDefaultProfileImage();
+  }
+
+  /// 로그인 사용자 프로필 사진 자동 로드
+  Future<void> _loadDefaultProfileImage() async {
+    // 광고 표시 후 약간의 딜레이
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    if (!mounted) return;
+
+    final userProfileAsync = ref.read(userProfileProvider);
+    final profileImageUrl = userProfileAsync.valueOrNull?.profileImageUrl;
+
+    if (profileImageUrl != null && profileImageUrl.isNotEmpty) {
+      await _useProfileImage(profileImageUrl);
+    }
+  }
+
+  /// 페이지 진입 시 광고 표시
+  Future<void> _showEntryAd() async {
+    try {
+      // 광고가 준비되어 있으면 표시
+      if (_adService.isInterstitialAdReady) {
+        await _adService.showInterstitialAd();
+      } else {
+        // 광고 로드 후 표시
+        await _adService.loadInterstitialAd();
+        if (_adService.isInterstitialAdReady) {
+          await _adService.showInterstitialAd();
+        }
+      }
+    } catch (e) {
+      Logger.error('[FaceReadingPage] 광고 표시 실패', e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +90,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(title: 'AI 관상'),
+            const AppHeader(title: '관상'),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -71,14 +126,14 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            'AI가 당신의 얼굴을 분석합니다',
+            '당신의 얼굴을 분석합니다',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            '정면 사진을 업로드하면 AI가 관상을 분석해드립니다.\n'
+            '정면 사진을 업로드하면 관상을 분석해드립니다.\n'
             '개인정보는 안전하게 보호되며 분석 후 즉시 삭제됩니다.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
@@ -233,7 +288,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                     const Text('분석 중...'),
                   ],
                 )
-              : const Text('AI 관상 분석 시작'),
+              : const Text('관상 분석 시작'),
           ),
           const SizedBox(height: 12),
           GlassButton(
@@ -262,7 +317,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               ),
               const SizedBox(width: 8),
               Text(
-                'AI 관상 분석 결과',
+                '관상 분석 결과',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -270,6 +325,16 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
             ],
           ),
           const SizedBox(height: 16),
+
+          // ✅ 닮은꼴 유명인 캐러셀
+          if (_similarCelebrities != null && _similarCelebrities!.isNotEmpty) ...[
+            CelebrityMatchCarousel(
+              celebrities: _similarCelebrities!,
+              isBlurred: false,
+            ),
+            const SizedBox(height: 24),
+          ],
+
           Text(
             _analysisResult!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -310,6 +375,12 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
 
   void _showImagePicker() {
     HapticUtils.lightImpact();
+
+    // ✅ 프로필 사진 정보 가져오기
+    final userProfileAsync = ref.read(userProfileProvider);
+    final profileImageUrl = userProfileAsync.valueOrNull?.profileImageUrl;
+    final hasProfileImage = profileImageUrl != null && profileImageUrl.isNotEmpty;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: TossDesignSystem.transparent,
@@ -319,20 +390,80 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // ✅ 프로필 사진 옵션 (있을 때만 표시)
+              if (hasProfileImage)
+                ListTile(
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: CachedNetworkImage(
+                      imageUrl: profileImageUrl,
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  title: const Text('내 프로필 사진 사용'),
+                  subtitle: Text(
+                    '빠르게 분석을 시작해보세요',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  onTap: _isLoadingProfileImage
+                      ? null
+                      : () {
+                          Navigator.pop(context);
+                          _useProfileImage(profileImageUrl);
+                        },
+                ),
+              if (hasProfileImage)
+                Divider(
+                  height: 1,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                ),
               ListTile(
                 leading: Icon(Icons.camera_alt, color: Theme.of(context).colorScheme.primary),
                 title: const Text('카메라로 촬영'),
                 onTap: () {
                   Navigator.pop(context);
                   _pickImage(ImageSource.camera);
-                }),
+                },
+              ),
               ListTile(
                 leading: Icon(Icons.photo_library, color: Theme.of(context).colorScheme.primary),
                 title: const Text('갤러리에서 선택'),
                 onTap: () {
                   Navigator.pop(context);
                   _pickImage(ImageSource.gallery);
-                }),
+                },
+              ),
               ListTile(
                 leading: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                 title: const Text('취소'),
@@ -392,6 +523,44 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
     });
   }
 
+  /// ✅ 프로필 사진 다운로드 후 사용
+  Future<void> _useProfileImage(String imageUrl) async {
+    setState(() {
+      _isLoadingProfileImage = true;
+    });
+
+    try {
+      final response = await http.get(Uri.parse(imageUrl));
+      if (response.statusCode == 200) {
+        final tempDir = await getTemporaryDirectory();
+        final file = File(
+            '${tempDir.path}/profile_face_${DateTime.now().millisecondsSinceEpoch}.jpg');
+        await file.writeAsBytes(response.bodyBytes);
+
+        if (mounted) {
+          setState(() {
+            _selectedImage = file;
+            _analysisResult = null;
+            _isLoadingProfileImage = false;
+          });
+          HapticUtils.mediumImpact();
+        }
+      } else {
+        throw Exception('Failed to download image');
+      }
+    } catch (e) {
+      Logger.error('프로필 이미지 다운로드 실패', e);
+      if (mounted) {
+        setState(() {
+          _isLoadingProfileImage = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('프로필 사진을 불러올 수 없습니다')),
+        );
+      }
+    }
+  }
+
   Future<void> _analyzeImage() async {
     // 토큰 확인
     final tokenBalance = ref.read(tokenBalanceProvider);
@@ -437,6 +606,32 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
 【전체적인 인상】
 전반적으로 균형 잡힌 관상으로, 복이 많은 얼굴입니다. 특히 중년 이후 큰 성공과 행복이 기다리고 있을 것으로 보입니다.
 ''';
+
+        // ✅ 닮은꼴 유명인 mock 데이터
+        _similarCelebrities = [
+          {
+            'celebrity_name': '아이유',
+            'celebrity_type': 'solo_singer',
+            'similarity_score': 87,
+            'matched_features': ['눈매', '웃는 모습', '이목구비 비율'],
+            'reason': '맑고 또렷한 눈매가 매우 유사합니다',
+          },
+          {
+            'celebrity_name': '수지',
+            'celebrity_type': 'actress',
+            'similarity_score': 82,
+            'matched_features': ['얼굴형', '코 라인', '입술'],
+            'reason': '부드러운 얼굴 윤곽과 코 라인이 닮았습니다',
+          },
+          {
+            'celebrity_name': '차은우',
+            'celebrity_type': 'idol_actor',
+            'similarity_score': 78,
+            'matched_features': ['눈썹', '전체 인상'],
+            'reason': '선명한 눈썹과 시원한 인상이 유사합니다',
+          },
+        ];
+
         _isAnalyzing = false;
       });
       
@@ -457,6 +652,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
     setState(() {
       _selectedImage = null;
       _analysisResult = null;
+      _similarCelebrities = null; // ✅ 닮은꼴 데이터도 초기화
     });
   }
 

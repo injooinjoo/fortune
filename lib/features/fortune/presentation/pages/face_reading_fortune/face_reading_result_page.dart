@@ -113,6 +113,18 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
               const SizedBox(height: 24),
             ],
 
+            // 닮은꼴 상(相) 분류 - 2025 트렌드
+            if (data['faceTypeClassification'] != null) ...[
+              _buildFaceTypeClassification(
+                data: data['faceTypeClassification'] as Map<String, dynamic>,
+                isDark: isDark,
+                cardColor: cardColor,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
+              const SizedBox(height: 24),
+            ],
+
             // 세분화된 부위별 분석
             _buildDetailedAnalysis(
               data: data,
@@ -323,6 +335,278 @@ class _FaceReadingResultPageState extends ConsumerState<FaceReadingResultPage> {
         ],
       ),
     ).animate().fadeIn(duration: 400.ms, delay: 100.ms);
+  }
+
+  /// 닮은꼴 상(相) 분류 섹션 - 동물상 + 인상 분류
+  Widget _buildFaceTypeClassification({
+    required Map<String, dynamic> data,
+    required bool isDark,
+    required Color cardColor,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    final animalType = data['animalType'] as Map<String, dynamic>?;
+    final impressionType = data['impressionType'] as Map<String, dynamic>?;
+
+    // 동물상 이모지 매핑
+    const animalEmojis = {
+      '강아지상': '🐶',
+      '고양이상': '🐱',
+      '여우상': '🦊',
+      '토끼상': '🐰',
+      '곰상': '🐻',
+      '늑대상': '🐺',
+      '사슴상': '🦌',
+      '다람쥐상': '🐿️',
+    };
+
+    // 인상 이모지 매핑
+    const impressionEmojis = {
+      '아랍상': '🧊',
+      '두부상': '🫧',
+      '하이브리드': '✨',
+    };
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 섹션 헤더
+          Row(
+            children: [
+              const Text(
+                '✨',
+                style: TextStyle(fontSize: 20),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '닮은꼴 상(相) 분류',
+                style: DSTypography.bodyLarge.copyWith(
+                  color: textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // 동물상 카드
+          if (animalType != null) ...[
+            _buildAnimalTypeCard(
+              animalType: animalType,
+              emojis: animalEmojis,
+              isDark: isDark,
+              textPrimary: textPrimary,
+              textSecondary: textSecondary,
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          // 인상 분류 카드
+          if (impressionType != null)
+            _buildImpressionTypeCard(
+              impressionType: impressionType,
+              emojis: impressionEmojis,
+              isDark: isDark,
+              textPrimary: textPrimary,
+              textSecondary: textSecondary,
+            ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 400.ms, delay: 150.ms);
+  }
+
+  /// 동물상 카드 위젯
+  Widget _buildAnimalTypeCard({
+    required Map<String, dynamic> animalType,
+    required Map<String, String> emojis,
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    final primary = animalType['primary'] as String? ?? '알 수 없음';
+    final secondary = animalType['secondary'] as String?;
+    final matchScore = (animalType['matchScore'] as num?)?.toInt() ?? 75;
+    final description = animalType['description'] as String? ?? '';
+    final traits = (animalType['traits'] as List?)?.cast<String>() ?? [];
+
+    final emoji = emojis[primary] ?? '🐾';
+    final accentColor = isDark ? const Color(0xFF10A37F) : const Color(0xFF10A37F);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF3D3D3D) : const Color(0xFFE8F5E9),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: accentColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 동물상 타이틀 + 점수
+          Row(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 28)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          primary,
+                          style: DSTypography.headingMedium.copyWith(
+                            color: textPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (secondary != null && secondary.isNotEmpty) ...[
+                          Text(
+                            ' + ',
+                            style: DSTypography.bodyMedium.copyWith(
+                              color: textSecondary,
+                            ),
+                          ),
+                          Text(
+                            secondary,
+                            style: DSTypography.bodyMedium.copyWith(
+                              color: textPrimary,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '매칭 점수 $matchScore점',
+                      style: DSTypography.labelSmall.copyWith(
+                        color: accentColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // 설명
+          if (description.isNotEmpty)
+            Text(
+              description,
+              style: DSTypography.bodyMedium.copyWith(
+                color: textPrimary,
+                height: 1.5,
+              ),
+            ),
+
+          // 특징 태그
+          if (traits.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: traits.map((trait) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: accentColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '#$trait',
+                    style: DSTypography.labelSmall.copyWith(
+                      color: accentColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 인상 분류 카드 위젯
+  Widget _buildImpressionTypeCard({
+    required Map<String, dynamic> impressionType,
+    required Map<String, String> emojis,
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    final type = impressionType['type'] as String? ?? '알 수 없음';
+    final matchScore = (impressionType['matchScore'] as num?)?.toInt() ?? 75;
+    final description = impressionType['description'] as String? ?? '';
+
+    final emoji = emojis[type] ?? '✨';
+    final accentColor = isDark ? const Color(0xFF7C4DFF) : const Color(0xFF5E35B1);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF3D3D3D) : const Color(0xFFF3E5F5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: accentColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 24)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      type,
+                      style: DSTypography.bodyLarge.copyWith(
+                        color: textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '$matchScore점',
+                      style: DSTypography.labelSmall.copyWith(
+                        color: accentColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                if (description.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: DSTypography.bodySmall.copyWith(
+                      color: textSecondary,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildDetailedAnalysis({

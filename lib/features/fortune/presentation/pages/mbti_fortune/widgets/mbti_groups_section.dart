@@ -10,12 +10,13 @@ class MbtiGroupsSection extends StatelessWidget {
   final Function(String) onMbtiSelected;
   final ScrollController scrollController;
 
-  static const Map<String, List<String>> mbtiGroups = {
-    '분석가': ['INTJ', 'INTP', 'ENTJ', 'ENTP'],
-    '외교관': ['INFJ', 'INFP', 'ENFJ', 'ENFP'],
-    '관리자': ['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'],
-    '탐험가': ['ISTP', 'ISFP', 'ESTP', 'ESFP'],
-  };
+  // ✅ 카테고리 제거: 단순 리스트로 변경
+  static const List<String> allMbtiTypes = [
+    'INTJ', 'INTP', 'ENTJ', 'ENTP',
+    'INFJ', 'INFP', 'ENFJ', 'ENFP',
+    'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
+    'ISTP', 'ISFP', 'ESTP', 'ESFP',
+  ];
 
   const MbtiGroupsSection({
     super.key,
@@ -25,21 +26,6 @@ class MbtiGroupsSection extends StatelessWidget {
     required this.onMbtiSelected,
     required this.scrollController,
   });
-
-  Color _getGroupColor(String groupName, DSColorScheme colors) {
-    switch (groupName) {
-      case '분석가':
-        return const Color(0xFF8B5CF6);
-      case '외교관':
-        return const Color(0xFF10B981);
-      case '관리자':
-        return const Color(0xFF3B82F6);
-      case '탐험가':
-        return const Color(0xFFF59E0B);
-      default:
-        return colors.accent;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +84,7 @@ class MbtiGroupsSection extends StatelessWidget {
           ),
         ),
 
-        // MBTI 그리드
+        // ✅ MBTI 그리드 (카테고리 없이 4x4)
         AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
           crossFadeState: showAllGroups
@@ -106,67 +92,32 @@ class MbtiGroupsSection extends StatelessWidget {
               : CrossFadeState.showSecond,
           firstChild: Padding(
             padding: const EdgeInsets.only(top: 16),
-            child: Column(
-              children: mbtiGroups.entries.map((entry) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 그룹 라벨
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12, left: 4),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 4,
-                            height: 20,
-                            margin: const EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                              color: _getGroupColor(entry.key, colors),
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                          Text(
-                            entry.key,
-                            style: DSTypography.labelLarge.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: colors.textPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // MBTI 카드
-                    GridView.count(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: 4,
-                      childAspectRatio: 0.85,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      children: entry.value
-                          .map((mbti) => MbtiCard(
-                                mbti: mbti,
-                                isSelected: selectedMbti == mbti,
-                                onTap: () {
-                                  onMbtiSelected(mbti);
-                                  // ✅ 부드러운 스크롤 애니메이션
-                                  Future.delayed(const Duration(milliseconds: 350), () {
-                                    if (scrollController.hasClients) {
-                                      scrollController.animateTo(
-                                        0,
-                                        duration: const Duration(milliseconds: 300),
-                                        curve: Curves.easeOutCubic,
-                                      );
-                                    }
-                                  });
-                                },
-                              ))
-                          .toList(),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                );
-              }).toList(),
+            child: GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 4,
+              childAspectRatio: 0.85,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              children: allMbtiTypes
+                  .map((mbti) => MbtiCard(
+                        mbti: mbti,
+                        isSelected: selectedMbti == mbti,
+                        onTap: () {
+                          onMbtiSelected(mbti);
+                          // ✅ 부드러운 스크롤 애니메이션
+                          Future.delayed(const Duration(milliseconds: 350), () {
+                            if (scrollController.hasClients) {
+                              scrollController.animateTo(
+                                0,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeOutCubic,
+                              );
+                            }
+                          });
+                        },
+                      ))
+                  .toList(),
             ),
           ),
           secondChild: const SizedBox(width: double.infinity),

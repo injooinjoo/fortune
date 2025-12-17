@@ -10,7 +10,6 @@ import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../services/ad_service.dart'; // ✅ RewardedAd용
 import '../../../../../core/utils/subscription_snackbar.dart';
 import '../../../../../presentation/providers/token_provider.dart';
-import '../../../../../presentation/providers/subscription_provider.dart';
 import '../../../../../core/utils/logger.dart'; // ✅ 로그용
 import '../../../../../core/services/fortune_haptic_service.dart';
 
@@ -50,8 +49,9 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
       if (mounted && !_hapticTriggered) {
         _hapticTriggered = true;
 
-        // ✅ 프리미엄 사용자는 블러 해제
-        final isPremium = ref.read(isPremiumProvider);
+        // ✅ 프리미엄 사용자는 블러 해제 (테스트계정, 무제한토큰 포함)
+        final tokenState = ref.read(tokenProvider);
+        final isPremium = tokenState.hasUnlimitedAccess;
         if (isPremium && _fortuneResult.isBlurred) {
           setState(() {
             _fortuneResult = _fortuneResult.copyWith(
@@ -170,7 +170,7 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
             ),
 
             // 🎯 Floating Button (블러 상태 + 비구독자만 표시)
-            if (_fortuneResult.isBlurred && !ref.watch(isPremiumProvider))
+            if (_fortuneResult.isBlurred && !ref.watch(tokenProvider).hasUnlimitedAccess)
               UnifiedButton.floating(
                 text: '연애 조언 모두 보기',
                 onPressed: _showAdAndUnblur,
@@ -189,6 +189,13 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
     final data = _fortuneResult.data;
     final loveScore = data['loveScore'] as int? ?? 70;
     final mainMessage = FortuneTextCleaner.clean(data['mainMessage'] as String? ?? '');
+
+    // 세부 점수 (API에서 제공하거나 기본값 사용)
+    final subScores = data['subScores'] as Map<String, dynamic>? ?? {};
+    final passionScore = subScores['passion'] as int? ?? (loveScore + 5).clamp(0, 100);
+    final emotionScore = subScores['emotion'] as int? ?? (loveScore - 3).clamp(0, 100);
+    final trustScore = subScores['trust'] as int? ?? loveScore;
+    final communicationScore = subScores['communication'] as int? ?? (loveScore + 2).clamp(0, 100);
 
     return Container(
       padding: const EdgeInsets.all(24),
@@ -225,11 +232,38 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            '$loveScore점',
-            style: DSTypography.displayLarge.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
+          // ✅ 점수 표시 개선 (/ 100 추가)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                '❤️ $loveScore',
+                style: DSTypography.displayLarge.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '/ 100',
+                style: DSTypography.bodyLarge.copyWith(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // ✅ 프로그레스 바 추가
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: loveScore / 100,
+              backgroundColor: Colors.white.withValues(alpha: 0.3),
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+              minHeight: 8,
             ),
           ),
           const SizedBox(height: 16),
@@ -241,9 +275,43 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
             ),
             textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 20),
+          // ✅ 세부 점수 태그
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.center,
+            children: [
+              _buildSubScoreTag('💘 열정', passionScore),
+              _buildSubScoreTag('💕 감성', emotionScore),
+              _buildSubScoreTag('🤝 신뢰', trustScore),
+              _buildSubScoreTag('💬 소통', communicationScore),
+            ],
+          ),
         ],
       ),
     ).animate().fadeIn(duration: 600.ms).scale(delay: 200.ms);
+  }
+
+  /// 세부 점수 태그 위젯
+  Widget _buildSubScoreTag(String label, int score) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Text(
+        '$label $score',
+        style: DSTypography.labelSmall.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 
   Widget _buildLoveStyleSection(DSColorScheme colors) {
@@ -252,14 +320,106 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
     final loveStyle = detailedAnalysis['loveStyle'] as Map<String, dynamic>? ?? {};
     final description = FortuneTextCleaner.clean(loveStyle['description'] as String? ?? '당신만의 특별한 연애 스타일을 가지고 있어요.');
 
-    return _buildDetailSection(
-      context,
-      '연애 성향',
-      description,
-      Icons.psychology_rounded,
-      colors.accent,
-      colors,
+    // ✅ 연애 타입 추출 (API에서 제공하거나 기본값)
+    final loveType = loveStyle['type'] as String? ??
+        data['loveType'] as String? ??
+        _extractLoveType(description);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: colors.accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.psychology_rounded, color: colors.accent, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '연애 성향',
+                style: DSTypography.headingSmall.copyWith(fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // ✅ 타입 배지 추가
+          _buildLoveTypeBadge(loveType),
+          const SizedBox(height: 12),
+          Text(
+            description,
+            style: DSTypography.bodyMedium.copyWith(
+              color: colors.textSecondary,
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    ).animate()
+        .fadeIn(delay: 200.ms, duration: 500.ms)
+        .slideX(begin: -0.1, end: 0);
+  }
+
+  /// 연애 타입 배지 위젯
+  Widget _buildLoveTypeBadge(String type) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFF6B9D), Color(0xFFFFA8C5)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF6B9D).withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.favorite, size: 16, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(
+            type,
+            style: DSTypography.labelMedium.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  /// 설명에서 연애 타입 추출 (기본값 생성)
+  String _extractLoveType(String description) {
+    if (description.contains('로맨틱') || description.contains('감성')) {
+      return '로맨티스트';
+    } else if (description.contains('열정') || description.contains('적극')) {
+      return '열정파';
+    } else if (description.contains('신중') || description.contains('조심')) {
+      return '신중파';
+    } else if (description.contains('자유') || description.contains('독립')) {
+      return '자유영혼';
+    } else if (description.contains('배려') || description.contains('따뜻')) {
+      return '따뜻한 배려파';
+    } else {
+      return '매력적인 연애러';
+    }
   }
 
   Widget _buildCharmPointsSection(DSColorScheme colors) {
@@ -269,18 +429,133 @@ class _LoveFortuneResultPageState extends ConsumerState<LoveFortuneResultPage> {
     final primary = FortuneTextCleaner.clean(charmPoints['primary'] as String? ?? '');
     final details = List<String>.from(charmPoints['details'] ?? []).map((d) => FortuneTextCleaner.clean(d.toString())).toList();
 
-    final content = details.isNotEmpty
-        ? '$primary\n\n• ${details.join('\n• ')}'
-        : primary;
+    // ✅ 태그용 매력 키워드 추출
+    final charmTags = data['charms'] as List<dynamic>? ??
+        charmPoints['tags'] as List<dynamic>? ??
+        _extractCharmTags(primary, details);
 
-    return _buildDetailSection(
-      context,
-      '매력 포인트',
-      content.isEmpty ? '당신만의 특별한 매력을 가지고 있어요.' : content,
-      Icons.star_rounded,
-      DSColors.warning,
-      colors,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: DSColors.warning.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.star_rounded, color: DSColors.warning, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '매력 포인트',
+                style: DSTypography.headingSmall.copyWith(fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // ✅ 태그 형태로 매력 표시
+          _buildCharmTags(charmTags.map((e) => e.toString()).toList()),
+          if (primary.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text(
+              primary,
+              style: DSTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
+                height: 1.6,
+              ),
+            ),
+          ],
+        ],
+      ),
+    ).animate()
+        .fadeIn(delay: 200.ms, duration: 500.ms)
+        .slideX(begin: -0.1, end: 0);
+  }
+
+  /// 매력 태그 위젯
+  Widget _buildCharmTags(List<String> charms) {
+    if (charms.isEmpty) {
+      return _buildCharmTags(['유머 감각', '배려심', '센스']);
+    }
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: charms.map((charm) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF0F5), // 연한 핑크색 배경
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: const Color(0xFFFF6B9D).withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('✨', style: TextStyle(fontSize: 12)),
+            const SizedBox(width: 4),
+            Text(
+              charm,
+              style: DSTypography.labelMedium.copyWith(
+                color: const Color(0xFFFF6B9D),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      )).toList(),
     );
+  }
+
+  /// 설명에서 매력 키워드 추출
+  List<String> _extractCharmTags(String primary, List<String> details) {
+    final keywords = <String>[];
+    final combined = '$primary ${details.join(' ')}';
+
+    // 일반적인 매력 키워드 매핑
+    final keywordMap = {
+      '유머': '유머 감각',
+      '웃음': '유머 감각',
+      '배려': '배려심',
+      '따뜻': '따뜻한 마음',
+      '센스': '센스',
+      '진실': '진실된 모습',
+      '솔직': '솔직함',
+      '자신감': '자신감',
+      '열정': '열정',
+      '긍정': '긍정적 에너지',
+      '지적': '지적 매력',
+      '친절': '친절함',
+      '다정': '다정함',
+      '사려': '사려 깊음',
+      '경청': '경청 능력',
+      '공감': '공감 능력',
+      '표현': '표현력',
+    };
+
+    for (final entry in keywordMap.entries) {
+      if (combined.contains(entry.key) && keywords.length < 4) {
+        keywords.add(entry.value);
+      }
+    }
+
+    // 키워드가 없으면 기본값
+    if (keywords.isEmpty) {
+      return ['매력적인 눈빛', '따뜻한 미소', '진심 어린 대화'];
+    }
+
+    return keywords;
   }
 
   Widget _buildImprovementSection(DSColorScheme colors) {

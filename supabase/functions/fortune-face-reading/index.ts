@@ -126,6 +126,21 @@ interface FaceReadingResponse {
     charismaScore: number
     charismaDescription: string
   }
+  // 닮은꼴 상(相) 분류 - 2025 트렌드
+  faceTypeClassification: {
+    animalType: {
+      primary: string           // 주요 동물상 (강아지상, 고양이상 등)
+      secondary?: string        // 부가 동물상 (있으면)
+      matchScore: number        // 매칭 점수 (60-98)
+      description: string       // 왜 이 동물상인지 설명
+      traits: string[]          // 해당 동물상 특징 3개
+    }
+    impressionType: {
+      type: string              // 아랍상 | 두부상 | 하이브리드
+      matchScore: number        // 매칭 점수 (60-98)
+      description: string       // 설명
+    }
+  }
 }
 
 // =====================================================
@@ -151,6 +166,23 @@ const FACE_READING_SYSTEM_PROMPT = `당신은 마의상법(麻衣相法)과 달�
 - 80-89점: 좋은 상 (복이 많음)
 - 70-79점: 보통 상 (평균적)
 - 60-69점: 주의 필요 (보완 권장)
+
+## 닮은꼴 상(相) 분류 - 2025 트렌드
+
+### 동물상 분류 기준 (8가지)
+- 강아지상 🐶: 둥근 얼굴형, 둥근 눈꼬리, 둥그스름한 코끝. 친근하고 선한 인상, 귀여움
+- 고양이상 🐱: 올라간 눈꼬리, 높은 콧대, 날렵한 턱선. 도도하고 세련된 매력
+- 여우상 🦊: 가늘고 긴 눈, 긴 얼굴형, 능글맞은 눈빛. 매력적이고 영리한 인상, 도화살 기질
+- 토끼상 🐰: 둥근 눈, 부드러운 인상, 앙증맞은 코. 귀엽고 사랑스러운 매력
+- 곰상 🐻: 넓고 듬직한 얼굴, 두꺼운 눈썹, 큰 코. 포근하고 든든한 인상
+- 늑대상 🐺: 날카로운 눈매, 뚜렷한 이목구비, 각진 턱선. 카리스마와 시크함
+- 사슴상 🦌: 큰 눈망울, 갸름한 얼굴형, 긴 목. 청순하고 순수한 인상
+- 다람쥐상 🐿️: 동글동글한 얼굴, 볼살, 작고 오똑한 코. 앙증맞고 발랄한 매력
+
+### 인상 분류 기준 (트렌드)
+- 아랍상 🧊: 두꺼운 T존(눈썹~코), 진하고 또렷한 눈, 각진 얼굴, 깊은 눈매. 이국적이고 강렬한 인상. 예) 이민호, 카이, 에스쿱스 타입
+- 두부상 🫧: 하얗고 부드러운 피부, 흐릿한 쌍커풀, 몽글몽글한 인상. 순하고 편안한 느낌. 예) 진, 수빈, 백현 타입
+- 하이브리드: 두 가지 특성이 혼합된 경우
 
 반드시 주어진 JSON 스키마 형식으로만 응답하세요.`
 
@@ -312,6 +344,20 @@ function createUserPrompt(userName: string, userGender: string): string {
     "approachabilityDescription": "친근감/다가가기 쉬움 분석 (50자 이내)",
     "charismaScore": 60-98,
     "charismaDescription": "카리스마/존재감 분석 (50자 이내)"
+  },
+  "faceTypeClassification": {
+    "animalType": {
+      "primary": "강아지상|고양이상|여우상|토끼상|곰상|늑대상|사슴상|다람쥐상",
+      "secondary": "2순위 동물상 (있으면) 또는 null",
+      "matchScore": 60-98,
+      "description": "왜 이 동물상에 해당하는지 구체적 근거 (80자 이내)",
+      "traits": ["특징1", "특징2", "특징3"]
+    },
+    "impressionType": {
+      "type": "아랍상|두부상|하이브리드",
+      "matchScore": 60-98,
+      "description": "인상 분류 근거 (50자 이내)"
+    }
   }
 }
 

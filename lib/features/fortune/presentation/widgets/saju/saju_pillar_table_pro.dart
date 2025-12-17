@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
+import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/ji_jang_gan_data.dart';
 import '../../../domain/models/saju/twelve_stage_calculator.dart';
 import '../../../domain/models/saju/gong_mang_calculator.dart';
+import 'saju_concept_card.dart';
 
 /// 전문가용 사주 4주 테이블
 ///
@@ -57,7 +59,7 @@ class SajuPillarTablePro extends StatelessWidget {
             _buildTitle(isDark),
             const SizedBox(height: DSSpacing.md),
           ],
-          _buildProTable(isDark),
+          _buildProTable(context, isDark),
           const SizedBox(height: DSSpacing.sm),
           _buildDayMasterInfo(isDark),
         ],
@@ -98,7 +100,7 @@ class SajuPillarTablePro extends StatelessWidget {
     );
   }
 
-  Widget _buildProTable(bool isDark) {
+  Widget _buildProTable(BuildContext context, bool isDark) {
     final pillars = [
       {'title': '시주', 'hanja': '時柱', 'key': 'hour'},
       {'title': '일주', 'hanja': '日柱', 'key': 'day'},
@@ -130,9 +132,9 @@ class SajuPillarTablePro extends StatelessWidget {
           // 헤더 행 (년주, 월주, 일주, 시주)
           _buildHeaderRow(pillars, isDark),
           // 천간 행
-          _buildStemRow(pillars, isDark),
+          _buildStemRow(context, pillars, isDark),
           // 지지 행
-          _buildBranchRow(pillars, gongMangInfo, isDark),
+          _buildBranchRow(context, pillars, gongMangInfo, isDark),
           // 지장간 행 (옵션)
           if (showJijanggan) _buildJijangganRow(pillars, isDark),
           // 12운성 행 (옵션)
@@ -214,7 +216,8 @@ class SajuPillarTablePro extends StatelessWidget {
     );
   }
 
-  Widget _buildStemRow(List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildStemRow(
+      BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -252,7 +255,11 @@ class SajuPillarTablePro extends StatelessWidget {
                     ? DSColors.accent.withValues(alpha: 0.08)
                     : null,
               ),
-              child: _buildStemCell(stemData, isDay, isDark),
+              child: GestureDetector(
+                onTap: () => _showStemExplanation(context, stemData),
+                behavior: HitTestBehavior.opaque,
+                child: _buildStemCell(stemData, isDay, isDark),
+              ),
             ),
           );
         }).toList(),
@@ -261,6 +268,7 @@ class SajuPillarTablePro extends StatelessWidget {
   }
 
   Widget _buildBranchRow(
+    BuildContext context,
     List<Map<String, String>> pillars,
     GongMangInfo? gongMangInfo,
     bool isDark,
@@ -309,7 +317,11 @@ class SajuPillarTablePro extends StatelessWidget {
                     ? DSColors.accent.withValues(alpha: 0.08)
                     : null,
               ),
-              child: _buildBranchCell(branchData, isDay, isGongMang, isDark),
+              child: GestureDetector(
+                onTap: () => _showBranchExplanation(context, branchData),
+                behavior: HitTestBehavior.opaque,
+                child: _buildBranchCell(branchData, isDay, isGongMang, isDark),
+              ),
             ),
           );
         }).toList(),
@@ -840,5 +852,51 @@ class SajuPillarTablePro extends StatelessWidget {
       default:
         return '';
     }
+  }
+
+  /// 천간 터치 시 해설 바텀시트 표시
+  void _showStemExplanation(
+      BuildContext context, Map<String, dynamic>? stemData) {
+    if (stemData == null) return;
+
+    final hanja = stemData['hanja'] as String?;
+    if (hanja == null) return;
+
+    final explanation = SajuExplanations.heavenlyStem[hanja];
+    if (explanation == null) return;
+
+    showCharacterExplanationSheet(
+      context: context,
+      hanja: hanja,
+      korean: explanation['korean']!,
+      element: explanation['element']!,
+      elementKorean: explanation['elementKorean']!,
+      meaning: explanation['meaning']!,
+      description: explanation['description']!,
+    );
+  }
+
+  /// 지지 터치 시 해설 바텀시트 표시
+  void _showBranchExplanation(
+      BuildContext context, Map<String, dynamic>? branchData) {
+    if (branchData == null) return;
+
+    final hanja = branchData['hanja'] as String?;
+    if (hanja == null) return;
+
+    final explanation = SajuExplanations.earthlyBranch[hanja];
+    if (explanation == null) return;
+
+    showCharacterExplanationSheet(
+      context: context,
+      hanja: hanja,
+      korean: explanation['korean']!,
+      element: explanation['element']!,
+      elementKorean: explanation['elementKorean']!,
+      meaning: explanation['meaning']!,
+      description: explanation['description']!,
+      animal: explanation['animal'],
+      time: explanation['time'],
+    );
   }
 }

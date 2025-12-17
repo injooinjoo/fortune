@@ -19,12 +19,16 @@ class UserSettings {
   /// 햅틱 피드백 활성화 여부
   final bool hapticEnabled;
 
+  /// 효과음 활성화 여부
+  final bool soundEnabled;
+
   const UserSettings({
     this.fontScale = 1.0,
     this.bodyFontFamily = 'Pretendard',
     this.headingFontFamily = 'Pretendard',
     this.numberFontFamily = 'TossFace',
     this.hapticEnabled = true,
+    this.soundEnabled = true,
   });
 
   UserSettings copyWith({
@@ -33,6 +37,7 @@ class UserSettings {
     String? headingFontFamily,
     String? numberFontFamily,
     bool? hapticEnabled,
+    bool? soundEnabled,
   }) {
     return UserSettings(
       fontScale: fontScale ?? this.fontScale,
@@ -40,6 +45,7 @@ class UserSettings {
       headingFontFamily: headingFontFamily ?? this.headingFontFamily,
       numberFontFamily: numberFontFamily ?? this.numberFontFamily,
       hapticEnabled: hapticEnabled ?? this.hapticEnabled,
+      soundEnabled: soundEnabled ?? this.soundEnabled,
     );
   }
 
@@ -49,6 +55,7 @@ class UserSettings {
   static const String _keyHeadingFont = 'user_settings_heading_font';
   static const String _keyNumberFont = 'user_settings_number_font';
   static const String _keyHapticEnabled = 'user_settings_haptic_enabled';
+  static const String _keySoundEnabled = 'user_settings_sound_enabled';
 
   /// SharedPreferences에 저장
   Future<void> save() async {
@@ -58,6 +65,7 @@ class UserSettings {
     await prefs.setString(_keyHeadingFont, headingFontFamily);
     await prefs.setString(_keyNumberFont, numberFontFamily);
     await prefs.setBool(_keyHapticEnabled, hapticEnabled);
+    await prefs.setBool(_keySoundEnabled, soundEnabled);
   }
 
   /// SharedPreferences에서 로드
@@ -69,6 +77,7 @@ class UserSettings {
       headingFontFamily: prefs.getString(_keyHeadingFont) ?? 'Pretendard',
       numberFontFamily: prefs.getString(_keyNumberFont) ?? 'TossFace',
       hapticEnabled: prefs.getBool(_keyHapticEnabled) ?? true,
+      soundEnabled: prefs.getBool(_keySoundEnabled) ?? true,
     );
   }
 }
@@ -150,6 +159,17 @@ class UserSettingsNotifier extends StateNotifier<UserSettings> {
   /// 햅틱 피드백 토글
   Future<void> toggleHaptic() async {
     await setHapticEnabled(!state.hapticEnabled);
+  }
+
+  /// 효과음 활성화/비활성화
+  Future<void> setSoundEnabled(bool enabled) async {
+    state = state.copyWith(soundEnabled: enabled);
+    await state.save();
+  }
+
+  /// 효과음 토글
+  Future<void> toggleSound() async {
+    await setSoundEnabled(!state.soundEnabled);
   }
 }
 

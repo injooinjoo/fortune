@@ -13,12 +13,16 @@ class NameInputStep extends ConsumerStatefulWidget {
   final String initialName;
   final Function(String) onNameChanged;
   final VoidCallback onNext;
-  
+  final VoidCallback? onSkip;
+  final bool allowSkip;
+
   const NameInputStep({
     super.key,
     required this.initialName,
     required this.onNameChanged,
     required this.onNext,
+    this.onSkip,
+    this.allowSkip = false,
   });
 
   @override
@@ -430,24 +434,44 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                 ),
               ),
               
-              // "계정이 있어요" link at bottom - Only show when keyboard is NOT visible AND no text input
+              // Bottom links - Only show when keyboard is NOT visible AND no text input
               if (!isKeyboardVisible && !_isValid)
                 Positioned(
                   bottom: 32.0,
                   left: 0,
                   right: 0,
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () => _showSocialLoginBottomSheet(context),
-                      child: Text(
-                        '계정이 있어요',
-                        style: typography.bodySmall.copyWith(
-                          color: colors.textSecondary,
-                          decoration: TextDecoration.underline,
-                          decorationColor: colors.textSecondary,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Skip button for social login users
+                      if (widget.allowSkip && widget.onSkip != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: GestureDetector(
+                            onTap: widget.onSkip,
+                            child: Text(
+                              '건너뛰기',
+                              style: typography.bodyMedium.copyWith(
+                                color: colors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      // "계정이 있어요" link
+                      Center(
+                        child: GestureDetector(
+                          onTap: () => _showSocialLoginBottomSheet(context),
+                          child: Text(
+                            '계정이 있어요',
+                            style: typography.bodySmall.copyWith(
+                              color: colors.textSecondary,
+                              decoration: TextDecoration.underline,
+                              decorationColor: colors.textSecondary,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
             ],

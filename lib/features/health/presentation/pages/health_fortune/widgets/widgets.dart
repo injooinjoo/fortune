@@ -5,3 +5,5 @@ export 'body_part_health_section.dart';
 export 'recommendations_section.dart';
 export 'avoidance_section.dart';
 export 'tomorrow_preview_section.dart';
+export 'medical_document_upload_section.dart';
+export 'document_upload_bottom_sheet.dart';

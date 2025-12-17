@@ -1,11 +1,11 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/date_picker/numeric_date_input.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
-import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
 import '../../../../services/storage_service.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../domain/models/conditions/biorhythm_fortune_conditions.dart';
@@ -15,6 +15,9 @@ import '../../../../core/utils/logger.dart';
 import '../../../../shared/components/toast.dart';
 import 'biorhythm_result_page.dart';
 import '../widgets/standard_fortune_app_bar.dart';
+import '../widgets/biorhythm/components/biorhythm_hanji_card.dart';
+import '../widgets/biorhythm/components/rhythm_traditional_icon.dart';
+import '../widgets/biorhythm/components/biorhythm_score_badge.dart';
 
 class BiorhythmInputPage extends ConsumerStatefulWidget {
   const BiorhythmInputPage({super.key});
@@ -211,10 +214,12 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hanjiBackground = DSBiorhythmColors.getHanjiBackground(isDark);
+    final textColor = DSBiorhythmColors.getInkBleed(isDark);
 
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: hanjiBackground,
       appBar: const StandardFortuneAppBar(
         title: '바이오리듬',
       ),
@@ -222,6 +227,12 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
         builder: (context, constraints) {
           return Stack(
             children: [
+              // Hanji texture background
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: _HanjiTexturePainter(isDark: isDark),
+                ),
+              ),
               SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
@@ -234,91 +245,107 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                         children: [
                           const SizedBox(height: 20),
 
-                          // 메인 설명 카드
+                          // 메인 설명 카드 - 한지 스타일
                           FadeTransition(
                             opacity: _fadeAnimation,
-                            child: AppCard(
-                              style: AppCardStyle.elevated,
+                            child: BiorhythmHanjiCard(
+                              style: HanjiCardStyle.scroll,
+                              showCornerDecorations: true,
+                              showSealStamp: true,
+                              sealText: '運',
                               padding: const EdgeInsets.all(24),
                               child: Column(
                                 children: [
-                                  // 바이오리듬 아이콘
+                                  // 전통 리듬 아이콘 3개
                                   AnimatedBuilder(
                                     animation: _pulseAnimation,
                                     builder: (context, child) => Transform.scale(
                                       scale: _pulseAnimation.value,
-                                      child: Container(
-                                        width: 80,
-                                        height: 80,
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              colors.accent,
-                                              DSColors.success,
-                                            ],
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                          ),
-                                          shape: BoxShape.circle,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: colors.accent.withValues(alpha: 0.3),
-                                              blurRadius: 20,
-                                              offset: const Offset(0, 8),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Icon(
-                                          Icons.timeline_rounded,
-                                          color: Colors.white,
-                                          size: 36,
-                                        ),
+                                      child: const RhythmTraditionalIconRow(
+                                        iconSize: 56,
+                                        showBackground: true,
+                                        showLabels: false,
                                       ),
                                     ),
                                   ),
                                   const SizedBox(height: 24),
 
+                                  // 타이틀 - 붓글씨 스타일
                                   Text(
-                                    '당신의 생체 리듬을 분석하고\n최적의 타이밍을 찾아드릴게요',
-                                    style: DSTypography.labelLarge.copyWith(
+                                    '생체 리듬의 흐름을\n읽어드립니다',
+                                    style: TextStyle(
+                                      fontFamily: 'GowunBatang',
+                                      fontSize: 20,
                                       fontWeight: FontWeight.w600,
-                                      color: colors.textPrimary,
-                                      height: 1.4,
+                                      color: textColor,
+                                      height: 1.5,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
                                   const SizedBox(height: 12),
 
+                                  // 설명 - 전통 스타일
                                   Text(
-                                    '신체·감정·지적 리듬의 3가지 주기를 분석해\n오늘의 컨디션과 앞으로의 흐름을 알려드려요',
-                                    style: DSTypography.bodyLarge.copyWith(
-                                      color: colors.textSecondary,
-                                      height: 1.5,
+                                    '신체(火) · 감정(木) · 지적(水)\n세 가지 기운의 주기를 분석하여\n오늘의 운세를 알려드립니다',
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 14,
+                                      color: textColor.withValues(alpha: 0.7),
+                                      height: 1.6,
                                     ),
                                     textAlign: TextAlign.center,
+                                  ),
+
+                                  const SizedBox(height: 16),
+
+                                  // 오행 배지 행
+                                  const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ElementBadge(type: BiorhythmType.physical, size: 28),
+                                      SizedBox(width: 12),
+                                      ElementBadge(type: BiorhythmType.emotional, size: 28),
+                                      SizedBox(width: 12),
+                                      ElementBadge(type: BiorhythmType.intellectual, size: 28),
+                                    ],
                                   ),
                                 ],
                               ),
                             ),
                           ),
 
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 24),
 
-                          // 생년월일 입력 카드
+                          // 생년월일 입력 카드 - 한지 스타일
                           FadeTransition(
                             opacity: _fadeAnimation,
-                            child: AppCard(
-                              style: AppCardStyle.outlined,
+                            child: BiorhythmHanjiCard(
+                              style: HanjiCardStyle.standard,
                               padding: const EdgeInsets.all(20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    '생년월일',
-                                    style: DSTypography.labelLarge.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: colors.textPrimary,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: 4,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          color: DSBiorhythmColors.getPhysical(isDark),
+                                          borderRadius: BorderRadius.circular(2),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        '생년월일',
+                                        style: TextStyle(
+                                          fontFamily: 'GowunBatang',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: textColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   const SizedBox(height: 16),
 
@@ -336,11 +363,13 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
 
                           const Spacer(),
 
-                          // 안내 문구
+                          // 안내 문구 - 전통 스타일
                           Text(
-                            '분석 결과는 참고용으로만 활용해 주세요',
-                            style: DSTypography.labelSmall.copyWith(
-                              color: colors.textSecondary,
+                            '※ 분석 결과는 참고용으로만 활용해 주세요',
+                            style: TextStyle(
+                              fontFamily: 'GowunBatang',
+                              fontSize: 12,
+                              color: textColor.withValues(alpha: 0.5),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -353,7 +382,7 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
                 ),
               ),
               UnifiedButton.floating(
-                text: '바이오리듬 분석하기',
+                text: '운세 분석하기',
                 onPressed: _selectedDate != null && !_isLoading ? _analyzeBiorhythm : null,
                 isEnabled: _selectedDate != null && !_isLoading,
                 isLoading: _isLoading,
@@ -363,5 +392,41 @@ class _BiorhythmInputPageState extends ConsumerState<BiorhythmInputPage>
         },
       ),
     );
+  }
+}
+
+/// Hanji paper texture background painter
+class _HanjiTexturePainter extends CustomPainter {
+  final bool isDark;
+
+  _HanjiTexturePainter({required this.isDark});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final random = math.Random(42);
+    final textureColor = isDark
+        ? Colors.white.withValues(alpha: 0.015)
+        : DSBiorhythmColors.inkBleed.withValues(alpha: 0.02);
+
+    // Draw subtle fiber texture
+    for (var i = 0; i < 100; i++) {
+      final x = random.nextDouble() * size.width;
+      final y = random.nextDouble() * size.height;
+      final length = 5 + random.nextDouble() * 15;
+      final angle = random.nextDouble() * math.pi;
+
+      canvas.drawLine(
+        Offset(x, y),
+        Offset(x + length * math.cos(angle), y + length * math.sin(angle)),
+        Paint()
+          ..color = textureColor
+          ..strokeWidth = 0.5,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _HanjiTexturePainter oldDelegate) {
+    return oldDelegate.isDark != isDark;
   }
 }

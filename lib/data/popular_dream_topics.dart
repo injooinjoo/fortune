@@ -108,16 +108,34 @@ class DreamTopic {
   final String title;
   final String category;
 
+  /// 직접 입력한 커스텀 꿈 내용 (선택적)
+  final String? customContent;
+
   const DreamTopic({
     required this.id,
     required this.emoji,
     required this.title,
     required this.category,
+    this.customContent,
   });
+
+  /// 커스텀 입력용 생성자
+  factory DreamTopic.custom(String content) {
+    return DreamTopic(
+      id: 'custom_${DateTime.now().millisecondsSinceEpoch}',
+      emoji: '✨',
+      title: '직접 입력한 꿈',
+      category: '기타',
+      customContent: content,
+    );
+  }
 
   /// 이모지와 제목을 합친 전체 텍스트
   String get fullTitle => '$emoji $title';
 
   /// API에 전달할 꿈 내용 텍스트
-  String get dreamContentForApi => '$title을 꾸었습니다.';
+  String get dreamContentForApi => customContent ?? '$title을 꾸었습니다.';
+
+  /// 커스텀 입력인지 여부
+  bool get isCustom => customContent != null;
 }

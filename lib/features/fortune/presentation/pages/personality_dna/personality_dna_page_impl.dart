@@ -165,7 +165,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
   Widget build(BuildContext context) {
     return UnifiedFortuneBaseWidget(
       fortuneType: 'personality-dna',
-      title: '성격 DNA',
+      title: '나의 성격 탐구',
       description: 'MBTI × 혈액형 × 별자리 × 띠 조합 분석',
       dataSource: FortuneDataSource.api,
       inputBuilder: (context, onComplete) => _buildInputForm(() {
@@ -216,7 +216,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
               child: AccordionInputForm(
                 sections: _accordionSections,
                 onAllCompleted: null,
-                completionButtonText: '🧬 나만의 성격 DNA 발견하기',
+                completionButtonText: '🧬 나의 성격 탐구하기',
               ),
             ),
           ],
@@ -227,7 +227,7 @@ class _PersonalityDNAPageImplState extends ConsumerState<PersonalityDNAPageImpl>
               debugPrint('🟡 [TossButton] showProgress: $_isGenerating, isLoading: $_isGenerating, isEnabled: ${_canGenerate() && !_isGenerating}');
               if (!_canGenerate()) return const SizedBox.shrink();
               return UnifiedButton.floating(
-                text: '🧬 나만의 성격 DNA 발견하기',
+                text: '🧬 나의 성격 탐구하기',
                 onPressed: _canGenerate() && !_isGenerating ? onComplete : null,
                 isEnabled: _canGenerate() && !_isGenerating,
                 showProgress: _isGenerating,

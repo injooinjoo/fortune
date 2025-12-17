@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
+import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/stem_branch_relations.dart';
+import 'saju_concept_card.dart';
 
 /// 합충형파해(合沖刑破害) 표시 위젯
 ///
@@ -55,20 +57,20 @@ class SajuHapchungWidget extends StatelessWidget {
             const SizedBox(height: DSSpacing.sm),
           ],
           // 관계 요약 시각화
-          _buildRelationSummary(relations, isDark),
+          _buildRelationSummary(context, relations, isDark),
           const SizedBox(height: DSSpacing.sm),
           // 합(合) 섹션
           if (combinationRelations.isNotEmpty) ...[
             _buildSectionHeader(RelationType.combination, isDark),
             const SizedBox(height: DSSpacing.sm),
-            ...combinationRelations.map((r) => _buildRelationItem(r, isDark)),
+            ...combinationRelations.map((r) => _buildRelationItem(context, r, isDark)),
             const SizedBox(height: DSSpacing.md),
           ],
           // 충/형/파/해 섹션
           if (inauspiciousRelations.isNotEmpty) ...[
             _buildSectionHeader(null, isDark, isInauspicious: true),
             const SizedBox(height: DSSpacing.sm),
-            ...inauspiciousRelations.map((r) => _buildRelationItem(r, isDark)),
+            ...inauspiciousRelations.map((r) => _buildRelationItem(context, r, isDark)),
           ],
           // 종합 해석
           if (relations.isNotEmpty) ...[
@@ -117,7 +119,7 @@ class SajuHapchungWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildRelationSummary(List<SajuRelation> relations, bool isDark) {
+  Widget _buildRelationSummary(BuildContext context, List<SajuRelation> relations, bool isDark) {
     final typeCounts = <RelationType, int>{};
     for (final relation in relations) {
       typeCounts[relation.type] = (typeCounts[relation.type] ?? 0) + 1;
@@ -140,57 +142,75 @@ class SajuHapchungWidget extends StatelessWidget {
           final count = typeCounts[type] ?? 0;
           final color = type.getColor(isDark: isDark);
 
-          return Column(
-            children: [
-              // 한자
-              Text(
-                type.hanja,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: count > 0 ? color : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
-                ),
-              ),
-              // 한글 + 개수
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    type.korean,
-                    style: DSTypography.labelSmall.copyWith(
-                      color: count > 0
-                          ? (isDark ? DSColors.textTertiary : DSColors.textSecondary)
-                          : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 10,
-                    ),
+          // 합충 데이터 조회
+          final hapchungData = SajuExplanations.hapchung[type.hanja];
+
+          return GestureDetector(
+            onTap: () {
+              if (hapchungData != null) {
+                showHapchungExplanationSheet(
+                  context: context,
+                  hanja: type.hanja,
+                  korean: type.korean,
+                  meaning: hapchungData['meaning'] ?? '',
+                  description: hapchungData['description'] ?? '',
+                  effect: hapchungData['effect'] ?? '',
+                  relationColor: color,
+                );
+              }
+            },
+            child: Column(
+              children: [
+                // 한자
+                Text(
+                  type.hanja,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: count > 0 ? color : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
                   ),
-                  const SizedBox(width: 2),
-                  Container(
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: count > 0
-                          ? color.withValues(alpha: 0.2)
-                          : (isDark ? Colors.grey.shade800 : Colors.grey.shade200),
-                      shape: BoxShape.circle,
+                ),
+                // 한글 + 개수
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      type.korean,
+                      style: DSTypography.labelSmall.copyWith(
+                        color: count > 0
+                            ? (isDark ? DSColors.textTertiary : DSColors.textSecondary)
+                            : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 10,
+                      ),
                     ),
-                    child: Center(
-                      child: Text(
-                        '$count',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: count > 0
-                              ? color
-                              : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
+                    const SizedBox(width: 2),
+                    Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: count > 0
+                            ? color.withValues(alpha: 0.2)
+                            : (isDark ? Colors.grey.shade800 : Colors.grey.shade200),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$count',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: count > 0
+                                ? color
+                                : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           );
         }).toList(),
       ),
@@ -261,10 +281,27 @@ class SajuHapchungWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildRelationItem(SajuRelation relation, bool isDark) {
+  Widget _buildRelationItem(BuildContext context, SajuRelation relation, bool isDark) {
     final color = relation.type.getColor(isDark: isDark);
 
-    return Container(
+    // 합충 데이터 조회
+    final hapchungData = SajuExplanations.hapchung[relation.type.hanja];
+
+    return GestureDetector(
+      onTap: () {
+        if (hapchungData != null) {
+          showHapchungExplanationSheet(
+            context: context,
+            hanja: relation.type.hanja,
+            korean: relation.type.korean,
+            meaning: hapchungData['meaning'] ?? '',
+            description: '${hapchungData['description'] ?? ''}\n\n📍 ${relation.name}\n${relation.description}',
+            effect: hapchungData['effect'] ?? '',
+            relationColor: color,
+          );
+        }
+      },
+      child: Container(
       margin: const EdgeInsets.only(bottom: DSSpacing.xs),
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
@@ -429,6 +466,7 @@ class SajuHapchungWidget extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

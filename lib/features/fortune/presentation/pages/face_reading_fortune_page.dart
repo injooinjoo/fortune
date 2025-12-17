@@ -15,6 +15,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
+import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
 
 // Import modular widgets
 import 'face_reading_fortune/index.dart';
@@ -32,6 +33,20 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
   ImageUploadResult? _uploadResult;
   bool _isAnalyzing = false;
   FortuneResult? _fortuneResult;
+
+  @override
+  void initState() {
+    super.initState();
+    // 페이지 진입 시 전면 광고 표시 (프리미엄 사용자 제외, frequency cap 적용)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showEntryAd();
+    });
+  }
+
+  /// 페이지 진입 시 전면 광고 표시
+  Future<void> _showEntryAd() async {
+    await InterstitialAdHelper.showInterstitialAd(ref);
+  }
 
   @override
   void dispose() {

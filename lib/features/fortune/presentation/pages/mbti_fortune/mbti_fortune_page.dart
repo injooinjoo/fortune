@@ -48,7 +48,6 @@ class _MbtiFortunePageState
   bool _isLoading = false;
   bool _showResult = false;
   double _energyLevel = 0.75;
-  Map<String, dynamic>? _cognitiveFunctions;
 
   // GPT 스타일 타이핑 효과 섹션 관리
   int _currentTypingSection = 0;
@@ -74,6 +73,21 @@ class _MbtiFortunePageState
     'ESTP': [Color(0xFFE11D48), Color(0xFFF43F5E)],
     'ESFP': [Color(0xFFF59E0B), Color(0xFFFBBF24)],
   };
+
+  @override
+  void initState() {
+    super.initState();
+    // 프로필에서 MBTI 자동 로드
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userProfile = ref.read(userProfileProvider).value;
+      if (userProfile?.mbtiType != null) {
+        setState(() {
+          _selectedMbti = userProfile!.mbtiType;
+          _showAllGroups = false; // 선택됐으니 접기
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -129,8 +143,8 @@ class _MbtiFortunePageState
             Column(
               children: [
                 Expanded(
-                  child: _showResult && _fortuneResult != null
-                      ? _buildResultView(_fortuneResult!)
+                  child: _showResult
+                      ? _buildResultView(_fortuneResult)
                       : _buildInputForm(),
                 ),
               ],
@@ -161,19 +175,17 @@ class _MbtiFortunePageState
 
 
   Future<void> _handleSubmit() async {
-    // ✅ InterstitialAd 제거: 버튼 클릭 시 바로 운세 생성
+    // ✅ 즉시 결과 화면으로 전환 (스켈레톤 표시)
+    setState(() {
+      _showResult = true;
+      _isLoading = true;
+      _fortuneResult = null;
+    });
     await _generateFortune();
   }
 
   Future<void> _generateFortune() async {
     debugPrint('🧠 [MbtiPage] _generateFortune 시작: $_selectedMbti');
-
-    // ✅ 1단계: 즉시 로딩 상태 표시 (버튼 애니메이션 시작)
-    if (mounted) {
-      setState(() {
-        _isLoading = true;
-      });
-    }
 
     try {
       // ✅ 타이머 시작 (최소 1초 대기)
@@ -394,21 +406,72 @@ class _MbtiFortunePageState
     );
   }
 
-  // ==================== Result View ====================
+  // ==================== Skeleton View ====================
 
-  Widget _buildResultView(FortuneResult result) {
+  Widget _buildSkeletonView() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          // Energy Level Card
+          // Energy Card 스켈레톤
+          _buildSkeletonCard(height: 120),
+          const SizedBox(height: 16),
+          // Main Fortune Card 스켈레톤
+          _buildSkeletonCard(height: 200),
+          const SizedBox(height: 16),
+          // Compatibility Card 스켈레톤
+          _buildSkeletonCard(height: 150),
+          const SizedBox(height: 100),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkeletonCard({required double height}) {
+    final colors = context.colors;
+
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.border),
+      ),
+      child: Center(
+        child: SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: colors.accent,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ==================== Result View ====================
+
+  Widget _buildResultView(FortuneResult? result) {
+    // 스켈레톤 로딩 UI
+    if (_isLoading || result == null) {
+      return _buildSkeletonView();
+    }
+
+    final data = result.data as Map<String, dynamic>? ?? {};
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          // 1. Energy Level Card (무료)
           EnergyCard(
             energyLevel: _energyLevel,
             colors: _mbtiColors[_selectedMbti!]!,
           ),
           const SizedBox(height: 16),
 
-          // Main Fortune Card - 타이핑 섹션 0
+          // 2. Main Fortune Card - todayFortune (무료)
           MainFortuneCard(
             fortuneResult: result,
             selectedMbti: _selectedMbti!,
@@ -420,13 +483,47 @@ class _MbtiFortunePageState
           ),
           const SizedBox(height: 16),
 
-          // Cognitive Functions
-          if (_cognitiveFunctions != null) ...[
-            const CognitiveFunctionsCard(),
-            const SizedBox(height: 16),
-          ],
+          // 3. Category Fortunes - 연애/직장/금전/건강 (프리미엄 - 블러)
+          BlurredFortuneContent(
+            fortuneResult: result,
+            child: MbtiCategoryFortunesCard(
+              fortuneResult: result,
+              startTyping: _currentTypingSection >= 1,
+              onTypingComplete: () {
+                if (mounted) setState(() => _currentTypingSection = 2);
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
 
-          // Compatibility (궁합 - 블러 대상)
+          // 4. Advice Card (프리미엄 - 블러)
+          if (data['advice'] != null && (data['advice'] as String).isNotEmpty)
+            BlurredFortuneContent(
+              fortuneResult: result,
+              child: MbtiAdviceCard(
+                advice: data['advice'] as String,
+                startTyping: _currentTypingSection >= 2,
+                onTypingComplete: () {
+                  if (mounted) setState(() => _currentTypingSection = 3);
+                },
+              ),
+            ),
+          if (data['advice'] != null && (data['advice'] as String).isNotEmpty)
+            const SizedBox(height: 16),
+
+          // 5. Cognitive Functions - 강점/도전과제 (프리미엄 - 블러)
+          if (data['cognitiveStrengths'] != null || data['challenges'] != null)
+            BlurredFortuneContent(
+              fortuneResult: result,
+              child: CognitiveFunctionsCard(
+                strengths: List<String>.from(data['cognitiveStrengths'] ?? []),
+                challenges: List<String>.from(data['challenges'] ?? []),
+              ),
+            ),
+          if (data['cognitiveStrengths'] != null || data['challenges'] != null)
+            const SizedBox(height: 16),
+
+          // 6. Compatibility Card - 궁합 (프리미엄 - 블러)
           BlurredFortuneContent(
             fortuneResult: result,
             child: CompatibilityCard(

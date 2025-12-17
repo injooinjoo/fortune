@@ -3,6 +3,7 @@ import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../domain/models/saju/sinsal_data.dart';
+import 'saju_concept_card.dart';
 
 /// 신살(神殺) 표시 위젯
 ///
@@ -59,21 +60,21 @@ class SajuSinsalWidget extends StatelessWidget {
           if (luckySinsals.isNotEmpty) ...[
             _buildSectionHeader('길신', '吉神', SinsalCategory.lucky, isDark),
             const SizedBox(height: DSSpacing.sm),
-            ...luckySinsals.map((s) => _buildSinsalItem(s, isDark)),
+            ...luckySinsals.map((s) => _buildSinsalItem(context, s, isDark)),
             const SizedBox(height: DSSpacing.md),
           ],
           // 중립 섹션 (도화살 등)
           if (neutralSinsals.isNotEmpty) ...[
             _buildSectionHeader('중립', '中立', SinsalCategory.neutral, isDark),
             const SizedBox(height: DSSpacing.sm),
-            ...neutralSinsals.map((s) => _buildSinsalItem(s, isDark)),
+            ...neutralSinsals.map((s) => _buildSinsalItem(context, s, isDark)),
             const SizedBox(height: DSSpacing.md),
           ],
           // 흉신 섹션
           if (unluckySinsals.isNotEmpty) ...[
             _buildSectionHeader('흉신', '凶神', SinsalCategory.unlucky, isDark),
             const SizedBox(height: DSSpacing.sm),
-            ...unluckySinsals.map((s) => _buildSinsalItem(s, isDark)),
+            ...unluckySinsals.map((s) => _buildSinsalItem(context, s, isDark)),
           ],
           // 종합 해석
           if (sinsals.isNotEmpty) ...[
@@ -172,10 +173,36 @@ class SajuSinsalWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildSinsalItem(Sinsal sinsal, bool isDark) {
+  Widget _buildSinsalItem(BuildContext context, Sinsal sinsal, bool isDark) {
     final color = sinsal.getColor(isDark: isDark);
 
-    return Container(
+    // 신살 타입 결정
+    String sinsalType;
+    switch (sinsal.category) {
+      case SinsalCategory.lucky:
+        sinsalType = '길신';
+        break;
+      case SinsalCategory.unlucky:
+        sinsalType = '흉신';
+        break;
+      case SinsalCategory.neutral:
+        sinsalType = '중립';
+        break;
+    }
+
+    return GestureDetector(
+      onTap: () {
+        showSinsalExplanationSheet(
+          context: context,
+          hanja: sinsal.hanja,
+          korean: sinsal.name,
+          type: sinsalType,
+          meaning: sinsal.meaning,
+          description: '${sinsal.description}\n\n💡 ${sinsal.remedy}',
+          sinsalColor: color,
+        );
+      },
+      child: Container(
       margin: const EdgeInsets.only(bottom: DSSpacing.xs),
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
@@ -323,6 +350,7 @@ class SajuSinsalWidget extends StatelessWidget {
             ),
           ],
         ],
+      ),
       ),
     );
   }

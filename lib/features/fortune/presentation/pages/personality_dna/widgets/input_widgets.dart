@@ -103,7 +103,7 @@ class TitleSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '🧬 나만의 성격 DNA',
+          '🧬 나의 성격 탐구',
           style: DSTypography.displayLarge.copyWith(
             fontWeight: FontWeight.w700,
             color: colors.textPrimary,

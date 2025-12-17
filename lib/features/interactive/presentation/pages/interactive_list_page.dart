@@ -26,8 +26,8 @@ class InteractiveListPage extends ConsumerWidget {
         isAvailable: true,
       ),
       _InteractiveFeature(
-        title: 'AI 관상',
-        subtitle: 'AI가 분석하는 당신의 얼굴 운세',
+        title: '관상',
+        subtitle: '얼굴을 분석해 운세를 알려드려요',
         icon: Icons.face_retouching_natural,
         route: '/interactive/face-reading',
         isAvailable: false,

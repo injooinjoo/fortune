@@ -349,7 +349,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                   onPressed: () {
                     context.pushNamed('interactive-tarot-deck-selection');
                   },
-                  tooltip: '덱 변경')]),
+                  tooltip: '카드 변경')]),
             
             // Main content area
             Expanded(

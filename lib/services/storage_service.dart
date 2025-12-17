@@ -9,6 +9,7 @@ class StorageService {
   static const String _guestModeKey = 'isGuestMode';
   static const String _userStatisticsKey = 'userStatistics';
   static const String _dailyFortuneRefreshKey = 'dailyFortuneRefresh';
+  static const String _loveFortuneInputKey = 'loveFortuneInput';
 
   Future<Map<String, dynamic>?> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -276,5 +277,32 @@ class StorageService {
   Future<void> incrementDailyFortuneRefreshCount() async {
     final currentCount = await getDailyFortuneRefreshCount();
     await saveDailyFortuneRefreshData(currentCount + 1);
+  }
+
+  // Love fortune input persistence
+  Future<Map<String, dynamic>?> getLoveFortuneInput() async {
+    final prefs = await SharedPreferences.getInstance();
+    final inputString = prefs.getString(_loveFortuneInputKey);
+
+    if (inputString != null) {
+      try {
+        return json.decode(inputString) as Map<String, dynamic>;
+      } catch (e) {
+        debugPrint('[StorageService] Failed to parse love fortune input: $e');
+        return null;
+      }
+    }
+    return null;
+  }
+
+  Future<void> saveLoveFortuneInput(Map<String, dynamic> input) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_loveFortuneInputKey, json.encode(input));
+    debugPrint('[StorageService] Love fortune input saved');
+  }
+
+  Future<void> clearLoveFortuneInput() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_loveFortuneInputKey);
   }
 }

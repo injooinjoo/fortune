@@ -42,3 +42,4 @@ export 'saju_jijanggan_widget.dart';
 export 'saju_twelve_stages_widget.dart';
 export 'saju_sinsal_widget.dart';
 export 'saju_hapchung_widget.dart';
+export 'saju_concept_card.dart';

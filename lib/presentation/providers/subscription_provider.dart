@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/in_app_purchase_service.dart';
 import '../../core/utils/logger.dart';
+import 'token_provider.dart';
 
 /// 구독 상태 모델
 class SubscriptionState {
@@ -83,9 +84,14 @@ final subscriptionProvider = StateNotifierProvider<SubscriptionNotifier, Subscri
 });
 
 /// 프리미엄 사용자 여부 Provider (광고 숨김 등에 사용)
+///
+/// tokenProvider.hasUnlimitedAccess를 사용하여 3가지 조건 모두 확인:
+/// - subscription.isActive (구독 활성화)
+/// - hasUnlimitedTokens (테스트 계정)
+/// - balance.hasUnlimitedAccess (무제한 토큰)
 final isPremiumProvider = Provider<bool>((ref) {
-  final subscriptionState = ref.watch(subscriptionProvider);
-  return subscriptionState.isActive;
+  final tokenState = ref.watch(tokenProvider);
+  return tokenState.hasUnlimitedAccess;
 });
 
 /// 구독 로딩 상태 Provider

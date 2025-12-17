@@ -285,7 +285,20 @@ ${mbti} 유형의 특성을 고려하여 오늘의 운세를 JSON 형식으로 �
       throw new Error('LLM API 응답 형식 오류')
     }
 
-    const fortuneData = JSON.parse(response.content)
+    let fortuneData
+    try {
+      fortuneData = JSON.parse(response.content)
+    } catch (parseError) {
+      console.error('JSON 파싱 실패:', response.content)
+      throw new Error('LLM 응답 JSON 파싱 실패')
+    }
+
+    // ✅ 필수 필드 검증
+    if (!fortuneData.todayFortune) {
+      console.error('todayFortune 필드 없음:', fortuneData)
+      // 기본값 제공
+      fortuneData.todayFortune = `${mbti} 유형의 오늘 운세입니다. 새로운 가능성이 열리는 하루가 될 것입니다.`
+    }
 
     // MBTI 특성 정보 추가
     const mbtiCharacteristics = MBTI_CHARACTERISTICS[mbti as keyof typeof MBTI_CHARACTERISTICS]

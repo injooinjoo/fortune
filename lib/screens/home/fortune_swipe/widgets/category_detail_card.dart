@@ -25,7 +25,7 @@ class CategoryDetailCard extends StatelessWidget {
     final scoreColor = FortuneSwipeHelpers.getPulseScoreColor(score);
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // 헤더 (가운데 정렬)
         Row(
@@ -52,6 +52,7 @@ class CategoryDetailCard extends StatelessWidget {
 
         // 카드 (Pulse 스타일)
         Container(
+          width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1C1C1E) : Colors.white,

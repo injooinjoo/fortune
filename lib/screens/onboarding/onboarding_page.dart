@@ -29,6 +29,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
   int _currentStep = 0;
   User? _currentUser;
+  bool _isSocialLogin = false;
 
   // Form values
   String _name = '';
@@ -136,39 +137,22 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         });
       }
 
-      // [App Store Guideline 4.0] Skip name step for social login users
-      // Apple Sign In only provides name on FIRST login, not on subsequent logins
-      // So we MUST skip name step for Apple/Google users regardless of whether name exists
+      // Check if user has a real name (not default/empty)
       final provider = _currentUser?.appMetadata['provider'] as String?;
-      final isSocialLogin = provider == 'apple' || provider == 'google';
+      _isSocialLogin = provider == 'apple' || provider == 'google';
 
-      debugPrint('📱 [Onboarding] Provider: $provider, isSocialLogin: $isSocialLogin');
-      debugPrint('📱 [Onboarding] Current name: $_name');
+      // List of default/placeholder names that should trigger name input step
+      final defaultNames = ['사용자', 'Apple 사용자', 'Google 사용자', 'user'];
+      final hasRealName = _name.isNotEmpty &&
+                          !defaultNames.contains(_name) &&
+                          !_name.startsWith('kakao_');
 
-      // For social login users: skip name step even if name is empty
-      // Use default name if needed (Apple/Google user or email prefix)
-      if (isSocialLogin && mounted) {
-        // If name is empty, use a default name based on provider or email
-        if (_name.isEmpty || _name == '사용자') {
-          _name = _currentUser?.email?.split('@').first ??
-                  (provider == 'apple' ? 'Apple 사용자' : 'Google 사용자');
-          debugPrint('📱 [Onboarding] Using default name for social login: $_name');
-        }
+      debugPrint('📱 [Onboarding] Provider: $provider, isSocialLogin: $_isSocialLogin');
+      debugPrint('📱 [Onboarding] Current name: $_name, hasRealName: $hasRealName');
 
-        debugPrint('📱 [Onboarding] Skipping name step for social login (App Store Guideline 4.0)');
-
-        // Wait for widget to build, then skip to birth date step
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && _currentStep == 0) {
-            setState(() {
-              _currentStep = 1;
-            });
-            _pageController.jumpToPage(1);
-          }
-        });
-      }
-      // For non-social login users: only skip if name already exists
-      else if (_name.isNotEmpty && _name != '사용자' && mounted) {
+      // Only skip name step if user already has a real name
+      // For social login users without real name: show name step with skip option
+      if (hasRealName && mounted) {
         debugPrint('📱 [Onboarding] Name already exists: $_name');
         debugPrint('📱 [Onboarding] Skipping to birth date step');
 
@@ -351,6 +335,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               });
             },
             onNext: _nextStep,
+            allowSkip: _isSocialLogin,
+            onSkip: _isSocialLogin ? () {
+              // Set default name for social login users who skip
+              if (_name.isEmpty) {
+                final provider = _currentUser?.appMetadata['provider'] as String?;
+                _name = _currentUser?.email?.split('@').first ??
+                        (provider == 'apple' ? 'Apple 사용자' : 'Google 사용자');
+              }
+              _nextStep();
+            } : null,
           ),
           
           // Step 2: Birth Date & Time

@@ -14,6 +14,7 @@ import '../../../../core/widgets/blurred_fortune_content.dart';
 import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/widgets/floating_dream_bubbles.dart';
+import '../../../../core/widgets/voice_input_text_field.dart';
 import '../../../../data/popular_dream_topics.dart';
 
 /// 꿈 해몽 페이지 (UnifiedFortuneService 버전)
@@ -39,6 +40,15 @@ class _DreamInterpretationPageState
   bool _isLoading = false;
   bool _showResult = false;
   DreamTopic? _selectedTopic;
+
+  // 텍스트 입력 컨트롤러
+  final TextEditingController _dreamTextController = TextEditingController();
+
+  @override
+  void dispose() {
+    _dreamTextController.dispose();
+    super.dispose();
+  }
 
   // ==================== Build ====================
 
@@ -121,50 +131,105 @@ class _DreamInterpretationPageState
 
     return Stack(
       children: [
-        // 플로팅 버블들
-        FloatingDreamBubbles(
-          onTopicSelected: _onTopicSelected,
-          bubbleCount: 15,
+        // 플로팅 버블들 (상단 입력 영역 공간 확보)
+        Padding(
+          padding: const EdgeInsets.only(top: 220),
+          child: FloatingDreamBubbles(
+            onTopicSelected: _onTopicSelected,
+            bubbleCount: 15,
+          ),
         ),
 
-        // 상단 안내 문구
+        // 상단 안내 문구 + 텍스트 입력바 통합
         Positioned(
           top: 20,
-          left: 20,
-          right: 20,
+          left: 16,
+          right: 16,
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: (isDark
                       ? TossDesignSystem.surfaceBackgroundDark
                       : TossDesignSystem.white)
-                  .withValues(alpha: 0.95),
-              borderRadius: BorderRadius.circular(16),
+                  .withValues(alpha: 0.98),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                width: 1.5,
+              ),
               boxShadow: [
+                // 기본 그림자
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+                // 글로우 효과
+                BoxShadow(
+                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                  blurRadius: 30,
+                  spreadRadius: -5,
                 ),
               ],
             ),
             child: Column(
               children: [
+                // 안내 문구
                 Text(
                   '🌙 어떤 꿈을 꾸셨나요?',
                   style: DSTypography.headingSmall.copyWith(
                     color: isDark
                         ? TossDesignSystem.textPrimaryDark
                         : TossDesignSystem.textPrimaryLight,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
-                  '꿈 버블을 터치하면 AI가 해몽해드려요',
+                  '꿈 내용을 입력하거나 아래 버블을 선택하세요',
                   style: DSTypography.bodySmall.copyWith(
                     color: isDark
                         ? TossDesignSystem.textSecondaryDark
                         : TossDesignSystem.textSecondaryLight,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // 텍스트 입력바 (그라데이션 테두리)
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF8B5CF6).withValues(alpha: 0.6),
+                        const Color(0xFF6366F1).withValues(alpha: 0.6),
+                        const Color(0xFF8B5CF6).withValues(alpha: 0.6),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF8B5CF6).withValues(alpha: 0.25),
+                        blurRadius: 12,
+                        spreadRadius: -2,
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(2), // 테두리 두께
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? TossDesignSystem.backgroundDark
+                          : TossDesignSystem.white,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: VoiceInputTextField(
+                      controller: _dreamTextController,
+                      onSubmit: _onTextSubmit,
+                      hintText: '예: 하늘을 나는 꿈, 이빨 빠지는 꿈...',
+                      transcribingText: '듣고 있어요...',
+                    ),
                   ),
                 ),
               ],
@@ -173,6 +238,20 @@ class _DreamInterpretationPageState
         ),
       ],
     );
+  }
+
+  /// 텍스트 입력 제출 핸들러
+  void _onTextSubmit(String text) {
+    if (text.trim().isEmpty) return;
+
+    // 커스텀 DreamTopic 생성
+    final customTopic = DreamTopic.custom(text.trim());
+
+    // 입력 필드 초기화
+    _dreamTextController.clear();
+
+    // 해몽 시작
+    _onTopicSelected(customTopic);
   }
 
   /// 로딩 화면

@@ -91,7 +91,8 @@ class SoulRates {
     'new-year': -20,
     'lucky-lottery': -30,
     'employment': -25,
-    'salpuli': -20};
+    'salpuli': -20,
+    'health-document': -3};  // 건강검진표/처방전/진단서 분석
 
   // 특별 조건부 운세
   static const Map<String, dynamic> conditionalRates = {

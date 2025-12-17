@@ -21,6 +21,12 @@ class CompatibilityResultView extends ConsumerStatefulWidget {
   final List<String> blurredSections;
   final VoidCallback onShowAdAndUnblur;
 
+  /// 프로필 추가 버튼 표시 여부 (직접 입력 + 프로필 추가 가능할 때)
+  final bool showAddProfileButton;
+
+  /// 프로필 추가 버튼 클릭 시 콜백
+  final VoidCallback? onAddProfile;
+
   const CompatibilityResultView({
     super.key,
     required this.fortune,
@@ -30,6 +36,8 @@ class CompatibilityResultView extends ConsumerStatefulWidget {
     required this.isBlurred,
     required this.blurredSections,
     required this.onShowAdAndUnblur,
+    this.showAddProfileButton = false,
+    this.onAddProfile,
   });
 
   @override
@@ -144,7 +152,85 @@ class _CompatibilityResultViewState extends ConsumerState<CompatibilityResultVie
             onPressed: widget.onShowAdAndUnblur,
             isEnabled: true,
           ),
+
+        // ✅ 프로필 추가 프롬프트 (블러 해제 후 + 직접 입력이었을 때)
+        if (!widget.isBlurred && widget.showAddProfileButton)
+          _buildAddProfilePrompt(context),
       ],
+    );
+  }
+
+  /// 프로필 추가 프롬프트 위젯
+  Widget _buildAddProfilePrompt(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Positioned(
+      left: 20,
+      right: 20,
+      bottom: 20,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${widget.person2Name}님을 프로필에 저장할까요?',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '저장하면 다음에 더 빠르게 궁합을 확인할 수 있어요',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white60 : Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton(
+              onPressed: widget.onAddProfile,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                '저장',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.3),
     );
   }
 }

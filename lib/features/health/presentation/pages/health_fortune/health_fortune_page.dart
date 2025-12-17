@@ -9,6 +9,7 @@ import '../../widgets/body_part_grid_selector.dart';
 import '../../widgets/health_score_card.dart';
 import '../../widgets/health_timeline_chart.dart';
 import '../../../domain/models/health_fortune_model.dart';
+import '../../../domain/models/medical_document_models.dart';
 import '../../../data/services/health_fortune_service.dart';
 import '../../../../../core/theme/toss_theme.dart';
 import '../../../../../core/theme/toss_design_system.dart';
@@ -166,6 +167,15 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
             onRefresh: _refreshHealthData,
           ),
 
+          const SizedBox(height: 16),
+
+          // 전문 진단 서류 업로드 섹션
+          MedicalDocumentUploadSection(
+            isDark: isDark,
+            tokenCost: 3,
+            onTap: _showDocumentUploadSheet,
+          ),
+
           const SizedBox(height: 24),
 
           ...ConditionState.values.map((condition) {
@@ -233,6 +243,17 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
   Future<void> _refreshHealthData() async {
     HapticFeedback.lightImpact();
     await _connectHealthApp();
+  }
+
+  void _showDocumentUploadSheet() {
+    HapticFeedback.mediumImpact();
+    DocumentUploadBottomSheet.show(
+      context,
+      onDocumentSelected: (result) {
+        // 문서 분석 결과 페이지로 이동
+        context.push('/medical-document-result', extra: result);
+      },
+    );
   }
 
   Widget _buildBodyPartSelectionPage() {

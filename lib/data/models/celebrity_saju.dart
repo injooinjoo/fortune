@@ -26,6 +26,9 @@ class CelebritySaju {
   // 전체 사주 데이터
   final Map<String, dynamic>? fullSajuData;
   final String dataSource;
+
+  // 프로필 이미지
+  final String? characterImageUrl;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -51,6 +54,7 @@ class CelebritySaju {
     required this.waterCount,
     this.fullSajuData,
     required this.dataSource,
+    this.characterImageUrl,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -78,6 +82,7 @@ class CelebritySaju {
       waterCount: json['water_count']?.toInt() ?? 0,
       fullSajuData: json['full_saju_data'],
       dataSource: json['data_source'] ?? '',
+      characterImageUrl: json['character_image_url'],
       createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
       updatedAt: DateTime.tryParse(json['updated_at'] ?? '') ?? DateTime.now(),
     );
@@ -106,6 +111,7 @@ class CelebritySaju {
       'water_count': waterCount,
       'full_saju_data': fullSajuData,
       'data_source': dataSource,
+      'character_image_url': characterImageUrl,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };

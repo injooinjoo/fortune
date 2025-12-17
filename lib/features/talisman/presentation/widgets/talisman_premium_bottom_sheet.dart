@@ -8,17 +8,32 @@ import '../../../../core/widgets/unified_button_enums.dart';
 class TalismanPremiumBottomSheet extends StatelessWidget {
   final VoidCallback? onSubscribe;
   final VoidCallback? onOneTimePurchase;
+  final VoidCallback? onWatchAd;
+  final VoidCallback? onTokenPaid;
+  final int? currentTokens;
+  final bool isPremium;
+
+  /// 토큰 비용 (복주머니 1개)
+  static const int requiredTokens = 1;
 
   const TalismanPremiumBottomSheet({
     super.key,
     this.onSubscribe,
     this.onOneTimePurchase,
+    this.onWatchAd,
+    this.onTokenPaid,
+    this.currentTokens,
+    this.isPremium = false,
   });
 
   static Future<void> show(
     BuildContext context, {
     VoidCallback? onSubscribe,
     VoidCallback? onOneTimePurchase,
+    VoidCallback? onWatchAd,
+    VoidCallback? onTokenPaid,
+    int? currentTokens,
+    bool isPremium = false,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -27,9 +42,15 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
       builder: (context) => TalismanPremiumBottomSheet(
         onSubscribe: onSubscribe,
         onOneTimePurchase: onOneTimePurchase,
+        onWatchAd: onWatchAd,
+        onTokenPaid: onTokenPaid,
+        currentTokens: currentTokens,
+        isPremium: isPremium,
       ),
     );
   }
+
+  bool get hasEnoughTokens => (currentTokens ?? 0) >= requiredTokens;
 
   @override
   Widget build(BuildContext context) {
@@ -98,17 +119,61 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
           // Action Buttons
           Column(
             children: [
+              // 광고 시청 옵션 (무료)
+              if (onWatchAd != null) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: UnifiedButton(
+                    text: '🎬 광고 보고 무료로 만들기',
+                    onPressed: onWatchAd,
+                    style: UnifiedButtonStyle.ghost,
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+
+              // ✅ 토큰 결제 옵션
+              if (onTokenPaid != null) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: UnifiedButton(
+                    text: hasEnoughTokens
+                        ? '🎀 복주머니 $requiredTokens개로 바로 만들기 (보유: ${currentTokens ?? 0}개)'
+                        : '🎀 복주머니 부족 (보유: ${currentTokens ?? 0}개 / 필요: $requiredTokens개)',
+                    onPressed: hasEnoughTokens ? onTokenPaid : null,
+                    style: UnifiedButtonStyle.secondary,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: TossTheme.borderGray200)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        '또는',
+                        style: TossTheme.caption.copyWith(
+                          color: TossTheme.textGray500,
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: TossTheme.borderGray200)),
+                  ],
+                ),
+                const SizedBox(height: 16),
+              ],
+
               SizedBox(
                 width: double.infinity,
                 child: UnifiedButton(
-                  text: '월 4,900원으로 구독하기',
+                  text: '⭐ 프리미엄 구독하기 (무제한)',
                   onPressed: onSubscribe,
                   style: UnifiedButtonStyle.primary,
                 ),
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               SizedBox(
                 width: double.infinity,
                 child: UnifiedButton(
@@ -117,11 +182,11 @@ class TalismanPremiumBottomSheet extends StatelessWidget {
                   style: UnifiedButtonStyle.secondary,
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               Text(
-                '언제든지 취소할 수 있으며, 첫 7일은 무료로 체험하실 수 있습니다.',
+                '프리미엄 구독 시 모든 부적을 무제한으로 생성할 수 있습니다.',
                 style: TossTheme.caption.copyWith(
                   color: TossTheme.textGray500,
                 ),

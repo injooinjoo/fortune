@@ -9,7 +9,25 @@ import '../../../presentation/providers/secondary_profiles_provider.dart';
 ///
 /// 가족/친구의 정보를 입력받아 새 프로필 생성
 class AddProfileSheet extends ConsumerStatefulWidget {
-  const AddProfileSheet({super.key});
+  /// 미리 채울 이름 (궁합에서 직접 입력 후 호출 시)
+  final String? initialName;
+
+  /// 미리 채울 생년월일 (궁합에서 직접 입력 후 호출 시)
+  final DateTime? initialBirthDate;
+
+  /// 커스텀 타이틀 (기본: '프로필 추가')
+  final String? title;
+
+  /// 커스텀 서브타이틀 (기본: '가족이나 친구의 운세를 확인할 수 있어요')
+  final String? subtitle;
+
+  const AddProfileSheet({
+    super.key,
+    this.initialName,
+    this.initialBirthDate,
+    this.title,
+    this.subtitle,
+  });
 
   @override
   ConsumerState<AddProfileSheet> createState() => _AddProfileSheetState();
@@ -23,6 +41,22 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
   bool _isLunar = false;
   String _relationship = 'family';
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // 초기값 설정 (궁합에서 직접 입력 후 호출 시)
+    if (widget.initialName != null) {
+      _nameController.text = widget.initialName!;
+    }
+    if (widget.initialBirthDate != null) {
+      _birthDate = _formatDate(widget.initialBirthDate!);
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
 
   @override
   void dispose() {
@@ -65,10 +99,10 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
               const SizedBox(height: 20),
 
               // 타이틀
-              Text('프로필 추가', style: context.heading2),
+              Text(widget.title ?? '프로필 추가', style: context.heading2),
               const SizedBox(height: 8),
               Text(
-                '가족이나 친구의 운세를 확인할 수 있어요',
+                widget.subtitle ?? '가족이나 친구의 운세를 확인할 수 있어요',
                 style: context.bodyMedium.copyWith(
                   color: fortuneTheme.secondaryText,
                 ),
@@ -382,7 +416,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
           );
 
       if (mounted) {
-        Navigator.pop(context);
+        Navigator.pop(context, true); // 성공 시 true 반환
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${_nameController.text.trim()} 프로필이 추가되었습니다'),

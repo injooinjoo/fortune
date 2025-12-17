@@ -9,6 +9,7 @@ import '../../../../../core/services/fortune_haptic_service.dart';
 import '../../../../../core/widgets/unified_button.dart';
 import '../../../../../presentation/providers/token_provider.dart';
 import '../../../../../presentation/providers/user_profile_notifier.dart';
+import '../../../../../services/storage_service.dart';
 import '../../../../fortune/domain/models/conditions/love_fortune_conditions.dart';
 import '../../widgets/standard_fortune_app_bar.dart';
 import '../love/love_fortune_result_page.dart';
@@ -53,6 +54,7 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
   final Set<String> _hobbies = {};
 
   bool _isLoading = false;
+  final StorageService _storageService = StorageService();
 
   @override
   void initState() {
@@ -60,7 +62,8 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
     _initializeAccordionSections();
 
     // Pre-fill user data with profile if available
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // 1. 프로필에서 기본값 먼저 설정 (항상)
       final userProfileAsync = ref.read(userProfileProvider);
       final userProfile = userProfileAsync.maybeWhen(
         data: (profile) => profile,
@@ -73,7 +76,6 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
           if (userProfile.birthDate != null) {
             final now = DateTime.now();
             int calculatedAge = now.year - userProfile.birthDate!.year;
-            // 생일이 아직 안 지났으면 1살 빼기
             if (now.month < userProfile.birthDate!.month ||
                 (now.month == userProfile.birthDate!.month &&
                     now.day < userProfile.birthDate!.day)) {
@@ -82,12 +84,117 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
             _age = calculatedAge;
           }
           // 성별 설정
-          _gender = userProfile.gender;
+          if (userProfile.gender != null) {
+            _gender = userProfile.gender;
+          }
         });
-        // Accordion 섹션 업데이트
+      }
+
+      // 2. 저장된 입력값 복원 (있으면 프로필 값 덮어씀 - 사용자 선택 우선)
+      await _loadSavedInput();
+
+      // 3. Accordion 섹션 업데이트
+      if (mounted) {
         _initializeAccordionSections();
       }
     });
+  }
+
+  /// 저장된 입력값 불러오기
+  Future<void> _loadSavedInput() async {
+    final savedInput = await _storageService.getLoveFortuneInput();
+    if (savedInput == null || !mounted) return;
+
+    setState(() {
+      // 기본 정보
+      _age = savedInput['age'] as int? ?? _age;
+      _gender = savedInput['gender'] as String?;
+      _relationshipStatus = savedInput['relationshipStatus'] as String?;
+
+      // 연애 스타일
+      final savedStyles = savedInput['datingStyles'] as List<dynamic>?;
+      if (savedStyles != null) {
+        _datingStyles.clear();
+        _datingStyles.addAll(savedStyles.cast<String>());
+      }
+
+      // 이상형 중요도
+      final savedImportance = savedInput['valueImportance'] as Map<String, dynamic>?;
+      if (savedImportance != null) {
+        savedImportance.forEach((key, value) {
+          if (_valueImportance.containsKey(key)) {
+            _valueImportance[key] = (value as num).toDouble();
+          }
+        });
+      }
+
+      // 이상형 나이대
+      final savedAgeRange = savedInput['preferredAgeRange'] as Map<String, dynamic>?;
+      if (savedAgeRange != null) {
+        _preferredAgeRange = RangeValues(
+          (savedAgeRange['min'] as num?)?.toDouble() ?? 20,
+          (savedAgeRange['max'] as num?)?.toDouble() ?? 30,
+        );
+      }
+
+      // 이상형 성격
+      final savedPersonality = savedInput['preferredPersonality'] as List<dynamic>?;
+      if (savedPersonality != null) {
+        _preferredPersonality.clear();
+        _preferredPersonality.addAll(savedPersonality.cast<String>());
+      }
+
+      // 만남 방식
+      final savedPlaces = savedInput['preferredMeetingPlaces'] as List<dynamic>?;
+      if (savedPlaces != null) {
+        _preferredMeetingPlaces.clear();
+        _preferredMeetingPlaces.addAll(savedPlaces.cast<String>());
+      }
+      _relationshipGoal = savedInput['relationshipGoal'] as String?;
+
+      // 나의 매력
+      final savedCharms = savedInput['charmPoints'] as List<dynamic>?;
+      if (savedCharms != null) {
+        _charmPoints.clear();
+        _charmPoints.addAll(savedCharms.cast<String>());
+      }
+      _lifestyle = savedInput['lifestyle'] as String?;
+
+      // 자신감 & 취미
+      _appearanceConfidence = (savedInput['appearanceConfidence'] as num?)?.toDouble() ?? 5.0;
+      final savedHobbies = savedInput['hobbies'] as List<dynamic>?;
+      if (savedHobbies != null) {
+        _hobbies.clear();
+        _hobbies.addAll(savedHobbies.cast<String>());
+      }
+    });
+
+    // Accordion 섹션 업데이트
+    _initializeAccordionSections();
+    debugPrint('[LoveFortuneInput] 저장된 입력값 복원 완료');
+  }
+
+  /// 현재 입력값 저장
+  Future<void> _saveCurrentInput() async {
+    final inputData = {
+      'age': _age,
+      'gender': _gender,
+      'relationshipStatus': _relationshipStatus,
+      'datingStyles': _datingStyles.toList(),
+      'valueImportance': _valueImportance,
+      'preferredAgeRange': {
+        'min': _preferredAgeRange.start.round(),
+        'max': _preferredAgeRange.end.round(),
+      },
+      'preferredPersonality': _preferredPersonality.toList(),
+      'preferredMeetingPlaces': _preferredMeetingPlaces.toList(),
+      'relationshipGoal': _relationshipGoal,
+      'appearanceConfidence': _appearanceConfidence,
+      'charmPoints': _charmPoints.toList(),
+      'lifestyle': _lifestyle,
+      'hobbies': _hobbies.toList(),
+    };
+    await _storageService.saveLoveFortuneInput(inputData);
   }
 
   void _initializeAccordionSections() {
@@ -160,14 +267,14 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
             _updateAccordionSection(
               'valueImportance',
               _valueImportance,
-              '평균 ${LoveFortuneInputHelpers.getAverageImportance(_valueImportance).toStringAsFixed(1)}점',
+              _buildValueImportanceDisplay(),
             );
             onComplete(_valueImportance);
           },
         ),
         value: _valueImportance,
         isCompleted: true,
-        displayValue: '평균 ${LoveFortuneInputHelpers.getAverageImportance(_valueImportance).toStringAsFixed(1)}점',
+        displayValue: _buildValueImportanceDisplay(),
       ),
 
       // 4. 이상형 나이대
@@ -221,15 +328,18 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
               _preferredPersonality.toList(),
               _preferredPersonality.join(', '),
             );
-            onComplete(_preferredPersonality.toList());
+            // 4개 선택 시에만 자동으로 다음 섹션으로 이동
+            if (_preferredPersonality.length == 4) {
+              onComplete(_preferredPersonality.toList());
+            }
           },
         ),
         value: _preferredPersonality.toList(),
-        isCompleted: _preferredPersonality.isNotEmpty,
+        isCompleted: _preferredPersonality.length == 4,
         displayValue: _preferredPersonality.isNotEmpty
             ? _preferredPersonality.join(', ')
             : null,
-        isMultiSelect: true,
+        isMultiSelect: false, // 4개 선택 시 자동 넘김 활성화
       ),
 
       // 6. 만남 방식
@@ -364,6 +474,8 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
           isMultiSelect: _accordionSections[index].isMultiSelect,
         );
       });
+      // 입력값 변경 시 저장
+      _saveCurrentInput();
     }
   }
 
@@ -426,6 +538,15 @@ class _LoveFortuneInputPageState extends ConsumerState<LoveFortuneInputPage> {
       );
       onComplete(data);
     }
+  }
+
+  /// 중요도 표시 문자열 생성 (개별 항목별)
+  String _buildValueImportanceDisplay() {
+    final items = _valueImportance.entries.map((e) {
+      final shortName = e.key.substring(0, 1); // 외, 성, 경, 가, 유
+      return '$shortName${e.value.round()}';
+    }).join(' ');
+    return items; // 예: "외3 성4 경2 가5 유3"
   }
 
   bool _canGenerate() {

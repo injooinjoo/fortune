@@ -1,9 +1,8 @@
-// ImageFilter.blur용
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math' as math;
-import '../../../../core/design_system/design_system.dart';
+import '../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
 import '../widgets/biorhythm_widgets.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../../services/ad_service.dart';
@@ -13,8 +12,6 @@ import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
-
-import '../../../../core/widgets/unified_button.dart';
 class BiorhythmResultPage extends ConsumerStatefulWidget {
   final DateTime birthDate;
   final FortuneResult fortuneResult; // API 결과
@@ -158,91 +155,294 @@ class _BiorhythmResultPageState extends ConsumerState<BiorhythmResultPage>
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hanjiBackground = DSBiorhythmColors.getHanjiBackground(isDark);
+    final textColor = DSBiorhythmColors.getInkBleed(isDark);
 
     return Scaffold(
-      backgroundColor: colors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false, // 백버튼 제거
-        title: Text(
-          '바이오리듬 분석 결과',
-          style: DSTypography.labelLarge.copyWith(
-            fontWeight: FontWeight.w600,
-            color: colors.textPrimary,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.close,
-              color: colors.textPrimary,
-            ),
-            onPressed: () => context.go('/fortune'),
-          ),
-        ],
-      ),
+      backgroundColor: hanjiBackground,
       body: Stack(
         children: [
-          Column(
-            children: [
-              // 페이지 인디케이터
-              _buildPageIndicator(),
+          // Hanji texture background
+          Positioned.fill(
+            child: CustomPaint(
+              painter: _HanjiTexturePainter(isDark: isDark),
+            ),
+          ),
 
-              // 메인 콘텐츠
-              Expanded(
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: PageView(
-                    controller: _pageController,
-                    onPageChanged: _onPageChanged,
-                    children: [
-                      _buildTodayStatusPage(),
-                      _buildWeeklyTrendPage(),
-                      _buildPersonalAdvicePage(),
-                    ],
+          SafeArea(
+            child: Column(
+              children: [
+                // Traditional style header
+                _buildTraditionalHeader(isDark, textColor),
+
+                // 페이지 인디케이터 (Traditional style)
+                _buildTraditionalPageIndicator(isDark),
+
+                // 메인 콘텐츠
+                Expanded(
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: PageView(
+                      controller: _pageController,
+                      onPageChanged: _onPageChanged,
+                      children: [
+                        _buildTodayStatusPage(),
+                        _buildWeeklyTrendPage(),
+                        _buildPersonalAdvicePage(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           // 광고 보고 전체 보기 버튼 (3번째 페이지 + 블러 상태일 때만, 구독자 제외)
           if (_currentPage == 2 && _fortuneResult.isBlurred && !ref.watch(isPremiumProvider))
-            UnifiedButton.floating(
-              text: '남은 조언 모두 보기',
-              onPressed: _showAdAndUnblur,
-              isLoading: false,
-              isEnabled: true,
+            Positioned(
+              left: 20,
+              right: 20,
+              bottom: MediaQuery.of(context).padding.bottom + 20,
+              child: _buildTraditionalAdButton(isDark),
             ),
         ],
       ),
     );
   }
 
-  Widget _buildPageIndicator() {
-    final colors = context.colors;
+  Widget _buildTraditionalHeader(bool isDark, Color textColor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          const SizedBox(width: 48), // Balance for close button
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  '바이오리듬 분석',
+                  style: TextStyle(
+                    fontFamily: 'GowunBatang',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: DSBiorhythmColors.goldAccent.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: DSBiorhythmColors.goldAccent.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    _formatTraditionalDate(),
+                    style: TextStyle(
+                      fontFamily: 'GowunBatang',
+                      fontSize: 12,
+                      color: DSBiorhythmColors.goldAccent,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Traditional close button (seal style)
+          GestureDetector(
+            onTap: () => context.go('/fortune'),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: DSBiorhythmColors.getInkWashGuide(isDark).withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: textColor.withValues(alpha: 0.2),
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  '閉',
+                  style: TextStyle(
+                    fontFamily: 'GowunBatang',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: textColor.withValues(alpha: 0.7),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatTraditionalDate() {
+    final now = DateTime.now();
+    return '${now.year}년 ${now.month}월 ${now.day}일';
+  }
+
+  Widget _buildTraditionalPageIndicator(bool isDark) {
+    final textColor = DSBiorhythmColors.getInkBleed(isDark);
+    final pageLabels = ['오늘', '주간', '조언'];
+    final pageHanja = ['今', '週', '言'];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(3, (index) {
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            width: _currentPage == index ? 24 : 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: _currentPage == index
-                  ? colors.accent
-                  : colors.border,
-              borderRadius: BorderRadius.circular(4),
+          final isSelected = _currentPage == index;
+          final color = _getPageColor(index, isDark);
+
+          return GestureDetector(
+            onTap: () {
+              _pageController.animateToPage(
+                index,
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeOutCubic,
+              );
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? color.withValues(alpha: 0.15)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected
+                      ? color.withValues(alpha: 0.5)
+                      : textColor.withValues(alpha: 0.2),
+                  width: isSelected ? 1.5 : 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Hanja character in seal style
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? color.withValues(alpha: 0.8)
+                          : textColor.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        pageHanja[index],
+                        style: TextStyle(
+                          fontFamily: 'GowunBatang',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: isSelected
+                              ? Colors.white
+                              : textColor.withValues(alpha: 0.5),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    pageLabels[index],
+                    style: TextStyle(
+                      fontFamily: 'GowunBatang',
+                      fontSize: 13,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                      color: isSelected
+                          ? color
+                          : textColor.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         }),
+      ),
+    );
+  }
+
+  Color _getPageColor(int index, bool isDark) {
+    switch (index) {
+      case 0: // 오늘 - Physical (Fire)
+        return DSBiorhythmColors.getPhysical(isDark);
+      case 1: // 주간 - Emotional (Wood)
+        return DSBiorhythmColors.getEmotional(isDark);
+      case 2: // 조언 - Intellectual (Water)
+        return DSBiorhythmColors.getIntellectual(isDark);
+      default:
+        return DSBiorhythmColors.getInkBleed(isDark);
+    }
+  }
+
+  Widget _buildTraditionalAdButton(bool isDark) {
+    return GestureDetector(
+      onTap: _showAdAndUnblur,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              DSBiorhythmColors.getPhysical(isDark),
+              DSBiorhythmColors.getEmotional(isDark),
+              DSBiorhythmColors.getIntellectual(isDark),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: DSBiorhythmColors.getPhysical(isDark).withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Text(
+                  '解',
+                  style: TextStyle(
+                    fontFamily: 'GowunBatang',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              '남은 풀이 모두 보기',
+              style: TextStyle(
+                fontFamily: 'GowunBatang',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -518,5 +718,41 @@ class BiorhythmData {
     if (intellectualScore >= 50) return '사고력이 좋음';
     if (intellectualScore >= 25) return '집중하기 어려울 수 있음';
     return '복잡한 일은 피하세요';
+  }
+}
+
+/// Hanji paper texture background painter
+class _HanjiTexturePainter extends CustomPainter {
+  final bool isDark;
+
+  _HanjiTexturePainter({required this.isDark});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final random = math.Random(42);
+    final textureColor = isDark
+        ? Colors.white.withValues(alpha: 0.02)
+        : DSBiorhythmColors.inkBleed.withValues(alpha: 0.02);
+
+    // Draw subtle fiber texture
+    for (var i = 0; i < 100; i++) {
+      final x = random.nextDouble() * size.width;
+      final y = random.nextDouble() * size.height;
+      final length = 6 + random.nextDouble() * 15;
+      final angle = random.nextDouble() * math.pi;
+
+      canvas.drawLine(
+        Offset(x, y),
+        Offset(x + length * math.cos(angle), y + length * math.sin(angle)),
+        Paint()
+          ..color = textureColor
+          ..strokeWidth = 0.4,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _HanjiTexturePainter oldDelegate) {
+    return oldDelegate.isDark != isDark;
   }
 }

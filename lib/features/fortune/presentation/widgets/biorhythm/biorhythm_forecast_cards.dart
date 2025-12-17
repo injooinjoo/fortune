@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:fortune/core/design_system/design_system.dart';
-import '../../../../../core/components/app_card.dart';
+import '../../../../../core/design_system/tokens/ds_biorhythm_colors.dart';
 import '../../pages/biorhythm_result_page.dart';
+import 'components/biorhythm_hanji_card.dart';
+import 'painters/ink_wave_chart_painter.dart';
 
+/// Weekly forecast header with traditional Korean style
+///
+/// Design Philosophy:
+/// - Calligraphy style title
+/// - Date range in traditional format
+/// - Hanji scroll card style
 class WeeklyForecastHeader extends StatelessWidget {
   final BiorhythmData biorhythmData;
-  
+
   const WeeklyForecastHeader({
     super.key,
     required this.biorhythmData,
@@ -14,173 +20,180 @@ class WeeklyForecastHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = DSBiorhythmColors.getInkBleed(isDark);
 
-    return AppCard(
-      style: AppCardStyle.elevated,
+    final startDate = DateTime.now();
+    final endDate = startDate.add(const Duration(days: 6));
+
+    return BiorhythmHanjiCard(
+      style: HanjiCardStyle.scroll,
+      showSealStamp: true,
+      sealText: '週',
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           Text(
-            '이번 주 바이오리듬 전망',
-            style: theme.textTheme.titleLarge?.copyWith(
+            '주간 운세 전망',
+            style: TextStyle(
+              fontFamily: 'GowunBatang',
+              fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white : DSColors.textPrimary,
+              color: textColor,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Text(
-            '${DateTime.now().month}월 ${DateTime.now().day}일 ~ ${DateTime.now().add(const Duration(days: 6)).month}월 ${DateTime.now().add(const Duration(days: 6)).day}일',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
+            _formatDateRange(startDate, endDate),
+            style: TextStyle(
+              fontFamily: 'GowunBatang',
+              fontSize: 14,
+              color: textColor.withValues(alpha: 0.6),
             ),
           ),
+          const SizedBox(height: 16),
+          // Legend row
+          _buildLegendRow(isDark),
         ],
       ),
     );
   }
+
+  String _formatDateRange(DateTime start, DateTime end) {
+    return '${start.month}월 ${start.day}일 ~ ${end.month}월 ${end.day}일';
+  }
+
+  Widget _buildLegendRow(bool isDark) {
+    final textColor = DSBiorhythmColors.getInkBleed(isDark);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildLegendItem(
+          '신체(火)',
+          DSBiorhythmColors.getPhysical(isDark),
+          textColor,
+        ),
+        const SizedBox(width: 20),
+        _buildLegendItem(
+          '감정(木)',
+          DSBiorhythmColors.getEmotional(isDark),
+          textColor,
+        ),
+        const SizedBox(width: 20),
+        _buildLegendItem(
+          '지적(水)',
+          DSBiorhythmColors.getIntellectual(isDark),
+          textColor,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLegendItem(String label, Color color, Color textColor) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 12,
+          height: 3,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(1.5),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'GowunBatang',
+            fontSize: 12,
+            color: textColor.withValues(alpha: 0.6),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
-// 주간 리듬 차트
-class WeeklyRhythmChart extends StatelessWidget {
+/// Weekly rhythm chart with traditional ink wash style
+///
+/// Design Philosophy:
+/// - CustomPainter-based ink wash wave lines (replaces fl_chart)
+/// - Brush stroke effects with thickness variation
+/// - Ink bleed at data points (seal stamp style)
+/// - Traditional day labels in Korean
+class WeeklyRhythmChart extends StatefulWidget {
   final BiorhythmData biorhythmData;
-  
+
   const WeeklyRhythmChart({
     super.key,
     required this.biorhythmData,
   });
 
   @override
+  State<WeeklyRhythmChart> createState() => _WeeklyRhythmChartState();
+}
+
+class _WeeklyRhythmChartState extends State<WeeklyRhythmChart>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutCubic,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return AppCard(
-      style: AppCardStyle.outlined,
+    // Convert -100~100 to 0~100 for display
+    final physicalData = widget.biorhythmData.physicalWeek
+        .map((v) => (v + 100) / 2)
+        .toList()
+        .cast<double>();
+    final emotionalData = widget.biorhythmData.emotionalWeek
+        .map((v) => (v + 100) / 2)
+        .toList()
+        .cast<double>();
+    final intellectualData = widget.biorhythmData.intellectualWeek
+        .map((v) => (v + 100) / 2)
+        .toList()
+        .cast<double>();
+
+    return BiorhythmHanjiCard(
+      style: HanjiCardStyle.standard,
       padding: const EdgeInsets.all(20),
       child: SizedBox(
-        height: 200,
-        child: LineChart(
-          LineChartData(
-            gridData: FlGridData(
-              show: true,
-              drawVerticalLine: false,
-              horizontalInterval: 50,
-              getDrawingHorizontalLine: (value) {
-                return FlLine(
-                  color: isDark ? DSColors.textTertiary : DSColors.border,
-                  strokeWidth: 1,
-                );
-              },
+        height: 220,
+        child: AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) => CustomPaint(
+            size: const Size(double.infinity, 220),
+            painter: InkWaveChartPainter(
+              physicalData: physicalData,
+              emotionalData: emotionalData,
+              intellectualData: intellectualData,
+              animationProgress: _animation.value,
+              isDark: isDark,
             ),
-            titlesData: FlTitlesData(
-              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 40,
-                  getTitlesWidget: (value, meta) {
-                    return Text(
-                      '${value.toInt()}',
-                      style: TextStyle(
-                        color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
-                        
-                      ),
-                    );
-                  },
-                ),
-              ),
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    final days = ['오늘', '내일', '모레', '3일후', '4일후', '5일후', '6일후'];
-                    if (value.toInt() < days.length) {
-                      return Text(
-                        days[value.toInt()],
-                        style: TextStyle(
-                          color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
-                          
-                        ),
-                      );
-                    }
-                    return const Text('');
-                  },
-                ),
-              ),
-            ),
-            borderData: FlBorderData(show: false),
-            minX: 0,
-            maxX: 6,
-            minY: 0,
-            maxY: 100,
-            lineBarsData: [
-              // 신체 리듬
-              LineChartBarData(
-                spots: biorhythmData.physicalWeek.asMap().entries.map((entry) {
-                  return FlSpot(entry.key.toDouble(), (entry.value + 100) / 2);
-                }).toList(),
-                isCurved: true,
-                color: const Color(0xFFFF5A5F),
-                barWidth: 3,
-                dotData: FlDotData(
-                  show: true,
-                  getDotPainter: (spot, percent, barData, index) {
-                    return FlDotCirclePainter(
-                      radius: 4,
-                      color: const Color(0xFFFF5A5F),
-                      strokeWidth: 2,
-                      strokeColor: Colors.white,
-                    );
-                  },
-                ),
-                belowBarData: BarAreaData(
-                  show: true,
-                  color: const Color(0xFFFF5A5F).withValues(alpha: 0.1),
-                ),
-              ),
-              // 감정 리듬
-              LineChartBarData(
-                spots: biorhythmData.emotionalWeek.asMap().entries.map((entry) {
-                  return FlSpot(entry.key.toDouble(), (entry.value + 100) / 2);
-                }).toList(),
-                isCurved: true,
-                color: const Color(0xFF00C896),
-                barWidth: 3,
-                dotData: FlDotData(
-                  show: true,
-                  getDotPainter: (spot, percent, barData, index) {
-                    return FlDotCirclePainter(
-                      radius: 4,
-                      color: const Color(0xFF00C896),
-                      strokeWidth: 2,
-                      strokeColor: Colors.white,
-                    );
-                  },
-                ),
-              ),
-              // 지적 리듬
-              LineChartBarData(
-                spots: biorhythmData.intellectualWeek.asMap().entries.map((entry) {
-                  return FlSpot(entry.key.toDouble(), (entry.value + 100) / 2);
-                }).toList(),
-                isCurved: true,
-                color: const Color(0xFF0068FF),
-                barWidth: 3,
-                dotData: FlDotData(
-                  show: true,
-                  getDotPainter: (spot, percent, barData, index) {
-                    return FlDotCirclePainter(
-                      radius: 4,
-                      color: const Color(0xFF0068FF),
-                      strokeWidth: 2,
-                      strokeColor: Colors.white,
-                    );
-                  },
-                ),
-              ),
-            ],
           ),
         ),
       ),
@@ -188,10 +201,15 @@ class WeeklyRhythmChart extends StatelessWidget {
   }
 }
 
-// 주요 날짜들
+/// Important dates card with traditional Korean style
+///
+/// Design Philosophy:
+/// - Hanji card with traditional decorations
+/// - Lucky/unlucky day indicators with 吉/凶 symbols
+/// - Calligraphy style text
 class ImportantDatesCard extends StatelessWidget {
   final BiorhythmData biorhythmData;
-  
+
   const ImportantDatesCard({
     super.key,
     required this.biorhythmData,
@@ -199,47 +217,60 @@ class ImportantDatesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = DSBiorhythmColors.getInkBleed(isDark);
 
-    // 최고/최저 날짜 찾기
     final bestDay = _findBestDay();
     final worstDay = _findWorstDay();
 
-    return AppCard(
-      style: AppCardStyle.filled,
+    return BiorhythmHanjiCard(
+      style: HanjiCardStyle.standard,
+      showCornerDecorations: true,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '이번 주 주요 날짜',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white : DSColors.textPrimary,
-            ),
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: DSBiorhythmColors.goldAccent,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '이번 주 길흉일',
+                style: TextStyle(
+                  fontFamily: 'GowunBatang',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // Best day (길일)
+          _buildDateItem(
+            context,
+            type: DateType.lucky,
+            title: '길일 (吉日)',
+            date: bestDay['date'] as String,
+            description: bestDay['description'] as String,
           ),
           const SizedBox(height: 16),
 
-          // 최고의 날
+          // Worst day (주의일)
           _buildDateItem(
             context,
-            '최고의 날',
-            bestDay['date'] as String,
-            bestDay['description'] as String,
-            Icons.trending_up_rounded,
-            const Color(0xFF00C851),
-          ),
-          const SizedBox(height: 12),
-
-          // 주의가 필요한 날
-          _buildDateItem(
-            context,
-            '주의가 필요한 날',
-            worstDay['date'] as String,
-            worstDay['description'] as String,
-            Icons.warning_rounded,
-            const Color(0xFFFF9500),
+            type: DateType.warning,
+            title: '주의일 (凶日)',
+            date: worstDay['date'] as String,
+            description: worstDay['description'] as String,
           ),
         ],
       ),
@@ -247,48 +278,90 @@ class ImportantDatesCard extends StatelessWidget {
   }
 
   Widget _buildDateItem(
-    BuildContext context,
-    String title,
-    String date,
-    String description,
-    IconData icon,
-    Color color,
-  ) {
+    BuildContext context, {
+    required DateType type,
+    required String title,
+    required String date,
+    required String description,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = DSBiorhythmColors.getInkBleed(isDark);
+
+    final color = type == DateType.lucky
+        ? DSBiorhythmColors.statusExcellent
+        : DSBiorhythmColors.statusCritical;
+
+    final hanja = type == DateType.lucky ? '吉' : '凶';
 
     return Row(
       children: [
+        // Seal-style badge with Hanja
         Container(
-          width: 40,
-          height: 40,
+          width: 44,
+          height: 44,
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: color.withValues(alpha: 0.4),
+              width: 1,
+            ),
           ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 20,
+          child: Center(
+            child: Text(
+              hanja,
+              style: TextStyle(
+                fontFamily: 'GowunBatang',
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 14),
 
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '$title - $date',
-                style: DSTypography.bodySmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white : DSColors.textPrimary,
-                ),
+              Row(
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontFamily: 'GowunBatang',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      date,
+                      style: TextStyle(
+                        fontFamily: 'GowunBatang',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 2),
+              const SizedBox(height: 4),
               Text(
                 description,
-                style: DSTypography.bodySmall.copyWith(
-                  color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 13,
+                  color: textColor.withValues(alpha: 0.6),
                 ),
               ),
             ],
@@ -299,56 +372,173 @@ class ImportantDatesCard extends StatelessWidget {
   }
 
   Map<String, String> _findBestDay() {
-    double bestScore = -1;
+    double bestScore = -101;
     int bestDayIndex = 0;
-    
+
     for (int i = 0; i < 7; i++) {
-      final avgScore = (biorhythmData.physicalWeek[i] + 
-                       biorhythmData.emotionalWeek[i] + 
-                       biorhythmData.intellectualWeek[i]) / 3;
+      final avgScore = (biorhythmData.physicalWeek[i] +
+              biorhythmData.emotionalWeek[i] +
+              biorhythmData.intellectualWeek[i]) /
+          3;
       if (avgScore > bestScore) {
         bestScore = avgScore;
         bestDayIndex = i;
       }
     }
-    
+
     final date = DateTime.now().add(Duration(days: bestDayIndex));
     final dayNames = ['오늘', '내일', '모레'];
-    final dateStr = bestDayIndex < 3 
+    final dateStr = bestDayIndex < 3
         ? dayNames[bestDayIndex]
-        : '${date.month}/${date.day}';
-    
+        : '${date.month}월 ${date.day}일';
+
     return {
       'date': dateStr,
-      'description': '모든 리듬이 높아 활동하기 좋은 날이에요',
+      'description': '삼기(三氣)가 조화로워 만사형통의 날입니다',
     };
   }
 
   Map<String, String> _findWorstDay() {
     double worstScore = 101;
     int worstDayIndex = 0;
-    
+
     for (int i = 0; i < 7; i++) {
-      final avgScore = (biorhythmData.physicalWeek[i] + 
-                       biorhythmData.emotionalWeek[i] + 
-                       biorhythmData.intellectualWeek[i]) / 3;
+      final avgScore = (biorhythmData.physicalWeek[i] +
+              biorhythmData.emotionalWeek[i] +
+              biorhythmData.intellectualWeek[i]) /
+          3;
       if (avgScore < worstScore) {
         worstScore = avgScore;
         worstDayIndex = i;
       }
     }
-    
+
     final date = DateTime.now().add(Duration(days: worstDayIndex));
     final dayNames = ['오늘', '내일', '모레'];
-    final dateStr = worstDayIndex < 3 
+    final dateStr = worstDayIndex < 3
         ? dayNames[worstDayIndex]
-        : '${date.month}/${date.day}';
-    
+        : '${date.month}월 ${date.day}일';
+
     return {
       'date': dateStr,
-      'description': '컨디션 관리에 신경 써야 하는 날이에요',
+      'description': '기운이 낮아 무리하지 않는 것이 좋습니다',
     };
   }
 }
 
-// 주간 활동 가이드
+/// Date type for styling
+enum DateType { lucky, warning }
+
+/// Rhythm cycle info card
+class RhythmCycleInfoCard extends StatelessWidget {
+  final BiorhythmData biorhythmData;
+
+  const RhythmCycleInfoCard({
+    super.key,
+    required this.biorhythmData,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = DSBiorhythmColors.getInkBleed(isDark);
+
+    return BiorhythmHanjiCard(
+      style: HanjiCardStyle.minimal,
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '바이오리듬 주기',
+            style: TextStyle(
+              fontFamily: 'GowunBatang',
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildCycleInfo(
+                context,
+                label: '신체(火)',
+                days: 23,
+                color: DSBiorhythmColors.getPhysical(isDark),
+              ),
+              _buildCycleInfo(
+                context,
+                label: '감정(木)',
+                days: 28,
+                color: DSBiorhythmColors.getEmotional(isDark),
+              ),
+              _buildCycleInfo(
+                context,
+                label: '지적(水)',
+                days: 33,
+                color: DSBiorhythmColors.getIntellectual(isDark),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCycleInfo(
+    BuildContext context, {
+    required String label,
+    required int days,
+    required Color color,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = DSBiorhythmColors.getInkBleed(isDark);
+
+    return Column(
+      children: [
+        Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: color.withValues(alpha: 0.4),
+              width: 1,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              '$days',
+              style: TextStyle(
+                fontFamily: 'GowunBatang',
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'GowunBatang',
+            fontSize: 12,
+            color: textColor.withValues(alpha: 0.6),
+          ),
+        ),
+        Text(
+          '일 주기',
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            fontSize: 11,
+            color: textColor.withValues(alpha: 0.4),
+          ),
+        ),
+      ],
+    );
+  }
+}

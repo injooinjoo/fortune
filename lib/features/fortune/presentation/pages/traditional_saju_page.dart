@@ -19,6 +19,7 @@ import '../widgets/standard_fortune_app_bar.dart';
 import '../widgets/fortune_loading_skeleton.dart';
 // 전문가 사주 위젯들
 import '../widgets/saju/saju_widgets.dart';
+import '../../../../../data/saju_explanations.dart';
 import '../../../../services/ad_service.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/utils/subscription_snackbar.dart';
@@ -269,20 +270,17 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
                 controller: _tabController,
                 children: [
                   // 1. 사주 명식
-                  _buildTabContent(SajuPillarTablePro(sajuData: sajuData)),
+                  _buildTabContent(_buildMyungsikTab(sajuData)),
                   // 2. 오행 차트
-                  _buildTabContent(SajuElementChart(
-                    elementBalance: elementBalance,
-                    animationController: _resultAnimationController,
-                  )),
+                  _buildTabContent(_buildOhangTab(elementBalance)),
                   // 3. 지장간 분석
-                  _buildTabContent(SajuJijangganWidget(sajuData: sajuData)),
+                  _buildTabContent(_buildJijangganTab(sajuData)),
                   // 4. 12운성 분석
-                  _buildTabContent(SajuTwelveStagesWidget(sajuData: sajuData)),
+                  _buildTabContent(_buildTwelveStagesTab(sajuData)),
                   // 5. 신살 분석
-                  _buildTabContent(SajuSinsalWidget(sajuData: sajuData)),
+                  _buildTabContent(_buildSinsalTab(sajuData)),
                   // 6. 합충형파해 분석
-                  _buildTabContent(SajuHapchungWidget(sajuData: sajuData)),
+                  _buildTabContent(_buildHapchungTab(sajuData)),
                   // 7. 질문 선택 섹션
                   _buildTabContent(_buildQuestionSelectionSection()),
                 ],
@@ -924,4 +922,116 @@ class _TraditionalSajuPageState extends ConsumerState<TraditionalSajuPage>
     }
   }
 
+  // =========================================================================
+  // 탭별 개념 설명 카드 포함 빌더
+  // =========================================================================
+
+  /// 1. 명식 탭 (개념 설명 카드 + 사주 테이블)
+  Widget _buildMyungsikTab(Map<String, dynamic> sajuData) {
+    final concept = SajuExplanations.tabConcepts['myungsik']!;
+    return Column(
+      children: [
+        SajuConceptCard(
+          title: concept['title']!,
+          shortDescription: concept['short']!,
+          fullDescription: concept['full']!,
+          icon: Icons.grid_view_rounded,
+        ),
+        const SizedBox(height: DSSpacing.lg),
+        SajuPillarTablePro(sajuData: sajuData),
+      ],
+    );
+  }
+
+  /// 2. 오행 탭 (개념 설명 카드 + 오행 차트)
+  Widget _buildOhangTab(Map<String, dynamic> elementBalance) {
+    final concept = SajuExplanations.tabConcepts['ohang']!;
+    // dynamic을 int로 변환
+    final intBalance = elementBalance.map(
+      (key, value) => MapEntry(key, (value as num).toInt()),
+    );
+    return Column(
+      children: [
+        SajuConceptCard(
+          title: concept['title']!,
+          shortDescription: concept['short']!,
+          fullDescription: concept['full']!,
+          icon: Icons.donut_large_rounded,
+        ),
+        const SizedBox(height: DSSpacing.lg),
+        SajuElementChart(
+          elementBalance: intBalance,
+          animationController: _resultAnimationController,
+        ),
+      ],
+    );
+  }
+
+  /// 3. 지장간 탭 (개념 설명 카드 + 지장간 위젯)
+  Widget _buildJijangganTab(Map<String, dynamic> sajuData) {
+    final concept = SajuExplanations.tabConcepts['jijanggan']!;
+    return Column(
+      children: [
+        SajuConceptCard(
+          title: concept['title']!,
+          shortDescription: concept['short']!,
+          fullDescription: concept['full']!,
+          icon: Icons.layers_rounded,
+        ),
+        const SizedBox(height: DSSpacing.lg),
+        SajuJijangganWidget(sajuData: sajuData),
+      ],
+    );
+  }
+
+  /// 4. 12운성 탭 (개념 설명 카드 + 12운성 위젯)
+  Widget _buildTwelveStagesTab(Map<String, dynamic> sajuData) {
+    final concept = SajuExplanations.tabConcepts['twelve_fortune']!;
+    return Column(
+      children: [
+        SajuConceptCard(
+          title: concept['title']!,
+          shortDescription: concept['short']!,
+          fullDescription: concept['full']!,
+          icon: Icons.loop_rounded,
+        ),
+        const SizedBox(height: DSSpacing.lg),
+        SajuTwelveStagesWidget(sajuData: sajuData),
+      ],
+    );
+  }
+
+  /// 5. 신살 탭 (개념 설명 카드 + 신살 위젯)
+  Widget _buildSinsalTab(Map<String, dynamic> sajuData) {
+    final concept = SajuExplanations.tabConcepts['sinsal']!;
+    return Column(
+      children: [
+        SajuConceptCard(
+          title: concept['title']!,
+          shortDescription: concept['short']!,
+          fullDescription: concept['full']!,
+          icon: Icons.stars_rounded,
+        ),
+        const SizedBox(height: DSSpacing.lg),
+        SajuSinsalWidget(sajuData: sajuData),
+      ],
+    );
+  }
+
+  /// 6. 합충 탭 (개념 설명 카드 + 합충 위젯)
+  Widget _buildHapchungTab(Map<String, dynamic> sajuData) {
+    final concept = SajuExplanations.tabConcepts['hapchung']!;
+    return Column(
+      children: [
+        SajuConceptCard(
+          title: concept['title']!,
+          shortDescription: concept['short']!,
+          fullDescription: concept['full']!,
+          icon: Icons.compare_arrows_rounded,
+        ),
+        const SizedBox(height: DSSpacing.lg),
+        SajuHapchungWidget(sajuData: sajuData),
+      ],
+    );
+  }
 }

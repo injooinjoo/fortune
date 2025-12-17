@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/components/app_card.dart';
+import '../../../../data/saju_explanations.dart';
+import 'saju/saju_concept_card.dart';
 
 /// 오행 균형 차트 위젯
 class SajuElementChart extends StatefulWidget {
@@ -159,6 +161,33 @@ class _SajuElementChartState extends State<SajuElementChart> {
                 }
                 _touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
               });
+
+              // 탭 시 바텀시트 표시
+              if (event is FlTapUpEvent &&
+                  pieTouchResponse != null &&
+                  pieTouchResponse.touchedSection != null) {
+                final elements = ['목', '화', '토', '금', '수'];
+                final touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                if (touchedIndex >= 0 && touchedIndex < elements.length) {
+                  final element = elements[touchedIndex];
+                  final data = SajuExplanations.ohangElements[element];
+                  if (data != null) {
+                    showOhangExplanationSheet(
+                      context: context,
+                      element: element,
+                      hanja: data['hanja'] ?? '',
+                      meaning: data['meaning'] ?? '',
+                      personality: data['personality'] ?? '',
+                      description: data['description'] ?? '',
+                      season: data['season'] ?? '',
+                      direction: data['direction'] ?? '',
+                      organ: data['organ'] ?? '',
+                      colorName: data['color'] ?? '',
+                      number: data['number'] ?? '',
+                    );
+                  }
+                }
+              }
             },
           ),
           borderData: FlBorderData(show: false),
@@ -245,43 +274,63 @@ class _SajuElementChartState extends State<SajuElementChart> {
           final color = _getElementColor(context, element);
           final strength = _getElementStrength(count);
 
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: Row(
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
+          return GestureDetector(
+            onTap: () {
+              final data = SajuExplanations.ohangElements[element];
+              if (data != null) {
+                showOhangExplanationSheet(
+                  context: context,
+                  element: element,
+                  hanja: data['hanja'] ?? '',
+                  meaning: data['meaning'] ?? '',
+                  personality: data['personality'] ?? '',
+                  description: data['description'] ?? '',
+                  season: data['season'] ?? '',
+                  direction: data['direction'] ?? '',
+                  organ: data['organ'] ?? '',
+                  colorName: data['color'] ?? '',
+                  number: data['number'] ?? '',
+                );
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  element,
-                  style: typography.bodySmall.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: colors.textPrimary,
+                  const SizedBox(width: 6),
+                  Text(
+                    element,
+                    style: typography.bodySmall.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colors.textPrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  strength,
-                  style: typography.bodySmall.copyWith(
-                    fontSize: 10,
-                    color: colors.textTertiary,
+                  const SizedBox(width: 4),
+                  Text(
+                    strength,
+                    style: typography.bodySmall.copyWith(
+                      fontSize: 10,
+                      color: colors.textTertiary,
+                    ),
                   ),
-                ),
-                const Spacer(),
-                Text(
-                  count.toStringAsFixed(1),
-                  style: typography.bodySmall.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color,
+                  const Spacer(),
+                  Text(
+                    count.toStringAsFixed(1),
+                    style: typography.bodySmall.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         }).toList(),

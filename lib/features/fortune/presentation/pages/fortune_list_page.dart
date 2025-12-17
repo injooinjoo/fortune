@@ -325,7 +325,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
 
     // ==================== Personal/Character-based Fortunes (통합) ====================
     FortuneCategory(
-      title: '성격 DNA',
+      title: '나의 성격 탐구',
       route: '/personality-dna',
       type: 'personality-dna',
       icon: Icons.biotech_rounded,
@@ -719,6 +719,13 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
               // 정렬 옵션들
               _buildSortOption(
                 context,
+                '추천순',
+                '인기 + 조회수 + 즐겨찾기 기반',
+                SortOption.recommended,
+                currentSort == SortOption.recommended,
+              ),
+              _buildSortOption(
+                context,
                 '최근 조회순',
                 '최근에 본 운세가 위로',
                 SortOption.recentlyViewed,
@@ -733,17 +740,10 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
               ),
               _buildSortOption(
                 context,
-                '⭐',
+                '즐겨찾기 우선',
                 '즐겨찾기한 운세를 상단에 고정',
                 SortOption.favoriteFirst,
                 currentSort == SortOption.favoriteFirst,
-              ),
-              _buildSortOption(
-                context,
-                '사용자 지정',
-                '드래그하여 순서 변경',
-                SortOption.custom,
-                currentSort == SortOption.custom,
               ),
             ],
           ),

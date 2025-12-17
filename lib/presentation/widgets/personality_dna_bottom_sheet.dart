@@ -94,7 +94,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _showDetailedView ? '성격 DNA 정보 입력' : '성격 DNA 분석',
+                        _showDetailedView ? '성격 탐구 정보 입력' : '나의 성격 탐구',
                         style: DSTypography.displaySmall.copyWith(
                           fontWeight: FontWeight.w700,
                           color: Theme.of(context).brightness == Brightness.dark
@@ -174,7 +174,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                         Expanded(
                           flex: 2,
                           child: UnifiedButton(
-                            text: '🧬 나만의 성격 DNA 발견하기',
+                            text: '🧬 나의 성격 탐구하기',
                             onPressed: _canGenerate && !_isLoading
                                 ? _generatePersonalityDNA
                                 : null,
@@ -188,7 +188,7 @@ class _PersonalityDNABottomSheetState extends ConsumerState<PersonalityDNABottom
                     )
                   : UnifiedButton(
                       text: _canGenerate
-                          ? '🧬 나만의 성격 DNA 발견하기'
+                          ? '🧬 나의 성격 탐구하기'
                           : '📝 정보 수정하기',
                       onPressed: _canGenerate && !_isLoading
                           ? _generatePersonalityDNA

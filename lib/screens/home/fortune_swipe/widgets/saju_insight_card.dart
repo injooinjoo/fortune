@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/utils/hanja_utils.dart';
+import '../../../../core/theme/saju_colors.dart';
 
 /// 🔮 사주 인사이트 카드
 class SajuInsightCard extends StatelessWidget {
@@ -57,10 +58,10 @@ class SajuInsightCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _SajuPillar(label: '시', value: sajuData['hour_pillar'] ?? '○○', color: Colors.white),
-                  _SajuPillar(label: '일', value: sajuData['day_pillar'] ?? '○○', color: Colors.white),
-                  _SajuPillar(label: '월', value: sajuData['month_pillar'] ?? '○○', color: Colors.white),
-                  _SajuPillar(label: '년', value: sajuData['year_pillar'] ?? '○○', color: Colors.white),
+                  _SajuPillar(hanjaLabel: '時柱', koreanLabel: '시주', value: sajuData['hour_pillar'] ?? '○○', isDark: isDark),
+                  _SajuPillar(hanjaLabel: '日柱', koreanLabel: '일주', value: sajuData['day_pillar'] ?? '○○', isDark: isDark),
+                  _SajuPillar(hanjaLabel: '月柱', koreanLabel: '월주', value: sajuData['month_pillar'] ?? '○○', isDark: isDark),
+                  _SajuPillar(hanjaLabel: '年柱', koreanLabel: '년주', value: sajuData['year_pillar'] ?? '○○', isDark: isDark),
                 ],
               ),
               const SizedBox(height: 16),
@@ -90,14 +91,16 @@ class SajuInsightCard extends StatelessWidget {
 }
 
 class _SajuPillar extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color color;
+  final String hanjaLabel;   // 時柱, 日柱, 月柱, 年柱
+  final String koreanLabel;  // 시주, 일주, 월주, 년주
+  final String value;        // 갑자, 을축 등
+  final bool isDark;
 
   const _SajuPillar({
-    required this.label,
+    required this.hanjaLabel,
+    required this.koreanLabel,
     required this.value,
-    required this.color,
+    required this.isDark,
   });
 
   @override
@@ -106,44 +109,85 @@ class _SajuPillar extends StatelessWidget {
     final hanja = HanjaUtils.toHanja(value);
     final hasHanja = hanja.isNotEmpty;
 
+    // 천간 추출하여 오행 색상 결정
+    final stem = value.isNotEmpty ? value[0] : '';
+    final element = HanjaUtils.getStemElement(stem) ?? '';
+    final elementColor = SajuColors.getStemColor(stem, isDark: isDark);
+
     return Column(
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: color.withValues(alpha: 0.8),
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
+        // 라벨: 한자 + 한글
+        Column(
+          children: [
+            Text(
+              hanjaLabel,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              koreanLabel,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.6),
+                fontSize: 9,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 6),
+        // 천간지지 박스
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(6),
+            color: Colors.white.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: elementColor.withValues(alpha: 0.5),
+              width: 1,
+            ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 한글 천간지지
-              Text(
-                value,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              // 한자 (있는 경우)
+              // 한자 크게 (주)
               if (hasHanja) ...[
-                const SizedBox(height: 2),
                 Text(
                   hanja,
                   style: TextStyle(
-                    color: color.withValues(alpha: 0.7),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
+                    color: elementColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 2),
+              ],
+              // 한글 작게 (보조)
+              Text(
+                value,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              // 오행 태그
+              if (element.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: elementColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    element,
+                    style: TextStyle(
+                      color: elementColor,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],

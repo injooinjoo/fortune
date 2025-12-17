@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/design_system/design_system.dart';
 import '../../../core/services/fortune_haptic_service.dart';
+import '../../../core/services/page_turn_sound_service.dart';
 import '../../../core/utils/fortune_text_cleaner.dart';
 import '../../../domain/entities/fortune.dart' as fortune_entity;
 import '../../../domain/entities/user_profile.dart';
@@ -91,8 +92,9 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
     final page = _pageController.page?.round() ?? 0;
     if (page != _currentPage) {
       setState(() => _currentPage = page);
-      // 페이지 스냅 시 햅틱 피드백
+      // 페이지 스냅 시 햅틱 피드백 + 효과음
       ref.read(fortuneHapticServiceProvider).pageSnap();
+      ref.read(pageTurnSoundServiceProvider).playPageTurn();
     }
   }
 
@@ -117,6 +119,17 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
         bottom: false,
         child: Stack(
           children: [
+            // 한지 텍스처 배경
+            Positioned.fill(
+              child: Opacity(
+                opacity: isDark ? 0.08 : 0.15,
+                child: Image.asset(
+                  'assets/images/hanji_texture.png',
+                  fit: BoxFit.cover,
+                  repeat: ImageRepeat.repeat,
+                ),
+              ),
+            ),
             // PageView
             Positioned.fill(
               top: 0,

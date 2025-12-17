@@ -11,6 +11,8 @@ import '../../../talisman/presentation/providers/talisman_provider.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../talisman/presentation/widgets/talisman_premium_bottom_sheet.dart';
+import '../../../../services/ad_service.dart';
+import '../../../../presentation/providers/token_provider.dart';
 
 class TalismanFortunePage extends ConsumerStatefulWidget {
   const TalismanFortunePage({super.key});
@@ -43,10 +45,23 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
-        // 결과 페이지면 leading 없음
-        leading: talismanState.step == TalismanGenerationStep.result
-            ? null
-            : _buildBackButton(context, ref, talismanState.step, userId, colors),
+        // 결과 페이지에서 백버튼 → 처음으로, 그 외 → 나가기
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          color: colors.textPrimary,
+          onPressed: () {
+            if (talismanState.step == TalismanGenerationStep.result) {
+              // 결과 페이지에서 백버튼 → 처음으로 돌아가기
+              ref.read(talismanGenerationProvider(userId).notifier).reset();
+              setState(() {
+                _selectedCategory = null;
+                _selectedWish = null;
+              });
+            } else {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
         title: Text(
           '부적',
           style: DSTypography.headingSmall.copyWith(
@@ -66,29 +81,6 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
             : null,
       ),
       body: _buildContent(context, ref, talismanState, userId, colors),
-    );
-  }
-
-  Widget _buildBackButton(BuildContext context, WidgetRef ref, TalismanGenerationStep step, String? userId, DSColorScheme colors) {
-    VoidCallback onTap;
-
-    if (step == TalismanGenerationStep.result) {
-      // 결과 페이지: 홈으로 돌아가기
-      onTap = () => Navigator.of(context).pop();
-    } else if (step != TalismanGenerationStep.categorySelection) {
-      // 중간 단계: 이전 단계로
-      onTap = () {
-        ref.read(talismanGenerationProvider(userId).notifier).goBack();
-      };
-    } else {
-      // 첫 페이지: 뒤로가기 버튼
-      onTap = () => Navigator.of(context).pop();
-    }
-
-    return IconButton(
-      icon: const Icon(Icons.arrow_back_ios),
-      color: colors.textPrimary,
-      onPressed: onTap,
     );
   }
 
@@ -147,22 +139,15 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
                   return;
                 }
 
-                // 하루 제한 체크
-                final canCreate = await ref.read(dailyTalismanLimitProvider(userId).future);
-                if (!mounted || !context.mounted) return;
-                if (canCreate) {
-                  // 제한 초과 시 프리미엄 안내
-                  await _showPremiumBottomSheet(context);
-                  return;
-                }
-
+                // 소원 저장 (광고 시청 후 사용)
                 setState(() {
                   _selectedWish = wish;
                 });
-                ref.read(talismanGenerationProvider(userId).notifier).generateTalisman(
-                  category: _selectedCategory!,
-                  specificWish: wish,
-                );
+
+                // 항상 결제 필수 (광고 시청 또는 복주머니 결제)
+                if (!mounted || !context.mounted) return;
+                await _showPremiumBottomSheet(context);
+                // generateTalisman은 결제 성공 후 _handleTokenOption 또는 _handleWatchAd에서 호출됨
               },
               onAIWishSubmitted: (wish, isAIGenerated, imageUrl) async {
                 final authState = ref.read(authStateProvider).value;
@@ -284,8 +269,23 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
   }
 
   Future<void> _showPremiumBottomSheet(BuildContext context) async {
+    // ✅ 토큰 잔액 및 프리미엄 상태 확인
+    final tokenState = ref.read(tokenProvider);
+    final currentTokens = tokenState.balance?.remainingTokens ?? 0;
+    final isPremium = tokenState.hasUnlimitedAccess;
+
     await TalismanPremiumBottomSheet.show(
       context,
+      currentTokens: currentTokens,
+      isPremium: isPremium,
+      onWatchAd: () async {
+        Navigator.of(context).pop();
+        await _handleWatchAd();
+      },
+      onTokenPaid: () async {
+        Navigator.of(context).pop();
+        await _handleTokenOption();
+      },
       onSubscribe: () async {
         Navigator.of(context).pop();
         await _handleSubscription();
@@ -326,6 +326,116 @@ class _TalismanFortunePageState extends ConsumerState<TalismanFortunePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('구매 처리 중 오류가 발생했습니다: $e')),
       );
+    }
+  }
+
+  /// ✅ 토큰 결제 처리 (복채 3개 차감)
+  Future<void> _handleTokenOption() async {
+    try {
+      final authState = ref.read(authStateProvider).value;
+      final userId = authState?.session?.user.id;
+
+      if (userId == null) {
+        _showLoginRequiredDialog(context);
+        return;
+      }
+
+      // 토큰 차감
+      final success = await ref.read(tokenProvider.notifier).consumeTokens(
+        fortuneType: 'talisman',
+        amount: TalismanPremiumBottomSheet.requiredTokens,
+      );
+
+      if (!mounted) return;
+
+      if (success) {
+        // 토큰 차감 성공 → 부적 생성 진행
+        if (_selectedCategory != null && _selectedWish != null) {
+          ref.read(talismanGenerationProvider(userId).notifier).generateTalisman(
+            category: _selectedCategory!,
+            specificWish: _selectedWish!,
+          );
+        }
+      } else {
+        // 토큰 부족 또는 오류
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('복채가 부족합니다. 광고를 시청하거나 복채를 충전해주세요.')),
+        );
+      }
+    } catch (e) {
+      debugPrint('[TalismanFortunePage] 토큰 차감 실패: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('토큰 차감 중 오류가 발생했습니다: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleWatchAd() async {
+    try {
+      final adService = AdService();
+
+      // 광고 준비 확인
+      if (!adService.isRewardedAdReady) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('광고를 준비하는 중입니다...'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+
+        await adService.loadRewardedAd();
+
+        // 광고 로딩 대기
+        int waitCount = 0;
+        while (!adService.isRewardedAdReady && waitCount < 10) {
+          await Future.delayed(const Duration(milliseconds: 500));
+          waitCount++;
+        }
+
+        if (!adService.isRewardedAdReady) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('광고 로드에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      // 광고 표시
+      await adService.showRewardedAd(
+        onUserEarnedReward: (ad, reward) async {
+          debugPrint('[TalismanFortunePage] 광고 보상 획득, 부적 생성 진행');
+
+          if (mounted) {
+            // 광고 시청 완료 후 부적 생성 진행
+            final authState = ref.read(authStateProvider).value;
+            final userId = authState?.session?.user.id;
+
+            if (userId != null && _selectedCategory != null && _selectedWish != null) {
+              ref.read(talismanGenerationProvider(userId).notifier).generateTalisman(
+                category: _selectedCategory!,
+                specificWish: _selectedWish!,
+              );
+            }
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      debugPrint('[TalismanFortunePage] 광고 표시 실패: $e\n$stackTrace');
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('광고 표시 중 오류가 발생했습니다: $e')),
+        );
+      }
     }
   }
 

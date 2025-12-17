@@ -12,6 +12,8 @@ import 'package:fortune/core/models/fortune_result.dart';
 import 'package:fortune/features/fortune/domain/models/conditions/compatibility_fortune_conditions.dart';
 import 'package:fortune/services/ad_service.dart';
 import 'package:fortune/core/utils/subscription_snackbar.dart';
+import 'package:fortune/screens/profile/widgets/add_profile_sheet.dart';
+import 'package:fortune/presentation/providers/secondary_profiles_provider.dart';
 import 'widgets/index.dart';
 
 class CompatibilityPage extends ConsumerStatefulWidget {
@@ -39,6 +41,9 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
   // 블러 상태 관리 (로컬)
   bool _isBlurred = false;
   List<String> _blurredSections = [];
+
+  // 직접 입력 여부 추적 (프로필 추가 프롬프트 표시용)
+  bool _wasManualInput = false;
 
   @override
   void initState() {
@@ -293,6 +298,9 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       onAnalyze: _analyzeCompatibility,
       isLoading: _isLoading,
       canAnalyze: _canAnalyze(),
+      onManualInputChanged: (isManual) {
+        _wasManualInput = isManual;
+      },
     );
   }
 
@@ -306,6 +314,7 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
   Widget _buildResultView() {
     final fortune = _compatibilityData!['fortune'] as Fortune;
     final scores = _compatibilityData!['scores'] as Map<String, double>;
+    final canAddProfile = ref.watch(canAddSecondaryProfileProvider);
 
     return CompatibilityResultView(
       fortune: fortune,
@@ -315,7 +324,32 @@ class _CompatibilityPageState extends ConsumerState<CompatibilityPage> {
       isBlurred: _isBlurred,
       blurredSections: _blurredSections,
       onShowAdAndUnblur: _showAdAndUnblur,
+      // 직접 입력이었고 프로필 추가 가능할 때만 버튼 표시
+      showAddProfileButton: _wasManualInput && canAddProfile,
+      onAddProfile: _showAddProfileSheet,
     );
+  }
+
+  /// 프로필 추가 바텀시트 표시
+  Future<void> _showAddProfileSheet() async {
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => AddProfileSheet(
+        initialName: _person2NameController.text,
+        initialBirthDate: _person2BirthDate,
+        title: '상대방 프로필 저장',
+        subtitle: '저장하면 다음에 더 빠르게 궁합을 확인할 수 있어요',
+      ),
+    );
+
+    // 프로필 추가 성공 시 버튼 숨기기
+    if (result == true && mounted) {
+      setState(() {
+        _wasManualInput = false;
+      });
+    }
   }
 
   /// 광고 시청 후 블러 해제

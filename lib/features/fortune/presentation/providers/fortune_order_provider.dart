@@ -6,7 +6,7 @@ import '../pages/fortune_list_page.dart';
 
 /// 정렬 옵션 Enum
 enum SortOption {
-  custom,           // 사용자 지정 순서 (드래그 앤 드롭)
+  recommended,      // 추천순 (인기 + 조회수 + 즐겨찾기 복합)
   recentlyViewed,   // 최근 조회순
   availableFirst,   // 조회 가능순 (오늘 아직 안 본 것)
   favoriteFirst,    // 즐겨찾기 우선
@@ -18,27 +18,32 @@ class FortuneOrderState {
   final Set<String> favorites;           // 즐겨찾기 운세 타입들
   final SortOption currentSort;          // 현재 정렬 옵션
   final Map<String, DateTime> lastViewed; // 마지막 조회 시간
+  final Map<String, int> viewCount;      // 누적 조회수 (인기순 정렬용)
 
   FortuneOrderState({
     List<String>? customOrder,
     Set<String>? favorites,
-    this.currentSort = SortOption.custom,
+    this.currentSort = SortOption.recommended, // 기본값: 추천순
     Map<String, DateTime>? lastViewed,
+    Map<String, int>? viewCount,
   })  : customOrder = customOrder ?? [],
         favorites = favorites ?? {},
-        lastViewed = lastViewed ?? {};
+        lastViewed = lastViewed ?? {},
+        viewCount = viewCount ?? {};
 
   FortuneOrderState copyWith({
     List<String>? customOrder,
     Set<String>? favorites,
     SortOption? currentSort,
     Map<String, DateTime>? lastViewed,
+    Map<String, int>? viewCount,
   }) {
     return FortuneOrderState(
       customOrder: customOrder ?? this.customOrder,
       favorites: favorites ?? this.favorites,
       currentSort: currentSort ?? this.currentSort,
       lastViewed: lastViewed ?? this.lastViewed,
+      viewCount: viewCount ?? this.viewCount,
     );
   }
 }
@@ -49,6 +54,7 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
   static const String _prefKeyFavorites = 'fortune_favorites';
   static const String _prefKeySortOption = 'fortune_sort_option';
   static const String _prefKeyLastViewed = 'fortune_last_viewed';
+  static const String _prefKeyViewCount = 'fortune_view_count';
 
   FortuneOrderNotifier() : super(FortuneOrderState()) {
     _loadFromPreferences();
@@ -64,7 +70,7 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
     // 즐겨찾기
     final favoritesJson = prefs.getStringList(_prefKeyFavorites);
 
-    // 정렬 옵션
+    // 정렬 옵션 (기본값: recommended = 0)
     final sortOptionIndex = prefs.getInt(_prefKeySortOption) ?? 0;
     final sortOption = SortOption.values[sortOptionIndex];
 
@@ -78,11 +84,22 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
       });
     }
 
+    // 누적 조회수
+    final viewCountJson = prefs.getString(_prefKeyViewCount);
+    final viewCount = <String, int>{};
+    if (viewCountJson != null) {
+      final map = Uri.splitQueryString(viewCountJson);
+      map.forEach((key, value) {
+        viewCount[key] = int.tryParse(value) ?? 0;
+      });
+    }
+
     state = FortuneOrderState(
       customOrder: customOrderJson,
       favorites: favoritesJson?.toSet() ?? {},
       currentSort: sortOption,
       lastViewed: lastViewed,
+      viewCount: viewCount,
     );
   }
 
@@ -104,6 +121,12 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
         .map((e) => '${e.key}=${e.value.toIso8601String()}')
         .join('&');
     await prefs.setString(_prefKeyLastViewed, lastViewedString);
+
+    // 누적 조회수
+    final viewCountString = state.viewCount.entries
+        .map((e) => '${e.key}=${e.value}')
+        .join('&');
+    await prefs.setString(_prefKeyViewCount, viewCountString);
   }
 
   /// 즐겨찾기 토글
@@ -129,12 +152,6 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
     await FavoritesWidgetDataManager.syncToWidget();
   }
 
-  /// 사용자 지정 순서 업데이트 (드래그 앤 드롭)
-  Future<void> updateCustomOrder(List<String> newOrder) async {
-    state = state.copyWith(customOrder: newOrder);
-    await _saveToPreferences();
-  }
-
   /// 정렬 옵션 변경
   Future<void> changeSortOption(SortOption option) async {
     state = state.copyWith(currentSort: option);
@@ -146,7 +163,14 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
     final newLastViewed = Map<String, DateTime>.from(state.lastViewed);
     newLastViewed[fortuneType] = DateTime.now();
 
-    state = state.copyWith(lastViewed: newLastViewed);
+    // 누적 조회수 증가
+    final newViewCount = Map<String, int>.from(state.viewCount);
+    newViewCount[fortuneType] = (newViewCount[fortuneType] ?? 0) + 1;
+
+    state = state.copyWith(
+      lastViewed: newLastViewed,
+      viewCount: newViewCount,
+    );
     await _saveToPreferences();
   }
 
@@ -179,8 +203,8 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
   /// 정렬된 운세 리스트 반환
   List<FortuneCategory> getSortedCategories(List<FortuneCategory> categories) {
     switch (state.currentSort) {
-      case SortOption.custom:
-        return _sortByCustomOrder(categories);
+      case SortOption.recommended:
+        return _sortByRecommended(categories);
       case SortOption.recentlyViewed:
         return _sortByRecentlyViewed(categories);
       case SortOption.availableFirst:
@@ -190,31 +214,29 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
     }
   }
 
-  /// 사용자 지정 순서로 정렬
-  List<FortuneCategory> _sortByCustomOrder(List<FortuneCategory> categories) {
-    if (state.customOrder.isEmpty) {
-      return categories;
-    }
-
-    final sorted = <FortuneCategory>[];
-    final remaining = List<FortuneCategory>.from(categories);
-
-    // 사용자 순서대로 먼저 추가
-    for (final type in state.customOrder) {
-      final category = remaining.firstWhere(
-        (c) => c.type == type,
-        orElse: () => categories.first, // 기본값
-      );
-      if (remaining.contains(category)) {
-        sorted.add(category);
-        remaining.remove(category);
-      }
-    }
-
-    // 나머지 추가
-    sorted.addAll(remaining);
-
+  /// 추천순 정렬 (인기 + 조회수 + 즐겨찾기 복합)
+  List<FortuneCategory> _sortByRecommended(List<FortuneCategory> categories) {
+    final sorted = List<FortuneCategory>.from(categories);
+    sorted.sort((a, b) {
+      final aScore = _calculateRecommendScore(a);
+      final bScore = _calculateRecommendScore(b);
+      return bScore.compareTo(aScore); // 높은 점수 먼저
+    });
     return sorted;
+  }
+
+  /// 추천 점수 계산
+  /// 점수 = (조회수 × 10) + (즐겨찾기 ? 100 : 0) + (isNew ? 50 : 0) + (오늘 안봄 ? 30 : 0)
+  int _calculateRecommendScore(FortuneCategory category) {
+    final views = state.viewCount[category.type] ?? 0;
+    final isFavorite = state.favorites.contains(category.type);
+    final isNewCategory = category.isNew;
+    final notViewedToday = !category.hasViewedToday;
+
+    return (views * 10) +
+           (isFavorite ? 100 : 0) +
+           (isNewCategory ? 50 : 0) +
+           (notViewedToday ? 30 : 0);
   }
 
   /// 최근 조회순 정렬

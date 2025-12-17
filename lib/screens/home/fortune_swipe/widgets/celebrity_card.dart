@@ -77,7 +77,7 @@ class CelebrityCard extends ConsumerWidget {
                   child: _CelebrityCardItem(
                     name: celeb.name,
                     description: description,
-                    imageUrl: null,
+                    imageUrl: celeb.characterImageUrl,
                     compatibility: compatibility,
                     isDark: isDark,
                   ),

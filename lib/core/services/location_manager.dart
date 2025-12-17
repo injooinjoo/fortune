@@ -37,14 +37,40 @@ class LocationManager {
     try {
       // 1. 메모리 캐시 확인 (강제 새로고침 아닐 때)
       if (!forceRefresh && _currentLocation != null && _currentLocation!.isValid()) {
-        developer.log('🎯 LocationManager: 메모리 캐시 사용 - ${_currentLocation!.cityName}');
-        return _currentLocation!;
+        // GPS 캐시인 경우, 권한이 여전히 있는지 확인
+        if (_currentLocation!.isFromGPS) {
+          final hasPermission = await hasLocationPermission();
+          if (!hasPermission) {
+            developer.log('⚠️ LocationManager: GPS 권한 취소됨, 메모리 캐시 무효화');
+            _currentLocation = null;
+            // SharedPreferences 캐시도 정리
+            await clearCache();
+          } else {
+            developer.log('🎯 LocationManager: 메모리 캐시 사용 - ${_currentLocation!.cityName}');
+            return _currentLocation!;
+          }
+        } else {
+          developer.log('🎯 LocationManager: 메모리 캐시 사용 - ${_currentLocation!.cityName}');
+          return _currentLocation!;
+        }
       }
 
       // 2. SharedPreferences 캐시 확인
       if (!forceRefresh) {
         final cachedLocation = await getLastSavedLocation();
         if (cachedLocation != null && cachedLocation.isValid()) {
+          // GPS 캐시인 경우, 권한이 여전히 있는지 확인
+          if (cachedLocation.isFromGPS) {
+            final hasPermission = await hasLocationPermission();
+            if (!hasPermission) {
+              // 권한이 취소됨 → 캐시 무효화하고 기본값 사용
+              developer.log('⚠️ LocationManager: GPS 권한 취소됨, 캐시 무효화');
+              await clearCache();
+              final defaultLocation = LocationInfo.defaultSeoul();
+              _currentLocation = defaultLocation;
+              return defaultLocation;
+            }
+          }
           _currentLocation = cachedLocation;
           developer.log('💾 LocationManager: 캐시 사용 - ${cachedLocation.cityName}');
           return cachedLocation;

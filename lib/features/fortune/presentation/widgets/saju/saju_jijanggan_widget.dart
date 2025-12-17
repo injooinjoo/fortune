@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
+import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/ji_jang_gan_data.dart';
+import 'saju_concept_card.dart';
 
 /// 지장간(支藏干) 표시 위젯
 ///
@@ -41,7 +43,7 @@ class SajuJijangganWidget extends StatelessWidget {
             _buildTitle(isDark),
             const SizedBox(height: DSSpacing.sm),
           ],
-          _buildJijangganTable(isDark),
+          _buildJijangganTable(context, isDark),
         ],
       ),
     );
@@ -80,7 +82,7 @@ class SajuJijangganWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildJijangganTable(bool isDark) {
+  Widget _buildJijangganTable(BuildContext context, bool isDark) {
     final pillars = [
       {'title': '년주', 'hanja': '年柱', 'key': 'year'},
       {'title': '월주', 'hanja': '月柱', 'key': 'month'},
@@ -195,7 +197,7 @@ class SajuJijangganWidget extends StatelessWidget {
                               )
                             : null,
                   ),
-                  child: _buildHiddenStemsCell(branch, isDark),
+                  child: _buildHiddenStemsCell(context, branch, isDark),
                 ),
               );
             }).toList(),
@@ -247,7 +249,7 @@ class SajuJijangganWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildHiddenStemsCell(String branch, bool isDark) {
+  Widget _buildHiddenStemsCell(BuildContext context, String branch, bool isDark) {
     if (branch.isEmpty) {
       return const Center(child: Text('-'));
     }
@@ -265,38 +267,56 @@ class SajuJijangganWidget extends StatelessWidget {
         final bgColor =
             SajuColors.getWuxingBackgroundColor(stem.wuxing, isDark: isDark);
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 2),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 4,
-            vertical: 2,
-          ),
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                stem.stemHanja,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: color,
+        // 천간 데이터 조회
+        final stemData = SajuExplanations.heavenlyStem[stem.stemHanja];
+
+        return GestureDetector(
+          onTap: () {
+            if (stemData != null) {
+              showCharacterExplanationSheet(
+                context: context,
+                hanja: stem.stemHanja,
+                korean: stemData['korean'] ?? '',
+                element: stemData['element'] ?? '',
+                elementKorean: stemData['elementKorean'] ?? '',
+                meaning: stemData['meaning'] ?? '',
+                description: stemData['description'] ?? '',
+              );
+            }
+          },
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 2),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 4,
+              vertical: 2,
+            ),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  stem.stemHanja,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 2),
-              Text(
-                '${stem.ratio}%',
-                style: TextStyle(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w500,
-                  color: color.withValues(alpha: 0.8),
+                const SizedBox(width: 2),
+                Text(
+                  '${stem.ratio}%',
+                  style: TextStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w500,
+                    color: color.withValues(alpha: 0.8),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }).toList(),

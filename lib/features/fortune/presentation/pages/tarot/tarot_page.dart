@@ -108,10 +108,10 @@ class _TarotPageState extends ConsumerState<TarotPage>
               switchOutCurve: Curves.easeInOut,
               child: _buildCurrentStateWidget(),
             ),
-            // 🃏 덱 선택 화면에서 "덱 선택 완료" 버튼
+            // 🃏 카드 선택 화면에서 "카드 선택 완료" 버튼
             if (_currentState == TarotFlowState.deckSelection)
               UnifiedButton.floating(
-                text: '덱 선택 완료',
+                text: '카드 선택 완료',
                 onPressed: () {
                   setState(() {
                     _currentState = TarotFlowState.questioning;

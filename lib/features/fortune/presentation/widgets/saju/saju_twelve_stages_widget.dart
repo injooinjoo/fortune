@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/components/app_card.dart';
+import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/twelve_stage_calculator.dart';
+import 'saju_concept_card.dart';
 
 /// 12운성(十二運星) 표시 위젯
 ///
@@ -47,7 +49,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
             const SizedBox(height: DSSpacing.md),
           ],
           // 12운성 테이블
-          _buildStagesTable(stages, isDark),
+          _buildStagesTable(context, stages, isDark),
           const SizedBox(height: DSSpacing.md),
           // 신강/신약 판단
           _buildStrengthIndicator(totalStrength, strengthLevel, isDark),
@@ -108,6 +110,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
   }
 
   Widget _buildStagesTable(
+    BuildContext context,
     Map<String, TwelveStage> stages,
     bool isDark,
   ) {
@@ -225,7 +228,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                               )
                             : null,
                   ),
-                  child: _buildStageCell(stage, isDay, isDark),
+                  child: _buildStageCell(context, stage, isDay, isDark),
                 ),
               );
             }).toList(),
@@ -235,48 +238,64 @@ class SajuTwelveStagesWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStageCell(TwelveStage? stage, bool isDay, bool isDark) {
+  Widget _buildStageCell(BuildContext context, TwelveStage? stage, bool isDay, bool isDark) {
     if (stage == null) {
       return const Center(child: Text('-'));
     }
 
     final color = stage.color;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // 한자 - 컴팩트 사이즈
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            stage.hanja,
-            style: TextStyle(
-              fontSize: isDay ? 22 : 18,
-              fontWeight: FontWeight.bold,
-              color: isDay ? DSColors.accent : color,
+    // 12운성 설명 데이터 조회
+    final stageData = SajuExplanations.twelveStages[stage.korean];
+
+    return GestureDetector(
+      onTap: () {
+        showTwelveStageExplanationSheet(
+          context: context,
+          hanja: stage.hanja,
+          korean: stage.korean,
+          meaning: stage.meaning,
+          description: stageData?['description'] ?? stage.meaning,
+          fortune: stage.fortune,
+          stageColor: color,
+        );
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 한자 - 컴팩트 사이즈
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              stage.hanja,
+              style: TextStyle(
+                fontSize: isDay ? 22 : 18,
+                fontWeight: FontWeight.bold,
+                color: isDay ? DSColors.accent : color,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
-        ),
-        // 한글
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            stage.korean,
-            style: DSTypography.labelSmall.copyWith(
-              fontSize: 10,
-              color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
-              fontWeight: FontWeight.w500,
+          // 한글
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              stage.korean,
+              style: DSTypography.labelSmall.copyWith(
+                fontSize: 10,
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
-        ),
-        const SizedBox(height: 2),
-        // 강도 표시 (세련된 도트 스타일)
-        _buildStrengthBadge(stage.strength, color),
-      ],
+          const SizedBox(height: 2),
+          // 강도 표시 (세련된 도트 스타일)
+          _buildStrengthBadge(stage.strength, color),
+        ],
+      ),
     );
   }
 

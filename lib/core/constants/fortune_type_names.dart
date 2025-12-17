@@ -29,7 +29,7 @@ class FortuneTypeNames {
     // Personal/Character Fortunes (성격/캐릭터 운세)
     'mbti': 'MBTI 운세',
     'personality': '성격',
-    'personality-dna': '성격 DNA',
+    'personality-dna': '나의 성격 탐구',
     'blood-type': '혈액형 운세',
     'zodiac': '별자리 운세',
     'zodiac-animal': '띠 운세',

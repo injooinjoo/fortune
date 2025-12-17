@@ -48,6 +48,8 @@ import '../screens/subscription/subscription_page.dart';
 // Import page classes for routes outside shell
 import '../features/health/presentation/pages/health_fortune_page.dart';
 import '../features/health/presentation/pages/health_fortune_result_page.dart';
+import '../features/health/presentation/pages/medical_document_result_page.dart';
+import '../features/health/domain/models/medical_document_models.dart';
 import '../core/models/fortune_result.dart';
 import '../features/sports/presentation/pages/sports_fortune_page.dart' show ExerciseFortunePage;
 import '../features/fortune/presentation/pages/compatibility_page.dart';
@@ -321,6 +323,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             context,
             state,
             HealthFortuneResultPage(fortuneResult: fortuneResult),
+          );
+        },
+      ),
+      // Medical Document Analysis Result (건강검진표/처방전/진단서 분석)
+      GoRoute(
+        path: '/medical-document-result',
+        name: 'medical-document-result',
+        pageBuilder: (context, state) {
+          final uploadResult = state.extra as MedicalDocumentUploadResult;
+          return PageTransitions.slideTransition(
+            context,
+            state,
+            MedicalDocumentResultPage(uploadResult: uploadResult),
           );
         },
       ),

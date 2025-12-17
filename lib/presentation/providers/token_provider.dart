@@ -79,7 +79,8 @@ class TokenState {
     'lucky-realestate': 5,
     'celebrity-match': 5,
     'network-report': 5,
-    'five-blessings': 5};
+    'five-blessings': 5,
+    'health-document': 3};  // 건강검진표/처방전/진단서 분석
 
   TokenState copyWith({
     TokenBalance? balance,
