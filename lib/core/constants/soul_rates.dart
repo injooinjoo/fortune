@@ -49,7 +49,11 @@ class SoulRates {
     'lucky-yoga': 2,
     'wish': 3,
     'talisman': 3,
-    'talent': 2};
+    'talent': 2,
+
+    // 이사운 (무료로 변경됨)
+    'moving': 3,
+    'moving-date': 3};
 
   // 영혼을 소비하는 프리미엄 운세 (음수)
   static const Map<String, int> consumeRates = {
@@ -73,9 +77,7 @@ class SoulRates {
     'face-reading': -15,
     'timeline': -15,
     'lucky-exam': -10,
-    'moving': -15,
-    'moving-date': -15,
-    
+
     // 울트라 프리미엄 운세 (30-50 영혼 소비)
     'startup': -30,
     'business': -35,
