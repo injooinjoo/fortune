@@ -20,7 +20,12 @@ struct LoveFortuneWidgetView: View {
 // MARK: - Medium Widget
 struct MediumLoveFortuneView: View {
     let entry: LoveFortuneEntry
-    
+    @Environment(\.colorScheme) var colorScheme
+
+    private var textColors: WidgetTextColors {
+        WidgetTextColors(colorScheme)
+    }
+
     var body: some View {
         ZStack {
             ContainerRelativeShape()
@@ -29,7 +34,7 @@ struct MediumLoveFortuneView: View {
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 ))
-            
+
             HStack(spacing: 16) {
                 // Left: Compatibility Score
                 VStack(spacing: 8) {
@@ -40,16 +45,16 @@ struct MediumLoveFortuneView: View {
                             .font(.caption)
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(.white.opacity(0.8))
-                    
+                    .foregroundColor(textColors.secondary)
+
                     Spacer()
-                    
+
                     // Circular Progress
                     ZStack {
                         Circle()
-                            .stroke(Color.white.opacity(0.2), lineWidth: 8)
+                            .stroke(textColors.backgroundOverlay, lineWidth: 8)
                             .frame(width: 80, height: 80)
-                        
+
                         Circle()
                             .trim(from: 0, to: CGFloat(entry.compatibilityScore) / 100)
                             .stroke(
@@ -62,39 +67,39 @@ struct MediumLoveFortuneView: View {
                             )
                             .rotationEffect(.degrees(-90))
                             .frame(width: 80, height: 80)
-                        
+
                         Text("\(entry.compatibilityScore)%")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
+                            .foregroundColor(textColors.primary)
                     }
-                    
+
                     Spacer()
                 }
-                
+
                 Divider()
-                    .background(Color.white.opacity(0.3))
-                
+                    .background(textColors.divider)
+
                 // Right: Partner Info & Message
                 VStack(alignment: .leading, spacing: 8) {
                     Text("\(entry.partnerName)님과의 궁합")
                         .font(.footnote)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
-                    
+                        .foregroundColor(textColors.primary)
+
                     Text(entry.message)
                         .font(.caption)
-                        .foregroundColor(.white.opacity(0.9))
+                        .foregroundColor(textColors.secondary)
                         .lineLimit(3)
                         .multilineTextAlignment(.leading)
-                    
+
                     Spacer()
-                    
+
                     HStack {
                         Spacer()
                         Text("자세히 보기 ›")
                             .font(.caption2)
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(textColors.primary)
                     }
                 }
             }
@@ -107,7 +112,12 @@ struct MediumLoveFortuneView: View {
 // MARK: - Large Widget
 struct LargeLoveFortuneView: View {
     let entry: LoveFortuneEntry
-    
+    @Environment(\.colorScheme) var colorScheme
+
+    private var textColors: WidgetTextColors {
+        WidgetTextColors(colorScheme)
+    }
+
     var body: some View {
         ZStack {
             ContainerRelativeShape()
@@ -116,7 +126,7 @@ struct LargeLoveFortuneView: View {
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 ))
-            
+
             VStack(alignment: .leading, spacing: 16) {
                 // Header
                 HStack {
@@ -130,19 +140,19 @@ struct LargeLoveFortuneView: View {
                     Spacer()
                     Text(entry.date, style: .time)
                         .font(.caption)
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(textColors.tertiary)
                 }
-                .foregroundColor(.white)
-                
+                .foregroundColor(textColors.primary)
+
                 // Main Content
                 HStack(alignment: .top, spacing: 20) {
                     // Compatibility Score
                     VStack(spacing: 12) {
                         ZStack {
                             Circle()
-                                .stroke(Color.white.opacity(0.2), lineWidth: 10)
+                                .stroke(textColors.backgroundOverlay, lineWidth: 10)
                                 .frame(width: 100, height: 100)
-                            
+
                             Circle()
                                 .trim(from: 0, to: CGFloat(entry.compatibilityScore) / 100)
                                 .stroke(
@@ -155,88 +165,91 @@ struct LargeLoveFortuneView: View {
                                 )
                                 .rotationEffect(.degrees(-90))
                                 .frame(width: 100, height: 100)
-                            
+
                             VStack(spacing: 0) {
                                 Text("\(entry.compatibilityScore)")
                                     .font(.system(size: 32, weight: .bold, design: .rounded))
                                 Text("%")
                                     .font(.system(size: 16, weight: .medium))
                             }
-                            .foregroundColor(.white)
+                            .foregroundColor(textColors.primary)
                         }
-                        
+
                         Text(entry.partnerName)
                             .font(.headline)
-                            .foregroundColor(.white)
+                            .foregroundColor(textColors.primary)
                     }
-                    
+
                     // Messages
                     VStack(alignment: .leading, spacing: 12) {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("오늘의 궁합 메시지")
                                 .font(.caption)
-                                .foregroundColor(.white.opacity(0.7))
-                            
+                                .foregroundColor(textColors.secondary)
+
                             Text(entry.message)
                                 .font(.callout)
                                 .fontWeight(.medium)
-                                .foregroundColor(.white)
+                                .foregroundColor(textColors.primary)
                                 .lineLimit(3)
                         }
-                        
+
                         if let advice = entry.advice {
                             Divider()
-                                .background(Color.white.opacity(0.3))
-                            
+                                .background(textColors.divider)
+
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("연애 조언")
                                     .font(.caption)
-                                    .foregroundColor(.white.opacity(0.7))
-                                
+                                    .foregroundColor(textColors.secondary)
+
                                 Text(advice)
                                     .font(.footnote)
-                                    .foregroundColor(.white.opacity(0.9))
+                                    .foregroundColor(textColors.secondary)
                                     .lineLimit(4)
                             }
                         }
                     }
                 }
-                
+
                 Spacer()
-                
+
                 // Compatibility Indicators
                 HStack(spacing: 16) {
                     CompatibilityIndicator(
                         icon: "heart.fill",
                         label: "애정도",
-                        value: getCompatibilityLevel(entry.compatibilityScore)
+                        value: getCompatibilityLevel(entry.compatibilityScore),
+                        colorScheme: colorScheme
                     )
-                    
+
                     CompatibilityIndicator(
                         icon: "bubble.left.and.bubble.right.fill",
                         label: "소통",
-                        value: getCommunicationLevel(entry.compatibilityScore)
+                        value: getCommunicationLevel(entry.compatibilityScore),
+                        colorScheme: colorScheme
                     )
-                    
+
                     CompatibilityIndicator(
                         icon: "sparkles",
                         label: "미래",
-                        value: getFutureLevel(entry.compatibilityScore)
+                        value: getFutureLevel(entry.compatibilityScore),
+                        colorScheme: colorScheme
                     )
                 }
-                
+
                 // Call to Action
                 HStack {
                     Spacer()
                     Text("상세 궁합 보기 ›")
                         .font(.footnote)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundColor(textColors.primary)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .background(
                             Capsule()
-                                .fill(Color.white.opacity(0.2))
+                                .fill(textColors.backgroundOverlay)
                         )
                 }
             }
@@ -279,27 +292,32 @@ struct CompatibilityIndicator: View {
     let icon: String
     let label: String
     let value: String
-    
+    let colorScheme: ColorScheme
+
+    private var textColors: WidgetTextColors {
+        WidgetTextColors(colorScheme)
+    }
+
     var body: some View {
         VStack(spacing: 4) {
             Image(systemName: icon)
                 .font(.body)
-                .foregroundColor(.white.opacity(0.8))
-            
+                .foregroundColor(textColors.icon)
+
             Text(label)
                 .font(.caption2)
-                .foregroundColor(.white.opacity(0.6))
-            
+                .foregroundColor(textColors.tertiary)
+
             Text(value)
                 .font(.caption)
                 .fontWeight(.semibold)
-                .foregroundColor(.white)
+                .foregroundColor(textColors.primary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color.white.opacity(0.1))
+                .fill(textColors.backgroundOverlay)
         )
     }
 }

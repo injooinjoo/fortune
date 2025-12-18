@@ -7,11 +7,50 @@ extension Color {
     static let loveWidgetBackground1 = Color("LoveWidgetBackground1")
     static let loveWidgetBackground2 = Color("LoveWidgetBackground2")
     static let activityBackground = Color("ActivityBackground")
-    
+
     // MARK: - Text Colors
     static let widgetPrimaryText = Color("WidgetPrimaryText")
     static let widgetSecondaryText = Color("WidgetSecondaryText")
     static let widgetAccent = Color("WidgetAccent")
+}
+
+// MARK: - Dynamic Widget Text Colors
+struct WidgetTextColors {
+    let colorScheme: ColorScheme
+
+    init(_ colorScheme: ColorScheme) {
+        self.colorScheme = colorScheme
+    }
+
+    // Primary text color - high contrast
+    var primary: Color {
+        colorScheme == .dark ? .white : Color(white: 0.1)
+    }
+
+    // Secondary text color - medium contrast
+    var secondary: Color {
+        colorScheme == .dark ? .white.opacity(0.8) : Color(white: 0.3)
+    }
+
+    // Tertiary text color - low contrast
+    var tertiary: Color {
+        colorScheme == .dark ? .white.opacity(0.6) : Color(white: 0.5)
+    }
+
+    // Divider color
+    var divider: Color {
+        colorScheme == .dark ? .white.opacity(0.3) : Color(white: 0.2).opacity(0.3)
+    }
+
+    // Background overlay for buttons/indicators
+    var backgroundOverlay: Color {
+        colorScheme == .dark ? .white.opacity(0.2) : Color(white: 0.1).opacity(0.15)
+    }
+
+    // Icon color
+    var icon: Color {
+        colorScheme == .dark ? .white.opacity(0.8) : Color(white: 0.2)
+    }
 }
 
 // MARK: - Widget Color Set
