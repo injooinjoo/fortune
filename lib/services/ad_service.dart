@@ -94,14 +94,14 @@ class AdService {
           }
         }
 
-        // COPPA 규정 준수 설정 (전체 이용가 앱)
-        // - tagForChildDirectedTreatment: 아동 대상 콘텐츠로 취급
-        // - maxAdContentRating: 모든 연령에 적합한 광고만 표시
+        // 광고 설정 (일반 앱 - 아동 대상 아님)
+        // - tagForChildDirectedTreatment: unspecified (아동 대상 아님)
+        // - maxAdContentRating: ma (성인 광고 허용)
         final config = RequestConfiguration(
           testDeviceIds: testDeviceIds,
-          tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
-          tagForUnderAgeOfConsent: TagForUnderAgeOfConsent.yes,
-          maxAdContentRating: MaxAdContentRating.g,  // General - 모든 연령
+          tagForChildDirectedTreatment: TagForChildDirectedTreatment.unspecified,
+          tagForUnderAgeOfConsent: TagForUnderAgeOfConsent.unspecified,
+          maxAdContentRating: MaxAdContentRating.ma,  // Mature Audiences - 일반 앱
         );
 
         await MobileAds.instance.updateRequestConfiguration(config).timeout(

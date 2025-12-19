@@ -259,7 +259,10 @@
       "Bash(xargs ls:*)",
       "Bash(flutter test:*)",
       "Bash(flutter devices:*)",
-      "Bash(flutter doctor:*)"
+      "Bash(flutter doctor:*)",
+      "Bash(mdfind:*)",
+      "Bash(flutter pub run:*)",
+      "Bash(md5:*)"
     ],
     "deny": [],
     "ask": [],

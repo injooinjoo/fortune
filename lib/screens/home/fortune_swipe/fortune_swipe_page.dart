@@ -332,6 +332,11 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
           score: score,
           message: _getMainScoreMessage(score),
           isDark: isDark,
+          categoryScores: _getCategoryScoresMap(),
+          luckyItems: _getLuckyItems(),
+          fiveElements: _getFiveElementsScoresMap(),
+          userName: displayUserName,
+          date: DateTime.now(),
         );
       default:
         return const SizedBox.shrink();
@@ -420,6 +425,36 @@ class _FortuneSwipePageState extends ConsumerState<FortuneSwipePage> {
       };
     }
     return {'시간': '오전 10시', '색상': '파란색', '숫자': '7', '방향': '동쪽', '음식': '과일', '아이템': '시계'};
+  }
+
+  /// 카테고리별 점수 Map<String, int> 반환 (공유 카드용)
+  Map<String, int> _getCategoryScoresMap() {
+    if (widget.fortune?.metadata?['categories'] != null) {
+      final categories = widget.fortune!.metadata!['categories'];
+      return {
+        'love': (categories['love']?['score'] as num?)?.toInt() ?? 70,
+        'money': (categories['money']?['score'] as num?)?.toInt() ?? 75,
+        'work': (categories['work']?['score'] as num?)?.toInt() ?? 80,
+        'study': (categories['study']?['score'] as num?)?.toInt() ?? 70,
+        'health': (categories['health']?['score'] as num?)?.toInt() ?? 75,
+      };
+    }
+    return {'love': 70, 'money': 75, 'work': 80, 'study': 70, 'health': 75};
+  }
+
+  /// 오행 점수 Map<String, int> 반환 (공유 카드용)
+  Map<String, int> _getFiveElementsScoresMap() {
+    final apiElements = widget.fortune?.fiveElements;
+    if (apiElements != null && apiElements['wood'] != null) {
+      return {
+        'wood': (apiElements['wood'] as num).toInt(),
+        'fire': (apiElements['fire'] as num).toInt(),
+        'earth': (apiElements['earth'] as num).toInt(),
+        'metal': (apiElements['metal'] as num).toInt(),
+        'water': (apiElements['water'] as num).toInt(),
+      };
+    }
+    return {'wood': 20, 'fire': 15, 'earth': 25, 'metal': 20, 'water': 20};
   }
 
   Map<String, String?> _getSajuData() {
